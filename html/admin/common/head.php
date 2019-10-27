@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../common/coreHead.php';
 
-$CONFIG['ROOTURL'] = "http://139.59.170.70/admin";
+$CONFIG['ROOTURL'] = getenv('bCMS__BACKENDURL');
 
 
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);

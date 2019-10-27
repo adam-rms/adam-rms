@@ -5,7 +5,7 @@ $PAGEDATA['pageConfig'] = ["TITLE" => "Login"];
 
 if (isset($_SESSION['return'])) {
 	$PAGEDATA['return'] = $_SESSION['return'];
-} else $PAGEDATA['return'] ="/";
+} else $PAGEDATA['return'] =$CONFIG['ROOTURL'];
 
 $AUTH->logout(); //Log em out even if they didn't want to - It solves a few issues!
 
