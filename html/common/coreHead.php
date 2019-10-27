@@ -5,12 +5,6 @@ use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 
 //GLOBALS STUFF - DON'T CHANGE
-
-if (getenv('bCMS__DEBUG') == "true") {
-    error_reporting(E_ALL);
-    ini_set("display_errors", 1);
-}
-
 /*
 function errorHandler() {
     if (error_get_last() and error_get_last()['type'] == '1') {
