@@ -1,0 +1,311 @@
+{% extends "login/template.twig" %}
+{% block content %}
+    <form id="form1">
+		<input class="form-control form-control-lg" id="form1Input" autofocus placeholder="Username or Email" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+		<div style="width: 100%; text-align:right;">
+			<button class="btn btn-primary" type="submit" value="Submit" >Next</button>
+		</div>
+	</form>
+		<!--Normal password login-->
+	<form id="form2">
+		<input class="form-control form-control-lg" id="form2Input" placeholder="Password" type="password" style="margin-top: 10px; margin-bottom: 10px;">
+		<div style="width: 100%; text-align:right;">
+			<button type="button" class="btn btn-default" id="passwordResetButton">Reset my password</button>
+			<button class="btn btn-primary" type="submit" value="Submit">Login</button>
+		</div>
+	</form>
+	<form id="form3b">
+        <input class="form-control form-control-lg" id="form3bInput" placeholder="Choose an email address" type="email" style="margin-top: 10px; margin-bottom: 10px;">
+        <div style="width: 100%; text-align:right;">
+            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+        </div>
+    </form>
+    <form id="form3c">
+        <input class="form-control form-control-lg" id="form3cInput" placeholder="Choose a username" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <div style="width: 100%; text-align:right;">
+            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+        </div>
+    </form>
+    <form id="form3d">
+        <p>Please confirm you have read and accept our <a href="#" target="_blank">terms and conditions</a></p>
+        <div style="width: 100%; text-align:right;">
+            <button class="btn btn-success" type="submit" value="Submit">I accept</button>
+        </div>
+    </form>
+    <form id="formVerifyEmail">
+        <p>Please check your email address for our verification email</p>
+        <p><i>Every now and again our E-Mails get sucked up by hungry spam filters - If you can't find our E-Mail please check your spam/junk folder</i></p>
+        <div style="width: 100%; text-align:right;">
+            <button class="btn btn-warning" type="submit" value="Submit">Send again</button>
+            <button class="btn btn-primary setToLoginButton" type="button">Continue to login</button>
+        </div>
+    </form>
+    <form id="form3e">
+        <p>Your account has been created - welcome to {{ CONFIG.PROJECT_NAME}}!</p>
+        <div style="width: 100%; text-align:right;">
+            <button class="btn btn-primary setToLoginButton"  type="button">Continue to login</button>
+        </div>
+    </form>
+	<script>
+        function isEmail(email) {
+            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            return regex.test(email);
+        }
+        var initialData;
+
+
+		$( document ).ready(function() {
+			$("#form1").fadeIn();
+		});
+		$("#form1").submit(function(){
+			loginStep1();
+			return false;
+		});
+        $(".setToLoginButton").on("click",function(){
+            $("form").fadeOut(function () {
+                $("input").val(""); //Reset all the forms
+                $("#form1").fadeIn(function () {
+                    $("#form1Input").focus();
+                });
+            });
+        });
+        var userid = "";
+		function loginStep1() {
+			if ($("#form1Input").val().length <= 0) {
+                toastr.warning("Please enter something into the login box");
+			} else {
+				$.ajax({
+					url: "../api/login/authStep1.php",
+					type: "POST",
+                    dataType: 'json',
+					data: {"formInput" : $("#form1Input").val()},
+					success: function(result) {
+                        initialData = result;
+					    if (result.result) {
+                            if (result.response.user) {
+                                userid = result.response.data.users_userid;
+                                //This is a normal user login
+                                $("#form1").fadeOut(function () {
+                                    $("#form2").fadeIn(function () {
+                                        $("#form2Input").focus();
+									});
+								});
+							} else {
+                                toastr.error("Problem connecting to server - please contact support");
+							}
+						} else {
+                            if (result.error.code == "VERIFYEMAIL") {
+                                //They need to verify their email address
+                                $("#form1").fadeOut(function () {
+                                    $("#formVerifyEmail").fadeIn();
+                                });
+                            } else {
+                                toastr.error(result.error.message);
+                            }
+						}
+					},
+					error: function(){
+                        toastr.error("Please refresh the page and check your internet connection");
+					}
+				});
+			}
+		}
+
+        $("#form2").submit(function(){
+            loginStep2();
+            return false;
+        });
+        $('#passwordResetButton').click(function(){
+            $.ajax({
+                url: "../api/login/forgotPassword.php",
+                type: "POST",
+                dataType: 'json',
+                data: {"userid" : userid},
+                success: function(result) {
+                    if (result.result) {
+                        toastr.success("Password reset link sent to your registered email address");
+                    } else {
+                        oastr.warning("Please contact the support team for a new password");
+                    }
+                }, error: function(){
+                    toastr.error("Please refresh the page and check your internet connection");
+                }
+            });
+
+        });
+        function loginStep2() {
+            if ($("#form2Input").val().length <= 0) {
+                toastr.warning("Please enter something into the password box");
+            } else {
+                $.ajax({
+                    url: "../api/login/authStep2Password.php",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {"formInput" : $("#form1Input").val(),"password": $("#form2Input").val()},
+                    success: function(result) {
+                        if (result.result) {
+                            window.location.href = "{{ return }}";
+                    	} else {
+                            toastr.error(result.error.message);
+                        }
+                    },
+                    error: function(){
+                        toastr.error("Please refresh the page and check your internet connection");
+                    }
+                });
+            }
+        }
+
+        //Step 3 is a token sign up
+        $("#form3a").submit(function(){
+            loginStep3a();
+            return false;
+        });
+        function loginStep3a() {
+            if ($("#form3aInput").val().length <= 8) {
+                toastr.warning("Please enter a longer password");
+            } else if ($("#form3aInput").val() != $("#form3aInputConfirm").val()) {
+                toastr.warning("Please ensure that both password boxes match");
+            } else {
+                $("#form3a").fadeOut(function () {
+                    if (initialData.response.data.noEmailNeeded != 1) {
+                        $("#form3b").fadeIn(function () { //Request an email
+                            $("#form3bInput").focus();
+                        });
+                    } else {
+                        $("#form3bInput").val("");
+                        $("#form3c").fadeIn(); //Otherwise skip straight to the section on usernames
+                    }
+                });
+
+            }
+        }
+        $("#form3b").submit(function(){
+            loginStep3b();
+            return false;
+        });
+        function loginStep3b() {
+            if (!isEmail($("#form3bInput").val())) {
+                toastr.warning("Please enter a valid email address");
+            } else {
+                $.ajax({
+                    url: "../api/login/usernameOrEmailTaken.php",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        "email":$("#form3bInput").val()
+                    }, success: function(result) {
+                        if (result.result) {
+                            if (result.response) {
+                                toastr.warning("Sorry this email address is taken - please try choosing another");
+                            } else {
+                                $("#form3b").fadeOut(function () {
+                                    $("#form3c").fadeIn(function () { //Request an email
+                                        $("#form3cInput").focus();
+                                    });
+                                });
+                            }
+                        } else {
+                            toastr.error(result.error.message);
+                        }
+                    }, error: function(){
+                        toastr.error("Please refresh the page and check your internet connection");
+                    }
+                });
+            }
+        }
+        $("#form3c").submit(function(){
+            loginStep3c();
+            return false;
+        });
+        function loginStep3c() {
+            if ($("#form3cInput").val().length < 5) {
+                toastr.warning("Please enter a longer username");
+            } else {
+                $.ajax({
+                    url: "../api/login/usernameOrEmailTaken.php",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        "username":$("#form3cInput").val()
+                    }, success: function(result) {
+                        if (result.result) {
+                            if (result.response) {
+                                toastr.warning("Sorry this username is taken - please try choosing another");
+                            } else {
+                                $("#form3c").fadeOut(function () {
+                                    $("#form3d").fadeIn();
+                                });
+                            }
+                        } else {
+                            toastr.error(result.error.message);
+                        }
+                    }, error: function(){
+                        toastr.error("Please refresh the page and check your internet connection");
+                    }
+                });
+            }
+        }
+        $("#form3d").submit(function(){
+            loginStep3d();
+            return false;
+        });
+        function loginStep3d() {
+            //Terms and conditions now accepted
+             $.ajax({
+                url: "../api/login/activateAccount.php",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    "token" : initialData.response.data.tokenid,
+                    "password": $("#form3aInput").val(),
+                    "username": $("#form3cInput").val(),
+                    "email":$("#form3bInput").val()
+                }, success: function(result) {
+                    if (result.result) {
+                        $("#form3d").fadeOut(function () {
+                            if (initialData.response.data.noEmailNeeded == 1) {
+                                $("#form3e").fadeIn();
+                            } else {
+                                $("#formVerifyEmail").fadeIn(); //Show them that they were supposed to verify email address
+                            }
+                        });
+                    } else {
+                        toastr.error(result.error.message);
+                    }
+                }, error: function(){
+                    toastr.error("Please refresh the page and check your internet connection");
+                }
+            });
+        }
+
+        $("#formVerifyEmail").submit(function(){
+            formVerifyEmail();
+            return false;
+        });
+        function formVerifyEmail() {
+            //They want us to send out another verification email
+            if (initialData.hasOwnProperty("error") && initialData.error.hasOwnProperty("userid")) {
+                var userid = initialData.error.userid;
+            } else {
+                var userid = initialData.response.data.userid;
+            }
+            $.ajax({
+                url: "../api/login/reSendVerificationEmail.php",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    "userid" : userid
+                }, success: function(result) {
+                    if (result.result) {
+                        toastr.success("E-Mail re-sent");
+                    } else {
+                        toastr.error("Error verifying email address - please contact support");
+                    }
+                }, error: function(){
+                    toastr.error("Please refresh the page and check your internet connection");
+                }
+            });
+        }
+	</script>
+{% endblock %}

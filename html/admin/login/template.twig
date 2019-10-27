@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>{{ CONFIG.PROJECT_NAME ~ ' | ' ~ pageConfig.title }}</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+
+    <!--Facebook Link Sharing Data-->
+    <meta property="og:title" content="{{ CONFIG.PROJECT_NAME }}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="/login/"/>
+    <meta property="og:site_name" content="{{ CONFIG.PROJECT_NAME }}"/>
+    <meta property="og:description"
+          content="{{ CONFIG.PROJECT_NAME }} admin login"/>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous" />
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha256-yNbKY1y6h2rbVcQtf0b8lq4a+xpktyFc3pSYoGAY1qQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" integrity="sha256-R91pD48xW+oHbpJYGn5xR0Q7tMhH4xOrWn1QqMRINtA=" crossorigin="anonymous" />
+    <script>
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "progressBar": false,
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+        }
+    </script>
+    <style>
+        html, body, .container, #masterRow {
+            height: 99%;
+            font-size: 14px;
+        }
+
+        #masterBox {
+            box-shadow: 0px 1px 5px #888888;
+            border-radius: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin: 0px;
+        }
+
+        table, tr {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        td {
+            width: 50%;
+            padding: 10px;
+        }
+        a {
+            color: inherit; /* blue colors for links too */
+            text-decoration: inherit; /* no underline */
+        }
+        form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row align-items-center" id="masterRow">
+        <div class="col-lg-6 offset-lg-3
+                            col-md-6 offset-md-3
+                            col-sm-8 offset-sm-2
+                            col-xs-10 offset-xs-1">
+            <div id="masterBox" style="text-align: center;">
+                <img src="../assets/img/logo.png" style="width:30%; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader" />
+                <p id="EventNameHeader" style="font-size:20px;"></p>
+                {% block content %}
+                {% endblock %}
+            </div>
+            <table border="0">
+                <tr>
+                    <td style="text-align: left; color: #888888;">{{ CONFIG.VERSION.TAG }}.{{ CONFIG.VERSION.COMMIT }}</td>
+                    <td style="text-align: right;"><a style="margin-right: 15px;" href="https://github.com/Jbithell/bCMS">About</a><a href="/" target="_blank">Terms &amp; Privacy</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '{{ CONFIG.ANALYTICS.TRACKINGID }}');
+</script>
+
+
+
+</body>
+</html>
+
+

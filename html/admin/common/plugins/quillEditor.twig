@@ -1,0 +1,242 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js" integrity="sha256-3oYBiGm16EW9wQH8G1VhGh43XgivbO5KaB10RhA9phE=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" integrity="sha256-qc/vMbPSg7/JfxMwKeMv3wlx7ojG33FXfYfO0UJIsc0=" crossorigin="anonymous" />
+<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.5.js"></script>
+<script>
+    var quill = {};
+    quill['functions'] = {};
+    var leaveAfterSave = false;
+    var userTimeJoined = Infinity;
+    function quillSaveFunction(html, delta, callback) {
+        {% block saveFunction %}
+        callback(); //THE CALLBACK IS COMPULSORY
+        {% endblock %}
+    }
+    quill['functions']['save'] = function() {
+        quillSaveFunction($("div.ql-editor").html(), quill['editor'].getContents(), function () {
+            $("#quill-lastSavedAtMessage").html("Changes saved");
+            window.onbeforeunload = null; //Let them leave a page without a warning after they save
+			if (leaveAfterSave) {
+                setPubnubState(false, function () {
+                    window.location.href = "{{ CONFIG.ROOTURL }}";
+				}, true);
+			}
+        });
+    }
+
+    $( document ).ready(function() {
+        quill['editor'] = new Quill('#quillEditor', {
+            debug: false,
+            modules: {
+                toolbar: {
+                    container: '#quillToolbar',  // Selector for toolbar container
+                },
+                history: {
+                    delay: 1000,
+                    maxStack: 500,
+                    userOnly: true
+                }
+            },
+            placeholder: 'Compose an epic resolution to wow your committee',
+            readOnly: false,
+			enable: false,
+            theme: 'snow'
+        });
+        quill['editor'].keyboard.addBinding({
+            key: 'S',
+            shortKey: true, //metaKey on a Mac and ctrlKey on Linux and Windows.
+            handler: function(range, context) {
+                quill['functions']['save']();
+            }
+        });
+
+        // Handlers can also be added post initialization
+        quill['editor'].getModule('toolbar').addHandler('image', function(value) {
+            console.log("CLicked");
+            if (value) {
+                var href = prompt('Enter the URL');
+                this.quill.format('link', href);
+            } else {
+                this.quill.format('link', false);
+            }
+        });
+        quill['editor'].on('text-change', function(delta, oldDelta, source) {
+            window.onbeforeunload = function() {
+                return true;
+            };
+            $("#quill-lastSavedAtMessage").html("Unsaved changes");
+        });
+        $(".quill-save-button").on("click", function () {
+            quill['functions']['save']();
+        });
+        $(".quill-close-button").on("click", function () {
+            leaveAfterSave = true;
+            quill['functions']['save']();
+        });
+
+    });
+
+function setPubnubState(editing, callback = false, leaving=false) {
+    pubnub.setState({
+			state: {
+				"name": "{{ USERDATA.forename }} {{ USERDATA.surname }}",
+				"editing": editing,
+				"joinedtimestamp": (leaving ? false : userTimeJoined), //If they are leaving then set their timestamp to false so we don't think they're being waited for
+				"arbitraryNumber": Math.floor((Math.random() * 1000) + 1)
+			},
+			uuid: "{{ type }}-{{ id }}-{{ USERDATA.userid }}",
+			channels: ['{{ type }}-{{ id }}']
+		},
+		function (status, response) {
+        	if (callback) {
+				callback();
+			}
+		}
+	);
+}
+var statusListener = {
+    status: function(statusEvent) {
+        checkStatus(statusEvent);
+    },
+    presence: function(presenceEvent) {
+        checkStatus(presenceEvent);
+    }};
+function checkStatus(payload) {
+    pubnub.hereNow({
+		channels: ['{{ type }}-{{ id }}'],
+		includeUUIDs: true,
+		includeState: true
+	},
+	function (status, response) {
+        //3 - Get hit with all this data about who is online
+		console.log(response);
+		if (!status.error) {
+            var editor = false;
+            var lowestTimestamp = parseInt(payload.timetoken); //The current time
+            $.each(response.channels['{{ type }}-{{ id }}']['occupants'], function (index, value) {
+                if (value.state !== undefined && value.state.hasOwnProperty("editing")  && value.uuid != "{{ type }}-{{ id }}-{{ USERDATA.userid }}") { //
+                    if (value.state.editing == true) {
+                        editor = value.state.name;//We've found who's doing the editing!
+                    } else if (value.state.joinedtimestamp != false && (value.state.joinedtimestamp < lowestTimestamp)) {
+                        lowestTimestamp = value.state.joinedtimestamp;
+                    }
+                }
+            });
+            if (editor || (lowestTimestamp < userTimeJoined)) { //If someone is already editing or joined the queue before me then let them do their thing. Any second they will declare themselves editor anyway and then we will get a new event locking us with them as editor
+                quill['editor'].enable(false); //Someone is already here so it should be locked for editing
+                $("#quillContainerBox").hide();
+                if (editor) {
+                    $("#quillLockedEditingUser").text("Locked for editing by " + editor);
+                } else {
+                    setPubnubState(false); //Set the state again - seems like it's for no reason I know it's just that sometimes the first message is missed out causing multi lock issues //TODO work out why it does this because it's a rate limiting issue
+                }
+                $("#quillLockedEditing").show();
+            } else { //Either I'm first in the queue or there is nobody else around so I might as well make myself editor
+                pubnub.removeListener(statusListener);
+                setPubnubState(true, function () {
+                    $.ajax({ //Download the latest text of the resolution
+                        url: '{{CONFIG.ROOTURL}}{{ contentEndpoint }}{{ id }}',
+                        cache : false,
+                        success: function (result) {
+                            $("div.ql-editor").html(result);
+                            $("#quillContainerBox").show();
+                            $("#quillLockedEditing").hide();
+                            quill['editor'].enable(true);
+                        }, error: function () {
+                            location.reload();
+                        }
+                    });
+                });
+            }
+		}
+	});
+}
+var pubnub = new PubNub({
+	subscribeKey: '{{ CONFIG.PUBNUB.DOCUMENTS.SUBSCRIBE }}',
+	publishKey: '{{ CONFIG.PUBNUB.DOCUMENTS.PUBLISH }}',
+	uuid: '{{ type }}-{{ id }}-{{ USERDATA.userid }}',
+	presenceTimeout: 120, //Times out after 120 seconds
+	ssl: true,
+});
+
+pubnub.subscribe({
+	channels: ['{{ type }}-{{ id }}'],
+	withPresence: true
+});
+// 1- ARRIVE ON THE PAGE, and get the time you've arrived
+pubnub.time(function(status, response) {
+	if (status.error) {
+		location.reload();
+	} else {
+	    //2 - STORE this time and then set the current state of the connection this user has to false (ie not editing a document) - which leads to 3.
+        userTimeJoined = response.timetoken;
+        setPubnubState(false, function () {
+            pubnub.addListener(statusListener); //Add a listener to find out when this person leaves
+            checkStatus(response);
+		});
+	}
+});
+</script>
+
+<div class="box box-success" id="quillContainerBox" style="display:none;">
+    <div class="box-header with-border" id="quillToolbar"
+         style="border-right: 0;border-bottom: 1px solid #f4f4f4;border-top: 0;border-left: 0">
+        <!--<span class="ql-formats">
+            <select class="ql-font"></select>
+            <select class="ql-size"></select>
+            </span>-->
+		<span class="ql-formats">
+					<button class="quill-save-button"><i class="fa fa-floppy-o"></i></button>
+					</span>
+        <span class="ql-formats">
+					<button class="ql-bold"></button>
+					<button class="ql-italic"></button>
+					<button class="ql-underline"></button>
+					<button class="ql-strike"></button>
+					</span>
+        <span class="ql-formats">
+					<select class="ql-color"></select>
+					<select class="ql-background"></select>
+					</span>
+        <span class="ql-formats">
+					<button class="ql-script" value="sub"></button>
+					<button class="ql-script" value="super"></button>
+					</span>
+        <span class="ql-formats">
+					<button class="ql-header" value="1"></button>
+					<button class="ql-header" value="2"></button>
+					<button class="ql-blockquote"></button>
+            <!--<button class="ql-code-block"></button>-->
+			<button class="ql-clean"></button>
+					</span>
+        <span class="ql-formats">
+					<button class="ql-list" value="ordered"></button>
+					<button class="ql-list" value="bullet"></button>
+					<button class="ql-indent" value="-1"></button>
+					<button class="ql-indent" value="+1"></button>
+					</span>
+        <span class="ql-formats">
+					<!--<button class="ql-direction" value="rtl"></button>-->
+					<select class="ql-align"></select>
+					</span>
+        <span class="ql-formats">
+			 {% block extraItems %}
+					<button class="ql-link"></button>
+					<button class="ql-video"></button>
+					<!--<button class="ql-formula"></button>-->
+             {% endblock %}
+		</span>
+		<span class="ql-formats pull-right" style="font-style: italic;" id="quill-lastSavedAtMessage">
+		</span>
+    </div>
+    <div class="box-body no-padding">
+        <div id="quillEditor" style="border:0;"></div>
+    </div>
+    <div class="box-footer" style="text-align: right;">
+		<button class="quill-close-button btn btn-success btn-sm" type="button">Save and Close</button>
+    </div>
+</div>
+<div class="callout callout-danger" id="quillLockedEditing" style="display:none;">
+	<h4 id="quillLockedEditingUser">Locked for editing</h4>
+	<p>Please ask the user editing this document click save and close, this message will then disappear and allow you to edit the document. <i>Sometimes, if the person editing didn't close correctly or they had an internet connection issue, the document will remain locked for a few minutes after they finished editing.</i></p>
+</div>
+
