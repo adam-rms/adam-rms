@@ -44,6 +44,11 @@ $TWIG->addFilter(new Twig_SimpleFilter('permissions', function ($permissionid) {
     if (!$AUTH->login) return false;
     else return $AUTH->permissionCheck($permissionid);
 }));
+$TWIG->addFilter(new Twig_SimpleFilter('instancePermissions', function ($permissionid) {
+    global $AUTH;
+    if (!$AUTH->login) return false;
+    else return $AUTH->instancePermissionCheck($permissionid);
+}));
 $TWIG->addFilter(new Twig_SimpleFilter('modifyGet', function ($array) {
     global $bCMS;
     return http_build_query(($bCMS->modifyGet($array)));

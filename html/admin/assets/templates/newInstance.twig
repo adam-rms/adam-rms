@@ -1,0 +1,68 @@
+<div class="col-lg-6 col-lg-offset-3 col-md-12" style="padding: 5px;">
+    <div class="box box-warning">
+        <form id="createNewInstanceForm">
+        <div class="box-header with-border">
+            <h3 class="box-title">Create new Business</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+
+            <div class="form-group">
+                <label>Business Name</label>
+                <input type="text" required class="form-control" placeholder="AdamRMS Hire Services Global" name="instances_name">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea class="form-control" rows="4" placeholder="" name="instances_address"></textarea>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-internet-explorer"></i></span>
+                    <input type="url" class="form-control"  placeholder="www.adam-rms.xyz" name="instances_website">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                    <input type="email" class="form-control" placeholder="Email" name="instances_email">
+                </div>
+            </div>
+            <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                <input type="phone" class="form-control" placeholder="Phone" name="instances_phone">
+            </div>
+            </div>
+            <hr/>
+            <div class="form-group">
+                <label>Your Role in Business</label>
+                <input type="text" required class="form-control" placeholder="Manager" name="role">
+            </div>
+
+
+        </div>
+        <div class="box-footer">
+            <button type="submit" class="btn btn-success pull-right">Create</button>
+        </div></form>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#createNewInstanceForm').on('submit', function(e){
+            e.preventDefault();
+            $.ajax({
+                url: '{{ CONFIG.ROOTURL }}/api/instances/new.php?' + $( this ).serialize(),
+                success: function (result) {
+                    if (result.result) {
+                        window.location.href = "{{CONFIG.ROOTURL}}?i=" + result.response.instanceid;
+                    } else {
+                        console.log(result);
+                        bootbox.alert('Error - Could not create a new business - please try again!', function () {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>

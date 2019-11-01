@@ -32,29 +32,47 @@ class bID
                             $this->data['viewSiteAs'] = $DBLIB->getOne("users");
                         } else $this->data['viewSiteAs'] = false;
 
-                        $DBLIB->where("userPositions_end >= '" . date('Y-m-d H:i:s') . "'");
-                        $DBLIB->where("userPositions_start <= '" . date('Y-m-d H:i:s') . "'");
+                        $this->login = true;
+
+                        //$DBLIB->where("userPositions_end >= '" . date('Y-m-d H:i:s') . "'");
+                        //$DBLIB->where("userPositions_start <= '" . date('Y-m-d H:i:s') . "'");
                         $DBLIB->orderBy("positions_rank", "ASC");
                         $DBLIB->orderBy("positions_displayName", "ASC");
                         $DBLIB->join("positions", "userPositions.positions_id=positions.positions_id", "LEFT");
                         $DBLIB->where("users_userid", $this->data['users_userid']);
                         $positions = $DBLIB->get("userPositions");
-                        if (count($positions) > 0) { //You must have at least one current position to be allowed to login
-                            $this->data['positions'] = [];
-                            $permissionCodes = [];
-                            foreach ($positions as $position) {
-                                $this->data['positions'][] = $position;
-                                $position['groups'] = explode(",", $position['positions_positionsGroups']);
-                                foreach ($position['groups'] as $positiongroup) {
-                                    $DBLIB->where("positionsGroups_id", $positiongroup);
-                                    $positiongroup = $DBLIB->getone("positionsGroups", ["positionsGroups_actions"]);
-                                    $permissionCodes = array_merge ( $permissionCodes, explode(",", $positiongroup['positionsGroups_actions']), explode(",",$position['userPositions_extraPermissions']));
-                                }
-                                                        }
-                            $this->permissions = array_unique($permissionCodes);
-                            $this->login = true;
-                        } else {
-                            $this->login = false;
+                        $this->data['positions'] = [];
+                        $permissionCodes = [];
+                        foreach ($positions as $position) {
+                            $this->data['positions'][] = $position;
+                            $position['groups'] = explode(",", $position['positions_positionsGroups']);
+                            foreach ($position['groups'] as $positiongroup) {
+                                $DBLIB->where("positionsGroups_id", $positiongroup);
+                                $positiongroup = $DBLIB->getone("positionsGroups", ["positionsGroups_actions"]);
+                                $permissionCodes = array_merge($permissionCodes, explode(",", $positiongroup['positionsGroups_actions']), explode(",", $position['userPositions_extraPermissions']));
+                            }
+                        }
+                        $this->permissions = array_unique($permissionCodes);
+
+
+
+                        $DBLIB->orderBy("instancePositions_rank", "ASC");
+                        $DBLIB->orderBy("instancePositions_displayName", "ASC");
+                        $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+                        $DBLIB->join("instances", "instancePositions.instances_id=instances.instances_id", "LEFT");
+                        $DBLIB->where("users_userid", $this->data['users_userid']);
+                        $DBLIB->where("userInstances_deleted", 0);
+                        $DBLIB->where("instances.instances_deleted", 0);
+                        $instances = $DBLIB->get("userInstances");
+                        $this->data['instances'] = [];
+                        foreach ($instances as $instance) {
+                            $instance['permissions'] = array_unique(array_merge(explode(",", $instance['instancePositions_actions']), explode(",", $instance['userInstances_extraPermissions'])));
+                            $this->data['instances'][] = $instance;
+                        }
+                        $this->data['instance'] = false;
+                        if (isset($_SESSION['instance'])) $this->setInstance($_SESSION['instance']);
+                        if (!$this->data['instance'] and count($this->data['instances']) >0) {
+                            $this->setInstance($this->data['instances'][0]['instances_id']);
                         }
                     }
                 }
@@ -67,6 +85,25 @@ class bID
         if (!$this->login) return false; //Not logged in
         if (in_array($permissionId, $this->permissions)) return true;
         else return false;
+    }
+
+    public function instancePermissionCheck($permissionId) {
+        if (!$this->login) return false; //Not logged in
+        if (!$this->data['instance']) return false;
+        if (in_array($permissionId, $this->data['instance']['permissions'])) return true;
+        else return false;
+    }
+    public function setInstance($instanceId) {
+        if (!$this->login) return false; //Not logged in
+        foreach ($this->data['instances'] as $instance) {
+            //Check they have this instance available
+            if ($instance['instances_id'] == $instanceId) {
+                $this->data['instance'] = $instance;
+                $_SESSION['instance'] = $this->data['instance']['instances_id'];
+                return true;
+            }
+        }
+        return false;
     }
     private function generateTokenAlias()
     {
@@ -119,21 +156,21 @@ class bID
         $_SESSION = array();
     }
 
-    function emailTaken($email)
+    public function emailTaken($email)
     {
         global $DBLIB;
         if (strlen($email) < 1) return false;
-        $email = $GLOBALS['bCMS']->sanitizeString(strtolower($email));
+        $email = trim(strtolower($email));
         $DBLIB->where("users_email", $email);
         if ($DBLIB->getValue("users", "count(*)") > 0) return true;
         else return false;
     }
 
-    function usernameTaken($username)
+    public function usernameTaken($username)
     {
         global $DBLIB;
         if (strlen($username) < 1) return false;
-        $username = $GLOBALS['bCMS']->sanitizeString(strtolower($username)); //Usernames must be unique
+        $username = trim(strtolower($username)); //Usernames must be unique
         $DBLIB->where("users_username", $username);
         if ($DBLIB->getValue("users", "count(*)") > 0) return true;
         else return false;

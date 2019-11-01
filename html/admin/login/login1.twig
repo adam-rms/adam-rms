@@ -3,7 +3,8 @@
     <form id="form1">
 		<input class="form-control form-control-lg" id="form1Input" autofocus placeholder="Username or Email" type="text" style="margin-top: 10px; margin-bottom: 10px;">
 		<div style="width: 100%; text-align:right;">
-			<button class="btn btn-primary" type="submit" value="Submit" >Next</button>
+            <button type="button" class="btn btn-default" id="joinButton">Create Account</button>
+            <button class="btn btn-primary" type="submit" value="Submit" >Next</button>
 		</div>
 	</form>
 		<!--Normal password login-->
@@ -14,6 +15,20 @@
 			<button class="btn btn-primary" type="submit" value="Submit">Login</button>
 		</div>
 	</form>
+    <form id="form3aa">
+        <input class="form-control form-control-lg" id="form3aaInput" placeholder="First Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="form3aaInputLastName" placeholder="Last Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <div style="width: 100%; text-align:right;">
+            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+        </div>
+    </form>
+    <form id="form3a">
+        <input class="form-control form-control-lg" id="form3aInput" placeholder="Choose a password" type="password" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="form3aInputConfirm" placeholder="Confirm your choice of password" type="password" style="margin-top: 0px; margin-bottom: 10px;">
+        <div style="width: 100%; text-align:right;">
+            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+        </div>
+    </form>
 	<form id="form3b">
         <input class="form-control form-control-lg" id="form3bInput" placeholder="Choose an email address" type="email" style="margin-top: 10px; margin-bottom: 10px;">
         <div style="width: 100%; text-align:right;">
@@ -27,7 +42,7 @@
         </div>
     </form>
     <form id="form3d">
-        <p>Please confirm you have read and accept our <a href="#" target="_blank">terms and conditions</a></p>
+        <p>Please confirm you have read and accept our <a href="https://adam-rms.xyz" target="_blank">terms and conditions</a></p>
         <div style="width: 100%; text-align:right;">
             <button class="btn btn-success" type="submit" value="Submit">I accept</button>
         </div>
@@ -61,6 +76,13 @@
 			loginStep1();
 			return false;
 		});
+        $('#joinButton').click(function(){
+            $("#form1").fadeOut(function () {
+                $("#form3aa").fadeIn(function () { //Request an email
+                    $("#form3aaInput").focus();
+                });
+            });
+        });
         $(".setToLoginButton").on("click",function(){
             $("form").fadeOut(function () {
                 $("input").val(""); //Reset all the forms
@@ -157,6 +179,26 @@
         }
 
         //Step 3 is a token sign up
+        $("#form3aa").submit(function(){
+            loginStep3aa();
+            return false;
+        });
+        function loginStep3aa() {
+            if ($("#form3aaInput").val().length <= 1) {
+                toastr.warning("Please enter a first name");
+            } else if ($("#form3aaInputLastName").val().length <= 1) {
+                toastr.warning("Please enter a second name");
+            } else {
+                $("#form3aa").fadeOut(function () {
+                    $("#form3a").fadeIn(function () { //Request an email
+                        $("#form3aInput").focus();
+                    });
+                });
+
+            }
+        }
+
+        //Step 3 is a token sign up
         $("#form3a").submit(function(){
             loginStep3a();
             return false;
@@ -168,14 +210,9 @@
                 toastr.warning("Please ensure that both password boxes match");
             } else {
                 $("#form3a").fadeOut(function () {
-                    if (initialData.response.data.noEmailNeeded != 1) {
-                        $("#form3b").fadeIn(function () { //Request an email
-                            $("#form3bInput").focus();
-                        });
-                    } else {
-                        $("#form3bInput").val("");
-                        $("#form3c").fadeIn(); //Otherwise skip straight to the section on usernames
-                    }
+                    $("#form3b").fadeIn(function () { //Request an email
+                        $("#form3bInput").focus();
+                    });
                 });
 
             }
@@ -253,22 +290,19 @@
         function loginStep3d() {
             //Terms and conditions now accepted
              $.ajax({
-                url: "../api/login/activateAccount.php",
+                url: "../api/login/signup.php",
                 type: "POST",
                 dataType: 'json',
                 data: {
-                    "token" : initialData.response.data.tokenid,
+                    "name1": $("#form3aaInput").val(),
+                    "name2": $("#form3aaInputLastName").val(),
                     "password": $("#form3aInput").val(),
                     "username": $("#form3cInput").val(),
                     "email":$("#form3bInput").val()
                 }, success: function(result) {
                     if (result.result) {
                         $("#form3d").fadeOut(function () {
-                            if (initialData.response.data.noEmailNeeded == 1) {
-                                $("#form3e").fadeIn();
-                            } else {
-                                $("#formVerifyEmail").fadeIn(); //Show them that they were supposed to verify email address
-                            }
+                            $("#formVerifyEmail").fadeIn(); //Show them that they were supposed to verify email address
                         });
                     } else {
                         toastr.error(result.error.message);

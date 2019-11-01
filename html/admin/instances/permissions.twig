@@ -1,0 +1,127 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+	<div class="row">
+	<div class="col-lg-12 col-md-12">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">Business Role Groups</h3>
+				{% if 16|instancePermissions %}
+				<div class="box-tools pull-right">
+					<button type="button" class="btn btn-box-tool" id="addNewInstancePosition"><i class="fa fa-plus"></i>
+					</button>
+				</div>
+				{% endif %}
+			</div>
+			<div class="box-body table-responsive no-padding" style="overflow-x: scroll;">
+				<table class="table table-striped sticky-header" >
+					<thead>
+						<tr>
+							<th></th>
+							<th></th>
+							{% for position in positions %}
+							<th>{{position.instancePositions_displayName}}</th>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for category in actions %}
+							<tr>
+								<td colspan="{{ 2+positions|length }}"><h3>{{ category.category.instanceActionsCategories_name }}</h3></td>
+							</tr>
+							{% for action in category.actions %}
+								<tr>
+									<td>{{action.instanceActions_id}}</td>
+									<td>{{action.instanceActions_name}}</td>
+									{% for position in positions %}
+                                        {% set positioncannotbecausedep = "false" %}
+                                        {% set positioncannotbecauseindep = "false" %}
+									<td>
+										{% for dependentactionid in action.instanceActions_dependent|split(',') %}
+                                            {% if dependentactionid != "" and dependentactionid not in position.instancePositions_actions|split(',') %}
+												<small class="label label-warning" title="Requires other permission to be set first">{{ dependentactionid }}</small>
+                                                {% set positioncannotbecausedep = "true" %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% for independentactionid in action.instanceActions_incompatible|split(',') %}
+                                            {% if independentactionid != "" and independentactionid in position.instancePositions_actions|split(',') %}
+												<small class="label label-danger" title="Requires other permission to be removed first">{{ independentactionid }}</small>
+                                                {% set positioncannotbecauseindep = "true" %}
+                                            {% endif %}
+                                        {% endfor %}
+
+										{% if 12|instancePermissions %}
+                                        <input type="checkbox" data-permissionid="{{action.instanceActions_id}}" data-positionid="{{position.instancePositions_id}}" {% if action.instanceActions_id in position.instancePositions_actions|split(',') %}checked{% endif %}  {% if positioncannotbecausedep == "true" or positioncannotbecauseindep == "true" %}disabled{% endif %} />
+										{% else %}
+											{% if action.instanceActions_id in position.instancePositions_actions|split(',') %}
+										      <i class="fa fa-check-square-o"></i>
+											{% else %}
+												<i class="fa fa-square-o"></i>
+											{% endif %}
+										{% endif %}
+									</td>
+								{% endfor %}
+							{% endfor %}
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div class="overlay" id="loading">
+				<i class="fa fa-refresh fa-spin"></i>
+			</div>
+		</div>
+	</div>
+</div>
+{% if 12|instancePermissions %}
+<script>
+$(document).ready(function() {
+	$("#loading").hide();
+	$(':checkbox').change(function() {
+		$("#loading").show();
+		if($(this).is(":checked")) {
+			var get = "addpermission=" + $(this).data("permissionid");
+		} else {
+			var get = "removepermission=" + $(this).data("permissionid");
+		}
+		$.ajax({
+			url: "{{CONFIG.ROOTURL}}/api/permissions/instancePermissionsEditor.php?" + get + "&position=" + $(this).data("positionid"),
+			cache : false,
+			success: function(result){
+				if (result == '1') {
+					$("#loading").hide();
+                    location.reload();
+				} else {
+					bootbox.alert(result + "Sorry - Operation could not be completed! Please try again!", function() {
+						location.reload();
+					});
+				}
+			}
+		});
+	});
+});
+</script>
+{% else %}
+<script>
+	$(document).ready(function() {
+		$("#loading").hide();
+	});
+</script>
+{% endif %}
+
+	{% if 16|instancePermissions %}
+	<script>
+		$(document).ready(function() {
+			$("#addNewInstancePosition").on("click", function () {
+				bootbox.prompt("Enter role group name", function(result){
+					if (result) {
+						ajaxcall("permissions/newInstancePosition.php", {"name": result}, function() {
+							location.reload();
+						}, true);
+					}
+				});
+			});
+		});
+	</script>
+	{% endif %}
+{% endblock %}

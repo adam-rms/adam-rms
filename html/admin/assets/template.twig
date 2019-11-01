@@ -18,8 +18,8 @@
               integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous"/>
 
         <!-- Theme style -->
-        <link rel="stylesheet" href="assets/css/AdminLTE.min.css">
-        <link rel="stylesheet" href="assets/css/skins/_all-skins.min.css">
+        <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/css/AdminLTE.min.css">
+        <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/css/skins/_all-skins.css">
 
     <!-- JS Scripts/Plugins-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"
@@ -46,15 +46,12 @@
             }
         </style>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js" integrity="sha256-FA14tBI8v+/1BtcH9XtJpcNbComBEpdawUZA6BPXRVw=" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" integrity="sha256-xJOZHfpxLR/uhh1BwYFS5fhmOAdIRQaiOul5F/b7v3s=" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" integrity="sha256-nbyata2PJRjImhByQzik2ot6gSHSU4Cqdz5bNYL2zcU=" crossorigin="anonymous" />
 
         <!--Fastclick - increases speed of response-->
          <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js" integrity="sha256-t6SrqvTQmKoGgi5LOl0AUy+lBRtIvEJ+++pLAsfAjWs=" crossorigin="anonymous"></script>
 
     <!-- AdminLTE App -->
-        <script src="assets/js/app.js"></script>
+        <script src="{{ CONFIG.ROOTURL }}/assets/js/app.js"></script>
 
         <!--Sentry Error logging-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/raven.js/3.26.2/raven.min.js"
@@ -126,9 +123,49 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+
+
+    <script>
+        function ajaxcall(path, data, callback, reloadIfError) {
+            if (data !== null) var senddata = data;
+            else var senddata = {};
+            if (reloadIfError == null){
+                reloadIfError = true;
+            }
+            $.ajax({
+                url: '{{ CONFIG.ROOTURL }}/api/' + path,
+                type: "POST",
+                data: senddata,
+                cache: false,
+                success: function (result) {
+                    if (result.result) {
+                        if (typeof callback === "function") {
+                            callback(result);
+                        }
+                    } else {
+                        console.log(result.error);
+                        bootbox.alert('Sorry we couldn\'t complete this action - please try again!<br/><br/>' + result.error.message, function () {
+                            if (reloadIfError) {
+                                location.reload();
+                            }
+                        });
+                    }
+                    return false;
+                }, error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Connection Error");
+                    bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection', function () {
+                        if (reloadIfError) {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 </head>
 {% if BODY %}
-<body class="hold-transition skin-black sidebar-mini">
+<body class="hold-transition skin-red sidebar-mini">
 <div class="wrapper">
     <header class="main-header">
         <!-- Logo -->
@@ -136,7 +173,7 @@
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini">{{ CONFIG.PROJECT_NAME }}</span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>{{ CONFIG.PROJECT_NAME }}</b> Admin</span>
+            <span class="logo-lg">Adam<b>RMS</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -146,6 +183,32 @@
             </a>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
+                    {% if USERDATA.instances|length > 0 %}
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            {{ USERDATA.instance.instances_name }}
+                            <span class="label label-info">{{ USERDATA.instance.userInstances_label }}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">Your Businesses</li>
+                            <li>
+                                {% for instance in USERDATA.instances %}
+                                <ul class="menu">
+                                    <li>
+                                        <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}">
+                                            {{instance.instances_name}}
+                                            <span class="label label-info">{{ instance.userInstances_label }}</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                {% endfor %}
+                            </li>
+                            {% if 8|permissions %}
+                            <li class="footer"><a href="{{CONFIG.ROOTURL}}/instances/new.php">Create new business</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
                     <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <span>
@@ -211,9 +274,27 @@
         <!-- sidebar: style can be found in sidebar.less -->
         <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp"></div>-->
         <section class="sidebar">
+            
             <ul class="sidebar-menu"  data-widget="tree">
-                {% if 2|permissions or 11|permissions %}
-                <li class="header">Security</li>
+                {% if 2|instancePermissions or 11|instancePermissions %}
+                    <li class="header">Security</li>
+                {% endif %}
+                {% if 2|instancePermissions %}
+                    <li>
+                        <a href="{{ CONFIG.ROOTURL }}/instances/users.php">
+                            <i class="fa fa-users"></i> <span>Users</span>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if 11|instancePermissions %}
+                    <li>
+                        <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php">
+                            <i class="fa fa-unlock-alt"></i> <span>Permissions</span>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if 2|permissions or 11|permissions or 7|permissions %}
+                <li class="header">AdamRMS Security</li>
                 {% endif %}
             {% if 2|permissions %}
             <li>
@@ -222,7 +303,6 @@
                 </a>
             </li>
             {% endif %}
-
             {% if 11|permissions %}
                 <li>
                     <a href="{{ CONFIG.ROOTURL }}/permissions.php">
@@ -230,6 +310,13 @@
                     </a>
                 </li>
             {% endif %}
+                {% if 7|permissions %}
+                    <li>
+                        <a href="{{ CONFIG.ROOTURL }}/auditLog.php">
+                            <i class="fa fa-gavel"></i> <span>Audit Log</span>
+                        </a>
+                    </li>
+                {% endif %}
             </ul>
         </section>
         <!-- /.sidebar -->
@@ -258,6 +345,7 @@
             {% endif %}
         <section class="content">
             {% if USERDATA.users_changepass == '1' %}
+                <div class="row">
             <div class="col-lg-6 col-lg-offset-3 col-md-12" style="padding: 5px;">
                 <div class="panel panel-default">
                     <div class="panel-body" style="text-align: center;">
@@ -296,6 +384,7 @@
                     </script>
                 </div>
             </div>
+                </div>
             {% else %}
                 {% block content %}
                 {% endblock %}
@@ -306,9 +395,9 @@
     </div><!-- /.content-wrapper -->
     <footer class="main-footer" id="main-footer">
         <div class="pull-right hidden-xs">
-            <a href="https://github.com/Jbithell/bCMS">bCMS {{ CONFIG.VERSION.TAG }}.{{ CONFIG.VERSION.COMMIT }}</a>
+            Built on <a href="https://github.com/Jbithell/bCMS">bCMS</a>
         </div>
-        <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://www.jbithell.com">James Bithell</a>.</strong> All rights
+        <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
         reserved.
     </footer>
 </div><!-- ./wrapper -->

@@ -57,9 +57,7 @@
                             <tbody>
                             {% for user in users %}
                                 <tr
-                                        {% if user.currentPositions|length < 1 %}
-                                        class="warning"
-                                        {% elseif user.users_suspended == '1' %}
+                                        {% if user.users_suspended == '1' %}
                                         class="danger"
                                         {% endif %}>
                                     <td>{{ user.users_username }}</td>
@@ -83,9 +81,6 @@
                                     <td>
                                         {% if user.users_suspended == '1' %}
                                             <span class="label label-danger">Suspended</span><br/>
-                                        {% endif %}
-                                        {% if user.currentPositions|length < 1 %}
-                                            <span class="label label-warning">Cannot login</span><br/>
                                         {% endif %}
 
                                     </td>

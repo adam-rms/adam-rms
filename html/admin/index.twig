@@ -1,9 +1,23 @@
 {% extends "assets/template.twig" %}
 
 {% block content %}
+    {% if USERDATA.instances|length < 1 %}
+        {% if 8|permissions %}
+            <div class="row"> {% include 'assets/templates/newInstance.twig' %}</div>
+        {% else %}
+            <div class="row">
+                <div class="col-lg-6 col-lg-offset-3 col-md-12">
+                    <div class="callout callout-danger">
+                        <h4>Not a member of any businesses</h4>
 
+                        <p>Sorry - your account isn't associated with any businesses - please ask your manager to add you to your business.</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
     <div class="row">
         {{ dump(USERDATA) }}
     </div>
-
+    {% endif %}
 {% endblock %}
