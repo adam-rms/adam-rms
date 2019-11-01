@@ -276,6 +276,13 @@
         <section class="sidebar">
             
             <ul class="sidebar-menu"  data-widget="tree">
+                {% if USERDATA.instances|length > 0 %}
+
+                <li>
+                    <a href="{{ CONFIG.ROOTURL }}/manufacturers.php">
+                        <i class="fa fa-industry"></i> <span>Manufacturers</span>
+                    </a>
+                </li>
                 {% if 2|instancePermissions or 11|instancePermissions %}
                     <li class="header">Security</li>
                 {% endif %}
@@ -317,7 +324,10 @@
                         </a>
                     </li>
                 {% endif %}
+
+                {% endif %}
             </ul>
+
         </section>
         <!-- /.sidebar -->
     </aside>
