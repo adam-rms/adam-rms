@@ -1,0 +1,134 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js" integrity="sha256-FcVIknBiVRk5KLQeIBb9VQdtFRMqwffXyZ+D8q0gQro=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" integrity="sha256-xJOZHfpxLR/uhh1BwYFS5fhmOAdIRQaiOul5F/b7v3s=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" integrity="sha256-nbyata2PJRjImhByQzik2ot6gSHSU4Cqdz5bNYL2zcU=" crossorigin="anonymous" />
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 col-lg-6 col-lg-offset-3">
+        <div class="box box-solid">
+            <div class="box-header with-border">
+                <h3 class="box-title">Add new Asset</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Manufacturer</label>
+                    <select class="form-control" id="manufacturer">
+                        {% for manufacturer in manufacturers %}
+                            <option {%  if manufacturer.manufacturers_id == 1 %} selected {% endif %} value="{{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Asset Type</label>
+                    <select class="form-control" id="assetType" placeholder=""></select>
+                    <p><a href="#" id="addNewType">Add new type</a></p>
+                </div>
+
+                <div class="input-group definableFieldsGroup" data-fieldcount="1">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="1"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="1" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="2">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="2"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="2" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="3">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="3"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="3" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="4">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="4"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="4" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="5">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="5"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="5" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="6">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="6"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="6" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="7">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="7"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="7" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="8">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="8"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="8" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="9">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="9"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="9" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="10">
+                    <span class="input-group-addon definableFieldsLabel" data-fieldcount="10"></span>
+                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="10" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <style>
+        .definableFieldsGroup {
+            margin-bottom: 5px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $(".definableFieldsGroup").hide();
+            $("#manufacturer").select2({
+                theme: "bootstrap",
+                width: '100%'
+            });
+            $("#assetType").select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap",
+                minimumInputLength: 1,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Select a manufacturer to search for asset types",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/assets/search.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term,
+                            manufacturer: $("#manufacturer").val()
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.assetTypes_name,
+                                        id: item.assetTypes_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $('#assetType').on('change', function() {
+                $(".definableFieldsGroup").hide();
+                ajaxcall("assets/getAssetTypeData.php", {"term": this.value}, function (data) {
+                    console.log(data.response);
+                    $(data.response.assetCategories_fields).each(function (count, value) {
+                        count = count+1;
+                        $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
+                        $(".definableFieldsLabel[data-fieldcount='" + count + "']").text(value);
+                    })
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

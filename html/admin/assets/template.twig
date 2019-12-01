@@ -244,7 +244,7 @@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a href="account.php" class="btn btn-default btn-flat">Settings</a>
+                                        <a href="{{ CONFIG.ROOTURL }}/account.php" class="btn btn-default btn-flat">Settings</a>
                                     </div>
                                     <div class="pull-right">
                                         {% if USERDATA.viewSiteAs != false %}
@@ -277,7 +277,23 @@
             
             <ul class="sidebar-menu"  data-widget="tree">
                 {% if USERDATA.instances|length > 0 %}
-
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-th"></i> <span>Assets</span>
+                        <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        {% for category in assetCategories %}
+                        <li><a href="{{CONFIG.ROOTURL}}/assets.php?category={{ category.assetCategories_id }}"><i class="fa {{category.assetCategories_fontAwesome}}"></i> {{category.assetCategories_name}}</a></li>
+                        {% endfor %}
+                        <li><a href="{{CONFIG.ROOTURL}}/assets.php"><i class="fa fa-list"></i> View All</a></li>
+                        {% if 17|instancePermissions %}
+                            <li><a href="{{CONFIG.ROOTURL}}/newAsset.php"><i class="fa fa-plus"></i> Add</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
                 <li>
                     <a href="{{ CONFIG.ROOTURL }}/manufacturers.php">
                         <i class="fa fa-industry"></i> <span>Manufacturers</span>

@@ -1,0 +1,92 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-widget widget-user">
+                <div class="widget-user-header bg-aqua-active">
+                    <h3 class="widget-user-username">{{asset.assetTypes_name}}{% if asset.oneasset %}: {{ thisasset.assets_tag|aTag }}{% endif %}</h3>
+                    <h5 class="widget-user-desc">{{asset.assetTypes_description}}</h5>
+                </div>
+                <div class="widget-user-image">
+                    {% if asset.assetTypes_thumbnail %}
+                    <img class="img-circle" src="{{asset.assetTypes_thumbnail}}" alt="{{asset.assetTypes_name}}">
+
+                    {% endif %}
+                </div>
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-sm-4 border-right">
+                            <div class="description-block">
+                                <h5 class="description-header"><a href="assets.php?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a></h5>
+                                <span class="description-text">MANUFACTURER</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-4 border-right">
+                            <div class="description-block">
+                                <h5 class="description-header"><a href="assets.php?category={{  asset.assetCategories_id }}">{{ asset.assetCategories_name }}</a></h5>
+                                <span class="description-text">CATEGORY</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-4">
+                            <div class="description-block">
+                                <h5 class="description-header">{{asset.assetTypes_mass != 0 ? asset.assetTypes_mass ~ "kg" : "?" }}</h5>
+                                <span class="description-text">MASS</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+            </div>
+            <!-- /.widget-user -->
+        </div>
+        {% if asset.oneasset != true %}
+        <div class="col-md-8">
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">Stock</div>
+                </div>
+                <div class="box-body no-padding">
+                    <table class="table table-condensed">
+                        <tr>
+                            <th style="width:60px;">#</th>
+                            {% for field in asset.fields %}
+                            <th>{{ field }}</th>
+                            {% endfor %}
+                            <th>Status</th>
+                            <th style="width:10px;">Filter</th>
+                        </tr>
+                        {% for thisasset in assets %}
+                        <tr>
+                            <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}">{{ thisasset.assets_tag|aTag }}</a></td>
+                            {% for field in asset.fields %}
+                                <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
+                            {% endfor %}
+                            <td><span class="badge bg-red">FAULT COUNT</span></td>
+                            <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="fa fa-filter"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+            {# We're displaying just the one asset here #}
+            {% if assets[0].assets_notes %}
+            <div class="col-md-8">
+                <div class="box box-solid">
+                    <div class="box-body">
+                    {{ assets[0].assets_notes }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

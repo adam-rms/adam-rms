@@ -15,9 +15,9 @@ $DBLIB->pageLimit = 50;
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("
-		(auditLog.auditLog_actionType LIKE '%" . $PAGEDATA['search'] . "%'
-		OR auditLog.auditLog_actionTable LIKE '%" . $PAGEDATA['search'] . "%'
-		OR auditLog.auditLog_actionData LIKE '%" . $PAGEDATA['search'] . "%')
+		(auditLog.auditLog_actionType LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
+		OR auditLog.auditLog_actionTable LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
+		OR auditLog.auditLog_actionData LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%')
     ");
 }
 $DBLIB->orderBy("auditLog_timestamp", "DESC");

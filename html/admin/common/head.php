@@ -9,7 +9,8 @@ $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 //Twig_Autoloader::register();
 $TWIGLOADER = new Twig_Loader_Filesystem(__DIR__ . '/../');
 $TWIG = new Twig_Environment($TWIGLOADER, array(
-    'debug' => true
+    'debug' => true,
+    'auto_reload' => true
 ));
 $TWIG->addExtension(new Twig_Extension_Debug());
 $TWIG->addFilter(new Twig_SimpleFilter('timeago', function ($datetime) {
@@ -60,6 +61,10 @@ $TWIG->addFilter(new Twig_SimpleFilter('randomString', function ($characters) {
 $TWIG->addFilter(new Twig_SimpleFilter('s3URL', function ($fileid, $size = false) {
     global $bCMS;
     return $bCMS->s3URL($fileid, $size);
+}));
+$TWIG->addFilter(new Twig_SimpleFilter('aTag', function ($id) {
+    if ($id <= 9999) return "A-" . sprintf('%04d', $id);
+    else return $id;
 }));
 
 $GLOBALS['AUTH'] = new bID;

@@ -10,7 +10,7 @@ $DBLIB->where("(SELECT COUNT(*) FROM userInstances
     WHERE userInstances.users_userid=users.users_userid AND userInstances.userInstances_deleted = '0' AND instancePositions.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' 
     ) < 1");
 $DBLIB->where("(
-		users_email LIKE '%" . $_POST['term'] . "%'
+		users_email LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
     )");
 $users = $DBLIB->get("users", null, ["users_userid", "users_name1", "users_name2"]);
 if (!$users) finish(false, ["code" => "LIST-USERS-FAIL", "message"=> "Could not search for Users"]);

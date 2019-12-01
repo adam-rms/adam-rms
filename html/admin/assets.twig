@@ -8,9 +8,9 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">
                         {% if search|length > 0 %}
-                            Search results for manufacturers matching <b>{{ search }}</b>
+                            Search results for assets matching <b>{{ search }}</b>
                         {% else %}
-                            Manufacturers
+                            Assets
                         {% endif %}
                     </h3>
                     <div class="box-tools pull-right">
@@ -19,19 +19,20 @@
                             <div class="input-group-btn">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                             </div>
-
                         </form>
                     </div>
                 </div>
                 <div class="box-body table-responsive no-padding">
-                    {% if manufacturers|length > 0 %}
+                    {% if assets|length > 0 %}
                         <table class="table sticky-header" border="0" style="overflow-x: scroll;">
                             <tbody>
-                            {% for manufacturer in manufacturers %}
+                            {% for asset in assets %}
                                 <tr>
-                                    <td><a href="assets.php?manufacturer={{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</a></td>
-                                    <td><a href="{{ manufacturer.manufacturers_website }}" target="_blank">{{ manufacturer.manufacturers_website }}</a></td>
-                                    <td>{{  manufacturer.manufacturers_notes }}</td>
+                                    <td>{{ asset.count }}x</td>
+                                    <td><a href="asset.php?id={{ asset.assetTypes_id }}">{{ asset.assetTypes_name }}</a></td>
+                                    <td><a href="?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a></td>
+                                    <td>{{ asset.assetTypes_description }}</td>
+                                    <td><a href="?category={{  asset.assetCategories_id }}">{{ asset.assetCategories_name }}</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
