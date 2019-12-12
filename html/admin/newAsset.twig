@@ -19,11 +19,16 @@
                             <option {%  if manufacturer.manufacturers_id == 1 %} selected {% endif %} value="{{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</option>
                         {% endfor %}
                     </select>
+                    <div style="text-align: right">
+                        <p><a href="#" id="unknownManufacturerShortlink">Manufacturer unknown</a></p>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Asset Type</label>
                     <select class="form-control" id="assetType" placeholder=""></select>
-                    <p><a href="#" id="addNewType">Add new type</a></p>
+                    <div style="text-align: right">
+                        <p><a href="#" id="addNewType">Add new type</a></p>
+                    </div>
                 </div>
 
                 <div class="input-group definableFieldsGroup" data-fieldcount="1">
@@ -89,7 +94,7 @@
                 minimumInputLength: 1,
                 width: '100%',
                 minimumResultsForSearch: 1,
-                placeholder: "Select a manufacturer to search for asset types",
+                placeholder: "Select a manufacturer then search for asset types",
                 ajax: {
                     url: "{{ CONFIG.ROOTURL }}/api/assets/search.php",
                     dataType: "json",
@@ -127,6 +132,10 @@
                         $(".definableFieldsLabel[data-fieldcount='" + count + "']").text(value);
                     })
                 });
+            });
+            $('#unknownManufacturerShortlink').on('click', function() {
+                $('#manufacturer').val('1');
+                $('#manufacturer').trigger('change');
             });
         });
     </script>
