@@ -1,131 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!--{{ CONFIG.PROJECT_NAME }}, version {{ CONFIG.VERSION.TAG }} build {{ CONFIG.VERSION.COMMIT }}-->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title id="tab-title-text">{{ CONFIG.PROJECT_NAME }} Backend {{ (pageConfig.TITLE != null ? " | " ~ pageConfig.TITLE : "")  }}</title>
+    <title>{{ (pageConfig.TITLE != null ? pageConfig.TITLE  ~  " | " : "")  }}{{ CONFIG.PROJECT_NAME }} </title>
 
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <!-- CSS SECTION-->
         <!--Include fonts-->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
-              integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous"/>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-              integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous"/>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
         <!-- Theme style -->
-        <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/css/AdminLTE.min.css">
-        <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/css/skins/_all-skins.css">
+        <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/css/adminlte.min.css">
 
-    <!-- JS Scripts/Plugins-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"
-                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
-                integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
-        <script>
-            $.widget.bridge('uibutton', $.ui.button);
-        </script>
+        <!-- JS Scripts/Plugins-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha256-L/W5Wfqfa0sdBNIKN9cG6QA5F2qx4qICmU2VgLruv9Y=" crossorigin="anonymous" />
         <!-- Bootstrap 3.3.5 -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
-                integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha256-OUFW7hFO0/r5aEGTQOz9F/aXQOt+TwqI1Z4fbVvww04=" crossorigin="anonymous"></script>
         <!--Bootbox -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"
-                integrity="sha256-4F7e4JsAJyLUdpP7Q8Sah866jCOhv72zU5E8lIRER4w=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
 
-        <!--Sticky Table Header-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/1.3.2/jquery.floatThead.min.js" integrity="sha256-TuqGSNYCOySq+u0uJ7NEfg5Lg4TZjw2CnSxYzy6eiB8=" crossorigin="anonymous"></script>
-        <style>
-            table.floatThead-table {
-                border-top: none;
-                border-bottom: none;
-                background-color: #FFF;
-            }
-        </style>
-
-
-        <!--Fastclick - increases speed of response-->
-         <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js" integrity="sha256-t6SrqvTQmKoGgi5LOl0AUy+lBRtIvEJ+++pLAsfAjWs=" crossorigin="anonymous"></script>
+            <!--Fastclick - increases speed of response-->
+        {#<script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js" integrity="sha256-t6SrqvTQmKoGgi5LOl0AUy+lBRtIvEJ+++pLAsfAjWs=" crossorigin="anonymous"></script>#}
 
     <!-- AdminLTE App -->
-        <script src="{{ CONFIG.ROOTURL }}/assets/js/app.js"></script>
+        <script src="{{ CONFIG.ROOTURL }}/assets/js/adminlte.js"></script>
 
-        <!--Sentry Error logging-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/raven.js/3.26.2/raven.min.js"
-                integrity="sha256-SwNT3bdv1zGK2V0mAEIMIdSEhIR+HbhYHLMkmR6U7D8=" crossorigin="anonymous"></script>
-        <script>Raven.config('{{ CONFIG.ERRORS.SENTRYPublic }}').install()</script>
-
-        <script>
-            //Random colour generator
-            Colors = {};
-            Colors.names = {
-                aqua: "#00ffff",
-                azure: "#f0ffff",
-                beige: "#f5f5dc",
-                black: "#000000",
-                blue: "#0000ff",
-                brown: "#a52a2a",
-                cyan: "#00ffff",
-                darkblue: "#00008b",
-                darkcyan: "#008b8b",
-                darkgrey: "#a9a9a9",
-                darkgreen: "#006400",
-                darkkhaki: "#bdb76b",
-                darkmagenta: "#8b008b",
-                darkolivegreen: "#556b2f",
-                darkorange: "#ff8c00",
-                darkorchid: "#9932cc",
-                darkred: "#8b0000",
-                darksalmon: "#e9967a",
-                darkviolet: "#9400d3",
-                fuchsia: "#ff00ff",
-                gold: "#ffd700",
-                green: "#008000",
-                indigo: "#4b0082",
-                khaki: "#f0e68c",
-                lightblue: "#add8e6",
-                lightcyan: "#e0ffff",
-                lightgreen: "#90ee90",
-                lightgrey: "#d3d3d3",
-                lightpink: "#ffb6c1",
-                lightyellow: "#ffffe0",
-                lime: "#00ff00",
-                magenta: "#ff00ff",
-                maroon: "#800000",
-                navy: "#000080",
-                olive: "#808000",
-                orange: "#ffa500",
-                pink: "#ffc0cb",
-                purple: "#800080",
-                violet: "#800080",
-                red: "#ff0000",
-                silver: "#c0c0c0",
-                white: "#ffffff",
-                yellow: "#ffff00"
-            };
-            Colors.random = function () {
-                var result;
-                var count = 0;
-                for (var prop in this.names)
-                    if (Math.random() < 1 / ++count)
-                        result = prop;
-                return result;
-            };
-        </script>
 
     {% block htmlIncludes %}{% endblock %}
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-
-
     <script>
         function ajaxcall(path, data, callback, reloadIfError) {
             if (data !== null) var senddata = data;
@@ -165,271 +70,365 @@
     </script>
 </head>
 {% if BODY %}
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition sidebar-mini layout-footer-fixed">
 <div class="wrapper">
-    <header class="main-header">
-        <!-- Logo -->
-        <a href="{{ CONFIG.ROOTURL }}" class="logo">
-            <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini">{{ CONFIG.PROJECT_NAME }}</span>
-            <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg">Adam<b>RMS</b></span>
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="{{CONFIG.ROOTURL}}" class="nav-link">Home</a>
+            </li>
+            {% if USERDATA.viewSiteAs != false %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php" class="nav-link">Back to Admin</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/login/?logout" class="nav-link">Logout</a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <!-- SEARCH FORM -->
+        <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/assets.php" method="GET">
+            <div class="input-group input-group-sm">
+                <input class="form-control form-control-navbar" name="q" type="search" placeholder="Search Assets" aria-label="Search Assets">
+                <div class="input-group-append">
+                    <button class="btn btn-navbar" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <ul class="navbar-nav ml-auto">
+           {#<li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-comments"></i>
+                    <span class="badge badge-danger navbar-badge">3</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <a href="#" class="dropdown-item">
+                        <!-- Message Start -->
+                        <div class="media">
+                            <img src="" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                    Brad Diesel
+                                    <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                                </h3>
+                                <p class="text-sm">Call me whenever you can...</p>
+                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                            </div>
+                        </div>
+                        <!-- Message End -->
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <!-- Message Start -->
+                        <div class="media">
+                            <img src="" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                    John Pierce
+                                    <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                                </h3>
+                                <p class="text-sm">I got your message bro</p>
+                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                            </div>
+                        </div>
+                        <!-- Message End -->
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <!-- Message Start -->
+                        <div class="media">
+                            <img src="" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                    Nora Silvester
+                                    <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                                </h3>
+                                <p class="text-sm">The subject goes here</p>
+                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                            </div>
+                        </div>
+                        <!-- Message End -->
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+                </div>
+            </li>#}
+            {% if USERDATA.instances|length > 0 %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        {{ USERDATA.instance.instances_name }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <span class="dropdown-item dropdown-header">Your Businesses</span>
+                        {% for instance in USERDATA.instances %}
+                            <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item">
+                                <i class="fas fa-users mr-2"></i> {{instance.instances_name}}
+                                <span class="float-right text-muted text-sm">{{ instance.userInstances_label }}</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                        {% endfor %}
+                        <div class="dropdown-divider"></div>
+                        {% if 8|permissions %}
+                         <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
+                        {% endif %}
+
+                    </div>
+                </li>
+
+            {% endif %}
+
+            <li class="nav-item">
+                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
+                    <i class="fas fa-th-large"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="{{CONFIG.ROOTURL}}" class="brand-link navbar-light" style="color: rgba(0,0,0,.8);">
+            <img src="{{ CONFIG.ROOTURL }}/assets/img/logoicon.png"
+                 alt="AdamRMS Logo"
+                 class="brand-image img-circle elevation-3"
+                 style="opacity: .8;">
+            <span class="brand-text font-weight-light">Adam RMS</span>
         </a>
-        <!-- Header Navbar: style can be found in header.less -->
-        <nav class="navbar navbar-static-top" role="navigation">
-            <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle hidden-lg hidden-md" data-toggle="push-menu" role="button">
-                <span class="sr-only">Toggle navigation</span>
-            </a>
-            <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
-                    {% if USERDATA.instances|length > 0 %}
-                    <li class="dropdown notifications-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            {{ USERDATA.instance.instances_name }}
-                            <span class="label label-info">{{ USERDATA.instance.userInstances_label }}</span>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar user (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="https://www.gravatar.com/avatar/{{ USERDATA.users_email_md5 }}?s=160&d=identicon" class="img-circle elevation-2" alt="User Image">
+                </div>
+                <div class="info">
+                    <a href="{{ CONFIG.ROOTURL }}/account.php" class="d-block">{{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}</a>
+                </div>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <!-- Add icons to the links using the .nav-icon class
+                         with font-awesome or any other icon font library -->
+
+                {% if USERDATA.instances|length > 0 %}
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                Assets
+                                <i class="fas fa-angle-left right"></i>
+                                <span class="badge badge-info right">6</span>
+                            </p>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li class="header">Your Businesses</li>
-                            <li>
-                                {% for instance in USERDATA.instances %}
-                                <ul class="menu">
-                                    <li>
-                                        <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}">
-                                            {{instance.instances_name}}
-                                            <span class="label label-info">{{ instance.userInstances_label }}</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                                {% endfor %}
+                        <ul class="nav nav-treeview">
+                            {% for category in assetCategories %}
+                                <li class="nav-item">
+                                    <a href="{{CONFIG.ROOTURL}}/assets.php?category={{ category.assetCategories_id }}" class="nav-link">
+                                        <i class="fas {{category.assetCategories_fontAwesome}} nav-icon"></i>
+                                        <p>{{category.assetCategories_name}}</p>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            <li class="nav-item">
+                                <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
+                                    <i class="fas fa-list nav-icon"></i>
+                                    <p>View All</p>
+                                </a>
                             </li>
-                            {% if 8|permissions %}
-                            <li class="footer"><a href="{{CONFIG.ROOTURL}}/instances/new.php">Create new business</a></li>
+                            {% if 17|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
+                                        <i class="fas fa-plus nav-icon"></i>
+                                        <p>Add</p>
+                                    </a>
+                                </li>
                             {% endif %}
                         </ul>
                     </li>
-                    {% endif %}
-                    <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span>
-                                    {%  if USERDATA.positions|length > 0 %}
-                                        {{ USERDATA.positions[0].positions_displayName }} -
-                                    {% endif %}
-                                    {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}</span>
-                            </a>
-
-                            <ul class="dropdown-menu">
-                                <!-- User image -->
-                                <li class="user-header">
-                                    {% if USERDATA.users_thumbnail != null %}
-                                        <img src="{{ USERDATA.users_thumbnail|s3URL("tiny") }}" class="img-square">
-                                    {% endif %}
-                                    <p>
-                                        {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
-                                        <small>User since {{ USERDATA.users_created|date("F Y") }}</small>
-                                    </p>
-                                </li>
-                                <!-- Menu Body -->
-                                {%  if USERDATA.positions|length > 1 %}<!--If they have multiple positions list them here-->
-                                <li class="user-body">
-                                    {% for position in USERDATA.positions %}
-                                    <div class="col-xs-12 text-center" style="padding-bottom: 5px;">
-                                        <a>{{ position.positions_displayName }}</a>
-                                    </div>
-                                    {% endfor %}
-                                </li>
-                                {% endif %}
-
-
-                                <!-- Menu Footer-->
-                                <li class="user-footer">
-                                    <div class="pull-left">
-                                        <a href="{{ CONFIG.ROOTURL }}/account.php" class="btn btn-default btn-flat">Settings</a>
-                                    </div>
-                                    <div class="pull-right">
-                                        {% if USERDATA.viewSiteAs != false %}
-                                            <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php"
-                                               class="btn btn-default btn-flat">Back to Admin</a>
-                                        {% else %}
-                                            <a href="{{ CONFIG.ROOTURL }}/login/?logout"
-                                               class="btn btn-default btn-flat">Sign out</a>
-                                        {% endif %}
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                       <!--<li>
-                            <a data-toggle="control-sidebar">
-                                <i class="fa fa-bell-o"></i>
-                                <span class="label label-danger">5</span>
-                            </a>
-                        </li>-->
-                </ul>
-
-            </div>
-        </nav>
-    </header>
-    <!-- Left side column. contains the logo and sidebar -->
-    <aside class="main-sidebar">
-        <!-- sidebar: style can be found in sidebar.less -->
-        <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp"></div>-->
-        <section class="sidebar">
-            
-            <ul class="sidebar-menu"  data-widget="tree">
-                {% if USERDATA.instances|length > 0 %}
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-th"></i> <span>Assets</span>
-                        <span class="pull-right-container">
-                          <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        {% for category in assetCategories %}
-                        <li><a href="{{CONFIG.ROOTURL}}/assets.php?category={{ category.assetCategories_id }}"><i class="fa {{category.assetCategories_fontAwesome}}"></i> {{category.assetCategories_name}}</a></li>
-                        {% endfor %}
-                        <li><a href="{{CONFIG.ROOTURL}}/assets.php"><i class="fa fa-list"></i> View All</a></li>
-                        {% if 17|instancePermissions %}
-                            <li><a href="{{CONFIG.ROOTURL}}/newAsset.php"><i class="fa fa-plus"></i> Add</a></li>
-                        {% endif %}
-                    </ul>
-                </li>
-                <li>
-                    <a href="{{ CONFIG.ROOTURL }}/manufacturers.php">
-                        <i class="fa fa-industry"></i> <span>Manufacturers</span>
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/manufacturers.php" class="nav-link">
+                        <i class="nav-icon fas fa-industry"></i>
+                        <p>
+                            Manufacturers
+                            {#<span class="right badge badge-danger">New</span>#}
+                        </p>
                     </a>
                 </li>
                 {% if 2|instancePermissions or 11|instancePermissions %}
-                    <li class="header">Security</li>
+                    <li class="nav-header">SECURITY</li>
                 {% endif %}
                 {% if 2|instancePermissions %}
-                    <li>
-                        <a href="{{ CONFIG.ROOTURL }}/instances/users.php">
-                            <i class="fa fa-users"></i> <span>Users</span>
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                Users
+                                {#<span class="right badge badge-danger">New</span>#}
+                            </p>
                         </a>
                     </li>
                 {% endif %}
                 {% if 11|instancePermissions %}
-                    <li>
-                        <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php">
-                            <i class="fa fa-unlock-alt"></i> <span>Permissions</span>
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
+                        <i class="nav-icon fas fa-unlock-alt"></i>
+                        <p>
+                            Permissions
+                            {#<span class="right badge badge-danger">New</span>#}
+                        </p>
                         </a>
                     </li>
                 {% endif %}
                 {% if 2|permissions or 11|permissions or 7|permissions %}
-                <li class="header">AdamRMS Security</li>
+                <li class="nav-header">ADAMRMS SECURITY</li>
                 {% endif %}
             {% if 2|permissions %}
-            <li>
-                <a href="{{ CONFIG.ROOTURL }}/users.php">
-                    <i class="fa fa-users"></i> <span>Users</span>
-                </a>
-            </li>
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/users.php" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Users
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
             {% endif %}
             {% if 11|permissions %}
-                <li>
-                    <a href="{{ CONFIG.ROOTURL }}/permissions.php">
-                        <i class="fa fa-unlock-alt"></i> <span>Permissions</span>
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/permissions.php" class="nav-link">
+                        <i class="nav-icon fas fa-unlock-alt"></i>
+                        <p>
+                            Permissions
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
                     </a>
                 </li>
             {% endif %}
                 {% if 7|permissions %}
-                    <li>
-                        <a href="{{ CONFIG.ROOTURL }}/auditLog.php">
-                            <i class="fa fa-gavel"></i> <span>Audit Log</span>
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
+                            <i class="nav-icon fas fa-gavel"></i>
+                            <p>
+                                Audit Log
+                                <span class="right badge badge-danger">AdamRMS</span>
+                            </p>
                         </a>
                     </li>
                 {% endif %}
 
                 {% endif %}
-            </ul>
-
-        </section>
-        <!-- /.sidebar -->
+                </ul>
+            </nav>
+        </div>
     </aside>
+
 
     <!-- Content Wrapper. Contains page content -->
     <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp hidden-lg hidden-md hidden-sm"></div>-->
     <div class="content-wrapper" id="content-wrapper">
         {% endif %}
-            <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 0px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 0px;">
                 <h4><i class="fa fa-terminal"></i> Developers at Work!</h4>
                 {{ CONFIG.PROJECT_NAME }} Admin is currently being worked on by our developers - Please bear with us if you
                 hit any snags!
             </div>
-
             {%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
-            <section class="content-header">
+            <div class="row mb-2">
+                <div class="col-sm-6">
                 <h1>
                     {{ pageConfig.TITLE }}
                 </h1>
-                <ol class="breadcrumb">
-                    <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li class="active">{{ pageConfig.TITLE }}</li>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{{CONFIG.ROOTURL}}">Home</a></li>
+                            <li class="breadcrumb-item active">{{ pageConfig.TITLE }}</li>
                 </ol>
-            </section>
-            {% endif %}
-        <section class="content">
-            {% if USERDATA.users_changepass == '1' %}
-                <div class="row">
-            <div class="col-lg-6 col-lg-offset-3 col-md-12" style="padding: 5px;">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="text-align: center;">
-                       <h2>Change your Password</h2>
-                            <p>Please enter a new password:</p>
-                            <input type="password" id="forcechangepass1" class="form-control input-lg"
-                                   placeholder="New Password" style="margin-bottom: 5px;" />
-                            <input type="password" id="forcechangepass2" class="form-control input-lg"
-                                   placeholder="Confirm New Password"  style="margin-bottom: 5px;" />
-                            <p>Choose a strong password longer than 8 characters that is a random alphanumeric string</p>
-                            <button id="forcechangepassbutton" class="btn btn-default">Save</button>
-
                     </div>
-                    <div class="panel-footer">
-                        <a href="mailto:{{ CONFIG.PROJECT_SUPPORT_EMAIL }}">Contact Support</a>
-                    </div>
-                    <script>
-                        $(document).ready(function () {
-                            $('#forcechangepassbutton').click(function () {
-                                if ($("#forcechangepass1").val() != $("#forcechangepass2").val()) bootbox.alert("Sorry - Your passwords do not match!");
-                                else if ($("#forcechangepass1").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
-                                else {
-                                    $.ajax({
-                                        url: '{{ CONFIG.ROOTURL }}/api/account/forcePasswordChange.php?pass=' + $("#forcechangepass1").val(),
-                                        success: function (result) {
-                                            if (result == '1') {
-                                                location.reload();
-                                            } else {
-                                                bootbox.alert('Error - Could not send E-Mail again - Please refresh the page and try again!');
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                    </script>
                 </div>
             </div>
-                </div>
+            {% endif %}
+            </div>
+        </div>
+        <div class="content">
+            <div class="container-fluid">
+            {% if USERDATA.users_changepass == '1' %}
+                <div class="row">
+                    <div class="col-lg-6 col-lg-offset-3 col-md-12" style="padding: 5px;">
+                        <div class="panel panel-default">
+                            <div class="panel-body" style="text-align: center;">
+                               <h2>Change your Password</h2>
+                                    <p>Please enter a new password:</p>
+                                    <input type="password" id="forcechangepass1" class="form-control input-lg"
+                                           placeholder="New Password" style="margin-bottom: 5px;" />
+                                    <input type="password" id="forcechangepass2" class="form-control input-lg"
+                                           placeholder="Confirm New Password"  style="margin-bottom: 5px;" />
+                                    <p>Choose a strong password longer than 8 characters that is a random alphanumeric string</p>
+                                    <button id="forcechangepassbutton" class="btn btn-default">Save</button>
+
+                            </div>
+                            <div class="panel-footer">
+                                <a href="mailto:{{ CONFIG.PROJECT_SUPPORT_EMAIL }}">Contact Support</a>
+                            </div>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#forcechangepassbutton').click(function () {
+                                        if ($("#forcechangepass1").val() != $("#forcechangepass2").val()) bootbox.alert("Sorry - Your passwords do not match!");
+                                        else if ($("#forcechangepass1").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
+                                        else {
+                                            $.ajax({
+                                                url: '{{ CONFIG.ROOTURL }}/api/account/forcePasswordChange.php?pass=' + $("#forcechangepass1").val(),
+                                                success: function (result) {
+                                                    if (result == '1') {
+                                                        location.reload();
+                                                    } else {
+                                                        bootbox.alert('Error - Could not send E-Mail again - Please refresh the page and try again!');
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                        </div>
             {% else %}
                 {% block content %}
                 {% endblock %}
             {% endif %}
 
             {% if BODY %}
-        </section><!-- /.content -->
+            </div>
+        </div><!-- /.content -->
     </div><!-- /.content-wrapper -->
     <footer class="main-footer" id="main-footer">
-        <div class="pull-right hidden-xs">
+        <div class="float-right d-none d-sm-block">
             Built on <a href="https://github.com/Jbithell/bCMS">bCMS</a>
         </div>
         <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
         reserved.
     </footer>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
 </div><!-- ./wrapper -->
 <script>
     $(document).ready(function () {
-        $(".sticky-header").floatThead();
         $('[data-toggle="popover"]').popover({
             html: true,
         });

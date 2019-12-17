@@ -19,6 +19,7 @@ if ($assetCategories) {
 
 
 $PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
+$PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
 $USERDATA = $PAGEDATA['USERDATA'];
 ?>
