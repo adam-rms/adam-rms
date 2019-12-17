@@ -6,7 +6,7 @@
             <div class="row"> {% include 'assets/templates/newInstance.twig' %}</div>
         {% else %}
             <div class="row">
-                <div class="col-lg-6 col-lg-offset-3 col-md-12">
+                <div class="col-lg-6 offset-lg-3 col-md-12">
                     <div class="callout callout-danger">
                         <h4>Not a member of any businesses</h4>
 
@@ -16,8 +16,5 @@
             </div>
         {% endif %}
     {% else %}
-    <div class="row">
-        <pre>{{ dump(USERDATA) }}</pre>
-    </div>
     {% endif %}
 {% endblock %}

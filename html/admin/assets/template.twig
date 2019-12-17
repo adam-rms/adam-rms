@@ -169,12 +169,11 @@
                         <span class="dropdown-item dropdown-header">Your Businesses</span>
                         {% for instance in USERDATA.instances %}
                             <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item">
-                                <i class="fas fa-users mr-2"></i> {{instance.instances_name}}
+                                {{instance.instances_name}}
                                 <span class="float-right text-muted text-sm">{{ instance.userInstances_label }}</span>
                             </a>
                             <div class="dropdown-divider"></div>
                         {% endfor %}
-                        <div class="dropdown-divider"></div>
                         {% if 8|permissions %}
                          <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
                         {% endif %}
@@ -338,35 +337,37 @@
         {% endif %}
         <div class="content-header">
             <div class="container-fluid">
-                <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 0px;">
-                <h4><i class="fa fa-terminal"></i> Developers at Work!</h4>
-                {{ CONFIG.PROJECT_NAME }} Admin is currently being worked on by our developers - Please bear with us if you
-                hit any snags!
-            </div>
-            {%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                <h1>
-                    {{ pageConfig.TITLE }}
-                </h1>
+                {%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>
+                            {{ pageConfig.TITLE }}
+                        </h1>
+                    </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{CONFIG.ROOTURL}}">Home</a></li>
                             <li class="breadcrumb-item active">{{ pageConfig.TITLE }}</li>
-                </ol>
+                        </ol>
                     </div>
+
                 </div>
-            </div>
-            {% endif %}
+                {% endif %}
+                <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 0px;">
+                    <h4>
+                        <i class="fa fa-terminal"></i> Developers at Work!
+                    </h4>
+                    {{ CONFIG.PROJECT_NAME }} Admin is currently being worked on by our developers - Please bear with us if you hit any snags!
+                </div>
             </div>
         </div>
         <div class="content">
             <div class="container-fluid">
             {% if USERDATA.users_changepass == '1' %}
                 <div class="row">
-                    <div class="col-lg-6 col-lg-offset-3 col-md-12" style="padding: 5px;">
-                        <div class="panel panel-default">
-                            <div class="panel-body" style="text-align: center;">
+                    <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
+                        <div class="card card-default">
+                            <div class="card-body" style="text-align: center;">
                                <h2>Change your Password</h2>
                                     <p>Please enter a new password:</p>
                                     <input type="password" id="forcechangepass1" class="form-control input-lg"
@@ -377,7 +378,7 @@
                                     <button id="forcechangepassbutton" class="btn btn-default">Save</button>
 
                             </div>
-                            <div class="panel-footer">
+                            <div class="card-footer">
                                 <a href="mailto:{{ CONFIG.PROJECT_SUPPORT_EMAIL }}">Contact Support</a>
                             </div>
                             <script>

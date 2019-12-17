@@ -12,11 +12,11 @@
 {% block content %}
 	<div class="row" style="margin-top: 15px;">
 		<div class="col-lg-6">
-			<div class="box panel-default">
-				<div class="box-header with-border">
-					<h3 class="box-title">Account Basics</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Account Basics</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<div class="alert alert-success" id="updatesettingsusccess" style="display: none;">
 						<strong>Success!</strong> Account settings saved!
 					</div>
@@ -37,7 +37,7 @@
 						<input type="email" class="form-control" id="email" name="email" value="{{USER['users_email']}}" />
 					</div>
 				</div>
-				<div class="box-footer">
+				<div class="card-footer">
 					<button id="save-account-settings" class="btn btn-default">Save</button>
 				</div>
 					<script>
@@ -144,11 +144,11 @@
 		</div>
 		{% if USER.users_userid == USERDATA.users_userid %}
 		<div class="col-lg-6">
-			<div class="box panel-default">
-				<div class="box-header with-border">
-					<h3 class="box-title">Password</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Password</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<div class="alert alert-success" id="update_pass_success" style="display: none;">
 						<strong>Success!</strong> Password Changed!
 					</div>
@@ -168,7 +168,7 @@
 						<input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
 					</div>
 				</div>
-				<div class="box-footer">
+				<div class="card-footer">
 					<button id="save-password-settings" class="btn btn-default">Change</button>
 				</div>
 					<script>
@@ -200,11 +200,11 @@
 		{% endif %}
 		{% if 16|permissions %}
 		<div class="col-lg-6">
-			<div class="box">
-				<div class="box-header with-border">
-					<h3 class="box-title">Positions</h3>
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Positions</h3>
 				</div>
-				<div class="box-body no-padding">
+				<div class="card-body p-0">
 					<table class="table" border="0" style="overflow-x: scroll;">
 						<thead>
 						<tr>
@@ -433,11 +433,11 @@
 		{% endif %}
 		{% if false %}
 		<div class="col-lg-6">
-			<div class="box panel-default">
-				<div class="box-header with-border">
-					<h3 class="box-title">Profile picture</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Profile picture</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					{% if USER.users_thumbnail != null %}
 						<img src="{{ USER.users_thumbnail|s3URL("") }}" style="width: 100%;">
 						{% else %}
@@ -445,7 +445,7 @@
 					{% endif %}
 				</div>
 				{% if 14|permissions or USER.users_userid == USERDATA.users_userid %}
-				<div class="box-footer">
+				<div class="card-footer">
 					{% embed 'common/plugins/fineuploader.twig' with {'publicBool': true, 'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 1, 'subTypeId': 1, 'fileLimit': 1, 'imagesOnly': true } %}
 						{% block success %}
 							console.log(responseJson);
@@ -476,11 +476,11 @@
 		{% endif %}
 		{% if USER.users_userid != "NEW" %}
 		<div class="col-lg-6">
-			<div class="box panel-default">
-				<div class="box-header with-border">
-					<h3 class="box-title">Social Media profiles</h3>
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Social Media profiles</h3>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					<div class="alert alert-success" id="update_social_success" style="display: none;">
 						<strong>Success!</strong> Social media updated!
 					</div>
@@ -510,12 +510,12 @@
 						</div><br/>
 						<label>Snapchat</label>
 						<div class="input-group">
-							<span class="input-group-addon"><i class="fa fa-snapchat-ghost"></i></span>
+							<div class="input-group-prepend"><span class="input-group-text"><i class="fab fa-snapchat-ghost"></i></span></div>
 							<input type="text" class="form-control" name="snapchat" value="{{ USER.users_social_snapchat }}">
 						</div>
 					</form>
 				</div>
-				<div class="box-footer">
+				<div class="card-footer">
 					<button id="save-social-settings" class="btn btn-default">Save</button>
 				</div>
 				<script>

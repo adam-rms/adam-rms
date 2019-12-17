@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-4">
-            <div class="box box-widget widget-user">
+            <div class="card card-widget widget-user">
                 <div class="widget-user-header bg-aqua-active">
                     <h3 class="widget-user-username">{{asset.assetTypes_name}}{% if asset.oneasset %}: {{ thisasset.assets_tag|aTag }}{% endif %}</h3>
                     <h5 class="widget-user-desc">{{asset.assetTypes_description}}</h5>
@@ -14,7 +14,7 @@
 
                     {% endif %}
                 </div>
-                <div class="box-footer">
+                <div class="card-footer">
                     <div class="row">
                         <div class="col-sm-4 border-right">
                             <div class="description-block">
@@ -48,11 +48,11 @@
         </div>
         {% if asset.oneasset != true %}
         <div class="col-md-8">
-            <div class="box">
-                <div class="box-header">
-                    <div class="box-title">Stock</div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Stock</div>
                 </div>
-                <div class="box-body no-padding">
+                <div class="card-body p-0">
                     <table class="table table-condensed">
                         <tr>
                             <th style="width:60px;">#</th>
@@ -80,8 +80,8 @@
             {# We're displaying just the one asset here #}
             {% if assets[0].assets_notes %}
             <div class="col-md-8">
-                <div class="box box-solid">
-                    <div class="box-body">
+                <div class="card">
+                    <div class="card-body">
                     {{ assets[0].assets_notes }}
                     </div>
                 </div>
