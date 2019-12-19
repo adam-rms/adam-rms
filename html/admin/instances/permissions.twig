@@ -39,13 +39,14 @@
 									<td>
 										{% for dependentactionid in action.instanceActions_dependent|split(',') %}
                                             {% if dependentactionid != "" and dependentactionid not in position.instancePositions_actions|split(',') %}
-												<small class="label label-warning" title="Requires other permission to be set first">{{ dependentactionid }}</small>
+												<span class="badge badge-warning" title="Requires other permission to be set first">{{ dependentactionid }}</span>
                                                 {% set positioncannotbecausedep = "true" %}
                                             {% endif %}
                                         {% endfor %}
                                         {% for independentactionid in action.instanceActions_incompatible|split(',') %}
                                             {% if independentactionid != "" and independentactionid in position.instancePositions_actions|split(',') %}
-												<small class="label label-danger" title="Requires other permission to be removed first">{{ independentactionid }}</small>
+
+												<span class="badge badge-danger" title="Requires other permission to be removed first">{{ independentactionid }}</span>
                                                 {% set positioncannotbecauseindep = "true" %}
                                             {% endif %}
                                         {% endfor %}
@@ -54,9 +55,15 @@
                                         <input type="checkbox" data-permissionid="{{action.instanceActions_id}}" data-positionid="{{position.instancePositions_id}}" {% if action.instanceActions_id in position.instancePositions_actions|split(',') %}checked{% endif %}  {% if positioncannotbecausedep == "true" or positioncannotbecauseindep == "true" %}disabled{% endif %} />
 										{% else %}
 											{% if action.instanceActions_id in position.instancePositions_actions|split(',') %}
-										      <i class="fa fa-check-square-o"></i>
+												<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+													<input type="checkbox" checked disabled class="custom-control-input">
+													<label class="custom-control-label"></label>
+												</div>
 											{% else %}
-												<i class="fa fa-square-o"></i>
+												<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+													<input type="checkbox" disabled class="custom-control-input">
+													<label class="custom-control-label"></label>
+												</div>
 											{% endif %}
 										{% endif %}
 									</td>

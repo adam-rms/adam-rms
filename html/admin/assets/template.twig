@@ -162,22 +162,25 @@
             </li>#}
             {% if USERDATA.instances|length > 0 %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
+                    <a class="nav-link"  data-toggle="dropdown" href="#">
                         {{ USERDATA.instance.instances_name }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span class="dropdown-item dropdown-header">Your Businesses</span>
-                        {% for instance in USERDATA.instances %}
-                            <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item">
-                                {{instance.instances_name}}
-                                <span class="float-right text-muted text-sm">{{ instance.userInstances_label }}</span>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        {% endfor %}
+                        {% if USERDATA.instances|length > 1 %}
+                            <span class="dropdown-item dropdown-header">Your Businesses</span>
+                            {% for instance in USERDATA.instances %}
+                                <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item">
+                                    {{instance.instances_name}}
+                                    <span class="float-right text-muted text-sm">{{ instance.userInstances_label }}</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            {% endfor %}
+                        {% endif  %}
                         {% if 8|permissions %}
-                         <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
+                            <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
+                            {% else %}
+                                <a href="#" class="dropdown-item dropdown-footer"><i>Contact support to add new businesses</i></a>
                         {% endif %}
-
                     </div>
                 </li>
 
