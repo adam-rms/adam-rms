@@ -18,6 +18,10 @@ if ($assetCategories) {
 } else $PAGEDATA['assetCategories'] = [];
 
 
+$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("assets_deleted", 0);
+$PAGEDATA['assetCount'] = $DBLIB->getValue("assets", "COUNT(*)");
+
 $PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 

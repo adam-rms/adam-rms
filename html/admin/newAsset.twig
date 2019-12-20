@@ -12,6 +12,7 @@
                 <h3 class="card-title">Add new Asset</h3>
             </div>
             <div class="card-body">
+                <form id="addNewForm">
                 <div class="form-group">
                     <label>Manufacturer</label>
                     <select class="form-control" id="manufacturer">
@@ -30,58 +31,93 @@
                         <p><a href="#" id="addNewType">Add new type</a></p>
                     </div>
                 </div>
-
+                <div id="addNewTypeGroup" style="display: none;">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Name</span></div>
+                        <input type="text" class="form-control" name="assetTypes_name" id="addNewType-name" />
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Description</span></div>
+                        <textarea class="form-control" rows="3" name="assetTypes_description" id="addNewType-description"  placeholder=""></textarea>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Mass
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_mass" class="form-control" id="addNewType-mass" />
+                        <div class="input-group-append">
+                            <div class="input-group-text">kg</div>
+                        </div>
+                    </div>
+                    <div class="callout callout-info">
+                        <p>Definable fields are specific attributes for assets of this type - for a lighting fixture this might be the lens fitted</p>
+                    </div>
+                </div>
+                    <div class="input-group" id="assetNotes" style="display:none;">
+                    <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
+                    <textarea class="form-control" rows="2" name="assets_notes" placeholder=""></textarea>
+                </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="1">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="1"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="1" />
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_1" data-fieldcount="1" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="2">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="2"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="2" />
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_2"  data-fieldcount="2" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="3">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="3"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="3" />
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_3" data-fieldcount="3" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="4">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="4"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="4" />
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_4" data-fieldcount="4" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="5">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="5"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="5" />
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_5" data-fieldcount="5" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="6">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="6"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="6" />
+                     <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_6" data-fieldcount="6" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="7">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="7"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="7" />
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_7"  data-fieldcount="7" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="8">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="8"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="8" />
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_8" data-fieldcount="8" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="9">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="9"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="9" />
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_9" data-fieldcount="9" />
                 </div>
                 <div class="input-group definableFieldsGroup" data-fieldcount="10">
                     <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="10"></span></div>
-                    <input type="text" class="definableFieldsInput form-control" data-fieldcount="10" />
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_10"  data-fieldcount="10" />
                 </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-default float-right" id="saveButton">Save</button>
+            </div>
+            <div class="overlay">
+                <i class="fas fa-2x fa-sync-alt"></i>
             </div>
         </div>
     </div>
 </div>
     <style>
-        .definableFieldsGroup {
+        .input-group {
             margin-bottom: 5px;
         }
     </style>
     <script>
         $(document).ready(function () {
+            $(".overlay").hide();
             $(".definableFieldsGroup").hide();
             $("#manufacturer").select2({
                 theme: "bootstrap",
@@ -124,18 +160,45 @@
             });
             $('#assetType').on('change', function() {
                 $(".definableFieldsGroup").hide();
+                $("#addNewTypeGroup").hide();
+                $("#assetNotes").show();
                 ajaxcall("assets/getAssetTypeData.php", {"term": this.value}, function (data) {
-                    console.log(data.response);
                     $(data.response.assetCategories_fields).each(function (count, value) {
                         count = count+1;
                         $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
                         $(".definableFieldsLabel[data-fieldcount='" + count + "']").text(value);
+                        $(".definableFieldsInput").val("");
                     })
                 });
             });
             $('#unknownManufacturerShortlink').on('click', function() {
                 $('#manufacturer').val('1');
                 $('#manufacturer').trigger('change');
+            });
+            $('#addNewType').on('click', function() {
+                $('#assetType').val('');
+                $('#assetType').trigger('change');
+                $('#addNewTypeGroup').show();
+                $("#assetNotes").hide();
+                $([0,1,2,3,4,5,6,7,8,9]).each(function (count, value) {
+                    count = count+1;
+                    $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
+                    $(".definableFieldsLabel[data-fieldcount='" + count + "']").text("Definable field " + count);
+                    $(".definableFieldsInput").val("");
+                })
+            });
+            $('#saveButton').on('click', function() {
+                var formData = $("#addNewForm").serializeArray();
+                formData.push({"name": "manufacturers_id", "value":$('#manufacturer').val()}, {"name": "assetTypes_id", "value": $('#assetType').val()});
+                ajaxcall("assets/newAssetFromType.php", {formData}, function (data) {
+                    console.log(data);
+                });
+                if ($('#assetType').val() != null) {
+
+                    //Existing asset type
+                } else {
+                    //New asset type
+                }
             });
         });
     </script>

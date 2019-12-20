@@ -228,7 +228,9 @@
                             <p>
                                 Assets
                                 <i class="fas fa-angle-left right"></i>
-                                <span class="badge badge-info right">6</span>
+                                {% if assetCount > 0 %}
+                                <span class="badge badge-success right">{{ assetCount }}</span>
+                                {% endif %}
                             </p>
                         </a>
                         <ul class="nav nav-treeview">

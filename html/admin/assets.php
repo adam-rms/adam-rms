@@ -30,6 +30,7 @@ $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
 	$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 	$DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
+	$DBLIB->where("assets_deleted", 0);
 	$asset['count'] = $DBLIB->getValue("assets", "COUNT(*)");
 	$PAGEDATA['assets'][] = $asset;
 }
