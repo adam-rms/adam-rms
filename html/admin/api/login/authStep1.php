@@ -15,8 +15,8 @@ if (isset($_POST['formInput'])) {
         $DBLIB->where("userPositions_start <= '" . date('Y-m-d H:i:s') . "'");
         $DBLIB->where("users_userid", $user['users_userid']);
         $positionsCount = $DBLIB->getvalue("userPositions","COUNT(*)"); //You must have at least one current position to be allowed to login
-        if ($positionsCount < 1) finish(false, ["code" => 6, "message" => "User doesn't have permission to login"]);
-        elseif ($user['users_emailVerified'] != 1) finish(false, ["code" => "VERIFYEMAIL", "message" => "Please verify your email address using the link we sent you to login","userid" => $user['users_userid']]);
+        //if ($positionsCount < 1) finish(false, ["code" => 6, "message" => "User doesn't have permission to login"]);
+        if ($user['users_emailVerified'] != 1) finish(false, ["code" => "VERIFYEMAIL", "message" => "Please verify your email address using the link we sent you to login","userid" => $user['users_userid']]);
         else finish(true, false, ["user" => true, "token" => false, "data" => $user]);
     }
 } else finish(false, ["code" => null, "message" => "Unknown error"]);

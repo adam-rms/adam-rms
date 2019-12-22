@@ -27,6 +27,6 @@ $array['assetTypes_definableFields'] = implode(",", $array['assetTypes_definable
 
 if ($array['assetTypes_mass'] == "") $array['assetTypes_mass'] = null; //This is odd but seems to fix an error
 
-$result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_thumbnail'] ) ));
+$result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_thumbnail','assetTypes_inserted'] ) ));
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert asset type"]);
 else finish(true, null, ["assetTypes_id" => $result]);

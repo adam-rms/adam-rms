@@ -31,7 +31,7 @@
                                 <tr>
                                     <td><a href="assets.php?manufacturer={{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</a></td>
                                     <td><a href="{{ manufacturer.manufacturers_website }}" target="_blank">{{ manufacturer.manufacturers_website }}</a></td>
-                                    <td>{{  manufacturer.manufacturers_notes }}</td>
+                                    <td>{{  manufacturer.manufacturers_notes|nl2br }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

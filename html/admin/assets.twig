@@ -36,10 +36,18 @@
                             <tbody>
                             {% for asset in assets %}
                                 <tr>
-                                    <td>{{ asset.count }}x</td>
+                                    <td style="min-width: 92px; max-width: 100px; text-align: right;">
+                                        {% if showTags %}
+                                            {% for tag in asset.tags %}
+                                                {{ tag.assets_tag|aTag  }}<br/>
+                                            {% endfor %}
+                                        {% else %}
+                                            {{ asset.count }}x
+                                        {% endif %}
+                                    </td>
                                     <td><a href="asset.php?id={{ asset.assetTypes_id }}">{{ asset.assetTypes_name }}</a></td>
                                     <td><a href="?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a></td>
-                                    <td>{{ asset.assetTypes_description }}</td>
+                                    <td>{{ asset.assetTypes_description|nl2br }}</td>
                                     <td><a href="?category={{  asset.assetCategories_id }}">{{ asset.assetCategories_name }}</a></td>
                                 </tr>
                             {% endfor %}
@@ -52,8 +60,11 @@
                 <div class="overlay" id="loadingoverlay">
                     <i class="fa fa-refresh fa-spin"></i>
                 </div>
-                {% if pagination.total > 1 %}
                 <div class="card-footer clearfix">
+                    {% if showTags != true %}
+                        <button class="btn btn-sm btn-default showTagsButton">Show asset codes</button>
+                    {% endif %}
+                    {% if pagination.total > 1 %}
                     <ul class="pagination pagination-sm m-0 float-right">
                         {% if pagination.page > 1 %}
                             <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
@@ -73,13 +84,16 @@
                             <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
                         {% endif %}
                     </ul>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
         <script>
             $(document).ready(function () {
                 $("#loadingoverlay").hide();
+                $(".showTagsButton").click(function () {
+                    insertURLQueryParam("showtags", "1");
+                });
             });
         </script>
     </div>

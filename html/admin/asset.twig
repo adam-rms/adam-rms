@@ -45,7 +45,7 @@
                         <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                     {% endif %}
                     {% endif %}
-                    {{asset.assetTypes_description}}
+                    {{asset.assetTypes_description|nl2br}}
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -84,8 +84,8 @@
                                         {% for field in asset.fields %}
                                             <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
                                         {% endfor %}
-                                        <td>{{ thisasset['assets_notes'] }}</td>
-                                        <td><span class="badge bg-red">FAULT COUNT</span></td>
+                                        <td>{{ thisasset['assets_notes']|nl2br }}</td>
+                                        <td><span class="badge bg-red"></span></td>
                                         <td>
                                             <div class="btn-group">
                                             {% if 19|instancePermissions %}

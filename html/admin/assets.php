@@ -3,13 +3,15 @@ require_once __DIR__ . '/common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Assets", "BREADCRUMB" => false];
 
+if (isset($_GET['showtags'])) $PAGEDATA['showTags'] = true;
+else $PAGEDATA['showTags'] = false;
+
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
 
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = 20; //Users per page
-
 if (isset($_GET['category'])) $DBLIB->where("assetTypes.assetCategories_id", $_GET['category']);
 if (isset($_GET['manufacturer'])) $DBLIB->where("manufacturers.manufacturers_id", $_GET['manufacturer']);
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
@@ -31,7 +33,11 @@ foreach ($assets as $asset) {
 	$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 	$DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
 	$DBLIB->where("assets_deleted", 0);
-	$asset['count'] = $DBLIB->getValue("assets", "COUNT(*)");
+	$DBLIB->orderBy("assets.assets_tag", "ASC");
+	if ($PAGEDATA['showTags']) {
+		$asset['tags'] = $DBLIB->get("assets", null, ["assets_id", "assets_tag"]);
+		$asset['count'] = count($asset['tags']);
+	} else $asset['count'] = $DBLIB->getValue("assets", "COUNT(*)");
 	$PAGEDATA['assets'][] = $asset;
 }
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
