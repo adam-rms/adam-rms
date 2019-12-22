@@ -99,13 +99,14 @@ class bCMS {
         }
         return $_GET;
     }
-    function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null) { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
+    function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null) { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
         global $DBLIB;
         $data = [
-            "auditLog_actionType" => $this->sanitizeString($actionType),
-            "auditLog_actionTable" => $this->sanitizeString($table),
-            "auditLog_actionData" =>  $this->sanitizeString($revelantData),
-            "auditLog_timestamp" =>  date("Y-m-d H:i:s")
+            "auditLog_actionType" => $actionType,
+            "auditLog_actionTable" => $table,
+            "auditLog_actionData" =>  $revelantData,
+            "auditLog_timestamp" =>  date("Y-m-d H:i:s"),
+            "projects_id" => $projectid,
             ];
         if ($userid > 0) $data["users_userid"] = $this->sanitizeString($userid);
         if ($useridTo > 0) $data["auditLog_actionUserid"] = $this->sanitizeString($useridTo);

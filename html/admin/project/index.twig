@@ -1,0 +1,487 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
+    <style>
+        .color-palette {
+            height: 35px;
+            line-height: 35px;
+            text-align: right;
+            padding-right: .75rem;
+        }
+
+        .color-palette.disabled {
+            text-align: center;
+            padding-right: 0;
+            display: block;
+        }
+
+        .color-palette-set {
+            margin-bottom: 15px;
+        }
+
+        .color-palette span {
+            display: none;
+            font-size: 12px;
+        }
+
+        .color-palette:hover span {
+            display: block;
+        }
+
+        .color-palette.disabled span {
+            display: block;
+            text-align: left;
+            padding-left: .75rem;
+        }
+
+        .color-palette-box h4 {
+            position: absolute;
+            left: 1.25rem;
+            margin-top: .75rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            display: block;
+            z-index: 7;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Project Detail</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            {% if project.projects_archived == 1 %}
+                                <div class="alert alert-danger">
+                                    <h5><i class="icon fas fa-ban"></i> Archived</h5>
+                                    This project has been moved to archive
+                                </div>
+                            {% endif %}
+                            <h3 class="text-primary">{{project.projects_name}}</h3>
+                            <p class="text-muted">{{ project.projects_description|nl2br }}</p>
+                            <br>
+                            <div class="text-muted">
+                                <p class="text-sm">Client
+                                    <b class="d-block">{{ project.clients_name }}</b>
+                                </p>
+                                <p class="text-sm">Project Manager
+                                    <b class="d-block">{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}</b>
+                                </p>
+                                <p class="text-sm">Venue
+                                    <b class="d-block">{{ project.projects_address|nl2br }}</b>
+                                </p>
+                                <p class="text-sm">Dates
+                                    {% if 27|instancePermissions %}
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control float-right" id="datePickerInput">
+                                    </div>
+                                    {% else %}
+                                        <b class="d-block">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("Y-m-d h:i:sa")}} - {{ project.projects_dates_use_end ? project.projects_dates_use_end|date("Y-m-d h:i:sa") }}</b>
+                                    {% endif %}
+                                </p>
+                                <p class="text-sm">Dates assets in use
+                                    {% if 27|instancePermissions %}
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control float-right" id="datePickerInputDeliver">
+                                        </div>
+                                    {% else %}
+                                        <b class="d-block">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa")}} - {{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
+                                        {% endif %}
+                                   </p>
+                            </div>
+                            <br/>
+                            <div class="alert" style="background-color: {{STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
+                                <h5><b>Status: </b>{{ STATUSES[project.projects_status]['name'] }}</h5>
+                                {{ STATUSES[project.projects_status]['description'] }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" id="quickAddCommentButton">Add Comment</button>
+                        <button type="button" class="btn btn-info" id="editProjectStatus">Change Status</button>
+                        <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                            <span class="sr-only">Toggle Dropdown</span>
+                            <div class="dropdown-menu" role="menu">
+                                {% if 28|instancePermissions %}<a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>{% endif %}
+                                {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
+                                {% if 30|instancePermissions %}<a class="dropdown-item" id="editProjectAddress" href="#">Edit Venue</a>{% endif %}
+                                {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectLead" href="#">Change Project Lead</a>{% endif %}
+                                {% if 22|instancePermissions %}<a class="dropdown-item" id="editProjectClient" href="#">Change Client</a>{% endif %}
+                                <div class="dropdown-divider"></div>
+                                {% if 25|instancePermissions %}
+                                    {% if project.projects_archived == 1 %}
+                                        <a class="dropdown-item" id="archiveProject" href="#">Remove from Archive</a>
+                                    {% else %}
+                                        <a class="dropdown-item" id="archiveProject" href="#">Archive</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if 26|instancePermissions %}<a class="dropdown-item" id="deleteProject" href="#">Delete</a>{% endif %}
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <div class="col-12 col-md-12 col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Timeline</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- The time line -->
+                            <div class="timeline">
+                                {% set currentDate = '' %}
+                                {% for event in project.auditLog %}
+                                    {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
+                                        <div class="time-label">
+                                            <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
+                                        </div>
+                                        {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
+                                    {% endif %}
+                                    <div>
+                                        {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                            <i class="far fa-comment bg-blue"></i>
+                                        {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                            <i class="fas fa-ban bg-red"></i>
+                                        {% else %}
+                                            <i class="fas fa-info bg-gray-light"></i>
+                                        {% endif %}
+                                        <div class="timeline-item">
+                                            <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
+                                            <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a>
+                                                {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                    added a quick comment
+                                                {% elseif event.auditLog_actionType == "INSERT" %}
+                                                    created the project
+                                                {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                                    archived the project
+                                                {% else %}
+                                                    edited the project
+                                                {% endif %}
+                                            </h3>
+                                            {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                            <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
+                                            {% elseif event.auditLog_actionType == "INSERT" %}
+                                                {# Blank #}
+                                            {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                                {# Blank #}
+                                            {% else %}
+                                                <div class="timeline-body" style="font-style: italic;">{{event.auditLog_actionData|nl2br }}</div>
+                                            {% endif %}
+                                            {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                {# Blank #}
+                                            {% elseif event.auditLog_actionType == "INSERT" %}
+                                                {# Blank #}
+                                            {% else %}
+                                                {#<div class="timeline-footer">
+                                                    <a class="btn btn-primary btn-sm">Read more</a>
+                                                    <a class="btn btn-danger btn-sm">Delete</a>
+                                                </div>#}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div>
+                                    <i class="fas fa-clock bg-gray"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#quickAddCommentButton").click(function () {
+                bootbox.prompt({
+                    title: "Enter comment",
+                    inputType: 'textarea',
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/newQuickComment.php", {
+                                "text": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% if 22|instancePermissions %}
+            $("#editProjectClient").click(function () {
+                bootbox.prompt({
+                    title: "Set project client",
+                    inputType: 'select',
+                    inputOptions: [
+                        {
+                            text: 'Choose one...',
+                            value: '',
+                        },
+                        {% for client in clients %}
+                        {
+                            text: '{{client.clients_name}}',
+                            value: '{{ client.clients_id }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeClient.php", {
+                                "clients_id": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 23|instancePermissions %}
+            $("#editProjectLead").click(function () {
+                bootbox.prompt({
+                    title: "Set project lead",
+                    inputType: 'select',
+                    inputOptions: [
+                        {
+                            text: 'Choose one...',
+                            value: '',
+                        },
+                        {% for user in potentialManagers %}
+                        {
+                            text: '{{user.users_name1 ~ " " ~ user.users_name2}}',
+                            value: '{{ user.users_userid }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeProjectManager.php", {
+                                "users_userid": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 24|instancePermissions %}
+            $("#editProjectDescription").click(function () {
+                bootbox.prompt({
+                    title: "Edit Project Description",
+                    inputType: 'textarea',
+                    value: `{{ project.projects_description|raw }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeDescription.php", {
+                                "projects_description": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 25|instancePermissions %}
+            $("#archiveProject").click(function () {
+                {% if project.projects_archived != 1 %}
+                bootbox.confirm({
+                    message: "Are you sure you wish to archive the project?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/archive.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+                {% else %}
+                bootbox.confirm({
+                    message: "Are you sure you wish to remove this project from the archive?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/unArchive.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+                {% endif %}
+            });
+            {% endif %}
+            {% if 26|instancePermissions %}
+            $("#deleteProject").click(function () {
+                bootbox.confirm({
+                    message: "Are you sure you wish to delete the project?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/delete.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
+                                window.location.href = "{{CONFIG.ROOTURL}}/";
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 27|instancePermissions %}
+            $('#datePickerInput').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                startDate: "{{ project.projects_dates_use_start|date("j M Y h:i:sa") }}",
+                endDate: "{{ project.projects_dates_use_end|date("j M Y h:i:sa") }}"
+            });
+            $('#datePickerInput').on('apply.daterangepicker', function(ev, picker) {
+                ajaxcall("projects/changeProjectDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_use_start":picker.startDate.format('DD MMM YYYY hh:mm A'),"projects_dates_use_end":picker.endDate.format('DD MMM YYYY hh:mm A')}, function (data) {
+                    location.reload();
+                });
+            });
+            $('#datePickerInputDeliver').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                startDate: "{{ project.projects_dates_deliver_start|date("j M Y h:i:sa") }}",
+                endDate: "{{ project.projects_dates_deliver_end|date("j M Y h:i:sa") }}"
+            });
+            $('#datePickerInputDeliver').on('apply.daterangepicker', function(ev, picker) {
+                ajaxcall("projects/changeProjectDeliverDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_deliver_start":picker.startDate.format('DD MMM YYYY hh:mm A'),"projects_dates_deliver_end":picker.endDate.format('DD MMM YYYY hh:mm A')}, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if 28|instancePermissions %}
+            $("#editProjectName").click(function () {
+                bootbox.prompt({
+                    title: "Change Project Name",
+                    inputType: 'text',
+                    value: `{{ project.projects_name|raw }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeName.php", {
+                                "projects_name": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 29|instancePermissions %}
+            $("#editProjectStatus").click(function () {
+                bootbox.prompt({
+                    title: "Set project status",
+                    inputType: 'select',
+                    value: {{ project.projects_status }},
+                    inputOptions: [
+                        {% for id,status in STATUSES %}
+                        {
+                            text: '{{status.name ~ " (" ~ status.description ~ ')'}}',
+                            value: '{{ id }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeStatus.php", {
+                                "projects_status": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 30|instancePermissions %}
+            $("#editProjectAddress").click(function () {
+                bootbox.prompt({
+                    title: "Edit Project Venue",
+                    inputType: 'textarea',
+                    value: `{{ project.projects_address|raw }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeAddress.php", {
+                                "projects_address": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+        });
+    </script>
+{% endblock %}

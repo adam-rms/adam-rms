@@ -22,6 +22,7 @@
         <!--Bootbox -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
 
+    {% block htmlIncludes %}{% endblock %}
             <!--Fastclick - increases speed of response-->
         {#<script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js" integrity="sha256-t6SrqvTQmKoGgi5LOl0AUy+lBRtIvEJ+++pLAsfAjWs=" crossorigin="anonymous"></script>#}
 
@@ -29,7 +30,6 @@
         <script src="{{ CONFIG.ROOTURL }}/assets/js/adminlte.js"></script>
 
 
-    {% block htmlIncludes %}{% endblock %}
     <script>
         function pad(n, width, z) {
             z = z || '0';
@@ -103,6 +103,7 @@
             });
         }
     </script>
+
 </head>
 {% if BODY %}
 <body class="hold-transition sidebar-mini layout-footer-fixed">
@@ -303,6 +304,51 @@
                         </p>
                     </a>
                 </li>
+                {% if 20|instancePermissions %}
+                    <li class="nav-header">PROJECTS</li>
+                    {% set archive = false %}
+                    {% for project in projects %}
+                        {% if project.projects_archived != 1 %}
+                        <li class="nav-item">
+                            <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
+                                <i class="nav-icon far fa-circle nav-icon"></i>
+                                <p>{{ project.projects_name }}</p>
+                            </a>
+                        </li>
+                        {% else %}
+                            {% set archive = true %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if archive %}
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                Archive
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {% if project.projects_archived == 1 %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
+                                        <i class="nav-icon far fa-circle nav-icon"></i>
+                                        <p>{{ project.projects_name }}</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 21|instancePermissions %}
+                        <li class="nav-item">
+                            <a href="#" id="newProjectButton" class="nav-link">
+                                <i class="nav-icon fas fa-plus"></i>
+                                <p>New Project</p>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
                 {% if 2|instancePermissions or 11|instancePermissions %}
                     <li class="nav-header">SECURITY</li>
                 {% endif %}
@@ -473,6 +519,18 @@
         $('[data-toggle="popover"]').popover({
             html: true,
         });
+        {% if 21|instancePermissions %}
+        $("#newProjectButton").click(function () {
+            bootbox.prompt("Enter Project Name", function (result) {
+                if (result) {
+                    ajaxcall("projects/new.php", {"projects_name": result}, function (data) {
+                        window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+                    });
+                }
+            });
+        });
+        {% endif %}
+
     });
     console.log("Welcome to {{ CONFIG.PROJECT_NAME }} version {{ CONFIG.VERSION.TAG }}  build {{ CONFIG.VERSION.COMMITFULL }}");
 </script>
