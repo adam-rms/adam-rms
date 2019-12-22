@@ -63,8 +63,18 @@ $TWIG->addFilter(new Twig_SimpleFilter('s3URL', function ($fileid, $size = false
     return $bCMS->s3URL($fileid, $size);
 }));
 $TWIG->addFilter(new Twig_SimpleFilter('aTag', function ($id) {
+    if ($id == null) return null;
     if ($id <= 9999) return "A-" . sprintf('%04d', $id);
-    else return $id;
+    else return "A-" . $id;
 }));
+
+function generateNewTag() {
+    global $DBLIB;
+    //Get highest current tag
+    $DBLIB->orderBy("assets_tag", "DESC");
+    $tag = $DBLIB->getone("assets", ["assets_tag"]);
+    if ($tag) return intval($tag["assets_tag"])+1;
+    else return 1;
+}
 
 $GLOBALS['AUTH'] = new bID;

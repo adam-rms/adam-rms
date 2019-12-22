@@ -2,7 +2,10 @@
 {% block htmlIncludes %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js" integrity="sha256-FcVIknBiVRk5KLQeIBb9VQdtFRMqwffXyZ+D8q0gQro=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" integrity="sha256-xJOZHfpxLR/uhh1BwYFS5fhmOAdIRQaiOul5F/b7v3s=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" integrity="sha256-nbyata2PJRjImhByQzik2ot6gSHSU4Cqdz5bNYL2zcU=" crossorigin="anonymous" />
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/assets/css/select2-bootstrap4.min.css" />
+
+    <script src="{{ CONFIG.ROOTURL }}/assets/js/sweetalert2.min.js"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/assets/css/sweetAlert2-bootstrap-4.min.css" />
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -15,7 +18,7 @@
                 <form id="addNewForm">
                 <div class="form-group">
                     <label>Manufacturer</label>
-                    <select class="form-control" id="manufacturer">
+                    <select class="form-control  select2bs4" id="manufacturer">
                         {% for manufacturer in manufacturers %}
                             <option {%  if manufacturer.manufacturers_id == 1 %} selected {% endif %} value="{{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</option>
                         {% endfor %}
@@ -26,12 +29,13 @@
                 </div>
                 <div class="form-group">
                     <label>Asset Type</label>
-                    <select class="form-control" id="assetType" placeholder=""></select>
+                    <select class="form-control  select2bs4" id="assetType" placeholder=""></select>
                     <div style="text-align: right">
                         <p><a href="#" id="addNewType">Add new type</a></p>
                     </div>
                 </div>
                 <div id="addNewTypeGroup" style="display: none;">
+                    <label>Details</label>
                     <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text">Name</span></div>
                         <input type="text" class="form-control" name="assetTypes_name" id="addNewType-name" />
@@ -51,9 +55,19 @@
                             <div class="input-group-text">kg</div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="form-control  select2bs4" id="category" name="assetCategories_id">
+                            {% for category in categories %}
+                                <option value="{{ category.assetCategories_id }}">{{ category.assetCategories_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
                     <div class="callout callout-info">
                         <p>Definable fields are specific attributes for assets of this type - for a lighting fixture this might be the lens fitted</p>
                     </div>
+
                 </div>
                     <div class="input-group" id="assetNotes" style="display:none;">
                     <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
@@ -116,17 +130,22 @@
         }
     </style>
     <script>
+        counter = 1;
         $(document).ready(function () {
             $(".overlay").hide();
             $(".definableFieldsGroup").hide();
             $("#manufacturer").select2({
-                theme: "bootstrap",
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            $("#category").select2({
+                theme: "bootstrap4",
                 width: '100%'
             });
             $("#assetType").select2({
                 tags: false,
                 multiple: false,
-                theme: "bootstrap",
+                theme: "bootstrap4",
                 minimumInputLength: 1,
                 width: '100%',
                 minimumResultsForSearch: 1,
@@ -162,6 +181,8 @@
                 $(".definableFieldsGroup").hide();
                 $("#addNewTypeGroup").hide();
                 $("#assetNotes").show();
+                $("#saveButton").text("Save");
+                counter = 1;
                 ajaxcall("assets/getAssetTypeData.php", {"term": this.value}, function (data) {
                     $(data.response.assetCategories_fields).each(function (count, value) {
                         count = count+1;
@@ -187,17 +208,33 @@
                     $(".definableFieldsInput").val("");
                 })
             });
+
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
             $('#saveButton').on('click', function() {
                 var formData = $("#addNewForm").serializeArray();
                 formData.push({"name": "manufacturers_id", "value":$('#manufacturer').val()}, {"name": "assetTypes_id", "value": $('#assetType').val()});
-                ajaxcall("assets/newAssetFromType.php", {formData}, function (data) {
-                    console.log(data);
-                });
                 if ($('#assetType').val() != null) {
-
                     //Existing asset type
+                    ajaxcall("assets/newAssetFromType.php", {formData}, function (data) {
+                        $("#saveButton").text("Add Another");
+                        Toast.fire({
+                            type: 'success',
+                            title: (counter + 'x Asset ' + aTag(data.response['assets_tag']) + ' added') //TODO Format this correctly
+                        });
+                        counter +=1;
+                    }, false);
                 } else {
                     //New asset type
+                    //ajaxcall("assets/newAssetFromType.php", {formData}, function (data) {
+                    //    console.log(data);
+                    //}, false);
                 }
             });
         });

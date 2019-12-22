@@ -9,5 +9,8 @@ $DBLIB->where("(manufacturers.instances_id IS NULL OR manufacturers.instances_id
 $DBLIB->orderBy("manufacturers_name", "ASC");
 $PAGEDATA['manufacturers'] = $DBLIB->get('manufacturers', null, ["manufacturers.manufacturers_id", "manufacturers.manufacturers_name"]);
 
+$DBLIB->orderBy("assetCategories_rank", "ASC");
+$PAGEDATA['categories'] = $DBLIB->get('assetCategories');
+
 echo $TWIG->render('newAsset.twig', $PAGEDATA);
 ?>

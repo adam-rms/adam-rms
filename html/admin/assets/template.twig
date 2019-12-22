@@ -31,6 +31,16 @@
 
     {% block htmlIncludes %}{% endblock %}
     <script>
+        function pad(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+        function aTag(number) {
+            if (number == null) return number;
+            if (number <= 9999) return "A-" + pad(number, 4);
+            else return "A-" + number;
+        }
         function ajaxcall(path, data, callback, reloadIfError) {
             if (data !== null) var senddata = data;
             else var senddata = {};
