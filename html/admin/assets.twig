@@ -9,13 +9,21 @@
                     <h3 class="card-title">
                         {% if search|length > 0 %}
                             Search results for assets matching <b>{{ search }}</b>
+                        {% elseif thisCategory %}
+                            <i class="fas {{thisCategory.assetCategories_fontAwesome}} nav-icon"></i>
+                            {{ thisCategory.assetCategories_name}} Assets
+                        {% elseif thisManufacturer %}
+                            Assets by {{ thisManufacturer.manufacturers_name}}
+                            {% if thisManufacturer.manufacturers_website != "" %}
+                                <a style="margin-left: 10px;" class="btn btn-sm btn-default" target="_blank" href="{{ thisManufacturer.manufacturers_website }}">{{ thisManufacturer.manufacturers_website }}</a>
+                            {% endif %}
                         {% else %}
-                            Assets
+                            All Assets
                         {% endif %}
                     </h3>
                     <div class="card-tools pull-right">
                         <form class="input-group input-group-sm" style="width: 150px;" method="GET">
-                            <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                            <input type="text" name="q" class="form-control" placeholder="Search all assets" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                             </div>

@@ -30,9 +30,11 @@
                 <div class="form-group">
                     <label>Asset Type</label>
                     <select class="form-control  select2bs4" id="assetType" placeholder=""></select>
+                    {% if 18|instancePermissions %}
                     <div style="text-align: right">
                         <p><a href="#" id="addNewType">Add new type</a></p>
                     </div>
+                    {% endif %}
                 </div>
                 <div id="addNewTypeGroup" style="display: none;">
                     <label>Details</label>
@@ -146,7 +148,7 @@
                 tags: false,
                 multiple: false,
                 theme: "bootstrap4",
-                minimumInputLength: 1,
+                minimumInputLength: 0,
                 width: '100%',
                 minimumResultsForSearch: 1,
                 placeholder: "Select a manufacturer then search for asset types",
@@ -184,11 +186,13 @@
                 $("#saveButton").text("Save");
                 counter = 1;
                 ajaxcall("assets/getAssetTypeData.php", {"term": this.value}, function (data) {
+                    $(".definableFieldsInput").val("");
                     $(data.response.assetCategories_fields).each(function (count, value) {
                         count = count+1;
-                        $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
-                        $(".definableFieldsLabel[data-fieldcount='" + count + "']").text(value);
-                        $(".definableFieldsInput").val("");
+                        if (value != "") {
+                            $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
+                            $(".definableFieldsLabel[data-fieldcount='" + count + "']").text(value);
+                        }
                     })
                 });
             });
@@ -201,11 +205,11 @@
                 $('#assetType').trigger('change');
                 $('#addNewTypeGroup').show();
                 $("#assetNotes").hide();
+                $(".definableFieldsInput").val("");
                 $([0,1,2,3,4,5,6,7,8,9]).each(function (count, value) {
                     count = count+1;
                     $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
                     $(".definableFieldsLabel[data-fieldcount='" + count + "']").text("Definable field " + count);
-                    $(".definableFieldsInput").val("");
                 })
             });
 
@@ -226,15 +230,21 @@
                         $("#saveButton").text("Add Another");
                         Toast.fire({
                             type: 'success',
-                            title: (counter + 'x Asset ' + aTag(data.response['assets_tag']) + ' added') //TODO Format this correctly
+                            title: (counter + 'x Asset ' + aTag(data.response['assets_tag']) + ' added')
                         });
                         counter +=1;
                     }, false);
                 } else {
                     //New asset type
-                    //ajaxcall("assets/newAssetFromType.php", {formData}, function (data) {
-                    //    console.log(data);
-                    //}, false);
+                    ajaxcall("assets/newAssetType.php", {formData}, function (data) {
+                        $("#assetType").select2("trigger", "select", {
+                            data: { id: data.response['assetTypes_id'], text:$("#addNewType-name").val() }
+                        });
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Asset Type Created'
+                        });
+                    }, false);
                 }
             });
         });

@@ -36,5 +36,17 @@ foreach ($assets as $asset) {
 }
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 
+if (isset($_GET['category'])) {
+	$DBLIB->where("assetCategories_id", $_GET['category']);
+	$PAGEDATA['thisCategory'] = $DBLIB->getone("assetCategories");
+	$PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['thisCategory']['assetCategories_name'] . " Assets";
+} else $PAGEDATA['thisCategory'] = false;
+
+if (isset($_GET['manufacturer'])) {
+	$DBLIB->where("manufacturers_id", $_GET['manufacturer']);
+	$PAGEDATA['thisManufacturer'] = $DBLIB->getone("manufacturers");
+	$PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['thisManufacturer']['manufacturers_name'] . " Assets";
+} else $PAGEDATA['thisManufacturer'] = false;
+
 echo $TWIG->render('assets.twig', $PAGEDATA);
 ?>
