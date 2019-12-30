@@ -311,7 +311,12 @@
                         {% if project.projects_archived != 1 %}
                         <li class="nav-item">
                             <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
-                                <i class="nav-icon far fa-circle nav-icon"></i>
+                                <i class="nav-icon
+{% if project.projects_manager == USERDATA.users_userid %}
+far fa-dot-circle
+{% else %}
+far fa-circle
+{% endif %}"></i>
                                 <p>{{ project.projects_name }}</p>
                             </a>
                         </li>
