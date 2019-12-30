@@ -18,16 +18,12 @@ class bID
             if ($tokencheckresult != null) {
                 if (strtotime($tokencheckresult["authTokens_created"]) + 3 * 24 * (3600 * 1000) < time() or $tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
                     $this->login = false;
-                    echo("TIMESTAMP ERROR");
                 } //Check token hasn't expired and check if the IP matches that preset in table
                 else {
                     //Get user data
                     $DBLIB->where("users_userid", $tokencheckresult["users_userid"]);
                     $this->data = $DBLIB->getOne("users");
-                    if ($this->data == null) {
-                        $this->login = false;
-                        echo("USER ERROR");
-                    }
+                    if ($this->data == null) $this->login = false;
                     else {
                         $this->token = $tokencheckresult;
 
@@ -81,7 +77,9 @@ class bID
                     }
                 }
             } else $this->login = false;
-        } else $this->login = false;
+        } else {
+            $this->login = false;
+        }
     }
     public function permissionCheck($permissionId) {
         if (!$this->login) return false; //Not logged in
