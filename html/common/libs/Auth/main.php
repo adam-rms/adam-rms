@@ -12,14 +12,13 @@ class bID
         global $DBLIB;
         if (isset($_SESSION['token'])) {
             //Time to check whether it is valid
-            var_dump($_SESSION);
             $DBLIB->where('authTokens_token', $GLOBALS['bCMS']->sanitizeString($_SESSION['token']));
             $DBLIB->where("authTokens_valid", '1');
             $tokencheckresult = $DBLIB->getOne("authTokens");
             if ($tokencheckresult != null) {
                 if (strtotime($tokencheckresult["authTokens_created"]) + 3 * 24 * (3600 * 1000) < time() or $tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
                     $this->login = false;
-                    die("TIMESTAMP ERROR");
+                    echo("TIMESTAMP ERROR");
                 } //Check token hasn't expired and check if the IP matches that preset in table
                 else {
                     //Get user data
@@ -27,7 +26,7 @@ class bID
                     $this->data = $DBLIB->getOne("users");
                     if ($this->data == null) {
                         $this->login = false;
-                        die("USER ERROR");
+                        echo("USER ERROR");
                     }
                     else {
                         $this->token = $tokencheckresult;
@@ -82,10 +81,7 @@ class bID
                     }
                 }
             } else $this->login = false;
-        } else {
-            die("NO SESSION");
-            $this->login = false;
-        }
+        } else $this->login = false;
     }
     public function permissionCheck($permissionId) {
         if (!$this->login) return false; //Not logged in
