@@ -4,11 +4,12 @@
  *
  * Any settings must go in the environment variables
  */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-include_once (__DIR__ . '/../../keys.php');
+if (getenv('bCMS__ERRORS') == "true") {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+if(file_exists(__DIR__ . '/../../keys.php')) include_once (__DIR__ . '/../../keys.php');
 require_once(__DIR__ . '/../../composer/vendor/autoload.php'); //Composer
 require_once(__DIR__ . '/libs/Auth/main.php');
 require_once(__DIR__ . '/libs/Email/main.php');
