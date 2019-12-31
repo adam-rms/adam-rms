@@ -27,7 +27,15 @@ $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->orderBy("projects.projects_dates_deliver_start", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
 $DBLIB->orderBy("projects.projects_created", "ASC");
-$PAGEDATA['projects'] = $DBLIB->get("projects", null, ["projects_id", "projects_archived", "projects_name", "clients_name", "projects_dates_use_start", "projects_dates_use_end", "projects_status"]);
+$PAGEDATA['projects'] = $DBLIB->get("projects", null, ["projects_id", "projects_archived", "projects_name", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end", "projects_status", "projects_manager"]);
+if ($AUTH->data['users_selectedProjectID'] != null) {
+    foreach ($PAGEDATA['projects'] as $project) {
+        if ($project['projects_id'] == $AUTH->data['users_selectedProjectID'] ) {
+            $PAGEDATA['thisProject'] = $project;
+            break;
+        }
+    }
+} else $PAGEDATA['thisProject'] = false;
 
 $PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
@@ -40,6 +48,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 0,
+        "assetsAvailable" => false,
     ],
     1 => [
         "name" => "Targeted",
@@ -47,6 +56,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 1,
+        "assetsAvailable" => false,
     ],
     2 => [
         "name" => "Quote Sent",
@@ -54,6 +64,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#ffdd99",
         "order" => 2,
+        "assetsAvailable" => false,
     ],
     3 => [
         "name" => "Confirmed",
@@ -61,6 +72,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#ffffff",
         "backgroundColour" => "#66ff66",
         "order" => 3,
+        "assetsAvailable" => false,
     ],
     4 => [
         "name" => "Prep",
@@ -68,6 +80,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#ffdd99",
         "order" => 4,
+        "assetsAvailable" => false,
     ],
     5 => [
         "name" => "Dispatched",
@@ -75,6 +88,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#ffffff",
         "backgroundColour" => "#66ff66",
         "order" => 5,
+        "assetsAvailable" => false,
     ],
     6 => [
         "name" => "Returned",
@@ -82,6 +96,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#ffdd99",
         "order" => 6,
+        "assetsAvailable" => false,
     ],
     7 => [
         "name" => "Closed",
@@ -89,6 +104,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 7,
+        "assetsAvailable" => false,
     ],
     8 => [
         "name" => "Cancelled",
@@ -96,6 +112,7 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 8,
+        "assetsAvailable" => true,
     ],
     9 => [
         "name" => "Lead Lost",
@@ -103,13 +120,18 @@ $GLOBALS['STATUSES'] = [
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 9,
+        "assetsAvailable" => true,
     ]
 ];
+$GLOBALS['STATUSES-AVAILABLE'] = [];
+foreach ($GLOBALS['STATUSES'] as $key => $status) {
+    if ($status['assetsAvailable']) array_push($GLOBALS['STATUSES-AVAILABLE'], $key);
+}
 usort($GLOBALS['STATUSES'], function($a, $b) {
     return $a['order'] - $b['order'];
 });
 $PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
-
+$PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
 
 $USERDATA = $PAGEDATA['USERDATA'];
 ?>

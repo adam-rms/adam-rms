@@ -5,7 +5,7 @@ $PAGEDATA['pageConfig'] = ["TITLE" => "Home", "BREADCRUMB" => false];
 
 if (isset($_GET['i'])) {
     $GLOBALS['AUTH']->setInstance($_GET['i']);
-    header("Location: " . $CONFIG['ROOTBACKENDURL'] . "?");
+    header("Location: " . $CONFIG['ROOTURL'] . "?");
 }
 
 echo $TWIG->render('index.twig', $PAGEDATA);

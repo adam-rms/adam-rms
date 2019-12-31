@@ -23,7 +23,16 @@ $assets = $DBLIB->get("assets", null);
 if (!$assets) die("404 Assets Not Found");
 $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
-
+    if ($AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {
+        //Check availability
+        $DBLIB->where("assets_id", $asset['assets_id']);
+        $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
+        $DBLIB->where("(projects.projects_id = '" . $PAGEDATA['thisProject']['projects_id'] . "' OR projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
+        $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+        $DBLIB->where("projects.projects_deleted", 0);
+        $DBLIB->where("((projects_dates_deliver_start >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"]  . "' AND projects_dates_deliver_start <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"] . "'))");
+        $asset['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name"]);
+    }
     $PAGEDATA['assets'][] = $asset;
 }
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['asset']['assetTypes_name'], "BREADCRUMB" => false];

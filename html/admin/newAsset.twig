@@ -57,6 +57,38 @@
                             <div class="input-group-text">kg</div>
                         </div>
                     </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Value - £
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_value" class="form-control" id="addNewType-value" />
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Day Rate - £
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_dayRate" class="form-control" id="addNewType-dayRate" />
+                        <div class="input-group-append">
+                            <div class="input-group-text" id="addNewType-dayRate-guide">Guide 2% of value</div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Weekly Rate - £
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_weekRate" class="form-control" id="addNewType-weekRate" />
+                        <div class="input-group-append">
+                            <div class="input-group-text" id="addNewType-weekRate-guide">Guide 6% of value</div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Category</label>
                         <select class="form-control  select2bs4" id="category" name="assetCategories_id">
@@ -246,6 +278,11 @@
                         });
                     }, false);
                 }
+            });
+
+            $("#addNewType-value").change(function() {
+                $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
+                $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
             });
         });
     </script>

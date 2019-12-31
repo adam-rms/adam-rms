@@ -94,12 +94,17 @@ class bID
         else return false;
     }
     public function setInstance($instanceId) {
+        global $DBLIB;
         if (!$this->login) return false; //Not logged in
         foreach ($this->data['instances'] as $instance) {
             //Check they have this instance available
             if ($instance['instances_id'] == $instanceId) {
                 $this->data['instance'] = $instance;
-                $_SESSION['instance'] = $this->data['instance']['instances_id'];
+                if ($this->data['instance']['instances_id'] != $this->data["users_selectedInstanceID"]) {
+                    //Change it in db
+                    $DBLIB->where("users_userid", $this->data['users_userid']);
+                    $DBLIB->update("users", ["users_selectedProjectID" => null, "users_selectedInstanceID" => $this->data['instance']['instances_id']]);
+                }
                 return true;
             }
         }

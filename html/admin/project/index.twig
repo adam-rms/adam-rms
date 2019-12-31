@@ -55,6 +55,14 @@
                     <h3 class="card-title">Project Detail</h3>
 
                     <div class="card-tools">
+                        {% if 32|instancePermissions %}
+                            <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject">
+                                <i class="fas fa-dolly"></i></button>
+                        {% endif %}
+                        {% if 31|instancePermissions %}
+                        <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" type="button" class="btn btn-tool">
+                            <i class="fas fa-shopping-basket"></i></a>
+                        {% endif %}
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i></button>
                     </div>
@@ -115,9 +123,11 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="btn-group">
+                    <div class="btn-group float-right">
                         <button type="button" class="btn btn-default" id="quickAddCommentButton">Add Comment</button>
+                        {% if 29|instancePermissions %}
                         <button type="button" class="btn btn-info" id="editProjectStatus">Change Status</button>
+                        {% endif %}
                         <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
@@ -144,12 +154,12 @@
             <!-- /.card -->
         </div>
         <div class="col-12 col-md-12 col-lg-8">
-            <div class="card">
+            <div class="card collapsed-card">
                 <div class="card-header">
                     <h3 class="card-title">Timeline</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i></button>
+                            <i class="fas fa-plus"></i></button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -217,6 +227,124 @@
                     </div>
                 </div>
             </div>
+            {% if assetsAssigned %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ assetsAssigned|length }} Asset{{ assetsAssigned|length != 1 ? 's' }} - {{ mass|round(2, 'ceil') }}kg</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th style="width:5px"><input type="checkbox" id="assetAssignmentCheckboxAll" /></th>
+                            <th style="width: 90px">#</th>
+                            <th>Comment</th>
+                            <th>Spec</th>
+                            <th style="width: 60px;">Mass</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set currentCategory = '' %}
+                        {% set currentType = '' %}
+                        {% for assetAssignment in assetsAssigned %}
+                            {% if assetAssignment.assetCategories_name != currentCategory %}
+                                {% set currentCategory = assetAssignment.assetCategories_name %}
+                                <tr style="background-color: #F5F5F5;">
+                                    <td colspan="999">
+                                        <i class="fas {{ assetAssignment.assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ assetAssignment.assetCategories_name }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if assetAssignment.assetTypes_id != currentType %}
+                                {% set currentType = assetAssignment.assetTypes_id %}
+                                <tr>
+                                    <td></td>
+                                    <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
+                                        {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
+                                    </td>
+                                    {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
+                                    <td style="padding:0px;">
+                                        <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                            {% if field != "" %}
+                                                <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tr></table>
+                                    </td>
+                                    <td colspan="999"></td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
+                            </td>
+                            <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a></td>
+                            <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>{{ assetAssignment.assetsAssignment_comment }}</td>
+                            {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
+                            <td style="padding:0px;">
+                                <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                            {% if field != "" %}
+                                               <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr></table>
+                            </td>
+                            {% endif %}
+                            <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "?" }}</td>
+                            <td>&pound;{{ assetAssignment.price }}</td>
+                            <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer p-0" style="background-color: #FFFFFF;">
+                    <table class="table table-striped">
+                        <tr>
+                            <td style="width:100%;"></td>
+                            <td>
+                                <b>SubTotal</b>
+                            </td>
+                            <td>
+                                &pound;{{ prices.subTotal|round(2) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <b>Discounts</b>
+                            </td>
+                            <td>
+                                -&pound;{{ prices.discounts|round(2) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <b>Total</b>
+                            </td>
+                            <td>
+                                &pound;{{ prices.total|round(2) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="99">
+                                {{ priceMaths.string|nl2br }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
     <script>
@@ -411,10 +539,51 @@
                 startDate: "{{ project.projects_dates_deliver_start|date("j M Y h:i:sa") }}",
                 endDate: "{{ project.projects_dates_deliver_end|date("j M Y h:i:sa") }}"
             });
-            $('#datePickerInputDeliver').on('apply.daterangepicker', function(ev, picker) {
-                ajaxcall("projects/changeProjectDeliverDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_deliver_start":picker.startDate.format('DD MMM YYYY hh:mm A'),"projects_dates_deliver_end":picker.endDate.format('DD MMM YYYY hh:mm A')}, function (data) {
-                    location.reload();
+            function changeProjectDeliverDates(start, end) {
+                ajaxcall("projects/changeProjectDeliverDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_deliver_start":start,"projects_dates_deliver_end":end}, function (data) {
+                    if (data.response.changed) {
+                        location.reload();
+                    } else {
+                        var message = "The dates of this project can't be changed because assets assigned to it have been assigned to other projects that clash. <br/><br/> Would you like to automatically remove the following assets from this project? This will have billing implications<br/><br/><br/><table class='table table-bordered'><tr><th>Tag</th><th>Name</th><th>Project Clashing</th></tr>";
+                        $.each(data.response.assets, function( index, value ) {
+                            message += "<tr><td>A-" + value['assets_tag'] + "</td><td>" + value['assetTypes_name'] + "</td><td>" + value['projects_name'] + "</td></tr>";
+                        });
+                        bootbox.confirm({
+                            message: message + "</table>",
+                            buttons: {
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-success'
+                                },
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                if (result) {
+                                    {% if 31|instancePermissions %}
+                                    var toRemove = [];
+                                    console.log(data.response.assets);
+                                    $.each(data.response.assets, function( index, value ) {
+                                        toRemove.push(value['old_assetsAssignments_id']);
+                                    });
+                                    ajaxcall("projects/assets/unassignBulk.php", {
+                                        "assetsAssignments": toRemove
+                                    }, function (data) {
+                                        changeProjectDeliverDates(start, end);
+                                    });
+                                    {% else %}
+                                    bootbox.alert("Sorry - you don't have permission to remove these assets");
+                                    {% endif %}
+                                }
+                            }
+                        });
+                    }
                 });
+            }
+            $('#datePickerInputDeliver').on('apply.daterangepicker', function(ev, picker) {
+                changeProjectDeliverDates(picker.startDate.format('DD MMM YYYY hh:mm A'),picker.endDate.format('DD MMM YYYY hh:mm A'));
             });
             {% endif %}
             {% if 28|instancePermissions %}
@@ -437,6 +606,52 @@
             });
             {% endif %}
             {% if 29|instancePermissions %}
+            function changeStatus(newStatus) {
+                ajaxcall("projects/changeStatus.php", {
+                    "projects_status": newStatus,
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    if (data.response.changed) {
+                        location.reload();
+                    } else {
+                        var message = "The status of this project can't be changed because assets assigned to it have been assigned to other projects that clash. <br/><br/> Would you like to automatically remove the following assets from this project? This will have billing implications<br/><br/><br/><table class='table table-bordered'><tr><th>Tag</th><th>Name</th><th>Project Clashing</th></tr>";
+                        $.each(data.response.assets, function( index, value ) {
+                            message += "<tr><td>A-" + value['assets_tag'] + "</td><td>" + value['assetTypes_name'] + "</td><td>" + value['projects_name'] + "</td></tr>";
+                        });
+                        bootbox.confirm({
+                            message: message + "</table>",
+                            buttons: {
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-success'
+                                },
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                if (result) {
+                                    {% if 31|instancePermissions %}
+                                    var toRemove = [];
+                                    console.log(data.response.assets);
+                                    $.each(data.response.assets, function( index, value ) {
+                                        toRemove.push(value['old_assetsAssignments_id']);
+                                    });
+                                    ajaxcall("projects/assets/unassignBulk.php", {
+                                        "assetsAssignments": toRemove
+                                        }, function (data) {
+                                            changeStatus(newStatus);
+                                        });
+                                    {% else %}
+                                    bootbox.alert("Sorry - you don't have permission to remove these assets");
+                                    {% endif %}
+                                }
+                            }
+                        });
+                    }
+                });
+            }
             $("#editProjectStatus").click(function () {
                 bootbox.prompt({
                     title: "Set project status",
@@ -452,12 +667,29 @@
                     ],
                     callback: function (result) {
                         if (result) {
-                            ajaxcall("projects/changeStatus.php", {
-                                "projects_status": result,
-                                "projects_id": "{{ project.projects_id }}"
-                            }, function (data) {
-                                location.reload();
-                            });
+                            var newStatus = result;
+                            if ([{{ STATUSESAVAILABLE|join(",") }}].includes(parseInt(newStatus))) {
+                                bootbox.confirm({
+                                    message: "This will allow assets assigned to this project to be assigned to other clashing projects - are you sure you wish to continue?",
+                                    buttons: {
+                                        confirm: {
+                                            label: 'Yes',
+                                            className: 'btn-danger'
+                                        },
+                                        cancel: {
+                                            label: 'No',
+                                            className: 'btn-success'
+                                        }
+                                    },
+                                    callback: function (result) {
+                                        if (result) {
+                                            changeStatus(newStatus);
+                                        }
+                                    }
+                                });
+                            } else {
+                                changeStatus(newStatus);
+                            }
                         }
                     }
                 });
@@ -475,6 +707,30 @@
                                 "projects_address": result,
                                 "projects_id": "{{ project.projects_id }}"
                             }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 32|instancePermissions %}
+            $("#addAllAssetsToProject").click(function () {
+                bootbox.confirm({
+                    message: "Are you sure you wish to add all assets in the business that are available to the project?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/assign.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
                                 location.reload();
                             });
                         }

@@ -1,5 +1,9 @@
 {% extends "assets/template.twig" %}
+{% block htmlIncludes %}
 
+    <script src="{{ CONFIG.ROOTURL }}/assets/js/sweetalert2.min.js"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/assets/css/sweetAlert2-bootstrap-4.min.css" />
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-3">
@@ -30,13 +34,22 @@
                             {% endfor %}
                         {% endif %}
                         <li class="list-group-item">
-                            <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" or asset.assetTypes_mass == 0 ? asset.assetTypes_mass ~ "kg" : "?" }}</a>
+                            <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass ~ "kg" : "?" }}</a>
                         </li>
                         <li class="list-group-item">
                             <b>Category</b> <a class="float-right" href="assets.php?category={{  asset.assetCategories_id }}">{{ asset.assetCategories_name }}</a>
                         </li>
                         <li class="list-group-item">
                             <b>Manufacturer</b> <a class="float-right" href="assets.php?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Value</b> <a class="float-right">&pound;{{ asset.assetTypes_value }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Day Rate</b> <a class="float-right">&pound;{{ asset.assetTypes_dayRate }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Week Rate</b> <a class="float-right">&pound;{{ asset.assetTypes_weekRate }}</a>
                         </li>
                     </ul>
                     {% if asset.oneasset %}
@@ -88,11 +101,18 @@
                                         <td><span class="badge bg-red"></span></td>
                                         <td>
                                             <div class="btn-group">
-                                            {% if 19|instancePermissions %}
-                                                <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
-                                            {% endif %}
-                                            <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
-                                            </div>
+                                                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+                                                    <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                    {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
+                                                        <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                    {% endif %}
+                                                    <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                {% endif %}
+                                                {% if 19|instancePermissions %}
+                                                    <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
+                                                {% endif %}
+                                                <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
+                                                </div>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -256,7 +276,16 @@
     {% if 19|instancePermissions %}
         <script>
             $(document).ready(function () {
+
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
                 $(".deleteAssetButton").click(function () {
+                    var assetid = $(this).data("assetid");
                     bootbox.confirm({
                         message: "Are you sure you wish to delete this asset?",
                         buttons: {
@@ -271,14 +300,56 @@
                         },
                         callback: function (result) {
                             if (result) {
-                                ajaxcall("assets/delete.php", {"assets_id":$(this).data("assetid")}, function (data) {
+                                ajaxcall("assets/delete.php", {"assets_id":assetid}, function (data) {
                                     window.location.href = "{{CONFIG.ROOTURL}}/assets.php";
                                 });
                             }
                         }
                     });
-
                 });
+                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+                $(".addToBasketAssetButton").click(function () {
+                    var assetId=$(this).data("assetid");
+                    ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid")}, function (data) {
+                        $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Added to {{ thisProject.projects_name }}'
+                        });
+                    });
+                });
+                {% endif %}
+                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+                $(".removeFromBasketAssetButton").click(function () {
+                    var assetId = $(this).data("assetid");
+                    bootbox.confirm({
+                        message: "Are you sure you wish to remove this asset from the project?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
+                                $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                                ajaxcall("projects/assets/unassign.php", {"assets_id":assetId}, function (data) {
+                                    Toast.fire({
+                                        type: 'success',
+                                        title: 'Removed from {{ thisProject.projects_name }}'
+                                    });
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
             });
         </script>
     {% endif %}
