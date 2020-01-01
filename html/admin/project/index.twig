@@ -109,6 +109,9 @@
                                             </div>
                                             <input type="text" class="form-control float-right" id="datePickerInputDeliver">
                                         </div>
+                                        <div style="width: 100%;text-align: right;">
+                                            <a href="#" id="copyProjectDatesToDeliverDates">Copy from Project Dates</a>
+                                        </div>
                                     {% else %}
                                         <b class="d-block">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa")}} - {{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
                                         {% endif %}
@@ -149,9 +152,128 @@
                         </button>
                     </div>
                 </div>
-                <!-- /.card-body -->
             </div>
-            <!-- /.card -->
+
+            {% if 33|instancePermissions %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Project Finance</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2"><b>Hires</b></td>
+                                </tr>
+                                {% if FINANCIALS.prices.discounts > 0 %}
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Hires SubTotal
+                                    </td>
+                                    <td>
+                                        &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Discounts
+                                    </td>
+                                    <td>
+                                        &#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Hires Total
+                                    </td>
+                                    <td>
+                                        &pound;{{ FINANCIALS.prices.total|number_format(2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><b>Sales</b></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Sales
+                                    </td>
+                                    <td>
+                                        &pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Staffing
+                                    </td>
+                                    <td>
+                                        &pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
+                                    </td>
+                                </tr>
+                                {% if FINANCIALS.payments.subHire.total > 0 %}
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Sub Hires
+                                    </td>
+                                    <td>
+                                        &pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                <tr>
+                                    <td colspan="2"><b>Totals</b></td>
+                                </tr>
+                                {% if FINANCIALS.payments.received.total > 0 %}
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        SubTotal
+                                    </td>
+                                    <td>
+                                        &pound;{{ FINANCIALS.payments.subTotal|number_format(2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Payments Received to Date
+                                    </td>
+                                    <td>
+                                        &#8209;&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td style="width: 100%; text-align: right;">
+                                        Grand Total Outstanding
+                                    </td>
+                                    <td>
+                                        &pound;{{ FINANCIALS.payments.total|number_format(2) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if 34|instancePermissions %}
+                    <div class="card-footer">
+                        <div class="btn-group float-right">
+                             <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
+                             <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                                <span class="sr-only">Toggle Dropdown</span>
+                                <div class="dropdown-menu" role="menu">
+                                    <a class="dropdown-item newPayment" data-type="2" href="#">Add Sales Item</a>
+                                    <a class="dropdown-item newPayment" data-type="3" href="#">Add Sub Hire Cost</a>
+                                    <a class="dropdown-item newPayment" data-type="4" href="#">Add Staff Cost</a>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
         <div class="col-12 col-md-12 col-lg-8">
             <div class="card collapsed-card">
@@ -227,16 +349,38 @@
                     </div>
                 </div>
             </div>
-            {% if assetsAssigned %}
+            {% if FINANCIALS.assetsAssigned %}
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ assetsAssigned|length }} Asset{{ assetsAssigned|length != 1 ? 's' }} - {{ mass|round(2, 'ceil') }}kg</h3>
+                    <h3 class="card-title">{{ FINANCIALS.assetsAssigned|length }} Asset{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }} - {{FINANCIALS.mass|round(2, 'ceil') }}kg</h3>
                     <div class="card-tools">
+                        {% if 41|instancePermissions %}
+                            <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
+                                <i class="far fa-comment"></i></button>
+                        {% endif %}
+                        {% if 43|instancePermissions %}
+                            <button type="button" class="btn btn-tool" title="Set discount" id="setAssetAssignmentDiscount">
+                                <i class="fas fa-percent"></i></button>
+                        {% endif %}
+                        {% if 42|instancePermissions %}
+                            <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
+                                <i class="fas fa-coins"></i></button>
+                        {% endif %}
+                        {% if 31|instancePermissions %}
+                            <button type="button" class="btn btn-tool" title="Remove assets" id="setAssetAssignmentDelete">
+                                <i class="fas fa-trash"></i></button>
+                        {% endif %}
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i></button>
                     </div>
                 </div>
                 <div class="card-body p-0">
+                    {% if STATUSES[project.projects_status]["assetsAvailable"] %}
+                    <div class="alert alert-danger">
+                        <h5>Assets not locked</h5>
+                        Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
+                    </div>
+                    {% endif %}
                     <table class="table table-bordered">
                         <thead>
                         <tr>
@@ -252,7 +396,7 @@
                         <tbody>
                         {% set currentCategory = '' %}
                         {% set currentType = '' %}
-                        {% for assetAssignment in assetsAssigned %}
+                        {% for assetAssignment in FINANCIALS.assetsAssigned %}
                             {% if assetAssignment.assetCategories_name != currentCategory %}
                                 {% set currentCategory = assetAssignment.assetCategories_name %}
                                 <tr style="background-color: #F5F5F5;">
@@ -264,7 +408,7 @@
                             {% if assetAssignment.assetTypes_id != currentType %}
                                 {% set currentType = assetAssignment.assetTypes_id %}
                                 <tr>
-                                    <td></td>
+                                    <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
                                     <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
                                         {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
                                     </td>
@@ -287,7 +431,7 @@
                                 <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
                             </td>
                             <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a></td>
-                            <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>{{ assetAssignment.assetsAssignment_comment }}</td>
+                            <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>{{ assetAssignment.assetsAssignments_comment }}</td>
                             {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
                             <td style="padding:0px;">
                                 <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
@@ -300,7 +444,7 @@
                             </td>
                             {% endif %}
                             <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "?" }}</td>
-                            <td>&pound;{{ assetAssignment.price }}</td>
+                            <td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
                             <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
                         </tr>
                         {% endfor %}
@@ -315,7 +459,7 @@
                                 <b>SubTotal</b>
                             </td>
                             <td>
-                                &pound;{{ prices.subTotal|round(2) }}
+                                &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
                             </td>
                         </tr>
                         <tr>
@@ -324,7 +468,7 @@
                                 <b>Discounts</b>
                             </td>
                             <td>
-                                -&pound;{{ prices.discounts|round(2) }}
+                                &#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}
                             </td>
                         </tr>
                         <tr>
@@ -333,22 +477,243 @@
                                 <b>Total</b>
                             </td>
                             <td>
-                                &pound;{{ prices.total|round(2) }}
+                                &pound;{{ FINANCIALS.prices.total|number_format(2) }}
                             </td>
                         </tr>
                         <tr>
                             <td colspan="99">
-                                {{ priceMaths.string|nl2br }}
+                                {{ FINANCIALS.priceMaths.string|nl2br }}
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
             {% endif %}
+            {% if FINANCIALS.payments.received.ledger and 33|instancePermissions %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Payments Received</h3>
+                        <div class="card-tools">
+                            {% if 34|instancePermissions %}
+                            <button type="button" class="btn btn-tool newPayment" data-type="1" title="Add new Payment">
+                                <i class="fas fa-plus"></i></button>
+                            {% endif %}
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Date</th>
+                                <th>Method</th>
+                                <th>Comment</th>
+                                <th>Amount</th>
+                                {% if 35|instancePermissions %}<th></th>{% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in FINANCIALS.payments.received.ledger %}
+                                    <tr>
+                                        <td>{{ payment.payments_reference }}</td>
+                                        <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
+                                        <td>{{ payment.payments_method }}</td>
+                                        <td>{{ payment.payments_comment|nl2br }}</td>
+                                        <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                        {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer" style="text-align: right;">
+                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if FINANCIALS.payments.sales.ledger and 33|instancePermissions %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sales Items</h3>
+                        <div class="card-tools">
+                            {% if 34|instancePermissions %}
+                                <button type="button" class="btn btn-tool newPayment" data-type="2" title="Add new Payment">
+                                    <i class="fas fa-plus"></i></button>
+                            {% endif %}
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th style="width: 100%;">Comment</th>
+                                <th>Amount</th>
+                                {% if 35|instancePermissions %}<th></th>{% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for payment in FINANCIALS.payments.sales.ledger %}
+                                <tr>
+                                    <td>{{ payment.payments_comment|nl2br }}</td>
+                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer" style="text-align: right;">
+                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if FINANCIALS.payments.subHire.ledger and 33|instancePermissions %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sub Hire Items</h3>
+                        <div class="card-tools">
+                            {% if 34|instancePermissions %}
+                                <button type="button" class="btn btn-tool newPayment" data-type="3" title="Add new Payment">
+                                    <i class="fas fa-plus"></i></button>
+                            {% endif %}
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th style="width: 100%;">Comment</th>
+                                <th>Amount</th>
+                                {% if 35|instancePermissions %}<th></th>{% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for payment in FINANCIALS.payments.subHire.ledger %}
+                                <tr>
+                                    <td>{{ payment.payments_comment|nl2br }}</td>
+                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer" style="text-align: right;">
+                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if FINANCIALS.payments.staff.ledger and 33|instancePermissions %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Staff Costs</h3>
+                        <div class="card-tools">
+                            {% if 34|instancePermissions %}
+                                <button type="button" class="btn btn-tool newPayment" data-type="4" title="Add new Payment">
+                                    <i class="fas fa-plus"></i></button>
+                            {% endif %}
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th style="width: 100%;">Comment</th>
+                                <th>Amount</th>
+                                {% if 35|instancePermissions %}<th></th>{% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for payment in FINANCIALS.payments.staff.ledger %}
+                                <tr>
+                                    <td>{{ payment.payments_comment|nl2br }}</td>
+                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer" style="text-align: right;">
+                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
+    {% if 34|instancePermissions %}
+    <div class="modal fade" id="newPaymentModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="newPaymentModal-title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newPaymentModal-form">
+                    <input type="hidden" id="newPaymentModal-form-type" name="payments_type" value="1"/>
+                    <input type="hidden" name="projects_id" value="{{ project.projects_id }}"/>
+                    <div class="input-group newPaymentModal-paymentOnly" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Date</span>
+                        </div>
+                        <input type="text" class="form-control" name="payments_date" id="newPaymentModal-form-date">
+                    </div>
+                    <div class="input-group newPaymentModal-paymentOnly" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Reference</span>
+                        </div>
+                        <input type="text" class="form-control" name="payments_reference">
+                    </div>
+                    <div class="input-group newPaymentModal-paymentOnly" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Payment Method</span>
+                        </div>
+                        <select class="form-control" name="payments_method">
+                            <option selected></option>
+                            <option>Credit Card</option>
+                            <option>Debit Card</option>
+                            <option>Bank Transfer</option>
+                            <option>Cash</option>
+                            <option>Cheque</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend"><span class="input-group-text">Description</span></div>
+                        <textarea class="form-control" rows="3" name="payments_comment"  placeholder=""></textarea>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Amount &pound;</span>
+                        </div>
+                        <input class="form-control" type="number" step="0.01" min="0" name="payments_amount">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="newPaymentModal-button">Save changes</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% endif %}
     <script>
         $(document).ready(function () {
+            $("#assetAssignmentCheckboxAll").click(function () {
+                $(".assetAssignmentCheckbox").prop('checked', $(this).prop('checked'));
+            });
             $("#quickAddCommentButton").click(function () {
                 bootbox.prompt({
                     title: "Enter comment",
@@ -365,6 +730,82 @@
                     }
                 });
             });
+
+            {% if 41|instancePermissions %}
+            $("#setAssetAssignmentComment").click(function () {
+                var selected = [];
+                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                    selected.push($(this).data('assetassignmentid'));
+                });
+                bootbox.prompt({
+                    title: "Set Comment",
+                    message: "This will override any existing comments set in this project for the assets selected",
+                    inputType: 'text',
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/setComment.php", {
+                                "assetsAssignments": selected,
+                                "assetsAssignments_comment": result
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 42|instancePermissions %}
+            $("#setAssetAssignmentPrice").click(function () {
+                var selected = [];
+                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                    selected.push($(this).data('assetassignmentid'));
+                });
+                bootbox.prompt({
+                    title: "Set Custom Price",
+                    message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
+                    inputType: 'number',
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/setPrice.php", {
+                                "assetsAssignments": selected,
+                                "assetsAssignments_customPrice": result
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 43|instancePermissions %}
+            $("#setAssetAssignmentDiscount").click(function () {
+                var selected = [];
+                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                    selected.push($(this).data('assetassignmentid'));
+                });
+                bootbox.prompt({
+                    title: "Set Discount",
+                    message: "Example: a discount of 20% would multiply the hire cost by 0.8<br/><br/>This will override any existing discounts set in this project for the assets selected",
+                    inputType: 'number',
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/setDiscount.php", {
+                                "assetsAssignments": selected,
+                                "assetsAssignments_discount": result
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
             {% if 22|instancePermissions %}
             $("#editProjectClient").click(function () {
                 bootbox.prompt({
@@ -417,6 +858,36 @@
                             ajaxcall("projects/changeProjectManager.php", {
                                 "users_userid": result,
                                 "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 31|instancePermissions %}
+            $("#setAssetAssignmentDelete").click(function () {
+                var selected = [];
+                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                    selected.push($(this).data('assetassignmentid'));
+                });
+                bootbox.confirm({
+                    message: "Are you sure you wish to remove these assets from the project? This will have billing implications",
+                    buttons: {
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        },
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/unassignBulk.php", {
+                                "assetsAssignments": selected
                             }, function (data) {
                                 location.reload();
                             });
@@ -518,7 +989,7 @@
             {% if 27|instancePermissions %}
             $('#datePickerInput').daterangepicker({
                 timePicker: true,
-                timePickerIncrement: 30,
+                timePickerIncrement: 15,
                 locale: {
                     format: 'DD MMM YYYY hh:mm A'
                 },
@@ -532,7 +1003,7 @@
             });
             $('#datePickerInputDeliver').daterangepicker({
                 timePicker: true,
-                timePickerIncrement: 30,
+                timePickerIncrement: 15,
                 locale: {
                     format: 'DD MMM YYYY hh:mm A'
                 },
@@ -585,6 +1056,10 @@
             $('#datePickerInputDeliver').on('apply.daterangepicker', function(ev, picker) {
                 changeProjectDeliverDates(picker.startDate.format('DD MMM YYYY hh:mm A'),picker.endDate.format('DD MMM YYYY hh:mm A'));
             });
+            $("#copyProjectDatesToDeliverDates").click(function () {
+                changeProjectDeliverDates($("#datePickerInput").data('daterangepicker').startDate.format('DD MMM YYYY hh:mm A'),$("#datePickerInput").data('daterangepicker').endDate.format('DD MMM YYYY hh:mm A'));
+            });
+
             {% endif %}
             {% if 28|instancePermissions %}
             $("#editProjectName").click(function () {
@@ -738,6 +1213,71 @@
                 });
             });
             {% endif %}
+            {% if 34|instancePermissions %}
+            $('#newPaymentModal-form-date').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 1,
+                singleDatePicker: true,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                startDate: "{{ "now"|date("j M Y h:i:sa") }}",
+                maxDate:"{{ "now"|date("j M Y h:i:sa") }}",
+            });
+            $(".newPayment").click(function () {
+                var type = $(this).data("type");
+                $("#newPaymentModal-form-type").val(type);
+                $("#newPaymentModal").modal('show');
+                $(".newPaymentModal-paymentOnly").hide();
+                switch(type) {
+                    case 1:
+                        $("#newPaymentModal-title").html("Add payment received");
+                        $(".newPaymentModal-paymentOnly").show();
+                        break;
+                    case 2:
+                        $("#newPaymentModal-title").html("Add sales item");
+                        break;
+                    case 3:
+                        $("#newPaymentModal-title").html("Add subhire cost");
+                        break;
+                    case 4:
+                        $("#newPaymentModal-title").html("Add staff cost");
+                        break;
+                }
+            });
+            $("#newPaymentModal-button").click(function () {
+                var formData = $("#newPaymentModal-form").serializeArray();
+                ajaxcall("projects/newPayment.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if 35|instancePermissions %}
+            $(".deletePaymentButton").click(function () {
+                var id = $(this).data("paymentid");
+                bootbox.confirm({
+                    message: "Are you sure you wish to delete this payment?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/deletePayment.php", {"payments_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+
         });
     </script>
 {% endblock %}

@@ -8,9 +8,9 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         {% if search|length > 0 %}
-                            Search results for manufacturers matching <b>{{ search }}</b>
+                            Search results for payments matching <b>{{ search }}</b>
                         {% else %}
-                            Manufacturers
+                            Payments
                         {% endif %}
                     </h3>
                     <div class="card-tools pull-right">
@@ -18,23 +18,35 @@
                             <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                {% if 38|instancePermissions %}
-                                    <button type="button" class="btn btn-default" id="newManufacturerButton"><i class="fa fa-plus"></i></button>
-                                {% endif %}
                             </div>
 
                         </form>
                     </div>
                 </div>
                 <div class="card-body table-responsive p-0">
-                    {% if manufacturers|length > 0 %}
+                    {% if payments|length > 0 %}
                         <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
+                            <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Date</th>
+                                <th>From</th>
+                                <th>Method</th>
+                                <th>Comment</th>
+                                <th>Amount</th>
+                                <th>Project</th>
+                            </tr>
+                            </thead>
                             <tbody>
-                            {% for manufacturer in manufacturers %}
+                            {% for payment in payments %}
                                 <tr>
-                                    <td><a href="assets.php?manufacturer={{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</a></td>
-                                    <td><a href="{{ manufacturer.manufacturers_website }}" target="_blank">{{ manufacturer.manufacturers_website }}</a></td>
-                                    <td>{{  manufacturer.manufacturers_notes|nl2br }}</td>
+                                    <td>{{ payment.payments_reference }}</td>
+                                    <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
+                                    <td><a href="{{ CONFIG.ROOTURL }}/clients.php?q={{ payment.clients_name }}">{{ payment.clients_name }}</a></td>
+                                    <td>{{ payment.payments_method }}</td>
+                                    <td>{{ payment.payments_comment|nl2br }}</td>
+                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td><a href="{{ CONFIG.ROOTURL }}/project/?id={{ payment.projects_id }}">{{ payment.projects_name }}</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -74,17 +86,6 @@
         <script>
             $(document).ready(function () {
                 $("#loadingoverlay").hide();
-                {% if 38|instancePermissions %}
-                $("#newManufacturerButton").click(function () {
-                    bootbox.prompt("Enter Manufacturer Name", function (result) {
-                        if (result) {
-                            ajaxcall("manufacturer/new.php", {"manufacturers_name": result}, function (data) {
-                                location.reload();
-                            });
-                        }
-                    });
-                });
-                {% endif %}
             });
         </script>
     </div>

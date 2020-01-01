@@ -274,6 +274,28 @@
                         </p>
                     </a>
                 </li>
+                {% if 36|instancePermissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
+                        <i class="nav-icon fas fa-briefcase"></i>
+                        <p>
+                            Clients
+                            {#<span class="right badge badge-danger">New</span>#}
+                        </p>
+                    </a>
+                </li>
+                {% endif %}
+                {% if 40|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
+                            <i class="nav-icon fas fa-coins"></i>
+                            <p>
+                                Payments
+                                {#<span class="right badge badge-danger">New</span>#}
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
                 {% if 20|instancePermissions %}
                     <li class="nav-header">PROJECTS</li>
                     {% set archive = false %}
