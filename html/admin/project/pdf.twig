@@ -113,7 +113,7 @@
     </div>
 </div>
 
-{% if 33|instancePermissions %}
+{% if 33|instancePermissions and showFinance %}
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Project Finance</h3>
@@ -395,7 +395,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if FINANCIALS.payments.received.ledger and 33|instancePermissions %}
+        {% if FINANCIALS.payments.received.ledger and 33|instancePermissions and showFinance%}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Payments Received</h3>
@@ -445,7 +445,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if FINANCIALS.payments.sales.ledger and 33|instancePermissions %}
+        {% if FINANCIALS.payments.sales.ledger and 33|instancePermissions and showFinance %}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Sales Items</h3>
@@ -489,7 +489,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if FINANCIALS.payments.subHire.ledger and 33|instancePermissions %}
+        {% if FINANCIALS.payments.subHire.ledger and 33|instancePermissions and showFinance %}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Sub Hire Items</h3>
@@ -533,7 +533,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if FINANCIALS.payments.staff.ledger and 33|instancePermissions %}
+        {% if FINANCIALS.payments.staff.ledger and 33|instancePermissions and showFinance %}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Staff Costs</h3>

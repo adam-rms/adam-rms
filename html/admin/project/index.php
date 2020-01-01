@@ -43,6 +43,7 @@ if ($AUTH->instancePermissionCheck(23)) {
 $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']['projects_id']);
 
 if (isset($_GET['pdf'])) {
+    if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
     $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4']);
     $mpdf->SetHTMLHeader('
                 <table width="100%">
