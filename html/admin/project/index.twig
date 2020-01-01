@@ -55,6 +55,8 @@
                     <h3 class="card-title">Project Detail</h3>
 
                     <div class="card-tools">
+                        <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf" type="button" class="btn btn-tool">
+                            <i class="far fa-file-pdf"></i></a>
                         {% if 32|instancePermissions %}
                             <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject">
                                 <i class="fas fa-dolly"></i></button>
@@ -159,6 +161,8 @@
                     <div class="card-header">
                         <h3 class="card-title">Project Finance</h3>
                         <div class="card-tools">
+                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf&finance" type="button" class="btn btn-tool">
+                                <i class="far fa-file-pdf"></i></a>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                 <i class="fas fa-minus"></i></button>
                         </div>

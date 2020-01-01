@@ -1,4 +1,5 @@
 <?php
+if (isset($_GET['pdf'])) ini_set('max_execution_time', 300); //seconds
 require_once __DIR__ . '/../common/headSecure.php';
 
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die("Sorry - you can't access this page");
@@ -41,5 +42,29 @@ if ($AUTH->instancePermissionCheck(23)) {
 //Payments
 $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']['projects_id']);
 
-echo $TWIG->render('project/index.twig', $PAGEDATA);
+if (isset($_GET['pdf'])) {
+    $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4']);
+    $mpdf->SetHTMLHeader('
+                <table width="100%">
+                    <tr>
+                        <td width="50%"><b>' .  $PAGEDATA['USERDATA']['instance']['instances_name'] . '</b></td>
+                        <td width="50%" style="text-align: right;">' . $PAGEDATA["project"]['clients_name'] . " - " . $PAGEDATA["project"]['projects_name'] . '</td>
+                    </tr>
+                </table>
+                <div style="text-align: right; font-weight: bold;">
+                    
+                </div>
+            ');
+    $mpdf->SetHTMLFooter('
+                <table width="100%">
+                    <tr>
+                        <td width="45%">Generated {DATE j M Y h:i:sa}</td>
+                        <td width="10%" align="center">{PAGENO}/{nbpg}</td>
+                        <td width="45%" style="text-align: right;">AdamRMS | &copy;{DATE Y} Bithell Studios Ltd.</td>
+                    </tr>
+                </table>
+             ');
+    $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
+    $mpdf->Output();
+} else echo $TWIG->render('project/index.twig', $PAGEDATA);
 ?>
