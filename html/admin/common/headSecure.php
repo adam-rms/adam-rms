@@ -186,7 +186,8 @@ function projectFinancials($projectid)
     $assets = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome"]);
 
     $return['assetsAssigned'] = [];
-    $return['mass'] = 0;
+    $return['mass'] = 0.0;
+    $return['value'] = 0.0;
     $return['prices'] = ["subTotal" => 0.0, "discounts" => 0.0, "total" => 0.0];
     //Calculate the default pricing for all assets
     $return['priceMaths'] = ["string" => "Calculated based on:", "days" => 0, "weeks" => 0];
@@ -232,8 +233,10 @@ function projectFinancials($projectid)
     }
     //End calculation
     $return['assetTypesCounter'] = [];
+
     foreach ($assets as $asset) {
         $return['mass'] += $asset['assetTypes_mass'];
+        $return['value'] += $asset['assetTypes_value'];
 
         if (isset($return['assetTypesCounter'][$asset['assetTypes_id']])) $return['assetTypesCounter'][$asset['assetTypes_id']] += 1;
         else $return['assetTypesCounter'][$asset['assetTypes_id']] = 1;

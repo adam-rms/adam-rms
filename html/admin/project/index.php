@@ -9,7 +9,7 @@ $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $_GET['id']);
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
-$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "clients.clients_name", "users.users_name1", "users.users_name2", "users.users_email"]);
+$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "clients.*", "users.users_name1", "users.users_name2", "users.users_email"]);
 if (!$PAGEDATA['project']) die("404");
 
 //AuditLog
@@ -44,18 +44,13 @@ $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']['projects_id'])
 
 if (isset($_GET['pdf'])) {
     if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
-    $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4']);
-    $mpdf->SetHTMLHeader('
-                <table width="100%">
-                    <tr>
-                        <td width="50%"><b>' .  $PAGEDATA['USERDATA']['instance']['instances_name'] . '</b></td>
-                        <td width="50%" style="text-align: right;">' . $PAGEDATA["project"]['clients_name'] . " - " . $PAGEDATA["project"]['projects_name'] . '</td>
-                    </tr>
-                </table>
-                <div style="text-align: right; font-weight: bold;">
-                    
-                </div>
-            ');
+   // die($TWIG->render('project/pdf.twig', $PAGEDATA));
+    $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4', 'setAutoTopMargin' => 'pad', "margin_top" => 5]);
+    $mpdf->SetTitle($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name']);
+    $mpdf->SetAuthor($PAGEDATA['USERDATA']['instance']['instances_name']);
+    $mpdf->SetCreator("AdamRMS - the rental management system from Bithell Studios");
+    $mpdf->SetSubject($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " | " . $PAGEDATA['USERDATA']['instance']['instances_name']);
+    $mpdf->SetKeywords("quotation,AdamRMS");
     $mpdf->SetHTMLFooter('
                 <table width="100%">
                     <tr>
@@ -66,6 +61,6 @@ if (isset($_GET['pdf'])) {
                 </table>
              ');
     $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
-    $mpdf->Output();
+    $mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', 'I');
 } else echo $TWIG->render('project/index.twig', $PAGEDATA);
 ?>

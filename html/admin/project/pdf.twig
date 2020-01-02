@@ -1,579 +1,312 @@
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Project Detail</h3>
+<style>
+    body {
+        font-size: 16px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
 
-        <div class="card-tools">
-            {% if 32|instancePermissions %}
-                <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject">
-                    <i class="fas fa-dolly"></i></button>
-            {% endif %}
-            {% if 31|instancePermissions %}
-                <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" type="button"
-                   class="btn btn-tool">
-                    <i class="fas fa-shopping-basket"></i></a>
-            {% endif %}
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                    title="Collapse">
-                <i class="fas fa-minus"></i></button>
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-12">
-                {% if project.projects_archived == 1 %}
-                    <div class="alert alert-danger">
-                        <h5><i class="icon fas fa-ban"></i> Archived</h5>
-                        This project has been moved to archive
-                    </div>
-                {% endif %}
-                <h3 class="text-primary">{{ project.projects_name }}</h3>
-                <p class="text-muted">{{ project.projects_description|nl2br }}</p>
-                <br>
-                <div class="text-muted">
-                    <p class="text-sm">Client
-                        <b class="d-block">{{ project.clients_name }}</b>
-                    </p>
-                    <p class="text-sm">Project Manager
-                        <b class="d-block">{{ project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}</b>
-                    </p>
-                    <p class="text-sm">Venue
-                        <b class="d-block">{{ project.projects_address|nl2br }}</b>
-                    </p>
-                    <p class="text-sm">Dates
-                        {% if 27|instancePermissions %}
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="far fa-clock"></i></span>
-                        </div>
-                        <input type="text" class="form-control float-right" id="datePickerInput">
-                    </div>
-                    {% else %}
-                        <b class="d-block">{{ project.projects_dates_use_start ? project.projects_dates_use_start|date("Y-m-d h:i:sa") }}
-                            - {{ project.projects_dates_use_end ? project.projects_dates_use_end|date("Y-m-d h:i:sa") }}</b>
-                    {% endif %}
-                    </p>
-                    <p class="text-sm">Dates assets in use
-                        {% if 27|instancePermissions %}
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="far fa-clock"></i></span>
-                        </div>
-                        <input type="text" class="form-control float-right" id="datePickerInputDeliver">
-                    </div>
-                    <div style="width: 100%;text-align: right;">
-                        <a href="#" id="copyProjectDatesToDeliverDates">Copy from Project Dates</a>
-                    </div>
-                {% else %}
-                    <b class="d-block">{{ project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa") }}
-                        - {{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
-                    {% endif %}
-                    </p>
-                </div>
-                <br/>
-                <div class="alert"
-                     style="background-color: {{ STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
-                    <h5><b>Status: </b>{{ STATUSES[project.projects_status]['name'] }}</h5>
-                    {{ STATUSES[project.projects_status]['description'] }}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card-footer">
-        <div class="btn-group float-right">
-            <button type="button" class="btn btn-default" id="quickAddCommentButton">Add Comment</button>
-            {% if 29|instancePermissions %}
-                <button type="button" class="btn btn-info" id="editProjectStatus">Change Status</button>
-            {% endif %}
-            <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                <span class="sr-only">Toggle Dropdown</span>
-                <div class="dropdown-menu" role="menu">
-                    {% if 28|instancePermissions %}<a class="dropdown-item" id="editProjectName" href="#">Edit
-                        Name</a>{% endif %}
-                    {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit
-                        Description</a>{% endif %}
-                    {% if 30|instancePermissions %}<a class="dropdown-item" id="editProjectAddress" href="#">Edit
-                        Venue</a>{% endif %}
-                    {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectLead" href="#">Change Project
-                        Lead</a>{% endif %}
-                    {% if 22|instancePermissions %}<a class="dropdown-item" id="editProjectClient" href="#">Change
-                        Client</a>{% endif %}
-                    <div class="dropdown-divider"></div>
-                    {% if 25|instancePermissions %}
-                        {% if project.projects_archived == 1 %}
-                            <a class="dropdown-item" id="archiveProject" href="#">Remove from Archive</a>
-                        {% else %}
-                            <a class="dropdown-item" id="archiveProject" href="#">Archive</a>
-                        {% endif %}
-                    {% endif %}
-                    {% if 26|instancePermissions %}<a class="dropdown-item" id="deleteProject"
-                                                      href="#">Delete</a>{% endif %}
-                </div>
-            </button>
-        </div>
-    </div>
+     table {
+        width: 100%;
+    }
+
+     table td {
+        padding: 5px;
+        vertical-align: top;
+    }
+</style>
+<body>
+<htmlpageheader name="firstpage" style="display:none">
+</htmlpageheader>
+<htmlpageheader name="otherpages" style="display:none">
+    <table width="100%">
+        <tr>
+            <td width="50%"><b>{{ USERDATA['instance']['instances_name'] }}</b></td>
+            <td width="50%" style="text-align: right;"> {{  project['clients_name'] }} - {{ project['projects_name'] }}</td>
+        </tr>
+    </table>
+</htmlpageheader>
+<sethtmlpageheader name="firstpage" value="on" show-this-page="1" />
+<sethtmlpageheader name="otherpages" value="on" />
+<div style="width: 100%;" align="center">
+    <img src="{{CONFIG.ROOTURL}}/assets/img/logos/instances/{{ USERDATA.instance.instances_logo }}" style="width: 200px; padding:20px;">
 </div>
+<table>
+    <tr>
+        <td>
+            <b>{{ project.clients_name }}</b><br/>
+            {{ project.clients_address|nl2br }}<br/><br/>
+            {{ project.clients_website }}<br/>
+            {{ project.clients_email }}<br/>
+            {{ project.clients_phone }}<br/>
+        </td>
+        <td style="text-align: right;">
+            <b>{{ USERDATA['instance']['instances_name'] }}</b><br/>
+            {{ USERDATA.instance.instances_address|nl2br }}<br/>
+            {{ USERDATA.instance.instances_website }}<br/>
+            {{ USERDATA.instance.instances_phone ? USERDATA.instance.instances_phone ~ "<br/>"}}
+            {{ USERDATA.instance.instances_email }}<br/><br/>
+            <b>{{ project.users_name1 ~ " " ~ project.users_name2  }}</b><br/>
+            {{ project.users_email }}
 
-{% if 33|instancePermissions and showFinance %}
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Project Finance</h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                        title="Collapse">
-                    <i class="fas fa-minus"></i></button>
-            </div>
-        </div>
-        <div class="card-body p-0">
-            <table class="table table-bordered">
-                <tbody>
+        </td>
+    </tr>
+</table>
+<h2>{{ project.projects_name }}</h2>
+<table style="background-color: #F5F5F5; padding: 6px;">
+    <tr>
+        <td>
+            <table>
                 <tr>
-                    <td colspan="2"><b>Hires</b></td>
-                </tr>
-                {% if FINANCIALS.prices.discounts > 0 %}
-                    <tr>
-                        <td style="width: 100%; text-align: right;">
-                            Hires SubTotal
-                        </td>
-                        <td>
-                            &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 100%; text-align: right;">
-                            Discounts
-                        </td>
-                        <td>
-                            &#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}
-                        </td>
-                    </tr>
-                {% endif %}
-                <tr>
-                    <td style="width: 100%; text-align: right;">
-                        Hires Total
-                    </td>
-                    <td>
-                        &pound;{{ FINANCIALS.prices.total|number_format(2) }}
-                    </td>
+                    <td style="padding:0;">Our&nbsp;Reference:</td>
+                    <td style="padding: 0px 0px 0px 5px;">{{project.projects_id}}</td>
                 </tr>
                 <tr>
-                    <td colspan="2"><b>Sales</b></td>
+                    <td style="padding:0;">Deliver:</td>
+                    <td style="padding: 0px 0px 0px 5px;">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("j M Y h:ia")}}</td>
                 </tr>
                 <tr>
-                    <td style="width: 100%; text-align: right;">
-                        Sales
-                    </td>
-                    <td>
-                        &pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
-                    </td>
+                    <td style="padding:0;">Start:</td>
+                    <td style="padding: 0px 0px 0px 5px;">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("j M Y h:ia")}}</td>
                 </tr>
                 <tr>
-                    <td style="width: 100%; text-align: right;">
-                        Staffing
-                    </td>
-                    <td>
-                        &pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
-                    </td>
+                    <td style="padding:0;">Finish:</td>
+                    <td style="padding: 0px 0px 0px 5px;">{{ project.projects_dates_use_end ? project.projects_dates_use_end|date("j M Y h:ia") }}</td>
                 </tr>
-                {% if FINANCIALS.payments.subHire.total > 0 %}
-                    <tr>
-                        <td style="width: 100%; text-align: right;">
-                            Sub Hires
-                        </td>
-                        <td>
-                            &pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
-                        </td>
-                    </tr>
-                {% endif %}
-
                 <tr>
-                    <td colspan="2"><b>Totals</b></td>
+                    <td style="padding:0;">Collect:</td>
+                    <td style="padding: 0px 0px 0px 5px;">{{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("j M Y h:ia") }}</td>
                 </tr>
-                {% if FINANCIALS.payments.received.total > 0 %}
-                    <tr>
-                        <td style="width: 100%; text-align: right;">
-                            SubTotal
-                        </td>
-                        <td>
-                            &pound;{{ FINANCIALS.payments.subTotal|number_format(2) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 100%; text-align: right;">
-                            Payments Received to Date
-                        </td>
-                        <td>
-                            &#8209;&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
-                        </td>
-                    </tr>
-                {% endif %}
                 <tr>
-                    <td style="width: 100%; text-align: right;">
-                        Grand Total Outstanding
-                    </td>
-                    <td>
-                        &pound;{{ FINANCIALS.payments.total|number_format(2) }}
-                    </td>
+                    <td style="padding:0;">Mass Estimate:</td>
+                    <td style="padding: 0px 0px 0px 5px;">{{FINANCIALS.mass|round(2, 'ceil') }}kg</td>
                 </tr>
-                </tbody>
+                <tr>
+                    <td style="padding:0;">Value Estimate:</td>
+                    <td style="padding: 0px 0px 0px 5px;">&pound;{{FINANCIALS.value|round(2, 'ceil') }}</td>
+                </tr>
             </table>
-        </div>
-        {% if 34|instancePermissions %}
-            <div class="card-footer">
-                <div class="btn-group float-right">
-                    <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
-                    <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                        <span class="sr-only">Toggle Dropdown</span>
-                        <div class="dropdown-menu" role="menu">
-                            <a class="dropdown-item newPayment" data-type="2" href="#">Add Sales Item</a>
-                            <a class="dropdown-item newPayment" data-type="3" href="#">Add Sub Hire Cost</a>
-                            <a class="dropdown-item newPayment" data-type="4" href="#">Add Staff Cost</a>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        {% endif %}
-    </div>
+        </td>
+        <td style="text-align: right;">
+            <b>Venue</b><br/>
+            {{ project.projects_address|nl2br }}
+        </td>
+    </tr>
+</table>
+{% if showFinance %}
+<hr/>
+<table>
+    <tr>
+       <td style="width: 35%;">
+           Hires SubTotal
+       </td>
+        <td style="width: 15%;text-align: right;">
+            &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
+        </td>
+        <td style="width: 35%;">
+            Sales
+        </td>
+        <td style="width: 15%;text-align: right;">
+            &pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 35%;">
+            {% if FINANCIALS.prices.discounts > 0 %}Discounts{% else %}Adjustments{% endif %}
+        </td>
+        <td style="width: 15%;text-align: right;">
+            {% if FINANCIALS.prices.discounts > 0 %}&#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}{% else %}None{% endif %}
+        </td>
+        <td style="width: 35%;">
+            Staffing
+        </td>
+        <td style="width: 15%;text-align: right;">
+            &pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 35%;">
+            <b>Hires Total</b>
+        </td>
+        <td style="width: 15%;text-align: right;">
+            &pound;{{ FINANCIALS.prices.total|number_format(2) }}
+        </td>
+        <td  style="width: 35%;">
+            Sub Hires
+        </td>
+        <td style="width: 15%;text-align: right;">
+            &pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
+        </td>
+    </tr>
+</table>
+<hr/>
+<table>
+    <tr>
+        <td style="width: 35%;">
+            SubTotal
+        </td>
+        <td style="width: 15%;text-align: right;">
+            &pound;{{ FINANCIALS.payments.subTotal|number_format(2) }}
+        </td>
+        <td style="width: 35%;">
+            Payments Received to Date
+        </td>
+        <td style="width: 15%;text-align: right;">
+            &#8209;&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 35%;">
+
+        </td>
+        <td style="width: 15%;text-align: right;">
+
+        </td>
+        <td style="width: 35%;">
+            <b>Grand Total Outstanding</b>
+        </td>
+        <td style="width: 15%;text-align: right;">
+            &pound;{{ FINANCIALS.payments.total|number_format(2) }}
+        </td>
+    </tr>
+</table>
 {% endif %}
-        {% if FINANCIALS.assetsAssigned %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">{{ FINANCIALS.assetsAssigned|length }}
-                        Asset{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }} - {{ FINANCIALS.mass|round(2, 'ceil') }}
-                        kg</h3>
-                    <div class="card-tools">
-                        {% if 41|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Set comment for assignment"
-                                    id="setAssetAssignmentComment">
-                                <i class="far fa-comment"></i></button>
-                        {% endif %}
-                        {% if 43|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Set discount"
-                                    id="setAssetAssignmentDiscount">
-                                <i class="fas fa-percent"></i></button>
-                        {% endif %}
-                        {% if 42|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Set custom price"
-                                    id="setAssetAssignmentPrice">
-                                <i class="fas fa-coins"></i></button>
-                        {% endif %}
-                        {% if 31|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Remove assets"
-                                    id="setAssetAssignmentDelete">
-                                <i class="fas fa-trash"></i></button>
-                        {% endif %}
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                                title="Collapse">
-                            <i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    {% if STATUSES[project.projects_status]["assetsAvailable"] %}
-                        <div class="alert alert-danger">
-                            <h5>Assets not locked</h5>
-                            Assets assigned to this project are not exclusive (because of its status) and can be
-                            assigned to other projects that clash with this one. Update project status before confirming
-                            with client
-                        </div>
-                    {% endif %}
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="width:5px"><input type="checkbox" id="assetAssignmentCheckboxAll"/></th>
-                            <th style="width: 90px">#</th>
-                            <th>Comment</th>
-                            <th>Spec</th>
-                            <th style="width: 60px;">Mass</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% set currentCategory = '' %}
-                        {% set currentType = '' %}
-                        {% for assetAssignment in FINANCIALS.assetsAssigned %}
-                            {% if assetAssignment.assetCategories_name != currentCategory %}
-                                {% set currentCategory = assetAssignment.assetCategories_name %}
-                                <tr style="background-color: #F5F5F5;">
-                                    <td colspan="999">
-                                        <i class="fas {{ assetAssignment.assetCategories_fontAwesome }}"
-                                           style="margin-right:10px;"></i>{{ assetAssignment.assetCategories_name }}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            {% if assetAssignment.assetTypes_id != currentType %}
-                                {% set currentType = assetAssignment.assetTypes_id %}
-                                <tr>
-                                    <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
-                                    <td style="font-weight: bold;"
-                                        {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"
-                                        {% else %}colspan="2"{% endif %}>
-                                        {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
-                                    </td>
-                                    {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
-                                        <td style="padding:0px;">
-                                            <table class="table table-bordered"
-                                                   style="margin:0;border-top: none !important;border-bottom: none !important;">
-                                                <tr>
-                                                    {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                                        {% if field != "" %}
-                                                            <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ field }}</td>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td colspan="999"></td>
-                                    {% endif %}
-                                </tr>
-                            {% endif %}
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="assetAssignmentCheckbox"
-                                           data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}"/>
-                                </td>
-                                <td>
-                                    <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assetAssignment.assetTypes_id }}&asset={{ assetAssignment.assets_id }}">{{ assetAssignment.assets_tag|aTag }}</a>
-                                </td>
-                                <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>{{ assetAssignment.assetsAssignments_comment }}</td>
-                                {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
-                                    <td style="padding:0px;">
-                                        <table class="table table-bordered"
-                                               style="margin:0;border-top: none !important;border-bottom: none !important;">
-                                            <tr>
-                                                {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                                    {% if field != "" %}
-                                                        <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tr>
-                                        </table>
-                                    </td>
+{% if FINANCIALS.assetsAssigned|length > 0 %}
+<pagebreak/>
+    <h2>Hires</h2>
+<table style="text-align: left;">
+        <tr>
+            <th style="width: 90px; text-align: left;">#</th>
+            <th style="text-align: left;">Comment</th>
+            <th style="text-align: left;">Spec</th>
+            <th style="width: 60px;">Mass</th>
+            {% if showFinance %}<th>Price</th>
+            <th>Disc.</th>{% endif %}
+        </tr>
+{% set currentCategory = '' %}
+{% set currentType = '' %}
+{% for assetAssignment in FINANCIALS.assetsAssigned %}
+    {% if assetAssignment.assetCategories_name != currentCategory %}
+        {% set currentCategory = assetAssignment.assetCategories_name %}
+        <tr style="background-color: #F5F5F5;">
+            <td colspan="{{ showFinance ? 6 : 4 }}">
+                <h3>{{ assetAssignment.assetCategories_name }}</h3>
+            </td>
+        </tr>
+    {% endif %}
+    {% if assetAssignment.assetTypes_id != currentType %}
+        {% set currentType = assetAssignment.assetTypes_id %}
+        <tr>
+            <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="{{  showFinance ? 6 : 4 }}"{% else %}colspan="2"{% endif %}>
+                {{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
+            </td>
+            {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
+                <td style="padding:0px;">
+                    <table style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                            {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                {% if field != "" %}
+                                    <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
                                 {% endif %}
-                                <td>{{ assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "?" }}</td>
-                                <td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
-                                <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
-                            </tr>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </td>
+                <td {{ showFinance ? 'colspan="2"'}}></td>
+            {% endif %}
+        </tr>
+    {% endif %}
+    <tr>
+        <td>{{ assetAssignment.assets_tag|aTag }}</td>
+        <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>{{ assetAssignment.assetsAssignments_comment }}</td>
+        {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
+            <td style="padding:0px;">
+                <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                            {% if field != "" %}
+                                <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
+                            {% endif %}
                         {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer p-0" style="background-color: #FFFFFF;">
-                    <table class="table table-striped">
-                        <tr>
-                            <td style="width:100%;"></td>
-                            <td>
-                                <b>SubTotal</b>
-                            </td>
-                            <td>
-                                &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <b>Discounts</b>
-                            </td>
-                            <td>
-                                &#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <b>Total</b>
-                            </td>
-                            <td>
-                                &pound;{{ FINANCIALS.prices.total|number_format(2) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="99">
-                                {{ FINANCIALS.priceMaths.string|nl2br }}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+                    </tr></table>
+            </td>
         {% endif %}
-        {% if FINANCIALS.payments.received.ledger and 33|instancePermissions and showFinance%}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Payments Received</h3>
-                    <div class="card-tools">
-                        {% if 34|instancePermissions %}
-                            <button type="button" class="btn btn-tool newPayment" data-type="1" title="Add new Payment">
-                                <i class="fas fa-plus"></i></button>
-                        {% endif %}
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                                title="Collapse">
-                            <i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>Reference</th>
-                            <th>Date</th>
-                            <th>Method</th>
-                            <th>Comment</th>
-                            <th>Amount</th>
-                            {% if 35|instancePermissions %}
-                                <th></th>{% endif %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for payment in FINANCIALS.payments.received.ledger %}
-                            <tr>
-                                <td>{{ payment.payments_reference }}</td>
-                                <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
-                                <td>{{ payment.payments_method }}</td>
-                                <td>{{ payment.payments_comment|nl2br }}</td>
-                                <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                {% if 35|instancePermissions %}
-                                    <td>
-                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton"
-                                            data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i>
-                                    </button></td>{% endif %}
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer" style="text-align: right;">
-                    <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
-                </div>
-            </div>
-        {% endif %}
-        {% if FINANCIALS.payments.sales.ledger and 33|instancePermissions and showFinance %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Sales Items</h3>
-                    <div class="card-tools">
-                        {% if 34|instancePermissions %}
-                            <button type="button" class="btn btn-tool newPayment" data-type="2" title="Add new Payment">
-                                <i class="fas fa-plus"></i></button>
-                        {% endif %}
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                                title="Collapse">
-                            <i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="width: 100%;">Comment</th>
-                            <th>Amount</th>
-                            {% if 35|instancePermissions %}
-                                <th></th>{% endif %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for payment in FINANCIALS.payments.sales.ledger %}
-                            <tr>
-                                <td>{{ payment.payments_comment|nl2br }}</td>
-                                <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                {% if 35|instancePermissions %}
-                                    <td>
-                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton"
-                                            data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i>
-                                    </button></td>{% endif %}
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer" style="text-align: right;">
-                    <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
-                </div>
-            </div>
-        {% endif %}
-        {% if FINANCIALS.payments.subHire.ledger and 33|instancePermissions and showFinance %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Sub Hire Items</h3>
-                    <div class="card-tools">
-                        {% if 34|instancePermissions %}
-                            <button type="button" class="btn btn-tool newPayment" data-type="3" title="Add new Payment">
-                                <i class="fas fa-plus"></i></button>
-                        {% endif %}
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                                title="Collapse">
-                            <i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="width: 100%;">Comment</th>
-                            <th>Amount</th>
-                            {% if 35|instancePermissions %}
-                                <th></th>{% endif %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for payment in FINANCIALS.payments.subHire.ledger %}
-                            <tr>
-                                <td>{{ payment.payments_comment|nl2br }}</td>
-                                <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                {% if 35|instancePermissions %}
-                                    <td>
-                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton"
-                                            data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i>
-                                    </button></td>{% endif %}
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer" style="text-align: right;">
-                    <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
-                </div>
-            </div>
-        {% endif %}
-        {% if FINANCIALS.payments.staff.ledger and 33|instancePermissions and showFinance %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Staff Costs</h3>
-                    <div class="card-tools">
-                        {% if 34|instancePermissions %}
-                            <button type="button" class="btn btn-tool newPayment" data-type="4" title="Add new Payment">
-                                <i class="fas fa-plus"></i></button>
-                        {% endif %}
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                                title="Collapse">
-                            <i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="width: 100%;">Comment</th>
-                            <th>Amount</th>
-                            {% if 35|instancePermissions %}
-                                <th></th>{% endif %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for payment in FINANCIALS.payments.staff.ledger %}
-                            <tr>
-                                <td>{{ payment.payments_comment|nl2br }}</td>
-                                <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                {% if 35|instancePermissions %}
-                                    <td>
-                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton"
-                                            data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i>
-                                    </button></td>{% endif %}
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer" style="text-align: right;">
-                    <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
-                </div>
-            </div>
-        {% endif %}
+        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "?" }}</td>
+        {% if showFinance %}<td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
+        <td>{{ assetAssignment.assetsAssignments_discount }}%</td>{% endif %}
+    </tr>
+{% endfor %}
+</table>
+    <table>
+        <tr>
+            <td style="text-align: right;"><h3>{{ FINANCIALS.assetsAssigned|length }} Item{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }}</h3></td>
+        </tr>
+    </table>
+{% endif %}
+{% if showFinance and FINANCIALS.payments.sales.ledger|length > 0 %}
+<h2>Sales</h2>
+<table>
+    <tbody>
+    {% for payment in FINANCIALS.payments.sales.ledger %}
+        <tr>
+            <td>{{ payment.payments_comment|nl2br }}</td>
+            <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td style="text-align:right; font-weight: bold;">Total:</td>
+        <td style="width:100px;text-align: right;">&pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}</td>
+    </tr>
+    </tfoot>
+</table>
+{% endif %}
+{% if showFinance and FINANCIALS.payments.subHire.ledger|length > 0 %}
+    <pagebreak/>
+    <h2>Sub Hire Items</h2>
+    <table>
+        <tbody>
+        {% for payment in FINANCIALS.payments.subHire.ledger %}
+            <tr>
+                <td>{{ payment.payments_comment|nl2br }}</td>
+                <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td style="text-align:right; font-weight: bold;">Total:</td>
+            <td style="width:100px;text-align: right;">&pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}</td>
+        </tr>
+        </tfoot>
+    </table>
+{% endif %}
+{% if showFinance and FINANCIALS.payments.staff.ledger|length > 0 %}
+    <pagebreak/>
+    <h2>Staff</h2>
+    <table>
+        <tbody>
+        {% for payment in FINANCIALS.payments.staff.ledger %}
+            <tr>
+                <td>{{ payment.payments_comment|nl2br }}</td>
+                <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td style="text-align:right; font-weight: bold;">Total:</td>
+                <td style="width:100px;text-align: right;">&pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}</td>
+            </tr>
+        </tfoot>
+    </table>
+    <br/>
+    <br/><br/>
+{% endif %}
+{% if showFinance %}
+<table style="background-color: #F5F5F5; padding: 6px;">
+    <tr>
+        <td>
+            {{ USERDATA.instance.instances_termsAndPayment|nl2br }}
+        </td>
+    </tr>
+</table>
+{% endif %}
+</body>
