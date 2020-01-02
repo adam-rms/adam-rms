@@ -15,7 +15,7 @@ if (!isset($_POST['assets_id'])) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets_deleted", 0);
     $assetIDs = $DBLIB->get("assets", null, ["assets_id"]);
-} else $assetIDs = ["assets_id" => $_POST['assets_id']];
+} else $assetIDs = [0 => ["assets_id" => $_POST['assets_id']]];
 
 foreach ($assetIDs as $asset) {
     $DBLIB->where("assets_id", $asset['assets_id']);
