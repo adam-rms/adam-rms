@@ -169,6 +169,10 @@
     </tr>
 </table>
 {% endif %}
+{%  if project.projects_invoiceNotes|length > 0 %}
+    <h2>Notes</h2>
+    <p>{{ project.projects_invoiceNotes }}</p>
+{% endif %}
 {% if FINANCIALS.assetsAssigned|length > 0 %}
 <pagebreak/>
     <h2>Hires</h2>

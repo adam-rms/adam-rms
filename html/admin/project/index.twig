@@ -137,7 +137,8 @@
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
                                 {% if 28|instancePermissions %}<a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>{% endif %}
-                                {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
+                                {% if 24|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
+                                {% if 46|instancePermissions %}<a class="dropdown-item editProjectInvoiceNotes" href="#">Edit Invoice Notes</a>{% endif %}
                                 {% if 30|instancePermissions %}<a class="dropdown-item" id="editProjectAddress" href="#">Edit Venue</a>{% endif %}
                                 {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectLead" href="#">Change Project Lead</a>{% endif %}
                                 {% if 22|instancePermissions %}<a class="dropdown-item" id="editProjectClient" href="#">Change Client</a>{% endif %}
@@ -276,6 +277,24 @@
                         </div>
                     </div>
                     {% endif %}
+                </div>
+            {% endif %}
+            {%  if project.projects_invoiceNotes|length > 0 %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Invoice Notes</h3>
+                        <div class="card-tools">
+                            {% if 46|instancePermissions %}
+                                <button type="button" class="btn btn-tool editProjectInvoiceNotes" title="Edit">
+                                    <i class="fas fa-edit"></i></button>
+                            {% endif %}
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {{ project.projects_invoiceNotes }}
+                    </div>
                 </div>
             {% endif %}
         </div>
@@ -910,6 +929,25 @@
                         if (result) {
                             ajaxcall("projects/changeDescription.php", {
                                 "projects_description": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if 46|instancePermissions %}
+            $(".editProjectInvoiceNotes").click(function () {
+                bootbox.prompt({
+                    title: "Edit Project Invoice Notes",
+                    inputType: 'textarea',
+                    value: `{{ project.projects_invoiceNotes|raw }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeInvoiceNotes.php", {
+                                "projects_invoiceNotes": result,
                                 "projects_id": "{{ project.projects_id }}"
                             }, function (data) {
                                 location.reload();
