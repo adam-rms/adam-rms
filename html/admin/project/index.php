@@ -42,6 +42,13 @@ if ($AUTH->instancePermissionCheck(23)) {
 //Payments
 $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']['projects_id']);
 
+//Notes
+$DBLIB->where("projectsNotes_deleted", 0);
+$DBLIB->where("projects_id", $PAGEDATA['project']['projects_id']);
+$DBLIB->orderBy("projectsNotes_id", "ASC");
+$PAGEDATA['project']['notes'] = $DBLIB->get("projectsNotes");
+
+
 if (isset($_GET['pdf'])) {
     if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
    // die($TWIG->render('project/pdf.twig', $PAGEDATA));
