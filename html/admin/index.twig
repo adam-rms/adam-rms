@@ -5,12 +5,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css" integrity="sha256-saO3mkZVAcyqsfgsGMrmE7Cs/TLN1RgVykZ5dnnJKug=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css" integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js" integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js" integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.js" integrity="sha256-q57s73NpMCTQ4ZXqb1X5bIywrICySeB6WvYxFGfz/PA=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
 {% endblock %}
 {% block content %}
@@ -40,14 +42,13 @@
                          -----------------------------------------------------------------*/
                         var Calendar = FullCalendar.Calendar;
                         var Draggable = FullCalendarInteraction.Draggable;
-
                         var calendarEl = document.getElementById('calendar');
 
                         // initialize the external events
                         // -----------------------------------------------------------------
 
                         var calendar = new Calendar(calendarEl, {
-                            plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                            plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid','list' ],
                             customButtons: {
                                 {% if 21|instancePermissions %}
                                 addProjectButton: {
@@ -68,11 +69,13 @@
                             header    : {
                                 left  : 'prev,next today{% if 21|instancePermissions %} addProjectButton{% endif %}',
                                 center: 'title',
-                                right : 'dayGridMonth,timeGridWeek,timeGridDay'
+                                right : 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
                             },
 
                             //Random default events
                             events    : [
+                                {% set earliestStart = false %}
+                                {% set latestEnd = false %}
                                 {% for project in projects %}
                                 {
                                     title          : '[{{ STATUSES[project.projects_status]["name"] }}] {{ project.clients_name ? project.clients_name ~ " - " }}{{ project.projects_name }}',
@@ -82,8 +85,18 @@
                                     backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
                                     textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
                                 },
+                                {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
+                                    {% set earliestStart = project.projects_dates_use_start|date("c") %}
+                                {% endif %}
+                                {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
+                                     {% set latestEnd = project.projects_dates_use_end|date("c") %}
+                                {% endif %}
                                 {% endfor %}
                             ],
+                            /*validRange: {
+                                start: '{{ earliestStart|date("c") }}',
+                                end: '{{ latestEnd|date("c") }}'
+                            },*/
                             editable  : false,
                             droppable : false, // this allows things to be dropped onto the calendar !!!
                             drop      : function(info) {
@@ -91,6 +104,28 @@
                             },
                             height: 800,
                             firstDay: 1,
+                            weekNumbers: true,
+                            weekNumbersWithinDays:true,
+                            {% if USERDATA.instance.weekStartDates %}
+                            weekNumberCalculation: function(date) {
+                                var dates = [{{ USERDATA.instance.weekStartDates|join(",") }}];
+                                var today = new Date();
+                                var thisDate = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', { month: 'long' })) + ' ' + date.getFullYear() + ' 00:00:00');
+                                var idOfThis;
+                                for (var i = 0; i < dates.length; i++) {
+                                    if (thisDate <= (dates[i])-(7 * 24 * 60 * 60 * 1000)) {
+                                        if (i == 0) {
+                                            return "";
+                                        }
+                                        idOfThis = i-1;
+                                        break;
+                                    }
+                                }
+                                return (Math.round((thisDate-dates[idOfThis]) / (7 * 24 * 60 * 60 * 1000))+1);
+                            },
+                            {% else %}
+                            weekNumberCalculation: "ISO",
+                            {% endif %}
                         });
 
                         calendar.render();

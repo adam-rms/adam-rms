@@ -3,6 +3,18 @@
 
     <script src="{{ CONFIG.ROOTURL }}/assets/js/sweetalert2.min.js"></script>
     <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/assets/css/sweetAlert2-bootstrap-4.min.css" />
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css" integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js" integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js" integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -128,98 +140,72 @@
                         </div>
                         <!-- /.tab-pane -->
                         <div class="active tab-pane" style="padding: 1.25rem" id="timeline">
-                            <!-- The timeline -->
-                            <div class="timeline timeline-inverse">
-                                <!-- timeline time label -->
-                                <div class="time-label">
-                       {# <span class="bg-danger">
-                          10 Feb. 2014
-                        </span>
-                                </div>
-                                <!-- /.timeline-label -->
-                                <!-- timeline item -->
-                                <div>
-                                    <i class="fas fa-envelope bg-primary"></i>
+                            <div id="calendar"></div>
+                            <script>
+                                $(function () {
+                                    /* initialize the calendar
+                                     -----------------------------------------------------------------*/
+                                    var Calendar = FullCalendar.Calendar;
+                                    var Draggable = FullCalendarInteraction.Draggable;
 
-                                    <div class="timeline-item">
-                                        <span class="time"><i class="far fa-clock"></i> 12:05</span>
+                                    var calendarEl = document.getElementById('calendar');
 
-                                        <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+                                    // initialize the external events
+                                    // -----------------------------------------------------------------
 
-                                        <div class="timeline-body">
-                                            Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                                            weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                                            jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                                            quora plaxo ideeli hulu weebly balihoo...
-                                        </div>
-                                        <div class="timeline-footer">
-                                            <a href="#" class="btn btn-primary btn-sm">Read more</a>
-                                            <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END timeline item -->
-                                <!-- timeline item -->
-                                <div>
-                                    <i class="fas fa-user bg-info"></i>
+                                    var calendar = new Calendar(calendarEl, {
+                                        plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                                        buttonText:  {
+                                            today:    'Today',
+                                            month:    'Month',
+                                            week:     'Week',
+                                            day:      'Day',
+                                            list:     'List'
+                                        },
+                                        header    : {
+                                            left  : 'prev,next today',
+                                            center: 'title',
+                                            right : 'dayGridMonth{% if assets|length == 1 %},timeGridWeek{% endif %}'
+                                        },
+                                        //Random default events
+                                        events    : [
+                                            {% set earliestStart = false %}
+                                            {% set latestEnd = false %}
+                                            {% for thisasset in assets %}
+                                                {% for assignment in thisasset.assignments %}
+                                                {
+                                                    title          : '{% if assets|length > 1 %}{{ thisasset.assets_tag|aTag }} {% endif %}[{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
+                                                    start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
+                                                    end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
+                                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
+                                                    backgroundColor: '{{ STATUSES[assignment.projects_status]["backgroundColour"] }}',
+                                                    textColor    : '{{ STATUSES[assignment.projects_status]["foregroundColour"] }}'
+                                                },
+                                                {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
+                                                    {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
+                                                {% endif %}
+                                                {% if latestEnd < assignment.projects_dates_deliver_end|date("c") or latestEnd == false %}
+                                                    {% set latestEnd = assignment.projects_dates_deliver_end|date("c") %}
+                                                {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                        ],
+                                        validRange: {
+                                            start: '{{ earliestStart|date("c") }}',
+                                            end: '{{ latestEnd|date("c") }}'
+                                        },
+                                        editable  : false,
+                                        droppable : false, // this allows things to be dropped onto the calendar !!!
+                                        drop      : function(info) {
 
-                                    <div class="timeline-item">
-                                        <span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
+                                        },
+                                        height: 600,
+                                        firstDay: 1,
+                                    });
 
-                                        <h3 class="timeline-header border-0"><a href="#">Sarah Young</a> accepted your friend request
-                                        </h3>
-                                    </div>
-                                </div>
-                                <!-- END timeline item -->
-                                <!-- timeline item -->
-                                <div>
-                                    <i class="fas fa-comments bg-warning"></i>
-
-                                    <div class="timeline-item">
-                                        <span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
-
-                                        <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
-
-                                        <div class="timeline-body">
-                                            Take me to your leader!
-                                            Switzerland is small and neutral!
-                                            We are more like Germany, ambitious and misunderstood!
-                                        </div>
-                                        <div class="timeline-footer">
-                                            <a href="#" class="btn btn-warning btn-flat btn-sm">View comment</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END timeline item -->
-                                <!-- timeline time label -->
-                                <div class="time-label">
-                        <span class="bg-success">
-                          3 Jan. 2014
-                        </span>
-                                </div>
-                                <!-- /.timeline-label -->
-                                <!-- timeline item -->
-                                <div>
-                                    <i class="fas fa-camera bg-purple"></i>
-
-                                    <div class="timeline-item">
-                                        <span class="time"><i class="far fa-clock"></i> 2 days ago</span>
-
-                                        <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
-
-                                        <div class="timeline-body">
-                                            <img src="http://placehold.it/150x100" alt="...">
-                                            <img src="http://placehold.it/150x100" alt="...">
-                                            <img src="http://placehold.it/150x100" alt="...">
-                                            <img src="http://placehold.it/150x100" alt="...">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END timeline item -->
-                                <div>#}
-                                    <i class="far fa-clock bg-gray"></i>
-                                </div>
-                            </div>
+                                    calendar.render();
+                                })
+                            </script>
                         </div>
                         <!-- /.tab-pane -->
 

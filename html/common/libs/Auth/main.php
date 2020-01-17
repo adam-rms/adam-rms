@@ -66,6 +66,16 @@ class bID
                         $instances = $DBLIB->get("userInstances");
                         $this->data['instances'] = [];
                         foreach ($instances as $instance) {
+                            if ($instance['instances_weekStartDates'] != null) {
+                                $dates = explode("\n", $instance['instances_weekStartDates']);
+                                $instance['weekStartDates'] = [];
+                                foreach ($dates as $date) {
+                                    array_push($instance['weekStartDates'], strtotime($date)*1000);
+                                }
+                                unset($dates);
+                                sort($instance['weekStartDates']);
+                            } else $instance['weekStartDates'] = false;
+
                             $instance['permissions'] = array_unique(array_merge(explode(",", $instance['instancePositions_actions']), explode(",", $instance['userInstances_extraPermissions'])));
                             $this->data['instances'][] = $instance;
                         }
