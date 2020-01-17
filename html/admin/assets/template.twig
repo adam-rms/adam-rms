@@ -342,14 +342,16 @@ far fa-circle
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            {% if project.projects_archived == 1 %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
-                                        <i class="nav-icon far fa-circle nav-icon"></i>
-                                        <p>{{ project.projects_name }}</p>
-                                    </a>
-                                </li>
-                            {% endif %}
+                            {% for project in projects %}
+                                {% if project.projects_archived == 1 %}
+                                    <li class="nav-item">
+                                        <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
+                                            <i class="nav-icon far fa-circle nav-icon"></i>
+                                            <p>{{ project.projects_name }}</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
                         </ul>
                     </li>
                     {% endif %}
