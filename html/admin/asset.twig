@@ -19,12 +19,12 @@
                     </div>
                     {% endif %}
                     <h3 class="profile-username text-center">{{asset.assetTypes_name}}</h3>
-                    {% if asset.oneasset %}
+                    {% if assets|length == 1 %}
                     <p class="text-muted text-center">{{ assets[0].assets_tag|aTag }}</p>
                     {% endif %}
 
                     <ul class="list-group list-group-unbordered mb-3">
-                        {% if asset.oneasset %}
+                        {% if assets|length == 1 %}
                             {% for field in asset.fields %}
                                 {% if field != "" %}
                                 <li class="list-group-item">
@@ -54,9 +54,16 @@
                     </ul>
                     {% if asset.oneasset %}
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
-                        {% if 19|instancePermissions %}
-                        <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                     {% endif %}
+                    {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions and assets|length == 1 %}
+                        <button title="Remove from project" {% if (not assets[0].assignment) or USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-block btn-warning removeFromBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Remove from Project</button>
+                        {%  if assets[0].assignment and USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}
+                            <button title="Assigned to {{ assets[0].assignment[0]['projects_name'] }}" class="btn btn-block btn-success" disabled>Can't add to project</button>
+                        {% endif %}
+                        <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
+                    {% endif %}
+                    {% if 19|instancePermissions and assets|length == 1 %}
+                        <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                     {% endif %}
                     {{asset.assetTypes_description|nl2br}}
                 </div>
@@ -69,10 +76,11 @@
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
-                        {% if asset.oneasset != true %}
-                            <li class="nav-item"><a class="nav-link" href="#assets" data-toggle="tab">Assets</a></li>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}">View All</a></li>
+                        {% if asset.oneasset %}
+                           <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}">View All</a></li>
+                            {% elseif assets|length > 1 %}
+                                <li class="nav-item"><a class="nav-link" href="#assets" data-toggle="tab">Assets</a></li>
+
                         {% endif %}
                         <li class="nav-item"><a class="nav-link active" href="#timeline" data-toggle="tab">Timeline</a></li>
                         <li class="nav-item"><a class="nav-link" {# href="#settings" data-toggle="tab" #}>Edit</a></li>
