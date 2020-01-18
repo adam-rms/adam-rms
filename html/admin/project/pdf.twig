@@ -249,8 +249,10 @@
     <tbody>
     {% for payment in FINANCIALS.payments.sales.ledger %}
         <tr>
+            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
             <td>{{ payment.payments_comment|nl2br }}</td>
-            <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+            <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+            <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
         </tr>
     {% endfor %}
     </tbody>
@@ -269,8 +271,10 @@
         <tbody>
         {% for payment in FINANCIALS.payments.subHire.ledger %}
             <tr>
+                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
-                <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -289,8 +293,10 @@
         <tbody>
         {% for payment in FINANCIALS.payments.staff.ledger %}
             <tr>
+                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
-                <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
             </tr>
         {% endfor %}
         </tbody>

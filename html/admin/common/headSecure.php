@@ -156,15 +156,15 @@ function projectFinancials($projectid)
                 break;
             case 2:
                 $return['payments']['sales']['ledger'][] = $payment;
-                $return['payments']['sales']['total'] += $payment['payments_amount'];
+                $return['payments']['sales']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
                 break;
             case 3:
                 $return['payments']['subHire']['ledger'][] = $payment;
-                $return['payments']['subHire']['total'] += $payment['payments_amount'];
+                $return['payments']['subHire']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
                 break;
             case 4:
                 $return['payments']['staff']['ledger'][] = $payment;
-                $return['payments']['staff']['total'] += $payment['payments_amount'];
+                $return['payments']['staff']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
                 break;
         }
     }

@@ -593,16 +593,20 @@
                         <table class="table table-bordered">
                             <thead>
                             <tr>
+                                <th>Quantity</th>
                                 <th style="width: 100%;">Comment</th>
                                 <th>Amount</th>
+                                <th>Total</th>
                                 {% if 35|instancePermissions %}<th></th>{% endif %}
                             </tr>
                             </thead>
                             <tbody>
                             {% for payment in FINANCIALS.payments.sales.ledger %}
                                 <tr>
+                                    <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
                                     {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
                                 </tr>
                             {% endfor %}
@@ -631,16 +635,20 @@
                         <table class="table table-bordered">
                             <thead>
                             <tr>
+                                <th>Quantity</th>
                                 <th style="width: 100%;">Comment</th>
                                 <th>Amount</th>
+                                <th>Total</th>
                                 {% if 35|instancePermissions %}<th></th>{% endif %}
                             </tr>
                             </thead>
                             <tbody>
                             {% for payment in FINANCIALS.payments.subHire.ledger %}
                                 <tr>
+                                    <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
                                     {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
                                 </tr>
                             {% endfor %}
@@ -669,16 +677,20 @@
                         <table class="table table-bordered">
                             <thead>
                             <tr>
+                                <th>Quantity</th>
                                 <th style="width: 100%;">Comment</th>
                                 <th>Amount</th>
+                                <th>Total</th>
                                 {% if 35|instancePermissions %}<th></th>{% endif %}
                             </tr>
                             </thead>
                             <tbody>
                             {% for payment in FINANCIALS.payments.staff.ledger %}
                                 <tr>
+                                    <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
                                     {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
                                 </tr>
                             {% endfor %}
@@ -731,6 +743,12 @@
                             <option>Cheque</option>
                             <option>Other</option>
                         </select>
+                    </div>
+                    <div class="input-group mb-3 newPaymentModal-nonPaymentOnly">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Quantity</span>
+                        </div>
+                        <input class="form-control" type="number" step="1" min="0" name="payments_quantity">
                     </div>
                     <div class="input-group" style="margin-bottom: 5px;">
                         <div class="input-group-prepend"><span class="input-group-text">Description</span></div>
@@ -1314,19 +1332,21 @@
                 $("#newPaymentModal-form-type").val(type);
                 $("#newPaymentModal").modal('show');
                 $(".newPaymentModal-paymentOnly").hide();
+                $(".newPaymentModal-nonPaymentOnly").show();
                 switch(type) {
                     case 1:
                         $("#newPaymentModal-title").html("Add payment received");
                         $(".newPaymentModal-paymentOnly").show();
+                        $(".newPaymentModal-nonPaymentOnly").hide();
                         break;
                     case 2:
-                        $("#newPaymentModal-title").html("Add sales item");
+                        $("#newPaymentModal-title").html("Add Sales Item");
                         break;
                     case 3:
-                        $("#newPaymentModal-title").html("Add subhire cost");
+                        $("#newPaymentModal-title").html("Add Sub-Hire Cost");
                         break;
                     case 4:
-                        $("#newPaymentModal-title").html("Add staff cost");
+                        $("#newPaymentModal-title").html("Add Staff cost");
                         break;
                 }
             });
