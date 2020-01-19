@@ -21,6 +21,19 @@
          <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha256-OUFW7hFO0/r5aEGTQOz9F/aXQOt+TwqI1Z4fbVvww04=" crossorigin="anonymous"></script>
         <!--Bootbox -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
+        <!--Pace Loader-->
+        <script>
+            window.paceOptions = {
+                startOnPageLoad: false,
+                document: false,
+                eventLag: false,
+                ajax: {
+                    trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE']
+                }
+            };
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/css/pace.css">
 
     {% block htmlIncludes %}{% endblock %}
             <!--Fastclick - increases speed of response-->
@@ -67,6 +80,7 @@
             //this will reload the page, it's likely better to store this until finished
             document.location.search = kvp.join('&');
         }
+        $(document).ajaxStart(function() { Pace.restart(); });
         function ajaxcall(path, data, callback, reloadIfError) {
             if (data !== null) var senddata = data;
             else var senddata = {};
@@ -93,6 +107,7 @@
                     }
                     return false;
                 }, error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
                     console.log("Connection Error");
                     bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection', function () {
                         if (reloadIfError) {
