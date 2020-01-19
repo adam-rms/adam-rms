@@ -785,8 +785,8 @@
                             <div class="summernote" data-noteid="{{ note.projectsNotes_id }}">{{ note.projectsNotes_text|raw }}</div>
                         </div>
                         <div class="modal-footer justify-content-between">
-                            <a href="{{ CONFIG.ROOTURL }}/project/notePDF.php?id={{ note.projectsNotes_id }}" class="btn btn-default btn-sm"><i class="far fa-file-pdf"></i></a>
-                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}"><i class="far fa-save"></i></button>
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="pdf"><i class="far fa-file-pdf"></i></button>
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="none"><i class="far fa-save"></i></button>
                         </div>
                     </div>
                 </div>
@@ -1408,8 +1408,14 @@
                 }
             });
             $(".noteModal-save").click(function () {
-               ajaxcall("projects/editNote.php", {"projects_id": "{{ project.projects_id }}", "projectsNotes_id": $(this).data("noteid"), "projectsNotes_text":$('.summernote[data-noteid=' + $(this).data("noteid") + ']').summernote('code')}, function (data) {
-                   location.reload();
+                var callback = $(this).data("callback");
+                var noteid = $(this).data("noteid")
+                ajaxcall("projects/editNote.php", {"projects_id": "{{ project.projects_id }}", "projectsNotes_id": noteid, "projectsNotes_text":$('.summernote[data-noteid=' + noteid + ']').summernote('code')}, function (data) {
+                    if (callback == "pdf") {
+                        window.location.href = "{{ CONFIG.ROOTURL }}/project/notePDF.php?id=" + noteid;
+                    } else {
+                        location.reload();
+                    }
                 });
             });
             {% endif %}
