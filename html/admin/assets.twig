@@ -22,10 +22,12 @@
                         {% endif %}
                     </h3>
                     <div class="card-tools pull-right">
-                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                        <form class="input-group input-group-sm"  method="GET">
                             <input type="text" name="q" class="form-control" placeholder="Search all assets" value="{{ search }}" />
                             <div class="input-group-append">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
+                                <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?xlsx" class="btn btn-default" title="Excel Export"><i class="fas fa-file-excel"></i></a>
+                                <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?csv" class="btn btn-default" title="CSV Export"><i class="fas fa-file-csv"></i></a>
                             </div>
                         </form>
                     </div>

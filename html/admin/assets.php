@@ -36,6 +36,8 @@ if (strlen($PAGEDATA['search']) > 0) {
     )");
 }
 $assets = $DBLIB->arraybuilder()->paginate('assetTypes', $page, ["assetTypes.*", "manufacturers.*", "assetCategories.*"]);
+$PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
+
 $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
 	$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
@@ -48,7 +50,6 @@ foreach ($assets as $asset) {
 	} else $asset['count'] = $DBLIB->getValue("assets", "COUNT(*)");
 	$PAGEDATA['assets'][] = $asset;
 }
-$PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 
 if (isset($_GET['category'])) {
 	$DBLIB->where("assetCategories_id", $_GET['category']);
