@@ -5,10 +5,11 @@ layout: page
 
 ## Common Preamble
 
-1. Please read this document carefully before accessing or using our website. By accessing or using any part of the site, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions of this agreement, then you may not access the website or use any services. If these Terms of Service are considered an offer, acceptance is expressly limited to these Terms of Service. Any use of the term “Service”, “Website” or “We” refers to iMUN, its team and associated introductions unless expressly stated otherwise.
-2. The headings used in this agreement are included for convenience only and will not limit or otherwise affect this document. 
-3. We reserve the right at any time to modify or discontinue the Service (or any part or content thereof) without notice at any time.
-4. Questions about this document should be sent to our support team using the email address studios@jbithell.com
+1. Please read this document carefully before accessing or using our website. By accessing or using any part of the site, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions of this agreement, then you may not access the website or use any services. If these Terms of Service are considered an offer, acceptance is expressly limited to these Terms of Service. Any use of the term “Service”, “Website” or “We” refers to AdamRMS, its team and associated introductions unless expressly stated otherwise.
+1. The headings used in this agreement are included for convenience only and will not limit or otherwise affect this document. 
+1. AdamRMS is developed and distributed by Bithell Studios Ltd, a company registered in England and Wales, United Kingdom.
+1. We reserve the right at any time to modify or discontinue the Service (or any part or content thereof) without notice at any time.
+1. Questions about this document should be sent to our support team using the email address studios@jbithell.com
 
 [Data Processing Statement & Privacy Policy](#data-processing-statement-and-privacy-policy)
 
@@ -45,7 +46,7 @@ When users first login or signup they are asked to consent to this document by t
 
 ### Data Storage
 
-As a European Union based service provider we endeavour to store your data within the European Union as per our legal obligations, but we cannot guarantee that it will not leave the European Union in transit.
+As a European Union based service provider we endeavour to store your data within the European Union as per our legal obligations, but we cannot guarantee that it will not leave the European Union for storage, processing or in transit.
 
 ## Cookie Policy
 
@@ -117,7 +118,7 @@ machine which has been left logged on but is unattended (e.g. if the previous us
 
 ### Input
 
-This section of the policy refers to user submitted content, which includes but is not limited to notice board posts, press posts, resolutions & comments.
+This section of the policy refers to user submitted content, which includes but is not limited to assets, notes, projects, etc.
 
 1.  We may, but have no obligation to, monitor, edit or remove content that we determine in our sole discretion are unlawful, offensive, threatening, libelous, defamatory, pornographic, obscene or otherwise objectionable or violates any party's intellectual property or these Terms of Service.
 2.  You agree that your comments will not violate the rights of any party, including copyright, trademark, privacy, personality or other personal or proprietary right. You further agree that your comments will not contain libelous or otherwise unlawful, abusive or obscene material, or contain any computer virus or other malware that could in any way affect the operation of the Service or any related website. You may not use a false e-mail address, pretend to be someone other than yourself, or otherwise mislead us or third-parties as to the origin of any comments as this constitutes statutory fraud. You are solely responsible for any comments you make and their accuracy. We take no responsibility and assume no liability for any comments posted by you or any third-party.
