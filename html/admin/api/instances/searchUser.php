@@ -11,7 +11,10 @@ $DBLIB->where("(SELECT COUNT(*) FROM userInstances
     ) < 1");
 $DBLIB->where("(
 		users_email LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
+		OR users_name1 LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
+		OR users_name2 LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'	
+		OR CONCAT( users_name1,  ' ', users_name2 ) LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
     )");
-$users = $DBLIB->get("users", null, ["users_userid", "users_name1", "users_name2"]);
+$users = $DBLIB->get("users", null, ["users_userid", "users_name1", "users_name2", "users_email"]);
 if (!$users) finish(false, ["code" => "LIST-USERS-FAIL", "message"=> "Could not search for Users"]);
 else finish(true, null, $users);

@@ -28,11 +28,9 @@
                 </div>
                 <div class="card-body table-responsive p-0">
                     {% if 3|instancePermissions %}
-                        <div class="input-group" style="margin: 10px;">
-                                <select class="chooser form-control" multiple="multiple" id="addUserToInstance"></select>
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-info" id="addUserToInstance-button"><i class="fa fa-plus"></i></button>
-                            </div>
+                        <div class="input-group  mb-3" style="padding: 10px; padding-bottom: 0;">
+                            <select class="form-control" multiple="multiple" id="addUserToInstance"></select>
+                            <button type="button" style="margin-top: 5px;" class="btn btn-default btn-sm" id="addUserToInstance-button">Add to business</button>
                         </div>
                     {% endif %}
                         <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
@@ -199,7 +197,7 @@
                             return {
                                 results: $.map(data.response, function (item) {
                                     return {
-                                        text: item.users_name1 + " " + item.users_name2,
+                                        text: item.users_name1 + " " + item.users_name2 + " (" + item.users_email + ")",
                                         id: item.users_userid
                                     }
                                 })
@@ -230,12 +228,20 @@
                         callback: function (result) {
                             if (result && result.length > 0) {
                                 var rolegroup = result;
-                                bootbox.prompt("Role name for new users", function(result){
-                                    if (result && result.length > 0) {
-                                        var rolename = result;
-                                        ajaxcall("instances/addUser.php", {"rolegroup": rolegroup, "rolename": rolename, "users": $("#addUserToInstance").select2("val")}, function() {
-                                            location.reload();
-                                        }, true);
+                                bootbox.prompt({
+                                    title: "Role name for new users",
+                                    value: "User",
+                                    callback: function(result) {
+                                        if (result && result.length > 0) {
+                                            var rolename = result;
+                                            ajaxcall("instances/addUser.php", {
+                                                "rolegroup": rolegroup,
+                                                "rolename": rolename,
+                                                "users": $("#addUserToInstance").select2("val")
+                                            }, function () {
+                                                location.reload();
+                                            }, true);
+                                        }
                                     }
                                 });
                             }
