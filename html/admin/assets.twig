@@ -10,7 +10,7 @@
                         {% if search|length > 0 %}
                             Search results for assets matching <b>{{ search }}</b>
                         {% elseif thisCategory %}
-                            <i class="fas {{thisCategory.assetCategories_fontAwesome}} nav-icon"></i>
+                            <i class="{{thisCategory.assetCategories_fontAwesome}} nav-icon"></i>
                             {{ thisCategory.assetCategories_name}} Assets
                         {% elseif thisManufacturer %}
                             Assets by {{ thisManufacturer.manufacturers_name}}

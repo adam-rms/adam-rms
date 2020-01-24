@@ -262,7 +262,7 @@
                 {% if USERDATA.instances|length > 0 %}
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
+                            <i class="nav-icon fas fa-warehouse"></i>
                             <p>
                                 Assets
                                 <i class="fas fa-angle-left right"></i>
@@ -275,7 +275,7 @@
                             {% for category in assetCategories %}
                                 <li class="nav-item">
                                     <a href="{{CONFIG.ROOTURL}}/assets.php?category={{ category.assetCategories_id }}" class="nav-link">
-                                        <i class="fas {{category.assetCategories_fontAwesome}} nav-icon"></i>
+                                        <i class="{{category.assetCategories_fontAwesome}} nav-icon"></i>
                                         <p>{{category.assetCategories_name}}</p>
                                     </a>
                                 </li>
