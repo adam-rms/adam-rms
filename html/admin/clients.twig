@@ -14,7 +14,14 @@
                         {% endif %}
                     </h3>
                     <div class="card-tools pull-right">
-                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                        <form class="input-group input-group-sm" method="GET">
+                            <div class="input-group-prepend">
+                                {% if includeFuture %}
+                                    <a href="?" type="button" class="btn btn-default">Hide future projects</a>
+                                {% else %}
+                                    <a href="?future" type="button" class="btn btn-default">Include future projects</a>
+                                {% endif %}
+                            </div>
                             <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -32,7 +39,6 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Address</th>
                                     <th>Phone</th>
                                     <th>Email</th>
                                     <th>Website</th>
@@ -45,8 +51,14 @@
                             <tbody>
                             {% for client in clients %}
                                 <tr>
-                                    <td>{{ client.clients_name }}</td>
-                                    <td>{{ client.clients_address|nl2br }}</td>
+                                    <td>
+                                        <a data-toggle="collapse" href="#collapse{{ client.clients_id }}">
+                                            {{ client.clients_name }}
+                                        </a>
+                                        <div id="collapse{{ client.clients_id }}" class="collapse in">
+                                            {{ client.clients_address|nl2br }}
+                                        </div>
+                                    </td>
                                     <td>{{ client.clients_phone }}</td>
                                     <td>{{ client.clients_email }}</td>
                                     <td><a href="{{ client.clients_website }}" target="_blank">{{ client.clients_website }}</a></td>
