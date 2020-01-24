@@ -266,7 +266,9 @@ function projectFinancials($projectid)
     return $return;
 }
 
-
+if ($CONFIG['DEV'] and !$AUTH->permissionCheck(17) and !$PAGEDATA['USERDATA']['viewSiteAs']) {
+    die("Sorry - you can't use this development version of the site - please visit adam-rms.xyz");
+}
 
 $USERDATA = $PAGEDATA['USERDATA'];
 ?>
