@@ -202,14 +202,16 @@ function projectFinancials($projectid)
         $return['priceMaths']['string'] .= "\nBegins on Sunday so first weekend charged as one week";
         $start = $start + 86400;
     }
-    if (date("N", $end) == 6) {
-        $return['priceMaths']['weeks'] += 1;
-        $return['priceMaths']['string'] .= "\nEnds on Saturday so last weekend charged as one week";
-        $end = $end - 86400;
-    } elseif (date("N", $end) == 7) {
-        $return['priceMaths']['weeks'] += 1;
-        $return['priceMaths']['string'] .= "\nEnds on Sunday so last weekend charged as one week";
-        $end = $end - (86400 * 2);
+    if (($end-$start) > 259200) { //If it's just one weekend it doesn't count as two weeks
+        if (date("N", $end) == 6) {
+            $return['priceMaths']['weeks'] += 1;
+            $return['priceMaths']['string'] .= "\nEnds on Saturday so last weekend charged as one week";
+            $end = $end - 86400;
+        } elseif (date("N", $end) == 7) {
+            $return['priceMaths']['weeks'] += 1;
+            $return['priceMaths']['string'] .= "\nEnds on Sunday so last weekend charged as one week";
+            $end = $end - (86400 * 2);
+        }
     }
 
     $remaining = strtotime(date("d F Y 23:59:59", $end)) - strtotime(date("d F Y", $start));
