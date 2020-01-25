@@ -35,10 +35,10 @@ When users first login or signup they are asked to consent to this document by t
 
 ### Security
 1. The service shall ensure that personal data is stored securely
-1.  Some of the service's directors, employees and volunteers have access to some/all of the service's files, access logs, emails and data, which they may view at any time. This includes messages sent through the messenger feature and registration records.
+1.  Some of the service's directors, employees and volunteers have access to some/all of the service's files, access logs, emails and data, which they may view at any time.
 2.  To help provide fantastic service and support, certain directors, employees and volunteers may login to any user's account, at any time, without notifying them.
 3.  As provided for by the Regulation of Investigatory Powers Act 2000 or any corresponding statute, The Service's directors, employees and volunteers reserve the right to investigate and inspect electronic communications.
-4. As required for operational reasons, user data may be released to conference leaders, staff and volunteers to enable them to execute their conference functions - for example delegate debating performance will be released to enable prizes to be awarded.
+4. As required for operational reasons, user data may be released to other users to enable them to execute their role functions - for example your email address will be shared with other users to allow them to contact you in relation to events. 
 5. The service may release data for analytical purposes to external providers but this data will either be anonymised or stored in line with this document.
 6. When personal data is deleted this should be done safely such that the data is irrecoverable, in liason with the service's storage contractors. 
 7. Appropriate back-up and disaster recovery solutions shall be in place. 

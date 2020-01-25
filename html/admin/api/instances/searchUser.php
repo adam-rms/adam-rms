@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(3) or !isset($_POST['term'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
-
+//Duplicated for adding crew
 $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);
 $DBLIB->where("(SELECT COUNT(*) FROM userInstances

@@ -48,6 +48,14 @@ $DBLIB->where("projects_id", $PAGEDATA['project']['projects_id']);
 $DBLIB->orderBy("projectsNotes_id", "ASC");
 $PAGEDATA['project']['notes'] = $DBLIB->get("projectsNotes");
 
+//Crew
+$DBLIB->where("projects_id", $PAGEDATA['project']['projects_id']);
+$DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
+$DBLIB->join("users", "crewAssignments.users_userid=users.users_userid", "LEFT");
+$DBLIB->orderBy("crewAssignments.crewAssignments_rank", "ASC");
+$DBLIB->orderBy("crewAssignments.crewAssignments_id", "ASC");
+$PAGEDATA['project']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "users.users_name1", "users.users_name2", "users.users_email"]);
+
 
 if (isset($_GET['pdf'])) {
     if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
