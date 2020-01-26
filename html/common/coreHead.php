@@ -189,3 +189,5 @@ class bCMS {
 }
 
 $GLOBALS['bCMS'] = new bCMS;
+
+

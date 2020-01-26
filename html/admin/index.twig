@@ -49,6 +49,7 @@
 
                         var calendar = new Calendar(calendarEl, {
                             plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid','list' ],
+                            nextDayThreshold: '05:00:00',
                             customButtons: {
                                 {% if 21|instancePermissions %}
                                 addProjectButton: {

@@ -53,7 +53,16 @@
                                         {% if user.users_suspended == '1' %}
                                         class="danger"
                                         {% endif %}>
-                                    <td>{{ user.users_username }}{% if user.users_suspended == '1' %}
+                                    <td>
+                                        {% if 52|instancePermissions %}
+                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
+                                            {% endif %}
+                                            {{ user.users_username }}
+                                            {% if 52|instancePermissions %}
+                                        </a>
+                                                {% endif %}
+
+                                            {% if user.users_suspended == '1' %}
                                             <span class="label label-danger">Suspended</span><br/>
                                         {% endif %}</td>
                                     <td>{{ user["users_name1"] }}</td>

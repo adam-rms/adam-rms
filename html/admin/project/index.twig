@@ -102,7 +102,15 @@
                                     <b class="d-block">{{ project.clients_name }}</b>
                                 </p>
                                 <p class="text-sm">Project Manager
-                                    <b class="d-block">{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}</b>
+                                    <b class="d-block">
+                                        {% if 52|instancePermissions %}
+                                        <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}">
+                                        {% endif %}
+                                        {{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}
+                                        {% if 52|instancePermissions %}
+                                            </a>
+                                        {% endif %}
+                                    </b>
                                 </p>
                                 <p class="text-sm">Venue
                                     <b class="d-block">{{ project.projects_address|nl2br }}</b>
@@ -218,7 +226,13 @@
                                     {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
                                         <i>Vacant</i>
                                     {% elseif crew.users_name1 %}
+                                        {% if 52|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ crew.users_userid }}">
+                                        {% endif %}
                                        {{ crew.users_name1 ~ " " ~ crew.users_name2 }}
+                                        {% if 52|instancePermissions %}
+                                            </a>
+                                        {% endif %}
                                    {% else %}
                                        {{ crew.crewAssignments_personName }}
                                    {% endif %}
