@@ -49,7 +49,7 @@ foreach ($_POST['users'] as $user) {
     else {
         $bCMS->auditLog("ASSIGN-CREW", "crewAssignments", $insert, $AUTH->data['users_userid'],null, $project['projects_id']);
         if ($usersql and ($usersql['users_userid'] != $AUTH->data['users_userid'])) { //Email if it's a real user, but don't email if they assigned themselves
-            $text = "<p>This event runs from " . date('d M Y h:ia', strtotime($project['projects_dates_use_start'])) . ' to ' . date('d M Y h:ia', strtotime($project['projects_dates_use_start'])) . '</p>';
+            $text = "<p>This event runs from " . date('d M Y h:ia', strtotime($project['projects_dates_use_start'])) . ' to ' . date('d M Y h:ia', strtotime($project['projects_dates_use_end'])) . '</p>';
             if ($existingAssignments) {
                 $text .= "<p>Please note this event clashes with the following that you're already assigned to:<ul>";
                 foreach ($existingAssignments as $clash) {
