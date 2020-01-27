@@ -211,7 +211,7 @@ class bID
             "emailVerificationCodes_code" => $code
         );
         if (!$DBLIB->insert('emailVerificationCodes', $data)) throw new Exception('Fatal Error verifiying E-Mail');
-        if (sendemail($userid, "Verify your E-Mail", '<center><h1>Verify your E-Mail address!</h1><br/><p>Please <a href="' . $CONFIG['ROOTURL'] . '/api/account/verifyEmail.php?code=' . $code . '">verify your E-Mail address for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i></center>')) return true;
+        if (sendEmail($userid,  false,"Verify your E-Mail", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Verify your E-Mail address!</h1><p style="margin: 0;">Please <a href="' . $CONFIG['ROOTURL'] . '/api/account/verifyEmail.php?code=' . $code . '">verify your E-Mail address for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i>')) return true;
         else return false;
     }
 
@@ -230,7 +230,7 @@ class bID
             "passwordResetCodes_code" => $code
         );
         if (!$DBLIB->insert('passwordResetCodes', $data)) throw new Exception('Fatal Error sending a reset E-Mail');
-        if (sendemail($userid, "Reset your password", '<center><h1>Someone requested to reset your password - if this was not you please contact our support team urgently.</h1><br/><p><a href="' . $CONFIG['ROOTURL'] . '/api/account/passwordReset.php?code=' . $code . '">Reset account password for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i></center>')) return true;
+        if (sendEmail($userid,false,  "Reset your password", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Someone requested to reset your password - if this was not you please contact our support team urgently.</h1><p style="margin: 0;"><a href="' . $CONFIG['ROOTURL'] . '/api/account/passwordReset.php?code=' . $code . '">Reset account password for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i>')) return true;
         else return false;
     }
     function destroyTokens($userid = null) {

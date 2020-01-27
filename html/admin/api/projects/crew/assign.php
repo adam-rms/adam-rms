@@ -11,7 +11,8 @@ foreach ($_POST['formData'] as $item) {
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $array['projects_id']);
-$project = $DBLIB->getone("projects", ["projects_id","projects_name", "projects_dates_use_start","projects_dates_use_end"]);
+$DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
+$project = $DBLIB->getone("projects", ["projects_id","projects_name", "projects_dates_use_start","projects_dates_use_end", "users.users_name1", "users.users_name2", "users.users_email", "projects.projects_address"]);
 if (!$project) finish(false);
 
 foreach ($_POST['users'] as $user) {
@@ -49,18 +50,13 @@ foreach ($_POST['users'] as $user) {
     else {
         $bCMS->auditLog("ASSIGN-CREW", "crewAssignments", $insert, $AUTH->data['users_userid'],null, $project['projects_id']);
         if ($usersql and ($usersql['users_userid'] != $AUTH->data['users_userid'])) { //Email if it's a real user, but don't email if they assigned themselves
-            $text = "<p>This event runs from " . date('d M Y h:ia', strtotime($project['projects_dates_use_start'])) . ' to ' . date('d M Y h:ia', strtotime($project['projects_dates_use_end'])) . '</p>';
-            if ($existingAssignments) {
-                $text .= "<p>Please note this event clashes with the following that you're already assigned to:<ul>";
-                foreach ($existingAssignments as $clash) {
-                    $text.= "<li>" . $clash['projects_name'] . " (" . $clash['crewAssignments_role'] . ")</li>";
-                }
-                $text .= "</ul></p>";
-            }
-            if ($array["crewAssignments_comment"]) {
-                $text .= "<p><b>Comment: </b>" . $array["crewAssignments_comment"] . "</p>";
-            }
-            sendemail($usersql['users_userid'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you as " . $bCMS->sanitizeString($array["crewAssignments_role"]) . " for the event " . $project['projects_name'],$text);
+            $data =
+                [
+                    "project" => $project,
+                    "clashes" => $existingAssignments,
+                    "assignment" => $data
+                ];
+            sendEmail($usersql['users_userid'], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you as " . $bCMS->sanitizeString($array["crewAssignments_role"]) . " for the event " . $project['projects_name'],false, "/admin/api/projects/crew/assign-EmailTemplate.twig", $data);
         }
     }
 }

@@ -17,8 +17,6 @@ foreach ($_POST['users'] as $user) {
         "userInstances_label" => $_POST['rolename']
     ])) finish(false, ["code" => "ADD-USER-TO-INSTANCE-FAIL", "message"=> "Could not add user to Business"]);
 
-    sendemail($user, $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you to " . $AUTH->data['instance']['instances_name'],
-        "<center><h2>Welcome to " . $AUTH->data['instance']['instances_name'] . '</h2><br/><p><a href="' . $CONFIG['ROOTURL'] . '/">Login to ' . $CONFIG['PROJECT_NAME'] . '</a> to start work!</p><br/><i>' . $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you with role " . $bCMS->sanitizeString($_POST['rolename']) . '</i></center>'
-        );
+   sendEmail($user, $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you to " . $AUTH->data['instance']['instances_name'], false, "/admin/api/instances/addUser-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "rolename"=>$bCMS->sanitizeString($_POST['rolename'])]);
 }
 finish(true);

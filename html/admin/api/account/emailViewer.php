@@ -3,15 +3,20 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 header('Content-type: text/html');
 if (!$AUTH->permissionCheck(6)) die("Sorry you don't have access to this");
 	$PAGEDATA['title'] = "E-Mail Viewer";
-	$output = '<style>.pagebreak { page-break-before: always; } </style>';
+	$output = '<style>
+					* {
+						font-family: sans-serif !important;
+						font-size: 14px
+					}
+					.pagebreak { page-break-before: always; }
+				</style>';
 	if (isset($_GET['email']) and  $_GET['email'] != '') {
 		$DBLIB->where ('emailSent_id IN (' . $bCMS->sanitizeString($_GET['email']) . ')');
 		$emails = $DBLIB->get('emailSent');
 		if (!isset($emails[0])) die('E-Mail not found');
 	} else die('Nothing to see here!');
 	foreach ($emails as $email) {
-		$output .= '<h1>' . $CONFIG['PROJECT_NAME']. ' (' . $email['emailSent_id'] . ')</h1>
-		<hr />
+		$output .= '
 		<table border="0" style="width: 100%;">
 			<tr>
 				<td><b>From:</b></td>
@@ -19,7 +24,7 @@ if (!$AUTH->permissionCheck(6)) die("Sorry you don't have access to this");
 			</tr>
 			<tr>
 				<td><b>Sent:</b></td>
-				<td>' . date("l, F j, Y h:i A", strtotime($email['emailSent_sent'])). '</td>
+				<td>' . date("l, F j, Y h:i A", strtotime($email['emailSent_sent'])). ' - Email ID ' . $email['emailSent_id'] . '</td>
 			</tr>
 			<tr>
 				<td><b>To:</b></td>
@@ -30,9 +35,9 @@ if (!$AUTH->permissionCheck(6)) die("Sorry you don't have access to this");
 				<td>' . $email['emailSent_subject']. '</td>
 			</tr>
 			<tr>
-				<td colspan="2">' . outputemail($email['emailSent_html']). '</td>
+				<td colspan="2"><iframe style="width:100%;height:580px;border:0;" srcdoc="' . str_replace(array("\n", "\r"), '', htmlspecialchars($email['emailSent_html'])). '"></iframe></td>
 		</table>
-		<div class="pagebreak"> </div>';
+		<hr /><div class="pagebreak"> </div>';
 	}
 
 	echo $output;

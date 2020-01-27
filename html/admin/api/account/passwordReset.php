@@ -21,10 +21,8 @@
 		$DBLIB->where ('passwordResetCodes_id', $code['passwordResetCodes_id']);
 		$DBLIB->update ('passwordResetCodes', ["passwordResetCodes_valid" => "0", "passwordResetCodes_used" => "1"]); //Verify E-Mail
 
-		sendemail($code['users_userid'], "Password changed for " . $CONFIG['PROJECT_NAME'], '
-			<center>
-				<h1>Your password has been changed using a forgot password link</h1></center>
-			');
+		sendEmail($code['users_userid'], false, "Password changed for " . $CONFIG['PROJECT_NAME'] . ' using a forgot password link');
+
 		$bCMS->auditLog("UPDATE", "users", "PASSWORD RESET", $AUTH->data['users_userid'],$AUTH->data['users_userid']);
 		$AUTH->generateToken($code['users_userid'], true);
 		exit;
