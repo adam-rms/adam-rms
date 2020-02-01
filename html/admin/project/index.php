@@ -41,6 +41,18 @@ if ($AUTH->instancePermissionCheck(23)) {
 
 //Payments
 $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']['projects_id']);
+usort($PAGEDATA['FINANCIALS']['payments']['subHire']['ledger'], function ($a, $b) {
+    // Sort sub-hires in order of supplier so you can do supplier headings
+    return $a['payments_supplier'] <=> $b['payments_supplier'];
+});
+usort($PAGEDATA['FINANCIALS']['payments']['sales']['ledger'], function ($a, $b) {
+    // Sort sub-hires in order of supplier so you can do supplier headings
+    return $a['payments_supplier'] <=> $b['payments_supplier'];
+});
+usort($PAGEDATA['FINANCIALS']['payments']['staff']['ledger'], function ($a, $b) {
+    // Sort sub-hires in order of supplier so you can do supplier headings
+    return $a['payments_supplier'] <=> $b['payments_supplier'];
+});
 
 //Notes
 $DBLIB->where("projectsNotes_deleted", 0);
@@ -59,6 +71,7 @@ $PAGEDATA['project']['crewAssignments'] = $DBLIB->get("crewAssignments", null, [
 
 if (isset($_GET['pdf'])) {
     if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
+
    // die($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4', 'setAutoTopMargin' => 'pad', "margin_top" => 5]);
     $mpdf->SetTitle($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name']);

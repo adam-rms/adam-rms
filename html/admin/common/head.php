@@ -226,7 +226,7 @@ function projectFinancials($projectid)
     $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
-    $assets = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome"]);
+    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome"]);
 
     $return['assetsAssigned'] = [];
     $return['mass'] = 0.0;
@@ -301,6 +301,8 @@ function projectFinancials($projectid)
 
         $return['prices']['discounts'] += ($asset['price'] - $asset['discountPrice']);
         $return['prices']['total'] += $asset['discountPrice'];
+
+        $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));
 
         $return['assetsAssigned'][] = $asset;
     }

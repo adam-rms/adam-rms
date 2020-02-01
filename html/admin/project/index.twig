@@ -286,12 +286,12 @@
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
-                                    <td colspan="2"><b>Hires</b></td>
+                                    <td colspan="2"><b>Equipment</b></td>
                                 </tr>
                                 {% if FINANCIALS.prices.discounts > 0 %}
                                 <tr>
                                     <td style="width: 100%; text-align: right;">
-                                        Hires SubTotal
+                                        Equipment SubTotal
                                     </td>
                                     <td>
                                         &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
@@ -308,7 +308,7 @@
                                 {% endif %}
                                 <tr>
                                     <td style="width: 100%; text-align: right;">
-                                        Hires Total
+                                        Equipment Total
                                     </td>
                                     <td>
                                         &pound;{{ FINANCIALS.prices.total|number_format(2) }}
@@ -695,7 +695,16 @@
                             </tr>
                             </thead>
                             <tbody>
+                            {% set currentSupplier = "" %}
                             {% for payment in FINANCIALS.payments.sales.ledger %}
+                                {% if currentSupplier != payment.payments_supplier %}
+                                    {% set currentSupplier = payment.payments_supplier %}
+                                    {% if payment.payments_supplier != "" %}
+                                        <tr>
+                                            <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endif %}
                                 <tr>
                                     <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
@@ -737,7 +746,16 @@
                             </tr>
                             </thead>
                             <tbody>
+                            {% set currentSupplier = "" %}
                             {% for payment in FINANCIALS.payments.subHire.ledger %}
+                                {% if currentSupplier != payment.payments_supplier %}
+                                    {% set currentSupplier = payment.payments_supplier %}
+                                    {% if payment.payments_supplier != "" %}
+                                    <tr>
+                                        <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                    </tr>
+                                    {% endif %}
+                                {% endif %}
                                 <tr>
                                     <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
@@ -772,6 +790,7 @@
                             <thead>
                             <tr>
                                 <th>Quantity</th>
+                                <th>Supplier</th>
                                 <th style="width: 100%;">Comment</th>
                                 <th>Amount</th>
                                 <th>Total</th>
@@ -782,6 +801,7 @@
                             {% for payment in FINANCIALS.payments.staff.ledger %}
                                 <tr>
                                     <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                    <td>{{ payment.payments_supplier|replace({" ":"&nbsp;"})|raw }}</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
                                     <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
                                     <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
@@ -843,6 +863,12 @@
                             <span class="input-group-text">Quantity</span>
                         </div>
                         <input class="form-control" type="number" step="1" min="0" value="1" name="payments_quantity">
+                    </div>
+                    <div class="input-group mb-3 newPaymentModal-nonPaymentOnly">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Supplier</span>
+                        </div>
+                        <input class="form-control" type="text" name="payments_supplier">
                     </div>
                     <div class="input-group" style="margin-bottom: 5px;">
                         <div class="input-group-prepend"><span class="input-group-text">Description</span></div>

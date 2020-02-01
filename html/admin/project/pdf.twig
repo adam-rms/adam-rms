@@ -1,16 +1,22 @@
 <style>
     body {
-        font-size: 16px;
+        font-size: 12px;
         font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
     }
 
      table {
         width: 100%;
+         border-collapse: collapse;
     }
 
      table td {
-        padding: 5px;
         vertical-align: top;
+    }
+    th, td {
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-bottom: 1px;
+        padding-top: 1px;
     }
 </style>
 <body>
@@ -29,7 +35,7 @@
 <div style="width: 100%;" align="center">
     <img src="{{CONFIG.ROOTURL}}/assets/img/logos/instances/{{ USERDATA.instance.instances_logo }}" style="width: 200px; padding:20px;">
 </div>
-<table>
+<table style="font-size: 16px;">
     <tr>
         <td>
             <b>{{ project.clients_name }}</b><br/>
@@ -50,42 +56,42 @@
         </td>
     </tr>
 </table>
-<h2>{{ project.projects_name }}</h2>
-<table style="background-color: #F5F5F5; padding: 6px;">
+<h1>{{ project.projects_name }}</h1>
+<table style="background-color: #F5F5F5; font-size: 16px;">
     <tr>
-        <td>
+        <td style="padding: 8px;">
             <table>
                 <tr>
                     <td style="padding:0;">Our&nbsp;Reference:</td>
-                    <td style="padding: 0px 0px 0px 5px;">{{project.projects_id}}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{project.projects_id}}</td>
                 </tr>
                 <tr>
                     <td style="padding:0;">Deliver:</td>
-                    <td style="padding: 0px 0px 0px 5px;">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("j M Y h:ia")}}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("j M Y h:ia")}}</td>
                 </tr>
                 <tr>
                     <td style="padding:0;">Start:</td>
-                    <td style="padding: 0px 0px 0px 5px;">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("j M Y h:ia")}}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("j M Y h:ia")}}</td>
                 </tr>
                 <tr>
                     <td style="padding:0;">Finish:</td>
-                    <td style="padding: 0px 0px 0px 5px;">{{ project.projects_dates_use_end ? project.projects_dates_use_end|date("j M Y h:ia") }}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_end ? project.projects_dates_use_end|date("j M Y h:ia") }}</td>
                 </tr>
                 <tr>
                     <td style="padding:0;">Collect:</td>
-                    <td style="padding: 0px 0px 0px 5px;">{{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("j M Y h:ia") }}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("j M Y h:ia") }}</td>
                 </tr>
                 <tr>
                     <td style="padding:0;">Mass Estimate:</td>
-                    <td style="padding: 0px 0px 0px 5px;">{{FINANCIALS.mass|round(2, 'ceil') }}kg</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.mass|round(2, 'ceil') }}kg</td>
                 </tr>
                 <tr>
                     <td style="padding:0;">Value Estimate:</td>
-                    <td style="padding: 0px 0px 0px 5px;">&pound;{{FINANCIALS.value|round(2, 'ceil') }}</td>
+                    <td style="padding: 1px 0px 1px 5px;">&pound;{{FINANCIALS.value|round(2, 'ceil')|number_format(2) }}</td>
                 </tr>
             </table>
         </td>
-        <td style="text-align: right;">
+        <td style="text-align: right;padding: 8px;">
             <b>Venue</b><br/>
             {{ project.projects_address|nl2br }}
         </td>
@@ -93,10 +99,10 @@
 </table>
 {% if showFinance %}
 <hr/>
-<table>
+<table style="font-size: 16px;">
     <tr>
        <td style="width: 35%;">
-           Hires SubTotal
+           Equipment SubTotal
        </td>
         <td style="width: 15%;text-align: right;">
             &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
@@ -124,7 +130,7 @@
     </tr>
     <tr>
         <td style="width: 35%;">
-            <b>Hires Total</b>
+            <b>Equipment Total</b>
         </td>
         <td style="width: 15%;text-align: right;">
             &pound;{{ FINANCIALS.prices.total|number_format(2) }}
@@ -138,7 +144,7 @@
     </tr>
 </table>
 <hr/>
-<table>
+<table style="font-size: 16px;">
     <tr>
         <td style="width: 35%;">
             SubTotal
@@ -171,20 +177,22 @@
 {% endif %}
 {%  if project.projects_invoiceNotes|length > 0 %}
     <h2>Notes</h2>
-    <p>{{ project.projects_invoiceNotes }}</p>
+    <p style="font-size: 16px;">{{ project.projects_invoiceNotes }}</p>
 {% endif %}
 {% if FINANCIALS.assetsAssigned|length > 0 %}
 <pagebreak/>
-    <h2>Hires</h2>
+    <h2>Equipment</h2>
 <table style="text-align: left;">
+    <thead>
         <tr>
-            <th style="width: 90px; text-align: left;">#</th>
-            <th style="text-align: left;">Comment</th>
-            <th style="text-align: left;">Spec</th>
-            <th style="width: 60px;">Mass</th>
-            {% if showFinance %}<th>Price</th>
-            <th>Disc.</th>{% endif %}
+            <th style="width: 90px; text-align: left;border-bottom: 1px solid black;">#</th>
+            <th style="text-align: left;border-bottom: 1px solid black;">Comment</th>
+            <th style="text-align: left;border-bottom: 1px solid black;" colspan="3">Spec</th>
+            <th style="width: 60px;border-bottom: 1px solid black;">Mass</th>
+            {% if showFinance %}<th style="border-bottom: 1px solid black;">Price</th>
+            <th style="border-bottom: 1px solid black;">Disc.</th>{% endif %}
         </tr>
+    </thead>
 {% set currentCategory = '' %}
 {% set currentType = '' %}
 {% for assetAssignment in FINANCIALS.assetsAssigned %}
@@ -198,42 +206,50 @@
     {% endif %}
     {% if assetAssignment.assetTypes_id != currentType %}
         {% set currentType = assetAssignment.assetTypes_id %}
+        {% set definableFields = assetAssignment.assetTypes_definableFields_ARRAY %}
         <tr>
-            <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="{{  showFinance ? 6 : 4 }}"{% else %}colspan="2"{% endif %}>
-                {{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
-            </td>
-            {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
-                <td style="padding:0px;">
-                    <table style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
-                            {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                {% if field != "" %}
-                                    <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                    </table>
+                <td style="font-weight: bold;" {% if definableFields|length > 3 or definableFields|length < 1 %}colspan="{{  showFinance ? 8 : 6 }}"{% else %}colspan="2"{% endif %}>
+                   {{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
                 </td>
-                <td {{ showFinance ? 'colspan="2"'}}></td>
-            {% endif %}
+                {% if definableFields|length < 4 and definableFields|length > 0 %}
+                    {% for field in definableFields %}
+                    <td style="padding:0px;"
+                            {% if definableFields|length == 1 %}colspan="3"{% endif %}>
+                        <b>{{field}}</b>
+                    </td>
+                    {% endfor %}
+                    {% if definableFields|length == 2 %}<td></td>{% endif %}
+                <td {{ showFinance ? 'colspan="3"'}}></td>
+                {% endif %}
         </tr>
     {% endif %}
     <tr>
         <td>{{ assetAssignment.assets_tag|aTag }}</td>
-        <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>{{ assetAssignment.assetsAssignments_comment }}</td>
-        {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
-            <td style="padding:0px;">
-                <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
-                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                            {% if field != "" %}
-                                <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr></table>
+        <td {% if definableFields|length < 1 %}colspan="4"{% endif %}>{{ assetAssignment.assetsAssignments_comment }}</td>
+        {% if definableFields|length < 4 and definableFields|length > 0 %}
+            {% if definableFields|length < 4 and definableFields|length > 0 %}
+                {% for field in definableFields %}
+                    <td style="padding:0px;"
+                        {% if definableFields|length == 1 %}colspan="3"{% endif %}>
+                        {{ assetAssignment['asset_definableFields_' ~ loop.index] }}
+                    </td>
+                {% endfor %}
+                    {% if definableFields|length == 2 %}<td></td>{% endif %}
+                {% endif %}
+        {% elseif definableFields|length > 0 %}
+            <td style="padding:0px;text-align: left;" colspan="3">
+                {% for field in definableFields %}
+                    {% if field != "" %}
+                        <b>{{field}}:</b> {{ assetAssignment['asset_definableFields_' ~ loop.index] }}<br/>
+                    {% endif %}
+                {% endfor %}
             </td>
         {% endif %}
-        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "?" }}</td>
-        {% if showFinance %}<td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
-        <td>{{ assetAssignment.assetsAssignments_discount }}%</td>{% endif %}
+        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "" }}</td>
+        {% if showFinance %}
+            <td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
+            <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
+        {% endif %}
     </tr>
 {% endfor %}
 </table>
@@ -243,77 +259,100 @@
         </tr>
     </table>
 {% endif %}
-{% if showFinance and FINANCIALS.payments.sales.ledger|length > 0 %}
-<h2>Sales</h2>
-<table>
-    <tbody>
-    {% for payment in FINANCIALS.payments.sales.ledger %}
-        <tr>
-            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-            <td>{{ payment.payments_comment|nl2br }}</td>
-            <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-            <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-    <tfoot>
-    <tr>
-        <td style="text-align:right; font-weight: bold;">Total:</td>
-        <td style="width:100px;text-align: right;">&pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}</td>
-    </tr>
-    </tfoot>
-</table>
-{% endif %}
-{% if showFinance and FINANCIALS.payments.subHire.ledger|length > 0 %}
+{% if FINANCIALS.payments.sales.ledger|length > 0 %}
     <pagebreak/>
+    <h2>Sales</h2>
+    <table border="0">
+        <tbody>
+        {% set currentSupplier = "" %}
+        {% for payment in FINANCIALS.payments.sales.ledger %}
+            {% if currentSupplier != payment.payments_supplier %}
+                {% set currentSupplier = payment.payments_supplier %}
+                <tr>
+                    <td colspan="{{ showFinance ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
+                <td>{{ payment.payments_comment|nl2br }}</td>
+                {% if showFinance %}
+                    <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        {% if showFinance %}
+            <tr>
+                <td colspan="4" style="text-align: right;"><b>Total: </b>&pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endif %}
+{% if FINANCIALS.payments.subHire.ledger|length > 0 %}
     <h2>Sub Hire Items</h2>
-    <table>
+    <table border="0">
         <tbody>
+        {% set currentSupplier = "" %}
         {% for payment in FINANCIALS.payments.subHire.ledger %}
+            {% if currentSupplier != payment.payments_supplier %}
+                {% set currentSupplier = payment.payments_supplier %}
             <tr>
-                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                <td colspan="{{ showFinance ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
-                <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                {% if showFinance %}
+                    <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
-        </tbody>
-        <tfoot>
+        {% if showFinance %}
         <tr>
-            <td style="text-align:right; font-weight: bold;">Total:</td>
-            <td style="width:100px;text-align: right;">&pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}</td>
+            <td colspan="4" style="text-align: right;"><b>Total: </b>&pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}</td>
         </tr>
-        </tfoot>
+        {% endif %}
+        </tbody>
+
     </table>
 {% endif %}
-{% if showFinance and FINANCIALS.payments.staff.ledger|length > 0 %}
-    <pagebreak/>
+{% if FINANCIALS.payments.staff.ledger|length > 0 %}
     <h2>Staff</h2>
-    <table>
+    <table border="0">
         <tbody>
+        {% set currentSupplier = "" %}
         {% for payment in FINANCIALS.payments.staff.ledger %}
+            {% if currentSupplier != payment.payments_supplier %}
+                {% set currentSupplier = payment.payments_supplier %}
+                <tr>
+                    <td colspan="{{ showFinance ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
+                </tr>
+            {% endif %}
             <tr>
-                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
-                <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                {% if showFinance %}
+                    <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
-        </tbody>
-        <tfoot>
+        {% if showFinance %}
             <tr>
-                <td style="text-align:right; font-weight: bold;">Total:</td>
-                <td style="width:100px;text-align: right;">&pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}</td>
+                <td colspan="4" style="text-align: right;"><b>Total: </b>&pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}</td>
             </tr>
-        </tfoot>
+        {% endif %}
+        </tbody>
+
     </table>
-    <br/>
-    <br/><br/>
 {% endif %}
 {% if showFinance %}
-<table style="background-color: #F5F5F5; padding: 6px;">
+<table style="background-color: #F5F5F5; margin-top: 10px; font-size: 14px;">
     <tr>
-        <td>
+        <td style="padding: 6px;">
             {{ USERDATA.instance.instances_termsAndPayment|nl2br }}
         </td>
     </tr>
