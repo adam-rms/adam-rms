@@ -63,8 +63,8 @@
                                     <td>{{ client.clients_email }}</td>
                                     <td><a href="{{ client.clients_website }}" target="_blank">{{ client.clients_website }}</a></td>
                                     <td>{{ client.clients_notes|nl2br }}</td>
-                                    <td>&pound;{{ client['totalPayments'] }}</td>
-                                    <td>{% if client['totalOutstanding'] > 0 %}&pound;{{ client['totalOutstanding'] }}{% endif %}</td>
+                                    <td>&pound;{{ client['totalPayments']|number_format(2) }}</td>
+                                    <td>{% if client['totalOutstanding'] > 0 %}&pound;{{ client['totalOutstanding']|number_format(2) }}{% endif %}</td>
                                     {% if 39|instancePermissions %}
                                     <td>
                                         <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#clientModal{{ client.clients_id }}"><i class="fas fa-edit"></i></button>
