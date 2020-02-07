@@ -218,6 +218,15 @@
                         {% endfor %}
                 </div>
             </li>
+            {% elseif thisProject %}
+            <li class="nav-item">
+                <a class="nav-link">
+                    <div class="d-none d-lg-block">
+                        <i class="fas fa-shopping-basket"></i>
+                        {{ thisProject.projects_name }}
+                    </div>
+                </a>
+            </li>
             {% endif %}
             {% if USERDATA.instances|length > 0 %}
                 <li class="nav-item dropdown">
