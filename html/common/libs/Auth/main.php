@@ -65,6 +65,7 @@ class bID
                         $DBLIB->where("instances.instances_deleted", 0);
                         $instances = $DBLIB->get("userInstances");
                         $this->data['instances'] = [];
+                        $this->data['instance_ids'] = [];
                         foreach ($instances as $instance) {
                             if ($instance['instances_weekStartDates'] != null) {
                                 $dates = explode("\n", $instance['instances_weekStartDates']);
@@ -78,6 +79,7 @@ class bID
 
                             $instance['permissions'] = array_unique(array_merge(explode(",", $instance['instancePositions_actions']), explode(",", $instance['userInstances_extraPermissions'])));
                             $this->data['instances'][] = $instance;
+                            array_push($this->data['instance_ids'], $instance['instances_id']);
                         }
                         $this->data['instance'] = false;
                         if ($this->data['users_selectedInstanceID'] != null) $this->setInstance($this->data['users_selectedInstanceID']);
@@ -113,7 +115,7 @@ class bID
                 if ($this->data['instance']['instances_id'] != $this->data["users_selectedInstanceID"]) {
                     //Change it in db
                     $DBLIB->where("users_userid", $this->data['users_userid']);
-                    $DBLIB->update("users", ["users_selectedProjectID" => null, "users_selectedInstanceID" => $this->data['instance']['instances_id']]);
+                    $DBLIB->update("users", ["users_selectedInstanceID" => $this->data['instance']['instances_id']]); //Allow users to keep other projects selected
                 }
                 return true;
             }

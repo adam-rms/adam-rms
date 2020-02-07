@@ -568,7 +568,12 @@
                                 <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
                             </td>
                             <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a></td>
-                            <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>{{ assetAssignment.assetsAssignments_comment }}</td>
+                            <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>
+                                {{ assetAssignment.assetsAssignments_comment }}
+                                {% if assetAssignment.instances_id != USERDATA.instance.instances_id %}
+                                    <span class="badge badge-danger">Business: {{ assetAssignment.assetInstanceName }}</span>
+                                {% endif %}
+                            </td>
                             {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
                             <td style="padding:0px;">
                                 <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>

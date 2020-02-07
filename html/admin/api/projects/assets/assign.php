@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(31)) die("404");
 
-$DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
 $DBLIB->where("projects.projects_deleted", 0);
 if (isset($_POST['projects_id'])) $DBLIB->where("projects.projects_id", $_POST['projects_id']);
 else $DBLIB->where("projects.projects_id", $AUTH->data['users_selectedProjectID']);

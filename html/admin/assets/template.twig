@@ -175,11 +175,31 @@
             {% if projects and 31|instancePermissions %}
           <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
-                    <i class="fas fa-shopping-basket"></i>
+                    <div class="d-none d-lg-block">
+                        <i class="fas fa-shopping-basket"></i>
+                        {% if thisProject %}
+                            {{ thisProject.projects_name }}
+                        {% endif %}
+                    </div>
+                    <div class="d-block d-lg-none">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    {% if thisProject %}
+                    <a href="#" class="dropdown-item">
+                        <h3 class="dropdown-item-title">
+                            {{ thisProject.projects_name }}
+                            {% if thisProject.instances_name %}
+                                <span class="badge badge-danger">{{ thisProject.instances_name }}</span>
+                            {% endif %}
+                        </h3>
+                        <p class="text-sm text-muted"><i class="fas fa-shopping-basket mr-1"></i> Selected</p>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    {% endif %}
                     {% for project in projects %}
-                        {% if project.projects_archived != 1 %}
+                        {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id %}
                             <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" class="dropdown-item changeProjectBasket" data-projectid="{{ project.projects_id }}">
                                 <h3 class="dropdown-item-title">
                                     {{ project.projects_name }}
@@ -202,7 +222,13 @@
             {% if USERDATA.instances|length > 0 %}
                 <li class="nav-item dropdown">
                     <a class="nav-link"  data-toggle="dropdown" href="#">
-                        {{ USERDATA.instance.instances_name }}
+                        <div class="d-none d-sm-block">
+                            {{ USERDATA.instance.instances_name }}
+                        </div>
+                        <div class="d-block d-sm-none">
+                           <i class="fas fa-building"></i>
+                        </div>
+
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         {% if USERDATA.instances|length > 1 %}
@@ -210,7 +236,12 @@
                             {% for instance in USERDATA.instances %}
                                 <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item">
                                     {{instance.instances_name}}
-                                    <span class="float-right text-muted text-sm">{{ instance.userInstances_label }}</span>
+                                    <p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
+                                    {% if USERDATA.instance.instances_id == instance.instances_id %}
+                                    <div class="d-block d-sm-none">
+                                        <span class="float-right text-muted text-sm">Selected</span>
+                                    </div>
+                                    {% endif %}
                                 </a>
                                 <div class="dropdown-divider"></div>
                             {% endfor %}
