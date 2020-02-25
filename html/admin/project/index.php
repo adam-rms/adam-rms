@@ -71,8 +71,8 @@ $PAGEDATA['project']['crewAssignments'] = $DBLIB->get("crewAssignments", null, [
 if (isset($_GET['loadingView'])) {
     $PAGEDATA['loadingView'] = true;
     $PAGEDATA['loadingViewStatusID'] = (isset($_GET['loadingViewStatus']) ? $_GET['loadingViewStatus'] : 5);
-    $PAGEDATA['loadingViewStatus'] = $GLOBALS['ASSET-ASSIGNMENT-STATUSES'][$PAGEDATA['loadingViewStatusID']];
-    $PAGEDATA['loadingViewStatusArray'] = $GLOBALS['ASSET-ASSIGNMENT-STATUSES'];
+    $PAGEDATA['loadingViewStatus'] = $GLOBALS['ASSETASSIGNMENTSTATUSES'][$PAGEDATA['loadingViewStatusID']];
+    $PAGEDATA['loadingViewStatusArray'] = $GLOBALS['ASSETASSIGNMENTSTATUSES'];
 }
 else $PAGEDATA['loadingView'] = false;
 
