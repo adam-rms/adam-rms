@@ -176,6 +176,23 @@ $PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
 $PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
 
 
+$GLOBALS['ASSET-ASSIGNMENT-STATUSES'] = [
+    0 => [
+        "name" => "None applicable"
+        ],
+    1 => ["name" => "Pending pick"],
+    2 => ["name" => "Picked"],
+    3 => ["name" => "Prepping"],
+    4 => ["name" => "Tested for prep"],
+    5 => ["name" => "Packed"],
+    6 => ["name" => "Dispatched"],
+    7 => ["name" => "Awaiting Check-in"],
+    8 => ["name" => "Case opened"],
+    9 => ["name" => "Unpacked"],
+    10 => ["name" => "Tested from return"],
+    11 => ["name" => "Stored"]
+];
+
 //Project Finance Calculator
 function projectFinancials($projectid)
 {
@@ -183,7 +200,7 @@ function projectFinancials($projectid)
     $return = [];
 
     $DBLIB->where("projects_id", $projectid);
-    $project = $DBLIB->getone("projects", ['projects_id', 'projects_dates_deliver_start','projects_dates_deliver_end']);
+    $project = $DBLIB->getone("projects", ['instances_id', 'projects_id', 'projects_dates_deliver_start','projects_dates_deliver_end']);
     if (!$project) return false;
 
     $DBLIB->where("payments.payments_deleted", 0);
@@ -224,12 +241,14 @@ function projectFinancials($projectid)
     $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
     $DBLIB->join("assetCategories", "assetTypes.assetCategories_id=assetCategories.assetCategories_id", "LEFT");
     $DBLIB->join("instances", "assets.instances_id=instances.instances_id", "LEFT");
+    $DBLIB->orderBy("instances.instances_name", "ASC");
     $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
     $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "instances.instances_name AS assetInstanceName", "instances.instances_id"]);
 
     $return['assetsAssigned'] = [];
+    $return['assetsAssignedSUB'] = [];
     $return['mass'] = 0.0;
     $return['value'] = 0.0;
     $return['prices'] = ["subTotal" => 0.0, "discounts" => 0.0, "total" => 0.0];
@@ -305,7 +324,8 @@ function projectFinancials($projectid)
 
         $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));
 
-        $return['assetsAssigned'][] = $asset;
+        if ($asset['instances_id'] != $project['instances_id']) $return['assetsAssignedSUB'][] = $asset;
+        else $return['assetsAssigned'][] = $asset;
     }
 
 

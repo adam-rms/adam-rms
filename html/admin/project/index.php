@@ -68,11 +68,18 @@ $DBLIB->orderBy("crewAssignments.crewAssignments_rank", "ASC");
 $DBLIB->orderBy("crewAssignments.crewAssignments_id", "ASC");
 $PAGEDATA['project']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "users.users_name1", "users.users_name2", "users.users_email"]);
 
+if (isset($_GET['loadingView'])) {
+    $PAGEDATA['loadingView'] = true;
+    $PAGEDATA['loadingViewStatusID'] = (isset($_GET['loadingViewStatus']) ? $_GET['loadingViewStatus'] : 5);
+    $PAGEDATA['loadingViewStatus'] = $GLOBALS['ASSET-ASSIGNMENT-STATUSES'][$PAGEDATA['loadingViewStatusID']];
+    $PAGEDATA['loadingViewStatusArray'] = $GLOBALS['ASSET-ASSIGNMENT-STATUSES'];
+}
+else $PAGEDATA['loadingView'] = false;
 
 if (isset($_GET['pdf'])) {
     if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
 
-   // die($TWIG->render('project/pdf.twig', $PAGEDATA));
+    //die($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4', 'setAutoTopMargin' => 'pad', "margin_top" => 5]);
     $mpdf->SetTitle($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name']);
     $mpdf->SetAuthor($PAGEDATA['USERDATA']['instance']['instances_name']);
