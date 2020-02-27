@@ -55,7 +55,7 @@ $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_emai
 
 
 if ($CONFIG['DEV'] and !$AUTH->permissionCheck(17) and !$PAGEDATA['USERDATA']['viewSiteAs']) {
-    die("Sorry - you can't use this development version of the site - please visit adam-rms.xyz");
+    die("Sorry - you can't use this development version of the site - please visit adam-rms.com");
 }
 
 $USERDATA = $PAGEDATA['USERDATA'];
