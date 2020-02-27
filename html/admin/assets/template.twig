@@ -119,7 +119,22 @@
             });
         }
     </script>
-
+    <style>
+        .nav-item {
+            /*
+                Fix for an odd error where items in the navbar were not displaying in a helpful way
+             */
+            max-width: 234px;
+        }
+        .todo-list > li .tools {
+            /*
+                Fix for crew roles list delete icon not displaying in a helpful way
+             */
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+    </style>
 
     <!--Favicons-->
     <link rel="apple-touch-icon" sizes="57x57" href="{{CONFIG.ROOTURL}}/assets/img/icons/apple-icon-57x57.png">
@@ -138,7 +153,7 @@
 
 </head>
 {% if BODY %}
-<body class="hold-transition sidebar-mini layout-footer-fixed">
+<body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
         <ul class="navbar-nav">
@@ -589,6 +604,9 @@ far fa-circle
     <!-- Control Sidebar -->
     <aside class="control-sidebar control-sidebar-dark">
         <!-- Control sidebar content goes here -->
+        <div class="p-3 control-sidebar-content">
+            <h5>Coming Soon</h5>
+        </div>
     </aside>
     <!-- /.control-sidebar -->
 </div><!-- ./wrapper -->
