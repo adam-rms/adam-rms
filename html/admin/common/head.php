@@ -7,13 +7,13 @@ $CONFIG['ROOTURL'] = getenv('bCMS__BACKENDURL');
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 //TWIG
 //Twig_Autoloader::register();
-$TWIGLOADER = new Twig_Loader_Filesystem(__DIR__ . '/../');
-$TWIG = new Twig_Environment($TWIGLOADER, array(
+$TWIGLOADER = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../');
+$TWIG = new \Twig\Environment($TWIGLOADER, array(
     'debug' => true,
     'auto_reload' => true
 ));
-$TWIG->addExtension(new Twig_Extension_Debug());
-$TWIG->addFilter(new Twig_SimpleFilter('timeago', function ($datetime) {
+$TWIG->addExtension(new \Twig\Extension\DebugExtension());
+$TWIG->addFilter(new \Twig\TwigFilter('timeago', function ($datetime) {
     $time = time() - strtotime($datetime);
     $units = array (
         31536000 => 'year',
@@ -32,37 +32,37 @@ $TWIG->addFilter(new Twig_SimpleFilter('timeago', function ($datetime) {
             .' '.$val.(($numberOfUnits>1) ? 's' : '').' ago';
     }
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('formatsize', function ($var) {
+$TWIG->addFilter(new \Twig\TwigFilter('formatsize', function ($var) {
     global $bCMS;
     return $bCMS->formatSize($var);
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('unclean', function ($var) {
+$TWIG->addFilter(new \Twig\TwigFilter('unclean', function ($var) {
     global $bCMS;
     return $bCMS->unCleanString($var);
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('permissions', function ($permissionid) {
+$TWIG->addFilter(new \Twig\TwigFilter('permissions', function ($permissionid) {
     global $AUTH;
     if (!$AUTH->login) return false;
     else return $AUTH->permissionCheck($permissionid);
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('instancePermissions', function ($permissionid) {
+$TWIG->addFilter(new \Twig\TwigFilter('instancePermissions', function ($permissionid) {
     global $AUTH;
     if (!$AUTH->login) return false;
     else return $AUTH->instancePermissionCheck($permissionid);
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('modifyGet', function ($array) {
+$TWIG->addFilter(new \Twig\TwigFilter('modifyGet', function ($array) {
     global $bCMS;
     return http_build_query(($bCMS->modifyGet($array)));
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('randomString', function ($characters) {
+$TWIG->addFilter(new \Twig\TwigFilter('randomString', function ($characters) {
     global $bCMS;
     return $bCMS->randomString($characters);
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('s3URL', function ($fileid, $size = false) {
+$TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false) {
     global $bCMS;
     return $bCMS->s3URL($fileid, $size);
 }));
-$TWIG->addFilter(new Twig_SimpleFilter('aTag', function ($id) {
+$TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
     if ($id == null) return null;
     if ($id <= 9999) return "A-" . sprintf('%04d', $id);
     else return "A-" . $id;
