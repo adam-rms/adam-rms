@@ -7,6 +7,9 @@ if (isset($_GET['i'])) {
     $GLOBALS['AUTH']->setInstance($_GET['i']);
     header("Location: " . $CONFIG['ROOTURL'] . "?");
 }
-
+if ($AUTH->permissionCheck(18) and isset($_GET['phpversion'])) {
+    phpinfo();
+    exit;
+}
 echo $TWIG->render('index.twig', $PAGEDATA);
 ?>
