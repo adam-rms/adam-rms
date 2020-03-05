@@ -17,14 +17,14 @@ function sendEmail($userid, $instanceID = false, $subject, $html = false, $templ
         $instance = $DBLIB->getone("userInstances", ["instances.instances_name", "instances.instances_address", "instances.instances_emailHeader"]);
     } else $instance = false;
 
-    $loader = new Twig_Loader_Filesystem(__DIR__ . '/');
-    $loader->addPath(__DIR__ . '/../../../');
-    $TWIG = new Twig_Environment($loader, array(
+    $TWIGLOADER = new \Twig\Loader\FilesystemLoader(__DIR__ . '/');
+    $TWIGLOADER->addPath(__DIR__ . '/../../../');
+    $TWIG = new \Twig\Environment($TWIGLOADER, array(
         'debug' => true,
         'auto_reload' => true
     ));
-    $TWIG->addExtension(new Twig_Extension_Debug());
-    $TWIG->addFilter(new Twig_SimpleFilter('aTag', function ($id) {
+    $TWIG->addExtension(new \Twig\Extension\DebugExtension());
+    $TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
         if ($id == null) return null;
         if ($id <= 9999) return "A-" . sprintf('%04d', $id);
         else return "A-" . $id;
