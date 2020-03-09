@@ -16,7 +16,7 @@ class bID
             $DBLIB->where("authTokens_valid", '1');
             $tokencheckresult = $DBLIB->getOne("authTokens");
             if ($tokencheckresult != null) {
-                if (strtotime($tokencheckresult["authTokens_created"]) + 3 * 24 * (3600 * 1000) < time() or $tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
+                if (strtotime($tokencheckresult["authTokens_created"]) + 1 * 12 * (3600 * 1000) < time() or $tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
                     $this->login = false;
                 } //Check token hasn't expired and check if the IP matches that preset in table
                 else {
