@@ -1,10 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!isset($_POST['term'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No data for action"]);
-
-
-if (isset($_POST['manufacturer'])) $DBLIB->where("manufacturers_id", $_POST['manufacturer']);
+if (isset($_POST['manufacturer'])) $DBLIB->where("assetTypes.manufacturers_id", $_POST['manufacturer']);
 $DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id = '" . $AUTH->data['instance']['instances_id'] . "')");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
