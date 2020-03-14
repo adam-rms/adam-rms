@@ -431,10 +431,10 @@
                         <!-- /.tab-pane -->
                         {% if 54|instancePermissions %}
                         <div class="tab-pane" style="padding: 1.25rem"  id="typeFiles">
+                            {% if 55|instancePermissions %}
                             <div class="callout callout-default">
                                 Use this area to store files relevant to all assets of this type such as instruction manuals
                             </div>
-                            {% if 55|instancePermissions %}
                             {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-TYPE-FILE', 'paste': true, 'typeId': 3, 'subTypeId': asset.assetTypes_id, 'imagesOnly': false } %}
                                 {% block success %}
                                     console.log(responseJson.id);
@@ -476,11 +476,11 @@
 
                         {% if assets|length == 1 and 61|instancePermissions %}
                             <div class="tab-pane" style="padding: 1.25rem"  id="files">
-                                <div class="callout callout-default">
-                                    Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
-                                </div>
-                                {% if 62|instancePermissions %}
-                                    {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-FILE', 'paste': false, 'typeId': 4, 'subTypeId': assets[0]['assets_id'], 'imagesOnly': false } %}
+                               {% if 62|instancePermissions %}
+                                   <div class="callout callout-default">
+                                       Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
+                                   </div>
+                                   {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-FILE', 'paste': false, 'typeId': 4, 'subTypeId': assets[0]['assets_id'], 'imagesOnly': false } %}
                                         {% block success %}
                                             console.log(responseJson.id);
                                         {% endblock %}
