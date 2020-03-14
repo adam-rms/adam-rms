@@ -93,14 +93,18 @@
                 type: "POST",
                 data: senddata,
                 cache: false,
-                success: function (result) {
+                success: function (result, status, data) {
                     if (result.result) {
                         if (typeof callback === "function") {
                             callback(result);
                         }
                     } else {
-                        console.log(result.error);
-                        bootbox.alert('Sorry we couldn\'t complete this action - please try again!<br/><br/>' + result.error.message, function () {
+                        if (result.error && result.error.message) {
+                            var errorMessage = result.error.message; //Putting this inline breaks the function below
+                        } else {
+                            var errorMessage = "";
+                        }
+                        bootbox.alert('Sorry we couldn\'t complete this action - please try again!<br/><br/>' + errorMessage, function () {
                             if (reloadIfError) {
                                 location.reload();
                             }
