@@ -47,9 +47,10 @@
                                 <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}">
                                     {% for thumb in asset.thumbnail %}
                                         <div>
+                                            <a href="asset.php?id={{ asset.assetTypes_id }}">
                                             <img class="img-fluid" style="max-height: 340px;"
                                                  src="{{ thumb.s3files_id|s3URL }}"
-                                                 alt="{{asset.assetTypes_name}}">
+                                                 alt="{{asset.assetTypes_name}}"></a>
                                         </div>
                                     {% endfor %}
                                 </div>
@@ -121,8 +122,9 @@
             insertURLQueryParam("pageLimit", $(this).data("count"));
         });
         $('.slick').slick({
-            dots: true,
+            dots: false,
             arrows: false,
+            focusOnSelect: true,
             pauseOnHover: true,
             draggable: false,
             infinite: true,
