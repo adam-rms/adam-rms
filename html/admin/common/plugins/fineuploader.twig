@@ -126,15 +126,18 @@ x-amz-meta-size
             },
             callbacks: {
                 onComplete: function (id, name, responseJson, xhr) {
-                    if (responseJson.resize != true) {
-                        {% block success %}
-                        {% endblock %}
-                    } else {
-                        console.log("Resize successfully uploaded");
+                    if (responseJson) {
+                        console.log(responseJson);
+                        if (responseJson.resize != true) {
+                            {% block success %}
+                            {% endblock %}
+                        } else {
+                            console.log("Resize successfully uploaded");
+                        }
+                        {#
+                            responseJson.id is the uplaoded file id
+                        #}
                     }
-                    {#
-                        responseJson.id is the uplaoded file id
-                    #}
                 }
             },
             objectProperties: {
