@@ -59,6 +59,11 @@
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
+                        {% if asset.assetTypes_productLink != null %}
+                        <li class="list-group-item">
+                            <b>Product Web Link</b> <a class="float-right" href="{{ asset.assetTypes_productLink }}" target="_blank">{{ asset.assetTypes_productLink|length > 25 ? asset.assetTypes_productLink|slice(0, 25) ~ '...': asset.assetTypes_productLink  }}</a>
+                        </li>
+                        {% endif %}
                         <li class="list-group-item">
                             <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass ~ "kg" : "?" }}</a>
                         </li>
@@ -262,6 +267,10 @@
                                             <div class="input-group">
                                                 <div class="input-group-prepend"><span class="input-group-text">Description</span></div>
                                                 <textarea class="form-control" rows="3" name="assetTypes_description" id="addNewType-description"  placeholder="">{{ asset.assetTypes_description}}</textarea>
+                                            </div>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend"><span class="input-group-text">Product Link</span></div>
+                                                <input type="url" class="form-control" name="assetTypes_productLink" value="{{ asset.assetTypes_productLink }}" id="addNewType-productLink" />
                                             </div>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">

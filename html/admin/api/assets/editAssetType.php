@@ -17,7 +17,7 @@ if ($array['assetTypes_mass'] == "") $array['assetTypes_mass'] = null; //This is
 if ($array['assetTypes_dayRate'] == "") $array['assetTypes_dayRate'] = null; //This is odd but seems to fix an error
 if ($array['assetTypes_weekRate'] == "") $array['assetTypes_weekRate'] = null; //This is odd but seems to fix an error
 
-$result = $DBLIB->update("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
+$result = $DBLIB->update("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','assetTypes_productLink','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update asset type"]);
 else {
     $bCMS->auditLog("EDIT-ASSET-TYPE", "assetTypes", json_encode($array), $AUTH->data['users_userid'],null, $array['assetTypes_id']);
