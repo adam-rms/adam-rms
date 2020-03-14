@@ -9,7 +9,7 @@ $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $_GET['id']);
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
-$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "clients.*", "users.users_name1", "users.users_name2", "users.users_email"]);
+$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "clients.*", "users.users_userid", "users.users_name1", "users.users_name2", "users.users_email"]);
 if (!$PAGEDATA['project']) die("404");
 
 //AuditLog

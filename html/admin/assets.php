@@ -19,7 +19,7 @@ else $PAGEDATA['search'] = null;
 
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
-$DBLIB->pageLimit = 20; //Users per page
+$DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 20); //Users per page
 if (isset($_GET['category'])) $DBLIB->where("assetTypes.assetCategories_id", $_GET['category']);
 if (isset($_GET['manufacturer'])) $DBLIB->where("manufacturers.manufacturers_id", $_GET['manufacturer']);
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
@@ -44,10 +44,9 @@ foreach ($assets as $asset) {
 	$DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
 	$DBLIB->where("assets_deleted", 0);
 	$DBLIB->orderBy("assets.assets_tag", "ASC");
-	if ($PAGEDATA['showTags']) {
-		$asset['tags'] = $DBLIB->get("assets", null, ["assets_id", "assets_tag"]);
-		$asset['count'] = count($asset['tags']);
-	} else $asset['count'] = $DBLIB->getValue("assets", "COUNT(*)");
+	$asset['tags'] = $DBLIB->get("assets", null, ["assets_id", "assets_tag"]);
+	$asset['count'] = count($asset['tags']);
+	$asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id']);
 	$PAGEDATA['assets'][] = $asset;
 }
 
@@ -63,5 +62,6 @@ if (isset($_GET['manufacturer'])) {
 	$PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['thisManufacturer']['manufacturers_name'] . " Assets";
 } else $PAGEDATA['thisManufacturer'] = false;
 
-echo $TWIG->render('assets.twig', $PAGEDATA);
+if (isset($_GET['listView'])) echo $TWIG->render('assetsListView.twig', $PAGEDATA);
+else echo $TWIG->render('assetsShopView.twig', $PAGEDATA);
 ?>

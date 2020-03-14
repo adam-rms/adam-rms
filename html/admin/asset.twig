@@ -4,6 +4,9 @@
     <script src="{{ CONFIG.ROOTURL }}/assets/js/sweetalert2.min.js"></script>
     <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/assets/css/sweetAlert2-bootstrap-4.min.css" />
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js" integrity="sha256-FcVIknBiVRk5KLQeIBb9VQdtFRMqwffXyZ+D8q0gQro=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" integrity="sha256-xJOZHfpxLR/uhh1BwYFS5fhmOAdIRQaiOul5F/b7v3s=" crossorigin="anonymous" />
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/assets/css/select2-bootstrap4.min.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
@@ -15,6 +18,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/slick/slick.css" />
+    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/slick/slick-theme.css" />
+    <script type="text/javascript" src="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/slick/slick.min.js"></script>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -23,11 +31,15 @@
             <!-- Profile Image -->
             <div class="card card-primary card-outline">
                 <div class="card-body box-profile">
-                    {% if asset.assetTypes_thumbnail %}
-                   <div class="text-center">
-                        <img class="profile-user-img img-fluid" style="width:80%;"
-                             src="{{ CONFIG.ROOTURL }}/assets/img/assets/{{asset.assetTypes_thumbnail}}"
-                             alt="{{asset.assetTypes_name}}">
+                    {% if asset.thumbnail %}
+                    <div class="text-center slick">
+                        {% for thumb in asset.thumbnail %}
+                            <div>
+                                <img class="img-fluid" style="max-height: 340px;"
+                                     src="{{ thumb.s3files_id|s3URL }}"
+                                     alt="{{asset.assetTypes_name}}">
+                            </div>
+                        {% endfor %}
                     </div>
                     {% endif %}
                     <h3 class="profile-username text-center">{{asset.assetTypes_name}}</h3>
@@ -37,8 +49,10 @@
 
                     <ul class="list-group list-group-unbordered mb-3">
                         {% if assets|length == 1 %}
+                            {% set assetFieldsLength = 0 %}
                             {% for field in asset.fields %}
                                 {% if field != "" %}
+                                    {% set assetFieldsLength = assetFieldsLength +1 %}{# Build a count of the number of fields use to help editing an asset #}
                                 <li class="list-group-item">
                                     <b>{{field}}</b> <a class="float-right">{{ assets[0]['asset_definableFields_' ~ loop.index] }}</a>
                                 </li>
@@ -85,6 +99,11 @@
         </div>
         <!-- /.col -->
         <div class="col-md-9">
+            {% if assets|length == 1 and assets[0]['assets_notes']|length > 0 %}
+            <div class="callout callout-default">
+                {{ assets[0]['assets_notes']|nl2br }}
+            </div>
+            {% endif %}
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
@@ -94,8 +113,15 @@
                                 <li class="nav-item"><a class="nav-link" href="#assets" data-toggle="tab">Assets</a></li>
 
                         {% endif %}
-                        <li class="nav-item"><a class="nav-link active" href="#timeline" data-toggle="tab">Timeline</a></li>
-                        <li class="nav-item"><a class="nav-link" {# href="#settings" data-toggle="tab" #}>Edit</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="#calendarBox" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
+                        {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) %}
+                            <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Edit Type</a></li>
+                        {% elseif 58|instancePermissions %}
+                            <li class="nav-item"><a class="nav-link" href="#" title="Locked as this asset type was built by AdamRMS">Edit Type</a></li>
+                        {% endif %}
+                        {% if assets|length == 1 and 59|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit Asset</a></li>{% endif %}
+                        {% if 54|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
+                        {% if assets|length == 1 and 61|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -109,6 +135,7 @@
                                     {% endfor %}
                                     <th>Notes</th>
                                     <th>Status</th>
+                                    <th title="File attachments"><i class="fas fa-paperclip"></i></th>
                                     <th style="width:30px;"></th>
                                 </tr>
                                 {% for thisasset in assets %}
@@ -119,6 +146,7 @@
                                         {% endfor %}
                                         <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                         <td><span class="badge bg-red"></span></td>
+                                        <td>{{ thisasset.files|length > 0 ?: "" }}</td>
                                         <td>
                                             <div class="btn-group">
                                                 {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
@@ -139,7 +167,7 @@
                             </table>
                         </div>
                         <!-- /.tab-pane -->
-                        <div class="active tab-pane" style="padding: 1.25rem" id="timeline">
+                        <div class="active tab-pane" style="padding: 1.25rem" id="calendarBox">
                             <div id="calendar"></div>
                             <script>
                                 $(function () {
@@ -208,56 +236,279 @@
                             </script>
                         </div>
                         <!-- /.tab-pane -->
+                        {% if 58|instancePermissions %}
+                        <div class="tab-pane" style="padding:0"  id="settings">
+                            <div class="card" style="margin-bottom:0;">
+                                <div class="card-header p-2">
+                                    <ul class="nav nav-pills">
+                                        <li class="nav-item"><a class="nav-link active" href="#details" data-toggle="tab">Details</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#fields" data-toggle="tab">Custom Fields</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#thumbnail" data-toggle="tab">Thumbnails</a></li>
+                                    </ul>
+                                </div><!-- /.card-header -->
+                                <div class="card-body" style="padding: 0;">
+                                    <div class="tab-content">
+                                        <div class="active tab-pane" style="padding: 1.25rem" id="details">
+                                            <style>
+                                                .input-group {
+                                                    margin-bottom: 5px;
+                                                }
+                                            </style>
+                                            <form id="addNewForm">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend"><span class="input-group-text">Name</span></div>
+                                                <input type="text" class="form-control" name="assetTypes_name" value="{{ asset.assetTypes_name}}" id="addNewType-name" />
+                                            </div>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend"><span class="input-group-text">Description</span></div>
+                                                <textarea class="form-control" rows="3" name="assetTypes_description" id="addNewType-description"  placeholder="">{{ asset.assetTypes_description}}</textarea>
+                                            </div>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Mass
+                                                    </span>
+                                                </div>
+                                                <input type="number" step="0.001" min="0" name="assetTypes_mass" value="{{ asset.assetTypes_mass}}" class="form-control" id="addNewType-mass" />
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">kg</div>
+                                                </div>
+                                            </div>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Value - £
+                                                    </span>
+                                                </div>
+                                                <input type="number" step="0.001" min="0" name="assetTypes_value" value="{{ asset.assetTypes_value}}" class="form-control" id="addNewType-value" />
+                                            </div>
 
-                        <div class="tab-pane" style="padding: 1.25rem"  id="settings">
-                            <form class="form-horizontal">
-                                <div class="form-group row">
-                                    <label for="inputName" class="col-sm-2 col-form-label">Name</label>
-                                    <div class="col-sm-10">
-                                        <input type="email" class="form-control" id="inputName" placeholder="Name">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                                    <div class="col-sm-10">
-                                        <input type="email" class="form-control" id="inputEmail" placeholder="Email">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputName2" class="col-sm-2 col-form-label">Name</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="inputName2" placeholder="Name">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputExperience" class="col-sm-2 col-form-label">Experience</label>
-                                    <div class="col-sm-10">
-                                        <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputSkills" class="col-sm-2 col-form-label">Skills</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="offset-sm-2 col-sm-10">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
-                                            </label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Day Rate - £
+                                                    </span>
+                                                </div>
+                                                <input type="number" step="0.001" min="0" name="assetTypes_dayRate" value="{{ asset.assetTypes_dayRate }}" class="form-control" id="addNewType-dayRate" />
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text" id="addNewType-dayRate-guide">Guide 2% of value</div>
+                                                </div>
+                                            </div>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Weekly Rate - £
+                                                    </span>
+                                                </div>
+                                                <input type="number" step="0.001" min="0" name="assetTypes_weekRate" class="form-control" value="{{ asset.assetTypes_weekRate }}" id="addNewType-weekRate" />
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text" id="addNewType-weekRate-guide">Guide 6% of value</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Category</label>
+                                                <select class="form-control  select2bs4" id="category" name="assetCategories_id">
+                                                    {% for category in categories %}
+                                                        <option  {%  if category.assetCategories_id == asset.assetCategories_id %} selected {% endif %} value="{{ category.assetCategories_id }}">{{ category.assetCategories_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <label>Manufacturer</label>
+                                            <select class="form-control  select2bs4" id="manufacturer">
+                                                {% for manufacturer in manufacturers %}
+                                                    <option {%  if manufacturer.manufacturers_id == asset.manufacturers_id %} selected {% endif %} value="{{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            </form>
+                                            <button class="btn btn-default float-right" id="saveSettingsButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                        </div>
+                                        <div class="tab-pane" style="padding: 1.25rem" id="fields">
+                                            <div class="callout callout-info">
+                                                <p>Definable fields are specific attributes for assets of this type - for a lighting fixture this might be the lens fitted</p>
+                                            </div>
+                                            <form id="editDefinableFieldsType">
+                                            {% for field in asset.fields %}
+                                                <div class="input-group definableFieldsGroup" data-fieldcount="{{loop.index}}">
+                                                    <div class="input-group-prepend"><span class="input-group-text">Definable Field {{loop.index}}</span></div>
+                                                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_{{ loop.index }}" value="{{field}}" data-fieldcount="{{loop.index}}" />
+                                                </div>
+                                            {% endfor %}
+                                            </form>
+                                            <div class="callout callout-danger">
+                                                <p>Leave a field blank to delete it</p>
+                                            </div>
+                                            <button class="btn btn-default float-right" id="saveTypeDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                        </div>
+                                        <div class="tab-pane" style="padding: 1.25rem" id="thumbnail">
+                                            {% if 55|instancePermissions %}
+                                                {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': false, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
+                                                    {% block success %}
+                                                        console.log(responseJson.id);
+                                                    {% endblock %}
+                                                {% endembed %}
+                                                <br/>
+                                            {% endif %}
+                                            <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+                                                {% for file in asset.thumbnail %}
+                                                    <li>
+                                                        <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
+                                                        <div class="mailbox-attachment-info">
+                                                            <span class="mailbox-attachment-size clearfix mt-1">
+                                                                <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span><br/>
+                                                                <span>{{ file.s3files_meta_size|formatsize }}</span>
+                                                                {% if 57|instancePermissions %}
+                                                                    <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
+                                                                {% endif %}
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="offset-sm-2 col-sm-10">
-                                        <button type="submit" class="btn btn-danger">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
+                                    <!-- /.tab-content -->
+                                </div><!-- /.card-body -->
+                            </div>
                         </div>
+                        {% endif %}
+
+                        {% if assets|length == 1 and 59|instancePermissions %}
+                            <div class="tab-pane" style="padding:0"  id="editAsset">
+                                <div class="card" style="margin-bottom:0;">
+                                    <div class="card-header p-2">
+                                        <ul class="nav nav-pills">
+                                            <li class="nav-item"><a class="nav-link active" href="#editAssetDetails" data-toggle="tab">Details</a></li>
+                                            {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
+                                        </ul>
+                                    </div><!-- /.card-header -->
+                                    <div class="card-body" style="padding: 0;">
+                                        <div class="tab-content">
+                                            <div class="active tab-pane" style="padding: 1.25rem" id="editAssetDetails">
+                                                <form id="editAssetDetailsForm">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
+                                                        <textarea class="form-control" rows="2" name="assets_notes" placeholder="">{{ assets[0]['assets_notes'] }}</textarea>
+                                                    </div>
+                                                </form>
+                                                <button class="btn btn-default float-right" id="saveAssetSettingsButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetFields">
+                                                <form id="editAssetDefinableFieldsForm">
+                                                    {% for field in asset.fields %}
+                                                        {% if field != "" %}
+                                                        <div class="input-group definableFieldsGroup" data-fieldcount="{{loop.index}}">
+                                                            <div class="input-group-prepend"><span class="input-group-text">{{field}}</span></div>
+                                                            <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_{{ loop.index }}" value="{{ assets[0]['asset_definableFields_' ~ loop.index] }}" data-fieldcount="{{loop.index}}" />
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </form>
+                                                <button class="btn btn-default float-right" id="saveAssetDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetType">
+                                                <div class="callout callout-danger">
+                                                    Changing the asset type for this asset can have significant implications especially with cost of existing projects and definable fields
+                                                </div>
+                                                <select class="form-control  select2bs4" id="assetTypeChange" placeholder="{{ asset.assetTypes_name }}" value="{{ asset.assetTypes_id }}"></select>
+                                                <button class="btn btn-default float-right" id="saveAssetTypeChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div><!-- /.card-body -->
+                                </div>
+                            </div>
+                        {% endif %}
                         <!-- /.tab-pane -->
+                        {% if 54|instancePermissions %}
+                        <div class="tab-pane" style="padding: 1.25rem"  id="typeFiles">
+                            <div class="callout callout-default">
+                                Use this area to store files relevant to all assets of this type such as instruction manuals
+                            </div>
+                            {% if 55|instancePermissions %}
+                            {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-TYPE-FILE', 'paste': true, 'typeId': 3, 'subTypeId': asset.assetTypes_id, 'imagesOnly': false } %}
+                                {% block success %}
+                                    console.log(responseJson.id);
+                                {% endblock %}
+                            {% endembed %}
+                            <br/>
+                            {% endif %}
+                            <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+                                {% for file in asset.files %}
+                                    <li>
+                                        {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
+                                        <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
+                                        {% else %}
+                                        <span class="mailbox-attachment-icon"><i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i></span>
+                                        {% endif %}
+                                        <div class="mailbox-attachment-info">
+                                            <a href="{{ file.s3files_id|s3URL }}" class="mailbox-attachment-name" target="_blank">
+                                                <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i> {{ file.s3files_name }}
+                                            </a>
+                                            <span class="mailbox-attachment-size clearfix mt-1">
+                                                <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span>
+
+                                            <br/><br/>
+                                                <span>{{ file.s3files_meta_size|formatsize }}</span>
+                                          <a href="{{ file.s3files_id|s3URL }}" target="_blank" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                                          {% if 56|instancePermissions %}
+                                            <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
+                                          {% endif %}
+                                          {% if 57|instancePermissions %}
+                                              <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
+                                          {% endif %}
+</span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if assets|length == 1 and 61|instancePermissions %}
+                            <div class="tab-pane" style="padding: 1.25rem"  id="files">
+                                <div class="callout callout-default">
+                                    Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
+                                </div>
+                                {% if 62|instancePermissions %}
+                                    {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-FILE', 'paste': false, 'typeId': 4, 'subTypeId': assets[0]['assets_id'], 'imagesOnly': false } %}
+                                        {% block success %}
+                                            console.log(responseJson.id);
+                                        {% endblock %}
+                                    {% endembed %}
+                                    <br/>
+                                {% endif %}
+                                <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+                                    {% for file in assets[0]['files'] %}
+                                        <li>
+                                            {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
+                                                <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
+                                            {% else %}
+                                                <span class="mailbox-attachment-icon"><i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i></span>
+                                            {% endif %}
+                                            <div class="mailbox-attachment-info">
+                                                <a href="{{ file.s3files_id|s3URL }}" class="mailbox-attachment-name" target="_blank">
+                                                    <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i> {{ file.s3files_name }}
+                                                </a>
+                                                <span class="mailbox-attachment-size clearfix mt-1">
+                                                <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span>
+
+                                            <br/><br/>
+                                                <span>{{ file.s3files_meta_size|formatsize }}</span>
+                                          <a href="{{ file.s3files_id|s3URL }}" target="_blank" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                                          {% if 56|instancePermissions %}
+                                              <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
+                                          {% endif %}
+                                        {% if 57|instancePermissions %}
+                                            <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
+                                        {% endif %}
+</span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
                     <!-- /.tab-content -->
                 </div><!-- /.card-body -->
@@ -276,6 +527,19 @@
                     position: 'top-end',
                     showConfirmButton: false,
                     timer: 3000
+                });
+                $('.slick').slick({
+                    dots: true,
+                    arrows: false,
+                    pauseOnHover: true,
+                    draggable: false,
+                    infinite: true,
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 5000,
+                    fade: true,
+                    cssEase: 'linear'
                 });
 
                 $(".deleteAssetButton").click(function () {
@@ -343,6 +607,153 @@
                         }
                     });
                 });
+                {% endif %}
+                {% if 56|instancePermissions %}
+                $(".renameFile").click(function () {
+                    var id = $(this).data("s3fileid");
+                    var filename = $(this).data("s3filename");
+                    bootbox.prompt({
+                        title: "Edit file name",
+                        inputType: 'textarea',
+                        value: filename,
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("file/rename.php", {
+                                    "s3files_id": id,
+                                    "s3files_name": result
+                                }, function (data) {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if 35|instancePermissions %}
+                $(".deleteFile").click(function () {
+                    var id = $(this).data("s3fileid");
+                    bootbox.confirm({
+                        message: "Are you sure you wish to delete this file?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-success'
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-default'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("file/delete.php", {
+                                    "s3files_id": id
+                                }, function (data) {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if 58|instancePermissions %}
+                $("#manufacturer").select2({
+                    theme: "bootstrap4",
+                    width: '100%'
+                });
+                $("#category").select2({
+                    theme: "bootstrap4",
+                    width: '100%'
+                });
+                $("#addNewType-value").change(function() {
+                    $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
+                    $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
+                });
+                $('#saveSettingsButton').on('click', function() {
+                    var formData = $("#addNewForm").serializeArray();
+                    formData.push({"name": "manufacturers_id", "value":$('#manufacturer').val()}, {"name": "assetTypes_id", "value": "{{asset.assetTypes_id}}"});
+                    console.log(formData);
+                    ajaxcall("assets/editAssetType.php", {formData}, function (data) {
+                        location.reload();
+                    }, false);
+                });
+                $('#saveTypeDefinableFieldButton').on('click', function() {
+                    var formData = $("#editDefinableFieldsType").serializeArray();
+                    formData.push({"name": "assetTypes_id", "value": "{{asset.assetTypes_id}}"});
+                    ajaxcall("assets/editAssetTypeDefinableFields.php", {formData}, function (data) {
+                        location.reload();
+                    }, false);
+                });
+                {% endif %}
+                {% if 59|instancePermissions %}
+                $('#saveAssetSettingsButton').on('click', function() {
+                    var formData = $("#editAssetDetailsForm").serializeArray();
+                    formData.push({"name": "assets_id", "value": "{{assets[0]['assets_id']}}"});
+                    ajaxcall("assets/editAsset.php", {formData}, function (data) {
+                        location.reload();
+                    }, false);
+                });
+                $('#saveAssetDefinableFieldButton').on('click', function() {
+                    var formData = $("#editAssetDefinableFieldsForm").serializeArray();
+                    formData.push({"name": "assets_id", "value": "{{assets[0]['assets_id']}}"});
+                    ajaxcall("assets/editAsset.php", {formData}, function (data) {
+                        location.reload();
+                    }, false);
+                });
+
+
+                $("#assetTypeChange").select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    width: '100%',
+                    minimumResultsForSearch: 1,
+                    placeholder: "Search for asset types",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/assets/search.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                term: params.term
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: item.manufacturers_name + " - " + item.assetTypes_name,
+                                            id: item.assetTypes_id
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    }
+                });
+                $('#saveAssetTypeChangeButton').on('click', function() {
+                    if ($("#assetTypeChange").val()) {
+                        var formData = [
+                            {
+                                "name" : "assets_id",
+                                "value" : "{{ assets[0]['assets_id'] }}"
+                            },
+                            {
+                                "name" : "assetTypes_id",
+                                "value" : $("#assetTypeChange").val()
+                            },
+                        ];
+                        ajaxcall("assets/editAsset.php", {formData}, function (data) {
+                            window.location.href = "{{ CONFIG.ROOTURL }}/asset.php?id=" + $("#assetTypeChange").val();
+                        }, false);
+                    }
+                });
+
                 {% endif %}
             });
         </script>

@@ -27,7 +27,19 @@ $CONFIG = array(
     "PROJECT_FROM_EMAIL" => getenv('bCMS__EMAIL'),
     "ROOTURL" => "", //Set on a frontend/backend basis
     "PROJECT_SUPPORT_EMAIL" => getenv('bCMS__SUPPORTEMAIL'),
-    'AWS' => ['UPLOAD' => true, 'KEY' => getenv('iMUN__S3_KEY'), 'SECRET' => getenv('iMUN__S3_SECRET'), 'DEFAULTUPLOADS' => ['BUCKET' => getenv('iMUN__S3_BUCKET'), 'ENDPOINT' =>  getenv('iMUN__S3_ENDPOINT'), 'REGION' => getenv('iMUN__S3_REGION'), 'CDNEndpoint' => getenv('iMUN__S3_CDN')], "FINEUPLOADER" => ["KEY" => getenv('iMUN__S3_KEY'), "SECRET" =>  getenv('iMUN__S3_SECRET')]],
+    'AWS' => [
+        'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
+        'SECRET' => getenv('bCMS__AWS_SERVER_SECRET_KEY'),
+        'DEFAULTUPLOADS' => [
+            'BUCKET' => getenv('bCMS__AWS_S3_BUCKET_NAME'),
+            'ENDPOINT' => getenv('bCMS__AWS_S3_BUCKET_ENDPOINT'),
+            'REGION' => getenv('bCMS__AWS_S3_BUCKET_REGION'),
+        ],
+        "FINEUPLOADER" => [
+            "KEY" => getenv('bCMS__AWS_CLIENT_KEY'),
+            "SECRET" => getenv('bCMS__AWS_CLIENT_SECRET_KEY')
+        ]
+    ],
     'DEV' => (getenv('bCMS__ERRORS') == "true" ? true : false),
 );
 date_default_timezone_set("UTC");

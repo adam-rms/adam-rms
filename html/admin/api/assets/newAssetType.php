@@ -7,7 +7,7 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
-if (strlen($array['assetTypes_id']) <0) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if (strlen($array['instances_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
 $array['instances_id'] = $AUTH->data['instance']["instances_id"];
 $array['assetTypes_inserted'] = date('Y-m-d H:i:s');
@@ -30,6 +30,6 @@ if ($array['assetTypes_dayRate'] == "") $array['assetTypes_dayRate'] = null; //T
 if ($array['assetTypes_weekRate'] == "") $array['assetTypes_weekRate'] = null; //This is odd but seems to fix an error
 
 
-$result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_thumbnail','assetTypes_inserted',"instances_id","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
+$result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"instances_id","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert asset type"]);
 else finish(true, null, ["assetTypes_id" => $result]);

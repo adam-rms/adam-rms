@@ -185,7 +185,7 @@
                                 {% if 24|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
                                 {% if 46|instancePermissions %}<a class="dropdown-item editProjectInvoiceNotes" href="#">Edit Invoice Notes</a>{% endif %}
                                 {% if 30|instancePermissions %}<a class="dropdown-item" id="editProjectAddress" href="#">Edit Venue</a>{% endif %}
-                                {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectLead" href="#">Change Project Lead</a>{% endif %}
+                                {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectLead" href="#">Change Project Manager</a>{% endif %}
                                 {% if 22|instancePermissions %}<a class="dropdown-item" id="editProjectClient" href="#">Change Client</a>{% endif %}
                                 <div class="dropdown-divider"></div>
                                 {% if 25|instancePermissions %}
@@ -1203,8 +1203,9 @@
             {% if 23|instancePermissions %}
             $("#editProjectLead").click(function () {
                 bootbox.prompt({
-                    title: "Set project lead",
+                    title: "Set project manager",
                     inputType: 'select',
+                    value: {{ project.users_userid }},
                     inputOptions: [
                         {
                             text: 'Choose one...',

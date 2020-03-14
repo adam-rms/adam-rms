@@ -115,7 +115,16 @@ class bCMS {
         if ($DBLIB->insert("auditLog", $data)) return true;
         else return false;
     }
-    function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+1 minute') {
+    function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC') {
+        global $DBLIB, $CONFIG;
+        $DBLIB->where("s3files_meta_type", $typeid);
+        if ($subTypeid) $DBLIB->where("s3files_meta_subType", $subTypeid);
+        $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
+        $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
+        $DBLIB->orderBy($sort, $sortOrder);
+        return $DBLIB->get("s3files", null, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
+    }
+    function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes') {
         global $DBLIB, $CONFIG;
         /*
          * File interface for Amazon AWS S3.
@@ -128,64 +137,73 @@ class bCMS {
         $fileid = $this->sanitizeString($fileid);
         if (strlen($fileid) < 1) return false;
         $DBLIB->where("s3files_id", $fileid);
-        $DBLIB->where("s3files_meta_deleteOn IS NULL"); //If the file is to be deleted soon or has been deleted don't let them download it
+        $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
         $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
         $file = $DBLIB->getone("s3files");
         if (!$file) return false;
-        if ($file['s3files_meta_public'] == 1) {
-            $returnFilePath = $file['s3files_cdn_endpoint'] . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'];
+        if ($size and false) { //disabled as at the moment the filenames are random so there's no way that this ever works out correct!
             switch ($size) {
                 case "tiny":
-                    $returnFilePath .= ' (tiny)';
+                    $file['s3files_filename'] .= ' (tiny)';
                     break; //The want the original
                 case "small":
-                    $returnFilePath .= ' (small)';
+                    $file['s3files_filename'] .= ' (small)';
                     break; //The want the original
                 case "medium":
-                    $returnFilePath .= ' (medium)';
+                    $file['s3files_filename'] .= ' (medium)';
                     break; //The want the original
                 case "large":
-                    $returnFilePath .= ' (large)';
+                    $file['s3files_filename'] .= ' (large)';
                     break; //The want the original
                 default:
                     //They want the original
             }
-            return $returnFilePath . "." . $file['s3files_extension'];
-        } else {
-            $s3Client = new Aws\S3\S3Client([
-                'region'  => $file["s3files_region"],
-                'endpoint' => "https://" . $file["s3files_endpoint"],
-                'version' => 'latest',
-                'credentials' => array(
-                    'key'    => $CONFIG['AWS']['KEY'],
-                    'secret' => $CONFIG['AWS']['SECRET'],
-                )
-            ]);
-
-            $file['expiry'] = $expire;
-
-
-            switch ($file['s3files_meta_type']) {
-                case 1:
-                    //This is a user thumbnail
-                    break;
-                default:
-                    //There are no specific requirements for this file so not to worry.
-            }
-
-            $parameters = [
-                'Bucket' => $file['s3files_bucket'],
-                'Key'    => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
-            ];
-            if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . $CONFIG['PROJECT_NAME'] . ' ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
-            $cmd = $s3Client->getCommand('GetObject', $parameters);
-            $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
-            $presignedUrl = (string) $request->getUri();
-
-            $presignedUrl = $file['s3files_cdn_endpoint'] . explode($file["s3files_endpoint"],$presignedUrl)[1]; //Remove the endpoint itself from the url in order to set a new one
-
-            return $presignedUrl;
         }
+        $s3Client = new Aws\S3\S3Client([
+            'region'  => $file["s3files_region"],
+            'endpoint' => "https://" . $file["s3files_endpoint"],
+            'version' => 'latest',
+            'credentials' => array(
+                'key'    => $CONFIG['AWS']['KEY'],
+                'secret' => $CONFIG['AWS']['SECRET'],
+            )
+        ]);
+
+        $file['expiry'] = $expire;
+
+
+        switch ($file['s3files_meta_type']) {
+            case 1:
+                //This is a user thumbnail
+                break;
+            case 2:
+                // Asset type thumbnail
+            case 3:
+                // Asset type file
+            case 4:
+                // Asset file
+            case 5:
+                // Instance thumbnail
+            case 6:
+                // Instance file
+            case 7:
+                //Project file
+            default:
+                //There are no specific requirements for this file so not to worry.
+        }
+
+        $parameters = [
+            'Bucket' => $file['s3files_bucket'],
+            'Key'    => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
+        ];
+        if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . $CONFIG['PROJECT_NAME'] . ' ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
+        $cmd = $s3Client->getCommand('GetObject', $parameters);
+        $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
+        $presignedUrl = (string) $request->getUri();
+
+        //$presignedUrl = $file['s3files_cdn_endpoint'] . explode($file["s3files_endpoint"],$presignedUrl)[1]; //Remove the endpoint itself from the url in order to set a new one
+
+        return $presignedUrl;
     }
 }
 

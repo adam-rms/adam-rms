@@ -7,7 +7,7 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
-if (strlen($array['projects_id']) <0) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if (strlen($array['projects_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 $array['payments_date'] = date("Y-m-d H:i:s", strtotime($array['payments_date']));
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);

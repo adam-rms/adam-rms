@@ -5,11 +5,12 @@ $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->where("assetTypes.assetTypes_id", $_GET['id']);
-$DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0) > 0)");
+//$DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0) > 0)");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
-$PAGEDATA['asset'] = $DBLIB->getone('assetTypes');
+$PAGEDATA['asset'] = $DBLIB->getone('assetTypes', ["*", "assetTypes.instances_id as assetInstances_id"]); //have to double download it as otherwise manufacturer instance id is returned instead
 if (!$PAGEDATA['asset']) die("404 Asset Not Found");
-
+$PAGEDATA['asset']['thumbnail'] = $bCMS->s3List(2, $PAGEDATA['asset']['assetTypes_id']);
+$PAGEDATA['asset']['files'] = $bCMS->s3List(3, $PAGEDATA['asset']['assetTypes_id']);
 $PAGEDATA['asset']['fields'] = explode(",", $PAGEDATA['asset']['assetTypes_definableFields']);
 
 $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
@@ -41,9 +42,19 @@ foreach ($assets as $asset) {
     $DBLIB->where("projects.projects_deleted", 0);
     $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end"]);
 
+    $asset['files'] = $bCMS->s3List(4, $asset['assets_id']);
+
     $PAGEDATA['assets'][] = $asset;
 }
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['asset']['assetTypes_name'], "BREADCRUMB" => false];
+
+// For asset type editing
+$DBLIB->where("(manufacturers.instances_id IS NULL OR manufacturers.instances_id = '" . $AUTH->data['instance']['instances_id'] . "')");
+$DBLIB->orderBy("manufacturers_name", "ASC");
+$PAGEDATA['manufacturers'] = $DBLIB->get('manufacturers', null, ["manufacturers.manufacturers_id", "manufacturers.manufacturers_name"]);
+
+$DBLIB->orderBy("assetCategories_rank", "ASC");
+$PAGEDATA['categories'] = $DBLIB->get('assetCategories');
 
 echo $TWIG->render('asset.twig', $PAGEDATA);
 ?>

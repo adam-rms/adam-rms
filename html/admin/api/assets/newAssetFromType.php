@@ -6,7 +6,7 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
-if (strlen($array['assetTypes_id']) <0) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if (strlen($array['assetTypes_id']) < 1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
 $array['assets_inserted'] = date('Y-m-d H:i:s');

@@ -7,7 +7,7 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
-if (strlen($array['clients_id']) <0) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if (strlen($array['clients_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("clients_deleted", 0);

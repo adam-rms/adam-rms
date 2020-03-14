@@ -62,6 +62,113 @@ $TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false)
     global $bCMS;
     return $bCMS->s3URL($fileid, $size);
 }));
+$TWIG->addFilter(new \Twig\TwigFilter('fontAwesomeFile', function ($extension) {
+    switch ($extension) {
+        case "gif":
+            return 'fa-file-image';
+            break;
+
+        case "jpeg":
+            return 'fa-file-image';
+            break;
+
+        case "jpg":
+            return 'fa-file-image';
+            break;
+
+        case "png":
+            return 'fa-file-image';
+            break;
+
+        case "pdf":
+            return 'fa-file-pdf';
+            break;
+
+        case "doc":
+            return 'fa-file-word';
+            break;
+
+        case "docx":
+            return 'fa-file-word';
+            break;
+
+        case "ppt":
+            return 'fa-file-powerpoint';
+            break;
+
+        case "pptx":
+            return 'fa-file-powerpoint';
+            break;
+
+        case "xls":
+            return 'fa-file-excel';
+            break;
+
+        case "xlsx":
+            return 'fa-file-excel';
+            break;
+
+        case "csv":
+            return 'fa-file-csv';
+            break;
+
+        case "aac":
+            return 'fa-file-audio';
+            break;
+
+        case "mp3":
+            return 'fa-file-audio';
+            break;
+
+        case "ogg":
+            return 'fa-file-audio';
+            break;
+
+        case "avi":
+            return 'fa-file-video';
+            break;
+
+        case "flv":
+            return 'fa-file-video';
+            break;
+
+        case "mkv":
+            return 'fa-file-video';
+            break;
+
+        case "mp4":
+            return 'fa-file-video';
+            break;
+
+        case "gz":
+            return 'fa-file-archive';
+            break;
+
+        case "zip":
+            return 'fa-file-archive';
+            break;
+
+        case "css":
+            return 'fa-file-code';
+            break;
+
+        case "html":
+            return 'fa-file-code';
+            break;
+
+        case "js":
+            return 'fa-file-code';
+            break;
+
+        case "txt":
+            return 'fa-file-alt';
+            break;
+        default:
+            return 'fa-file';
+            break;
+
+    }
+}));
 $TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
     if ($id == null) return null;
     if ($id <= 9999) return "A-" . sprintf('%04d', $id);

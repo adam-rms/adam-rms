@@ -1,0 +1,136 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/slick/slick.css" />
+    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/slick/slick-theme.css" />
+    <script type="text/javascript" src="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ CONFIG.ROOTURL }}/assets/libs/slick-1.8.1/slick/slick.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="card card-solid">
+    <div class="card-header">
+        <h3 class="card-title">
+            {% if search|length > 0 %}
+                Search results for assets matching <b>{{ search }}</b>
+            {% elseif thisCategory %}
+                <i class="{{thisCategory.assetCategories_fontAwesome}} nav-icon"></i>
+                {{ thisCategory.assetCategories_name}} Assets
+            {% elseif thisManufacturer %}
+                Assets by {{ thisManufacturer.manufacturers_name}}
+                {% if thisManufacturer.manufacturers_website != "" %}
+                    <a style="margin-left: 10px;" class="btn btn-sm btn-default" target="_blank" href="{{ thisManufacturer.manufacturers_website }}">{{ thisManufacturer.manufacturers_website }}</a>
+                {% endif %}
+            {% else %}
+                All Assets
+            {% endif %}
+        </h3>
+        <div class="card-tools pull-right">
+            <form class="input-group input-group-sm"  method="GET">
+                <input type="text" name="q" class="form-control" placeholder="Search all assets" value="{{ search }}" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
+                    <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?xlsx" class="btn btn-default" title="Excel Export"><i class="fas fa-file-excel"></i></a>
+                    <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?csv" class="btn btn-default" title="CSV Export"><i class="fas fa-file-csv"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card-body pb-0">
+        <div class="row d-flex align-items-stretch">
+            {% for asset in assets %}
+                <div class="col-auto d-flex align-items-stretch">
+                    <div class="card bg-light">
+                        <div class="card-header text-muted border-bottom-0">
+                            <a href="?category={{  asset.assetCategories_id }}">{{ asset.assetCategories_name }}</a>
+                        </div>
+                        <div class="card-body pt-0" style="max-width: 250px;">
+                            {% if asset.thumbnail|length > 0 %}
+                                <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}">
+                                    {% for thumb in asset.thumbnail %}
+                                        <div>
+                                            <img class="img-fluid" style="max-height: 340px;"
+                                                 src="{{ thumb.s3files_id|s3URL }}"
+                                                 alt="{{asset.assetTypes_name}}">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
+                            <p class="text-muted text-sm">{{ asset.assetTypes_description|length > 60 ? (asset.assetTypes_description|slice(0, 60)|nl2br ~ '...')|raw : asset.assetTypes_description|nl2br  }}</p>
+                            <ul class="ml-4 mb-0 fa-ul text-muted">
+                                {% if asset.manufacturers_id != 1 %}<li class="small"><span class="fa-li"><i class="fas fa-industry"></i></span> <a href="?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a></li>{% endif %}
+                                {% if asset.assetTypes_mass != "" and asset.assetTypes_mass != 0  %}<li class="small"><span class="fa-li"><i class="fas fa-weight"></i></span> {{ asset.assetTypes_mass ~ "kg" }}</li>{% endif %}
+                                <li class="small"><span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> &pound;{{ asset.assetTypes_value }}<br/>&pound;{{ asset.assetTypes_dayRate }}/day<br/>&pound;{{ asset.assetTypes_weekRate }}/week</li>
+                                {% if asset.count > 1 %}<li class="small" title="Number owned"><span class="fa-li"><i class="fas fa-boxes"></i></span> {{asset.count}}</li>{% endif %}
+
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                {#
+                                Add to cart button
+                                <a href="#" class="btn btn-sm bg-teal">
+                                    <i class="fas fa-comments"></i>
+                                </a>
+                                #}
+                                <a href="asset.php?id={{ asset.assetTypes_id }}" class="btn btn-sm btn-default">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card-footer clearfix">
+        <div class="btn-group" role="group">
+            <button class="btn btn-sm btn-default listViewButton">List View</button>
+            <button class="btn btn-sm btn-default viewMore" data-count="100">View 100</button>
+            <button class="btn btn-sm btn-default viewMore" data-count="250">View 250</button>
+        </div>
+
+        {% if pagination.total > 1 %}
+            <ul class="pagination pagination-sm m-0 float-right">
+                {% if pagination.page > 1 %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                {% endif %}
+
+                {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                            {% if pagination.page == i %}
+                                <b>{{ i }}</b>
+                            {% else %}
+                                {{ i }}
+                            {% endif %}
+                        </a></li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.total %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(".listViewButton").click(function () {
+            insertURLQueryParam("listView", "1");
+        });
+        $(".viewMore").click(function () {
+            insertURLQueryParam("pageLimit", $(this).data("count"));
+        });
+        $('.slick').slick({
+            dots: true,
+            arrows: false,
+            pauseOnHover: true,
+            draggable: false,
+            infinite: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 2000,
+        });
+    });
+</script>
+{% endblock %}
