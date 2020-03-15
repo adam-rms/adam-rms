@@ -32,7 +32,7 @@
             <div class="card card-primary card-outline">
                 <div class="card-body box-profile">
                     {% if asset.thumbnail %}
-                    <div class="text-center slick">
+                    <div class="text-center {{ asset.thumbnail|length > 1 ? 'slick' : '' }}">
                         {% for thumb in asset.thumbnail %}
                             <div>
                                 <img class="img-fluid" style="max-height: 340px;"
@@ -104,10 +104,26 @@
         </div>
         <!-- /.col -->
         <div class="col-md-9">
-            {% if assets|length == 1 and assets[0]['assets_notes']|length > 0 %}
-            <div class="callout callout-default">
-                {{ assets[0]['assets_notes']|nl2br }}
-            </div>
+            {% if assets|length == 1 %}
+                {% if assets[0]['assets_notes']|length > 0 %}
+                <div class="callout callout-default">
+                    {{ assets[0]['assets_notes']|nl2br }}
+                </div>
+                {% endif %}
+            {% for flag in assets[0].flagsblocks.BLOCK %}
+                <div class="alert alert-danger">
+                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                    <h5> <i class="fas fa-ban"></i> {{ flag.maintenanceJobs_title }}</h5>
+                    {{ flag.maintenanceJobs_faultDescription }}
+                </div>
+            {% endfor %}
+            {% for flag in assets[0].flagsblocks.FLAG %}
+                <div class="alert alert-warning">
+                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                    <h5><i class="far fa-flag"></i> {{ flag.maintenanceJobs_title }}</h5>
+                    {{ flag.maintenanceJobs_faultDescription }}
+                </div>
+            {% endfor %}
             {% endif %}
             <div class="card">
                 <div class="card-header p-2">
@@ -127,6 +143,7 @@
                         {% if assets|length == 1 and 59|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit Asset</a></li>{% endif %}
                         {% if 54|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
                         {% if assets|length == 1 and 61|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
+                        {% if assets|length == 1 and 63|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -140,7 +157,10 @@
                                     {% endfor %}
                                     <th>Notes</th>
                                     <th>Status</th>
+
                                     <th title="File attachments"><i class="fas fa-paperclip"></i></th>
+                                    <th style="width:1%"><i class="fas fa-flag"></i></th>
+                                    <th style="width:1%"><i class="fas fa-ban"></i></th>
                                     <th style="width:30px;"></th>
                                 </tr>
                                 {% for thisasset in assets %}
@@ -152,6 +172,12 @@
                                         <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                         <td><span class="badge bg-red"></span></td>
                                         <td>{{ thisasset.files|length > 0 ?: "" }}</td>
+                                        <td>
+                                            {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
+                                        </td>
+                                        <td>
+                                            {{ thisasset.flagsblocks.COUNT.BLOCK > 0 ?: '' }}
+                                        </td>
                                         <td>
                                             <div class="btn-group">
                                                 {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
@@ -445,7 +471,7 @@
                             <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
                                 {% for file in asset.files %}
                                     <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
-                                        {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
+                                        {% if file.s3files_extension|lower in ["gif", "jpeg", "jpg", "png"] %}
                                         <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
                                         {% else %}
                                         <span class="mailbox-attachment-icon"><i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i></span>
@@ -518,6 +544,299 @@
                                 </ul>
                             </div>
                         {% endif %}
+
+                        {% if 63|instancePermissions %}
+                            <div class="tab-pane" style="padding:0"  id="maintenance">
+                                <div class="card" style="margin-bottom:0;">
+                                    <div class="card-header p-2">
+                                        <ul class="nav nav-pills">
+                                            {% if 64|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link active" href="#maintenance-flags" data-toggle="tab">Blocks &amp; Flags</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-jobsOutstanding" data-toggle="tab">Jobs Outstanding</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-jobsCompleted" data-toggle="tab">Jobs Completed</a></li>
+                                        </ul>
+                                    </div><!-- /.card-header -->
+                                    <div class="card-body" style="padding: 0;">
+                                        <div class="tab-content">
+                                            <div class="tab-pane" style="padding: 1.25rem" id="maintenance-newJob">
+                                                <style>
+                                                    .input-group {
+                                                        margin-bottom: 5px;
+                                                    }
+                                                </style>
+                                                <form id="addNewJobForm">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Asset</span></div>
+                                                        <input type="text" class="form-control" disabled value="{{ assets[0].assets_tag|aTag }}" />
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Title</span></div>
+                                                        <input type="text" class="form-control" name="maintenanceJobs_title" id="maintenanceJobstitle" placeholder="Drum revolve key missing" />
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Fault Description</span></div>
+                                                        <textarea class="form-control" rows="5" name="maintenanceJobs_faultDescription" id="maintenanceJobsfaultDescription" placeholder="Details of the fault"></textarea>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                              Priority
+                                                            </span>
+                                                        </div>
+                                                        <select class="form-control" name="maintenanceJobs_priority">
+                                                            <option value="1">Emergency</option>
+                                                            <option value="2">Business Critical</option>
+                                                            <option value="3">Exceptionally Urgent</option>
+                                                            <option value="4">Very Urgent</option>
+                                                            <option value="5">Urgent</option>
+                                                            <option value="6">Urgent Upgrade</option>
+                                                            <option value="7">Short-term Upgrade</option>
+                                                            <option value="8" selected>Routine</option>
+                                                            <option value="9">Long Term</option>
+                                                            <option value="10">Log only</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <label>Tag Users</label>
+                                                        <select class="form-control" multiple="multiple" placeholder="Select users to be tagged for updates in the job" id="tagUserInJob">
+                                                        </select>
+                                                    </div>
+                                                </form>
+
+                                                <button class="btn btn-default float-right" id="addNewJobButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            <div class="active tab-pane" style="padding: 1.25rem" id="maintenance-flags">
+                                                {% for flag in assets[0].flagsblocks.BLOCK %}
+                                                    <div class="alert alert-danger">
+                                                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                        <h5><i class="fas fa-ban"></i> {{ flag.maintenanceJobs_title }}</h5>
+                                                        {{ flag.maintenanceJobs_faultDescription }}
+                                                    </div>
+                                                {% endfor %}
+                                                {% for flag in assets[0].flagsblocks.FLAG %}
+                                                <div class="alert alert-warning">
+                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                    <h5><i class="far fa-flag"></i> {{ flag.maintenanceJobs_title }}</h5>
+                                                    {{ flag.maintenanceJobs_faultDescription }}
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="tab-pane" style="padding: 0;" id="maintenance-jobsOutstanding">
+                                                <table class="table table-striped projects">
+                                                    <thead>
+                                                    <tr>
+                                                        <th style="width: 1%">
+                                                            #
+                                                        </th>
+                                                        <th>
+                                                            Title
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Creator
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Assigned
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Priority
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Status
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-flag"></i>
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-ban"></i>
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for job in assets[0].jobs %}
+                                                        {% if job.maintenanceJobsStatuses_id != 2 %}
+                                                        <tr>
+                                                            <td>
+                                                                <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                            </td>
+                                                            <td>
+                                                                <a>
+                                                                    {{ job.maintenanceJobs_title }}
+                                                                </a>
+                                                                <br/>
+                                                                <small>
+                                                                    Created {{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}
+                                                                </small>
+                                                            </td>
+                                                            <td>
+                                                                <ul class="list-inline">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                            <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userCreatorUserEMail|md5 }}?s=160&d=identicon">
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                {% if job.userAssignedUserName1 != null %}
+                                                                    <ul class="list-inline">
+                                                                        <li class="list-inline-item">
+                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
+                                                                                <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userAssignedUserEMail|md5 }}?s=160&d=identicon">
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="project-state">
+                                                                {% if job.maintenanceJobs_priority %}
+                                                                    <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
+                                                                    <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
+                                                                    <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
+                                                                    <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
+                                                                    <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
+                                                                    <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
+                                                                    <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
+                                                                    <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
+                                                                    <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
+                                                                    <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
+                                                                {% else %}
+
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="project-state">
+                                                                {% if job.maintenanceJobsStatuses_name %}
+                                                                    <span class="badge badge-default">{{ job.maintenanceJobsStatuses_name }}</span>
+                                                                {% else %}
+                                                                    <span class="badge badge-default">Awaiting Sorting</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td >
+                                                                {% if job.maintenanceJobs_flagAssets == 1 %}
+                                                                    <i class="fas fa-flag"></i>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td >
+                                                                {% if job.maintenanceJobs_blockAssets == 1 %}
+                                                                    <i class="fas fa-ban"></i>
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane" style="padding: 0" id="maintenance-jobsCompleted">
+                                                <table class="table table-striped projects">
+                                                    <thead>
+                                                    <tr>
+                                                        <th style="width: 1%">
+                                                            #
+                                                        </th>
+                                                        <th>
+                                                            Title
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Creator
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Assigned
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Priority
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Status
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-flag"></i>
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-ban"></i>
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for job in assets[0].jobs %}
+                                                        {% if job.maintenanceJobsStatuses_id == 2 %}
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                                </td>
+                                                                <td>
+                                                                    <a>
+                                                                        {{ job.maintenanceJobs_title }}
+                                                                    </a>
+                                                                    <br/>
+                                                                    <small>
+                                                                        Created {{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}
+                                                                    </small>
+                                                                </td>
+                                                                <td>
+                                                                    <ul class="list-inline">
+                                                                        <li class="list-inline-item">
+                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userCreatorUserEMail|md5 }}?s=160&d=identicon">
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </td>
+                                                                <td>
+                                                                    {% if job.userAssignedUserName1 != null %}
+                                                                        <ul class="list-inline">
+                                                                            <li class="list-inline-item">
+                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userAssignedUserEMail|md5 }}?s=160&d=identicon">
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="project-state">
+                                                                    {% if job.maintenanceJobs_priority %}
+                                                                        <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
+                                                                        <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
+                                                                        <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
+                                                                        <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
+                                                                        <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
+                                                                        <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
+                                                                        <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
+                                                                        <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
+                                                                        <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
+                                                                        <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
+                                                                    {% else %}
+
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="project-state">
+                                                                    {% if job.maintenanceJobsStatuses_name %}
+                                                                        <span class="badge badge-default">{{ job.maintenanceJobsStatuses_name }}</span>
+                                                                    {% else %}
+                                                                        <span class="badge badge-default">Awaiting Sorting</span>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td >
+                                                                    {% if job.maintenanceJobs_flagAssets == 1 %}
+                                                                        <i class="fas fa-flag"></i>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td >
+                                                                    {% if job.maintenanceJobs_blockAssets == 1 %}
+                                                                        <i class="fas fa-ban"></i>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div><!-- /.card-body -->
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
                     <!-- /.tab-content -->
                 </div><!-- /.card-body -->
@@ -527,10 +846,13 @@
     </div>
 
 
-    {% if 19|instancePermissions %}
+
         <script>
             $(document).ready(function () {
-
+                $(".select2bs4").select2({
+                    theme: "bootstrap4",
+                    width: '100%'
+                });
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -550,7 +872,7 @@
                     fade: true,
                     cssEase: 'linear'
                 });
-
+                {% if 19|instancePermissions %}
                 $(".deleteAssetButton").click(function () {
                     var assetid = $(this).data("assetid");
                     bootbox.confirm({
@@ -574,6 +896,7 @@
                         }
                     });
                 });
+                {% endif %}
                 {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
                 $(".addToBasketAssetButton").click(function () {
                     var assetId=$(this).data("assetid");
@@ -667,14 +990,7 @@
                 });
                 {% endif %}
                 {% if 58|instancePermissions %}
-                $("#manufacturer").select2({
-                    theme: "bootstrap4",
-                    width: '100%'
-                });
-                $("#category").select2({
-                    theme: "bootstrap4",
-                    width: '100%'
-                });
+
                 $("#addNewType-value").change(function() {
                     $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
                     $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
@@ -765,7 +1081,51 @@
                 });
 
                 {% endif %}
+                {% if 63|instancePermissions %}
+                $("#tagUserInJob").select2({
+                    tags: false,
+                    multiple: true,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    width: '100%',
+                    minimumResultsForSearch: 1,
+                    placeholder: "Enter email addresses to search for existing AdamRMS users to add to business",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchUser.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                term: params.term
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: item.users_name1 + " " + item.users_name2,
+                                            id: item.users_userid
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    }
+                });
+                $('#addNewJobButton').on('click', function() {
+                    var formData = $("#addNewJobForm").serializeArray();
+                    if ($("#maintenanceJobstitle").val().length > 0 && $("#maintenanceJobsfaultDescription").val().length > 0) {
+                        formData.push({"name": "maintenanceJobs_assets", "value": ["{{assets[0]['assets_id']}}"]},{"name": "maintenanceJobs_user_tagged", "value": $("#tagUserInJob").val()},{"name": "maintenanceJobs_user_creator", "value": "{{ USERDATA.users_userid }}"});
+                        ajaxcall("maintenance/newJob.php", {formData}, function (data) {
+                            window.location.href = "{{ CONFIG.ROOTURL }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
+                        }, false);
+                    }
+                });
+                {% endif %}
             });
         </script>
-    {% endif %}
 {% endblock %}

@@ -100,7 +100,7 @@ class bCMS {
         }
         return $_GET;
     }
-    function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null) { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
+    function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null, $targetid = null) { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
         global $DBLIB;
         $data = [
             "auditLog_actionType" => $actionType,
@@ -108,7 +108,8 @@ class bCMS {
             "auditLog_actionData" =>  $revelantData,
             "auditLog_timestamp" =>  date("Y-m-d H:i:s"),
             "projects_id" => $projectid,
-            ];
+            "auditLog_targetID" => $this->sanitizeString($targetid)
+        ];
         if ($userid > 0) $data["users_userid"] = $this->sanitizeString($userid);
         if ($useridTo > 0) $data["auditLog_actionUserid"] = $this->sanitizeString($useridTo);
 
@@ -188,6 +189,8 @@ class bCMS {
                 // Instance file
             case 7:
                 //Project file
+            case 8:
+                // Maintenance job file
             default:
                 //There are no specific requirements for this file so not to worry.
         }

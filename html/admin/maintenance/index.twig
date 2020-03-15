@@ -1,0 +1,155 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Maintenance Jobs</h3>
+
+        <div class="card-tools">
+
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-striped projects">
+            <thead>
+            <tr>
+                <th style="width: 1%">
+                    #
+                </th>
+                <th style="width: 20%">
+                    Title
+                </th>
+                <th style="width: 5%">
+                    Creator
+                </th>
+                <th style="width: 5%">
+                    Assigned
+                </th>
+                <th>
+                    Deadline
+                </th>
+                <th style="width: 8%" class="text-center">
+                    Priority
+                </th>
+                <th style="width: 8%" class="text-center">
+                    Status
+                </th>
+                <th style="width: 1%" class="text-center">
+                    <i class="fas fa-flag"></i>
+                </th>
+                <th style="width: 1%" class="text-center">
+                    <i class="fas fa-ban"></i>
+                </th>
+                <th style="width: 20%">
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td>
+                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                </td>
+                <td>
+                    <a>
+                        {{ job.maintenanceJobs_title }}
+                    </a>
+                    <br/>
+                    <small>
+                        Created {{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}
+                    </small>
+                </td>
+                <td>
+                    <ul class="list-inline">
+                        <li class="list-inline-item">
+                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userCreatorUserEMail|md5 }}?s=160&d=identicon">
+                            </a>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    {% if job.userAssignedUserName1 != null %}
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
+                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userAssignedUserEMail|md5 }}?s=160&d=identicon">
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </td>
+                <td class="project_progress">
+                    <!--<div class="progress progress-sm">
+                        <div class="progress-bar bg-green" role="progressbar" aria-volumenow="57" aria-volumemin="0" aria-volumemax="100" style="width: 57%">
+                        </div>
+                    </div>
+                    <small>
+                        57% Complete
+                    </small>-->
+                </td>
+                <td class="project-state">
+                    {% if job.maintenanceJobs_priority %}
+                        <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
+                        <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
+                        <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
+                        <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
+                        <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
+                        <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
+                        <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
+                        <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
+                        <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
+                        <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
+                    {% else %}
+                        
+                    {% endif %}
+                </td>
+                <td class="project-state">
+                    {% if job.maintenanceJobsStatuses_name %}
+                    <span class="badge badge-default">{{ job.maintenanceJobsStatuses_name }}</span>
+                    {% else %}
+                        <span class="badge badge-default">Awaiting Sorting</span>
+                    {% endif %}
+                </td>
+                <td >
+                    {% if job.maintenanceJobs_flagAssets == 1 %}
+                        <i class="fas fa-flag"></i>
+                    {% endif %}
+                </td>
+                <td >
+                    {% if job.maintenanceJobs_blockAssets == 1 %}
+                        <i class="fas fa-ban"></i>
+                    {% endif %}
+                </td>
+                <td class="project-actions text-right">
+
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer clearfix">
+        {% if pagination.total > 1 %}
+            <ul class="pagination pagination-sm m-0 float-right">
+                {% if pagination.page > 1 %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                {% endif %}
+
+                {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                            {% if pagination.page == i %}
+                                <b>{{ i }}</b>
+                            {% else %}
+                                {{ i }}
+                            {% endif %}
+                        </a></li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.total %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

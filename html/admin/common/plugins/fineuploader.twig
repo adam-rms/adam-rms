@@ -184,6 +184,10 @@ x-amz-meta-size
                     //{name: "large", maxSize: 1500}
                 ]
             },
+            {% if disableMultiple %}
+            ios: true,
+            multiple: false,
+            {% endif %}
             {% if paste %}
             {# Only one fineuploader on the page can be setup to allow files to be pasted - so set this carefully #}
             paste: {

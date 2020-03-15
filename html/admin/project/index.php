@@ -18,6 +18,7 @@ $DBLIB->where("auditLog.projects_id", $PAGEDATA['project']['projects_id']);
 $DBLIB->where("auditLog.auditLog_actionTable", "projects"); //TODO show more in the log but for now only project stuff
 $DBLIB->join("users", "auditLog.users_userid=users.users_userid", "LEFT");
 $DBLIB->orderBy("auditLog.auditLog_timestamp", "DESC");
+$DBLIB->orderBy("auditLog.auditLog_id", "DESC");
 $PAGEDATA['project']['auditLog'] = $DBLIB->get("auditLog",null, ["auditLog.*", "users.users_name1", "users.users_name2", "users.users_email"]);
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA["project"]['projects_name'], "BREADCRUMB" => false];

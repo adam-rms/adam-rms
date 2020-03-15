@@ -63,7 +63,7 @@ $TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false)
     return $bCMS->s3URL($fileid, $size);
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('fontAwesomeFile', function ($extension) {
-    switch ($extension) {
+    switch (strtolower($extension)) {
         case "gif":
             return 'fa-file-image';
             break;
@@ -173,6 +173,9 @@ $TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
     if ($id == null) return null;
     if ($id <= 9999) return "A-" . sprintf('%04d', $id);
     else return "A-" . $id;
+}));
+$TWIG->addFilter(new \Twig\TwigFilter('md5', function ($id) {
+    return md5($id);
 }));
 
 function generateNewTag() {
@@ -300,6 +303,30 @@ $GLOBALS['ASSETASSIGNMENTSTATUSES'] = [
     11 => ["name" => "Stored"]
 ];
 
+function assetFlagsAndBlocks($assetid) {
+    global $DBLIB;
+    $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
+    $DBLIB->where("(maintenanceJobs.maintenanceJobs_blockAssets = 1 OR maintenanceJobs.maintenanceJobs_flagAssets = 1)");
+    $DBLIB->where("(FIND_IN_SET(" .$assetid . ", maintenanceJobs.maintenanceJobs_assets) > 0)");
+    $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
+    //$DBLIB->join("users AS userCreator", "userCreator.users_userid=maintenanceJobs.maintenanceJobs_user_creator", "LEFT");
+    //$DBLIB->join("users AS userAssigned", "userAssigned.users_userid=maintenanceJobs.maintenanceJobs_user_assignedTo", "LEFT");
+    $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_priority", "DESC");
+    $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.maintenanceJobs_id", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_title", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_flagAssets", "maintenanceJobs.maintenanceJobs_blockAssets","maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
+    $return = ["BLOCK" => [], "FLAG" => [], "COUNT" => ["BLOCK" => 0, "FLAG" => 0]];
+    if (!$jobs) return $return;
+    foreach ($jobs as $job) {
+        if ($job["maintenanceJobs_blockAssets"] == 1) {
+            $return['BLOCK'][] = $job;
+            $return['COUNT']['BLOCK'] += 1;
+        }
+        if ($job["maintenanceJobs_flagAssets"] == 1) {
+            $return['FLAG'][] = $job;
+            $return['COUNT']['FLAG'] += 1;
+        }
+    }
+    return $return;
+}
 //Project Finance Calculator
 function projectFinancials($projectid)
 {
@@ -352,7 +379,9 @@ function projectFinancials($projectid)
     $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
+    $DBLIB->where("assets.assets_deleted", 0);
     $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "instances.instances_name AS assetInstanceName", "instances.instances_id"]);
+
 
     $return['assetsAssigned'] = [];
     $return['assetsAssignedSUB'] = [];
@@ -428,6 +457,8 @@ function projectFinancials($projectid)
 
         $return['prices']['discounts'] += ($asset['price'] - $asset['discountPrice']);
         $return['prices']['total'] += $asset['discountPrice'];
+
+        $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
 
         $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));
 

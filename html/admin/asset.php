@@ -35,6 +35,9 @@ foreach ($assets as $asset) {
         $asset['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name"]);
     }
 
+    //Flags&Blocks
+    $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
+
     //Calendar
     $DBLIB->where("assets_id", $asset['assets_id']);
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
@@ -55,6 +58,20 @@ $PAGEDATA['manufacturers'] = $DBLIB->get('manufacturers', null, ["manufacturers.
 
 $DBLIB->orderBy("assetCategories_rank", "ASC");
 $PAGEDATA['categories'] = $DBLIB->get('assetCategories');
+
+// Jobs
+if (count($PAGEDATA['assets']) == 1) {
+    $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
+    $DBLIB->where("(FIND_IN_SET(" .$PAGEDATA['assets'][0]['assets_id'] . ", maintenanceJobs.maintenanceJobs_assets) > 0)");
+    $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
+    $DBLIB->join("users AS userCreator", "userCreator.users_userid=maintenanceJobs.maintenanceJobs_user_creator", "LEFT");
+    $DBLIB->join("users AS userAssigned", "userAssigned.users_userid=maintenanceJobs.maintenanceJobs_user_assignedTo", "LEFT");
+    $DBLIB->orderBy("maintenanceJobsStatuses.maintenanceJobsStatuses_order", "ASC");
+    $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_due", "ASC");
+    $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_added", "ASC");
+    $PAGEDATA['assets'][0]['jobs'] = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name","userCreator.users_userid AS userCreatorUserID", "userCreator.users_name1 AS userCreatorUserName1", "userCreator.users_name2 AS userCreatorUserName2", "userCreator.users_email AS userCreatorUserEMail","userAssigned.users_name1 AS userAssignedUserName1","userAssigned.users_userid AS userAssignedUserID", "userAssigned.users_name2 AS userAssignedUserName2", "userAssigned.users_email AS userAssignedUserEMail"]);
+}
+
 
 echo $TWIG->render('asset.twig', $PAGEDATA);
 ?>
