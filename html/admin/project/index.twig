@@ -1205,7 +1205,9 @@
                 bootbox.prompt({
                     title: "Set project manager",
                     inputType: 'select',
+                    {% if project.users_userid != "" %}
                     value: {{ project.users_userid }},
+                    {% endif %}
                     inputOptions: [
                         {
                             text: 'Choose one...',
