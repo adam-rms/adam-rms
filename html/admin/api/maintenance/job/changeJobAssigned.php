@@ -18,6 +18,6 @@ if ($user['users_userid'] == null) {
     $bCMS->auditLog("CHANGE-ASSIGNED", "maintenanceJobs", "Unassign the job", $AUTH->data['users_userid'],null,null, $_POST['maintenanceJobs_id']);
 } else {
     $bCMS->auditLog("CHANGE-ASSIGNED", "maintenanceJobs", "Assigned the job to ". $user['users_name1'] . " " . $user['users_name2'], $AUTH->data['users_userid'],null,null, $_POST['maintenanceJobs_id']);
-    sendEmail($user['users_userid'], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " assigned you to a Maintenance Job", false, "/admin/api/maintenance/job/changeJobAssigned-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "maintenanceJobs_id" => $bCMS->sanitizeString($_POST['maintenanceJobs_id'])]);
+    if ($user['users_userid'] != $AUTH->data['users_userid']) sendEmail($user['users_userid'], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " assigned you to a Maintenance Job", false, "/admin/api/maintenance/job/changeJobAssigned-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "maintenanceJobs_id" => $bCMS->sanitizeString($_POST['maintenanceJobs_id'])]);
 }
 finish(true);
