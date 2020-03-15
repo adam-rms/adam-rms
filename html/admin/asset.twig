@@ -359,7 +359,7 @@
                                             {% endif %}
                                             <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
                                                 {% for file in asset.thumbnail %}
-                                                    <li>
+                                                    <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
                                                         <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
                                                         <div class="mailbox-attachment-info">
                                                             <span class="mailbox-attachment-size clearfix mt-1">
@@ -444,7 +444,7 @@
                             {% endif %}
                             <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
                                 {% for file in asset.files %}
-                                    <li>
+                                    <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
                                         {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
                                         <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
                                         {% else %}
@@ -489,7 +489,7 @@
                                 {% endif %}
                                 <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
                                     {% for file in assets[0]['files'] %}
-                                        <li>
+                                        <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
                                             {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
                                                 <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
                                             {% else %}
@@ -658,7 +658,8 @@
                                 ajaxcall("file/delete.php", {
                                     "s3files_id": id
                                 }, function (data) {
-                                    location.reload();
+                                    //Hide the file in the display
+                                    $(".fileBox[data-s3fileid=" + id + "]").hide();
                                 });
                             }
                         }
