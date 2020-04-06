@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../common/coreHead.php';
 
-$CONFIG['ROOTURL'] = getenv('bCMS__BACKENDURL');
+$CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
 
 
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
