@@ -37,7 +37,7 @@ try {
 /* DATBASE CONNECTIONS */
 $CONN = new mysqli($CONFIG['DB_HOSTNAME'], $CONFIG['DB_USERNAME'], $CONFIG['DB_PASSWORD'], $CONFIG['DB_DATABASE']);
 if ($CONN->connect_error) throw new Exception($CONN->connect_error);
-$DBLIB = new MysqliDb ($CONN); //Re-use it in the wierd lib we love
+$DBLIB = new MysqliDb ($CONN); //Re-use it in the lib we love
 
 /* FUNCTIONS */
 class bCMS {
