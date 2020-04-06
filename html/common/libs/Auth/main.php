@@ -6,6 +6,7 @@ class bID
     public $login;
     private $token;
     public $data;
+    public $debug = '';
     private $permissions;
     function __construct()
     {
@@ -17,7 +18,7 @@ class bID
             $tokencheckresult = $DBLIB->getOne("authTokens");
             if ($tokencheckresult != null) {
                 if ((strtotime($tokencheckresult["authTokens_created"]) + 1 * 12 * (3600 * 1000)) < time() or $tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
-                    if ($CONFIG['DEV']) echo "Token expired \n";
+                    if ($CONFIG['DEV']) $this->debug .= "Token expired <br/>";
                     $this->login = false;
                 } //Check token hasn't expired and check if the IP matches that preset in table
                 else {
@@ -25,7 +26,7 @@ class bID
                     $DBLIB->where("users_userid", $tokencheckresult["users_userid"]);
                     $this->data = $DBLIB->getOne("users");
                     if ($this->data == null) {
-                        if ($CONFIG['DEV']) echo "User not found \n";
+                        if ($CONFIG['DEV']) $this->debug .= "User not found <br/>";
                         $this->login = false;
                     }
                     else {
@@ -93,11 +94,11 @@ class bID
                     }
                 }
             } else {
-                if ($CONFIG['DEV']) echo "Token not found in db\n";
+                if ($CONFIG['DEV']) $this->debug .= "Token not found in db<br/>";
                 $this->login = false;
             }
         } else {
-            if ($CONFIG['DEV']) echo "No session token\n";
+            if ($CONFIG['DEV']) $this->debug .= "No session token<br/>";
             $this->login = false;
         }
     }
