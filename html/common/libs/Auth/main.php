@@ -20,10 +20,24 @@ class bID
                 if ((strtotime($tokencheckresult["authTokens_created"]) + (1 * 12 * (3600 * 1000))) < time()) {
                     if ($CONFIG['DEV']) $this->debug .= "Token expired at " . $tokencheckresult["authTokens_created"] . " - server time is " . time() . "<br/>";
                     $this->login = false;
-                } elseif ($tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
-                    if ($CONFIG['DEV']) $this->debug .= "IP doesn't match token<br/>";
-                    $this->login = false;
                 } else {
+                    if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+                        if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokencheckresult["authTokens_ipAddress"]) {
+                            if ($CONFIG['DEV']) $this->debug .= "IP from Cloudflare doesn't match token<br/>";
+                            $this->login = false;
+                        }
+                    } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+                        if ($_SERVER["HTTP_X_FORWARDED_FOR"] != $tokencheckresult["authTokens_ipAddress"]) {
+                            //TODO evaluate this as a security risk
+                            if ($CONFIG['DEV']) $this->debug .= "IP from Heroku/generic proxy doesn't match token<br/>";
+                            $this->login = false;
+                        }
+                    } else {
+                        if($_SERVER["REMOTE_ADDR"] != $tokencheckresult["authTokens_ipAddress"]) {
+                            if ($CONFIG['DEV']) $this->debug .= "IP direct doesn't match token<br/>";
+                            $this->login = false;
+                        }
+                    }
                     //Get user data
                     $DBLIB->where("users_userid", $tokencheckresult["users_userid"]);
                     $this->data = $DBLIB->getOne("users");
