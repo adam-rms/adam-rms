@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/common/headSecure.php';
 
+if (!isset($_GET['id'])) $_GET['id'] = $AUTH->data['users_userid'];
 
 $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);
