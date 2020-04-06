@@ -34,20 +34,26 @@ try {
 } catch (Exception $e) {
     //Do Nothing
 }
-/* DATBASE CONNECTIONS */
-$CONN = new mysqli($CONFIG['DB_HOSTNAME'], $CONFIG['DB_USERNAME'], $CONFIG['DB_PASSWORD'], $CONFIG['DB_DATABASE']);
-if ($CONN->connect_error) throw new Exception($CONN->connect_error);
-$DBLIB = new MysqliDb ($CONN); //Re-use it in the lib we love
+/* DATBASE CONNECTION */
+$DBLIB = new MysqliDb ([
+                'host' => $CONFIG['DB_HOSTNAME'],
+                'username' => $CONFIG['DB_USERNAME'],
+                'password' => $CONFIG['DB_PASSWORD'],
+                'db'=> $CONFIG['DB_DATABASE'],
+                'port' => 3306,
+                //'prefix' => 'adamrms_',
+                'charset' => 'utf8'
+        ]);
 
 /* FUNCTIONS */
 class bCMS {
     function sanitizeString($var) {
+        global $DBLIB;
         //Setup Sanitize String Function
         $var = strip_tags($var);
         $var = htmlentities($var);
         $var = stripslashes($var);
-        global $CONN;
-        return mysqli_real_escape_string($CONN, $var);
+        return $DBLIB->escape($var);
     }
     function randomString($length = 10, $stringonly = false) { //Generate a random string
         $characters = 'abcdefghkmnopqrstuvwxyzABCDEFGHKMNOPQRSTUVWXYZ';
@@ -71,8 +77,8 @@ class bCMS {
 
         $clean_html = urlencode($clean_html); //Url encoding stops \ problems!
 
-        global $CONN;
-        return mysqli_real_escape_string($CONN, $clean_html);
+        global $DBLIB;
+        return $DBLIB->escape($clean_html);
     }
     function unCleanString($var) {
         return urldecode($var);
