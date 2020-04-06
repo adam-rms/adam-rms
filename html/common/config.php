@@ -27,6 +27,7 @@ $CONFIG = array(
     'SENDGRID' => ['APIKEY' => $_ENV['bCMS__SendGridAPIKEY']],
     //'ERRORS' => ['SENTRY' => $_ENV['bCMS__SENTRYLOGIN'], "SENTRYPublic" => $_ENV['bCMS__SENTRYLOGINPUBLIC'], 'URL' => 'https://google.com'],
     'ANALYTICS' => ['TRACKINGID' => $_ENV['bCMS__GoogleAnalytics']],
+    'VERSION' => ['HEROKU' => ['VERSION' => (isset($_ENV['HEROKU_RELEASE_VERSION']) ? $_ENV['HEROKU_RELEASE_VERSION'] : ""), 'COMMIT' => (isset($_ENV['HEROKU_SLUG_COMMIT']) ? $_ENV['HEROKU_SLUG_COMMIT'] : "")]],
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => $_ENV['bCMS__EMAIL'],
     "ROOTURL" => "", //Set on a frontend/backend basis
