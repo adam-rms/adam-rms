@@ -17,11 +17,13 @@ class bID
             $DBLIB->where("authTokens_valid", '1');
             $tokencheckresult = $DBLIB->getOne("authTokens");
             if ($tokencheckresult != null) {
-                if ((strtotime($tokencheckresult["authTokens_created"]) + 1 * 12 * (3600 * 1000)) < time() or $tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
-                    if ($CONFIG['DEV']) $this->debug .= "Token expired <br/>";
+                if ((strtotime($tokencheckresult["authTokens_created"]) + (1 * 12 * (3600 * 1000))) < time()) {
+                    if ($CONFIG['DEV']) $this->debug .= "Token expired at " . $tokencheckresult["authTokens_created"] . " - server time is " . time() . "<br/>";
                     $this->login = false;
-                } //Check token hasn't expired and check if the IP matches that preset in table
-                else {
+                } elseif ($tokencheckresult["authTokens_ipAddress"] != (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"])) {
+                    if ($CONFIG['DEV']) $this->debug .= "IP doesn't match token<br/>";
+                    $this->login = false;
+                } else {
                     //Get user data
                     $DBLIB->where("users_userid", $tokencheckresult["users_userid"]);
                     $this->data = $DBLIB->getOne("users");
