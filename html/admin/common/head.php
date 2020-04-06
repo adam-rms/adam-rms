@@ -8,11 +8,22 @@ $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 //TWIG
 //Twig_Autoloader::register();
 $TWIGLOADER = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../');
-$TWIG = new \Twig\Environment($TWIGLOADER, array(
-    'debug' => true,
-    'auto_reload' => true
-));
-$TWIG->addExtension(new \Twig\Extension\DebugExtension());
+if ($CONFIG['DEV']) {
+    $TWIG = new \Twig\Environment($TWIGLOADER, array(
+        'debug' => true,
+        'auto_reload' => true,
+        'charset' => 'utf-8'
+    ));
+    $TWIG->addExtension(new \Twig\Extension\DebugExtension());
+} else {
+    $TWIG = new \Twig\Environment($TWIGLOADER, array(
+        'debug' => false,
+        'auto_reload' => false,
+        'cache' => __DIR__ . '/twigCache/',
+        'charset' => 'utf-8'
+    ));
+}
+
 $TWIG->addFilter(new \Twig\TwigFilter('timeago', function ($datetime) {
     $time = time() - strtotime($datetime);
     $units = array (

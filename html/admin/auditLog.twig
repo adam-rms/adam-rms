@@ -50,7 +50,9 @@
 
 <pre>
 {% if item.auditLog_actionData is iterable %}
-{{ dump(item.auditLog_actionData)|raw }}
+    {% for item in item.auditLog_actionData %}
+    {{ item|raw }}
+    {% endfor %}
 {% else %}
 {{ item.auditLog_actionData|raw }}
 {% endif %}
