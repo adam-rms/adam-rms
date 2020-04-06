@@ -22,5 +22,5 @@ $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 
 
 
-echo $TWIG->render('maintenance/index.twig', $PAGEDATA);
+echo $TWIG->render('maintenance/maintenance_index.twig', $PAGEDATA);
 ?>

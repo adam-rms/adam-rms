@@ -43,5 +43,5 @@ $PAGEDATA['positions'] = $DBLIB->get("instancePositions", null, ["instancePositi
 
 
 
-echo $TWIG->render('instances/users.twig', $PAGEDATA);
+echo $TWIG->render('instances/instances_users.twig', $PAGEDATA);
 ?>

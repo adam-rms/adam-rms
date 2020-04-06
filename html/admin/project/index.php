@@ -98,5 +98,5 @@ if (isset($_GET['pdf'])) {
              ');
     $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', 'I');
-} else echo $TWIG->render('project/index.twig', $PAGEDATA);
+} else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>

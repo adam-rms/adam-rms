@@ -21,5 +21,5 @@ $DBLIB->orderBy("instancePositions_rank", "ASC");
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['positions'] = $DBLIB->get("instancePositions");
 
-echo $TWIG->render('instances/permissions.twig', $PAGEDATA);
+echo $TWIG->render('instances/instances_permissions.twig', $PAGEDATA);
 ?>

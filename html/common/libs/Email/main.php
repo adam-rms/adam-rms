@@ -21,7 +21,8 @@ function sendEmail($userid, $instanceID = false, $subject, $html = false, $templ
     $TWIGLOADER->addPath(__DIR__ . '/../../../');
     $TWIG = new \Twig\Environment($TWIGLOADER, array(
         'debug' => true,
-        'auto_reload' => true
+        'auto_reload' => true,
+        "encoding" => "UTF-8"
     ));
     $TWIG->addExtension(new \Twig\Extension\DebugExtension());
     $TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
@@ -30,7 +31,7 @@ function sendEmail($userid, $instanceID = false, $subject, $html = false, $templ
         else return "A-" . $id;
     }));
 
-    $outputHTML = $TWIG->render('template.twig', ["SUBJECT" => $subject, "HTML"=> $html, "CONFIG" => $CONFIG, "DATA" => $array, "TEMPLATE" => $template, "INSTANCE" => $instance]);
+    $outputHTML = $TWIG->render('email_template.twig', ["SUBJECT" => $subject, "HTML"=> $html, "CONFIG" => $CONFIG, "DATA" => $array, "TEMPLATE" => $template, "INSTANCE" => $instance]);
 
     $email = new \SendGrid\Mail\Mail();
     $email->setFrom($CONFIG['PROJECT_FROM_EMAIL'], $CONFIG['PROJECT_NAME']);
