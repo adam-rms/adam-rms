@@ -1,17 +1,17 @@
 {% set THISWIDGET = WIDGETS.widget('storageUsage', {'instanceid': USERDATA.instance.instances_id}) %}
 
 
-<div class="card card-primary statsWidget" data-widgetname="storageUsage">
+<div class="card statsWidget" data-widgetname="storageUsage">
     <div class="card-header">
         <h3 class="card-title">Storage Usage</h3>
 
         <div class="card-tools">
             {% if WIDGETS.checkUser('storageUsage') %}
-                <button type="button" class="btn bg-info btn-tool removeWidgetButton" data-card-widget="collapse" data-widgetname="storageUsage" title="Remove from Dashboard">
+                <button type="button" class="btn btn-tool removeWidgetButton" data-card-widget="collapse" data-widgetname="storageUsage" title="Remove from Dashboard">
                     <i class="fas fa-times"></i>
                 </button>
             {% else %}
-                <button type="button" class="btn bg-info btn-tool addWidgetButton" data-widgetname="storageUsage" title="Add to Dashboard">
+                <button type="button" class="btn btn-tool addWidgetButton" data-widgetname="storageUsage" title="Add to Dashboard">
                     <i class="fas fa-plus"></i>
                 </button>
             {% endif %}

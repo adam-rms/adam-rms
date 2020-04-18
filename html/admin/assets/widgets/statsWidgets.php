@@ -89,7 +89,7 @@ class statsWidgets
 
         return ["timeSeriesValue" => $timeSeriesDataValue, "timeSeriesMass" => $timeSeriesDataMass];
     }
-    private function inventoryValue($arguments = []) {
+    private function inventoryTotal($arguments = []) {
         global $DBLIB;
         if (!$arguments['instanceid']) return [];
 
@@ -97,29 +97,12 @@ class statsWidgets
         $DBLIB->orderBy("assets_inserted", "ASC");
         $DBLIB->where("assets_deleted", 0);
         $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
-        $assets= $DBLIB->get("assets", null, ["assets_inserted", "assetTypes_value"]);
+        $assets= $DBLIB->get("assets", null, ["assets_inserted", "assetTypes_value", "assetTypes_mass"]);
         if (!$assets) return [];
 
-        $return = ["VALUE" => 0.0];
+        $return = ["VALUE" => 0.0,"MASS" => 0.0];
         foreach ($assets as $asset) {
             $return['VALUE'] += $asset['assetTypes_value'];
-        }
-
-        return $return;
-    }
-    private function inventoryMass($arguments = []) {
-        global $DBLIB;
-        if (!$arguments['instanceid']) return [];
-
-        $DBLIB->where("assets.instances_id", $arguments['instanceid']);
-        $DBLIB->orderBy("assets_inserted", "ASC");
-        $DBLIB->where("assets_deleted", 0);
-        $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
-        $assets= $DBLIB->get("assets", null, ["assets_inserted", "assetTypes_mass"]);
-        if (!$assets) return [];
-
-        $return = ["MASS" => 0.0];
-        foreach ($assets as $asset) {
             $return['MASS'] += $asset['assetTypes_mass'];
         }
 
@@ -129,12 +112,15 @@ class statsWidgets
         global $DBLIB;
         if (!$arguments['instanceid']) return [];
 
-        $return = ["USED" => 0.0];
+        $return = ["USED" => 0.0, "CAPACITY" => 0];
+
+        $DBLIB->where("instances_id", $arguments['instanceid']);
+        $return['CAPACITY'] = $DBLIB->getvalue("instances", "instances_storageLimit");
+
         $DBLIB->where("s3files.instances_id", $arguments['instanceid']);
         $DBLIB->where("(s3files_meta_deleteOn IS NULL)");
         $DBLIB->where("s3files_meta_physicallyStored", 1);
         $return['USED'] = $DBLIB->getValue("s3files", "SUM(s3files_meta_size)");
-
         return $return;
     }
 }
