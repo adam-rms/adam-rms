@@ -4,29 +4,7 @@ require_once __DIR__ . '/config.php';
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 
-//GLOBALS STUFF - DON'T CHANGE
-/*
-function errorHandler() {
-    if (error_get_last() and error_get_last()['type'] == '1') {
-        global $CONFIG;
-        try {
-            header('Location: ' . $CONFIG['ERRORS']['URL'] . '?e=' . urlencode(error_get_last()['message']) . '&return=' . urlencode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"));
-        } catch (Exception $e) {
-            die('<meta http-equiv="refresh" content="0; url=' . $CONFIG['ROOTURL'] . '/error/?e=' . urlencode(error_get_last()['message']) . '&return=' . urlencode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]") . '" />');
-        }
-    }
-}
-//set_error_handler('errorHandler');
-$CONFIG['ERRORS']['SENTRY-CLIENT']['MAIN'] = new Raven_Client($CONFIG['ERRORS']['SENTRY']);
-$CONFIG['ERRORS']['SENTRY-CLIENT']['MAIN']->setRelease($CONFIG['VERSION']['TAG'] . "." . $CONFIG['VERSION']['COMMIT']);
-$CONFIG['ERRORS']['SENTRY-CLIENT']['HANDLER'] = new Raven_ErrorHandler($CONFIG['ERRORS']['SENTRY-CLIENT']['MAIN']);
-$CONFIG['ERRORS']['SENTRY-CLIENT']['HANDLER']->registerExceptionHandler();
-$CONFIG['ERRORS']['SENTRY-CLIENT']['HANDLER']->registerErrorHandler();
-$CONFIG['ERRORS']['SENTRY-CLIENT']['HANDLER']->registerShutdownFunction();
-register_shutdown_function('errorHandler');
-
-*/
-
+if (!$CONFIG['DEV']) Sentry\init(['dsn' => $CONFIG['ERRORS']['SENTRY'] ]); //Setup Sentry Error Logging
 try {
     //session_set_cookie_params(0, '/', '.' . $_SERVER['SERVER_NAME']); //Fix for subdomain bug
     session_set_cookie_params(43200); //12hours
