@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/common/headSecure.php';
 
-$PAGEDATA['pageConfig'] = ["TITLE" => "Home", "BREADCRUMB" => false];
+$PAGEDATA['pageConfig'] = ["TITLE" => "Dashboard", "BREADCRUMB" => false];
 
 if (isset($_GET['i'])) {
     $GLOBALS['AUTH']->setInstance($_GET['i']);
@@ -11,5 +11,8 @@ if ($AUTH->permissionCheck(18) and isset($_GET['phpversion'])) {
     phpinfo();
     exit;
 }
-echo $TWIG->render('index.twig', $PAGEDATA);
+
+$PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']));
+
+echo $TWIG->render('dashboard.twig', $PAGEDATA);
 ?>

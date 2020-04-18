@@ -97,7 +97,7 @@
                         <label>Category</label>
                         <select class="form-control  select2bs4" id="category" name="assetCategories_id">
                             {% for category in categories %}
-                                <option value="{{ category.assetCategories_id }}">{{ category.assetCategories_name }}</option>
+                                <option value="{{ category.assetCategories_id }}">{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</option>
                             {% endfor %}
                         </select>
                     </div>

@@ -1,0 +1,29 @@
+{% set THISWIDGET = WIDGETS.widget('storageUsage', {'instanceid': USERDATA.instance.instances_id}) %}
+
+
+<div class="card card-primary statsWidget" data-widgetname="storageUsage">
+    <div class="card-header">
+        <h3 class="card-title">Storage Usage</h3>
+
+        <div class="card-tools">
+            {% if WIDGETS.checkUser('storageUsage') %}
+                <button type="button" class="btn bg-info btn-tool removeWidgetButton" data-card-widget="collapse" data-widgetname="storageUsage" title="Remove from Dashboard">
+                    <i class="fas fa-times"></i>
+                </button>
+            {% else %}
+                <button type="button" class="btn bg-info btn-tool addWidgetButton" data-widgetname="storageUsage" title="Add to Dashboard">
+                    <i class="fas fa-plus"></i>
+                </button>
+            {% endif %}
+        </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        {% if THISWIDGET.CAPACITY > 0 %}
+        <div class="progress">
+            <div class="progress-bar" style="width: {{ (THISWIDGET.USED/THISWIDGET.CAPACITY)|round(1, 'ceil') }}%"></div>
+        </div>
+        {% endif %}
+        <span class="progress-description">{{ THISWIDGET.USED|formatsize }} of {{ (THISWIDGET.CAPACITY ? THISWIDGET.CAPACITY|formatsize : "unlimited storage") }} used</span>
+    </div>
+</div>

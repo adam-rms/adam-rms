@@ -39,6 +39,7 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Address</th>
                                     <th>Phone</th>
                                     <th>Email</th>
                                     <th>Website</th>
@@ -52,12 +53,17 @@
                             {% for client in clients %}
                                 <tr>
                                     <td>
-                                        <a data-toggle="collapse" href="#collapse{{ client.clients_id }}">
+
+                                        <a {% if 20|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?client={{ client.clients_id }}"{% endif %}>
                                             {{ client.clients_name }}
                                         </a>
-                                        <div id="collapse{{ client.clients_id }}" class="collapse in">
-                                            {{ client.clients_address|nl2br }}
-                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if client.clients_address %}
+                                            <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ client.clients_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
+                                                <i class="fas fa-map-marked-alt"></i>
+                                            </a>
+                                        {% endif %}
                                     </td>
                                     <td>{{ client.clients_phone }}</td>
                                     <td>{{ client.clients_email }}</td>

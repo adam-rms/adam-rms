@@ -68,7 +68,7 @@
                             <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass ~ "kg" : "?" }}</a>
                         </li>
                         <li class="list-group-item">
-                            <b>Category</b> <a class="float-right" href="assets.php?category={{  asset.assetCategories_id }}">{{ asset.assetCategories_name }}</a>
+                            <b>Category</b> <a class="float-right" href="assets.php?category={{ asset.assetCategories_id }}">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
                         </li>
                         <li class="list-group-item">
                             <b>Manufacturer</b> <a class="float-right" href="assets.php?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a>
@@ -344,7 +344,7 @@
                                                 <label>Category</label>
                                                 <select class="form-control  select2bs4" id="category" name="assetCategories_id">
                                                     {% for category in categories %}
-                                                        <option  {%  if category.assetCategories_id == asset.assetCategories_id %} selected {% endif %} value="{{ category.assetCategories_id }}">{{ category.assetCategories_name }}</option>
+                                                        <option  {%  if category.assetCategories_id == asset.assetCategories_id %} selected {% endif %} value="{{ category.assetCategories_id }}">{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>

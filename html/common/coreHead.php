@@ -4,7 +4,10 @@ require_once __DIR__ . '/config.php';
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 
-if (!$CONFIG['DEV']) Sentry\init(['dsn' => $CONFIG['ERRORS']['SENTRY'] ]); //Setup Sentry Error Logging
+if (!$CONFIG['DEV']) Sentry\init([
+    'dsn' => $CONFIG['ERRORS']['SENTRY'],
+    'release' => $CONFIG['VERSION']['HEROKU']['COMMIT']
+]); //Setup Sentry Error Logging
 try {
     //session_set_cookie_params(0, '/', '.' . $_SERVER['SERVER_NAME']); //Fix for subdomain bug
     session_set_cookie_params(43200); //12hours

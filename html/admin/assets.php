@@ -27,6 +27,7 @@ $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0) > 0)");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
+$DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
@@ -35,7 +36,7 @@ if (strlen($PAGEDATA['search']) > 0) {
 		assetTypes_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' 
     )");
 }
-$assets = $DBLIB->arraybuilder()->paginate('assetTypes', $page, ["assetTypes.*", "manufacturers.*", "assetCategories.*"]);
+$assets = $DBLIB->arraybuilder()->paginate('assetTypes', $page, ["assetTypes.*", "manufacturers.*", "assetCategories.*", "assetCategoriesGroups_name"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 
 $PAGEDATA['assets'] = [];
@@ -52,6 +53,7 @@ foreach ($assets as $asset) {
 
 if (isset($_GET['category'])) {
 	$DBLIB->where("assetCategories_id", $_GET['category']);
+	$DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 	$PAGEDATA['thisCategory'] = $DBLIB->getone("assetCategories");
 	$PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['thisCategory']['assetCategories_name'] . " Assets";
 } else $PAGEDATA['thisCategory'] = false;

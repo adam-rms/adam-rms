@@ -1,0 +1,30 @@
+<script>
+    $(document).ready(function () {
+        function countWidgets() { //Homepage widgets only - but runs on other pages anyway without great impact
+            if ($(".statsWidget:visible").length < 1) {
+                $("#noWidgetsBox").show();
+            } else {
+                $("#noWidgetsBox").hide();
+            }
+        }
+
+       $(".removeWidgetButton").show();
+       $(".removeWidgetButton").click(function () {
+           var widgetName = $(this).data("widgetname");
+           setTimeout(countWidgets,2000); //Wait for the widget to hide
+           ajaxcall("account/widgetToggle.php", {"widgetName":widgetName}, function (data) {
+               $(".statsWidget[data-widgetname=" + widgetName + "]").hide(); //Not all support hiding through the button directly
+               console.log("Widget Removed");
+           });
+       });
+       $(".addWidgetButton").click(function () {
+           var widgetButton = $(this);
+           var widgetName = $(this).data("widgetname");
+           ajaxcall("account/widgetToggle.php", {"widgetName":widgetName}, function (data) {
+               widgetButton.hide();
+               console.log("Widget Added");
+           });
+       });
+
+    });
+</script>

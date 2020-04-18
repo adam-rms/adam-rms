@@ -21,7 +21,8 @@ $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0) > 0)");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
-$assets = $DBLIB->get('assetTypes', null, ["assetTypes.*", "manufacturers.manufacturers_name", "assetCategories.assetCategories_name"]);
+$DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
+$assets = $DBLIB->get('assetTypes', null, ["assetTypes.*", "manufacturers.manufacturers_name", "assetCategories.assetCategories_name", "assetCategoriesGroups.assetCategoriesGroups_name"]);
 $PAGEDATA['assets'] = [];
 $count = 0;
 foreach ($assets as $asset) {
@@ -61,7 +62,7 @@ foreach ($PAGEDATA['assets'] as $assetType) {
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         if ($asset['assets_tag'] <= 9999) $asset['assets_tag'] = "A-" . sprintf('%04d', $asset['assets_tag']);
         else $asset['assets_tag'] = "A-" . $asset['assets_tag'];
-        $array = [$asset['assets_tag'], $assetType['assetCategories_name'], $assetType['assetTypes_name'], ($assetType['manufacturers_id'] != 1 ? $assetType['manufacturers_name'] : ""), $assetType['assetTypes_mass'], $assetType['assetTypes_dayRate'], $assetType['assetTypes_weekRate'], $assetType['assetTypes_value'], $asset['assets_notes']];
+        $array = [$asset['assets_tag'], $assetType['assetCategoriesGroups_name'] . " - " . $assetType['assetCategories_name'], $assetType['assetTypes_name'], ($assetType['manufacturers_id'] != 1 ? $assetType['manufacturers_name'] : ""), $assetType['assetTypes_mass'], $assetType['assetTypes_dayRate'], $assetType['assetTypes_weekRate'], $assetType['assetTypes_value'], $asset['assets_notes']];
         for ($x = 1; $x <= 10; $x++) {
             array_push($array, $assetType['definableFields'][$x-1] . ($assetType['definableFields'][$x-1] != null ? ": ": ""),$asset['asset_definableFields_' . $x]);
         }

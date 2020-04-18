@@ -7,6 +7,7 @@ if (!isset($_POST['term'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id = '" . $AUTH->data['instance']['instances_id'] . "')");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
+$DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $DBLIB->where("assetTypes_id", $_POST['term']);
 $assets = $DBLIB->getone("assetTypes");
 

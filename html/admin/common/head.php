@@ -385,13 +385,14 @@ function projectFinancials($projectid)
     $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
     $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
     $DBLIB->join("assetCategories", "assetTypes.assetCategories_id=assetCategories.assetCategories_id", "LEFT");
+    $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
     $DBLIB->join("instances", "assets.instances_id=instances.instances_id", "LEFT");
     $DBLIB->orderBy("instances.instances_name", "ASC");
     $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
     $DBLIB->where("assets.assets_deleted", 0);
-    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "instances.instances_name AS assetInstanceName", "instances.instances_id"]);
+    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "instances.instances_name AS assetInstanceName", "instances.instances_id"]);
 
 
     $return['assetsAssigned'] = [];
@@ -469,6 +470,7 @@ function projectFinancials($projectid)
         $return['prices']['discounts'] += ($asset['price'] - $asset['discountPrice']);
         $return['prices']['total'] += $asset['discountPrice'];
 
+        $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
         $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
 
         $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));

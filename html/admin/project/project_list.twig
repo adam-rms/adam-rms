@@ -1,0 +1,118 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
+
+        <div class="card-tools">
+            <form class="input-group input-group-sm"  method="GET">
+                <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
+                    {% if 21|instancePermissions %}<button class="btn btn-default newProjectButton"  title="Add new project"><i class="fa fa-plus"></i></button>{% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-striped projects">
+            <thead>
+            <tr>
+                <th style="width: 1%">
+                    #
+                </th>
+                <th style="width: 55%">
+                    Title
+                </th>
+                <th style="width: 24%">
+                    Client
+                </th>
+                <th style="width: 5%">
+                    Manager
+                </th>
+                <th style="width: 35%">
+                    Status
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set archive = false %}
+            {% for project in PROJECTSLIST %}
+                {% if archive == false and project.projects_archived == 1 %}
+                    {% set archive = true %}
+                    <tr style="background-color: #ffffff;">
+                        <td colspan="5">
+                            <b>Archived Projects</b>
+                        </td>
+                    </tr>
+                {% endif %}
+            <tr>
+                <td>
+                    <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">#{{ project.projects_id }}</a>
+                </td>
+                <td>
+                    <a>
+                        {{ project.projects_name }}
+                    </a>
+                    <br/>
+                    <small>
+                        {{project.projects_dates_use_start|date("d M Y h:ia")}} - {{project.projects_dates_use_end|date("d M Y h:ia")}}
+                    </small>
+                </td>
+                <td>
+                    <a href="?client={{ project.clients_id }}">
+                        {{ project.clients_name }}
+                    </a>
+                </td>
+                <td>
+                    <ul class="list-inline">
+                        <li class="list-inline-item">
+                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
+                                <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ project.users_email|md5 }}?s=160&d=identicon">
+                            </a>
+                        </li>
+                    </ul>
+                </td>
+                <td class="project_progress">
+                    {{ STATUSES[project.projects_status]['name'] }}<br/>
+                    {% if STATUSES[project.projects_status]['order'] < 7 %}
+                    <div class="progress progress-sm">
+                        <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[project.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
+                        </div>
+                    </div>
+                    {% endif %}
+                    <small>
+                        {{ STATUSES[project.projects_status]['description'] }}
+                    </small>
+                </td>
+            </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer clearfix">
+        {% if pagination.total > 1 %}
+            <ul class="pagination pagination-sm m-0 float-right">
+                {% if pagination.page > 1 %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                {% endif %}
+
+                {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                            {% if pagination.page == i %}
+                                <b>{{ i }}</b>
+                            {% else %}
+                                {{ i }}
+                            {% endif %}
+                        </a></li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.total %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/head.php';
 require_once __DIR__ . '/../../common/libs/Auth/main.php';
+require_once __DIR__ . '/../assets/widgets/statsWidgets.php'; //Stats on homepage etc.
 
 if (!$GLOBALS['AUTH']->login) {
     if ($CONFIG['DEV']) die("<h2>Debugging enabled - auth fail debug details</h2>" . $GLOBALS['AUTH']->debug . "<br/><br/><br/>Login false - redirect to <a href='" . $CONFIG['ROOTURL'] . "/login/'>" . $CONFIG['ROOTURL'] . "/login/</a>");
@@ -12,18 +13,16 @@ if (!$GLOBALS['AUTH']->login) {
 $DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assets.assetTypes_id=assetTypes.assetTypes_id AND assets_deleted = '0' AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "') > 0)");
 $assetCategories = $DBLIB->getvalue("assetTypes", "DISTINCT assetCategories_id", null);
 if ($assetCategories) {
-    $DBLIB->orderBy("assetCategories_rank", "ASC");
+    $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
+    $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
     $DBLIB->where("(assetCategories_id IN (" . implode(",", $assetCategories) . "))");
-    $PAGEDATA['assetCategories'] = $DBLIB->get("assetCategories", null, ["assetCategories.assetCategories_name", "assetCategories.assetCategories_id", "assetCategories.assetCategories_fontAwesome"]);
+    $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
+    $PAGEDATA['assetCategories'] = $DBLIB->get("assetCategories", null, ["assetCategories.assetCategories_name", "assetCategories.assetCategories_id", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups_name", "assetCategoriesGroups_fontAwesome"]);
 } else $PAGEDATA['assetCategories'] = [];
-
-
-$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->where("assets_deleted", 0);
-$PAGEDATA['assetCount'] = $DBLIB->getValue("assets", "COUNT(*)");
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("projects.projects_archived", 0);
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->orderBy("projects.projects_dates_deliver_start", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
@@ -59,5 +58,5 @@ if ($CONFIG['DEV'] and !$AUTH->permissionCheck(17) and !$PAGEDATA['USERDATA']['v
     die("Sorry - you can't use this development version of the site - please visit adam-rms.com");
 }
 
-$USERDATA = $PAGEDATA['USERDATA'];
+$USERDATA = $PAGEDATA['USERDATA']; //TODO - remove as depreciated
 ?>

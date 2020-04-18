@@ -12,8 +12,7 @@
             {% if search|length > 0 %}
                 Search results for assets matching <b>{{ search }}</b>
             {% elseif thisCategory %}
-                <i class="{{thisCategory.assetCategories_fontAwesome}} nav-icon"></i>
-                {{ thisCategory.assetCategories_name}} Assets
+                {{ thisCategory.assetCategoriesGroups_name }} - {{ thisCategory.assetCategories_name}} Assets
             {% elseif thisManufacturer %}
                 Assets by {{ thisManufacturer.manufacturers_name}}
                 {% if thisManufacturer.manufacturers_website != "" %}
@@ -40,7 +39,7 @@
                 <div class="col-auto d-flex align-items-stretch">
                     <div class="card bg-light">
                         <div class="card-header text-muted border-bottom-0">
-                            <a href="?category={{  asset.assetCategories_id }}">{{ asset.assetCategories_name }}</a>
+                            <a href="?category={{  asset.assetCategories_id }}">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
                         </div>
                         <div class="card-body pt-0" style="max-width: 250px;">
                             {% if asset.thumbnail|length > 0 %}

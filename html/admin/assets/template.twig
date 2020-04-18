@@ -164,9 +164,9 @@
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
-            <li class="nav-item d-none d-sm-inline-block">
+            {#<li class="nav-item d-none d-sm-inline-block">
                 <a href="{{CONFIG.ROOTURL}}" class="nav-link">Home</a>
-            </li>
+            </li>#}
             {% if USERDATA.viewSiteAs != false %}
                 <li class="nav-item">
                     <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php" class="nav-link">Back to Admin</a>
@@ -325,38 +325,146 @@
                          with font-awesome or any other icon font library -->
 
                 {% if USERDATA.instances|length > 0 %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/" class="nav-link">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Dashboard
+                            </p>
+                        </a>
+                    </li>
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-warehouse"></i>
+                            <i class="nav-icon fas fa-city"></i>
                             <p>
-                                Assets
+                                Business
                                 <i class="fas fa-angle-left right"></i>
-                                {% if assetCount > 0 %}
-                                <span class="badge badge-success right">{{ assetCount }}</span>
-                                {% endif %}
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            {% if 80|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/stats.php" class="nav-link">
+                                        <i class="nav-icon fas fa-chart-bar"></i>
+                                        <p>
+                                            Stats
+                                            {#<span class="right badge badge-danger">New</span>#}
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php" class="nav-link">
+                                    <i class="nav-icon far fa-calendar-alt"></i>
+                                    <p>
+                                        Calendar
+                                        {#<span class="right badge badge-danger">New</span>#}
+                                    </p>
+                                </a>
+                            </li>
+                            {% if 81|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
+                                        <i class="nav-icon fas fa-cog"></i>
+                                        <p>
+                                            Basic Settings
+                                            {#<span class="right badge badge-danger">New</span>#}
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 36|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
+                                        <i class="nav-icon fas fa-briefcase"></i>
+                                        <p>
+                                            Clients
+                                            {#<span class="right badge badge-danger">New</span>#}
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 40|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
+                                        <i class="nav-icon fas fa-coins"></i>
+                                        <p>
+                                            Payments
+                                            {#<span class="right badge badge-danger">New</span>#}
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 2|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>
+                                            Users
+                                            {#<span class="right badge badge-danger">New</span>#}
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 11|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
+                                        <i class="nav-icon fas fa-unlock-alt"></i>
+                                        <p>
+                                            Permissions
+                                            {#<span class="right badge badge-danger">New</span>#}
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+
+                    <li class="nav-header">ASSETS</li>
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
+                            <i class="nav-icon fas fa-warehouse"></i>
+                            <p>View All</p>
+                        </a>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-list nav-icon"></i>
+                            <p>
+                                Categories
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {% set currentCategoryGroup = false %}
                             {% for category in assetCategories %}
+                                {% if currentCategoryGroup != category.assetCategoriesGroups_name %}
+                                {% if currentCategoryGroup %}
+                                    {# Close the previous one for starting a new one #}
+                                    </ul>
+                                    </li>
+                                {% endif %}
+                                {% set currentCategoryGroup = category.assetCategoriesGroups_name %}
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i style="margin-left: 5px;" class="{{ category.assetCategoriesGroups_fontAwesome }} nav-icon"></i>
+                                        <p>
+                                            {{ category.assetCategoriesGroups_name }}
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+
+                                    {% endif %}
                                 <li class="nav-item">
                                     <a href="{{CONFIG.ROOTURL}}/assets.php?category={{ category.assetCategories_id }}" class="nav-link">
-                                        <i class="{{category.assetCategories_fontAwesome}} nav-icon"></i>
-                                        <p>{{category.assetCategories_name}}</p>
+                                        <p style="padding-left: 20px;">{{category.assetCategories_name}}</p>
                                     </a>
                                 </li>
                             {% endfor %}
-                            <li class="nav-item">
-                                <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
-                                    <i class="fas fa-list nav-icon"></i>
-                                    <p>View All</p>
-                                </a>
-                            </li>
-                            {% if 17|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
-                                        <i class="fas fa-plus nav-icon"></i>
-                                        <p>Add</p>
-                                    </a>
+                            {% if currentCategoryGroup %}
+                                {# Close the previous category group if you had any #}
+                                    </ul>
                                 </li>
                             {% endif %}
                         </ul>
@@ -370,28 +478,16 @@
                         </p>
                     </a>
                 </li>
-                {% if 36|instancePermissions %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
-                        <i class="nav-icon fas fa-briefcase"></i>
-                        <p>
-                            Clients
-                            {#<span class="right badge badge-danger">New</span>#}
-                        </p>
-                    </a>
-                </li>
-                {% endif %}
-                {% if 40|instancePermissions %}
+                {% if 17|instancePermissions %}
                     <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
-                            <i class="nav-icon fas fa-coins"></i>
-                            <p>
-                                Payments
-                                {#<span class="right badge badge-danger">New</span>#}
-                            </p>
+                        <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
+                            <i class="fas fa-plus nav-icon"></i>
+                            <p>New Asset</p>
                         </a>
                     </li>
                 {% endif %}
+
+
                     {% if 63|instancePermissions %}
                         <li class="nav-item">
                             <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
@@ -402,85 +498,41 @@
                             </a>
                         </li>
                     {% endif %}
+
+
                 {% if 20|instancePermissions %}
                     <li class="nav-header">PROJECTS</li>
                     {% set archive = false %}
                     {% for project in projects %}
-                        {% if project.projects_archived != 1 %}
                         <li class="nav-item">
                             <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
                                 <i class="nav-icon
 {% if project.projects_manager == USERDATA.users_userid %}
-far fa-dot-circle
+far fa-dot-circle text-warning
 {% else %}
 far fa-circle
 {% endif %}"></i>
                                 <p>{{ project.projects_name }}</p>
                             </a>
                         </li>
-                        {% else %}
-                            {% set archive = true %}
-                        {% endif %}
                     {% endfor %}
-                    {% if archive %}
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
-                            <p>
-                                Archive
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
+                    <li class="nav-item">
+                        <a href="{{CONFIG.ROOTURL}}/project/list.php" class="nav-link">
+                            <i class="nav-icon fas fa-list-ol"></i>
+                            <p>List</p>
                         </a>
-                        <ul class="nav nav-treeview">
-                            {% for project in projects %}
-                                {% if project.projects_archived == 1 %}
-                                    <li class="nav-item">
-                                        <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
-                                            <i class="nav-icon far fa-circle nav-icon"></i>
-                                            <p>{{ project.projects_name }}</p>
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
                     </li>
-                    {% endif %}
                     {% if 21|instancePermissions %}
                         <li class="nav-item">
-                            <a href="#" id="newProjectButton" class="nav-link">
+                            <a href="#" class="nav-link newProjectButton">
                                 <i class="nav-icon fas fa-plus"></i>
                                 <p>New Project</p>
                             </a>
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if 2|instancePermissions or 11|instancePermissions %}
-                    <li class="nav-header">SECURITY</li>
-                {% endif %}
-                {% if 2|instancePermissions %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>
-                                Users
-                                {#<span class="right badge badge-danger">New</span>#}
-                            </p>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if 11|instancePermissions %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
-                        <i class="nav-icon fas fa-unlock-alt"></i>
-                        <p>
-                            Permissions
-                            {#<span class="right badge badge-danger">New</span>#}
-                        </p>
-                        </a>
-                    </li>
-                {% endif %}
                 {% if 2|permissions or 11|permissions or 7|permissions %}
-                <li class="nav-header">ADAMRMS SECURITY</li>
+                <li class="nav-header">BITHELL STUDIOS STAFF</li>
                 {% endif %}
             {% if 2|permissions %}
                 <li class="nav-item">
@@ -608,7 +660,11 @@ far fa-circle
     </div><!-- /.content-wrapper -->
     <footer class="main-footer" id="main-footer">
         <div class="float-right d-none d-sm-block">
-            Built on <a href="https://github.com/Jbithell/bCMS">bCMS</a>
+            {% if CONFIG.DEV %}
+                DEV BUILD
+            {% else %}
+                {{ CONFIG.VERSION.HEROKU.VERSION }}.{{ CONFIG.VERSION.HEROKU.COMMIT[:7] }}
+            {% endif %}
         </div>
         <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
         reserved.
@@ -629,7 +685,7 @@ far fa-circle
             html: true,
         });
         {% if 21|instancePermissions %}
-        $("#newProjectButton").click(function () {
+        $(".newProjectButton").click(function () {
             bootbox.prompt("Enter Project Name", function (result) {
                 if (result) {
                     ajaxcall("projects/new.php", {"projects_name": result}, function (data) {
