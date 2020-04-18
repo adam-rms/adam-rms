@@ -9,7 +9,7 @@ $DBLIB->where("assetTypes.assetTypes_id", $_GET['id']);
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $PAGEDATA['asset'] = $DBLIB->getone('assetTypes', ["*", "assetTypes.instances_id as assetInstances_id"]); //have to double download it as otherwise manufacturer instance id is returned instead
-if (!$PAGEDATA['asset']) die("404 Asset Not Found");
+if (!$PAGEDATA['asset']) die($TWIG->render('404.twig', $PAGEDATA));
 $PAGEDATA['asset']['thumbnail'] = $bCMS->s3List(2, $PAGEDATA['asset']['assetTypes_id']);
 $PAGEDATA['asset']['files'] = $bCMS->s3List(3, $PAGEDATA['asset']['assetTypes_id']);
 $PAGEDATA['asset']['fields'] = explode(",", $PAGEDATA['asset']['assetTypes_definableFields']);
@@ -22,7 +22,7 @@ if (isset($_GET['asset'])) {
 }
 $DBLIB->where("assets.assets_deleted", 0);
 $assets = $DBLIB->get("assets", null);
-if (!$assets) die("404 Assets Not Found");
+if (!$assets) die($TWIG->render('404.twig', $PAGEDATA));
 $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
     if ($AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {

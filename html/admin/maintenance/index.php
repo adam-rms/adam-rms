@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(63)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck(63)) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Maintenance Jobs", "BREADCRUMB" => false];
 

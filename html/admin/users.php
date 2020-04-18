@@ -3,7 +3,7 @@ require_once __DIR__ . '/common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Users", "BREADCRUMB" => false];
 
-if (!$AUTH->permissionCheck(2)) die("Sorry - you can't access this page");
+if (!$AUTH->permissionCheck(2)) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA["mailings"] = [];
 

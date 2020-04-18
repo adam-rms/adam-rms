@@ -1,0 +1,26 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+    <div class="error-page">
+        <h2 class="headline text-warning"> 404</h2>
+
+        <div class="error-content">
+            <h3><i class="fas fa-exclamation-triangle text-warning"></i> Oops! Page not found.</h3>
+
+            <p>
+                We could not find the page you were looking for.
+                <br/>Meanwhile, you may <a href="{{ CONFIG.ROOTURL }}">return to dashboard</a> or try a search
+            </p>
+            <form class="search-form" action="{{ CONFIG.ROOTURL }}/assets.php">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search Assets">
+
+                    <div class="input-group-append">
+                        <button type="submit" name="q" class="btn btn-warning"><i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

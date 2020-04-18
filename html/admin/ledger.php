@@ -3,7 +3,7 @@ require_once __DIR__ . '/common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Ledger", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(40)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck(40)) die($TWIG->render('404.twig', $PAGEDATA));
 
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
