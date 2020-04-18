@@ -37,7 +37,7 @@
 						<input type="email" class="form-control" id="email" name="email" value="{{USER['users_email']}}" />
 					</div>
 				</div>
-				<div class="card-footer">
+				<div class="card-footer" style="text-align: right;">
 					<button id="save-account-settings" class="btn btn-default">Save</button>
 				</div>
 					<script>
@@ -168,7 +168,7 @@
 						<input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
 					</div>
 				</div>
-				<div class="card-footer">
+				<div class="card-footer" style="text-align: right;">
 					<button id="save-password-settings" class="btn btn-default">Change</button>
 				</div>
 					<script>
@@ -198,6 +198,19 @@
 			</div>
 		</div>
 		{% endif %}
+		<div class="col-lg-6">
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">Profile Picture</h3>
+				</div>
+				<div class="card-body" style="text-align: center;">
+					<img src="https://www.gravatar.com/avatar/{{ user.users_email|md5 }}?s=1024&d=identicon" alt="Profile Picture" style="width:50%;" />
+				</div>
+				<div class="card-footer" style="text-align: right;">
+					<a href="https://gravatar.com/" target="_blank" class="btn btn-default">Change</a>
+				</div>
+			</div>
+		</div>
 		{% if 16|permissions %}
 		<div class="col-lg-6">
 			<div class="card">
@@ -489,23 +502,31 @@
 
 						<label>Facebook</label>
 						<div class="input-group">
-							<span class="input-group-addon">https://facebook.com/</span>
+							<div class="input-group-prepend">
+								<span class="input-group-text">https://facebook.com/</span>
+							</div>
 							<input type="text" class="form-control" name="facebook" value="{{ USER.users_social_facebook }}">
 						</div>
 						<br/>
 						<label>Twitter</label>
 						<div class="input-group">
-							<span class="input-group-addon">https://twitter.com/</span>
+							<div class="input-group-prepend">
+								<span class="input-group-text">https://twitter.com/</span>
+							</div>
 							<input type="text" class="form-control" name="twitter" value="{{ USER.users_social_twitter }}">
 						</div><br/>
 						<label>Instagram</label>
 						<div class="input-group">
-							<span class="input-group-addon">https://instagram.com/</span>
+							<div class="input-group-prepend">
+								<span class="input-group-text">https://instagram.com/</span>
+							</div>
 							<input type="text" class="form-control" name="instagram" value="{{ USER.users_social_instagram }}">
 						</div><br/>
 						<label>Linkedin</label>
 						<div class="input-group">
-							<span class="input-group-addon">https://linkedin.com/ln/</span>
+							<div class="input-group-prepend">
+								<span class="input-group-text">https://linkedin.com/ln/</span>
+							</div>
 							<input type="text" class="form-control" name="linkedin" value="{{ USER.users_social_linkedin }}">
 						</div><br/>
 						<label>Snapchat</label>
@@ -515,7 +536,7 @@
 						</div>
 					</form>
 				</div>
-				<div class="card-footer">
+				<div class="card-footer" style="text-align: right;">
 					<button id="save-social-settings" class="btn btn-default">Save</button>
 				</div>
 				<script>

@@ -55,34 +55,37 @@
                         {% if user.users_social_facebook != "" %}
                         <li class="list-group-item">
                             <b>Facebook</b> <a href="https://www.facebook.com/{{ user.users_social_facebook }}"
-                                    class="float-right">{{ user.users_social_facebook }}</a>
+                                    class="float-right" target="_blank">{{ user.users_social_facebook }}</a>
                         </li>
                         {% endif %}
                         {% if user.users_social_twitter != "" %}
                             <li class="list-group-item">
                                 <b>Twitter</b> <a href="https://www.twitter.com/{{ user.users_social_twitter }}"
-                                                   class="float-right">@{{ user.users_social_twitter }}</a>
+                                                   class="float-right" target="_blank">@{{ user.users_social_twitter }}</a>
                             </li>
                         {% endif %}
                         {% if user.users_social_linkedin != "" %}
                             <li class="list-group-item">
                                 <b>LinkedIn</b> <a href="https://www.linkedin.com/in/{{ user.users_social_linkedin }}"
-                                                  class="float-right">{{ user.users_social_linkedin }}</a>
+                                                  class="float-right" target="_blank">{{ user.users_social_linkedin }}</a>
                             </li>
                         {% endif %}
                         {% if user.users_social_instagram != "" %}
                             <li class="list-group-item">
                                 <b>Instagram</b> <a href="https://www.instagram.com/{{ user.users_social_instagram }}"
-                                                  class="float-right">@{{ user.users_social_instagram }}</a>
+                                                  class="float-right" target="_blank">@{{ user.users_social_instagram }}</a>
                             </li>
                         {% endif %}
                         {% if user.users_social_snapchat != "" %}
                             <li class="list-group-item">
                                 <b>Snapchat</b> <a href="https://www.snapchat.com/add/{{ user.users_social_snapchat }}"
-                                                  class="float-right">{{ user.users_social_snapchat }}</a>
+                                                  class="float-right" target="_blank">{{ user.users_social_snapchat }}</a>
                             </li>
                         {% endif %}
                     </ul>
+                    {% if user.users_userid == USERDATA.users_userid %}
+                        <a href="{{ CONFIG.ROOTURL }}/account.php" class="btn btn-default btn-block">Account Settings</a>
+                    {% endif %}
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -256,7 +259,7 @@
                                 <li>Paste the URL into the field named <em>URL of calendar</em> that appears and click
                                     <em>Add calendar</em>.
                                 </li>
-                                <li>After a few seconds, the timetable will appear in your calendar. If it does not, try
+                                <li>After a few seconds, it should appear in your calendar. If it does not, try
                                     reloading Google Calendar.
                                 </li>
                             </ol>
