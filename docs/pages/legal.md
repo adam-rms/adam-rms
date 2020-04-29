@@ -8,6 +8,7 @@ layout: page
 1. Please read this document carefully before accessing or using our website. By accessing or using any part of the site, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions of this agreement, then you may not access the website or use any services. If these Terms of Service are considered an offer, acceptance is expressly limited to these Terms of Service. Any use of the term “Service”, “Website” or “We” refers to AdamRMS, its team and associated introductions unless expressly stated otherwise.
 1. The headings used in this agreement are included for convenience only and will not limit or otherwise affect this document. 
 1. AdamRMS is developed and distributed by Bithell Studios Ltd, a company registered in England and Wales, United Kingdom.
+1. Bithell Studios Ltd is registered at Companies House (№11918238), and registered with the Information Commissioner's Office with reference ZA741917. 
 1. We reserve the right at any time to modify or discontinue the Service (or any part or content thereof) without notice at any time.
 1. Questions about this document should be sent to our support team using the email address studios@jbithell.com
 
@@ -21,7 +22,7 @@ layout: page
 
 This section of this document is designed to bring the service into compliance with the European Union's General Data Protection Regulation (GDPR) which came into force on May 25, 2018.
 
-Data is typically passed to us either by our users directly: for example by signing up to the service and entering their personal details or by entering data into our service such as a resolution or their preference of news outlet, or it is passed to us by organisations hosting conferences using our service and entered by their agents: such as a list of attendees which accounts are generated for or by entering comments about delegate performance for example. 
+Data is typically passed to us either by our users directly: for example by signing up to the service and entering their personal details such as their email address, or it is passed to us by businesses or organisations they're associated with. 
 
 When users first login or signup they are asked to consent to this document by the system, which records them having done so. 
 
@@ -37,7 +38,7 @@ When users first login or signup they are asked to consent to this document by t
 1. The service shall ensure that personal data is stored securely
 1.  Some of the service's directors, employees and volunteers have access to some/all of the service's files, access logs, emails and data, which they may view at any time.
 2.  To help provide fantastic service and support, certain directors, employees and volunteers may login to any user's account, at any time, without notifying them.
-3.  As provided for by the Regulation of Investigatory Powers Act 2000 or any corresponding statute, The Service's directors, employees and volunteers reserve the right to investigate and inspect electronic communications.
+3.  As provided for by the Regulation of Investigatory Powers Act 2000 or any corresponding statute, the Service's directors, employees and volunteers reserve the right to investigate and inspect electronic communications.
 4. As required for operational reasons, user data may be released to other users to enable them to execute their role functions - for example your email address will be shared with other users to allow them to contact you in relation to events. 
 5. The service may release data for analytical purposes to external providers but this data will either be anonymised or stored in line with this document.
 6. When personal data is deleted this should be done safely such that the data is irrecoverable, in liason with the service's storage contractors. 
@@ -46,7 +47,7 @@ When users first login or signup they are asked to consent to this document by t
 
 ### Data Storage
 
-As a European Union based service provider we endeavour to store your data within the European Union as per our legal obligations, but we cannot guarantee that it will not leave the European Union for storage, processing or in transit.
+We endeavour to store your data within the European Union as per our legal obligations, but we cannot guarantee that it will not leave the European Union for storage, processing or in transit.
 
 ## Cookie Policy
 
@@ -106,22 +107,21 @@ This site uses Google Analytics which is one of the most widespread and trusted 
     
     1.  The Computer Misuse Act 1990 makes it a criminal offence to attempt to interfere with others' software, to harass people via the computer, or to attempt to gain unauthorized access to a computer system in order to view or change information.
     
-    A perfect example of an offence under the computer misuse act is the logging into another's account.
+    An example of an offence under the computer misuse act is the logging into another's account.
     
 2.  All inappropriate use of the service will be investigated, and reported to the authorities as deemed appropriate.
 3.  Third Party Links
     1.  Certain content, products and services available via the service may include materials from third-parties.
     2.  Third-party links on this site may direct you to third-party websites that are not affiliated with the service. We are not responsible for examining or evaluating the content or accuracy and we do not warrant and will not have any liability or responsibility for any third-party materials or websites, or for any other materials, products, or services of third-parties.
     3.  We are not liable for any harm or damages related to the purchase or use of goods, services, resources, content, or any other transactions made in connection with any third-party websites. Please review carefully the third-party's policies and practices and make sure you understand them before you engage in any transaction. Complaints, claims, concerns, or questions regarding third-party products should be directed to the third-party.
-4.  If you discover a 
-machine which has been left logged on but is unattended (e.g. if the previous user has forgotten to logout, you must immediately log the user out of the machine. Any other action (e.g. signing a resolution from the user's account) or any other form of account tampering is a criminal offence.
+4.  If you discover a machine which has been left logged on but is unattended (e.g. if the previous user has forgotten to logout, you must immediately log the user out of the machine. Any other action or any other form of account tampering is a criminal offence.
 
 ### Input
 
 This section of the policy refers to user submitted content, which includes but is not limited to assets, notes, projects, etc.
 
 1.  We may, but have no obligation to, monitor, edit or remove content that we determine in our sole discretion are unlawful, offensive, threatening, libelous, defamatory, pornographic, obscene or otherwise objectionable or violates any party's intellectual property or these Terms of Service.
-2.  You agree that your comments will not violate the rights of any party, including copyright, trademark, privacy, personality or other personal or proprietary right. You further agree that your comments will not contain libelous or otherwise unlawful, abusive or obscene material, or contain any computer virus or other malware that could in any way affect the operation of the Service or any related website. You may not use a false e-mail address, pretend to be someone other than yourself, or otherwise mislead us or third-parties as to the origin of any comments as this constitutes statutory fraud. You are solely responsible for any comments you make and their accuracy. We take no responsibility and assume no liability for any comments posted by you or any third-party.
+2.  You agree that your input will not violate the rights of any party, including copyright, trademark, privacy, personality or other personal or proprietary right. You further agree that your input will not contain libelous or otherwise unlawful, abusive or obscene material, or contain any computer virus or other malware that could in any way affect the operation of the Service or any related website. You may not use a false e-mail address, pretend to be someone other than yourself, or otherwise mislead us or third-parties as to the origin of any input as this constitutes statutory fraud. You are solely responsible for any input you make and their accuracy. We take no responsibility and assume no liability for any comments posted by you or any third-party.
 
 ### Errors, Inaccuracies or Omissions
 
@@ -152,7 +152,7 @@ This section of the policy refers to user submitted content, which includes but 
 
 ### Penetration Testing
 
-1.  We do not encourage or endorse any penetration testing or vulnerability searching of our service. If you do find any bugs or security flaws in our systems, please report them to our support team using the address at the top of this document immediately - taking as many precautions as possible. Failing to report bugs to us, and publishing them publicly threatens the whole community.
+1.  We do not encourage or endorse any penetration testing or vulnerability searching of our service. If you do find any bugs or security flaws in our systems, please report them to our support team using the address at the top of this document immediately - taking as many precautions as possible. Failing to report bugs to us, and publishing them publicly, threatens the whole community.
 
 
 ### Disclaimer of Warranties & Limitation of Liability
