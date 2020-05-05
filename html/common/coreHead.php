@@ -3,6 +3,8 @@ require_once __DIR__ . '/config.php';
 
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
+use Aws\CloudFront\CloudFrontClient;
+use Aws\Exception\AwsException;
 
 if (!$CONFIG['DEV']) Sentry\init([
     'dsn' => $CONFIG['ERRORS']['SENTRY'],
@@ -112,7 +114,7 @@ class bCMS {
         $DBLIB->orderBy($sort, $sortOrder);
         return $DBLIB->get("s3files", null, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
     }
-    function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes') {
+    function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes', $cloudfront = true) {
         global $DBLIB, $CONFIG;
         /*
          * File interface for Amazon AWS S3.
@@ -147,15 +149,6 @@ class bCMS {
                     //They want the original
             }
         }
-        $s3Client = new Aws\S3\S3Client([
-            'region'  => $file["s3files_region"],
-            'endpoint' => "https://" . $file["s3files_endpoint"],
-            'version' => 'latest',
-            'credentials' => array(
-                'key'    => $CONFIG['AWS']['KEY'],
-                'secret' => $CONFIG['AWS']['SECRET'],
-            )
-        ]);
 
         $file['expiry'] = $expire;
 
@@ -182,18 +175,44 @@ class bCMS {
                 //There are no specific requirements for this file so not to worry.
         }
 
-        $parameters = [
-            'Bucket' => $file['s3files_bucket'],
-            'Key'    => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
-        ];
-        if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . $CONFIG['PROJECT_NAME'] . ' ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
-        $cmd = $s3Client->getCommand('GetObject', $parameters);
-        $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
-        $presignedUrl = (string) $request->getUri();
+        //Generate the url
 
-        //$presignedUrl = $file['s3files_cdn_endpoint'] . explode($file["s3files_endpoint"],$presignedUrl)[1]; //Remove the endpoint itself from the url in order to set a new one
+        if ($cloudfront) {
+            // Create a CloudFront Client to sign the string
+            $CloudFrontClient = new Aws\CloudFront\CloudFrontClient([
+                'profile' => 'default',
+                'version' => '2014-11-06',
+                'region' => 'us-east-2'
+            ]);
+            $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
+                'url' => $CONFIG['AWS']["CLOUDFRONT"]["URL"] . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
+                'expires' => time() + 300, //5 mins - time() is always UTC anyway
+                'private_key' => $CONFIG['AWS']["CLOUDFRONT"]["PRIVATEKEY"],
+                'key_pair_id' => $CONFIG['AWS']["CLOUDFRONT"]["KEYPAIRID"]
+            ]);
+            return $signedUrlCannedPolicy;
+        } else {
+            //Download direct from S3
+            $s3Client = new Aws\S3\S3Client([
+                'region' => $file["s3files_region"],
+                'endpoint' => "https://" . $file["s3files_endpoint"],
+                'version' => 'latest',
+                'credentials' => array(
+                    'key' => $CONFIG['AWS']['KEY'],
+                    'secret' => $CONFIG['AWS']['SECRET'],
+                )
+            ]);
 
-        return $presignedUrl;
+            $parameters = [
+                'Bucket' => $file['s3files_bucket'],
+                'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
+            ];
+            if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . $CONFIG['PROJECT_NAME'] . ' ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
+            $cmd = $s3Client->getCommand('GetObject', $parameters);
+            $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
+            $presignedUrl = (string)$request->getUri();
+            return $presignedUrl;
+        }
     }
 }
 

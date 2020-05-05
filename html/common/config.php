@@ -43,6 +43,11 @@ $CONFIG = array(
         "FINEUPLOADER" => [
             "KEY" => $_ENV['bCMS__AWS_CLIENT_KEY'],
             "SECRET" => $_ENV['bCMS__AWS_CLIENT_SECRET_KEY']
+        ],
+        "CLOUDFRONT" => [
+            "PRIVATEKEY" => $_ENV['bCMS__AWS_ACCOUNT_PRIVATE_KEY'],
+            "KEYPAIRID" => $_ENV['bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID'],
+            "URL" => 'https://cdn.adam-rms.com/'
         ]
     ],
     'DEV' => ($_ENV['bCMS__ERRORS'] == "true" ? true : false),
