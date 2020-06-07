@@ -1,7 +1,5 @@
 {% extends "assets/template.twig" %}
-
 {% block content %}
-
     <div class="row">
         <div class="col-lg-12">
             <div class="card ">
@@ -30,11 +28,33 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Lastname</th>
-                                <th>Roles</th>
-                                <th>Instances</th>
+                                <th>Plan</th>
+                                <th>Storage Used</th>
+                                <th>Storage Limit</th>
+                                <th>Users</th>
+                                <th>Assets</th>
+                                <th>Asset Value</th>
+                                <th>Asset Mass</th>
                                 <th></th>
-                                <th></th>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><b>Totals</b></td>
+                                <td>
+                                    {{ totals['STORAGEUSED']|formatsize }}
+                                </td>
+                                <td>{{ totals['STORAGEALLOWED']|formatsize }}+&infin;</td>
+                                <td>
+                                </td>
+                                <td>
+                                    {{ totals.assets.COUNT|number_format(0) }}
+                                </td>
+                                <td>
+                                    &pound;{{ totals.assets.VALUE|round(2, 'ceil')|number_format(2) }}
+                                </td>
+                                <td>
+                                    {{ totals.assets.MASS|round(2, 'ceil')|number_format(2) }}kg
+                                </td>
+                                <td></td>
                             </tr>
                             </thead>
                             <tbody>
@@ -46,13 +66,23 @@
                                     <td>{{ instance.instances_id }}</td>
                                     <td>{{ instance.instances_name }}</td>
                                     <td>{{ instance.instances_plan }}</td>
+                                    <td>
+                                        {{ instance['STORAGEUSED']|formatsize }}
+                                    </td>
                                     <td>{{ (instance.instances_storageLimit > 0 ? instance.instances_storageLimit|formatsize : "&infin;") }}</td>
                                     <td>
-                                        {% if 5|permissions %}
-                                            <a href="{{ CONFIG.ROOTURL }}/account.php?uid={{ user["users_userid"] }}"
-                                               type="button" title="Edit user" class="btn btn-default"><i
-                                                        class="fa fa-pencil-alt"></i></a>
-                                        {% endif %}
+                                        {{ instance.USERS }}
+                                    </td>
+                                    <td>
+                                        {{ instance.assets.COUNT|number_format(0) }}
+                                    </td>
+                                    <td>
+                                        &pound;{{ instance.assets.VALUE|round(2, 'ceil')|number_format(2) }}
+                                    </td>
+                                    <td>
+                                        {{ instance.assets.MASS|round(2, 'ceil')|number_format(2) }}kg
+                                    </td>
+                                    <td>
                                         {% if 21|permissions %}
                                             <a href="{{ CONFIG.ROOTURL }}/?i={{ instance.instances_id }}"
                                                title="Login to Instance">
@@ -60,7 +90,6 @@
                                                             class="fa fa-sign-in-alt"></i></button>
                                             </a>
                                         {% endif %}
-
                                     </td>
                                 </tr>
                             {% endfor %}
