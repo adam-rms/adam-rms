@@ -19,9 +19,9 @@ $DBLIB->where("assets.assetTypes_id", $PAGEDATA['asset']['assetTypes_id']);
 if (isset($_GET['asset'])) {
     $PAGEDATA['asset']['oneasset'] = true;
     $DBLIB->where("assets.assets_id", $_GET['asset']);
-}
+} else $PAGEDATA['asset']['oneasset'] = false;
 $DBLIB->where("assets.assets_deleted", 0);
-$assets = $DBLIB->get("assets", null);
+$assets = $DBLIB->get("assets");
 if (!$assets) die($TWIG->render('404.twig', $PAGEDATA));
 $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
@@ -72,6 +72,28 @@ if (count($PAGEDATA['assets']) == 1) {
     $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_due", "ASC");
     $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_added", "ASC");
     $PAGEDATA['assets'][0]['jobs'] = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name","userCreator.users_userid AS userCreatorUserID", "userCreator.users_name1 AS userCreatorUserName1", "userCreator.users_name2 AS userCreatorUserName2", "userCreator.users_email AS userCreatorUserEMail","userAssigned.users_name1 AS userAssignedUserName1","userAssigned.users_userid AS userAssignedUserID", "userAssigned.users_name2 AS userAssignedUserName2", "userAssigned.users_email AS userAssignedUserEMail"]);
+
+    if ($PAGEDATA['assets'][0]['assets_linkedTo']) {
+        $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_linkedTo']);
+        $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+        $PAGEDATA['assets'][0]['link'] = $DBLIB->getOne("assets",["assets_tag", "assets_id","assetTypes_name","assets.assetTypes_id"]);
+    } else $PAGEDATA['assets'][0]['link'] = false;
+
+
+    $PAGEDATA['assets'][0]['linkedToThis'] = [];
+    function linkedAssets($assetId,$tier) {
+        global $DBLIB,$PAGEDATA;
+        $DBLIB->where("assets_linkedTo", $assetId);
+        $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+        $assets = $DBLIB->get("assets",null,["assets_tag","assets_id","assetTypes_name","assets.assetTypes_id"]);
+        $tier+=1;
+        foreach ($assets as $asset) {
+            $asset['tier'] = $tier;
+            $PAGEDATA['assets'][0]['linkedToThis'][] = $asset;
+            linkedAssets($asset['assets_id'],$tier);
+        }
+    }
+    linkedAssets($PAGEDATA['assets'][0]['assets_id'],0);
 }
 
 

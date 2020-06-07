@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/head.php';
-require_once __DIR__ . '/../../common/libs/Auth/main.php';
 require_once __DIR__ . '/../assets/widgets/statsWidgets.php'; //Stats on homepage etc.
 
 if (!$GLOBALS['AUTH']->login) {

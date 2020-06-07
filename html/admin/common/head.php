@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../common/coreHead.php';
+require_once __DIR__ . '/../../common/libs/Auth/main.php';
 
 $CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
 
