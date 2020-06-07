@@ -15,6 +15,6 @@ $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
 $result = $DBLIB->update("assets", array_intersect_key( $array, array_flip( ['assets_linkedTo','assetTypes_id','assets_notes','asset_definableFields_1','asset_definableFields_2','asset_definableFields_3','asset_definableFields_4','asset_definableFields_5','asset_definableFields_6','asset_definableFields_7','asset_definableFields_8','asset_definableFields_9','asset_definableFields_10','assets_value','assets_dayRate','assets_weekRate','assets_mass'] ) ));
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update asset"]);
 else {
-    $bCMS->auditLog("EDIT-ASSET", "assetTypes", json_encode($array), $AUTH->data['users_userid'],null, $array['assets_id']);
+    $bCMS->auditLog("EDIT-ASSET", "assets", json_encode($array), $AUTH->data['users_userid'],null, $array['assets_id']);
     finish(true);
 }
