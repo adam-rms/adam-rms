@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config.php';
+date_default_timezone_set("UTC");
+use \Firebase\JWT\JWT;
 
 class bID
 {
@@ -11,9 +13,17 @@ class bID
     function __construct()
     {
         global $DBLIB, $CONFIG;
-        if (isset($_SESSION['token'])) {
+
+        if (isset($_SESSION['token'])) $token = $_SESSION['token'];
+        elseif (isset($_POST['jwt'])) {
+            $decoded = JWT::decode($_POST['jwt'], $CONFIG['JWTKey'], array('HS256'));
+            $decoded_array = (array) $decoded;
+            $token = $decoded_array['token'];
+        } else $token = false;
+
+        if ($token and strlen($token) > 0) {
             //Time to check whether it is valid
-            $DBLIB->where('authTokens_token', $GLOBALS['bCMS']->sanitizeString($_SESSION['token']));
+            $DBLIB->where('authTokens_token', $GLOBALS['bCMS']->sanitizeString($token));
             $DBLIB->where("authTokens_valid", '1');
             $tokencheckresult = $DBLIB->getOne("authTokens");
             if ($tokencheckresult != null) {

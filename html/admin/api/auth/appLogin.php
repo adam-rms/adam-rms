@@ -2,12 +2,9 @@
 require_once __DIR__ . '/../apiHead.php';
 use \Firebase\JWT\JWT;
 
-$request_body = file_get_contents('php://input');
-$data = json_decode($request_body);
-
-if (isset($data['email']) and isset($data['password'])) {
-    $input = trim(strtolower($GLOBALS['bCMS']->sanitizeString($data['formInput'])));
-    $password = $GLOBALS['bCMS']->sanitizeString($data['password']);
+if (isset($dataPayload['email']) and isset($dataPayload['password'])) {
+    $input = trim(strtolower($GLOBALS['bCMS']->sanitizeString($dataPayload['email'])));
+    $password = $GLOBALS['bCMS']->sanitizeString($dataPayload['password']);
     if ($input == "") finish(false, ["code" => null, "message" => "No data specified"]);
     else {
         if (filter_var($input, FILTER_VALIDATE_EMAIL)) $DBLIB->where ("users_email", $input);
@@ -45,7 +42,6 @@ if (isset($data['email']) and isset($data['password'])) {
                 "uid" => $user['users_userid'],
                 "token" => $token,
                 "iat" => time()+21*24*60*60, //21 days token expiry
-                "nbf" => time()
             ), $CONFIG['JWTKey']);
 
             finish(true, null, ["token"=>$jwt]);
