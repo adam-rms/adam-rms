@@ -143,24 +143,19 @@ class bID
     public function setInstance($instanceId) {
         global $DBLIB;
         if (!$this->login) return false; //Not logged in
-        if (in_array(21, $this->permissions)) {
-            $DBLIB->where("users_userid", $this->data['users_userid']);
-            $DBLIB->update("users", ["users_selectedInstanceID" => $instanceId]); //It doesn't even bother to verify the instance ID as the user is trusted to be quite senior
-        } else {
-            foreach ($this->data['instances'] as $instance) {
-                //Check they have this instance available
-                if ($instance['instances_id'] == $instanceId) {
-                    $this->data['instance'] = $instance;
-                    if ($this->data['instance']['instances_id'] != $this->data["users_selectedInstanceID"]) {
-                        //Change it in db
-                        $DBLIB->where("users_userid", $this->data['users_userid']);
-                        $DBLIB->update("users", ["users_selectedInstanceID" => $this->data['instance']['instances_id']]); //Allow users to keep other projects selected
-                    }
-                    return true;
+        foreach ($this->data['instances'] as $instance) {
+            //Check they have this instance available
+            if ($instance['instances_id'] == $instanceId) {
+                $this->data['instance'] = $instance;
+                if ($this->data['instance']['instances_id'] != $this->data["users_selectedInstanceID"]) {
+                    //Change it in db
+                    $DBLIB->where("users_userid", $this->data['users_userid']);
+                    $DBLIB->update("users", ["users_selectedInstanceID" => $this->data['instance']['instances_id']]); //Allow users to keep other projects selected
                 }
+                return true;
             }
-            return false;
         }
+        return false;
     }
     private function generateTokenAlias()
     {
