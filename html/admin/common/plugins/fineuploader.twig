@@ -144,7 +144,7 @@ x-amz-meta-size
                 bucket: "{{ CONFIG.AWS.DEFAULTUPLOADS.BUCKET }}",
                 key: function (fileId) {
                     var filename = $("#{{ thisElementID }}").fineUploader("getName", fileId);
-                    filename = filename.replace(/^[a-z0-9]+$/i,'');
+                    filename = filename.replace(/[^a-z0-9\.]/gi,''); //Make the filename url safe etc.
                     //While we are here - set the size etc. of the file so it will be handled correctly in the php
                     $("#{{ thisElementID }}").fineUploader("setParams", {
                         "size": $("#{{ thisElementID }}").fineUploader("getSize", fileId),
