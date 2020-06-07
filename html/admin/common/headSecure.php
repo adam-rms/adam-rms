@@ -50,6 +50,17 @@ if ($AUTH->data['users_selectedProjectID'] != null) {
     }
 }
 
+if ($AUTH->data['instance']['instances_weekStartDates'] != null) {
+    $dates = explode("\n", $AUTH->data['instance']['instances_weekStartDates']);
+    $AUTH->data['instance']['weekStartDates'] = [];
+    foreach ($dates as $date) {
+        array_push($AUTH->data['instance']['weekStartDates'], strtotime($date)*1000);
+    }
+    unset($dates);
+    sort($AUTH->data['instance']['weekStartDates']);
+} else $AUTH->data['instance']['weekStartDates'] = false;
+
+
 $PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 

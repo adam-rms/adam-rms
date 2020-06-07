@@ -556,17 +556,28 @@ far fa-circle
                     </a>
                 </li>
             {% endif %}
-                {% if 7|permissions %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
-                            <i class="nav-icon fas fa-gavel"></i>
-                            <p>
-                                Audit Log
-                                <span class="right badge badge-danger">AdamRMS</span>
-                            </p>
-                        </a>
-                    </li>
-                {% endif %}
+            {% if 20|permissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/instances.php" class="nav-link">
+                        <i class="nav-icon fas fa-city"></i>
+                        <p>
+                            Instances
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if 7|permissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
+                        <i class="nav-icon fas fa-gavel"></i>
+                        <p>
+                            Audit Log
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
 
                 {% endif %}
                 </ul>
