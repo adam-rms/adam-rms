@@ -66,6 +66,7 @@
                     {% if showTags != true %}
                         <button class="btn btn-sm btn-default showTagsButton">Show asset codes</button>
                     {% endif %}
+                    <button class="btn btn-sm btn-default showLinkedButton">Show assets linked to others</button>
                     {% if pagination.total > 1 %}
                     <ul class="pagination pagination-sm m-0 float-right">
                         {% if pagination.page > 1 %}
@@ -95,6 +96,9 @@
                 $("#loadingoverlay").hide();
                 $(".showTagsButton").click(function () {
                     insertURLQueryParam("showtags", "1");
+                });
+                $(".showLinkedButton").click(function () {
+                    insertURLQueryParam("all", "1");
                 });
             });
         </script>

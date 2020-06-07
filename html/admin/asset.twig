@@ -65,23 +65,39 @@
                         </li>
                         {% endif %}
                         <li class="list-group-item">
-                            <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass ~ "kg" : "?" }}</a>
-                        </li>
-                        <li class="list-group-item">
                             <b>Category</b> <a class="float-right" href="assets.php?category={{ asset.assetCategories_id }}">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
                         </li>
                         <li class="list-group-item">
                             <b>Manufacturer</b> <a class="float-right" href="assets.php?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a>
                         </li>
+                        {% if assets|length == 1 %}
+                        {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
                         <li class="list-group-item">
-                            <b>Value</b> <a class="float-right">&pound;{{ asset.assetTypes_value }}</a>
+                            <b>Mass</b> <a class="float-right">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|number_format(2) : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|number_format(2) : '?')) }}kg</a>
                         </li>
                         <li class="list-group-item">
-                            <b>Day Rate</b> <a class="float-right">&pound;{{ asset.assetTypes_dayRate }}</a>
+                            <b>Value</b> <a class="float-right">&pound;{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|number_format(2) }}</a>
                         </li>
                         <li class="list-group-item">
-                            <b>Week Rate</b> <a class="float-right">&pound;{{ asset.assetTypes_weekRate }}</a>
+                            <b>Day Rate</b> <a class="float-right">&pound;{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|number_format(2) }}</a>
                         </li>
+                        <li class="list-group-item">
+                            <b>Week Rate</b> <a class="float-right">&pound;{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|number_format(2) }}</a>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item">
+                            <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass ~ "kg" : "?" }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Value</b> <a class="float-right">&pound;{{ asset.assetTypes_value|number_format(2) }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Day Rate</b> <a class="float-right">&pound;{{ asset.assetTypes_dayRate|number_format(2) }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Week Rate</b> <a class="float-right">&pound;{{ asset.assetTypes_weekRate|number_format(2) }}</a>
+                        </li>
+                        {% endif %}
                     </ul>
                     {% if asset.oneasset %}
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
@@ -196,8 +212,9 @@
                                         <th>{{ field }}</th>
                                     {% endfor %}
                                     <th>Notes</th>
-                                    <th>Status</th>
-
+                                    <th>Value</th>
+                                    <th>&pound;/day</th>
+                                    <th>&pound;/week</th>
                                     <th title="File attachments"><i class="fas fa-paperclip"></i></th>
                                     <th style="width:1%"><i class="fas fa-flag"></i></th>
                                     <th style="width:1%"><i class="fas fa-ban"></i></th>
@@ -210,8 +227,17 @@
                                             <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
                                         {% endfor %}
                                         <td>{{ thisasset['assets_notes']|nl2br }}</td>
-                                        <td><span class="badge bg-red"></span></td>
+                                        <td>
+                                            &pound;{{ (thisasset.assets_value ?: asset.assetTypes_value)|number_format(2) }}
+                                        </td>
+                                        <td>
+                                            &pound;{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|number_format(2) }}
+                                        </td>
+                                        <td>
+                                            &pound;{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|number_format(2) }}
+                                        </td>
                                         <td>{{ thisasset.files|length > 0 ?: "" }}</td>
+
                                         <td>
                                             {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
                                         </td>
@@ -453,8 +479,9 @@
                                     <div class="card-header p-2">
                                         <ul class="nav nav-pills">
                                             <li class="nav-item"><a class="nav-link active" href="#editAssetDetails" data-toggle="tab">Details</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="#linked" data-toggle="tab">Asset Links</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#linked" data-toggle="tab">Asset Link</a></li>
                                             {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
+                                            {% if 82|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
                                             <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
                                         </ul>
                                     </div><!-- /.card-header -->
@@ -470,10 +497,13 @@
                                                 <button class="btn btn-default float-right" id="saveAssetSettingsButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
                                             <div class="tab-pane" style="padding: 1.25rem" id="linked">
-                                                <div class="callout callout-info">
+                                                <div class="callout">
                                                     Linking this asset to another means that whenever that asset is added to a project this asset is also added. For example, you might link an assets power supply to the asset
                                                 </div>
-                                                    <select class="form-control select2bs4" id="assetLinkChange" placeholder="{{ assets[0]['link']['assets_tag']|aTag }} | {{ assets[0]['link']['assetTypes_name'] }}" value="{{ assets[0]['assets_linkedTo'] }}"></select>
+                                                <div class="callout callout-danger">
+                                                    When linked assets are added to a project they are discounted by 100% by default
+                                                </div>
+                                                <select class="form-control select2bs4" id="assetLinkChange" placeholder="{{ assets[0]['link']['assets_tag']|aTag }} | {{ assets[0]['link']['assetTypes_name'] }}" value="{{ assets[0]['assets_linkedTo'] }}"></select>
                                                 <button class="btn btn-default float-right" id="saveAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
                                             <div class="tab-pane" style="padding: 1.25rem" id="editAssetFields">
@@ -489,6 +519,52 @@
                                                 </form>
                                                 <button class="btn btn-default float-right" id="saveAssetDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
+                                            {% if 82|instancePermissions %}
+                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetDetailsOverrides">
+                                                <div class="callout">
+                                                    Overriding the details of the asset means that these settings below will take precedence over the properties for the type - this allows you to have multiple assets within a type with different masses for example
+                                                </div>
+                                                <form id="editAssetDetailsOverridesForm">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Mass
+                                                    </span>
+                                                        </div>
+                                                        <input type="number" step="0.001" min="0" name="assets_mass" value="{{ assets[0].assets_mass}}" class="form-control" />
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">kg</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Value - £
+                                                    </span>
+                                                        </div>
+                                                        <input type="number" step="0.001" min="0" name="assets_value" value="{{ assets[0].assets_value}}" class="form-control" />
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Day Rate - £
+                                                    </span>
+                                                        </div>
+                                                        <input type="number" step="0.001" min="0" name="assets_dayRate" value="{{ assets[0].assets_dayRate }}" class="form-control"  />
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                              Weekly Rate - £
+                                                            </span>
+                                                        </div>
+                                                        <input type="number" step="0.001" min="0" name="assets_weekRate" class="form-control" value="{{ assets[0].assets_weekRate }}" />
+                                                    </div>
+                                                </form>
+                                                <button class="btn btn-default float-right" id="editAssetDetailsOverridesButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            {% endif %}
                                             <div class="tab-pane" style="padding: 1.25rem" id="editAssetType">
                                                 <div class="callout callout-danger">
                                                     Changing the asset type for this asset can have significant implications especially with cost of existing projects and definable fields
@@ -957,8 +1033,6 @@
                         });
                     });
                 });
-                {% endif %}
-                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
                 $(".removeFromBasketAssetButton").click(function () {
                     var assetId = $(this).data("assetid");
                     bootbox.confirm({
@@ -1074,8 +1148,15 @@
                         location.reload();
                     }, false);
                 });
-
-
+                {% if 82|instancePermissions %}
+                $('#editAssetDetailsOverridesButton').on('click', function() {
+                    var formData = $("#editAssetDetailsOverridesForm").serializeArray();
+                    formData.push({"name": "assets_id", "value": "{{assets[0]['assets_id']}}"});
+                    ajaxcall("assets/editAsset.php", {formData}, function (data) {
+                        location.reload();
+                    }, false);
+                });
+                {% endif %}
                 $("#assetTypeChange").select2({
                     tags: false,
                     multiple: false,
