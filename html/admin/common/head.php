@@ -4,6 +4,11 @@ require_once __DIR__ . '/../../common/libs/Auth/main.php';
 
 $CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
 
+function compareFloats($a,$b) {
+    if ($b == 0) return ($a === $b);
+    if (abs(($a-$b)/$b) < 0.00001) return true;
+    else return false;
+}
 
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 //TWIG
@@ -339,149 +344,114 @@ function assetFlagsAndBlocks($assetid) {
     }
     return $return;
 }
-//Project Finance Calculator
-function projectFinancials($projectid)
-{
-    global $DBLIB;
-    $return = [];
+class projectFinance {
+    public function durationMaths($projects_dates_deliver_start,$projects_dates_deliver_end) {
+        //Calculate the default pricing for all assets
+        $return = ["string" => "Calculated based on:", "days" => 0, "weeks" => 0];
+        $start = strtotime(date("d F Y 00:00:00", strtotime($projects_dates_deliver_start)));
+        $end = strtotime(date("d F Y 23:59:59", strtotime($projects_dates_deliver_end)));
+        if (date("N", $start) == 6) {
+            $return['weeks'] += 1;
+            $return['string'] .= "\nBegins on Saturday so first weekend charged as one week";
+            $start = $start + (86400 * 2);
+        } elseif (date("N", $start) == 7) {
+            $return['weeks'] += 1;
+            $return['string'] .= "\nBegins on Sunday so first weekend charged as one week";
+            $start = $start + 86400;
+        }
+        if (($end-$start) > 259200) { //If it's just one weekend it doesn't count as two weeks
+            if (date("N", $end) == 6) {
+                $return['weeks'] += 1;
+                $return['string'] .= "\nEnds on Saturday so last weekend charged as one week";
+                $end = $end - 86400;
+            } elseif (date("N", $end) == 7) {
+                $return['weeks'] += 1;
+                $return['string'] .= "\nEnds on Sunday so last weekend charged as one week";
+                $end = $end - (86400 * 2);
+            }
+        }
 
-    $DBLIB->where("projects_id", $projectid);
-    $project = $DBLIB->getone("projects", ['instances_id', 'projects_id', 'projects_dates_deliver_start','projects_dates_deliver_end']);
-    if (!$project) return false;
+        $remaining = strtotime(date("d F Y 23:59:59", $end)) - strtotime(date("d F Y", $start));
+        if ($remaining > 0) {
+            $remaining = ceil($remaining / 86400); //Convert to days
+            $weeks = floor($remaining / 7); //Number of week periods
+            if ($weeks > 0) {
+                $return['weeks'] += $weeks;
+                $return['string'] .= "\nAdd " . $weeks . " week period(s) to reflect a period of more than 7 days";
+                $remaining = $remaining - ($weeks * 7);
+            }
+            if ($remaining > 2) {
+                $return['string'] .= "\nAdd a week to discount a period of more than 3 days or more that's under 7";
+                $return['weeks'] += 1;
+                $remaining = $remaining - 7;
+            }
+            if ($remaining > 0) {
+                $return['days'] += ceil($remaining);
+                $return['string'] .= "\nAdd " . ceil($remaining) . " day period(s)";
+            }
+        }
+        return $return;
+    }
+}
 
-    $DBLIB->where("payments.payments_deleted", 0);
-    $DBLIB->orderBy("payments.payments_date", "ASC");
-    $DBLIB->where("payments.projects_id", $projectid);
-    $payments = $DBLIB->get("payments");
-    $return['payments'] = ["received" => ["ledger" => [], "total" => 0.0], "sales" => ["ledger" => [], "total" => 0.0], "subHire" => ["ledger" => [], "total" => 0.0], "staff" => ["ledger" => [], "total" => 0.0]];
-    foreach ($payments as $payment) {
-        switch ($payment['payments_type']) {
+class projectFinanceCacher {
+    //This class assumes that the projectid has been validated as within the instance
+    private $data,$projectid;
+    private $changesMade = false;
+    public function __construct($projectid) {
+        //Reset the data
+        $this->projectid = $projectid;
+        $this->data = [
+            "projectsFinanceCache_equipmentSubTotal" =>0.0,
+            "projectsFinanceCache_equiptmentDiscounts" =>0.0,
+            "projectsFinanceCache_salesTotal" =>0.0,
+            "projectsFinanceCache_staffTotal" =>0.0,
+            "projectsFinanceCache_externalHiresTotal" =>0.0,
+            "projectsFinanceCache_paymentsReceived" =>0.0,
+            "projectsFinanceCache_value"=>0.0,
+            "projectsFinanceCache_mass"=>0.0
+        ];
+    }
+    public function save() {
+        //Process the changes at the end of the script
+        global $DBLIB;
+        if ($this->changesMade) {
+            $dataToUpload = [];
+            foreach ($this->data as $key => $value) {
+                //Put it into a format for mysql
+                if ($value != 0) $dataToUpload[$key] = $DBLIB->inc($value);
+            }
+            $dataToUpload['projectsFinanceCache_timestampUpdated'] = date("Y-m-d H:i:s");
+            $dataToUpload['projectsFinanceCache_equiptmentTotal'] = $DBLIB->inc($this->data["projectsFinanceCache_equipmentSubTotal"] - $this->data['projectsFinanceCache_equiptmentDiscounts']);
+            $dataToUpload['projectsFinanceCache_grandTotal'] = $DBLIB->inc((($this->data["projectsFinanceCache_equipmentSubTotal"] - $this->data['projectsFinanceCache_equiptmentDiscounts']) + $this->data['projectsFinanceCache_salesTotal'] + $this->data['projectsFinanceCache_staffTotal'] + $this->data["projectsFinanceCache_externalHiresTotal"]) - $this->data['projectsFinanceCache_paymentsReceived']);
+            $DBLIB->where("projects_id", $this->projectid);
+            $DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
+            return $DBLIB->update("projectsFinanceCache", $dataToUpload, 1); //Update the most recent cache datapoint
+        } else return true;
+    }
+    public function adjust($key,$value) {
+        if ($value !== 0 or $value !== null) {
+            $this->changesMade = true;
+            $this->data[$key] += $value;
+        }
+    }
+    public function adjustPayment($paymentType,$value) {
+        switch ($paymentType) {
             case 1:
-                $return['payments']['received']['ledger'][] = $payment;
-                $return['payments']['received']['total'] += $payment['payments_amount'];
+                $key = 'projectsFinanceCache_paymentsReceived';
                 break;
             case 2:
-                $return['payments']['sales']['ledger'][] = $payment;
-                $return['payments']['sales']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
+                $key = 'projectsFinanceCache_salesTotal';
                 break;
             case 3:
-                $return['payments']['subHire']['ledger'][] = $payment;
-                $return['payments']['subHire']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
+                $key = 'projectsFinanceCache_externalHiresTotal';
                 break;
             case 4:
-                $return['payments']['staff']['ledger'][] = $payment;
-                $return['payments']['staff']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
+                $key = 'projectsFinanceCache_staffTotal';
                 break;
+            default:
+                return false;
         }
+        return $this->adjust($key,$value);
     }
-    $return['payments']['received']['total'] = round($return['payments']['received']['total'], 2, PHP_ROUND_HALF_UP);
-    $return['payments']['sales']['total'] = round($return['payments']['sales']['total'], 2, PHP_ROUND_HALF_UP);
-    $return['payments']['subHire']['total'] = round($return['payments']['subHire']['total'], 2, PHP_ROUND_HALF_UP);
-    $return['payments']['staff']['total'] = round($return['payments']['staff']['total'], 2, PHP_ROUND_HALF_UP);
-
-    //Assets
-    $DBLIB->where("projects_id", $projectid);
-    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-    $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id", "LEFT");
-    $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
-    $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
-    $DBLIB->join("assetCategories", "assetTypes.assetCategories_id=assetCategories.assetCategories_id", "LEFT");
-    $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
-    $DBLIB->join("instances", "assets.instances_id=instances.instances_id", "LEFT");
-    $DBLIB->orderBy("instances.instances_name", "ASC");
-    $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
-    $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
-    $DBLIB->orderBy("assets.assets_tag", "ASC");
-    $DBLIB->where("assets.assets_deleted", 0);
-    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "instances.instances_name AS assetInstanceName", "instances.instances_id"]);
-
-
-    $return['assetsAssigned'] = [];
-    $return['assetsAssignedSUB'] = [];
-    $return['mass'] = 0.0;
-    $return['value'] = 0.0;
-    $return['prices'] = ["subTotal" => 0.0, "discounts" => 0.0, "total" => 0.0];
-    //Calculate the default pricing for all assets
-    $return['priceMaths'] = ["string" => "Calculated based on:", "days" => 0, "weeks" => 0];
-    $start = strtotime(date("d F Y 00:00:00", strtotime($project['projects_dates_deliver_start'])));
-    $end = strtotime(date("d F Y 23:59:59", strtotime($project['projects_dates_deliver_end'])));
-    if (date("N", $start) == 6) {
-        $return['priceMaths']['weeks'] += 1;
-        $return['priceMaths']['string'] .= "\nBegins on Saturday so first weekend charged as one week";
-        $start = $start + (86400 * 2);
-    } elseif (date("N", $start) == 7) {
-        $return['priceMaths']['weeks'] += 1;
-        $return['priceMaths']['string'] .= "\nBegins on Sunday so first weekend charged as one week";
-        $start = $start + 86400;
-    }
-    if (($end-$start) > 259200) { //If it's just one weekend it doesn't count as two weeks
-        if (date("N", $end) == 6) {
-            $return['priceMaths']['weeks'] += 1;
-            $return['priceMaths']['string'] .= "\nEnds on Saturday so last weekend charged as one week";
-            $end = $end - 86400;
-        } elseif (date("N", $end) == 7) {
-            $return['priceMaths']['weeks'] += 1;
-            $return['priceMaths']['string'] .= "\nEnds on Sunday so last weekend charged as one week";
-            $end = $end - (86400 * 2);
-        }
-    }
-
-    $remaining = strtotime(date("d F Y 23:59:59", $end)) - strtotime(date("d F Y", $start));
-    if ($remaining > 0) {
-        $remaining = ceil($remaining / 86400); //Convert to days
-        $weeks = floor($remaining / 7); //Number of week periods
-        if ($weeks > 0) {
-            $return['priceMaths']['weeks'] += $weeks;
-            $return['priceMaths']['string'] .= "\nAdd " . $weeks . " week period(s) to reflect a period of more than 7 days";
-            $remaining = $remaining - ($weeks * 7);
-        }
-        if ($remaining > 2) {
-            $return['priceMaths']['string'] .= "\nAdd a week to discount a period of more than 3 days or more that's under 7";
-            $return['priceMaths']['weeks'] += 1;
-            $remaining = $remaining - 7;
-        }
-        if ($remaining > 0) {
-            $return['priceMaths']['days'] += ceil($remaining);
-            $return['priceMaths']['string'] .= "\nAdd " . ceil($remaining) . " day period(s)";
-        }
-    }
-    //End calculation
-    $return['assetTypesCounter'] = [];
-
-    foreach ($assets as $asset) {
-        $return['mass'] += $asset['assetTypes_mass'];
-        $return['value'] += $asset['assetTypes_value'];
-
-        if (isset($return['assetTypesCounter'][$asset['assetTypes_id']])) $return['assetTypesCounter'][$asset['assetTypes_id']] += 1;
-        else $return['assetTypesCounter'][$asset['assetTypes_id']] = 1;
-
-        if ($asset['assetsAssignments_customPrice'] == null) {
-            //The actual pricing calculator
-            $asset['price'] = 0;
-            $asset['price'] += $return['priceMaths']['days'] * $asset['assetTypes_dayRate'];
-            $asset['price'] += $return['priceMaths']['weeks'] * $asset['assetTypes_weekRate'];
-        } else $asset['price'] = $asset['assetsAssignments_customPrice'];
-        $asset['price'] = round($asset['price'], 2, PHP_ROUND_HALF_UP);
-        $return['prices']['subTotal'] += $asset['price'];
-
-        if ($asset['assetsAssignments_discount'] > 0) {
-            $asset['discountPrice'] = round(($asset['price'] * (1 - ($asset['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP);
-        } else $asset['discountPrice'] = $asset['price'];
-
-        $return['prices']['discounts'] += ($asset['price'] - $asset['discountPrice']);
-        $return['prices']['total'] += $asset['discountPrice'];
-
-        $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
-        $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
-
-        $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));
-
-        if ($asset['instances_id'] != $project['instances_id']) $return['assetsAssignedSUB'][] = $asset;
-        else $return['assetsAssigned'][] = $asset;
-    }
-
-
-    $return['payments']['subTotal'] = $return['prices']['total'] + $return['payments']['sales']['total'] + $return['payments']['subHire']['total'] + $return['payments']['staff']['total'];
-    $return['payments']['total'] = $return['payments']['subTotal'] - $return['payments']['received']['total'];
-    return $return;
 }

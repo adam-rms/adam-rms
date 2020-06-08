@@ -103,11 +103,13 @@
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
                     {% endif %}
                     {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions and assets|length == 1 %}
+                        {% if assets[0].flagsblocks.COUNT.BLOCK < 1 %}
                         <button title="Remove from project" {% if (not assets[0].assignment) or USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-block btn-warning removeFromBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Remove from Project</button>
                         {%  if assets[0].assignment and USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}
                             <button title="Assigned to {{ assets[0].assignment[0]['projects_name'] }}" class="btn btn-block btn-success" disabled>Can't add to project</button>
                         {% endif %}
                         <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
+                        {% endif %}
                     {% endif %}
                     {% if 19|instancePermissions and assets|length == 1 %}
                         <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
@@ -247,11 +249,13 @@
                                         <td>
                                             <div class="btn-group">
                                                 {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+                                                    {% if thisasset.flagsblocks.COUNT.BLOCK < 1 %}
                                                     <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                     {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
                                                         <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                     {% endif %}
                                                     <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                    {% endif %}
                                                 {% endif %}
                                                 {% if 19|instancePermissions %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
@@ -500,9 +504,11 @@
                                                 <div class="callout">
                                                     Linking this asset to another means that whenever that asset is added to a project this asset is also added. For example, you might link an assets power supply to the asset
                                                 </div>
+                                                {% if USERDATA.instance.instances_config_linkedDefaultDiscount > 0 %}
                                                 <div class="callout callout-danger">
-                                                    When linked assets are added to a project they are discounted by 100% by default
+                                                    When linked assets are added to a project they are discounted by {{ USERDATA.instance.instances_config_linkedDefaultDiscount }}% by default
                                                 </div>
+                                                {% endif %}
                                                 <select class="form-control select2bs4" id="assetLinkChange" placeholder="{{ assets[0]['link']['assets_tag']|aTag }} | {{ assets[0]['link']['assetTypes_name'] }}" value="{{ assets[0]['assets_linkedTo'] }}"></select>
                                                 <button class="btn btn-default float-right" id="saveAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>

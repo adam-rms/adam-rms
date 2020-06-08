@@ -27,3 +27,41 @@ function finish($result = false, $error = ["code" => null, "message"=> null], $r
 
     die(json_encode($dataReturn));
 }
+
+class assetAssignmentSelector
+{
+    private $assignmentsProcess;
+    private $projectid = false;
+    private function selectAssignments($linkedassigmentid, $assignmentid = false)
+    {
+        global $DBLIB, $AUTH;
+        if ($assignmentid) $DBLIB->where("assetsAssignments_id", $assignmentid);
+        elseif ($linkedassigmentid) $DBLIB->where("assetsAssignments_linkedTo", $linkedassigmentid);
+        else return false;
+        $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+        $DBLIB->where("projects.projects_deleted", 0);
+        $DBLIB->where("assets_deleted", 0);
+        $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+        $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id","LEFT");
+        $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+        $assignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments_id", "assetsAssignments.projects_id","assetsAssignments.assetsAssignments_discount","assetsAssignments.assetsAssignments_customPrice","projects.projects_id","assetsAssignments.assets_id","assets.assets_dayRate","assets.assets_weekRate","assetTypes_dayRate","assetTypes_weekRate","assetTypes_mass","assetTypes_value","assets.assets_value","assets.assets_mass"]);
+        if (!$assignments) return false;
+        foreach ($assignments as $assignment) {
+            $this->projectid = $assignment['projects_id'];
+            $this->assignmentsProcess[] = $assignment;
+            $this->selectAssignments($assignment['assetsAssignments_id']);
+        }
+    }
+    public function __construct($assetsAssignments)
+    {
+        $this->assignmentsProcess = [];
+        foreach ($assetsAssignments as $assignment) {
+            $this->selectAssignments(false, $assignment);
+        }
+        if (count($this->assignmentsProcess) < 1) finish(false, ["message" => "No assignments to modify found"]);
+        else return true;
+    }
+    public function getData() {
+        return ["assignments" => $this->assignmentsProcess, "projectid" => $this->projectid];
+    }
+}

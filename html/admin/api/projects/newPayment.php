@@ -15,10 +15,13 @@ $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $array['projects_id']);
 $project = $DBLIB->getone("projects", ["projects_id"]);
 if (!$project) finish(false);
-
+$projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 
 $insert = $DBLIB->insert("payments", $array);
 if (!$insert) finish(false);
 
+$projectFinanceCacher->adjustPayment($array['payments_type'],$array['payments_amount']);
 $bCMS->auditLog("INSERT", "payments", $insert, $AUTH->data['users_userid'],null, $project['projects_id']);
-finish(true);
+
+if ($projectFinanceCacher->save()) finish(true);
+else finish(false,["message"=>"Finance Cacher Save failed"]);
