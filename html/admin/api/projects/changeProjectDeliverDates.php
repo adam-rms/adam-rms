@@ -10,10 +10,17 @@ $DBLIB->where("projects.projects_id", $_POST['projects_id']);
 $project = $DBLIB->getone("projects", ["projects_id", "projects_status","projects_dates_deliver_start","projects_dates_deliver_end"]);
 if (!$project) finish(false);
 
+$projectFinanceHelper = new projectFinance();
+$projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
+$priceMathsOld = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
+$priceMathsNew = $projectFinanceHelper->durationMaths($newDates['projects_dates_deliver_start'],$newDates['projects_dates_deliver_end']);
+
 //We're changing dates so we need to find clashes in the new dates
 $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
 $DBLIB->where("assetsAssignments.projects_id", $project['projects_id']);
-$assets = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assets_id", "assetsAssignments.assetsAssignments_id"]);
+$DBLIB->join("assets","assetsAssignments.assets_id=assets.assets_id", "LEFT");
+$DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+$assets = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assets_id", "assetsAssignments.assetsAssignments_id","assetsAssignments_customPrice","assetsAssignments_discount","assetTypes_weekRate","assetTypes_dayRate","assets_dayRate","assets_weekRate"]);
 if ($assets) {
     $unavailableAssets = [];
     foreach ($assets as $asset) {
@@ -34,12 +41,35 @@ if ($assets) {
     }
     if (count($unavailableAssets) > 0) {
         finish(true, null, ["changed" => false, "assets" => $unavailableAssets]);
+    } else {
+        foreach ($assets as $asset) {
+            //This change is going to go ahead so re-calculate finance
+            if ($asset['assetsAssignments_customPrice'] != null) continue; //There is a custom price set - so this asset is date agnostic anyway
+            $priceOriginal = 0.0;
+            $priceOriginal += $priceMathsOld['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
+            $priceOriginal += $priceMathsOld['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
+            $priceOriginal = round($priceOriginal, 2, PHP_ROUND_HALF_UP);
+            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', -1*$priceOriginal);
+            $priceNew = 0.0;
+            $priceNew += $priceMathsNew['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
+            $priceNew += $priceMathsNew['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
+            $priceNew = round($priceNew, 2, PHP_ROUND_HALF_UP);
+            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $priceNew);
+
+            if ($asset['assetsAssignments_discount'] > 0) {
+                //Remove old discount
+                $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', -1*($priceOriginal - (round(($priceOriginal * (1 - ($asset['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP))));
+                //Set a new discount
+                $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $priceNew - (round(($priceNew * (1 - ($asset['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP)));
+            }
+        }
     }
 }
 
-
-$DBLIB->where("projects.projects_id", $project['projects_id']);
-$projectUpdate = $DBLIB->update("projects", $newDates);
-if (!$projectUpdate) finish(false);
-$bCMS->auditLog("CHANGE-DATE", "projects", "Set the deliver start date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_deliver_start'])) . "\nSet the deliver end date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_deliver_end'])), $AUTH->data['users_userid'],null, $_POST['projects_id']);
-finish(true, null, ["changed" => true]);
+if ($projectFinanceCacher->save()) {
+    $DBLIB->where("projects.projects_id", $project['projects_id']);
+    $projectUpdate = $DBLIB->update("projects", $newDates);
+    if (!$projectUpdate) finish(false);
+    $bCMS->auditLog("CHANGE-DATE", "projects", "Set the deliver start date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_deliver_start'])) . "\nSet the deliver end date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_deliver_end'])), $AUTH->data['users_userid'],null, $_POST['projects_id']);
+    finish(true, null, ["changed" => true]);
+} else finish(false, ["message"=>"Cannot modify finances to change dates"]);
