@@ -40,9 +40,13 @@ foreach ($clients as $client) {
 	$client['totalPayments'] = 0.0;
 	$client['totalOutstanding'] = 0.0;
 	foreach ($projects as $project) {
-		$project['finance'] = projectFinancials($project['projects_id']);
-		$client['totalPayments'] += $project['finance']['payments']['received']['total'];
-		$client['totalOutstanding'] += $project['finance']['payments']['total'];
+		$DBLIB->where("projects_id", $project['projects_id']);
+		$DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
+		$project['finance'] = $DBLIB->getOne("projectsFinanceCache");
+		if (!$project['finance']) die('<a href="' . $CONFIG['ROOTURL'] . '/project?id=' . $project['projects_id'] . '" target="_blank">Project</a> lacks cache error');
+
+		$client['totalPayments'] += $project['finance']['projectsFinanceCache_paymentsReceived'];
+		$client['totalOutstanding'] += $project['finance']['projectsFinanceCache_grandTotal'];
 	}
 
 	$PAGEDATA['clients'][] = $client;

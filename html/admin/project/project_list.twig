@@ -21,7 +21,7 @@
                 <th style="width: 1%">
                     #
                 </th>
-                <th style="width: 55%">
+                <th style="width: 45%">
                     Title
                 </th>
                 <th style="width: 24%">
@@ -29,6 +29,12 @@
                 </th>
                 <th style="width: 5%">
                     Manager
+                </th>
+                <th style="width: 5%">
+                    Outstanding
+                </th>
+                <th style="width: 5%">
+                    Total
                 </th>
                 <th style="width: 35%">
                     Status
@@ -41,7 +47,7 @@
                 {% if archive == false and project.projects_archived == 1 %}
                     {% set archive = true %}
                     <tr style="background-color: #ffffff;">
-                        <td colspan="5">
+                        <td colspan="7">
                             <b>Archived Projects</b>
                         </td>
                     </tr>
@@ -72,6 +78,12 @@
                             </a>
                         </li>
                     </ul>
+                </td>
+                <td>
+                    {{ (project.finance.projectsFinanceCache_grandTotal > 0 ? '£' ~ project.finance.projectsFinanceCache_grandTotal : '') }}
+                </td>
+                <td>
+                    £{{ project.finance.projectsFinanceCache_grandTotal+project.finance.projectsFinanceCache_paymentsReceived }}
                 </td>
                 <td class="project_progress">
                     {{ STATUSES[project.projects_status]['name'] }}<br/>
