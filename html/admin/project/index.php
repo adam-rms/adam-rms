@@ -113,8 +113,8 @@ function projectFinancials($project) {
         if ($asset['assetsAssignments_customPrice'] == null) {
             //The actual pricing calculator
             $asset['price'] = 0;
-            $asset['price'] += $return['priceMaths']['days'] * $asset['assetTypes_dayRate'];
-            $asset['price'] += $return['priceMaths']['weeks'] * $asset['assetTypes_weekRate'];
+            $asset['price'] += $return['priceMaths']['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
+            $asset['price'] += $return['priceMaths']['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
         } else $asset['price'] = $asset['assetsAssignments_customPrice'];
         $asset['price'] = round($asset['price'], 2, PHP_ROUND_HALF_UP);
         $return['prices']['subTotal'] += $asset['price'];

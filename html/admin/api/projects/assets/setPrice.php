@@ -26,8 +26,8 @@ foreach ($assignmentsSetDiscount["assignments"] as $assignment) {
             $oldPrice = $assignment['assetsAssignments_customPrice'];
         } else {
             $oldPriceChange = 0.0;
-            $oldPriceChange += ($priceMaths['days'] * $assignment['assetTypes_dayRate']);
-            $oldPriceChange += ($priceMaths['weeks'] * $assignment['assetTypes_weekRate']);
+            $oldPriceChange += ($priceMaths['days'] * ($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']));
+            $oldPriceChange += ($priceMaths['weeks'] * ($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']));
             $oldPrice = round($oldPriceChange, 2, PHP_ROUND_HALF_UP);
         }
         //Remove the old price
@@ -38,8 +38,8 @@ foreach ($assignmentsSetDiscount["assignments"] as $assignment) {
         } else {
             //Price is now manually calculated
             $priceChange = 0.0;
-            $priceChange += ($priceMaths['days'] * $assignment['assetTypes_dayRate']);
-            $priceChange += ($priceMaths['weeks'] * $assignment['assetTypes_weekRate']);
+            $priceChange += ($priceMaths['days'] * ($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']));
+            $priceChange += ($priceMaths['weeks'] * ($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']));
             $price = round($priceChange, 2, PHP_ROUND_HALF_UP);
         }
         //Add the new price

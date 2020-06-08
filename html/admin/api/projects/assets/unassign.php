@@ -38,8 +38,8 @@ foreach ($assignmentsRemove["assignments"] as $assignment) {
             $price = $assignment['assetsAssignments_customPrice'];
         } else {
             $priceChange = 0.0;
-            $priceChange += ($priceMaths['days'] * $assignment['assetTypes_dayRate']);
-            $priceChange += ($priceMaths['weeks'] * $assignment['assetTypes_weekRate']);
+            $priceChange += ($priceMaths['days'] * ($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']));
+            $priceChange += ($priceMaths['weeks'] * ($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']));
             $price = round($priceChange, 2, PHP_ROUND_HALF_UP);
         }
         $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', -1*$price);

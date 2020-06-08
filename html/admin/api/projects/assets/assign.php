@@ -72,8 +72,8 @@ foreach ($assetsToProcess as $asset) {
             $projectFinanceCacher->adjust('projectsFinanceCache_value',($asset['assets_value'] !== null ? $asset['assets_value'] : $asset['assetTypes_value']));
 
             $priceChange = 0.0;
-            $priceChange += $priceMaths['days'] * $asset['assetTypes_dayRate'];
-            $priceChange += $priceMaths['weeks'] * $asset['assetTypes_weekRate'];
+            $priceChange += $priceMaths['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
+            $priceChange += $priceMaths['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
             $priceChange = round($priceChange, 2, PHP_ROUND_HALF_UP);
             $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $priceChange);
             if ($insertData['assetsAssignments_discount'] > 0) $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $priceChange-(round(($priceChange * (1 - ($insertData['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP)));
