@@ -1,6 +1,9 @@
 {
     "config": {
-        "vendor-dir": "composer/vendor"
+        "vendor-dir": "composer/vendor",
+        "platform": {
+            "php": "7.4.4"
+        }
     },
     "require": {
         "twig/twig": "^v3.0.3",
@@ -18,11 +21,12 @@
         "aws/aws-sdk-php": "^3.133",
         "vlucas/phpdotenv": "^4.1",
         "sentry/sdk": "2.1.0",
-        "firebase/php-jwt": "^5.2"
+        "firebase/php-jwt": "^5.2",
+        "moneyphp/money": "^3.3"
     },
     "scripts": {
     },
     "require-dev": {
-        "heroku/heroku-buildpack-php" : "v172"
+        "heroku/heroku-buildpack-php" : "v176"
     }
 }
