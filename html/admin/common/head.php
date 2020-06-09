@@ -2,13 +2,8 @@
 require_once __DIR__ . '/../../common/coreHead.php';
 require_once __DIR__ . '/../../common/libs/Auth/main.php';
 
-$CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
 
-function compareFloats($a,$b) {
-    if ($b == 0) return ($a === $b);
-    if (abs(($a-$b)/$b) < 0.00001) return true;
-    else return false;
-}
+$CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
 
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 //TWIG
@@ -193,6 +188,23 @@ $TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('md5', function ($id) {
     return md5($id);
+}));
+
+
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\IntlMoneyFormatter;
+$TWIG->addFilter(new \Twig\TwigFilter('money', function ($variable) {
+    if (!is_object($variable)) return $variable;
+    $currencies = new ISOCurrencies();
+    $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
+    $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
+    return $moneyFormatter->format($variable);
+}));
+
+$TWIG->addFilter(new \Twig\TwigFilter('moneyPositive', function ($variable) {
+    //TO BE USED WITH CAUTION - ONLY NORMALLY FOR CHECKING GREATER THAN 0
+    if (!is_object($variable)) return ($variable > 0);
+    return $variable->isPositive(); //False when 0
 }));
 
 function generateNewTag() {
