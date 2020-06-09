@@ -1,7 +1,11 @@
 <?php
 require_once __DIR__ . '/../../common/coreHead.php';
 require_once __DIR__ . '/../../common/libs/Auth/main.php';
-
+use Money\Currency;
+use Money\Money;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\IntlMoneyFormatter;
+use Money\Formatter\DecimalMoneyFormatter;
 
 $CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
 
@@ -191,21 +195,31 @@ $TWIG->addFilter(new \Twig\TwigFilter('md5', function ($id) {
 }));
 
 
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\IntlMoneyFormatter;
 $TWIG->addFilter(new \Twig\TwigFilter('money', function ($variable) {
-    if (!is_object($variable)) return $variable;
+    global $AUTH;
+    if (!is_object($variable)) $variable = new Money($variable, new Currency($AUTH->data['instance']['instances_config_currency']));
     $currencies = new ISOCurrencies();
     $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
     $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
     return $moneyFormatter->format($variable);
 }));
-
+$TWIG->addFilter(new \Twig\TwigFilter('moneyDecimal', function ($variable) {
+    global $AUTH;
+    if ($variable === null) return null;
+    if (!is_object($variable)) $variable = new Money($variable, new Currency($AUTH->data['instance']['instances_config_currency']));
+    $currencies = new ISOCurrencies();
+    $moneyFormatter = new DecimalMoneyFormatter($currencies);
+    return $moneyFormatter->format($variable);
+}));
 $TWIG->addFilter(new \Twig\TwigFilter('moneyPositive', function ($variable) {
     //TO BE USED WITH CAUTION - ONLY NORMALLY FOR CHECKING GREATER THAN 0
     if (!is_object($variable)) return ($variable > 0);
     return $variable->isPositive(); //False when 0
 }));
+$TWIG->addFilter(new \Twig\TwigFilter('mass', function ($variable) {
+    return number_format((float)$variable, 2, '.', '') . "kg";
+}));
+
 
 function generateNewTag() {
     global $DBLIB;
@@ -411,16 +425,17 @@ class projectFinanceCacher {
     private $data,$projectid;
     private $changesMade = false;
     public function __construct($projectid) {
+        global $AUTH;
         //Reset the data
         $this->projectid = $projectid;
         $this->data = [
-            "projectsFinanceCache_equipmentSubTotal" =>0.0,
-            "projectsFinanceCache_equiptmentDiscounts" =>0.0,
-            "projectsFinanceCache_salesTotal" =>0.0,
-            "projectsFinanceCache_staffTotal" =>0.0,
-            "projectsFinanceCache_externalHiresTotal" =>0.0,
-            "projectsFinanceCache_paymentsReceived" =>0.0,
-            "projectsFinanceCache_value"=>0.0,
+            "projectsFinanceCache_equipmentSubTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_equiptmentDiscounts" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_salesTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_staffTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_externalHiresTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_paymentsReceived" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_value"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
             "projectsFinanceCache_mass"=>0.0
         ];
     }
@@ -431,23 +446,33 @@ class projectFinanceCacher {
             $dataToUpload = [];
             foreach ($this->data as $key => $value) {
                 //Put it into a format for mysql
+                if ($key != 'projectsFinanceCache_mass') $value = $value->getAmount();
                 if ($value != 0) $dataToUpload[$key] = $DBLIB->inc($value);
             }
             $dataToUpload['projectsFinanceCache_timestampUpdated'] = date("Y-m-d H:i:s");
-            $dataToUpload['projectsFinanceCache_equiptmentTotal'] = $DBLIB->inc($this->data["projectsFinanceCache_equipmentSubTotal"] - $this->data['projectsFinanceCache_equiptmentDiscounts']);
-            $dataToUpload['projectsFinanceCache_grandTotal'] = $DBLIB->inc((($this->data["projectsFinanceCache_equipmentSubTotal"] - $this->data['projectsFinanceCache_equiptmentDiscounts']) + $this->data['projectsFinanceCache_salesTotal'] + $this->data['projectsFinanceCache_staffTotal'] + $this->data["projectsFinanceCache_externalHiresTotal"]) - $this->data['projectsFinanceCache_paymentsReceived']);
+            $dataToUpload['projectsFinanceCache_equiptmentTotal'] = $DBLIB->inc($this->data["projectsFinanceCache_equipmentSubTotal"]->subtract($this->data['projectsFinanceCache_equiptmentDiscounts'])->getAmount());
+            $dataToUpload['projectsFinanceCache_grandTotal'] = $DBLIB->inc((($this->data["projectsFinanceCache_equipmentSubTotal"]->subtract($this->data['projectsFinanceCache_equiptmentDiscounts']))->add($this->data['projectsFinanceCache_salesTotal'],$this->data['projectsFinanceCache_staffTotal'],$this->data["projectsFinanceCache_externalHiresTotal"])->subtract($this->data['projectsFinanceCache_paymentsReceived']))->getAmount());
             $DBLIB->where("projects_id", $this->projectid);
             $DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
             return $DBLIB->update("projectsFinanceCache", $dataToUpload, 1); //Update the most recent cache datapoint
         } else return true;
     }
-    public function adjust($key,$value) {
-        if ($value !== 0 or $value !== null) {
+    public function adjust($key,$value,$subtract = false) {
+        if ($key == 'projectsFinanceCache_mass' and ($value !== 0 or $value !== null)) {
             $this->changesMade = true;
+            if ($subtract) $value = -1*$value;
             $this->data[$key] += $value;
+        } else {
+            $this->changesMade = true;
+            //It's a money object!
+            if ($subtract) {
+                $this->data[$key] = $this->data[$key]->subtract($value);
+            } else {
+                $this->data[$key] = $this->data[$key]->add($value);
+            }
         }
     }
-    public function adjustPayment($paymentType,$value) {
+    public function adjustPayment($paymentType,$value,$subtract = false) {
         switch ($paymentType) {
             case 1:
                 $key = 'projectsFinanceCache_paymentsReceived';
@@ -464,6 +489,6 @@ class projectFinanceCacher {
             default:
                 return false;
         }
-        return $this->adjust($key,$value);
+        return $this->adjust($key,$value,$subtract);
     }
 }

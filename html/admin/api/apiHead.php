@@ -41,6 +41,7 @@ class assetAssignmentSelector
         $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
         $DBLIB->where("projects.projects_deleted", 0);
         $DBLIB->where("assets_deleted", 0);
+        $DBLIB->where("assetsAssignments_deleted", 0);
         $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
         $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id","LEFT");
         $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");

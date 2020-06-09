@@ -139,7 +139,6 @@ function projectFinancials($project) {
     return $return;
 }
 $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']);
-
 $DBLIB->where("projects_id",$PAGEDATA['project']['projects_id']);
 $DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
 $projectFinanceCache = $DBLIB->getone("projectsFinanceCache");
@@ -148,30 +147,29 @@ if (!$projectFinanceCache) {
     $projectFinanceCacheInsert = [
         "projects_id" => $PAGEDATA['project']['projects_id'],
         "projectsFinanceCache_timestamp" => date("Y-m-d H:i:s"),
-        "projectsFinanceCache_equipmentSubTotal" =>$PAGEDATA['FINANCIALS']['prices']['subTotal'],
-        "projectsFinanceCache_equiptmentDiscounts" =>$PAGEDATA['FINANCIALS']['prices']['discounts'],
-        "projectsFinanceCache_equiptmentTotal" =>$PAGEDATA['FINANCIALS']['prices']['total'],
-        "projectsFinanceCache_salesTotal" =>$PAGEDATA['FINANCIALS']['payments']['sales']['total'],
-        "projectsFinanceCache_staffTotal" =>$PAGEDATA['FINANCIALS']['payments']['staff']['total'],
-        "projectsFinanceCache_externalHiresTotal" => $PAGEDATA['FINANCIALS']['payments']['subHire']['total'],
-        "projectsFinanceCache_paymentsReceived" =>$PAGEDATA['FINANCIALS']['payments']['received']['total'],
-        "projectsFinanceCache_grandTotal" =>$PAGEDATA['FINANCIALS']['payments']['total'],
+        "projectsFinanceCache_equipmentSubTotal" =>$PAGEDATA['FINANCIALS']['prices']['subTotal']->getAmount(),
+        "projectsFinanceCache_equiptmentDiscounts" =>$PAGEDATA['FINANCIALS']['prices']['discounts']->getAmount(),
+        "projectsFinanceCache_equiptmentTotal" =>$PAGEDATA['FINANCIALS']['prices']['total']->getAmount(),
+        "projectsFinanceCache_salesTotal" =>$PAGEDATA['FINANCIALS']['payments']['sales']['total']->getAmount(),
+        "projectsFinanceCache_staffTotal" =>$PAGEDATA['FINANCIALS']['payments']['staff']['total']->getAmount(),
+        "projectsFinanceCache_externalHiresTotal" => $PAGEDATA['FINANCIALS']['payments']['subHire']['total']->getAmount(),
+        "projectsFinanceCache_paymentsReceived" =>$PAGEDATA['FINANCIALS']['payments']['received']['total']->getAmount(),
+        "projectsFinanceCache_grandTotal" =>$PAGEDATA['FINANCIALS']['payments']['total']->getAmount(),
         "projectsFinanceCache_mass"=>$PAGEDATA['FINANCIALS']['mass'],
-        "projectsFinanceCache_value"=>$PAGEDATA['FINANCIALS']['value'],
+        "projectsFinanceCache_value"=>$PAGEDATA['FINANCIALS']['value']->getAmount(),
     ];
     $DBLIB->insert("projectsFinanceCache", $projectFinanceCacheInsert); //Add a cache for the finance of the project
 //Just check the cache while we're here - shouldn't ever be thrown!
-} elseif (compareFloats($projectFinanceCache["projectsFinanceCache_equipmentSubTotal"],$PAGEDATA['FINANCIALS']['prices']['subTotal']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_equiptmentDiscounts"],$PAGEDATA['FINANCIALS']['prices']['discounts']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_equiptmentTotal"],$PAGEDATA['FINANCIALS']['prices']['total']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_salesTotal"],$PAGEDATA['FINANCIALS']['payments']['sales']['total']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_staffTotal"],$PAGEDATA['FINANCIALS']['payments']['staff']['total']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_externalHiresTotal"], $PAGEDATA['FINANCIALS']['payments']['subHire']['total']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_paymentsReceived"],$PAGEDATA['FINANCIALS']['payments']['received']['total']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_grandTotal"],$PAGEDATA['FINANCIALS']['payments']['total']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_mass"],$PAGEDATA['FINANCIALS']['mass']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-elseif (compareFloats($projectFinanceCache["projectsFinanceCache_value"],$PAGEDATA['FINANCIALS']['value']) !== true) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
-
+} elseif ($projectFinanceCache["projectsFinanceCache_equipmentSubTotal"] != $PAGEDATA['FINANCIALS']['prices']['subTotal']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_equiptmentDiscounts"] != $PAGEDATA['FINANCIALS']['prices']['discounts']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_equiptmentTotal"] != $PAGEDATA['FINANCIALS']['prices']['total']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_salesTotal"] != $PAGEDATA['FINANCIALS']['payments']['sales']['total']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_staffTotal"] != $PAGEDATA['FINANCIALS']['payments']['staff']['total']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_externalHiresTotal"] !=  $PAGEDATA['FINANCIALS']['payments']['subHire']['total']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_paymentsReceived"] != $PAGEDATA['FINANCIALS']['payments']['received']['total']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_grandTotal"] != $PAGEDATA['FINANCIALS']['payments']['total']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif ($projectFinanceCache["projectsFinanceCache_value"] != $PAGEDATA['FINANCIALS']['value']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+elseif (round($projectFinanceCache["projectsFinanceCache_mass"]*100000) != round($PAGEDATA['FINANCIALS']['mass']*100000)) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
 
 usort($PAGEDATA['FINANCIALS']['payments']['subHire']['ledger'], function ($a, $b) {
     // Sort sub-hires in order of supplier so you can do supplier headings
@@ -229,6 +227,6 @@ if (isset($_GET['pdf'])) {
              ');
     $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', 'I');
-} elseif (isset($_GET['list']) and count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0) echo $TWIG->render('project/project_list.twig', $PAGEDATA);
+} elseif (isset($_GET['list']) and count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
 else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>

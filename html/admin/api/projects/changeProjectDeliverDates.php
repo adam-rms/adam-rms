@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
+use Money\Currency;
+use Money\Money;
 
 if (!$AUTH->instancePermissionCheck(27) or !isset($_POST['projects_id'])) die("404");
 $newDates = ["projects_dates_deliver_start" => date ("Y-m-d H:i:s", strtotime($_POST['projects_dates_deliver_start'])), "projects_dates_deliver_end" => date ("Y-m-d H:i:s", strtotime($_POST['projects_dates_deliver_end']))];
@@ -45,22 +47,22 @@ if ($assets) {
         foreach ($assets as $asset) {
             //This change is going to go ahead so re-calculate finance
             if ($asset['assetsAssignments_customPrice'] != null) continue; //There is a custom price set - so this asset is date agnostic anyway
-            $priceOriginal = 0.0;
-            $priceOriginal += $priceMathsOld['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
-            $priceOriginal += $priceMathsOld['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
-            $priceOriginal = round($priceOriginal, 2, PHP_ROUND_HALF_UP);
-            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', -1*$priceOriginal);
-            $priceNew = 0.0;
-            $priceNew += $priceMathsNew['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
-            $priceNew += $priceMathsNew['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
-            $priceNew = round($priceNew, 2, PHP_ROUND_HALF_UP);
-            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $priceNew);
+
+            $priceOriginal = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $priceOriginal = $priceOriginal->add((new Money(($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceOriginalMathsOld['days']));
+            $priceOriginal = $priceOriginal->add((new Money(($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceOriginalMathsOld['weeks']));
+            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $priceOriginal,true);
+
+            $price = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $price = $price->add((new Money(($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMathsNew['days']));
+            $price = $price->add((new Money(($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMathsNew['weeks']));
+            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $price,false);
 
             if ($asset['assetsAssignments_discount'] > 0) {
                 //Remove old discount
-                $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', -1*($priceOriginal - (round(($priceOriginal * (1 - ($asset['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP))));
+                $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $priceOriginal->subtract($priceOriginal->multiply(1 - ($asset['assetsAssignments_discount'] / 100))),true);
                 //Set a new discount
-                $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $priceNew - (round(($priceNew * (1 - ($asset['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP)));
+                $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($asset['assetsAssignments_discount'] / 100))), false);
             }
         }
     }

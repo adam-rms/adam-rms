@@ -9,7 +9,7 @@ $DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id = '" 
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $DBLIB->where("assetTypes_id", $_POST['term']);
-$assets = $DBLIB->getone("assetTypes");
+$assets = $DBLIB->getone("assetTypes",['assetTypes_definableFields','assetTypes_id']);
 
 if ($assets['assetTypes_definableFields']) $assets['assetCategories_fields'] = explode(",", $assets['assetTypes_definableFields']);
 else $assets['assetCategories_fields'] = [];

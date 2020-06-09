@@ -83,7 +83,7 @@
                 </tr>
                 <tr>
                     <td style="padding:0;">Mass Estimate:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.mass|round(2, 'ceil') }}kg</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.mass|mass }}</td>
                 </tr>
                 <tr>
                     <td style="padding:0;">Value Estimate:</td>
@@ -245,7 +245,7 @@
                 {% endfor %}
             </td>
         {% endif %}
-        <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|round(2, 'ceil') ~ "kg" : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "") }}</td>
+        <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>
         {% if showFinance %}
             <td>{{ assetAssignment.price|money }}</td>
             <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
@@ -320,7 +320,7 @@
                 {% endfor %}
             </td>
         {% endif %}
-        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "" }}</td>
+        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "" }}</td>
         {% if showFinance %}
             <td>{{ assetAssignment.price|money }}</td>
             <td>{{ assetAssignment.assetsAssignments_discount }}%</td>

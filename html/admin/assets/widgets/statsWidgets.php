@@ -1,5 +1,6 @@
 <?php
-
+use Money\Currency;
+use Money\Money;
 class statsWidgets
 {
     /*
@@ -33,17 +34,16 @@ class statsWidgets
 
     }
     private function inventoryValueGraph($arguments = []) {
-        global $DBLIB;
+        global $DBLIB,$AUTH;
         if (!$arguments['instanceid']) return [];
 
         $DBLIB->where("assets.instances_id", $arguments['instanceid']);
         $DBLIB->orderBy("assets_inserted", "ASC");
         $DBLIB->where("assets_deleted", 0);
         $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
-        $assets= $DBLIB->get("assets", null, ["assets_inserted", "assetTypes_value", "assetTypes_mass"]);
+        $assets= $DBLIB->get("assets", null, ["assets_inserted", "assets_value", "assetTypes_value", "assetTypes_mass"]);
         if (!$assets) return [];
 
-        $timeSeries = "";
         $timeSeriesDataValue = [];
         $timeSeriesDataMass = [];
         $first = $assets[0];
@@ -79,10 +79,12 @@ class statsWidgets
             };
         }
 
+        $totalValue = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
         foreach ($assets as $asset) {
             $asset['timeSeries'] = $timeSeries($asset['assets_inserted']);
-            if (!isset($timeSeriesDataValue[$asset['timeSeries']])) $timeSeriesDataValue[$asset['timeSeries']] = 0.0;
-            $timeSeriesDataValue[$asset['timeSeries']] += $asset['assetTypes_value'];
+            if (!isset($timeSeriesDataValue[$asset['timeSeries']])) $timeSeriesDataValue[$asset['timeSeries']] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $timeSeriesDataValue[$asset['timeSeries']] = $totalValue->add(new Money(($asset['assets_value'] === null ? $asset['assetTypes_value'] : $asset['assets_value']),new Currency($AUTH->data['instance']['instances_config_currency'])));
+            $totalValue=$timeSeriesDataValue[$asset['timeSeries']];
             if (!isset($timeSeriesDataMass[$asset['timeSeries']])) $timeSeriesDataMass[$asset['timeSeries']] = 0.0;
             $timeSeriesDataMass[$asset['timeSeries']] += $asset['assetTypes_mass'];
         }
@@ -90,22 +92,21 @@ class statsWidgets
         return ["timeSeriesValue" => $timeSeriesDataValue, "timeSeriesMass" => $timeSeriesDataMass];
     }
     private function inventoryTotal($arguments = []) {
-        global $DBLIB;
+        global $DBLIB,$AUTH;
         if (!$arguments['instanceid']) return [];
 
         $DBLIB->where("assets.instances_id", $arguments['instanceid']);
         $DBLIB->orderBy("assets_inserted", "ASC");
         $DBLIB->where("assets_deleted", 0);
         $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
-        $assets= $DBLIB->get("assets", null, ["assets_inserted", "assetTypes_value", "assetTypes_mass"]);
+        $assets= $DBLIB->get("assets", null, ["assets_inserted", "assets_value","assetTypes_value", "assetTypes_mass"]);
         if (!$assets) return [];
 
-        $return = ["VALUE" => 0.0,"MASS" => 0.0];
+        $return = ["VALUE" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"MASS" => 0.0];
         foreach ($assets as $asset) {
-            $return['VALUE'] += $asset['assetTypes_value'];
+            $return['VALUE'] = $return['VALUE']->add(new Money(($asset['assets_value'] === null ? $asset['assetTypes_value'] : $asset['assets_value']),new Currency($AUTH->data['instance']['instances_config_currency'])));
             $return['MASS'] += $asset['assetTypes_mass'];
         }
-
         return $return;
     }
     private function storageUsage($arguments = []) {

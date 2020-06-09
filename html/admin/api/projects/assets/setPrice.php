@@ -2,7 +2,15 @@
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(43) or !isset($_POST['assetsAssignments'])) die("404");
-$_POST['assetsAssignments_customPrice'] = round($_POST['assetsAssignments_customPrice'], 2, PHP_ROUND_HALF_UP);
+use Money\Currency;
+use Money\Money;
+use Money\Currencies\ISOCurrencies;
+use Money\Parser\DecimalMoneyParser;
+
+$currencies = new ISOCurrencies();
+$moneyParser = new DecimalMoneyParser($currencies);
+$_POST['assetsAssignments_customPrice'] = $moneyParser->parse($_POST['assetsAssignments_customPrice'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
+
 $assignmentsSetDiscount = new assetAssignmentSelector($_POST['assetsAssignments']);
 $assignmentsSetDiscount = $assignmentsSetDiscount->getData();
 if (!$assignmentsSetDiscount['projectid']) finish(false,["message"=>"Cannot find projectid"]);
@@ -23,32 +31,30 @@ foreach ($assignmentsSetDiscount["assignments"] as $assignment) {
         $bCMS->auditLog("EDIT-DISCOUNT", "assetsAssignments", $assignment['assetsAssignments_customPrice'], $AUTH->data['users_userid'],null, $assignment['projects_id']);
 
         if ($assignment['assetsAssignments_customPrice'] > 0) {
-            $oldPrice = $assignment['assetsAssignments_customPrice'];
+            $oldPrice = new Money($assignment['assetsAssignments_customPrice'], new Currency($AUTH->data['instance']['instances_config_currency']));
         } else {
-            $oldPriceChange = 0.0;
-            $oldPriceChange += ($priceMaths['days'] * ($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']));
-            $oldPriceChange += ($priceMaths['weeks'] * ($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']));
-            $oldPrice = round($oldPriceChange, 2, PHP_ROUND_HALF_UP);
+            $oldPrice = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $oldPrice = $oldPrice->add((new Money(($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['days']));
+            $oldPrice = $oldPrice->add((new Money(($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['weeks']));
         }
         //Remove the old price
-        $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', -1*$oldPrice);
+        $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $oldPrice,true);
 
         if ($_POST['assetsAssignments_customPrice'] != null) {
-            $price = $_POST['assetsAssignments_customPrice'];
+            $price = new Money($_POST['assetsAssignments_customPrice'], new Currency($AUTH->data['instance']['instances_config_currency']));
         } else {
             //Price is now manually calculated
-            $priceChange = 0.0;
-            $priceChange += ($priceMaths['days'] * ($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']));
-            $priceChange += ($priceMaths['weeks'] * ($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']));
-            $price = round($priceChange, 2, PHP_ROUND_HALF_UP);
+            $price = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $price = $price->add((new Money(($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['days']));
+            $price = $price->add((new Money(($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['weeks']));
         }
         //Add the new price
-        $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $price);
+        $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $price, false);
 
         if ($assignment['assetsAssignments_discount'] > 0) {
             //If there was already a discount, remove it, then add it again
-            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', -1*($oldPrice-(round(($oldPrice * (1 - ($assignment['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP))));
-            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price-(round(($price * (1 - ($assignment['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP)));
+            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $oldPrice->subtract($oldPrice->multiply(1 - ($assignment['assetsAssignments_discount'] / 100))),true);
+            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($assignment['assetsAssignments_discount'] / 100))), false);
         }
     }
 }

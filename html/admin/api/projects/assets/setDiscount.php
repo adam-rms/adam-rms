@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(43) or !isset($_POST['assetsAssignments'])) die("404");
+use Money\Currency;
+use Money\Money;
 
 $assignmentsSetDiscount = new assetAssignmentSelector($_POST['assetsAssignments']);
 $assignmentsSetDiscount = $assignmentsSetDiscount->getData();
@@ -23,20 +25,20 @@ foreach ($assignmentsSetDiscount["assignments"] as $assignment) {
         $bCMS->auditLog("EDIT-DISCOUNT", "assetsAssignments", $assignment['assetsAssignments_id'], $AUTH->data['users_userid'],null, $assignment['projects_id']);
 
         if ($assignment['assetsAssignments_customPrice'] > 0) {
-            $price = $assignment['assetsAssignments_customPrice'];
+            $price = new Money($assignment['assetsAssignments_customPrice'], new Currency($AUTH->data['instance']['instances_config_currency']));
         } else {
-            $priceChange = 0.0;
-            $priceChange += ($priceMaths['days'] * ($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']));
-            $priceChange += ($priceMaths['weeks'] * ($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']));
-            $price = round($priceChange, 2, PHP_ROUND_HALF_UP);
+            $price = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $price = $price->add((new Money(($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['days']));
+            $price = $price->add((new Money(($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['weeks']));
         }
+
         if ($assignment['assetsAssignments_discount'] > 0) {
             //If there was already a discount, remove it
-            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', -1*($price-(round(($price * (1 - ($assignment['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP))));
+            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($assignment['assetsAssignments_discount'] / 100))),true);
         }
         if ($_POST['assetsAssignments_discount'] > 0) {
             //If there is now a discount, set it up
-            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price-(round(($price * (1 - ($_POST['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP)));
+            $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($_POST['assetsAssignments_discount'] / 100))),false);
         }
     }
 }

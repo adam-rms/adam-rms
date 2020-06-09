@@ -47,8 +47,7 @@
                         data                : [
                             {% set total = 0.0 %}
                             {% for key,value in THISWIDGET.timeSeriesValue %}
-                                {% set total = total + value %}
-                                {{ total }}
+                                {{ value|moneyDecimal }}
                             ,{% endfor %}],
                         yAxisID: "y-axis-value",
                     },

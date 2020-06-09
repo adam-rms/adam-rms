@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
-
+use Money\Currency;
+use Money\Money;
 if (!$AUTH->instancePermissionCheck(31) or (!isset($_POST['assetsAssignments']) and !isset($_POST['assets_id']))) die("404");
 
 if (isset($_POST['assets_id']) and !isset($_POST['assetsAssignments'])) {
@@ -12,6 +13,8 @@ if (isset($_POST['assets_id']) and !isset($_POST['assetsAssignments'])) {
     if ($assignment) $_POST['assetsAssignments'] = [$assignment['assetsAssignments_id']];
     else finish(false,["message"=>"Could not find assignment"]);
 }
+
+
 
 $assignmentsRemove = new assetAssignmentSelector($_POST['assetsAssignments']);
 $assignmentsRemove = $assignmentsRemove->getData();
@@ -26,24 +29,27 @@ $projectFinanceHelper = new projectFinance();
 $priceMaths = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 
+$assignmentsIDs = [];
 foreach ($assignmentsRemove["assignments"] as $assignment) {
+    if (in_array($assignment['assetsAssignments_id'],$assignmentsIDs)) continue; //Prevents removing something twice
+    array_push($assignmentsIDs,$assignment['assetsAssignments_id']);
     $DBLIB->where("assetsAssignments_id", $assignment['assetsAssignments_id']);
     if (!$DBLIB->update("assetsAssignments", ["assetsAssignments_deleted" => 1])) finish(false);
     else {
         $bCMS->auditLog("UNASSIGN-ASSET", "assetsAssignments", $assignment['assetsAssignments_id'], $AUTH->data['users_userid'],null, $assignment['projects_id']);
-        $projectFinanceCacher->adjust('projectsFinanceCache_mass',-1*($assignment['assets_mass'] !== null ? $assignment['assets_mass'] : $assignment['assetTypes_mass']));
-        $projectFinanceCacher->adjust('projectsFinanceCache_value',-1*($assignment['assets_value'] !== null ? $assignment['assets_value'] : $assignment['assetTypes_value']));
+        $projectFinanceCacher->adjust('projectsFinanceCache_mass',($assignment['assets_mass'] !== null ? $assignment['assets_mass'] : $assignment['assetTypes_mass']),true);
+        $projectFinanceCacher->adjust('projectsFinanceCache_value',new Money(($assignment['assets_value'] !== null ? $assignment['assets_value'] : $assignment['assetTypes_value']), new Currency($AUTH->data['instance']['instances_config_currency'])),true);
+
 
         if ($assignment['assetsAssignments_customPrice'] > 0) {
-            $price = $assignment['assetsAssignments_customPrice'];
+            $price = new Money($assignment['assetsAssignments_customPrice'], new Currency($AUTH->data['instance']['instances_config_currency']));
         } else {
-            $priceChange = 0.0;
-            $priceChange += ($priceMaths['days'] * ($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']));
-            $priceChange += ($priceMaths['weeks'] * ($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']));
-            $price = round($priceChange, 2, PHP_ROUND_HALF_UP);
+            $price = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $price = $price->add((new Money(($assignment['assets_dayRate'] !== null ? $assignment['assets_dayRate'] : $assignment['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['days']));
+            $price = $price->add((new Money(($assignment['assets_weekRate'] !== null ? $assignment['assets_weekRate'] : $assignment['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['weeks']));
         }
-        $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', -1*$price);
-        if ($assignment['assetsAssignments_discount'] > 0) $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', -1*($price-(round(($price * (1 - ($assignment['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP))));
+        $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $price,true);
+        if ($assignment['assetsAssignments_discount'] > 0) $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($assignment['assetsAssignments_discount'] / 100))),true);
     }
 }
 if ($projectFinanceCacher->save()) finish(true);

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/common/headSecure.php';
-
+use Money\Currency;
+use Money\Money;
 $PAGEDATA['pageConfig'] = ["TITLE" => "Ledger", "BREADCRUMB" => false];
 
 if (!$AUTH->instancePermissionCheck(40)) die($TWIG->render('404.twig', $PAGEDATA));
@@ -24,8 +25,13 @@ if (strlen($PAGEDATA['search']) > 0) {
 		payments.payments_amount LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' 
     )");
 }
-$PAGEDATA['payments'] = $DBLIB->arraybuilder()->paginate('payments', $page, ["payments.*", "projects.projects_id", "projects.projects_name","clients.clients_name"]);
+$payments = $DBLIB->arraybuilder()->paginate('payments', $page, ["payments.*", "projects.projects_id", "projects.projects_name","clients.clients_name"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 
+$PAGEDATA['payments'] = [];
+foreach ($payments as $payment) {
+	$payment['payments_amount'] = new Money($payment['payments_amount'], new Currency($AUTH->data['instance']['instances_config_currency']));
+	$PAGEDATA['payments'][] = $payment;
+}
 echo $TWIG->render('ledger.twig', $PAGEDATA);
 ?>

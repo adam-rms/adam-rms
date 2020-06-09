@@ -45,7 +45,7 @@
                                     <td><a href="{{ CONFIG.ROOTURL }}/clients.php?q={{ payment.clients_name }}">{{ payment.clients_name }}</a></td>
                                     <td>{{ payment.payments_method }}</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
+                                    <td>{{ payment.payments_amount|money }}</td>
                                     <td><a href="{{ CONFIG.ROOTURL }}/project/?id={{ payment.projects_id }}">{{ payment.projects_name }}</a></td>
                                 </tr>
                             {% endfor %}

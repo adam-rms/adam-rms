@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
+use Money\Currency;
+use Money\Money;
 
 if (!$AUTH->instancePermissionCheck(31)) die("404");
 
@@ -69,14 +71,15 @@ foreach ($assetsToProcess as $asset) {
         if ($insert) {
             //Calculate the maths changes needed for this assignment and add it to the project
             $projectFinanceCacher->adjust('projectsFinanceCache_mass',($asset['assets_mass'] !== null ? $asset['assets_mass'] : $asset['assetTypes_mass']));
-            $projectFinanceCacher->adjust('projectsFinanceCache_value',($asset['assets_value'] !== null ? $asset['assets_value'] : $asset['assetTypes_value']));
+            $projectFinanceCacher->adjust('projectsFinanceCache_value',new Money(($asset['assets_value'] !== null ? $asset['assets_value'] : $asset['assetTypes_value']), new Currency($AUTH->data['instance']['instances_config_currency'])));
 
-            $priceChange = 0.0;
-            $priceChange += $priceMaths['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
-            $priceChange += $priceMaths['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
-            $priceChange = round($priceChange, 2, PHP_ROUND_HALF_UP);
-            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $priceChange);
-            if ($insertData['assetsAssignments_discount'] > 0) $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $priceChange-(round(($priceChange * (1 - ($insertData['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP)));
+            $price = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $price = $price->add((new Money(($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['days']));
+            $price = $price->add((new Money(($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['weeks']));
+            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $price,false);
+
+            //Thought a discount can't be set, there might be a default one from the project
+            if ($insertData['assetsAssignments_discount'] > 0) $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($insertData['assetsAssignments_discount'] / 100))));
 
             $asset['insertedid'] = $insert;
             $bCMS->auditLog("ASSIGN-ASSET", "assetsAssignments", $insert, $AUTH->data['users_userid'], null, $project['projects_id']);

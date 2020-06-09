@@ -64,21 +64,21 @@
                                 {% if asset.count == 1 %}
                                     {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
                                     <li class="small">
-                                        <span class="fa-li"><i class="fas fa-weight"></i></span> {{ (asset.tags[0]['assets_mass'] ? asset.tags[0]['assets_mass']|number_format(2) : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|number_format(2) : '?')) }}kg
+                                        <span class="fa-li"><i class="fas fa-weight"></i></span> {{ (asset.tags[0]['assets_mass'] ? asset.tags[0]['assets_mass']|number_format(2) : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}
                                     </li>
                                     <li class="small">
-                                        <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> &pound;{{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|number_format(2) }}<br/>
-                                        &pound;{{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|number_format(2) }}/day<br/>&pound;{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|number_format(2) }}/week
+                                        <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|money }}<br/>
+                                        {{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money }}/day<br/>{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}/week
                                     </li>
                                 {% else %}
                                     {% if asset.assetTypes_mass != "" and asset.assetTypes_mass != 0  %}
                                         <li class="small">
-                                            <span class="fa-li"><i class="fas fa-weight"></i></span> {{ asset.assetTypes_mass ~ "kg" }}
+                                            <span class="fa-li"><i class="fas fa-weight"></i></span> {{ asset.assetTypes_mass|mass }}
                                         </li>
                                     {% endif %}
                                     <li class="small">
-                                        <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> &pound;{{ asset.assetTypes_value }}<br/>
-                                        &pound;{{ asset.assetTypes_dayRate }}/day<br/>&pound;{{ asset.assetTypes_weekRate }}/week
+                                        <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ asset.assetTypes_value|money }}<br/>
+                                        {{ asset.assetTypes_dayRate|money }}/day<br/>{{ asset.assetTypes_weekRate|money }}/week
                                     </li>
                                     <li class="small" title="Number owned"><span class="fa-li"><i class="fas fa-boxes"></i></span> {{asset.count}}</li>
                                 {% endif %}
@@ -130,10 +130,10 @@
                                                                     {% endfor %}
                                                                     <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                                                     <td>
-                                                                        &pound;{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|number_format(2) }}
+                                                                        {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money }}
                                                                     </td>
                                                                     <td>
-                                                                        &pound;{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|number_format(2) }}
+                                                                        {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money }}
                                                                     </td>
                                                                     <td>
                                                                         {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}

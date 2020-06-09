@@ -8,7 +8,7 @@
 {% endif %}
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">{{ FINANCIALS.assetsAssigned|length }} Asset{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|round(2, 'ceil') }}kg)</h3>
+        <h3 class="card-title">{{ FINANCIALS.assetsAssigned|length }} Asset{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})</h3>
         <div class="card-tools">
             {% if 41|instancePermissions %}
                 <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
@@ -108,7 +108,7 @@
                                 </tr></table>
                         </td>
                     {% endif %}
-                    <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|round(2, 'ceil') ~ "kg" : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "") }}</td>
+                    <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>
                     <td>{{ assetAssignment.price|money }}</td>
                     <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
                 </tr>
@@ -176,7 +176,7 @@
                                 </tr></table>
                         </td>
                     {% endif %}
-                    <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|round(2, 'ceil') ~ "kg" : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "") }}</td>
+                    <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>
                     <td>{{ assetAssignment.price|money }}</td>
                     <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
                 </tr>
@@ -188,6 +188,10 @@
 
 <script>
     $(document).ready(function () {
+        $("#assetAssignmentCheckboxAll").click(function () {
+            $(".assetAssignmentCheckbox").prop('checked', $(this).prop('checked'));
+        });
+
         {% if 41|instancePermissions %}
         $("#setAssetAssignmentComment").click(function () {
             var selected = [];
@@ -222,7 +226,6 @@
                 message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
                 inputType: 'number',
                 min: 0,
-                max: 100,
                 step: 1,
                 callback: function (result) {
                     if (result) {
@@ -255,6 +258,36 @@
                         ajaxcall("projects/assets/setDiscount.php", {
                             "assetsAssignments": selected,
                             "assetsAssignments_discount": result
+                        }, function (data) {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+        {% if 31|instancePermissions %}
+        $("#setAssetAssignmentDelete").click(function () {
+            var selected = [];
+            $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                selected.push($(this).data('assetassignmentid'));
+            });
+            bootbox.confirm({
+                message: "Are you sure you wish to remove these assets from the project? This will have billing implications",
+                buttons: {
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-success'
+                    },
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("projects/assets/unassign.php", {
+                            "assetsAssignments": selected
                         }, function (data) {
                             location.reload();
                         });

@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/common/headSecure.php';
+use Money\Currency;
+use Money\Money;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Clients", "BREADCRUMB" => false];
 
@@ -37,16 +39,16 @@ foreach ($clients as $client) {
 		$PAGEDATA['includeFuture'] = false;
 	} else $PAGEDATA['includeFuture'] = true;
 	$projects = $DBLIB->get("projects", null, ["projects_id"]);
-	$client['totalPayments'] = 0.0;
-	$client['totalOutstanding'] = 0.0;
+	$client['totalPayments'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+	$client['totalOutstanding'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
 	foreach ($projects as $project) {
 		$DBLIB->where("projects_id", $project['projects_id']);
 		$DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
 		$project['finance'] = $DBLIB->getOne("projectsFinanceCache");
 		if (!$project['finance']) die('<a href="' . $CONFIG['ROOTURL'] . '/project?id=' . $project['projects_id'] . '" target="_blank">Project</a> lacks cache error');
 
-		$client['totalPayments'] += $project['finance']['projectsFinanceCache_paymentsReceived'];
-		$client['totalOutstanding'] += $project['finance']['projectsFinanceCache_grandTotal'];
+		$client['totalPayments'] = $client['totalPayments']->add(new Money($project['finance']['projectsFinanceCache_paymentsReceived'], new Currency($AUTH->data['instance']['instances_config_currency'])));
+		$client['totalOutstanding'] = $client['totalOutstanding']->add(new Money(project['finance']['projectsFinanceCache_grandTotal'], new Currency($AUTH->data['instance']['instances_config_currency'])));
 	}
 
 	$PAGEDATA['clients'][] = $client;
