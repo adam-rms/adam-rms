@@ -48,7 +48,7 @@ foreach ($clients as $client) {
 		if (!$project['finance']) die('<a href="' . $CONFIG['ROOTURL'] . '/project?id=' . $project['projects_id'] . '" target="_blank">Project</a> lacks cache error');
 
 		$client['totalPayments'] = $client['totalPayments']->add(new Money($project['finance']['projectsFinanceCache_paymentsReceived'], new Currency($AUTH->data['instance']['instances_config_currency'])));
-		$client['totalOutstanding'] = $client['totalOutstanding']->add(new Money(project['finance']['projectsFinanceCache_grandTotal'], new Currency($AUTH->data['instance']['instances_config_currency'])));
+		$client['totalOutstanding'] = $client['totalOutstanding']->add(new Money($project['finance']['projectsFinanceCache_grandTotal'], new Currency($AUTH->data['instance']['instances_config_currency'])));
 	}
 
 	$PAGEDATA['clients'][] = $client;
