@@ -49,10 +49,10 @@
                                     {{ totals.assets.COUNT|number_format(0) }}
                                 </td>
                                 <td>
-                                    &pound;{{ totals.assets.VALUE|round(2, 'ceil')|number_format(2) }}
+                                    {{ totals.assets.VALUE|money }}
                                 </td>
                                 <td>
-                                    {{ totals.assets.MASS|round(2, 'ceil')|number_format(2) }}kg
+                                    {{ totals.assets.MASS|mass }}
                                 </td>
                                 <td></td>
                             </tr>
@@ -77,10 +77,10 @@
                                         {{ instance.assets.COUNT|number_format(0) }}
                                     </td>
                                     <td>
-                                        &pound;{{ instance.assets.VALUE|round(2, 'ceil')|number_format(2) }}
+                                       {{ instance.assets.VALUE|money }}
                                     </td>
                                     <td>
-                                        {{ instance.assets.MASS|round(2, 'ceil')|number_format(2) }}kg
+                                        {{ instance.assets.MASS|mass }}
                                     </td>
                                     <td>
                                         {% if 21|permissions %}
