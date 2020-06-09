@@ -5,6 +5,7 @@ if (!$AUTH->instancePermissionCheck(18)) die("Sorry - you can't access this page
 
 $array = [];
 foreach ($_POST['formData'] as $item) {
+    if ($item['value'] == '') $item['value'] = null;
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['manufacturers_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
@@ -25,10 +26,13 @@ $array['assetTypes_definableFields'][8] = $array['asset_definableFields_9'];
 $array['assetTypes_definableFields'][9] = $array['asset_definableFields_10'];
 $array['assetTypes_definableFields'] = implode(",", $array['assetTypes_definableFields']);
 
-if ($array['assetTypes_mass'] == "") $array['assetTypes_mass'] = null; //This is odd but seems to fix an error
-if ($array['assetTypes_dayRate'] == "") $array['assetTypes_dayRate'] = null; //This is odd but seems to fix an error
-if ($array['assetTypes_weekRate'] == "") $array['assetTypes_weekRate'] = null; //This is odd but seems to fix an error
-
+use Money\Currencies\ISOCurrencies;
+use Money\Parser\DecimalMoneyParser;
+$currencies = new ISOCurrencies();
+$moneyParser = new DecimalMoneyParser($currencies);
+$array['assetTypes_value'] = $moneyParser->parse($array['assetTypes_value'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
+$array['assetTypes_dayRate'] = $moneyParser->parse($array['assetTypes_dayRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
+$array['assetTypes_weekRate'] = $moneyParser->parse($array['assetTypes_weekRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
 
 $result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetTypes_productLink','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"instances_id","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert asset type"]);

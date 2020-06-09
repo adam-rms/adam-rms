@@ -101,10 +101,9 @@ function projectFinancials($project) {
     $return['prices'] = ["subTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "discounts" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))];
 
     $return['priceMaths'] = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
-
     $return['assetTypesCounter'] = [];
     foreach ($assets as $asset) {
-        $return['mass'] += $asset['assetTypes_mass'];
+        $return['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
         $asset['value'] = new Money(($asset['assets_value'] != null ? $asset['assets_value'] : $asset['assetTypes_value']), new Currency($AUTH->data['instance']['instances_config_currency']));
         $return['value'] = $return['value']->add($asset['value']);
 
@@ -113,9 +112,9 @@ function projectFinancials($project) {
 
         if ($asset['assetsAssignments_customPrice'] == null) {
             //The actual pricing calculator
-            $assetDayRate = new Money(($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency']));
-            $assetWeekRate = new Money(($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency']));
-            $asset['price'] = $assetDayRate->multiply($return['priceMaths']['days'])->add($assetWeekRate->multiply($return['priceMaths']['weeks']));
+            $asset['price'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+            $asset['price'] = $asset['price']->add((new Money(($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($return['priceMaths']['days']));
+            $asset['price'] = $asset['price']->add((new Money(($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($return['priceMaths']['weeks']));
         } else $asset['price'] = new Money($asset['assetsAssignments_customPrice'],new Currency($AUTH->data['instance']['instances_config_currency']));
 
         $return['prices']['subTotal'] = $asset['price']->add($return['prices']['subTotal']);
@@ -170,6 +169,7 @@ elseif ($projectFinanceCache["projectsFinanceCache_paymentsReceived"] != $PAGEDA
 elseif ($projectFinanceCache["projectsFinanceCache_grandTotal"] != $PAGEDATA['FINANCIALS']['payments']['total']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
 elseif ($projectFinanceCache["projectsFinanceCache_value"] != $PAGEDATA['FINANCIALS']['value']->getAmount()) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
 elseif (round($projectFinanceCache["projectsFinanceCache_mass"]*100000) != round($PAGEDATA['FINANCIALS']['mass']*100000)) throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+
 
 usort($PAGEDATA['FINANCIALS']['payments']['subHire']['ledger'], function ($a, $b) {
     // Sort sub-hires in order of supplier so you can do supplier headings
