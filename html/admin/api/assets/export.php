@@ -13,6 +13,14 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 error_reporting(0); //Errors if shown mean it won't download right
 ini_set('display_errors', 0);
 
+use Money\Currency;
+use Money\Money;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\IntlMoneyFormatter;
+$currencies = new ISOCurrencies();
+$numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
+$moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -62,7 +70,17 @@ foreach ($PAGEDATA['assets'] as $assetType) {
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         if ($asset['assets_tag'] <= 9999) $asset['assets_tag'] = "A-" . sprintf('%04d', $asset['assets_tag']);
         else $asset['assets_tag'] = "A-" . $asset['assets_tag'];
-        $array = [$asset['assets_tag'], $assetType['assetCategoriesGroups_name'] . " - " . $assetType['assetCategories_name'], $assetType['assetTypes_name'], ($assetType['manufacturers_id'] != 1 ? $assetType['manufacturers_name'] : ""), $assetType['assetTypes_mass'], $assetType['assetTypes_dayRate'], $assetType['assetTypes_weekRate'], $assetType['assetTypes_value'], $asset['assets_notes']];
+        $array = [
+            $asset['assets_tag'],
+            $assetType['assetCategoriesGroups_name'] . " - " . $assetType['assetCategories_name'],
+            $assetType['assetTypes_name'],
+            ($assetType['manufacturers_id'] != 1 ? $assetType['manufacturers_name'] : ""),
+            $asset['assets_mass'] !== null ?  $asset['assets_mass'] : $assetType['assetTypes_mass'],
+            $moneyFormatter->format(new Money($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $assetType['assetTypes_dayRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
+            $moneyFormatter->format(new Money($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $assetType['assetTypes_weekRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
+            $moneyFormatter->format(new Money($asset['assets_value'] !== null ? $asset['assets_value'] : $assetType['assetTypes_value'], new Currency($AUTH->data['instance']['instances_config_currency']))),
+            $asset['assets_notes']
+        ];
         for ($x = 1; $x <= 10; $x++) {
             array_push($array, $assetType['definableFields'][$x-1] . ($assetType['definableFields'][$x-1] != null ? ": ": ""),$asset['asset_definableFields_' . $x]);
         }
