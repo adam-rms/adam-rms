@@ -66,14 +66,12 @@
 {% block content %}
     <div class="row">
         <div class="col-12 col-md-12 col-lg-4">
-            <div class="card {{ loadingView ? "collapsed-card" }}">
+            <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Project Detail</h3>
 
                     <div class="card-tools">
-                        <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf" type="button" class="btn btn-tool">
-                            <i class="far fa-file-pdf"></i></a>
-                        {% if loadingView != true and 53|instancePermissions %}
+                        {% if 53|instancePermissions %}
                         <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&loadingView" type="button" title="Prep/Return View" class="btn btn-tool">
                             <i class="fas fa-truck-loading"></i>
                         </a>
@@ -87,7 +85,7 @@
                             <i class="fas fa-shopping-basket"></i></a>
                         {% endif %}
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-{{ loadingView ? "plus" : "minus" }}"></i></button>
+                            <i class="fas fa-minus"></i></button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -201,221 +199,6 @@
                     </div>
                 </div>
             </div>
-            {% if 47|instancePermissions %}
-                <div class="card {{ loadingView ? "collapsed-card" }}">
-                    <div class="card-header">
-                        <h3 class="card-title">Project Crew</h3>
-                        <div class="card-tools">
-                           <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-{{ loadingView ? "plus" : "minus" }}"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-
-                        <ul id="crewList" class="todo-list">
-                            {% for crew in project.crewAssignments %}
-                            <li value="{{crew.crewAssignments_id}}"
-                                {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
-                                    class="danger"
-                                {% elseif crew.users_email|length < 1 %}
-                                    class="warning"
-                                {% endif %}>
-                                {% if 51|instancePermissions %}
-                               <span class="handle">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                    <i class="fas fa-ellipsis-v"></i>
-                               </span>
-                                {% endif %}
-                               <span class="text">
-                                   {{crew.crewAssignments_role}} -
-                                    {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
-                                        <i>Vacant</i>
-                                    {% elseif crew.users_name1 %}
-                                        {% if 52|instancePermissions %}
-                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ crew.users_userid }}">
-                                        {% endif %}
-                                       {{ crew.users_name1 ~ " " ~ crew.users_name2 }}
-                                        {% if 52|instancePermissions %}
-                                            </a>
-                                        {% endif %}
-                                   {% else %}
-                                       {{ crew.crewAssignments_personName }}
-                                   {% endif %}
-                               </span>
-                                {% if crew.crewAssignments_comment|length > 0 %}
-                                    <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role}}" data-content="{{ crew.crewAssignments_comment|replace({'"':"'"}) }}"></i>
-                                {% endif %}
-                                <div class="tools">
-                                    {% if 49|instancePermissions %}
-                                        <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
-
-                                    {% endif %}
-                                </div>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                        <div class="card-footer">
-                            <div class="btn-group float-right">
-                                {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
-                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
-                                {% endif %}
-                                {% if 48|instancePermissions %}
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
-                                {% endif %}
-                                {% if 48|instancePermissions %}
-                                <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                    <div class="dropdown-menu" role="menu">
-                                        <a class="dropdown-item" id="addCrewVacant" href="#">Add Vacant Crew Position</a>
-                                    </div>
-                                </button>
-                                {% endif %}
-                            </div>
-                        </div>
-                </div>
-            {% endif %}
-            {% if 33|instancePermissions %}
-                <div class="card {{ loadingView ? "collapsed-card" }}">
-                    <div class="card-header">
-                        <h3 class="card-title">Project Finance</h3>
-                        <div class="card-tools">
-                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf&finance" type="button" class="btn btn-tool">
-                                <i class="far fa-file-pdf"></i></a>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-{{ loadingView ? "plus" : "minus" }}"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td colspan="2"><b>Equipment</b></td>
-                                </tr>
-                                {% if FINANCIALS.prices.discounts > 0 %}
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Equipment SubTotal
-                                    </td>
-                                    <td>
-                                        &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Discounts
-                                    </td>
-                                    <td>
-                                        &#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}
-                                    </td>
-                                </tr>
-                                {% endif %}
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Equipment Total
-                                    </td>
-                                    <td>
-                                        &pound;{{ FINANCIALS.prices.total|number_format(2) }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2"><b>Sales</b></td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Sales
-                                    </td>
-                                    <td>
-                                        &pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Staffing
-                                    </td>
-                                    <td>
-                                        &pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
-                                    </td>
-                                </tr>
-                                {% if FINANCIALS.payments.subHire.total > 0 %}
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Sub Hires
-                                    </td>
-                                    <td>
-                                        &pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
-                                    </td>
-                                </tr>
-                                {% endif %}
-
-                                <tr>
-                                    <td colspan="2"><b>Totals</b></td>
-                                </tr>
-                                {% if FINANCIALS.payments.received.total > 0 %}
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        SubTotal
-                                    </td>
-                                    <td>
-                                        &pound;{{ FINANCIALS.payments.subTotal|number_format(2) }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Payments Received to Date
-                                    </td>
-                                    <td>
-                                        &#8209;&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
-                                    </td>
-                                </tr>
-                                {% endif %}
-                                <tr>
-                                    <td style="width: 100%; text-align: right;">
-                                        Grand Total Outstanding
-                                    </td>
-                                    <td>
-                                        &pound;{{ FINANCIALS.payments.total|number_format(2) }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    {% if 34|instancePermissions %}
-                    <div class="card-footer">
-                        <div class="btn-group float-right">
-                             <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
-                             <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                <span class="sr-only">Toggle Dropdown</span>
-                                <div class="dropdown-menu" role="menu">
-                                    <a class="dropdown-item newPayment" data-type="2" href="#">Add Sales Item</a>
-                                    <a class="dropdown-item newPayment" data-type="3" href="#">Add Sub Hire Cost</a>
-                                    <a class="dropdown-item newPayment" data-type="4" href="#">Add Staff Cost</a>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            {% endif %}
-            {%  if project.projects_invoiceNotes|length > 0 %}
-                <div class="card {{ loadingView ? "collapsed-card" }}">
-                    <div class="card-header">
-                        <h3 class="card-title">Invoice Notes</h3>
-                        <div class="card-tools">
-                            {% if 46|instancePermissions %}
-                                <button type="button" class="btn btn-tool editProjectInvoiceNotes" title="Edit">
-                                    <i class="fas fa-edit"></i></button>
-                            {% endif %}
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-{{ loadingView ? "plus" : "minus" }}"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {{ project.projects_invoiceNotes }}
-                    </div>
-                </div>
-            {% endif %}
         </div>
         {% if loadingView %}
             <div class="col-12 col-md-12 col-lg-8">
@@ -439,501 +222,455 @@
             </div>
         {% endif %}
         <div class="col-12 col-md-12 {{ loadingView ? "col-lg-12" : "col-lg-8" }}">
-            {% for assetAssignment in FINANCIALS.assetsAssigned %}
-                {% for flag in assetAssignment.flagsblocks.BLOCK %}
-                    <div class="alert alert-danger">
-                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
-                        <h5> <i class="fas fa-ban"></i> {{ assetAssignment.assets_tag|aTag }}: {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}</h5>
-                        {{ flag.maintenanceJobs_title }} - {{ flag.maintenanceJobs_faultDescription }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
-            <div class="card collapsed-card">
-                <div class="card-header">
-                    <h3 class="card-title">Timeline</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-plus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <!-- The time line -->
-                            <div class="timeline">
-                                {% set currentDate = '' %}
-                                {% for event in project.auditLog %}
-                                    {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
-                                        <div class="time-label">
-                                            <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
-                                        </div>
-                                        {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
-                                    {% endif %}
-                                    <div>
-                                        {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                            <i class="far fa-comment bg-blue"></i>
-                                        {% elseif event.auditLog_actionType == "ARCHIVE" %}
-                                            <i class="fas fa-ban bg-red"></i>
-                                        {% else %}
-                                            <i class="fas fa-info bg-gray-light"></i>
-                                        {% endif %}
-                                        <div class="timeline-item">
-                                            <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
-                                            <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a>
-                                                {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                    added a quick comment
-                                                {% elseif event.auditLog_actionType == "INSERT" %}
-                                                    created the project
-                                                {% elseif event.auditLog_actionType == "ARCHIVE" %}
-                                                    archived the project
-                                                {% else %}
-                                                    edited the project
-                                                {% endif %}
-                                            </h3>
-                                            {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                            <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
-                                            {% elseif event.auditLog_actionType == "INSERT" %}
-                                                {# Blank #}
-                                            {% elseif event.auditLog_actionType == "ARCHIVE" %}
-                                                {# Blank #}
-                                            {% else %}
-                                                <div class="timeline-body" style="font-style: italic;">{{event.auditLog_actionData|nl2br }}</div>
-                                            {% endif %}
-                                            {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                {# Blank #}
-                                            {% elseif event.auditLog_actionType == "INSERT" %}
-                                                {# Blank #}
-                                            {% else %}
-                                                {#<div class="timeline-footer">
-                                                    <a class="btn btn-primary btn-sm">Read more</a>
-                                                    <a class="btn btn-danger btn-sm">Delete</a>
-                                                </div>#}
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                                <div>
-                                    <i class="fas fa-clock bg-gray"></i>
-                                </div>
-                            </div>
+            <div class="row">
+                {% for assetAssignment in FINANCIALS.assetsAssigned %}
+                    {% for flag in assetAssignment.flagsblocks.BLOCK %}
+                        <div class="alert alert-danger">
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                            <h5> <i class="fas fa-ban"></i> {{ assetAssignment.assets_tag|aTag }}: {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}</h5>
+                            {{ flag.maintenanceJobs_title }} - {{ flag.maintenanceJobs_faultDescription }}
                         </div>
-                        <!-- /.col -->
-                    </div>
-                </div>
-            </div>
-            {% if FINANCIALS.assetsAssigned %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">{{ FINANCIALS.assetsAssigned|length }} Asset{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }} - {{FINANCIALS.mass|round(2, 'ceil') }}kg</h3>
-                    <div class="card-tools">
-                        {% if 41|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
-                                <i class="far fa-comment"></i></button>
-                        {% endif %}
-                        {% if 43|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Set discount" id="setAssetAssignmentDiscount">
-                                <i class="fas fa-percent"></i></button>
-                        {% endif %}
-                        {% if 42|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
-                                <i class="fas fa-coins"></i></button>
-                        {% endif %}
-                        {% if 31|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Remove assets" id="setAssetAssignmentDelete">
-                                <i class="fas fa-trash"></i></button>
-                        {% endif %}
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    {% if STATUSES[project.projects_status]["assetsAvailable"] %}
+                    {% endfor %}
+                {% endfor %}
+                {% if STATUSES[project.projects_status]["assetsAvailable"] %}
                     <div class="alert alert-danger">
                         <h5>Assets not locked</h5>
                         Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
                     </div>
-                    {% endif %}
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="{{loadingView ? "" : "width:5px;"}}"><input type="checkbox" id="assetAssignmentCheckboxAll" /></th>
-                            <th style="width: 90px">#</th>
-                            <th>Comment</th>
-                            <th>Spec</th>
-                            <th style="width: 60px;">Mass</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% set currentCategory = '' %}
-                        {% set currentType = '' %}
-                        {% for assetAssignment in FINANCIALS.assetsAssigned %}
-                            {% if assetAssignment.assetCategories_name != currentCategory %}
-                                {% set currentCategory = assetAssignment.assetCategories_name %}
-                                <tr style="background-color: #F5F5F5;">
-                                    <td colspan="999">
-                                        <i class="{{ assetAssignment.assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ assetAssignment.assetCategories_name }}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            {% if assetAssignment.assetTypes_id != currentType %}
-                                {% set currentType = assetAssignment.assetTypes_id %}
-                                <tr>
-                                    <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
-                                    <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
-                                        {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
-                                    </td>
-                                    {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
-                                    <td style="padding:0px;">
-                                        <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
-                                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                            {% if field != "" %}
-                                                <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
-                                            {% endif %}
-                                        {% endfor %}
-                                        </tr></table>
-                                    </td>
-                                    <td colspan="999"></td>
-                                    {% endif %}
-                                </tr>
-                            {% endif %}
-                        <tr>
-                            <td>
-                                <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
-                                {% if loadingView %}
-                                    <button type="button" style="margin-left: 10px; {% if loadingViewStatusID != assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-default loadingViewButtonChange" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">Marked as {{ loadingViewStatus.name }}<br/><i>Change</i></button>
-                                    <button type="button" style="margin-left: 10px; {% if loadingViewStatusID == assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-success loadingViewButton" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">{% if assetAssignment.assetsAssignments_status != 0 %}<i>Marked as {{ loadingViewStatusArray[assetAssignment.assetsAssignments_status]["name"] }}</i><br/>{% endif %}<b>Mark as {{ loadingViewStatus.name }}</b></button>
-                                {% endif %}
-                            </td>
-                            <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a>                                </td>
-                            <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>
-                                {% for flag in assetAssignment.flagsblocks.FLAG %}
-                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-warning"><i class="far fa-flag" title="{{ flag.maintenanceJobs_title }}"></i></a>
-                                {% endfor %}
-                                {% for flag in assetAssignment.flagsblocks.BLOCK %}
-                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-danger" title="{{ flag.maintenanceJobs_title }}"><i class="fas fa-ban"></i></a>
-                                {% endfor %}
-                                {{ assetAssignment.assetsAssignments_comment }}
-                                {% if assetAssignment.instances_id != USERDATA.instance.instances_id %}
-                                    <span class="badge badge-danger">Business: {{ assetAssignment.assetInstanceName }}</span>
-                                {% endif %}
-                            </td>
-                            {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
-                            <td style="padding:0px;">
-                                <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
-                                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                            {% if field != "" %}
-                                               <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </tr></table>
-                            </td>
-                            {% endif %}
-                            <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "?" }}</td>
-                            <td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
-                            <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
-                        </tr>
-                        {% endfor %}
+                {% endif %}
 
-                        {% for assetAssignment in FINANCIALS.assetsAssignedSUB %}
-                            {% if assetAssignment.assetInstanceName != currentInstanceForLoop %}
-                                {% set currentInstanceForLoop = assetAssignment.assetInstanceName %}
-                                <tr style="background-color: #e6e6e6;">
-                                    <td colspan="999">
-                                        Business: <b>{{ assetAssignment.assetInstanceName }}</b>
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            {# Below is duplicate of Above !! #}
-                            {% if assetAssignment.assetCategories_name != currentCategory %}
-                                {% set currentCategory = assetAssignment.assetCategories_name %}
-                                <tr style="background-color: #F5F5F5;">
-                                    <td colspan="999">
-                                        <i class="{{ assetAssignment.assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ assetAssignment.assetCategories_name }}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                            {% if assetAssignment.assetTypes_id != currentType %}
-                                {% set currentType = assetAssignment.assetTypes_id %}
-                                <tr>
-                                    <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
-                                    <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
-                                        {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
-                                    </td>
-                                    {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
-                                        <td style="padding:0px;">
-                                            <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
-                                                    {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                                        {% if field != "" %}
-                                                            <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </tr></table>
+                {% if 33|instancePermissions %}
+                <div class="col-12">
+                    <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#payments-home" data-toggle="tab">Finance</a></li>
+                            {% if project.projects_invoiceNotes != null %}<li class="nav-item"><a class="nav-link" href="#payments-invoice" data-toggle="tab">Invoice Notes</a></li>{% endif %}
+                            {% if FINANCIALS.payments.received.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-received" data-toggle="tab">Payments Received</a></li>{% endif %}
+                            {% if FINANCIALS.payments.sales.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-sales" data-toggle="tab">Sales</a></li>{% endif %}
+                            {% if FINANCIALS.payments.subHire.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-subhire" data-toggle="tab">Additional Hires</a></li>{% endif %}
+                            {% if FINANCIALS.payments.staff.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-staff" data-toggle="tab">Staff</a></li>{% endif  %}
+                        </ul>
+                    </div><!-- /.card-header -->
+                    <div class="card-body" style="padding: 0;">
+                        <div class="tab-content">
+                            <div class="tab-pane active" style="padding: 0;" id="payments-home">
+                                <table class="table">
+                                    <tr>
+                                        <td style="width: 35%;">
+                                            Equipment SubTotal
                                         </td>
-                                        <td colspan="999"></td>
-                                    {% endif %}
-                                </tr>
-                            {% endif %}
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
-                                    {% if loadingView %}
-                                        <button type="button" style="margin-left: 10px; {% if loadingViewStatusID != assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-default loadingViewButtonChange" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">Marked as {{ loadingViewStatus.name }}<br/><i>Change</i></button>
-                                        <button type="button" style="margin-left: 10px; {% if loadingViewStatusID == assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-success loadingViewButton" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">{% if assetAssignment.assetsAssignments_status != 0 %}<i>Marked as {{ loadingViewStatusArray[assetAssignment.assetsAssignments_status]["name"] }}</i><br/>{% endif %}<b>Mark as {{ loadingViewStatus.name }}</b></button>
-                                    {% endif %}
-                                </td>
-                                <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a></td>
-                                <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>
-                                    {{ assetAssignment.assetsAssignments_comment }}
-                                </td>
-                                {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
-                                    <td style="padding:0px;">
-                                        <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
-                                                {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                                    {% if field != "" %}
-                                                        <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tr></table>
-                                    </td>
-                                {% endif %}
-                                <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "?" }}</td>
-                                <td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
-                                <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer p-0" style="background-color: #FFFFFF;">
-                    <table class="table table-striped">
-                        <tr>
-                            <td style="width:100%;"></td>
-                            <td>
-                                <b>SubTotal</b>
-                            </td>
-                            <td>
-                                &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <b>Discounts</b>
-                            </td>
-                            <td>
-                                &#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <b>Total</b>
-                            </td>
-                            <td>
-                                &pound;{{ FINANCIALS.prices.total|number_format(2) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="99">
-                                {{ FINANCIALS.priceMaths.string|nl2br }}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            {% endif %}
-            {% if FINANCIALS.payments.received.ledger and 33|instancePermissions %}
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Payments Received</h3>
-                        <div class="card-tools">
-                            {% if 34|instancePermissions %}
-                            <button type="button" class="btn btn-tool newPayment" data-type="1" title="Add new Payment">
-                                <i class="fas fa-plus"></i></button>
-                            {% endif %}
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>Reference</th>
-                                <th>Date</th>
-                                <th>Method</th>
-                                <th>Comment</th>
-                                <th>Amount</th>
-                                {% if 35|instancePermissions %}<th></th>{% endif %}
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {% for payment in FINANCIALS.payments.received.ledger %}
-                                    <tr>
-                                        <td>{{ payment.payments_reference }}</td>
-                                        <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
-                                        <td>{{ payment.payments_method }}</td>
-                                        <td>{{ payment.payments_comment|nl2br }}</td>
-                                        <td>&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                        {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                        <td style="width: 15%;text-align: right;">
+                                            {{ FINANCIALS.prices.subTotal|money }}
+                                        </td>
+                                        <td style="width: 35%;">
+                                            Sales
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            {{ FINANCIALS.payments.sales.total|money }}
+                                        </td>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer" style="text-align: right;">
-                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
-                    </div>
-                </div>
-            {% endif %}
-            {% if FINANCIALS.payments.sales.ledger and 33|instancePermissions %}
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Sales Items</h3>
-                        <div class="card-tools">
-                            {% if 34|instancePermissions %}
-                                <button type="button" class="btn btn-tool newPayment" data-type="2" title="Add new Payment">
-                                    <i class="fas fa-plus"></i></button>
-                            {% endif %}
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>Quantity</th>
-                                <th style="width: 100%;">Comment</th>
-                                <th>Amount</th>
-                                <th>Total</th>
-                                {% if 35|instancePermissions %}<th></th>{% endif %}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% set currentSupplier = "" %}
-                            {% for payment in FINANCIALS.payments.sales.ledger %}
-                                {% if currentSupplier != payment.payments_supplier %}
-                                    {% set currentSupplier = payment.payments_supplier %}
-                                    {% if payment.payments_supplier != "" %}
+                                    <tr>
+                                        <td style="width: 35%;">
+                                            {% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            {% if FINANCIALS.prices.discounts|moneyPositive %}&#8209;{{ FINANCIALS.prices.discounts|money }}{% else %}None{% endif %}
+                                        </td>
+                                        <td style="width: 35%;">
+                                            Staffing
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            {{ FINANCIALS.payments.staff.total|money }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 35%;">
+                                            <b>Equipment Total</b>
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            {{ FINANCIALS.prices.total|money }}
+                                        </td>
+                                        <td  style="width: 35%;">
+                                            Additional Hires
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            {{ FINANCIALS.payments.subHire.total|money }}
+                                        </td>
+                                    </tr>
+                                    <tr style="background-color: rgba(0,0,0,.03);">
+                                        <td style="width: 35%;">
+                                            SubTotal
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            {{ FINANCIALS.payments.subTotal|money }}
+                                        </td>
+                                        <td style="width: 35%;">
+                                            Payments Received to Date
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            &#8209;{{ FINANCIALS.payments.received.total|money }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 35%;">
+
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+
+                                        </td>
+                                        <td style="width: 35%;">
+                                            <b>Grand Total Outstanding</b>
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">
+                                            {{ FINANCIALS.payments.total|money }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="payments-invoice" style="padding: 1.25rem;">
+                                {{ project.projects_invoiceNotes }}
+                            </div>
+                            <div class="tab-pane" style="padding: 0;" id="payments-received">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Date</th>
+                                        <th>Method</th>
+                                        <th>Comment</th>
+                                        <th>Amount</th>
+                                        {% if 35|instancePermissions %}<th></th>{% endif %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for payment in FINANCIALS.payments.received.ledger %}
                                         <tr>
-                                            <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                            <td>{{ payment.payments_reference }}</td>
+                                            <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
+                                            <td>{{ payment.payments_method }}</td>
+                                            <td>{{ payment.payments_comment|nl2br }}</td>
+                                            <td>{{ payment.payments_amount|money }}</td>
+                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
                                         </tr>
-                                    {% endif %}
-                                {% endif %}
-                                <tr>
-                                    <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                    <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
-                                    {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer" style="text-align: right;">
-                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
-                    </div>
-                </div>
-            {% endif %}
-            {% if FINANCIALS.payments.subHire.ledger and 33|instancePermissions %}
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Sub Hire Items</h3>
-                        <div class="card-tools">
-                            {% if 34|instancePermissions %}
-                                <button type="button" class="btn btn-tool newPayment" data-type="3" title="Add new Payment">
-                                    <i class="fas fa-plus"></i></button>
-                            {% endif %}
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>Quantity</th>
-                                <th style="width: 100%;">Comment</th>
-                                <th>Amount</th>
-                                <th>Total</th>
-                                {% if 35|instancePermissions %}<th></th>{% endif %}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% set currentSupplier = "" %}
-                            {% for payment in FINANCIALS.payments.subHire.ledger %}
-                                {% if currentSupplier != payment.payments_supplier %}
-                                    {% set currentSupplier = payment.payments_supplier %}
-                                    {% if payment.payments_supplier != "" %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" style="padding: 0;" id="payments-sales">
+                                <table class="table table-bordered">
+                                    <thead>
                                     <tr>
-                                        <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                        <th>Quantity</th>
+                                        <th style="width: 100%;">Comment</th>
+                                        <th>Amount</th>
+                                        <th>Total</th>
+                                        {% if 35|instancePermissions %}<th></th>{% endif %}
                                     </tr>
-                                    {% endif %}
-                                {% endif %}
-                                <tr>
-                                    <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                    <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
-                                    {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer" style="text-align: right;">
-                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
-                    </div>
-                </div>
-            {% endif %}
-            {% if FINANCIALS.payments.staff.ledger and 33|instancePermissions %}
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Staff Costs</h3>
-                        <div class="card-tools">
-                            {% if 34|instancePermissions %}
-                                <button type="button" class="btn btn-tool newPayment" data-type="4" title="Add new Payment">
-                                    <i class="fas fa-plus"></i></button>
-                            {% endif %}
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
+                                    </thead>
+                                    <tbody>
+                                    {% set currentSupplier = "" %}
+                                    {% for payment in FINANCIALS.payments.sales.ledger %}
+                                        {% if currentSupplier != payment.payments_supplier %}
+                                            {% set currentSupplier = payment.payments_supplier %}
+                                            {% if payment.payments_supplier != "" %}
+                                                <tr>
+                                                    <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endif %}
+                                        <tr>
+                                            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                            <td>{{ payment.payments_comment|nl2br }}</td>
+                                            <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                            <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" style="padding: 0;" id="payments-subhire">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Quantity</th>
+                                        <th style="width: 100%;">Comment</th>
+                                        <th>Amount</th>
+                                        <th>Total</th>
+                                        {% if 35|instancePermissions %}<th></th>{% endif %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set currentSupplier = "" %}
+                                    {% for payment in FINANCIALS.payments.subHire.ledger %}
+                                        {% if currentSupplier != payment.payments_supplier %}
+                                            {% set currentSupplier = payment.payments_supplier %}
+                                            {% if payment.payments_supplier != "" %}
+                                                <tr>
+                                                    <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endif %}
+                                        <tr>
+                                            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                            <td>{{ payment.payments_comment|nl2br }}</td>
+                                            <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                            <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" style="padding: 0;" id="payments-staff">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Quantity</th>
+                                        <th>Supplier</th>
+                                        <th style="width: 100%;">Comment</th>
+                                        <th>Amount</th>
+                                        <th>Total</th>
+                                        {% if 35|instancePermissions %}<th></th>{% endif %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for payment in FINANCIALS.payments.staff.ledger %}
+                                        <tr>
+                                            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                            <td>{{ payment.payments_supplier|replace({" ":"&nbsp;"})|raw }}</td>
+                                            <td>{{ payment.payments_comment|nl2br }}</td>
+                                            <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                            <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body p-0">
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>Quantity</th>
-                                <th>Supplier</th>
-                                <th style="width: 100%;">Comment</th>
-                                <th>Amount</th>
-                                <th>Total</th>
-                                {% if 35|instancePermissions %}<th></th>{% endif %}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for payment in FINANCIALS.payments.staff.ledger %}
-                                <tr>
-                                    <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                    <td>{{ payment.payments_supplier|replace({" ":"&nbsp;"})|raw }}</td>
-                                    <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td style="width:100px;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
-                                    {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer" style="text-align: right;">
-                        <b>Total:&nbsp;</b>&pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
+                    <div class="card-footer">
+                        <div class="btn-group float-right">
+                            {% if 34|instancePermissions %}
+                            <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
+                            <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                                <span class="sr-only">Toggle Dropdown</span>
+                                <div class="dropdown-menu" role="menu">
+                                    <a class="dropdown-item newPayment" data-type="2" href="#">Add Sales Item</a>
+                                    <a class="dropdown-item newPayment" data-type="3" href="#">Add Additional Hire</a>
+                                    <a class="dropdown-item newPayment" data-type="4" href="#">Add Staff Cost</a>
+                                </div>
+                            </button>
+                            {% endif %}
+                            {% if 46|instancePermissions %}
+                                <button type="button" class="btn btn-default editProjectInvoiceNotes" title="Edit">Edit Invoice Notes</button>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            {% endif %}
+                </div>
+                {% endif %}
+                {% if 47|instancePermissions %}
+                    <div class="col-lg-8 col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Project Crew</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                        <i class="fas fa-minus"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+
+                                <ul id="crewList" class="todo-list">
+                                    {% for crew in project.crewAssignments %}
+                                        <li value="{{crew.crewAssignments_id}}"
+                                                {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
+                                            class="danger"
+                                        {% elseif crew.users_email|length < 1 %}
+                                            class="warning"
+                                                {% endif %}>
+                                            {% if 51|instancePermissions %}
+                                                <span class="handle">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                   </span>
+                                            {% endif %}
+                                            <span class="text">
+                                       {{crew.crewAssignments_role}} -
+                                        {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
+                                            <i>Vacant</i>
+                                        {% elseif crew.users_name1 %}
+                                            {% if 52|instancePermissions %}
+                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ crew.users_userid }}">
+                                            {% endif %}
+                                            {{ crew.users_name1 ~ " " ~ crew.users_name2 }}
+                                            {% if 52|instancePermissions %}
+                                                </a>
+                                            {% endif %}
+                                        {% else %}
+                                            {{ crew.crewAssignments_personName }}
+                                        {% endif %}
+                                   </span>
+                                            {% if crew.crewAssignments_comment|length > 0 %}
+                                                <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role}}" data-content="{{ crew.crewAssignments_comment|replace({'"':"'"}) }}"></i>
+                                            {% endif %}
+                                            <div class="tools">
+                                                {% if 49|instancePermissions %}
+                                                    <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
+
+                                                {% endif %}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="btn-group float-right">
+                                    {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
+                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
+                                    {% endif %}
+                                    {% if 48|instancePermissions %}
+                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
+                                    {% endif %}
+                                    {% if 48|instancePermissions %}
+                                        <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                            <div class="dropdown-menu" role="menu">
+                                                <a class="dropdown-item" id="addCrewVacant" href="#">Add Vacant Crew Position</a>
+                                            </div>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="col-lg-4 col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Assets</h3>
+                            <div class="card-tools">
+                                <a href="?id={{ project.projects_id }}&list" type="button" class="btn btn-tool">
+                                    <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        Mass
+                                    </td>
+                                    <td>
+                                        {{ FINANCIALS.mass|number_format(2) }}kg
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ FINANCIALS.value|money }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">PDFs</h3>
+                        </div>
+                        <div class="card-body">
+                        <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf" type="button" class="btn btn-default">
+                            <i class="far fa-file-pdf"></i> Plain</a>
+                                {% if 33|instancePermissions %}
+                                <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf&finance" type="button" class="btn btn-default">
+                                    <i class="far fa-file-pdf"></i> Finances</a>
+                                {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if project.auditLog|length > 0 %}
+                <div class="col-12">
+                    <div class="card collapsed-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Timeline</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!-- The time line -->
+                                    <div class="timeline">
+                                        {% set currentDate = '' %}
+                                        {% for event in project.auditLog %}
+                                            {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
+                                                <div class="time-label">
+                                                    <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
+                                                </div>
+                                                {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
+                                            {% endif %}
+                                            <div>
+                                                {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                    <i class="far fa-comment bg-blue"></i>
+                                                {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                                    <i class="fas fa-ban bg-red"></i>
+                                                {% else %}
+                                                    <i class="fas fa-info bg-gray-light"></i>
+                                                {% endif %}
+                                                <div class="timeline-item">
+                                                    <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
+                                                    <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a>
+                                                        {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                            added a quick comment
+                                                        {% elseif event.auditLog_actionType == "INSERT" %}
+                                                            created the project
+                                                        {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                                            archived the project
+                                                        {% else %}
+                                                            edited the project
+                                                        {% endif %}
+                                                    </h3>
+                                                    {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                        <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
+                                                    {% elseif event.auditLog_actionType == "INSERT" %}
+                                                        {# Blank #}
+                                                    {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                                        {# Blank #}
+                                                    {% else %}
+                                                        <div class="timeline-body" style="font-style: italic;">{{event.auditLog_actionData|nl2br }}</div>
+                                                    {% endif %}
+                                                    {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                        {# Blank #}
+                                                    {% elseif event.auditLog_actionType == "INSERT" %}
+                                                        {# Blank #}
+                                                    {% else %}
+                                                        {#<div class="timeline-footer">
+                                                            <a class="btn btn-primary btn-sm">Read more</a>
+                                                            <a class="btn btn-danger btn-sm">Delete</a>
+                                                        </div>#}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        <div>
+                                            <i class="fas fa-clock bg-gray"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.col -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
     {% if 34|instancePermissions %}
@@ -1110,81 +847,6 @@
                 });
             });
 
-            {% if 41|instancePermissions %}
-            $("#setAssetAssignmentComment").click(function () {
-                var selected = [];
-                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
-                    selected.push($(this).data('assetassignmentid'));
-                });
-                bootbox.prompt({
-                    title: "Set Comment",
-                    message: "This will override any existing comments set in this project for the assets selected",
-                    inputType: 'text',
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/assets/setComment.php", {
-                                "assetsAssignments": selected,
-                                "assetsAssignments_comment": result
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                });
-            });
-            {% endif %}
-            {% if 42|instancePermissions %}
-            $("#setAssetAssignmentPrice").click(function () {
-                var selected = [];
-                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
-                    selected.push($(this).data('assetassignmentid'));
-                });
-                bootbox.prompt({
-                    title: "Set Custom Price",
-                    message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
-                    inputType: 'number',
-                    min: 0,
-                    max: 100,
-                    step: 1,
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/assets/setPrice.php", {
-                                "assetsAssignments": selected,
-                                "assetsAssignments_customPrice": result
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                });
-            });
-            {% endif %}
-            {% if 43|instancePermissions %}
-            $("#setAssetAssignmentDiscount").click(function () {
-                var selected = [];
-                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
-                    selected.push($(this).data('assetassignmentid'));
-                });
-                bootbox.prompt({
-                    title: "Set Discount",
-                    message: "Example: a discount of 20% would multiply the hire cost by 0.8<br/><br/>This will override any existing discounts set in this project for the assets selected",
-                    inputType: 'number',
-                    min: 0,
-                    max: 100,
-                    step: 1,
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/assets/setDiscount.php", {
-                                "assetsAssignments": selected,
-                                "assetsAssignments_discount": result
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                });
-            });
-            {% endif %}
             {% if 22|instancePermissions %}
             $("#editProjectClient").click(function () {
                 bootbox.prompt({
@@ -1240,36 +902,6 @@
                             ajaxcall("projects/changeProjectManager.php", {
                                 "users_userid": result,
                                 "projects_id": "{{ project.projects_id }}"
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                });
-            });
-            {% endif %}
-            {% if 31|instancePermissions %}
-            $("#setAssetAssignmentDelete").click(function () {
-                var selected = [];
-                $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
-                    selected.push($(this).data('assetassignmentid'));
-                });
-                bootbox.confirm({
-                    message: "Are you sure you wish to remove these assets from the project? This will have billing implications",
-                    buttons: {
-                        cancel: {
-                            label: 'No',
-                            className: 'btn-success'
-                        },
-                        confirm: {
-                            label: 'Yes',
-                            className: 'btn-danger'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/assets/unassignBulk.php", {
-                                "assetsAssignments": selected
                             }, function (data) {
                                 location.reload();
                             });
@@ -1424,7 +1056,7 @@
                             message: message + "</table>",
                             buttons: {
                                 cancel: {
-                                    label: 'No',
+                                    label: 'No - cancel date change',
                                     className: 'btn-success'
                                 },
                                 confirm: {
@@ -1440,7 +1072,7 @@
                                     $.each(data.response.assets, function( index, value ) {
                                         toRemove.push(value['old_assetsAssignments_id']);
                                     });
-                                    ajaxcall("projects/assets/unassignBulk.php", {
+                                    ajaxcall("projects/assets/unassign.php", {
                                         "assetsAssignments": toRemove
                                     }, function (data) {
                                         changeProjectDeliverDates(start, end);
@@ -1514,7 +1146,7 @@
                                     $.each(data.response.assets, function( index, value ) {
                                         toRemove.push(value['old_assetsAssignments_id']);
                                     });
-                                    ajaxcall("projects/assets/unassignBulk.php", {
+                                    ajaxcall("projects/assets/unassign.php", {
                                         "assetsAssignments": toRemove
                                         }, function (data) {
                                             changeStatus(newStatus);
@@ -1641,7 +1273,7 @@
                         $("#newPaymentModal-title").html("Add Sales Item");
                         break;
                     case 3:
-                        $("#newPaymentModal-title").html("Add Sub-Hire Cost");
+                        $("#newPaymentModal-title").html("Add Additional Hire Cost");
                         break;
                     case 4:
                         $("#newPaymentModal-title").html("Add Staff cost");
@@ -1856,53 +1488,6 @@
                     }, null, true);
 
                 }
-            });
-            {% endif %}
-
-            {% if 53|instancePermissions and loadingView %}
-            $(".loadingViewButtonChange").click(function () {
-                var thisid = $(this).data('assetassignmentid');
-                bootbox.prompt({
-                    title: "Set asset status",
-                    inputType: 'select',
-                    inputOptions: [
-                        {
-                            text: 'Choose one...',
-                            value: '',
-                        },
-                        {% for key, status in loadingViewStatusArray %}
-                            {% if key != 0 and key != loadingViewStatusID %}
-                            {
-                                text: '{{ status.name }}',
-                                value: '{{ key }}',
-                            },
-                            {% endif %}
-                        {% endfor %}
-                    ],
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/assets/setStatus.php", {
-                                "assetsAssignments_id": thisid,
-                                "assetsAssignments_status": result
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
-                });
-            });
-            $(".loadingViewButton").click(function () {
-                var thisid = $(this).data('assetassignmentid');
-                ajaxcall("projects/assets/setStatus.php", {
-                        "assetsAssignments_id": thisid,
-                        "assetsAssignments_status": {{ loadingViewStatusID }}
-                    }, function (data) {
-                        $(".loadingViewButtonChange[data-assetassignmentid=" + thisid + "]").show();
-                        $(".loadingViewButton[data-assetassignmentid=" + thisid + "]").hide();
-                    });
-            });
-            $('#loadingViewOptionChanger').on('change', function() {
-                window.location.href = "{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&loadingView&loadingViewStatus=" + this.value;
             });
             {% endif %}
         });

@@ -87,7 +87,7 @@
                 </tr>
                 <tr>
                     <td style="padding:0;">Value Estimate:</td>
-                    <td style="padding: 1px 0px 1px 5px;">&pound;{{FINANCIALS.value|round(2, 'ceil')|number_format(2) }}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.value|money }}</td>
                 </tr>
             </table>
         </td>
@@ -105,27 +105,27 @@
            Equipment SubTotal
        </td>
         <td style="width: 15%;text-align: right;">
-            &pound;{{ FINANCIALS.prices.subTotal|number_format(2) }}
+            {{ FINANCIALS.prices.subTotal|money }}
         </td>
         <td style="width: 35%;">
             Sales
         </td>
         <td style="width: 15%;text-align: right;">
-            &pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}
+            {{ FINANCIALS.payments.sales.total|money }}
         </td>
     </tr>
     <tr>
         <td style="width: 35%;">
-            {% if FINANCIALS.prices.discounts > 0 %}Discounts{% else %}Adjustments{% endif %}
+            {% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}
         </td>
         <td style="width: 15%;text-align: right;">
-            {% if FINANCIALS.prices.discounts > 0 %}&#8209;&pound;{{ FINANCIALS.prices.discounts|number_format(2) }}{% else %}None{% endif %}
+            {% if FINANCIALS.prices.discounts|moneyPositive %}&#8209;{{ FINANCIALS.prices.discounts|money }}{% else %}None{% endif %}
         </td>
         <td style="width: 35%;">
             Staffing
         </td>
         <td style="width: 15%;text-align: right;">
-            &pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}
+            {{ FINANCIALS.payments.staff.total|money }}
         </td>
     </tr>
     <tr>
@@ -133,13 +133,13 @@
             <b>Equipment Total</b>
         </td>
         <td style="width: 15%;text-align: right;">
-            &pound;{{ FINANCIALS.prices.total|number_format(2) }}
+            {{ FINANCIALS.prices.total|money }}
         </td>
         <td  style="width: 35%;">
             Sub Hires
         </td>
         <td style="width: 15%;text-align: right;">
-            &pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}
+            {{ FINANCIALS.payments.subHire.total|money }}
         </td>
     </tr>
 </table>
@@ -150,13 +150,13 @@
             SubTotal
         </td>
         <td style="width: 15%;text-align: right;">
-            &pound;{{ FINANCIALS.payments.subTotal|number_format(2) }}
+            {{ FINANCIALS.payments.subTotal|money }}
         </td>
         <td style="width: 35%;">
             Payments Received to Date
         </td>
         <td style="width: 15%;text-align: right;">
-            &#8209;&pound;{{ FINANCIALS.payments.received.total|number_format(2) }}
+            &#8209;{{ FINANCIALS.payments.received.total|money }}
         </td>
     </tr>
     <tr>
@@ -170,7 +170,7 @@
             <b>Grand Total Outstanding</b>
         </td>
         <td style="width: 15%;text-align: right;">
-            &pound;{{ FINANCIALS.payments.total|number_format(2) }}
+            {{ FINANCIALS.payments.total|money }}
         </td>
     </tr>
 </table>
@@ -245,9 +245,9 @@
                 {% endfor %}
             </td>
         {% endif %}
-        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "" }}</td>
+        <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|round(2, 'ceil') ~ "kg" : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "") }}</td>
         {% if showFinance %}
-            <td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
+            <td>{{ assetAssignment.price|money }}</td>
             <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
         {% endif %}
     </tr>
@@ -320,9 +320,9 @@
                 {% endfor %}
             </td>
         {% endif %}
-        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass ~ "kg" : "" }}</td>
+        <td>{{assetAssignment.assetTypes_mass != "" and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "" }}</td>
         {% if showFinance %}
-            <td>&pound;{{ assetAssignment.price|number_format(2) }}</td>
+            <td>{{ assetAssignment.price|money }}</td>
             <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
         {% endif %}
     </tr>
@@ -351,14 +351,14 @@
                 <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
                 {% if showFinance %}
-                    <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                    <td style="width:100px;text-align: right;">{{ payment.payments_amount|money }}</td>
+                    <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                 {% endif %}
             </tr>
         {% endfor %}
         {% if showFinance %}
         <tr>
-            <td colspan="4" style="text-align: right;"><b>Total: </b>&pound;{{ FINANCIALS.payments.subHire.total|number_format(2) }}</td>
+            <td colspan="4" style="text-align: right;"><b>Total: </b>{{ FINANCIALS.payments.subHire.total|money }}</td>
         </tr>
         {% endif %}
         </tbody>
@@ -381,14 +381,14 @@
                 <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
                 {% if showFinance %}
-                    <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                    <td style="width:100px;text-align: right;">{{ payment.payments_amount|money }}</td>
+                    <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                 {% endif %}
             </tr>
         {% endfor %}
         {% if showFinance %}
             <tr>
-                <td colspan="4" style="text-align: right;"><b>Total: </b>&pound;{{ FINANCIALS.payments.sales.total|number_format(2) }}</td>
+                <td colspan="4" style="text-align: right;"><b>Total: </b>{{ FINANCIALS.payments.sales.total|money }}</td>
             </tr>
         {% endif %}
         </tbody>
@@ -410,14 +410,14 @@
                 <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
                 {% if showFinance %}
-                    <td style="width:100px;text-align: right;">&pound;{{ payment.payments_amount|number_format(2) }}</td>
-                    <td style="width:100px;text-align: right;">&pound;{{ (payment.payments_quantity*payment.payments_amount)|number_format(2) }}</td>
+                    <td style="width:100px;text-align: right;">{{ payment.payments_amount|money }}</td>
+                    <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                 {% endif %}
             </tr>
         {% endfor %}
         {% if showFinance %}
             <tr>
-                <td colspan="4" style="text-align: right;"><b>Total: </b>&pound;{{ FINANCIALS.payments.staff.total|number_format(2) }}</td>
+                <td colspan="4" style="text-align: right;"><b>Total: </b>{{ FINANCIALS.payments.staff.total|money }}</td>
             </tr>
         {% endif %}
         </tbody>

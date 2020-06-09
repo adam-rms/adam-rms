@@ -1,130 +1,268 @@
 {% extends "assets/template.twig" %}
 {% block content %}
+{% if STATUSES[project.projects_status]["assetsAvailable"] %}
+    <div class="alert alert-danger">
+        <h5>Assets not locked</h5>
+        Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
+    </div>
+{% endif %}
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
-
+        <h3 class="card-title">{{ FINANCIALS.assetsAssigned|length }} Asset{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|round(2, 'ceil') }}kg)</h3>
         <div class="card-tools">
-            <form class="input-group input-group-sm"  method="GET">
-                <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
-                    {% if 21|instancePermissions %}<button type="button" class="btn btn-default newProjectButton"  title="Add new project"><i class="fa fa-plus"></i></button>{% endif %}
-                </div>
-            </form>
+            {% if 41|instancePermissions %}
+                <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
+                    <i class="far fa-comment"></i></button>
+            {% endif %}
+            {% if 43|instancePermissions %}
+                <button type="button" class="btn btn-tool" title="Set discount" id="setAssetAssignmentDiscount">
+                    <i class="fas fa-percent"></i></button>
+            {% endif %}
+            {% if 42|instancePermissions %}
+                <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
+                    <i class="fas fa-coins"></i></button>
+            {% endif %}
+            {% if 31|instancePermissions %}
+                <button type="button" class="btn btn-tool" title="Remove assets" id="setAssetAssignmentDelete">
+                    <i class="fas fa-trash"></i></button>
+            {% endif %}
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                <i class="fas fa-minus"></i></button>
         </div>
     </div>
     <div class="card-body p-0">
         <table class="table table-striped projects">
             <thead>
             <tr>
-                <th style="width: 1%">
-                    #
-                </th>
-                <th style="width: 45%">
-                    Title
-                </th>
-                <th style="width: 24%">
-                    Client
-                </th>
-                <th style="width: 5%">
-                    Manager
-                </th>
-                <th style="width: 5%">
-                    Outstanding
-                </th>
-                <th style="width: 5%">
-                    Total
-                </th>
-                <th style="width: 35%">
-                    Status
-                </th>
+                <th style="{{loadingView ? "" : "width:5px;"}}"><input type="checkbox" id="assetAssignmentCheckboxAll" /></th>
+                <th style="width: 90px">#</th>
+                <th>Comment</th>
+                <th>Spec</th>
+                <th style="width: 60px;">Mass</th>
+                <th>Price</th>
+                <th>Discount</th>
             </tr>
             </thead>
             <tbody>
-            {% set archive = false %}
-            {% for project in PROJECTSLIST %}
-                {% if archive == false and project.projects_archived == 1 %}
-                    {% set archive = true %}
-                    <tr style="background-color: #ffffff;">
-                        <td colspan="7">
-                            <b>Archived Projects</b>
+            {% set currentCategory = '' %}
+            {% set currentType = '' %}
+            {% for assetAssignment in FINANCIALS.assetsAssigned %}
+                {% if assetAssignment.assetCategories_name != currentCategory %}
+                    {% set currentCategory = assetAssignment.assetCategories_name %}
+                    <tr style="background-color: #F5F5F5;">
+                        <td colspan="999">
+                            <i class="{{ assetAssignment.assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ assetAssignment.assetCategories_name }}
                         </td>
                     </tr>
                 {% endif %}
-            <tr>
-                <td>
-                    <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">#{{ project.projects_id }}</a>
-                </td>
-                <td>
-                    <a>
-                        {{ project.projects_name }}
-                    </a>
-                    <br/>
-                    <small>
-                        {{project.projects_dates_use_start|date("d M Y h:ia")}} - {{project.projects_dates_use_end|date("d M Y h:ia")}}
-                    </small>
-                </td>
-                <td>
-                    <a href="?client={{ project.clients_id }}">
-                        {{ project.clients_name }}
-                    </a>
-                </td>
-                <td>
-                    <ul class="list-inline">
-                        <li class="list-inline-item">
-                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ project.users_email|md5 }}?s=160&d=identicon">
-                            </a>
-                        </li>
-                    </ul>
-                </td>
-                <td>
-                    {{ (project.finance.projectsFinanceCache_grandTotal > 0 ? '£' ~ project.finance.projectsFinanceCache_grandTotal : '') }}
-                </td>
-                <td>
-                    £{{ project.finance.projectsFinanceCache_grandTotal+project.finance.projectsFinanceCache_paymentsReceived }}
-                </td>
-                <td class="project_progress">
-                    {{ STATUSES[project.projects_status]['name'] }}<br/>
-                    {% if STATUSES[project.projects_status]['order'] < 7 %}
-                    <div class="progress progress-sm">
-                        <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[project.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
-                        </div>
-                    </div>
+                {% if assetAssignment.assetTypes_id != currentType %}
+                    {% set currentType = assetAssignment.assetTypes_id %}
+                    <tr>
+                        <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
+                        <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
+                            {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
+                        </td>
+                        {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
+                            <td style="padding:0px;">
+                                <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                            {% if field != "" %}
+                                                <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr></table>
+                            </td>
+                            <td colspan="999"></td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
+                        {% if loadingView %}
+                            <button type="button" style="margin-left: 10px; {% if loadingViewStatusID != assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-default loadingViewButtonChange" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">Marked as {{ loadingViewStatus.name }}<br/><i>Change</i></button>
+                            <button type="button" style="margin-left: 10px; {% if loadingViewStatusID == assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-success loadingViewButton" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">{% if assetAssignment.assetsAssignments_status != 0 %}<i>Marked as {{ loadingViewStatusArray[assetAssignment.assetsAssignments_status]["name"] }}</i><br/>{% endif %}<b>Mark as {{ loadingViewStatus.name }}</b></button>
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a>                                </td>
+                    <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>
+                        {% for flag in assetAssignment.flagsblocks.FLAG %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-warning"><i class="far fa-flag" title="{{ flag.maintenanceJobs_title }}"></i></a>
+                        {% endfor %}
+                        {% for flag in assetAssignment.flagsblocks.BLOCK %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-danger" title="{{ flag.maintenanceJobs_title }}"><i class="fas fa-ban"></i></a>
+                        {% endfor %}
+                        {{ assetAssignment.assetsAssignments_comment }}
+                        {% if assetAssignment.instances_id != USERDATA.instance.instances_id %}
+                            <span class="badge badge-danger">Business: {{ assetAssignment.assetInstanceName }}</span>
+                        {% endif %}
+                    </td>
+                    {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
+                        <td style="padding:0px;">
+                            <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                                    {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                        {% if field != "" %}
+                                            <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr></table>
+                        </td>
                     {% endif %}
-                    <small>
-                        {{ STATUSES[project.projects_status]['description'] }}
-                    </small>
-                </td>
-            </tr>
+                    <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|round(2, 'ceil') ~ "kg" : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "") }}</td>
+                    <td>{{ assetAssignment.price|money }}</td>
+                    <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
+                </tr>
+            {% endfor %}
 
+            {% for assetAssignment in FINANCIALS.assetsAssignedSUB %}
+                {% if assetAssignment.assetInstanceName != currentInstanceForLoop %}
+                    {% set currentInstanceForLoop = assetAssignment.assetInstanceName %}
+                    <tr style="background-color: #e6e6e6;">
+                        <td colspan="999">
+                            Business: <b>{{ assetAssignment.assetInstanceName }}</b>
+                        </td>
+                    </tr>
+                {% endif %}
+                {# Below is duplicate of Above !! #}
+                {% if assetAssignment.assetCategories_name != currentCategory %}
+                    {% set currentCategory = assetAssignment.assetCategories_name %}
+                    <tr style="background-color: #F5F5F5;">
+                        <td colspan="999">
+                            <i class="{{ assetAssignment.assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ assetAssignment.assetCategories_name }}
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if assetAssignment.assetTypes_id != currentType %}
+                    {% set currentType = assetAssignment.assetTypes_id %}
+                    <tr>
+                        <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
+                        <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
+                            {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
+                        </td>
+                        {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
+                            <td style="padding:0px;">
+                                <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                            {% if field != "" %}
+                                                <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr></table>
+                            </td>
+                            <td colspan="999"></td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
+                        {% if loadingView %}
+                            <button type="button" style="margin-left: 10px; {% if loadingViewStatusID != assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-default loadingViewButtonChange" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">Marked as {{ loadingViewStatus.name }}<br/><i>Change</i></button>
+                            <button type="button" style="margin-left: 10px; {% if loadingViewStatusID == assetAssignment.assetsAssignments_status %}display: none;{% endif %}" class="btn btn-sm btn-success loadingViewButton" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}">{% if assetAssignment.assetsAssignments_status != 0 %}<i>Marked as {{ loadingViewStatusArray[assetAssignment.assetsAssignments_status]["name"] }}</i><br/>{% endif %}<b>Mark as {{ loadingViewStatus.name }}</b></button>
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a></td>
+                    <td {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="2"{% endif %}>
+                        {{ assetAssignment.assetsAssignments_comment }}
+                    </td>
+                    {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,,"  %}
+                        <td style="padding:0px;">
+                            <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                                    {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                        {% if field != "" %}
+                                            <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{ assetAssignment['asset_definableFields_' ~ loop.index] }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr></table>
+                        </td>
+                    {% endif %}
+                    <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|round(2, 'ceil') ~ "kg" : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|round(2, 'ceil') ~ "kg" : "") }}</td>
+                    <td>{{ assetAssignment.price|money }}</td>
+                    <td>{{ assetAssignment.assetsAssignments_discount }}%</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
-    <div class="card-footer clearfix">
-        {% if pagination.total > 1 %}
-            <ul class="pagination pagination-sm m-0 float-right">
-                {% if pagination.page > 1 %}
-                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
-                {% endif %}
-
-                {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
-                    <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
-                            {% if pagination.page == i %}
-                                <b>{{ i }}</b>
-                            {% else %}
-                                {{ i }}
-                            {% endif %}
-                        </a></li>
-                {% endfor %}
-
-                {% if pagination.page < pagination.total %}
-                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
-                {% endif %}
-            </ul>
-        {% endif %}
-    </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        {% if 41|instancePermissions %}
+        $("#setAssetAssignmentComment").click(function () {
+            var selected = [];
+            $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                selected.push($(this).data('assetassignmentid'));
+            });
+            bootbox.prompt({
+                title: "Set Comment",
+                message: "This will override any existing comments set in this project for the assets selected",
+                inputType: 'text',
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("projects/assets/setComment.php", {
+                            "assetsAssignments": selected,
+                            "assetsAssignments_comment": result
+                        }, function (data) {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+        {% if 42|instancePermissions %}
+        $("#setAssetAssignmentPrice").click(function () {
+            var selected = [];
+            $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                selected.push($(this).data('assetassignmentid'));
+            });
+            bootbox.prompt({
+                title: "Set Custom Price",
+                message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
+                inputType: 'number',
+                min: 0,
+                max: 100,
+                step: 1,
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("projects/assets/setPrice.php", {
+                            "assetsAssignments": selected,
+                            "assetsAssignments_customPrice": result
+                        }, function (data) {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+        {% if 43|instancePermissions %}
+        $("#setAssetAssignmentDiscount").click(function () {
+            var selected = [];
+            $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                selected.push($(this).data('assetassignmentid'));
+            });
+            bootbox.prompt({
+                title: "Set Discount",
+                message: "Example: a discount of 20% would multiply the hire cost by 0.8<br/><br/>This will override any existing discounts set in this project for the assets selected",
+                inputType: 'number',
+                min: 0,
+                max: 100,
+                step: 1,
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("projects/assets/setDiscount.php", {
+                            "assetsAssignments": selected,
+                            "assetsAssignments_discount": result
+                        }, function (data) {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+    });
+</script>
 {% endblock %}

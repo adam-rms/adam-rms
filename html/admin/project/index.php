@@ -1,6 +1,8 @@
 <?php
 if (isset($_GET['pdf'])) ini_set('max_execution_time', 300); //seconds
 require_once __DIR__ . '/../common/headSecure.php';
+use Money\Currency;
+use Money\Money;
 
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
 
@@ -43,7 +45,7 @@ if ($AUTH->instancePermissionCheck(23)) {
 
 //Payments and also
 function projectFinancials($project) {
-    global $DBLIB;
+    global $DBLIB,$AUTH;
     $projectFinanceHelper = new projectFinance();
     $return = [];
 
@@ -51,31 +53,30 @@ function projectFinancials($project) {
     $DBLIB->orderBy("payments.payments_date", "ASC");
     $DBLIB->where("payments.projects_id", $project['projects_id']);
     $payments = $DBLIB->get("payments");
-    $return['payments'] = ["received" => ["ledger" => [], "total" => 0.0], "sales" => ["ledger" => [], "total" => 0.0], "subHire" => ["ledger" => [], "total" => 0.0], "staff" => ["ledger" => [], "total" => 0.0]];
+    $return['payments'] = ["received" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))], "sales" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))], "subHire" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))], "staff" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))]];
     foreach ($payments as $payment) {
+        $key = false;
         switch ($payment['payments_type']) {
             case 1:
-                $return['payments']['received']['ledger'][] = $payment;
-                $return['payments']['received']['total'] += $payment['payments_amount'];
+                $key = "received";
                 break;
             case 2:
-                $return['payments']['sales']['ledger'][] = $payment;
-                $return['payments']['sales']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
+                $key = 'sales';
                 break;
             case 3:
-                $return['payments']['subHire']['ledger'][] = $payment;
-                $return['payments']['subHire']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
+                $key = 'subHire';
                 break;
             case 4:
-                $return['payments']['staff']['ledger'][] = $payment;
-                $return['payments']['staff']['total'] += ($payment['payments_amount']*$payment['payments_quantity']);
+                $key = 'staff';
                 break;
         }
+        if ($key) {
+            $payment['payments_amount'] = new Money($payment['payments_amount'], new Currency($AUTH->data['instance']['instances_config_currency']));
+            $payment['payments_amountTotal'] = $payment['payments_amount']->multiply($payment['payments_quantity']);
+            $return['payments'][$key]['total'] = $payment['payments_amountTotal']->add($return['payments'][$key]['total']);
+            $return['payments'][$key]['ledger'][] = $payment;
+        } else throw new Exception("Unknown payment type found");
     }
-    $return['payments']['received']['total'] = round($return['payments']['received']['total'], 2, PHP_ROUND_HALF_UP);
-    $return['payments']['sales']['total'] = round($return['payments']['sales']['total'], 2, PHP_ROUND_HALF_UP);
-    $return['payments']['subHire']['total'] = round($return['payments']['subHire']['total'], 2, PHP_ROUND_HALF_UP);
-    $return['payments']['staff']['total'] = round($return['payments']['staff']['total'], 2, PHP_ROUND_HALF_UP);
 
     //Assets
     $DBLIB->where("projects_id", $project['projects_id']);
@@ -93,40 +94,38 @@ function projectFinancials($project) {
     $DBLIB->where("assets.assets_deleted", 0);
     $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "instances.instances_name AS assetInstanceName", "instances.instances_id"]);
 
-
     $return['assetsAssigned'] = [];
     $return['assetsAssignedSUB'] = [];
-    $return['mass'] = 0.0;
-    $return['value'] = 0.0;
-    $return['prices'] = ["subTotal" => 0.0, "discounts" => 0.0, "total" => 0.0];
+    $return['mass'] = 0.0; //TODO evaluate whether using floats for mass is a good idea....
+    $return['value'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
+    $return['prices'] = ["subTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "discounts" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))];
 
     $return['priceMaths'] = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
 
     $return['assetTypesCounter'] = [];
     foreach ($assets as $asset) {
         $return['mass'] += $asset['assetTypes_mass'];
-        $return['value'] += $asset['assetTypes_value'];
+        $asset['value'] = new Money(($asset['assets_value'] != null ? $asset['assets_value'] : $asset['assetTypes_value']), new Currency($AUTH->data['instance']['instances_config_currency']));
+        $return['value'] = $return['value']->add($asset['value']);
 
         if (isset($return['assetTypesCounter'][$asset['assetTypes_id']])) $return['assetTypesCounter'][$asset['assetTypes_id']] += 1;
         else $return['assetTypesCounter'][$asset['assetTypes_id']] = 1;
 
         if ($asset['assetsAssignments_customPrice'] == null) {
             //The actual pricing calculator
-            $asset['price'] = 0;
-            $asset['price'] += $return['priceMaths']['days'] * ($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']);
-            $asset['price'] += $return['priceMaths']['weeks'] * ($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']);
-        } else $asset['price'] = $asset['assetsAssignments_customPrice'];
-        $asset['price'] = round($asset['price'], 2, PHP_ROUND_HALF_UP);
-        $return['prices']['subTotal'] += $asset['price'];
+            $assetDayRate = new Money(($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency']));
+            $assetWeekRate = new Money(($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $asset['assetTypes_weekRate']), new Currency($AUTH->data['instance']['instances_config_currency']));
+            $asset['price'] = $assetDayRate->multiply($return['priceMaths']['days'])->add($assetWeekRate->multiply($return['priceMaths']['weeks']));
+        } else $asset['price'] = new Money($asset['assetsAssignments_customPrice'],new Currency($AUTH->data['instance']['instances_config_currency']));
 
-        if ($asset['assetsAssignments_discount'] > 0) {
-            $asset['discountPrice'] = round(($asset['price'] * (1 - ($asset['assetsAssignments_discount'] / 100))), 2, PHP_ROUND_HALF_UP);
-        } else $asset['discountPrice'] = $asset['price'];
+        $return['prices']['subTotal'] = $asset['price']->add($return['prices']['subTotal']);
 
-        $return['prices']['discounts'] += ($asset['price'] - $asset['discountPrice']);
-        $return['prices']['total'] += $asset['discountPrice'];
+        if ($asset['assetsAssignments_discount'] > 0) $asset['discountPrice'] = $asset['price']->multiply(1 - ($asset['assetsAssignments_discount'] / 100));
+        else $asset['discountPrice'] = $asset['price'];
 
-        $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
+        $return['prices']['discounts'] = $return['prices']['discounts']->add($asset['price']->subtract($asset['discountPrice']));
+        $return['prices']['total'] = $return['prices']['total']->add($asset['discountPrice']);
+
         $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
 
         $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));
@@ -135,9 +134,8 @@ function projectFinancials($project) {
         else $return['assetsAssigned'][] = $asset;
     }
 
-    $return['payments']['subTotal'] = $return['prices']['total'] + $return['payments']['sales']['total'] + $return['payments']['subHire']['total'] + $return['payments']['staff']['total'];
-    $return['payments']['total'] = $return['payments']['subTotal'] - $return['payments']['received']['total'];
-    $return['payments']['total'] = round($return['payments']['total'],2);
+    $return['payments']['subTotal'] = $return['prices']['total']->add($return['payments']['sales']['total'],$return['payments']['subHire']['total'],$return['payments']['staff']['total']);
+    $return['payments']['total'] = $return['payments']['subTotal']->subtract($return['payments']['received']['total']);
     return $return;
 }
 $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']);
@@ -231,5 +229,6 @@ if (isset($_GET['pdf'])) {
              ');
     $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', 'I');
-} else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
+} elseif (isset($_GET['list']) and count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0) echo $TWIG->render('project/project_list.twig', $PAGEDATA);
+else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>
