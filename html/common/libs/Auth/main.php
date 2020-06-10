@@ -168,7 +168,7 @@ class bID
         return md5(time() . $randomString);
     }
 
-    function generateToken($userid, $redirect = true, $adminuserid = null, $returntoken = false)
+    function generateToken($userid, $redirect = true, $adminuserid = null, $returntoken = false, $deviceType = 'Web')
     {
         global $CONFIG, $DBLIB;
 
@@ -176,6 +176,7 @@ class bID
         $data = Array("authTokens_created" => date('Y-m-d G:i:s'),
             "authTokens_token" => $tokenalias,
             "users_userid" => $userid,
+            "authTokens_deviceType" => $deviceType,
             "authTokens_ipAddress" => isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"],
         );
         if ($adminuserid != null) {
