@@ -17,7 +17,7 @@ if (isset($_GET['removepermission'])) {
 } elseif (isset($_GET['addpermission'])) {
 	array_push($position['permissions'],$_GET['addpermission']);
 }
-
+asort($position['permissions']); //Prevents it being associative when downloaded
 $DBLIB->where ('instancePositions_id', $bCMS->sanitizeString($_GET['position']));
 if ($DBLIB->update ('instancePositions', ['instancePositions_actions' => implode(",",$position['permissions'])])) {
 	$bCMS->auditLog("UPDATE", "instancePositions", $bCMS->sanitizeString($_GET['position']) . " - " . implode(",",$position['permissions']), $AUTH->data['users_userid']);

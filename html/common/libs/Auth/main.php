@@ -96,7 +96,22 @@ class bID
                         $this->data['instances'] = [];
                         $this->data['instance_ids'] = [];
                         foreach ($instances as $instance) {
-                            $instance['permissions'] = array_unique(array_merge(explode(",", $instance['instancePositions_actions']), explode(",", $instance['userInstances_extraPermissions'])));
+                            $instance['permissions'] = [];
+                            //Seems to work better when done like this for the API calls as it prevents the array becoming associative
+                            if ($instance['instancePositions_actions']) {
+                                $actionsArray = explode(",", $instance['instancePositions_actions']);
+                                asort($actionsArray);
+                                foreach ($actionsArray as $action) {
+                                    $instance['permissions'][]= (int)$action;
+                                }
+                            }
+                            if ($instance['userInstances_extraPermissions']) {
+                                $extraActionsArray = explode(",", $instance['userInstances_extraPermissions']);
+                                asort($extraActionsArray);
+                                foreach ($extraActionsArray as $action) {
+                                    $instance['permissions'][]= (int)$action;
+                                }
+                            }
                             $this->data['instances'][] = $instance;
                             array_push($this->data['instance_ids'], $instance['instances_id']);
                         }

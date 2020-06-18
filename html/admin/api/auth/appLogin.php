@@ -2,9 +2,9 @@
 require_once __DIR__ . '/../apiHead.php';
 use \Firebase\JWT\JWT;
 
-if (isset($dataPayload['email']) and isset($dataPayload['password'])) {
-    $input = trim(strtolower($GLOBALS['bCMS']->sanitizeString($dataPayload['email'])));
-    $password = $GLOBALS['bCMS']->sanitizeString($dataPayload['password']);
+if (isset($_POST['email']) and isset($_POST['password'])) {
+    $input = trim(strtolower($GLOBALS['bCMS']->sanitizeString($_POST['email'])));
+    $password = $GLOBALS['bCMS']->sanitizeString($_POST['password']);
     if ($input == "") finish(false, ["code" => null, "message" => "No data specified"]);
     else {
         if (filter_var($input, FILTER_VALIDATE_EMAIL)) $DBLIB->where ("users_email", $input);
@@ -35,7 +35,7 @@ if (isset($dataPayload['email']) and isset($dataPayload['password'])) {
         elseif (!$successful) finish(false, ["code" => null, "message" => "Password incorrect"]);
         elseif ($user['users_suspended'] != '0') finish(false, ["code" => 5, "message" => "User suspended"]);
         else {
-            $token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, null, true);
+            $token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, null, true, $_POST['deviceData']);
 
             $jwt = JWT::encode(array(
                 "iss" => $CONFIG['ROOTURL'],
