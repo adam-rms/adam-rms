@@ -14,12 +14,13 @@ class bID
     {
         global $DBLIB, $CONFIG;
 
-        if (isset($_SESSION['token'])) $token = $_SESSION['token'];
-        elseif (isset($_POST['jwt'])) {
+        if (isset($_POST['jwt'])) {
+            //Prefer to process JWTs over sessions
             $decoded = JWT::decode($_POST['jwt'], $CONFIG['JWTKey'], array('HS256'));
             $decoded_array = (array) $decoded;
             $token = $decoded_array['token'];
-        } else $token = false;
+        } elseif (isset($_SESSION['token'])) $token = $_SESSION['token'];
+        else $token = false;
 
         if ($token and strlen($token) > 0) {
             //Time to check whether it is valid

@@ -27,6 +27,21 @@ function finish($result = false, $error = ["code" => null, "message"=> null], $r
 
     die(json_encode($dataReturn));
 }
+use Money\Currency;
+use Money\Money;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\IntlMoneyFormatter;
+function apiMoney($variable) {
+    global $AUTH;
+    if (!is_object($variable)) $variable = new Money($variable, new Currency($AUTH->data['instance']['instances_config_currency']));
+    $currencies = new ISOCurrencies();
+    $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
+    $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
+    return $moneyFormatter->format($variable);
+}
+function apiMass($variable) {
+    return number_format((float)$variable, 2, '.', '') . "kg";
+}
 
 class assetAssignmentSelector
 {

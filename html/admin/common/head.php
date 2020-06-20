@@ -185,10 +185,10 @@ $TWIG->addFilter(new \Twig\TwigFilter('fontAwesomeFile', function ($extension) {
 
     }
 }));
+
 $TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
-    if ($id == null) return null;
-    if ($id <= 9999) return "A-" . sprintf('%04d', $id);
-    else return "A-" . $id;
+    global $bCMS;
+    return $bCMS->aTag($id);
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('md5', function ($id) {
     return md5($id);

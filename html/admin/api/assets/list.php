@@ -37,23 +37,27 @@ foreach ($assets as $asset) {
     $asset['count'] = count($assetTags);
     $asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
     $asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id']);
+    if ($asset['thumbnail'][0]) $asset['thumbnailSuggested'] = $bCMS->s3URL($asset['thumbnail'][0]['s3files_id'], false, false, '+1 hour', true);
+    //Format finances
+    $asset['assetTypes_mass_format'] = apiMass($asset['assetTypes_mass']);
+    $asset['assetTypes_value_format'] = apiMoney($asset['assetTypes_value']);
+    $asset['assetTypes_dayRate_format'] = apiMoney($asset['assetTypes_dayRate']);
+    $asset['assetTypes_weekRate_format'] = apiMoney($asset['assetTypes_weekRate']);
+    
     $asset['tags'] = [];
     foreach ($assetTags as $tag) {
-        if ($AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {
-            //Check availability
-            $DBLIB->where("assets_id", $tag['assets_id']);
-            $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-            $DBLIB->where("(projects.projects_id = '" . $PAGEDATA['thisProject']['projects_id'] . "' OR projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
-            $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
-            $DBLIB->where("projects.projects_deleted", 0);
-            $DBLIB->where("((projects_dates_deliver_start >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"]  . "' AND projects_dates_deliver_start <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"] . "'))");
-            $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name"]);
-        }
         $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
+        $tag['assets_tag_format'] = $bCMS->aTag($tag['assets_tag']);
+        //Format finances
+        $tag['assets_mass_format'] = apiMass($tag['assets_mass']);
+        $tag['assets_value_format'] = apiMoney($tag['assets_value']);
+        $tag['assets_dayRate_format'] = apiMoney($tag['assets_dayRate']);
+        $tag['assets_weekRate_format'] = apiMoney($tag['assets_weekRate']);
+        
         $asset['tags'][] = $tag;
     }
 
     $PAGEDATA['assets'][] = $asset;
 }
-finish(true, null, $PAGEDATA['assets']);
+finish(true, null, ["assets" => $PAGEDATA['assets'], "pagination" => $PAGEDATA['pagination']]);
 ?>

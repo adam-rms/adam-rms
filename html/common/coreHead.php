@@ -214,6 +214,11 @@ class bCMS {
             return $presignedUrl;
         }
     }
+    function aTag($id) {
+        if ($id == null) return null;
+        if ($id <= 9999) return "A-" . sprintf('%04d', $id);
+        else return "A-" . $id;
+    }
 }
 
 $GLOBALS['bCMS'] = new bCMS;

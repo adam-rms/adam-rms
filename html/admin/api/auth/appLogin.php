@@ -41,7 +41,8 @@ if (isset($_POST['email']) and isset($_POST['password'])) {
                 "iss" => $CONFIG['ROOTURL'],
                 "uid" => $user['users_userid'],
                 "token" => $token,
-                "iat" => time()+21*24*60*60, //21 days token expiry
+                "exp" => time()+21*24*60*60, //21 days token expiry
+                "iat" => time()
             ), $CONFIG['JWTKey']);
 
             finish(true, null, ["token"=>$jwt]);
