@@ -1,0 +1,27 @@
+{% if asset %}
+    <table>
+        <tr>
+            {% if GET.adamrmslogo == 1 %}
+            <td>
+                <img src="{{ CONFIG.ROOTURL }}/assets/img/logosmall.png" style="height: 60px;" />
+            </td>
+            {% endif %}
+            <td>
+                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ asset.barcode.assetsBarcodes_value }}&size=60&type={{ asset.barcode.assetsBarcodes_type }}" alt="Barcode" style="margin-right: 3px;">
+            </td>
+            <td>
+                {% if GET.tags != 0 %}<b>{{ asset.assets_tag|aTag }}</b>{% endif %}
+                {% if GET.mass == 1 %}{{ (asset['assets_mass'] ? ' - ' ~ asset['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? ' - ' ~ asset.assetTypes_mass|mass : '')) }}{% endif %}
+                <br/>
+                {% if GET.typename == 1 %}{{ asset.assetTypes_name }}<br/>{% endif %}
+                {% if GET.definableField1 == 1 and asset.assetTypes_definableFields[0] != "" %}{{ asset.assetTypes_definableFields[0] }}: {{ asset['asset_definableFields_1'] }}<br/> {% endif %}
+                {% if GET.instanceName == 1 %}{{ USERDATA.instance.instances_name }}{% endif %}
+            </td>
+            {% if GET.instancelogo == 1 %}
+            <td>
+                <img src="{{CONFIG.ROOTURL}}/assets/img/logos/instances/{{ USERDATA.instance.instances_logo }}" style="height: 70px">
+            </td>
+            {% endif %}
+        </tr>
+    </table>
+{% endif %}

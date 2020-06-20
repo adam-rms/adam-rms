@@ -486,20 +486,24 @@
                         </a>
                     </li>
                 {% endif %}
-
-
-                    {% if 63|instancePermissions %}
-                        <li class="nav-item">
-                            <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
-                                <i class="nav-icon fas fa-paint-roller"></i>
-                                <p>
-                                    Maintenance
-                                </p>
-                            </a>
-                        </li>
-                    {% endif %}
-
-
+                {% if 63|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
+                            <i class="nav-icon fas fa-paint-roller"></i>
+                            <p>
+                                Maintenance
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if 84|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/maintenance/barcode.php" class="nav-link">
+                            <i class="fas fa-barcode nav-icon"></i>
+                            <p>Barcodes</p>
+                        </a>
+                    </li>
+                {% endif %}
                 {% if 20|instancePermissions %}
                     <li class="nav-header">PROJECTS</li>
                     {% set archive = false %}

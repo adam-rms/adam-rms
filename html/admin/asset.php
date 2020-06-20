@@ -39,6 +39,12 @@ foreach ($assets as $asset) {
     //Flags&Blocks
     $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
 
+    $DBLIB->where("assets_id", $asset['assets_id']);
+    $DBLIB->where("assetsBarcodes_deleted", 0);
+    $DBLIB->orderBy("assetsBarcodes_added", "ASC");
+    $DBLIB->join("users", "assetsBarcodes.users_userid=users.users_userid", "LEFT");
+    $asset['barcodes'] = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2","(SELECT assetsBarcodes_timestamp FROM assetsBarcodesScans WHERE assetsBarcodes_id=assetsBarcodes_id ORDER BY assetsBarcodes_timestamp DESC LIMIT 1) AS lastScan"]);
+
     //Calendar
     $DBLIB->where("assets_id", $asset['assets_id']);
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);

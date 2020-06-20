@@ -32,6 +32,16 @@
                     <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
                     <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?xlsx" class="btn btn-default" title="Excel Export"><i class="fas fa-file-excel"></i></a>
                     <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?csv" class="btn btn-default" title="CSV Export"><i class="fas fa-file-csv"></i></a>
+                    {% if 84|instancePermissions %}
+                        {% if search|length > 0 %}
+                        {% elseif thisCategory %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?category={{ thisCategory.assetCategories_id }}" class="btn btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                        {% elseif thisManufacturer %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?manufacturer={{ thisManufacturer.manufacturers_id }}" class="btn btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                        {% else %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?all" class="btn btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </form>
         </div>
@@ -87,6 +97,9 @@
                         </div>
                         <div class="card-footer">
                             <div class="text-right">
+                                {% if 84|instancePermissions %}
+                                <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-sm btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                                {% endif %}
                                 {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
                                     {% if asset.count == 1 %}
                                         {% if asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}

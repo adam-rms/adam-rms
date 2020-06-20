@@ -111,6 +111,9 @@
                         <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
                         {% endif %}
                     {% endif %}
+                    {% if 84|instancePermissions %}
+                        <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
+                    {% endif %}
                     {% if 19|instancePermissions and assets|length == 1 %}
                         <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                     {% endif %}
@@ -201,6 +204,7 @@
                         {% if assets|length == 1 and 59|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit Asset</a></li>{% endif %}
                         {% if 54|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
                         {% if assets|length == 1 and 61|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
+                        {% if assets|length == 1 and 84|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
                         {% if assets|length == 1 and 63|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
@@ -260,6 +264,8 @@
                                                 {% if 19|instancePermissions %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
                                                 {% endif %}
+
+
                                                 <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
                                                 </div>
                                         </td>
@@ -674,7 +680,64 @@
                                 </ul>
                             </div>
                         {% endif %}
+                        {% if assets|length == 1 and 84|instancePermissions %}
+                            <div class="tab-pane" style="padding: 0" id="barcodes">
+                                <table class="table table-striped projects">
+                                    <thead>
+                                    <tr>
+                                        <th>
 
+                                        </th>
+                                        <th>
+                                            Notes
+                                        </th>
+                                        <th>
+                                            Creator
+                                        </th>
+                                        <th>
+                                            Last Scanned
+                                        </th>
+                                        <th style="width:1%;">
+
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for barcode in assets[0].barcodes %}
+                                        <tr>
+                                            <td>
+                                                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ barcode.assetsBarcodes_value }}&size=50&type={{ barcode.assetsBarcodes_type }}" alt="Barcode">
+                                            </td>
+                                            <td>
+                                                {{ barcode.assetsBarcodes_notes }}
+                                            </td>
+                                            <td>
+                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.users_userid }}">
+                                                    {{ barcode.users_name1 ~ ' ' ~ barcode.users_name2}}
+                                                </a>
+                                                <br/>
+                                                <small>
+                                                    Created {{barcode.assetsBarcodes_added|date("d M Y h:i:sa")}}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                {% if barcode.lastScan != null %}
+                                                    {{barcode.lastScan|date("d M Y h:i:sa")}}
+                                                {% else %}
+                                                    <i>Never scanned</i>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if 86|instancePermissions %}
+                                                    <button title="Delete" class="btn btn-sm btn-danger deleteBarcodeButton" data-barcodeid="{{ barcode['assetsBarcodes_id'] }}"><i class="fa fa-trash"></i></button>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
                         {% if 63|instancePermissions %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
                                 <div class="card" style="margin-bottom:0;">
@@ -1021,6 +1084,31 @@
                             if (result) {
                                 ajaxcall("assets/delete.php", {"assets_id":assetid}, function (data) {
                                     window.location.href = "{{CONFIG.ROOTURL}}/assets.php";
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if 86|instancePermissions %}
+                $(".deleteBarcodeButton").click(function () {
+                    var barcodeid = $(this).data("barcodeid");
+                    bootbox.confirm({
+                        message: "Are you sure you wish to delete this barcode?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("assets/barcodes/delete.php", {"barcodes_id":barcodeid}, function (data) {
+                                    location.reload();
                                 });
                             }
                         }
