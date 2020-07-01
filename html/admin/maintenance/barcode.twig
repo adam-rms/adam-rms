@@ -85,7 +85,8 @@
                                 <p class="text-sm">Stickers Per Sheet
                                     <b class="d-block">
                                         <select class="form-control" name="numStickers">
-                                            <option value="8" selected>8</option>
+                                            <option value="8" selected>8 - Standard</option>
+                                            <option value="8cable">8 - Cable Style</option>
                                         </select>
                                     </b>
                                 </p>
@@ -115,16 +116,26 @@
                     </div>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Blanks</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="callout callout-default">
+                            Use blank barcodes to label new assets, then associate them with AdamRMS assets in the Mobile App
+                        </div>
+                        <input type="number" class="form-control" name="numStickers" id="blanksInput" min="0" value="0" max="500" />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script>
         $(document).ready(function () {
             $("#generateButton").click(function () {
                 var assets = $("#assetSearch").val();
-                if (assets.length > 0) {
-                    console.log(assets);
-                    window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePDF.php?" + $('#settings').serialize() + "&ids=" + assets.join();
-                }
+                window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePDF.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&download=1";
             });
 
             $("#assetSearch").select2({

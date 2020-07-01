@@ -1,6 +1,6 @@
 <style>
     body {
-        font-size: 16px;
+        font-size: {{ GET.numStickers == "8cable" ? '9' : '18' }}px;
         font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
     }
 
@@ -21,18 +21,22 @@ instanceName
 instancelogo: 0
 adamrmslogo: 0-->
 <table autosize="1" style="page-break-inside:avoid">
-    {% for i in range(0,((assets|length)/4)|round(0, 'ceil')) %}
-    <tr width="100%">
-        <td width="50%" height="255px" style="padding-right: 5px;" >
-            {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)],GET:GET} %}<br/>
-            {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)+1],GET:GET} %}
-        </td>
-        <td width="50%" height="255px" style="padding-left: 5px;">
-            {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)+2],GET:GET} %}<br/>
-            {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)+3],GET:GET} %}
-        </td>
+    {% if GET.numStickers == "8" or GET.numStickers == "8cable" %}
+        {% for i in range(0,((assets|length)/4)|round(0, 'ceil')) %}
+        <tr width="100%">
+            <td width="50%" height="255px" style="padding-right: 5px;" >
+                {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)],GET:GET} %}<br/>
+                {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)+1],GET:GET} %}
+            </td>
+            <td width="50%" height="255px" style="padding-left: 5px;">
+                {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)+2],GET:GET} %}<br/>
+                {% include 'maintenance/individualBarcodePDF.twig' with {asset: assets[(i*4)+3],GET:GET} %}
+            </td>
 
-    </tr>
-    {% endfor %}
+        </tr>
+        {% endfor %}
+    {% else %}
+        Unknown format size
+    {% endif %}
 </table>
 </body>

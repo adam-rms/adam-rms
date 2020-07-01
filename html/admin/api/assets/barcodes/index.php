@@ -1,10 +1,9 @@
 <?php
 require_once __DIR__ . '/../../apiHead.php';
 header('Content-Type:'.'image/png');
-
 if (isset($_GET['size'])) $height = intval($_GET['size']);
 else $height = 50;
-if (isset($_GET['width'])) $height = intval($_GET['width']);
+if (isset($_GET['width'])) $width = intval($_GET['width']);
 else $width = 1;
 
 $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
