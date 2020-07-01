@@ -9,7 +9,7 @@ $DBLIB->where("assets.assets_deleted", 0);
 $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 if (strlen($_POST['term']) > 0) {
     $DBLIB->where("(
-		assets.assets_tag LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
+		assets.assets_tag = '" . $bCMS->reverseATag($bCMS->sanitizeString($_POST['term'])) . "'
 		OR assetTypes.assetTypes_name LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
     )");
 }

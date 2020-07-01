@@ -219,6 +219,14 @@ class bCMS {
         if ($id <= 9999) return "A-" . sprintf('%04d', $id);
         else return "A-" . $id;
     }
+    function reverseATag($tag) {
+        //Reverse the process above, being sure to pick out any leading 0s
+        $tag = str_replace("A-000",null,$tag);
+        $tag = str_replace("A-00",null,$tag);
+        $tag = str_replace("A-0",null,$tag);
+        $tag = str_replace("A-",null,$tag);
+        return $tag;
+    }
 }
 
 $GLOBALS['bCMS'] = new bCMS;
