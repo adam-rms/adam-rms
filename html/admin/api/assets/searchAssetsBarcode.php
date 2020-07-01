@@ -6,7 +6,18 @@ $DBLIB->where("assetsBarcodes_type", $_POST['type']);
 $DBLIB->where("assetsBarcodes_deleted",0);
 $barcode = $DBLIB->getone("assetsBarcodes",["assets_id","assetsBarcodes_id"]);
 if (!$barcode) finish(true, null, ["asset" => false, "barcode" => false]);
-elseif ($barcode['assets_id'] == null) finish(true, null, ["asset" => false, "barcode" => $barcode['assetsBarcodes_id']]);
+
+$scan = [
+    "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
+    "users_userid" => $AUTH->data['users_userid'],
+    "assetsBarcodes_timestamp" => date('Y-m-d H:i:s'),
+    "locationsBarcodes_id" => ($_POST['locationType'] == "barcode" ? $_POST['location'] : null),
+    "assetsBarcodes_customLocation" => ($_POST['locationType'] != "barcode" ? $_POST['location'] : null)
+];
+$DBLIB->insert("assetsBarcodesScans",$scan);
+
+
+if ($barcode['assets_id'] == null) finish(true, null, ["asset" => false, "barcode" => $barcode['assetsBarcodes_id']]);
 
 $DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id = '" . $AUTH->data['instance']['instances_id'] . "')");
 $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
