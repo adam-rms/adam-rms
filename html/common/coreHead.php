@@ -221,10 +221,11 @@ class bCMS {
     }
     function reverseATag($tag) {
         //Reverse the process above, being sure to pick out any leading 0s
-        $tag = str_replace("A-000",null,$tag);
-        $tag = str_replace("A-00",null,$tag);
-        $tag = str_replace("A-0",null,$tag);
-        $tag = str_replace("A-",null,$tag);
+        $tag = strtolower($tag);
+        $tag = str_replace("a-000",null,$tag);
+        $tag = str_replace("a-00",null,$tag);
+        $tag = str_replace("a-0",null,$tag);
+        $tag = str_replace("a-",null,$tag);
         return $tag;
     }
 }
