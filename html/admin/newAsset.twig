@@ -266,7 +266,8 @@
                         $("#saveButton").text("Add Another");
                         Toast.fire({
                             type: 'success',
-                            title: (counter + 'x Asset ' + aTag(data.response['assets_tag']) + ' added')
+                            title: (counter + 'x Asset ' + aTag(data.response['assets_tag']) + ' added'),
+                            timer: 15000
                         });
                         counter +=1;
                     }, false);
