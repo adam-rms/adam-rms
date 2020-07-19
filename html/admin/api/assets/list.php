@@ -36,8 +36,11 @@ foreach ($assets as $asset) {
     $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass"]);
     $asset['count'] = count($assetTags);
     $asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
-    $asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id']);
-    if ($asset['thumbnail'][0]) $asset['thumbnailSuggested'] = $bCMS->s3URL($asset['thumbnail'][0]['s3files_id'], false, false, '+1 hour', true);
+    $asset['thumbnails'] = [];
+    foreach ($bCMS->s3List(2, $asset['assetTypes_id']) as $thumbnail) {
+        $thumbnail['url'] = $bCMS->s3URL($thumbnail['s3files_id'], false, false, '+1 hour', true);
+        $asset['thumbnails'][] = $thumbnail;
+    }
     //Format finances
     $asset['assetTypes_mass_format'] = apiMass($asset['assetTypes_mass']);
     $asset['assetTypes_value_format'] = apiMoney($asset['assetTypes_value']);
