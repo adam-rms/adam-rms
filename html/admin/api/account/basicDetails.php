@@ -3,12 +3,12 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 header('Content-Type:text/plain');
 
-if (isset($_GET['username'])) {
-    if ($_GET['userid'] == "NEW" and $AUTH->permissionCheck(4)) $newUser = true; //Are we making a new user here?
+if (isset($_POST['username'])) {
+    if ($_POST['userid'] == "NEW" and $AUTH->permissionCheck(4)) $newUser = true; //Are we making a new user here?
     else $newUser = false;
 
-    if ($AUTH->permissionCheck(5) && $USERDATA['users_userid'] != $_GET['userid'] && !$newUser) {
-        $DBLIB->where("users_userid", $bCMS->sanitizeString($_GET['userid']));
+    if ($AUTH->permissionCheck(5) && $USERDATA['users_userid'] != $_POST['userid'] && !$newUser) {
+        $DBLIB->where("users_userid", $bCMS->sanitizeString($_POST['userid']));
         $thisUser = $DBLIB->getone("users", ["users_userid", "users_email", "users_username"]);
         if (!$thisUser) die("5");
         $userid = $thisUser["users_userid"];
@@ -20,22 +20,22 @@ if (isset($_GET['username'])) {
 
     if (
         (
-            (!$newUser && !$thisUser && strtolower($_GET['email']) != $USERDATA['users_email']) //This users' user account
-          or ($thisUser && strtolower($_GET['email']) != $thisUser['users_email']) //Existing user account being edited
+            (!$newUser && !$thisUser && strtolower($_POST['email']) != $USERDATA['users_email']) //This users' user account
+          or ($thisUser && strtolower($_POST['email']) != $thisUser['users_email']) //Existing user account being edited
             or $newUser
-        ) && $AUTH->emailTaken($bCMS->sanitizeString(strtolower($_GET['email'])))) die("Email taken");
+        ) && $AUTH->emailTaken($bCMS->sanitizeString(strtolower($_POST['email'])))) die("Email taken");
     elseif (
         (
-            (!$newUser && !$thisUser && strtolower($_GET['username']) != $USERDATA['users_username']) //This users' user account
-            or ($thisUser && strtolower($_GET['username']) != $thisUser['users_username']) //Existing user account being edited
+            (!$newUser && !$thisUser && strtolower($_POST['username']) != $USERDATA['users_username']) //This users' user account
+            or ($thisUser && strtolower($_POST['username']) != $thisUser['users_username']) //Existing user account being edited
             or $newUser
-        ) && $AUTH->usernameTaken($bCMS->sanitizeString(strtolower($_GET['username'])))) die("Username taken");
+        ) && $AUTH->usernameTaken($bCMS->sanitizeString(strtolower($_POST['username'])))) die("Username taken");
     else {
         $data = Array (
-            'users_email' => strtolower($bCMS->sanitizeString($_GET['email'])),
-            'users_username' => strtolower($bCMS->sanitizeString($_GET['username'])),
-            'users_name1' => $bCMS->sanitizeString($_GET['forename']),
-            'users_name2' => $bCMS->sanitizeString($_GET['lastname'])
+            'users_email' => strtolower($bCMS->sanitizeString($_POST['email'])),
+            'users_username' => strtolower($bCMS->sanitizeString($_POST['username'])),
+            'users_name1' => $bCMS->sanitizeString($_POST['forename']),
+            'users_name2' => $bCMS->sanitizeString($_POST['lastname'])
         );
 
 
@@ -43,7 +43,7 @@ if (isset($_GET['username'])) {
         if (!$newUser) {
             $DBLIB->where('users_userid', $userid);
             if ($DBLIB->update('users', $data)) {
-                if (($thisUser && $thisUser['users_email'] != strtolower($_GET['email'])) or (!$thisUser && strtolower($_GET['email']) != $USERDATA['users_email'])) {
+                if (($thisUser && $thisUser['users_email'] != strtolower($_POST['email'])) or (!$thisUser && strtolower($_POST['email']) != $USERDATA['users_email'])) {
                     //The email address has been changed
                     $DBLIB->where ('users_userid', $userid);
                     $DBLIB->update ('users', ["users_emailVerified" => "0"]); //Set E-Mail to unverified

@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/../../apiHead.php';
 header('Content-Type:'.'image/png');
-if (isset($_GET['size'])) $height = intval($_GET['size']);
+if (isset($_POST['size'])) $height = intval($_POST['size']);
 else $height = 50;
-if (isset($_GET['width'])) $width = intval($_GET['width']);
+if (isset($_POST['width'])) $width = intval($_POST['width']);
 else $width = 1;
 
 $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
@@ -63,7 +63,7 @@ CODE_39
 CODE_93
 CODE_128
  */
-switch ($_GET['type']) {
+switch ($_POST['type']) {
     case "EAN_8":
         $type = $generator::TYPE_EAN_8;
         break;
@@ -83,4 +83,4 @@ switch ($_GET['type']) {
         $type = $generator::TYPE_CODE_128;
 }
 
-echo $generator->getBarcode($bCMS->sanitizeString($_GET['barcode']), $type, $width, $height, [0,0,0]);
+echo $generator->getBarcode($bCMS->sanitizeString($_POST['barcode']), $type, $width, $height, [0,0,0]);

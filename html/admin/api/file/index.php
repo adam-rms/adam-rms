@@ -9,11 +9,10 @@ require_once __DIR__ . '/../apiHeadSecure.php';
  *      r (optional, default false) - should the url be returned by the script as plain text or a redirect triggered? (if set it will return it)
  *      e (optional, default 1 minute) - when should the link expire? Must be a string describing how long in words basically. If this file type has security features then it will default to 1 minute.
  */
-
-$file = $bCMS->s3URL($_GET['f'], (isset($_GET['s']) ? $_GET['s'] : null), (isset($_GET['d'])),(isset($_GET['e']) ? $_GET['e'] : null));
+$file = $bCMS->s3UR($_POST['f'], (isset($_POST['s']) ? $_POST['s'] : null), (isset($_POST['d'])),(isset($_POST['e']) ? $_POST['e'] : null));
 if (!$file) die("404 file not found");
 else {
-    if (isset($_GET['r'])) {
+    if (isset($_POST['r'])) {
         header("Location: " . $file);
         die();
     } else die($file);

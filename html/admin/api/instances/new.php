@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->permissionCheck(8) or !isset($_GET['instances_name'])) die("404");
+if (!$AUTH->permissionCheck(8) or !isset($_POST['instances_name'])) die("404");
 
 $instance = $DBLIB->insert("instances", [
-    "instances_name" => $_GET['instances_name'],
-    "instances_address" => $_GET['instances_name'],
-    "instances_website" => $_GET['instances_website'],
-    "instances_email" => $_GET['instances_email'],
-    "instances_phone" => $_GET['instances_phone'],
+    "instances_name" => $_POST['instances_name'],
+    "instances_address" => $_POST['instances_name'],
+    "instances_website" => $_POST['instances_website'],
+    "instances_email" => $_POST['instances_email'],
+    "instances_phone" => $_POST['instances_phone'],
     "instances_plan" => "trial"
 ]);
 if (!$instance) finish(false, ["code" => "CREATE-INSTANCE-FAIL", "message"=> "Could not create new business"]);
@@ -24,7 +24,7 @@ if (!$position) finish(false, ["code" => "CREATE-POSITION-FAIL", "message"=> "Co
 $userPosition = $DBLIB->insert("userInstances", [
     "users_userid" => $USERDATA['users_userid'],
     "instancePositions_id" => $position,
-    "userInstances_label" => $_GET['role'],
+    "userInstances_label" => $_POST['role'],
 ]);
 if (!$userPosition) finish(false, ["code" => "ADD-USER-TO-INSTANCE-FAIL", "message"=> "Could not create new business"]);
 

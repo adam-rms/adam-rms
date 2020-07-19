@@ -60,6 +60,8 @@ foreach ($assets as $asset) {
         $asset['tags'][] = $tag;
     }
 
+    $asset['files'] = $bCMS->s3List(3, $asset['assetTypes_id']);
+
     $PAGEDATA['assets'][] = $asset;
 }
 finish(true, null, ["assets" => $PAGEDATA['assets'], "pagination" => $PAGEDATA['pagination']]);

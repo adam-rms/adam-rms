@@ -2,12 +2,12 @@
 	require_once __DIR__ . '/../apiHead.php';
 
 	header('Content-Type:text/plain');
-	if (!isset($_GET['code'])) {
+	if (!isset($_POST['code'])) {
         header('Location: ' . $CONFIG['ROOTURL']); //If it fails we may as well just assume they have tried to click it a second time.
         exit;
 	}
 
-	$DBLIB->where('emailVerificationCodes_code', $bCMS->sanitizeString($_GET['code']));
+	$DBLIB->where('emailVerificationCodes_code', $bCMS->sanitizeString($_POST['code']));
 	$code = $DBLIB->getOne('emailVerificationCodes');
 	if (isset($code) and $code['emailVerificationCodes_valid'] == '1') {
 		if (strtotime($code['emailVerificationCodes_timestamp']) < (time()-(60*60*48))) {

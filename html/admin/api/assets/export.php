@@ -1,9 +1,9 @@
 <?php
-if (isset($_GET['csv'])) {
+if (isset($_POST['csv'])) {
     header("Content-type: text/csv");
     header("Content-Disposition: attachment; filename=assets.csv");
 }
-elseif (isset($_GET['xlsx'])) {
+elseif (isset($_POST['xlsx'])) {
     header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     header("Content-Disposition: attachment; filename=assets.xlsx");
 }
@@ -87,14 +87,14 @@ foreach ($PAGEDATA['assets'] as $assetType) {
         $sheet->fromArray($array, NULL, 'A2');
     }
 }
-if (isset($_GET['csv'])) {
+if (isset($_POST['csv'])) {
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
     $writer->setDelimiter(',');
     $writer->setEnclosure('"');
     $writer->setLineEnding("\r\n");
     $writer->setSheetIndex(0);
     $writer->save("php://output");
-} elseif (isset($_GET['xlsx'])) {
+} elseif (isset($_POST['xlsx'])) {
     //Header
     $sheet->fromArray(["Asset Code", "Category", "Name", "Manufacturer", "Mass (kg)", "Day Rate", "Week Rate", "Value", "Notes", "Definable Fields"], NULL, 'A1');
     $sheet->mergeCells('J1:AC1');

@@ -13,6 +13,12 @@ foreach ($dataPayload as $key=>$item) {
     $_GET[$key] = $item;
     $_POST[$key] = $item;
 }
+//Copy GET over to POST for older clients
+foreach ($_GET as $key=>$item) {
+    $_POST[$key] = $item;
+}
+//POST is now the authoritarian copy
+
 
 require_once __DIR__ . '/../common/head.php';
 //To prevent errors showing on the json output
