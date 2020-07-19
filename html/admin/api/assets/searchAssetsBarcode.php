@@ -18,7 +18,7 @@ $DBLIB->insert("assetsBarcodesScans",$scan);
 
 if ($barcode['assets_id'] == null) finish(true, null, ["asset" => false, "barcode" => $barcode['assetsBarcodes_id']]);
 
-$DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id IN (" . $AUTH->data['instance_ids'] . "))");
+$DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id IN (" . implode(",",$AUTH->data['instance_ids']) . "))");
 $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");

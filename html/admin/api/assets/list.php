@@ -9,6 +9,7 @@ else $page = 1;
 $DBLIB->pageLimit = (isset($_POST['pageLimit']) ? $_POST['pageLimit'] : 20); //Users per page
 if (isset($_POST['category'])) $DBLIB->where("assetTypes.assetCategories_id", $_POST['category']);
 if (isset($_POST['manufacturer'])) $DBLIB->where("manufacturers.manufacturers_id", $_POST['manufacturer']);
+if (isset($_POST['assetTypes_id'])) $DBLIB->where("assetTypes.assetTypes_id", $_POST['assetTypes_id']);
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
