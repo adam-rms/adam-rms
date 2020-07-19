@@ -16,17 +16,16 @@ $scan = [
 ];
 $DBLIB->insert("assetsBarcodesScans",$scan);
 
-
 if ($barcode['assets_id'] == null) finish(true, null, ["asset" => false, "barcode" => $barcode['assetsBarcodes_id']]);
 
-$DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id = '" . $AUTH->data['instance']['instances_id'] . "')");
+$DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id IN (" . $AUTH->data['instance_ids'] . "))");
 $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $DBLIB->where("assets.assets_id",$barcode['assets_id']);
 $asset = $DBLIB->getone("assets", ["assets.assets_id", "assets.assets_tag", "assetTypes.assetTypes_name", "assetTypes.assetTypes_id", "assetCategories.assetCategories_name", "assetCategoriesGroups.assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);
-if (!$asset) finish(false, ["code" => "LIST-ASSETS-FAIL", "message"=> "Could not find asset"]);
+if (!$asset) finish(true, null, ["asset" => false, "barcode" => $barcode['assetsBarcodes_id']]);
 
 //Format asset tag
 if ($asset['assets_tag'] == null) $asset['tag']= '';
