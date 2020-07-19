@@ -9,7 +9,8 @@ $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGrou
 if (isset($_POST['term'])) {
     $DBLIB->where("(
         assetTypes_description LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%' OR
-        assetTypes_name LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%' 
+        assetTypes_name LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%' OR
+        assets_tag = '" . $bCMS->reverseATag($bCMS->sanitizeString($_POST['term'])). "'
     )");
 } else $DBLIB->orderBy("assetTypes_name", "ASC");
 $assets = $DBLIB->get("assetTypes", 15, ["assetTypes_name", "assetTypes_id", "assetCategories_name", "assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);
