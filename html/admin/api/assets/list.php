@@ -56,7 +56,9 @@ foreach ($assets as $asset) {
         $tag['assets_value_format'] = apiMoney($tag['assets_value']);
         $tag['assets_dayRate_format'] = apiMoney($tag['assets_dayRate']);
         $tag['assets_weekRate_format'] = apiMoney($tag['assets_weekRate']);
-        
+
+        $tag['files'] = $bCMS->s3List(4, $tag['assets_id']);
+
         $asset['tags'][] = $tag;
     }
 
