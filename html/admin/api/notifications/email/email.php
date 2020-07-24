@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../apiHead.php';
 function sendEmail($userid, $instanceID = false, $subject, $html = false, $template = false, $array = false) {
 	global $DBLIB, $CONFIG;
 	if (!$userid) return false;
@@ -15,23 +15,10 @@ function sendEmail($userid, $instanceID = false, $subject, $html = false, $templ
         $DBLIB->where("userInstances_deleted", 0);
         $DBLIB->where("instances.instances_deleted", 0);
         $instance = $DBLIB->getone("userInstances", ["instances.instances_name", "instances.instances_address", "instances.instances_emailHeader"]);
+        if ($instance['instances_emailHeader'] != null) $instance['instances_emailHeader'] = $bCMS->s3URL($instance['instances_emailHeader'],"medium");
     } else $instance = false;
 
-    $TWIGLOADER = new \Twig\Loader\FilesystemLoader(__DIR__ . '/');
-    $TWIGLOADER->addPath(__DIR__ . '/../../../');
-    $TWIG = new \Twig\Environment($TWIGLOADER, array(
-        'debug' => true,
-        'auto_reload' => true,
-        "encoding" => "UTF-8"
-    ));
-    $TWIG->addExtension(new \Twig\Extension\DebugExtension());
-    $TWIG->addFilter(new \Twig\TwigFilter('aTag', function ($id) {
-        if ($id == null) return null;
-        if ($id <= 9999) return "A-" . sprintf('%04d', $id);
-        else return "A-" . $id;
-    }));
-
-    $outputHTML = $TWIG->render('email_template.twig', ["SUBJECT" => $subject, "HTML"=> $html, "CONFIG" => $CONFIG, "DATA" => $array, "TEMPLATE" => $template, "INSTANCE" => $instance]);
+    $outputHTML = $TWIG->render('api/notifications/email/email_template.twig', ["SUBJECT" => $subject, "HTML"=> $html, "CONFIG" => $CONFIG, "DATA" => $array, "TEMPLATE" => $template, "INSTANCE" => $instance]);
 
     $email = new \SendGrid\Mail\Mail();
     $email->setFrom($CONFIG['PROJECT_FROM_EMAIL'], $CONFIG['PROJECT_NAME']);

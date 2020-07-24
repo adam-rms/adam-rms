@@ -27,7 +27,7 @@
 <sethtmlpageheader name="firstpage" value="on" show-this-page="1" />
 <sethtmlpageheader name="otherpages" value="on" />
 <div style="width: 100%;" align="center" style="text-align: center;">
-    <img src="{{CONFIG.ROOTURL}}/assets/img/logos/instances/{{ USERDATA.instance.instances_logo }}" style="width: 200px; padding:20px;">
+    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 200px; padding:20px;">
     <h2> {{  note['projectsNotes_title'] }}</h2>
     <h3>{{ USERDATA['instance']['instances_name'] }} - {{ project['projects_name'] }}</h3>
     <hr/>

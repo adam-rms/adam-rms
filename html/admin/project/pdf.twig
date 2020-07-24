@@ -33,7 +33,7 @@
 <sethtmlpageheader name="firstpage" value="on" show-this-page="1" />
 <sethtmlpageheader name="otherpages" value="on" />
 <div style="width: 100%;" align="center">
-    <img src="{{CONFIG.ROOTURL}}/assets/img/logos/instances/{{ USERDATA.instance.instances_logo }}" style="width: 200px; padding:20px;">
+    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 200px; padding:20px;">
 </div>
 <table style="font-size: 16px;">
     <tr>

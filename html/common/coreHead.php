@@ -173,6 +173,8 @@ class bCMS {
                 // Maintenance job file
             case 9:
                 // User thumbnail
+            case 10:
+                //Instance email thumbnail
             default:
                 //There are no specific requirements for this file so not to worry.
         }
