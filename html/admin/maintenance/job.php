@@ -89,7 +89,7 @@ $DBLIB->join("users", "maintenanceJobsMessages.users_userid=users.users_userid",
 $DBLIB->join("s3files", "s3files.s3files_id=maintenanceJobsMessages.maintenanceJobsMessages_file", "LEFT");
 $DBLIB->orderBy("maintenanceJobsMessages.maintenanceJobsMessages_timestamp", "ASC");
 $DBLIB->orderBy("maintenanceJobsMessages.maintenanceJobsMessages_id", "ASC");
-$PAGEDATA['job']['messages'] = $DBLIB->get("maintenanceJobsMessages",null, ["s3files.s3files_extension", "s3files.s3files_name", "maintenanceJobsMessages.maintenanceJobsMessages_text", "maintenanceJobsMessages.maintenanceJobsMessages_file", "maintenanceJobsMessages.maintenanceJobsMessages_timestamp","users.users_name1", "users.users_name2", "users.users_email", "users.users_userid"]);
+$PAGEDATA['job']['messages'] = $DBLIB->get("maintenanceJobsMessages",null, ["s3files.s3files_extension", "s3files.s3files_name", "maintenanceJobsMessages.maintenanceJobsMessages_text", "maintenanceJobsMessages.maintenanceJobsMessages_file", "maintenanceJobsMessages.maintenanceJobsMessages_timestamp","users.users_name1", "users.users_name2", "users.users_email", "users.users_userid","users.users_thumbnail"]);
 
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['job']['maintenanceJobs_title'], "BREADCRUMB" => false];

@@ -11,7 +11,7 @@
 {% endblock %}
 {% block content %}
 	<div class="row" style="margin-top: 15px;">
-		<div class="col-lg-6">
+		<div class="col-12 col-md-4">
 			<div class="card ">
 				<div class="card-header">
 					<h3 class="card-title">Account Basics</h3>
@@ -141,9 +141,7 @@
 					});
 					</script>
 			</div>
-		</div>
-		{% if USER.users_userid == USERDATA.users_userid %}
-		<div class="col-lg-6">
+			{% if USER.users_userid == USERDATA.users_userid %}
 			<div class="card ">
 				<div class="card-header">
 					<h3 class="card-title">Password</h3>
@@ -159,9 +157,9 @@
 					</div>
 					<div class="form-group">
 						<style>
-						.button_strength {
-							display: none;
-						}
+							.button_strength {
+								display: none;
+							}
 						</style>
 						<label for="username">New Password</label>
 						<input type="password" placeholder="New Password" class="form-control" id="passnew" /><br/>
@@ -171,7 +169,7 @@
 				<div class="card-footer" style="text-align: right;">
 					<button id="save-password-settings" class="btn btn-default">Change</button>
 				</div>
-					<script>
+				<script>
 					$(document).ready(function() {
 						$("#passnew").strength();
 						$('#save-password-settings').click(function() {
@@ -194,54 +192,109 @@
 							}
 						});
 					});
-					</script>
+				</script>
 			</div>
-		</div>
-		{% endif %}
-		<div class="col-lg-6">
-			<div class="card ">
-				<div class="card-header">
-					<h3 class="card-title">Profile Picture</h3>
-				</div>
-				<div class="card-body" style="text-align: center;">
-					<img src="https://www.gravatar.com/avatar/{{ user.users_email|md5 }}?s=1024&d=identicon" alt="Profile Picture" style="width:50%;" />
-				</div>
-				<div class="card-footer" style="text-align: right;">
-					<a href="https://gravatar.com/" target="_blank" class="btn btn-default">Change</a>
-				</div>
-			</div>
-		</div>
-		{% if 16|permissions %}
-		<div class="col-lg-6">
-			<div class="card">
-				<div class="card-header">
-					<h3 class="card-title">Positions</h3>
-				</div>
-				<div class="card-body p-0">
-					<table class="table" border="0" style="overflow-x: scroll;">
-						<thead>
-						<tr>
-							<th>Title</th>
-							<th>From</th>
-							<th>To</th>
-							<th>Show on site</th>
-							{% if USER.users_userid != USERDATA.users_userid and 13|permissions %}
-							<th></th>
-								<th></th>
-							{% endif %}
-						</tr>
-						</thead>
-						<tbody>
-						{% if USER.users_userid != "NEW" %}
-							{% for position in USER.POSITIONS %}
+			{% endif %}
+			{% if 16|permissions %}
+				<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">Positions</h3>
+						</div>
+						<div class="card-body p-0">
+							<table class="table" border="0" style="overflow-x: scroll;">
+								<thead>
 								<tr>
-									{% if 13|permissions and USER.users_userid != USERDATA.users_userid %}
+									<th>Title</th>
+									<th>From</th>
+									<th>To</th>
+									<th>Show on site</th>
+									{% if USER.users_userid != USERDATA.users_userid and 13|permissions %}
+										<th></th>
+										<th></th>
+									{% endif %}
+								</tr>
+								</thead>
+								<tbody>
+								{% if USER.users_userid != "NEW" %}
+									{% for position in USER.POSITIONS %}
+									<tr>
+										{% if 13|permissions and USER.users_userid != USERDATA.users_userid %}
+											<td>
+												<div class="form-group">
+													<select class="form-control positionID">
+														{% for subposition in POSSIBLEPOSITIONS %}
+
+															<option {{ subposition.positions_id == position.positions_id ? 'selected' : '' }} value="{{ subposition.positions_id }}">{{ subposition.positions_displayName }}</option>
+														{% endfor %}
+													</select>
+												</div>
+
+											</td>
+											<td>
+												<div class="form-group">
+													<input type='text' class="form-control positionStart" id="position{{ position.userPositions_id }}Start" />
+												</div>
+											</td>
+											<td>
+												<div class="form-group">
+													<input type='text' class="form-control positionEnd" id="position{{ position.userPositions_id }}End" />
+												</div>
+											</td>
+											<td>
+												<div class="checkbox">
+													<label><input type="checkbox" class="positionPublic" {{ (position.userPositions_show == 1 ? 'checked' : '') }} ></label>
+												</div>
+											</td>
+											<td>
+												<button type="button" title="Delete" data-positionid="{{ position.userPositions_id }}" class="btn btn-danger deletePermissionEdit"><i class="fa fa-trash"></i></button>
+											</td>
+											<td>
+												<button type="button" title="Save" data-positionid="{{ position.userPositions_id }}" class="btn btn-default savePermissionEdit"><i class="fa fa-save"></i></button>
+											</td>
+											<script>
+												$(function () {
+													$('#position{{ position.userPositions_id }}Start').datetimepicker({
+														date: "{{ position.userPositions_start }}",
+														locale: "en-gb",
+														format: "D MMM YYYY h:mm:ss a"
+													});
+													$('#position{{ position.userPositions_id }}End').datetimepicker({
+														useCurrent: false, //Important! See issue #1075
+														date: "{{ position.userPositions_end }}",
+														locale: "en-gb",
+														format: "D MMM YYYY h:mm:ss a"
+													});
+													$("#position{{ position.userPositions_id }}Start").on("dp.change", function (e) {
+														$('#position{{ position.userPositions_id }}End').data("DateTimePicker").minDate(e.date);
+													});
+													$("#position{{ position.userPositions_id }}End").on("dp.change", function (e) {
+														$('#position{{ position.userPositions_id }}Start').data("DateTimePicker").maxDate(e.date);
+													});
+												});
+											</script>
+										{% else %}
+											<td>
+												{% if position.userPositions_displayName != null %}
+													{{ position.userPositions_displayName }}
+												{% else %}
+													{{ position.positions_displayName }}
+												{% endif %}
+											</td>
+											<td>
+												{{ position.userPositions_start }}</td>
+											<td>{{ position.userPositions_end }}</td>
+											<td>{{ (position.userPositions_show == 1 ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>') }}</td>
+										{% endif %}
+									</tr>
+									{% endfor %}
+								{% if USER.users_userid != USERDATA.users_userid and 13|permissions %}
+									<tr><td colspan="999" style="font-weight: bold;">Add position</td></tr>
+									<tr>
 										<td>
 											<div class="form-group">
-												<select class="form-control positionID">
-													{% for subposition in POSSIBLEPOSITIONS %}
-
-														<option {{ subposition.positions_id == position.positions_id ? 'selected' : '' }} value="{{ subposition.positions_id }}">{{ subposition.positions_displayName }}</option>
+												<select class="form-control positionID" id="newPositionID">
+													{% for position in POSSIBLEPOSITIONS %}
+														<option value="{{ position.positions_id }}">{{ position.positions_displayName }}</option>
 													{% endfor %}
 												</select>
 											</div>
@@ -249,203 +302,132 @@
 										</td>
 										<td>
 											<div class="form-group">
-												<input type='text' class="form-control positionStart" id="position{{ position.userPositions_id }}Start" />
+												<input type='text' class="form-control positionStart" id="newPositionStart" />
 											</div>
 										</td>
 										<td>
 											<div class="form-group">
-												<input type='text' class="form-control positionEnd" id="position{{ position.userPositions_id }}End" />
+												<input type='text' class="form-control positionEnd" id="newPositionEnd" />
 											</div>
 										</td>
 										<td>
 											<div class="checkbox">
-												<label><input type="checkbox" class="positionPublic" {{ (position.userPositions_show == 1 ? 'checked' : '') }} ></label>
+												<label><input type="checkbox" class="positionPublic" checked id="newPositionShow"></label>
 											</div>
 										</td>
 										<td>
-											<button type="button" title="Delete" data-positionid="{{ position.userPositions_id }}" class="btn btn-danger deletePermissionEdit"><i class="fa fa-trash"></i></button>
+											<button type="button" title="Save" data-positionid="new" class="btn btn-default savePermissionEdit"><i class="fa fa-plus"></i></button>
 										</td>
-										<td>
-											<button type="button" title="Save" data-positionid="{{ position.userPositions_id }}" class="btn btn-default savePermissionEdit"><i class="fa fa-save"></i></button>
-										</td>
-										<script>
-											$(function () {
-												$('#position{{ position.userPositions_id }}Start').datetimepicker({
-													date: "{{ position.userPositions_start }}",
-													locale: "en-gb",
-													format: "D MMM YYYY h:mm:ss a"
-												});
-												$('#position{{ position.userPositions_id }}End').datetimepicker({
-													useCurrent: false, //Important! See issue #1075
-													date: "{{ position.userPositions_end }}",
-													locale: "en-gb",
-													format: "D MMM YYYY h:mm:ss a"
-												});
-												$("#position{{ position.userPositions_id }}Start").on("dp.change", function (e) {
-													$('#position{{ position.userPositions_id }}End').data("DateTimePicker").minDate(e.date);
-												});
-												$("#position{{ position.userPositions_id }}End").on("dp.change", function (e) {
-													$('#position{{ position.userPositions_id }}Start').data("DateTimePicker").maxDate(e.date);
-												});
+									</tr>
+									<script>
+										$(function () {
+											$('#newPositionStart').datetimepicker({
+												locale: "en-gb",
+												format: "D MMM YYYY h:mm:ss a"
 											});
-										</script>
-									{% else %}
-									<td>
-										{% if position.userPositions_displayName != null %}
-											{{ position.userPositions_displayName }}
-										{% else %}
-											{{ position.positions_displayName }}
-										{% endif %}
-									</td>
-									<td>
-										{{ position.userPositions_start }}</td>
-									<td>{{ position.userPositions_end }}</td>
-									<td>{{ (position.userPositions_show == 1 ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>') }}</td>
-									{% endif %}
-								</tr>
-							{% endfor %}
-							{% if USER.users_userid != USERDATA.users_userid and 13|permissions %}
-							<tr><td colspan="999" style="font-weight: bold;">Add position</td></tr>
-							<tr>
-								<td>
-									<div class="form-group">
-										<select class="form-control positionID" id="newPositionID">
-											{% for position in POSSIBLEPOSITIONS %}
-											<option value="{{ position.positions_id }}">{{ position.positions_displayName }}</option>
-											{% endfor %}
-										</select>
-									</div>
+											$('#newPositionEnd').datetimepicker({
+												useCurrent: false, //Important! See issue #1075
+												locale: "en-gb",
+												format: "D MMM YYYY h:mm:ss a"
+											});
+											$("#newPositionStart").on("dp.change", function (e) {
+												$('#newPositionEnd').data("DateTimePicker").minDate(e.date);
+											});
+											$("#newPositionEnd").on("dp.change", function (e) {
+												$('#newPositionStart').data("DateTimePicker").maxDate(e.date);
+											});
+										});
+									</script>
+								{% endif %}
+								{% else %}
+									<tr>
+										<td colspan="999" style="font-style: italic; text-align: center;">Please create the user before you assign positions</td>
+									</tr>
+								{% endif %}
+								</tbody>
 
-								</td>
-								<td>
-									<div class="form-group">
-										<input type='text' class="form-control positionStart" id="newPositionStart" />
-									</div>
-								</td>
-								<td>
-									<div class="form-group">
-										<input type='text' class="form-control positionEnd" id="newPositionEnd" />
-									</div>
-								</td>
-								<td>
-									<div class="checkbox">
-										<label><input type="checkbox" class="positionPublic" checked id="newPositionShow"></label>
-									</div>
-								</td>
-								<td>
-									<button type="button" title="Save" data-positionid="new" class="btn btn-default savePermissionEdit"><i class="fa fa-plus"></i></button>
-								</td>
-							</tr>
+							</table>
 							<script>
-								$(function () {
-									$('#newPositionStart').datetimepicker({
-										locale: "en-gb",
-										format: "D MMM YYYY h:mm:ss a"
+								$(document).ready(function() {
+									$("#permissionsOverlayLoading").hide();
+									{% if 13|permissions %}
+									$('.savePermissionEdit').click(function() {
+										$("#permissionsOverlayLoading").show();
+										$.ajax({
+											url: '{{CONFIG.ROOTURL}}/api/account/permissions.php',
+											data: {
+												"users_userid":"{{ USER.users_userid }}",
+												"userPositions_id":$(this).data("positionid"),
+												"positions_id":$(this).closest('tr').find('.positionID').val(),
+												"userPositions_start":$(this).closest('tr').find('.positionStart').val(),
+												"userPositions_end":$(this).closest('tr').find('.positionEnd').val(),
+												"userPositions_show":($(this).closest('tr').find('.positionPublic').is(':checked') ? 1 : 0),
+												"action":"EDIT"
+											},
+											type: "POST",
+											success: function (result) {
+												if (result.result) {
+													location.reload();
+												} else {
+													bootbox.alert('Error - Could not change permissions - Please try again!', function() {
+														location.reload();
+													});
+												}
+											}
+										});
+
 									});
-									$('#newPositionEnd').datetimepicker({
-										useCurrent: false, //Important! See issue #1075
-										locale: "en-gb",
-										format: "D MMM YYYY h:mm:ss a"
+									var thispositonid = "";
+									$('.deletePermissionEdit').click(function() {
+										thispositonid = $(this).data("positionid");
+										bootbox.confirm({
+											message: "Are you sure you wish to delete this position record? <br/> Positions should be normally kept as an important matter of record - if this user has now left the position please instead set the end date as appropriate",
+											buttons: {
+												confirm: {
+													label: 'Yes',
+													className: 'btn-success'
+												},
+												cancel: {
+													label: 'No',
+													className: 'btn-danger'
+												}
+											},
+											callback: function (result) {
+												if (result) {
+													$("#permissionsOverlayLoading").show();
+													$.ajax({
+														url: '{{ CONFIG.ROOTURL }}/api/account/permissions.php',
+														data: {
+															"userPositions_id": thispositonid,
+															"users_userid":"{{ USER.users_userid }}",
+															"action": "DELETE"
+														},
+														type: "POST",
+														success: function (result) {
+															if (result.result) {
+																location.reload();
+															} else {
+																bootbox.alert('Error - Could not change permissions - Please try again!', function () {
+																	location.reload();
+																});
+															}
+														}
+													});
+												}
+											}
+										});
 									});
-									$("#newPositionStart").on("dp.change", function (e) {
-										$('#newPositionEnd').data("DateTimePicker").minDate(e.date);
-									});
-									$("#newPositionEnd").on("dp.change", function (e) {
-										$('#newPositionStart').data("DateTimePicker").maxDate(e.date);
-									});
+									{% endif %}
 								});
 							</script>
-							{% endif %}
-						{% else %}
-							<tr>
-								<td colspan="999" style="font-style: italic; text-align: center;">Please create the user before you assign positions</td>
-							</tr>
-						{% endif %}
-						</tbody>
-
-					</table>
-					<script>
-						$(document).ready(function() {
-							$("#permissionsOverlayLoading").hide();
-							{% if 13|permissions %}
-							$('.savePermissionEdit').click(function() {
-								$("#permissionsOverlayLoading").show();
-								$.ajax({
-									url: '{{CONFIG.ROOTURL}}/api/account/permissions.php',
-									data: {
-										"users_userid":"{{ USER.users_userid }}",
-										"userPositions_id":$(this).data("positionid"),
-										"positions_id":$(this).closest('tr').find('.positionID').val(),
-										"userPositions_start":$(this).closest('tr').find('.positionStart').val(),
-										"userPositions_end":$(this).closest('tr').find('.positionEnd').val(),
-										"userPositions_show":($(this).closest('tr').find('.positionPublic').is(':checked') ? 1 : 0),
-										"action":"EDIT"
-									},
-									type: "POST",
-									success: function (result) {
-										if (result.result) {
-											location.reload();
-										} else {
-											bootbox.alert('Error - Could not change permissions - Please try again!', function() {
-												location.reload();
-											});
-										}
-									}
-								});
-
-							});
-							var thispositonid = "";
-							$('.deletePermissionEdit').click(function() {
-								thispositonid = $(this).data("positionid");
-								bootbox.confirm({
-									message: "Are you sure you wish to delete this position record? <br/> Positions should be normally kept as an important matter of record - if this user has now left the position please instead set the end date as appropriate",
-									buttons: {
-										confirm: {
-											label: 'Yes',
-											className: 'btn-success'
-										},
-										cancel: {
-											label: 'No',
-											className: 'btn-danger'
-										}
-									},
-									callback: function (result) {
-										if (result) {
-											$("#permissionsOverlayLoading").show();
-											$.ajax({
-												url: '{{ CONFIG.ROOTURL }}/api/account/permissions.php',
-												data: {
-													"userPositions_id": thispositonid,
-													"users_userid":"{{ USER.users_userid }}",
-													"action": "DELETE"
-												},
-												type: "POST",
-												success: function (result) {
-													if (result.result) {
-														location.reload();
-													} else {
-														bootbox.alert('Error - Could not change permissions - Please try again!', function () {
-															location.reload();
-														});
-													}
-												}
-											});
-										}
-									}
-								});
-							});
-							{% endif %}
-						});
-					</script>
-				</div>
-				<div class="overlay" id="permissionsOverlayLoading">
-					<i class="fa fa-refresh fa-spin"></i>
-				</div>
-			</div>
+						</div>
+						<div class="overlay" id="permissionsOverlayLoading">
+							<i class="fa fa-refresh fa-spin"></i>
+						</div>
+					</div>
+			{% endif %}
 		</div>
-		{% endif %}
-		{% if false %}
-		<div class="col-lg-6">
+		<div class="col-12 col-md-2">
 			<div class="card ">
 				<div class="card-header">
 					<h3 class="card-title">Profile picture</h3>
@@ -459,24 +441,14 @@
 				</div>
 				{% if 14|permissions or USER.users_userid == USERDATA.users_userid %}
 				<div class="card-footer">
-					{% embed 'common/plugins/fineuploader.twig' with {'publicBool': true, 'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 1, 'subTypeId': 1, 'fileLimit': 1, 'imagesOnly': true } %}
+					{% embed 'common/plugins/fineuploader.twig' with {'publicBool': false, 'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
 						{% block success %}
 							console.log(responseJson);
-							$.ajax({
-							url: '{{CONFIG.ROOTURL}}/api/account/thumbnail.php',
-							type : "POST",
-							data : {
+							ajaxcall("account/thumbnail.php", {
 								"users_userid": "{{ USER.users_userid }}",
 								'thumbnail' : responseJson.id,
-							},
-							cache : false,
-							success: function (result) {
-								if (result != '1') {
-									bootbox.alert(result + 'Error - Could not change thumbnail - Please refresh the page and try again!');
-								} else {
+								}, function (data) {
 									location.reload();
-								}
-							}
 							});
 						{% endblock %}
 					{% endembed %}
@@ -486,82 +458,81 @@
 				</script>
 			</div>
 		</div>
-		{% endif %}
-		{% if USER.users_userid != "NEW" %}
-		<div class="col-lg-6">
-			<div class="card ">
-				<div class="card-header">
-					<h3 class="card-title">Social Media profiles</h3>
-				</div>
-				<div class="card-body">
-					<div class="alert alert-success" id="update_social_success" style="display: none;">
-						<strong>Success!</strong> Social media updated!
+		<div class="col-12 col-md-6">
+			{% if USER.users_userid != "NEW" %}
+				<div class="card ">
+					<div class="card-header">
+						<h3 class="card-title">Social Media profiles</h3>
 					</div>
-					<form id="update_social_form">
-						<p>Share links to your social media profiles to be displayed on your user profile page</p>
+					<div class="card-body">
+						<div class="alert alert-success" id="update_social_success" style="display: none;">
+							<strong>Success!</strong> Social media updated!
+						</div>
+						<form id="update_social_form">
+							<p>Share links to your social media profiles to be displayed on your user profile page</p>
 
-						<label>Facebook</label>
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text">https://facebook.com/</span>
+							<label>Facebook</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text">https://facebook.com/</span>
+								</div>
+								<input type="text" class="form-control" name="facebook" value="{{ USER.users_social_facebook }}">
 							</div>
-							<input type="text" class="form-control" name="facebook" value="{{ USER.users_social_facebook }}">
-						</div>
-						<br/>
-						<label>Twitter</label>
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text">https://twitter.com/</span>
+							<br/>
+							<label>Twitter</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text">https://twitter.com/</span>
+								</div>
+								<input type="text" class="form-control" name="twitter" value="{{ USER.users_social_twitter }}">
+							</div><br/>
+							<label>Instagram</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text">https://instagram.com/</span>
+								</div>
+								<input type="text" class="form-control" name="instagram" value="{{ USER.users_social_instagram }}">
+							</div><br/>
+							<label>Linkedin</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text">https://linkedin.com/ln/</span>
+								</div>
+								<input type="text" class="form-control" name="linkedin" value="{{ USER.users_social_linkedin }}">
+							</div><br/>
+							<label>Snapchat</label>
+							<div class="input-group">
+								<div class="input-group-prepend"><span class="input-group-text"><i class="fab fa-snapchat-ghost"></i></span></div>
+								<input type="text" class="form-control" name="snapchat" value="{{ USER.users_social_snapchat }}">
 							</div>
-							<input type="text" class="form-control" name="twitter" value="{{ USER.users_social_twitter }}">
-						</div><br/>
-						<label>Instagram</label>
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text">https://instagram.com/</span>
-							</div>
-							<input type="text" class="form-control" name="instagram" value="{{ USER.users_social_instagram }}">
-						</div><br/>
-						<label>Linkedin</label>
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text">https://linkedin.com/ln/</span>
-							</div>
-							<input type="text" class="form-control" name="linkedin" value="{{ USER.users_social_linkedin }}">
-						</div><br/>
-						<label>Snapchat</label>
-						<div class="input-group">
-							<div class="input-group-prepend"><span class="input-group-text"><i class="fab fa-snapchat-ghost"></i></span></div>
-							<input type="text" class="form-control" name="snapchat" value="{{ USER.users_social_snapchat }}">
-						</div>
-					</form>
-				</div>
-				<div class="card-footer" style="text-align: right;">
-					<button id="save-social-settings" class="btn btn-default">Save</button>
-				</div>
-				<script>
-					$(document).ready(function() {
-						$('#save-social-settings').click(function() {
-							$("#update_social_success").hide();
-							$.ajax({
-								url: '{{CONFIG.ROOTURL}}/api/account/social.php',
-								data: {"data":$("#update_social_form").serialize(),"users_userid": "{{ USER.users_userid }}"},
-								type: "POST",
-								success: function (result) {
-									if (result == '1') {
-										$("#update_social_success").show();
-									} else {
-										bootbox.alert('Error - Could not change social settings - Please try again!', function() {
-											location.reload();
-										});
+						</form>
+					</div>
+					<div class="card-footer" style="text-align: right;">
+						<button id="save-social-settings" class="btn btn-default">Save</button>
+					</div>
+					<script>
+						$(document).ready(function() {
+							$('#save-social-settings').click(function() {
+								$("#update_social_success").hide();
+								$.ajax({
+									url: '{{CONFIG.ROOTURL}}/api/account/social.php',
+									data: {"data":$("#update_social_form").serialize(),"users_userid": "{{ USER.users_userid }}"},
+									type: "POST",
+									success: function (result) {
+										if (result == '1') {
+											$("#update_social_success").show();
+										} else {
+											bootbox.alert('Error - Could not change social settings - Please try again!', function() {
+												location.reload();
+											});
+										}
 									}
-								}
+								});
 							});
 						});
-					});
-				</script>
-			</div>
+					</script>
+				</div>
+			{% endif %}
 		</div>
-		{% endif %}
 </div>
 {% endblock %}

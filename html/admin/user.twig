@@ -32,12 +32,11 @@
     <div class="row">
         <div class="col-md-3">
 
-            <!-- Profile Image -->
             <div class="card card-primary card-outline">
                 <div class="card-body box-profile">
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
-                                 src="https://www.gravatar.com/avatar/{{ user.users_email_md5 }}?s=160&d=identicon"
+                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
                     <h3 class="profile-username text-center">{{ user.users_name1 }} {{ user.users_name2 }}</h3>

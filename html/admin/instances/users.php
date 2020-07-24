@@ -30,7 +30,7 @@ $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","L
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
 $DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
-$users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.users_username", "users.users_name1", "users.users_name2", "users.users_userid", "users.users_email", "users.users_emailVerified", "users.users_suspended","users.users_suspended", "instancePositions.instancePositions_displayName","userInstances.userInstances_label", "userInstances.userInstances_id", "userInstances.instancePositions_id"]);
+$users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.users_username", "users.users_name1", "users.users_name2", "users.users_userid", "users.users_email", "users.users_emailVerified", "users.users_suspended","users.users_suspended", "instancePositions.instancePositions_displayName","userInstances.userInstances_label", "userInstances.userInstances_id", "userInstances.instancePositions_id","users.users_thumbnail"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 foreach ($users as $user) {
 	$PAGEDATA["users"][] = $user;

@@ -864,7 +864,7 @@
                                                                 <ul class="list-inline">
                                                                     <li class="list-inline-item">
                                                                         <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                            <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userCreatorUserEMail|md5 }}?s=160&d=identicon">
+                                                                            <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}">
                                                                         </a>
                                                                     </li>
                                                                 </ul>
@@ -874,7 +874,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userAssignedUserEMail|md5 }}?s=160&d=identicon">
+                                                                                <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -969,7 +969,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userCreatorUserEMail|md5 }}?s=160&d=identicon">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -979,7 +979,7 @@
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
                                                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ job.userAssignedUserEMail|md5 }}?s=160&d=identicon">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -1108,6 +1108,7 @@
                         callback: function (result) {
                             if (result) {
                                 ajaxcall("assets/barcodes/delete.php", {"barcodes_id":barcodeid}, function (data) {
+
                                     location.reload();
                                 });
                             }

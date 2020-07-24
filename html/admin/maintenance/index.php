@@ -17,7 +17,7 @@ $DBLIB->orderBy("maintenanceJobsStatuses.maintenanceJobsStatuses_order", "ASC");
 $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_priority", "ASC");
 $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_due", "ASC");
 $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_added", "ASC");
-$PAGEDATA['jobs'] = $DBLIB->arraybuilder()->paginate('maintenanceJobs', $page, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name","userCreator.users_userid AS userCreatorUserID", "userCreator.users_name1 AS userCreatorUserName1", "userCreator.users_name2 AS userCreatorUserName2", "userCreator.users_email AS userCreatorUserEMail","userAssigned.users_name1 AS userAssignedUserName1","userAssigned.users_userid AS userAssignedUserID", "userAssigned.users_name2 AS userAssignedUserName2", "userAssigned.users_email AS userAssignedUserEMail"]);
+$PAGEDATA['jobs'] = $DBLIB->arraybuilder()->paginate('maintenanceJobs', $page, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name","userCreator.users_userid AS userCreatorUserID", "userCreator.users_name1 AS userCreatorUserName1", "userCreator.users_name2 AS userCreatorUserName2", "userCreator.users_email AS userCreatorUserEMail","userCreator.users_thumbnail AS userCreatorUserThumb","userAssigned.users_name1 AS userAssignedUserName1","userAssigned.users_userid AS userAssignedUserID", "userAssigned.users_name2 AS userAssignedUserName2", "userAssigned.users_email AS userAssignedUserEMail", "userAssigned.users_thumbnail AS userAssignedUserThumb"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 
 

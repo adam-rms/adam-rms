@@ -171,6 +171,8 @@ class bCMS {
                 //Project file
             case 8:
                 // Maintenance job file
+            case 9:
+                // User thumbnail
             default:
                 //There are no specific requirements for this file so not to worry.
         }

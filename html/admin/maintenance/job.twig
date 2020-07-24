@@ -272,14 +272,14 @@
                                 <span class="direct-chat-name float-left">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
                                 <span class="direct-chat-timestamp float-right">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
                             </div>
-                            <img class="direct-chat-img" src="https://www.gravatar.com/avatar/{{ message.users_email|md5 }}?s=160&d=identicon"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                            <img class="direct-chat-img" src="{{ message.users_thumbnail ? message.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
                         {% else %}
                         <div class="direct-chat-msg right">
                             <div class="direct-chat-infos clearfix">
                                 <span class="direct-chat-name float-right">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
                                 <span class="direct-chat-timestamp float-left">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
                             </div>
-                            <img class="direct-chat-img" src="https://www.gravatar.com/avatar/{{ message.users_email|md5 }}?s=160&d=identicon"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                            <img class="direct-chat-img" src="{{ message.users_thumbnail ? message.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
                         {% endif %}
                             <div class="direct-chat-text">
                                 {% if message.maintenanceJobsMessages_text|length > 0 %}

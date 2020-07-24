@@ -2,6 +2,28 @@
 
 {% block content %}
     <div class="card-columns">
+        {% if USERDATA.users_thumbnail == null %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="ion ion-clipboard mr-1"></i>
+                    Account Setup Checklist
+                </h3>
+            </div>
+            <div class="card-body">
+                <ul class="todo-list" data-widget="todo-list">
+                    <li>
+                        <div  class="icheck-primary d-inline ml-2">
+                            <input type="checkbox" disabled value="" name="todo1" id="todoCheck1" {% if USERDATA.users_thumbnail %}checked{% endif %}>
+                            <label for="todoCheck1"></label>
+                        </div>
+                        <span class="text"><a href="{{ CONFIG.ROOTURL }}/account.php">Upload a profile picture</a></span>
+                        <small class="badge badge-info"><i class="far fa-clock"></i> 2 mins</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
         {% set widgets = WIDGETS.getAllUser() %}
         {% for widget in widgets %}
             {% embed 'assets/widgets/' ~ widget ~ '.twig' %}

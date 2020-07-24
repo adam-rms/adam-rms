@@ -74,7 +74,7 @@
                             <ul class="list-inline">
                                 <li class="list-inline-item">
                                     <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                        <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="https://www.gravatar.com/avatar/{{ project.users_email|md5 }}?s=160&d=identicon">
+                                        <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ project.users_thumbnail ? project.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}">
                                     </a>
                                 </li>
                             </ul>
