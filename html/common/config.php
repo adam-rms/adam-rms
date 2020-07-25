@@ -155,6 +155,22 @@ $CONFIG = array(
                 "default" => true,
                 "canDisable" => true
             ],
+            [
+                "id" => 18,
+                "group" => "Asset Groups Watching",
+                "name" => "Asset assigned to Project",
+                "methods" => [1,2,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 19,
+                "group" => "Asset Groups Watching",
+                "name" => "Asset removed from Project",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
         ]
     ]
 );

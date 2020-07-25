@@ -9,14 +9,14 @@ $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_
 $DBLIB->where("projects.projects_deleted", 0);
 if (isset($_POST['projects_id'])) $DBLIB->where("projects.projects_id", $_POST['projects_id']);
 else $DBLIB->where("projects.projects_id", $AUTH->data['users_selectedProjectID']);
-$project = $DBLIB->getone("projects", ["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_defaultDiscount"]);
+$project = $DBLIB->getone("projects", ["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_defaultDiscount","projects_name"]);
 if (!$project) finish(false,["message"=>"Project not found"]);
 
 $projectFinanceHelper = new projectFinance();
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 $priceMaths = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
 
-$assetRequiredFields = ["assets_id","assets_dayRate","assets_weekRate","assetTypes_dayRate","assetTypes_weekRate","assetTypes_mass","assetTypes_value","assets_value","assets_mass"];
+$assetRequiredFields = ["assetTypes_name","assets_tag","assets_id","assets_dayRate","assets_weekRate","assetTypes_dayRate","assetTypes_weekRate","assetTypes_mass","assetTypes_value","assets_value","assets_mass","assets_assetGroups"];
 
 if (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
 elseif ($AUTH->instancePermissionCheck(32)) $DBLIB->where("(assets_linkedTo IS NULL)"); //We'll handle linked assets later in the script but for now add all assets
@@ -82,6 +82,19 @@ foreach ($assetsToProcess as $asset) {
             if ($insertData['assetsAssignments_discount'] > 0) $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($insertData['assetsAssignments_discount'] / 100))));
 
             $asset['insertedid'] = $insert;
+
+            $usersNotified = []; //If user follows multiple groups which this asset is in they'll be notified multiple times otherwise
+            foreach (explode(",",$asset['assets_assetGroups']) as $group) {
+                if (is_numeric($group)) {
+                    foreach ($bCMS->usersWatchingGroup($group) as $user) {
+                        if ($user != $AUTH->data['users_userid'] and !in_array($user,$usersNotified)) {
+                            array_push($usersNotified,$user);
+                            notify(18,$user, $AUTH->data['instance']['instances_id'], "Asset " . $bCMS->aTag($asset['assets_tag']) . " assigned to project", "Asset " . $bCMS->aTag($asset['assets_tag']) . " (" . $asset["assetTypes_name"] . ") has been added to the project " . $project['projects_name'] . " by " . $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2']);
+                        }
+                    }
+                }
+            }
+
             $bCMS->auditLog("ASSIGN-ASSET", "assetsAssignments", $insert, $AUTH->data['users_userid'], null, $project['projects_id']);
         } elseif (isset($_POST['assets_id']) and $_POST['assets_id'] == $asset['assets_id']) finish(false,["message"=>"Cannot insert assignment"]); //Fail because the one we were supposed to assign hasn't worked
         else $assetsFailed[] = $asset;

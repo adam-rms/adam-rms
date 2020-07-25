@@ -22,7 +22,7 @@ if (!$assignmentsRemove['projectid']) finish(false,["message"=>"Cannot find proj
 $DBLIB->where("projects.projects_id", $assignmentsRemove["projectid"]);
 $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
 $DBLIB->where("projects.projects_deleted", 0);
-$project = $DBLIB->getone("projects",["projects_id","projects_dates_deliver_start","projects_dates_deliver_end"]);
+$project = $DBLIB->getone("projects",["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_name"]);
 if (!$project) finish(false,["message"=>"Cannot find project"]);
 
 $projectFinanceHelper = new projectFinance();
@@ -50,6 +50,18 @@ foreach ($assignmentsRemove["assignments"] as $assignment) {
         }
         $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', $price,true);
         if ($assignment['assetsAssignments_discount'] > 0) $projectFinanceCacher->adjust('projectsFinanceCache_equiptmentDiscounts', $price->subtract($price->multiply(1 - ($assignment['assetsAssignments_discount'] / 100))),true);
+
+        $usersNotified = []; //If user follows multiple groups which this asset is in they'll be notified multiple times otherwise
+        foreach (explode(",",$assignment['assets_assetGroups']) as $group) {
+            if (is_numeric($group)) {
+                foreach ($bCMS->usersWatchingGroup($group) as $user) {
+                    if ($user != $AUTH->data['users_userid'] and !in_array($user,$usersNotified)) {
+                        array_push($usersNotified,$user);
+                        notify(19,$user, $AUTH->data['instance']['instances_id'], "Asset " . $bCMS->aTag($assignment['assets_tag']) . " removed from project", "Asset " . $bCMS->aTag($assignment['assets_tag']) . " (" . $assignment["assetTypes_name"] . ") has been removed from the project " . $project['projects_name'] . " by " . $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2']);
+                    }
+                }
+            }
+        }
     }
 }
 if ($projectFinanceCacher->save()) finish(true);

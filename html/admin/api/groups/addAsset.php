@@ -26,6 +26,7 @@ if (!$DBLIB->update("assets", ["assets_assetGroups" => $current], 1)) finish(fal
 
 $bCMS->auditLog("UPDATE", "assets", "Add asset " . $_POST['assets_id'] . " to group " . $_POST['assetGroups_id'], $AUTH->data['users_userid']);
 
+
 foreach ($bCMS->usersWatchingGroup($_POST['assetGroups_id']) as $user) {
     if ($user != $AUTH->data['users_userid']) notify(16,$user, $AUTH->data['instance']['instances_id'], "Asset " . $bCMS->aTag($asset['assets_tag']) . " added to group " . $group['assetGroups_name'], "Asset " . $bCMS->aTag($asset['assets_tag']) . " (" . $asset["assetTypes_name"] . ") has been added to the group " . $group['assetGroups_name'] . " by " . $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2']);
 }
