@@ -207,6 +207,13 @@ if (isset($_GET['loadingView'])) {
 }
 else $PAGEDATA['loadingView'] = false;
 
+//Locations
+$DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->orderBy("locations.locations_name", "ASC");
+$DBLIB->where("locations.locations_deleted", 0);
+$PAGEDATA['locations'] = $DBLIB->get("locations",null,["locations.locations_name","locations.locations_id"]);
+
+
 if (isset($_GET['pdf'])) {
     if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
 

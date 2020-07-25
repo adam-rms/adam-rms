@@ -2,7 +2,7 @@
 {% block content %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
+            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
 
             <div class="card-tools">
                 <form class="input-group input-group-sm"  method="GET">

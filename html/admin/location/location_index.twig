@@ -46,7 +46,7 @@
                     {% for location in locations %}
                     <tr>
                         <td colspan="2">
-                            {{ location.locations_name }}
+                            <a {% if 20|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?location={{ location.locations_id }}"{% endif %}>{{ location.locations_name }}</a>
                         </td>
                         <td>
                             {{ location.locations_notes|nl2br }}
@@ -87,7 +87,7 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    {{ subLocation.locations_name }}
+                                    <a {% if 20|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?location={{ subLocation.locations_id }}"{% endif %}>{{ subLocation.locations_name }}</a>
                                 </td>
                                 <td>
                                     {{ subLocation.locations_notes|nl2br }}

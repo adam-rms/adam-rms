@@ -102,7 +102,9 @@
                             <br>
                             <div class="text-muted">
                                 <p class="text-sm">Client
-                                    <b class="d-block">{{ project.clients_name }}</b>
+                                    <b class="d-block">
+                                        <a  style="color: inherit; text-decoration: inherit;"  {% if 36|instancePermissions %}href="{{ CONFIG.ROOTURL }}/clients.php"{% endif %}>
+                                            {{ project.clients_name }}</a></b>
                                 </p>
                                 <p class="text-sm">Project Manager
                                     <b class="d-block">
@@ -116,7 +118,7 @@
                                     </b>
                                 </p>
                                 <p class="text-sm">Venue
-                                    <b class="d-block">{{ project.locations_name }}</b>
+                                    <b class="d-block"><a  style="color: inherit; text-decoration: inherit;"  {% if 87|instancePermissions %}href="{{ CONFIG.ROOTURL }}/location/"{% endif %}>{{ project.locations_name }}</a></b>
                                 </p>
                                 <p class="text-sm">Dates
                                     {% if 27|instancePermissions %}
@@ -1206,18 +1208,27 @@
             {% if 30|instancePermissions %}
             $("#editProjectAddress").click(function () {
                 bootbox.prompt({
-                    title: "Edit Project Venue",
-                    inputType: 'textarea',
-                    value: `{{ project.projects_address|raw }}`,
+                    title: "Change Project Venue",
+                    inputType: 'select',
+                    inputOptions: [
+                        {
+                            text: 'No Venue',
+                            value: '',
+                        },
+                        {% for location in locations %}
+                        {
+                            text: '{{ location.locations_name }}',
+                            value: '{{ location.locations_id }}',
+                        },
+                        {% endfor %}
+                    ],
                     callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/changeAddress.php", {
-                                "projects_address": result,
-                                "projects_id": "{{ project.projects_id }}"
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
+                        ajaxcall("projects/changeVenue.php", {
+                            "locations_id": result,
+                            "projects_id": "{{ project.projects_id }}"
+                        }, function (data) {
+                            location.reload();
+                        });
                     }
                 });
             });

@@ -16,6 +16,16 @@ if (isset($_GET['client'])) {
     if ($PAGEDATA['CLIENT']) $PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['CLIENT']['clients_name'] . " Projects";
 } else $PAGEDATA['CLIENT'] = false;
 
+
+if (isset($_GET['location'])) {
+    $DBLIB->where("locations_deleted", 0);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("locations_id", $_GET['location']);
+    $PAGEDATA['LOCATION'] = $DBLIB->getone("locations", ["locations_id", "locations_name"]);
+    if ($PAGEDATA['LOCATION']) $PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['LOCATION']['locations_name'] . " Projects";
+} else $PAGEDATA['LOCATION'] = false;
+
+
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 30);
@@ -28,6 +38,7 @@ if (strlen($PAGEDATA['search']) > 0) {
     )");
 }
 if ($PAGEDATA['CLIENT']) $DBLIB->where("projects.clients_id", $PAGEDATA['CLIENT']['clients_id']);
+if ($PAGEDATA['LOCATION']) $DBLIB->where("projects.locations_id", $PAGEDATA['LOCATION']['locations_id']);
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->orderBy("projects.projects_archived", "ASC");
