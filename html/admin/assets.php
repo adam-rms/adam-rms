@@ -38,7 +38,7 @@ if (isset($_GET['manufacturer'])) $DBLIB->where("manufacturers.manufacturers_id"
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
-$DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0" . (!isset($_GET['all']) ? ' AND assets.assets_linkedTo IS NULL' : '') . (isset($_GET['group']) ? " AND FIND_IN_SET(" . $bCMS->sanitizeString($_GET['group']) . ", assets.assets_assetGroups)" : "") .") > 0)");
+$DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' " . (!isset($_GET['archive']) ? "AND (assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP()) " : "") . "AND assets_deleted = 0" . (!isset($_GET['all']) ? ' AND assets.assets_linkedTo IS NULL' : '') . (isset($_GET['group']) ? " AND FIND_IN_SET(" . $bCMS->sanitizeString($_GET['group']) . ", assets.assets_assetGroups)" : "") .") > 0)");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 if (strlen($PAGEDATA['search']) > 0) {
@@ -57,10 +57,11 @@ foreach ($assets as $asset) {
 	$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 	$DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
 	$DBLIB->where("assets_deleted", 0);
+	if (!isset($_GET['archive'])) $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
 	if (!isset($_GET['all'])) $DBLIB->where("(assets.assets_linkedTo IS NULL)");
 	if (isset($_GET['group'])) $DBLIB->where("FIND_IN_SET(" . $bCMS->sanitizeString($_GET['group']) . ", assets.assets_assetGroups)");
 	$DBLIB->orderBy("assets.assets_tag", "ASC");
-	$assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass"]);
+	$assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass","assets_endDate"]);
 	$asset['count'] = count($assetTags);
 	$asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
 	$asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id']);

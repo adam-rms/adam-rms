@@ -105,7 +105,9 @@
                                     {% endif %}
                                     {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
                                         {% if asset.count == 1 %}
-                                            {% if asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
+                                            {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}
+                                                <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                            {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
                                                 <button title="Remove from project" {% if (not asset.tags[0].assignment) or USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                 {% if asset.tags[0].assignment and USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}
                                                     <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
@@ -156,7 +158,9 @@
                                                                         </td>
                                                                         <td>
                                                                             <div class="btn-group">
-                                                                                {% if thisasset.flagsblocks.COUNT.BLOCK < 1 %}
+                                                                                {% if thisasset.assets_endDate != null and thisasset.assets_endDate < thisProject["projects_dates_deliver_end"] %}
+                                                                                    <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                                                {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
                                                                                     <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                                                     {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
                                                                                         <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
@@ -194,6 +198,7 @@
             <button class="btn btn-sm btn-default viewMore" data-count="100">View 100</button>
             <button class="btn btn-sm btn-default viewMore" data-count="250">View 250</button>
             <button class="btn btn-sm btn-default showLinkedButton">Show assets linked to others</button>
+            <button class="btn btn-sm btn-default showArchivedButton">Show archived assets</button>
         </div>
 
         {% if pagination.total > 1 %}
@@ -229,6 +234,9 @@
         });
         $(".showLinkedButton").click(function () {
             insertURLQueryParam("all", "1");
+        });
+        $(".showArchivedButton").click(function () {
+            insertURLQueryParam("archive", "1");
         });
         const Toast = Swal.mixin({
             toast: true,

@@ -37,6 +37,7 @@ foreach ($assets as $asset) {
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
     $DBLIB->where("assets_deleted", 0);
+    $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
     $asset['assets'] = $DBLIB->get("assets");
     $count += count($asset['assets']);
@@ -46,6 +47,7 @@ foreach ($assets as $asset) {
 //Get first asset added to give a created date
 $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("assets_deleted", 0);
+$DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
 $DBLIB->orderBy("assets.assets_inserted", "ASC");
 $created = $DBLIB->getValue("assets", "assets_inserted");
 

@@ -13,7 +13,7 @@ if (isset($_POST['assetTypes_id'])) $DBLIB->where("assetTypes.assetTypes_id", $_
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
-$DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0" . (!isset($_POST['all']) ? ' AND assets.assets_linkedTo IS NULL' : '') .") > 0)");
+$DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND (assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP()) AND assets_deleted = 0" . (!isset($_POST['all']) ? ' AND assets.assets_linkedTo IS NULL' : '') .") > 0)");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 if (strlen($PAGEDATA['search']) > 0) {
@@ -31,6 +31,7 @@ $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
+    $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
     $DBLIB->where("assets_deleted", 0);
     if (!isset($_POST['all'])) $DBLIB->where("(assets.assets_linkedTo IS NULL)");
     $DBLIB->orderBy("assets.assets_tag", "ASC");

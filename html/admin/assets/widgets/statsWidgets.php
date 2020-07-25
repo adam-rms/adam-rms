@@ -40,6 +40,7 @@ class statsWidgets
         $DBLIB->where("assets.instances_id", $arguments['instanceid']);
         $DBLIB->orderBy("assets_inserted", "ASC");
         $DBLIB->where("assets_deleted", 0);
+        $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
         $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
         $assets= $DBLIB->get("assets", null, ["assets_inserted", "assets_value", "assetTypes_value", "assetTypes_mass"]);
         if (!$assets) return [];
@@ -98,6 +99,7 @@ class statsWidgets
         $DBLIB->where("assets.instances_id", $arguments['instanceid']);
         $DBLIB->orderBy("assets_inserted", "ASC");
         $DBLIB->where("assets_deleted", 0);
+        $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
         $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
         $assets= $DBLIB->get("assets", null, ["assets_inserted", "assets_value","assetTypes_value", "assetTypes_mass"]);
         if (!$assets) return [];

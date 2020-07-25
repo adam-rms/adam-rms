@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(19)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck(97)) die("Sorry - you can't access this page");
 
 if (!isset($_POST['assets_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
@@ -12,10 +12,15 @@ $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURREN
 $asset = $DBLIB->getone("assets", ['assets_id']);
 if (!$asset) finish(false, ["code" => "DELETE-FAIL", "message"=> "Could not find asset"]);
 
+$update = [
+    "assets_archived" => $_POST['reason'],
+    "assets_endDate" => date("Y-m-d H:i:s", strtotime($_POST['date']))
+];
+
 $DBLIB->where("assets_id", $_POST['assets_id']);
-$result = $DBLIB->update("assets", ["assets_deleted" => 1]);
-if (!$result) finish(false, ["code" => "DELETE-FAIL", "message"=> "Could not delete asset"]);
+$result = $DBLIB->update("assets", $update);
+if (!$result) finish(false, ["code" => "ARCHIVE-FAIL", "message"=> "Could not archive asset"]);
 else {
-    $bCMS->auditLog("DELETE", "assets", $asset['assets_id'], $AUTH->data['users_userid']);
+    $bCMS->auditLog("ARCHIVE", "assets", $asset['assets_id'], $AUTH->data['users_userid']);
     finish(true);
 }

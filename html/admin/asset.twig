@@ -102,20 +102,27 @@
                     {% if asset.oneasset %}
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
                     {% endif %}
-                    {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions and assets|length == 1 %}
-                        {% if assets[0].flagsblocks.COUNT.BLOCK < 1 %}
-                        <button title="Remove from project" {% if (not assets[0].assignment) or USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-block btn-warning removeFromBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Remove from Project</button>
-                        {%  if assets[0].assignment and USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}
-                            <button title="Assigned to {{ assets[0].assignment[0]['projects_name'] }}" class="btn btn-block btn-success" disabled>Can't add to project</button>
+                    {% if assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") >= "now"|date("U")  %}
+                        {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions and assets|length == 1 %}
+                            {% if assets[0].assets_endDate != null and assets[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}
+                                <button title="Asset to be removed" class="btn btn-block btn-success" disabled>Can't add to project</button>
+                            {% elseif assets[0].flagsblocks.COUNT.BLOCK < 1 %}
+                            <button title="Remove from project" {% if (not assets[0].assignment) or USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-block btn-warning removeFromBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Remove from Project</button>
+                            {%  if assets[0].assignment and USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}
+                                <button title="Assigned to {{ assets[0].assignment[0]['projects_name'] }}" class="btn btn-block btn-success" disabled>Can't add to project</button>
+                            {% endif %}
+                            <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
+                            {% endif %}
                         {% endif %}
-                        <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
+                        {% if 84|instancePermissions %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
                         {% endif %}
-                    {% endif %}
-                    {% if 84|instancePermissions %}
-                        <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
-                    {% endif %}
-                    {% if 19|instancePermissions and assets|length == 1 %}
-                        <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
+                        {% if 97|instancePermissions and assets|length == 1 %}
+                            <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
+                        {% endif %}
+                        {% if 19|instancePermissions and assets|length == 1 %}
+                            <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
+                        {% endif %}
                     {% endif %}
                     {{asset.assetTypes_description|nl2br}}
                 </div>
@@ -126,6 +133,12 @@
         <!-- /.col -->
         <div class="col-md-9">
             {% if assets|length == 1 %}
+                {% if assets[0].assets_endDate is not null and assets[0].assets_endDate|date("U") <= "now"|date("U")  %}
+                    <div class="alert alert-danger">
+                        <h5> <i class="fas fa-archive"></i> Asset Archived</h5>
+                        Asset has been {{ assets[0].assets_archived }}
+                    </div>
+                {% endif %}
                 {% if assets[0]['assets_notes']|length > 0 %}
                 <div class="callout callout-default">
                     {{ assets[0]['assets_notes']|nl2br }}
@@ -253,13 +266,18 @@
                                         <td>
                                             <div class="btn-group">
                                                 {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-                                                    {% if thisasset.flagsblocks.COUNT.BLOCK < 1 %}
-                                                    <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                    {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
-                                                        <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                    {% if thisasset.assets_endDate != null and thisasset.assets_endDate < thisProject["projects_dates_deliver_end"] %}
+                                                        <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                    {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
+                                                        <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                        {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
+                                                            <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                        {% endif %}
+                                                        <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                     {% endif %}
-                                                    <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                    {% endif %}
+                                                {% endif %}
+                                                {% if 97|instancePermissions %}
+                                                    <button title="Archive" class="btn btn-sm btn-warning archiveAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fas fa-archive"></i></button>
                                                 {% endif %}
                                                 {% if 19|instancePermissions %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
@@ -1092,6 +1110,50 @@
                             if (result) {
                                 ajaxcall("assets/delete.php", {"assets_id":assetid}, function (data) {
                                     window.location.href = "{{CONFIG.ROOTURL}}/assets.php";
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if 97|instancePermissions %}
+                $(".archiveAssetButton").click(function () {
+                    var assetid = $(this).data("assetid");
+                    var date;
+                    bootbox.prompt({
+                        title: "When would you like the asset to be archived?",
+                        inputType: 'date',
+                        callback: function (result) {
+                            if (result) {
+                                date = result;
+                                bootbox.prompt({
+                                    title: "Why is this asset being archived?",
+                                    inputType: 'select',
+                                    inputOptions: [
+                                        {
+                                            text: 'Being Sold',
+                                            value: 'sold',
+                                        },
+                                        {
+                                            text: 'End of Life - being destroyed',
+                                            value: 'destroyed',
+                                        },
+                                        {
+                                            text: 'Missing/Lost',
+                                            value: 'lost',
+                                        },
+                                        {
+                                            text: 'Permanent Loan',
+                                            value: 'loaned permanently',
+                                        }
+                                    ],
+                                    callback: function (result) {
+                                        if (result) {
+                                            ajaxcall("assets/archive.php", {"assets_id":assetid, "date":date,"reason":result}, function (data) {
+                                                location.reload();
+                                            });
+                                        }
+                                    }
                                 });
                             }
                         }
