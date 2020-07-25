@@ -372,8 +372,8 @@
                                     <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
                                         <i class="nav-icon fas fa-cog"></i>
                                         <p>
-                                            Basic Settings
-                                            {#<span class="right badge badge-danger">New</span>#}
+                                            Settings
+                                            <span class="right badge badge-danger">New</span>
                                         </p>
                                     </a>
                                 </li>
@@ -418,6 +418,17 @@
                                         <p>
                                             Permissions
                                             {#<span class="right badge badge-danger">New</span>#}
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 89|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
+                                        <i class="fas fa-list nav-icon"></i>
+                                        <p>
+                                            Custom Categories
+                                            <span class="right badge badge-danger">New</span>
                                         </p>
                                     </a>
                                 </li>
