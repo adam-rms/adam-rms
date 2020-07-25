@@ -148,7 +148,7 @@
                                         {% endif %}
                                    </p>
                             </div>
-                            <h5 class="mt-5 text-muted">Project Files</h5>
+                            <h5 class="mt-5 text-muted">Project Notes</h5>
                             <ul class="list-unstyled">
                                 {% for note in project.notes %}
                                 <li>
@@ -593,6 +593,41 @@
                                     <i class="far fa-file-pdf"></i> Finances</a>
                                 {% endif %}
                         </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Files</h3>
+                            <div class="card-tools">
+                                <a href="?id={{ project.projects_id }}&files" type="button" class="btn btn-tool">
+                                    <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        {% if files %}
+                        <div class="card-body p-0">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        Total
+                                    </td>
+                                    <td>
+                                        {{ files|length }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Total Storage
+                                    </td>
+                                    <td>
+                                        {% set fileStorage = 0 %}
+                                        {% for file in files %}
+                                            {% set fileStorage = fileStorage+file["s3files_meta_size"] %}
+                                        {% endfor %}
+                                        {{ (fileStorage > 0  ? fileStorage|formatsize : '') }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% if project.auditLog|length > 0 %}

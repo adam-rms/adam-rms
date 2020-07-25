@@ -213,6 +213,8 @@ $DBLIB->orderBy("locations.locations_name", "ASC");
 $DBLIB->where("locations.locations_deleted", 0);
 $PAGEDATA['locations'] = $DBLIB->get("locations",null,["locations.locations_name","locations.locations_id"]);
 
+//Files
+$PAGEDATA['files'] = $bCMS->s3List(7, $PAGEDATA['project']['projects_id']);
 
 if (isset($_GET['pdf'])) {
     if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
@@ -236,5 +238,6 @@ if (isset($_GET['pdf'])) {
     $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', 'I');
 } elseif (isset($_GET['list']) and count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
+elseif (isset($_GET['files'])) echo $TWIG->render('project/project_files.twig', $PAGEDATA);
 else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>
