@@ -97,86 +97,88 @@
                         </div>
                         <div class="card-footer">
                             <div class="text-right">
-                                {% if 84|instancePermissions %}
-                                <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-sm btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
-                                {% endif %}
-                                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-                                    {% if asset.count == 1 %}
-                                        {% if asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
-                                            <button title="Remove from project" {% if (not asset.tags[0].assignment) or USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                            {% if asset.tags[0].assignment and USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}
-                                                <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                <div class="btn-group">
+                                    {% if 84|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-sm btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                                    {% endif %}
+                                    {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+                                        {% if asset.count == 1 %}
+                                            {% if asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
+                                                <button title="Remove from project" {% if (not asset.tags[0].assignment) or USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                {% if asset.tags[0].assignment and USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}
+                                                    <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                {% endif %}
+                                                <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                            {% else %}
+                                                <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                             {% endif %}
-                                            <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                         {% else %}
-                                            <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
-                                        {% endif %}
-                                    {% else %}
-                                        {% set someassignable = false %}
-                                        <div class="modal fade" id="assetDetailsModal{{ asset.assetTypes_id }}">
-                                            <div class="modal-dialog modal-xl">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">{{ asset.assetTypes_name }}</h4>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body" style="padding:0;text-align:left;overflow-x: auto;">
-                                                        <table class="table table-striped">
-                                                            <tr>
-                                                                <th style="width:70px;">ID</th>
-                                                                {% for field in asset.fields %}
-                                                                    <th>{{ field }}</th>
-                                                                {% endfor %}
-                                                                <th>Notes</th>
-                                                                <th>&pound;/day</th>
-                                                                <th>&pound;/week</th>
-                                                                <th style="width:1%"><i class="fas fa-flag"></i></th>
-                                                                <th style="width:30px;"></th>
-                                                            </tr>
-                                                            {% for thisasset in asset.tags %}
+                                            {% set someassignable = false %}
+                                            <div class="modal fade" id="assetDetailsModal{{ asset.assetTypes_id }}">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">{{ asset.assetTypes_name }}</h4>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body" style="padding:0;text-align:left;overflow-x: auto;">
+                                                            <table class="table table-striped">
                                                                 <tr>
-                                                                    <td>{{ thisasset.assets_tag|aTag }}</td>
+                                                                    <th style="width:70px;">ID</th>
                                                                     {% for field in asset.fields %}
-                                                                        <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
+                                                                        <th>{{ field }}</th>
                                                                     {% endfor %}
-                                                                    <td>{{ thisasset['assets_notes']|nl2br }}</td>
-                                                                    <td>
-                                                                        {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="btn-group">
-                                                                            {% if thisasset.flagsblocks.COUNT.BLOCK < 1 %}
-                                                                                <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                                                {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
-                                                                                    <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
-                                                                                {% endif %}
-                                                                                <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% else %}{% set someassignable = true %}{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                                            {% else %}
-                                                                                <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                    </td>
+                                                                    <th>Notes</th>
+                                                                    <th>&pound;/day</th>
+                                                                    <th>&pound;/week</th>
+                                                                    <th style="width:1%"><i class="fas fa-flag"></i></th>
+                                                                    <th style="width:30px;"></th>
                                                                 </tr>
-                                                            {% endfor %}
-                                                        </table>
+                                                                {% for thisasset in asset.tags %}
+                                                                    <tr>
+                                                                        <td>{{ thisasset.assets_tag|aTag }}</td>
+                                                                        {% for field in asset.fields %}
+                                                                            <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
+                                                                        {% endfor %}
+                                                                        <td>{{ thisasset['assets_notes']|nl2br }}</td>
+                                                                        <td>
+                                                                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="btn-group">
+                                                                                {% if thisasset.flagsblocks.COUNT.BLOCK < 1 %}
+                                                                                    <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                    {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
+                                                                                        <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                                                    {% endif %}
+                                                                                    <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% else %}{% set someassignable = true %}{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                {% else %}
+                                                                                    <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
+                                                                                {% endif %}
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
+                                            <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
-                                <a href="asset.php?id={{ asset.assetTypes_id }}" class="btn btn-sm btn-default">
-                                    <i class="fas fa-info-circle"></i>
-                                </a>
+                                    <a href="asset.php?id={{ asset.assetTypes_id }}" class="btn btn-sm btn-default">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
