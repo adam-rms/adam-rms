@@ -1,0 +1,108 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Locations
+                </h3>
+            </div>
+            <div class="card-body">
+                <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+                    {% for file in LOCATION.files %}
+                        <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
+                            {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
+                                <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
+                            {% else %}
+                                <span class="mailbox-attachment-icon"><i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i></span>
+                            {% endif %}
+                            <div class="mailbox-attachment-info">
+                                <a href="{{ file.s3files_id|s3URL }}" class="mailbox-attachment-name" target="_blank">
+                                    <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i> {{ file.s3files_name }}
+                                </a>
+                                <span class="mailbox-attachment-size clearfix mt-1">
+                                                <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span>
+
+                                            <br/><br/>
+                                                <span>{{ file.s3files_meta_size|formatsize }}</span>
+                                          <a href="{{ file.s3files_id|s3URL }}" target="_blank" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                                      {% if 56|instancePermissions %}
+                                          <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
+                                      {% endif %}
+                                    {% if 57|instancePermissions %}
+                                        <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
+                                    {% endif %}
+</span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if 101|instancePermissions %}
+            <div class="card-footer">
+                {% embed 'common/plugins/fineuploader.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 11, 'subTypeId': LOCATION['locations_id'], 'imagesOnly': false } %}
+                    {% block success %}
+                        console.log(responseJson.id);
+                    {% endblock %}
+                {% endembed %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        {% if 56|instancePermissions %}
+        $(".renameFile").click(function () {
+            var id = $(this).data("s3fileid");
+            var filename = $(this).data("s3filename");
+            bootbox.prompt({
+                title: "Edit file name",
+                inputType: 'textarea',
+                value: filename,
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("file/rename.php", {
+                            "s3files_id": id,
+                            "s3files_name": result
+                        }, function (data) {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+        {% if 57|instancePermissions %}
+        $(".deleteFile").click(function () {
+            var id = $(this).data("s3fileid");
+            bootbox.confirm({
+                message: "Are you sure you wish to delete this file?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("file/delete.php", {
+                            "s3files_id": id
+                        }, function (data) {
+                            //Hide the file in the display
+                            $(".fileBox[data-s3fileid=" + id + "]").hide();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

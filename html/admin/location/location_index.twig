@@ -53,7 +53,7 @@
                         </td>
                         <td>
                             {% if location.locations_address %}
-                                <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ location.locations_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
+                                <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ location.locations_name ~ "," ~ location.locations_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
                                     <i class="fas fa-map-marked-alt"></i>
                                 </a>
                             {% endif %}
@@ -66,6 +66,9 @@
                         </td>
                         <td class="project-actions text-right">
                             <div class="btn-group">
+                                {% if 100|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ location.files|length > 0 ? location.files|length : '' }}<i class="fas fa-paperclip"></i></a>
+                                {% endif %}
                                 {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
                                 {% endif %}
@@ -94,7 +97,7 @@
                                 </td>
                                 <td>
                                     {% if subLocation.locations_address %}
-                                        <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ subLocation.locations_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
+                                        <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ subLocation.locations_name ~ "," ~ subLocation.locations_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
                                             <i class="fas fa-map-marked-alt"></i>
                                         </a>
                                     {% endif %}

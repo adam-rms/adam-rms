@@ -175,6 +175,8 @@ class bCMS {
                 // User thumbnail
             case 10:
                 //Instance email thumbnail
+            case 11:
+                // Location file
             default:
                 //There are no specific requirements for this file so not to worry.
         }

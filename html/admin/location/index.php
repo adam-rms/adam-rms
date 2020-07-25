@@ -17,10 +17,10 @@ $DBLIB->where("locations.locations_deleted", 0);
 $DBLIB->join("clients","locations.clients_id=clients.clients_id","LEFT");
 $DBLIB->where("(locations_subOf IS NULL)");
 $DBLIB->orderBy("locations.locations_name", "ASC");
-$PAGEDATA['locations'] = $DBLIB->arraybuilder()->paginate('locations', $page, ["locations.*", "clients.clients_name"]);
+$locations = $DBLIB->arraybuilder()->paginate('locations', $page, ["locations.*", "clients.clients_name"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 function linkedLocations($locationId,$tier,$locationKey) {
-    global $DBLIB,$PAGEDATA,$AUTH;
+    global $DBLIB,$PAGEDATA,$AUTH,$bCMS;
     $DBLIB->where("locations_subOf", $locationId);
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->orderBy("locations.locations_name", "ASC");
@@ -29,13 +29,16 @@ function linkedLocations($locationId,$tier,$locationKey) {
     $locations = $DBLIB->get("locations",null,["locations.*", "clients.clients_name"]);
     $tier+=1;
     foreach ($locations as $location) {
+        $location['files'] = $bCMS->s3List(11, $location['locations_id']);
         $location['tier'] = $tier;
         $PAGEDATA['allLocations'][] = $location;
         $PAGEDATA['locations'][$locationKey]['linkedToThis'][] = $location;
         linkedLocations($location['locations_id'],$tier,$locationKey);
     }
 }
-foreach ($PAGEDATA['locations'] as $index=>$location) {
+foreach ($locations as $index=>$location) {
+    $location['files'] = $bCMS->s3List(11, $location['locations_id']);
+    $PAGEDATA['locations'][] = $location;
     $PAGEDATA['allLocations'][] = $location;
     $PAGEDATA['locations'][$index]['linkedToThis'] = [];
     linkedLocations($location['locations_id'],0,$index);
@@ -47,6 +50,16 @@ $DBLIB->where("clients.clients_deleted", 0);
 $DBLIB->where("clients.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->orderBy("clients.clients_name", "ASC");
 $PAGEDATA['clients'] = $DBLIB->get('clients');
+
+if (isset($_GET['files']) and isset($_GET['id'])) {
+    foreach ($PAGEDATA['allLocations'] as $location) {
+        if ($location['locations_id'] == $_GET['id']) {
+            $PAGEDATA['LOCATION'] = $location;
+            echo $TWIG->render('location/location_files.twig', $PAGEDATA);
+            exit;
+        }
+    }
+}
 
 
 echo $TWIG->render('location/location_index.twig', $PAGEDATA);
