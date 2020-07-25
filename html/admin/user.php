@@ -36,7 +36,7 @@ $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STAT
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
-$PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id", "projects.projects_address"]);
+$PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
 
 //Project Manager Roles
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
@@ -47,7 +47,7 @@ $DBLIB->where("projects.instances_id",  $AUTH->data['instance']['instances_id'])
 $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->orderBy("projects.projects_name", "ASC");
-$PAGEDATA['user']['projectManagement'] = $DBLIB->get("projects", null, ["projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id", "projects.projects_address"]);
+$PAGEDATA['user']['projectManagement'] = $DBLIB->get("projects", null, ["projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
 
 
 

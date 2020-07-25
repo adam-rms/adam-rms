@@ -5,6 +5,7 @@ if (!$AUTH->instancePermissionCheck(94)) die("404");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {
+    if ($item['value'] == '') $item['value'] = null;
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['assetGroups_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);

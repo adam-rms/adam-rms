@@ -422,6 +422,17 @@
                                     </a>
                                 </li>
                             {% endif %}
+                            {% if 87|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
+                                        <i class="fa fa-map-marked-alt nav-icon"></i>
+                                        <p>
+                                            Locations
+                                            <span class="right badge badge-danger">New</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
                             {% if 89|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">

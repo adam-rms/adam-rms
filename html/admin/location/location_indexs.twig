@@ -1,0 +1,41 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Locations</h3>
+
+        <div class="card-tools">
+            Barcode
+            Add
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-striped projects">
+
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer clearfix">
+        {% if pagination.total > 1 %}
+            <ul class="pagination pagination-sm m-0 float-right">
+                {% if pagination.page > 1 %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                {% endif %}
+                {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                            {% if pagination.page == i %}
+                                <b>{{ i }}</b>
+                            {% else %}
+                                {{ i }}
+                            {% endif %}
+                        </a></li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.total %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

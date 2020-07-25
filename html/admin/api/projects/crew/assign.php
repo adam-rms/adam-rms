@@ -12,7 +12,7 @@ $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $array['projects_id']);
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
-$project = $DBLIB->getone("projects", ["projects_id","projects_name", "projects_dates_use_start","projects_dates_use_end", "users.users_name1", "users.users_name2", "users.users_email", "projects.projects_address"]);
+$project = $DBLIB->getone("projects", ["projects_id","projects_name", "projects_dates_use_start","projects_dates_use_end", "users.users_name1", "users.users_name2", "users.users_email"]);
 if (!$project) finish(false);
 
 foreach ($_POST['users'] as $user) {

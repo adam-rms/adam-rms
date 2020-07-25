@@ -20,12 +20,13 @@ $DBLIB->where("crewAssignments.users_userid", $PAGEDATA['user']['users_userid'])
 $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
 $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
+$DBLIB->join("locations","projects.locations_id=locations.locations_id","LEFT");
 $DBLIB->join("users AS pmusers", "projects.projects_manager=pmusers.users_userid", "LEFT");
 $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
-$PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2","crewAssignments.crewAssignments_role", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_address"]);
+$PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2","crewAssignments.crewAssignments_role", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "locations.locations_name","locations.locations_address"]);
 
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 foreach ($PAGEDATA['user']['crewAssignments'] as $event) {
@@ -37,7 +38,7 @@ foreach ($PAGEDATA['user']['crewAssignments'] as $event) {
         ->setNoTime(false)
         ->setSummary($event['projects_name'] . ($event['clients_name'] ? " (" . $event['clients_name'] . ")" : ""))
         ->setCategories(['events', 'AdamRMS'])
-        ->setLocation($event['projects_address'], $event['projects_address'])
+        ->setLocation($event['locations_name'] . "\n" . $event['locations_address'], $event['locations_name'] . "\n" . $event['locations_address'])
         ->setDescription('Role: ' . $event['crewAssignments_role'] . "\n" . "Event Status: " . $STATUSES[$event['projects_status']]['name'] . "\n" . "Description: ". $event['projects_description'] . "\n" . "Project Manager: " . $event['pm_name1'] . " " . $event['pm_name2'])
         ->setMsBusyStatus("FREE")
     ;
