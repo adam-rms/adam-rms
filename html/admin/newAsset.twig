@@ -275,8 +275,8 @@
                         $("#saveButton").text("Add Another");
                         Toast.fire({
                             type: 'success',
-                            title: (counter + 'x Asset ' + aTag(data.response['assets_tag']) + ' added'),
-                            timer: 15000
+                            title: (counter + 'x Asset&nbsp;<a href="{{ CONFIG.ROOTURL }}/asset.php?id=' + data.response['assetTypes_id'] + '&asset=' + data.response['assets_id'] + '">' + aTag(data.response['assets_tag']) + ' added</a>'),
+                            timer: 30000
                         });
                         counter +=1;
                     }, false);
