@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHead.php'; //Can't be head secure as this is used by pages that aren't secure
 require_once __DIR__ . '/email/email.php';
-function notify($typeID, $userid, $instanceID = false, $subject, $html = false, $template = false, $array = false) {
+function notify($typeID, $userid, $instanceID = false, $headline, $message = false, $emailTemplate = false, $array = false) {
     global $CONFIG,$bCMS;
     foreach ($CONFIG['NOTIFICATIONS']['TYPES'] as $typeList) {
         if ($typeList['id'] == $typeID) $type = $typeList;
@@ -18,7 +18,7 @@ function notify($typeID, $userid, $instanceID = false, $subject, $html = false, 
                     //POST
                     break;
                 case 1:
-                    sendEmail($user, $instanceID, $subject, $html, $template, $array);
+                    sendEmail($user, $instanceID, $headline, $message, $emailTemplate, $array);
                     break;
                 case 2:
                     //SMS

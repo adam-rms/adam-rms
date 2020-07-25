@@ -14,6 +14,8 @@
         <h3 class="card-title">
             {% if search|length > 0 %}
                 Search results for assets matching <b>{{ search }}</b>
+            {% elseif thisGroup %}
+                <i class="fas fa-layer-group"></i> {{ thisGroup.assetGroups_name }} Assets
             {% elseif thisCategory %}
                 {{ thisCategory.assetCategoriesGroups_name }} - {{ thisCategory.assetCategories_name}} Assets
             {% elseif thisManufacturer %}
@@ -175,7 +177,7 @@
                                             <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                         {% endif %}
                                     {% endif %}
-                                    <a href="asset.php?id={{ asset.assetTypes_id }}" class="btn btn-sm btn-default">
+                                    <a href="asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}" class="btn btn-sm btn-default">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
                                 </div>

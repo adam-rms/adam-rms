@@ -69,8 +69,9 @@ $DBLIB->where("assetCategories_deleted",0);
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $PAGEDATA['categories'] = $DBLIB->get('assetCategories');
 
-// Jobs
+
 if (count($PAGEDATA['assets']) == 1) {
+    //Jobs
     $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
     $DBLIB->where("(FIND_IN_SET(" .$PAGEDATA['assets'][0]['assets_id'] . ", maintenanceJobs.maintenanceJobs_assets) > 0)");
     $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
@@ -81,12 +82,12 @@ if (count($PAGEDATA['assets']) == 1) {
     $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_added", "ASC");
     $PAGEDATA['assets'][0]['jobs'] = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name","userCreator.users_userid AS userCreatorUserID", "userCreator.users_name1 AS userCreatorUserName1", "userCreator.users_name2 AS userCreatorUserName2", "userCreator.users_email AS userCreatorUserEMail","userCreator.users_thumbnail AS userCreatorUserThumb","userAssigned.users_name1 AS userAssignedUserName1","userAssigned.users_userid AS userAssignedUserID", "userAssigned.users_name2 AS userAssignedUserName2", "userAssigned.users_email AS userAssignedUserEMail", "userAssigned.users_thumbnail AS userAssignedUserThumb"]);
 
+    //Links
     if ($PAGEDATA['assets'][0]['assets_linkedTo']) {
         $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_linkedTo']);
         $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
         $PAGEDATA['assets'][0]['link'] = $DBLIB->getOne("assets",["assets_tag", "assets_id","assetTypes_name","assets.assetTypes_id"]);
     } else $PAGEDATA['assets'][0]['link'] = false;
-
 
     $PAGEDATA['assets'][0]['linkedToThis'] = [];
     function linkedAssets($assetId,$tier) {
@@ -102,6 +103,15 @@ if (count($PAGEDATA['assets']) == 1) {
         }
     }
     linkedAssets($PAGEDATA['assets'][0]['assets_id'],0);
+
+    //Groups
+    if ($PAGEDATA['assets'][0]['assets_assetGroups']) {
+        $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");
+        $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
+        $DBLIB->where("assetGroups_deleted",0);
+        $DBLIB->where("assetGroups_id IN (" . $PAGEDATA['assets'][0]['assets_assetGroups'] . ")");
+        $PAGEDATA['assets'][0]['groups'] = $DBLIB->get("assetGroups",null,["assetGroups_id","assetGroups_name"]);
+    } else $PAGEDATA['assets'][0]['groups'] = [];
 }
 
 

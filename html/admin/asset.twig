@@ -490,6 +490,7 @@
                                         <ul class="nav nav-pills">
                                             <li class="nav-item"><a class="nav-link active" href="#editAssetDetails" data-toggle="tab">Details</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#linked" data-toggle="tab">Asset Link</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#groups" data-toggle="tab">Groups</a></li>
                                             {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
                                             {% if 82|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
                                             <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
@@ -517,6 +518,13 @@
                                                 {% endif %}
                                                 <select class="form-control select2bs4" id="assetLinkChange" placeholder="{{ assets[0]['link']['assets_tag']|aTag }} | {{ assets[0]['link']['assetTypes_name'] }}" value="{{ assets[0]['assets_linkedTo'] }}"></select>
                                                 <button class="btn btn-default float-right" id="saveAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            <div class="tab-pane" style="padding: 1.25rem" id="groups">
+                                                <select class="form-control" id="assetGroups" multiple>
+                                                    {% for group in assets[0]['groups'] %}
+                                                        <option value="{{ group.assetGroups_id }}" selected="selected">{{group.assetGroups_name}}</option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
                                             <div class="tab-pane" style="padding: 1.25rem" id="editAssetFields">
                                                 <form id="editAssetDefinableFieldsForm">
@@ -1356,6 +1364,60 @@
                             location.reload();
                         }, false);
                     }
+                });
+                {% endif %}
+
+                $("#assetGroups").select2({
+                    tags: false,
+                    multiple: true,
+                    theme: "bootstrap4",
+                    {% if 96|instancePermissions != true %}
+                    disabled: true,
+                    {% endif %}
+                    minimumInputLength: 1,
+                    width: '100%',
+                    minimumResultsForSearch: 1,
+                    placeholder: "Enter group name to search",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                term: params.term
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: item.assetGroups_name,
+                                            id: item.assetGroups_id
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    }
+                });
+                {% if 96|instancePermissions %}
+                $('#assetGroups').on('select2:select', function (e) {
+                    var id =e.params.data.id;
+                    ajaxcall("groups/addAsset.php", {
+                        "assetGroups_id": id,
+                        "assets_id": "{{ assets[0]['assets_id'] }}"
+                    });
+                });
+                $('#assetGroups').on('select2:unselect', function (e) {
+                    var id =e.params.data.id;
+                    ajaxcall("groups/removeAsset.php", {
+                        "assetGroups_id": id,
+                        "assets_id": "{{ assets[0]['assets_id'] }}"
+                    });
                 });
                 {% endif %}
                 {% if 63|instancePermissions %}

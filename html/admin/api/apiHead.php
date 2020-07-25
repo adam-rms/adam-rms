@@ -22,8 +22,14 @@ foreach ($_GET as $key=>$item) {
 
 require_once __DIR__ . '/../common/head.php';
 //To prevent errors showing on the json output
-error_reporting(0);
-ini_set('display_errors', 0);
+if ($_ENV['bCMS__ERRORS'] == "true") {
+    error_reporting(E_ERROR | E_PARSE);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(0);
+    ini_set('display_errors', 0);
+}
+
 
 //Finish function
 function finish($result = false, $error = ["code" => null, "message"=> null], $response = []) {

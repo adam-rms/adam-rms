@@ -259,6 +259,17 @@ class bCMS {
         }
         return ["userData" => $user,"settings"=>$configReturn];
     }
+    function usersWatchingGroup($groupid) {
+        global $DBLIB;
+        if (!is_numeric($groupid)) return false;
+        $DBLIB->where("FIND_IN_SET(" . $groupid. ", users_assetGroupsWatching)");
+        $users = $DBLIB->get("users",null,["users_userid"]);
+        $return = [];
+        foreach ($users as $user) {
+            array_push($return,$user['users_userid']);
+        }
+        return $return;
+    }
 }
 
 $GLOBALS['bCMS'] = new bCMS;
