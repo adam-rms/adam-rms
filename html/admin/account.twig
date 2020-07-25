@@ -428,6 +428,7 @@
 			{% endif %}
 		</div>
 		<div class="col-12 col-md-2">
+			{% if USER.users_userid != "NEW" %}
 			<div class="card ">
 				<div class="card-header">
 					<h3 class="card-title">Profile picture</h3>
@@ -457,6 +458,7 @@
 				<script>
 				</script>
 			</div>
+			{% endif %}
 		</div>
 		<div class="col-12 col-md-6">
 			{% if USER.users_userid != "NEW" %}
@@ -527,6 +529,70 @@
 											});
 										}
 									}
+								});
+							});
+						});
+					</script>
+				</div>
+				<div class="card ">
+					<div class="card-header">
+						<h3 class="card-title">Notifications</h3>
+					</div>
+					<div class="card-body" style="padding:0;">
+						<table class="table table-striped">
+							<thead>
+							<tr>
+								<th></th>
+								{% for method in CONFIG.NOTIFICATIONS.METHODS %}
+									<th>{{method}}</th>
+								{% endfor %}
+							</tr>
+							</thead>
+							<tbody>
+							{% set category = "" %}
+							{% for notification in CONFIG.NOTIFICATIONS.TYPES %}
+								{% if category != notification.group %}
+								<tr>
+									<td colspan="{{ 1+CONFIG.NOTIFICATIONS.METHODS|length }}"><h3>{{ notification.group }}</h3></td>
+								</tr>
+								{% set category = notification.group %}
+								{% endif %}
+								<tr>
+									<td>{{ notification.name }}</td>
+									{% for methodid,method in CONFIG.NOTIFICATIONS.METHODS %}
+									<td>
+										{% if methodid in notification.methods %}
+										<input type="checkbox" class="notificationsetting" data-methodid="{{methodid}}" data-typeid="{{notification.id}}"
+											    {% if notification.canDisable != true %}
+												disabled
+											    {% endif %}
+											    {% if USER['notifications']["settings"][notification.id]["methodsUser"][methodid] %}
+													checked
+												{% endif %}
+										/>
+										{% endif %}
+									</td>
+									{% endfor %}
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<div class="card-footer" style="text-align: right;">
+						<button id="save-notification-settings" class="btn btn-default">Save</button>
+					</div>
+					<script>
+						$(document).ready(function() {
+							$('#save-notification-settings').click(function() {
+								var config = [];
+								$(".notificationsetting").each(function( index ) {
+									if ($( this ).prop('disabled') !== true) {
+										config.push({"method":$( this ).data("methodid"),"type":$( this ).data("typeid"),"setting":$( this ).prop('checked')})
+									}
+								});
+								ajaxcall("account/notifications.php", {
+									"users_userid": "{{ USER.users_userid }}",
+									'settings' : config,
 								});
 							});
 						});

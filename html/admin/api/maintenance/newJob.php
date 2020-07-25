@@ -44,7 +44,7 @@ else {
     if (count($array['tagged']) > 0) {
         foreach ($array['tagged'] as $user) {
             if ($user['users_userid'] == $AUTH->data['users_userid']) continue;
-            sendEmail($user['users_userid'], $AUTH->data['instance']['instances_id'], "Tagged you in a job " . $array['maintenanceJobs_title'], false, "/admin/api/maintenance/createJob-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "job" => $array]);
+            notify(12,$user['users_userid'], $AUTH->data['instance']['instances_id'], "Tagged you in a job " . $array['maintenanceJobs_title'], false, "api/maintenance/createJob-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "job" => $array]);
         }
     }
     

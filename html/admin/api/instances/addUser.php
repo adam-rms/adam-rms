@@ -16,7 +16,6 @@ foreach ($_POST['users'] as $user) {
         "instancePositions_id" => $position["instancePositions_id"],
         "userInstances_label" => $_POST['rolename']
     ])) finish(false, ["code" => "ADD-USER-TO-INSTANCE-FAIL", "message"=> "Could not add user to Business"]);
-
-   sendEmail($user, $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you to " . $AUTH->data['instance']['instances_name'], false, "/admin/api/instances/addUser-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "rolename"=>$bCMS->sanitizeString($_POST['rolename'])]);
+   notify(2,$user, $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you to " . $AUTH->data['instance']['instances_name'], false, "/api/instances/addUser-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "rolename"=>$bCMS->sanitizeString($_POST['rolename'])]);
 }
 finish(true);

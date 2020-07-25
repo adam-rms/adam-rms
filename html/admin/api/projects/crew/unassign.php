@@ -13,7 +13,7 @@ if (!$assignment) finish(false);
 else {
     $bCMS->auditLog("UNASSIGN-CREW", "crewAssignments", $assignment['crewAssignments_id'], $AUTH->data['users_userid'],null, $assignment['projects_id']);
     if ($assignment["users_userid"]) {
-        sendEmail($assignment["users_userid"], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " removed you as crew from the event " . $assignment['projects_name']);
+        notify(10, $assignment["users_userid"], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " removed you as crew from the event " . $assignment['projects_name']);
     }
     $DBLIB->where("crewAssignments_id", $assignment['crewAssignments_id']);
     if ($DBLIB->update("crewAssignments", ["crewAssignments_deleted" => 1])) finish(true);

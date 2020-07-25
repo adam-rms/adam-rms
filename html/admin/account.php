@@ -28,6 +28,8 @@ if (isset($_GET['new']) and $AUTH->permissionCheck(4)) {
     $DBLIB->orderBy("positions_displayName", "ASC");
     $PAGEDATA['POSSIBLEPOSITIONS'] = $DBLIB->get("positions");
 
+    $PAGEDATA['USER']['notifications'] = $bCMS->notificationSettings($userid);
+
     $PAGEDATA['pageConfig']['TITLE'] = "Account Settings for " . $PAGEDATA['USER']['users_name1'] . " " . $PAGEDATA['USER']['users_name2'];
 }
 

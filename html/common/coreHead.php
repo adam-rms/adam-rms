@@ -232,6 +232,33 @@ class bCMS {
         $tag = str_replace("a-",null,$tag);
         return $tag;
     }
+    function notificationSettings($userid) {
+        global $DBLIB,$CONFIG;
+        $DBLIB->where("users_userid", $userid);
+        $user = $DBLIB->getone("users",["users_email", "users_userid", "users_name1", "users_name2","users_notificationSettings"]);
+        if (!$user) return false;
+        $user["users_notificationSettings"] = json_decode($user["users_notificationSettings"],true);
+        if (!$user["users_notificationSettings"]) $user["users_notificationSettings"] = [];
+        $configReturn = [];
+        foreach ($CONFIG['NOTIFICATIONS']['TYPES'] as $type) {
+            $type['methodsUser'] = [];
+            foreach ($type['methods'] as $method) {
+                if ($type['canDisable']) {
+                     foreach($user["users_notificationSettings"] as $individualSetting) {
+                         if ($individualSetting['method'] == $method and $individualSetting['type'] == $type['id']) {
+                             $type['methodsUser'][$method] = ($individualSetting['setting'] == "true" ? true : false);
+                             break;
+                         }
+                     }
+                     if (!isset($type['methodsUser'][$method])) $type['methodsUser'][$method] = $type['default'];
+                } else {
+                    $type['methodsUser'][$method] = true;
+                }
+            }
+            $configReturn[$type['id']] = $type;
+        }
+        return ["userData" => $user,"settings"=>$configReturn];
+    }
 }
 
 $GLOBALS['bCMS'] = new bCMS;

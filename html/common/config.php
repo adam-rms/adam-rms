@@ -50,5 +50,96 @@ $CONFIG = array(
     ],
     'DEV' => ($_ENV['bCMS__ERRORS'] == "true" ? true : false),
     'JWTKey' => 'WDOnxWSBZyn778OSLFDLbk0wXy1lvOLA9577XwTKhfPMjtR5sJVrHDGLiDF9SP8NSas3z081aE', //TODO save this along with other secrets
+    'NOTIFICATIONS' => [
+        "METHODS" => [
+            0 => "Post",
+            1 => "EMail",
+            2 => "SMS",
+            3 => "Mobile Push",
+            4 => "Slack",
+        ],
+        "TYPES" =>  [ //These need to be inorder and inorder of group
+            [
+                "id" => 1,
+                "group" => "Account",
+                "name" => "Password Reset",
+                "methods" => [1],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
+                "id" => 3,
+                "group" => "Account",
+                "name" => "Email verification",
+                "methods" => [1],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
+                "id" => 2,
+                "group" => "Account",
+                "name" => "Added to Business",
+                "methods" => [1],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
+                "id" => 11,
+                "group" => "Crewing",
+                "name" => "Added to Project Crew",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 10,
+                "group" => "Crewing",
+                "name" => "Removed from Project Crew",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 12,
+                "group" => "Maintenance",
+                "name" => "Tagged in new Maintenance Job",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 13,
+                "group" => "Maintenance",
+                "name" => "Sent message in Maintenance Job",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 14,
+                "group" => "Maintenance",
+                "name" => "Maintenance Job changed Status",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 15,
+                "group" => "Maintenance",
+                "name" => "Assigned Maintenance Job",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 15,
+                "group" => "Maintenance",
+                "name" => "Assigned Maintenance Job",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+        ]
+    ]
 );
 date_default_timezone_set("UTC");

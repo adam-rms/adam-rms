@@ -37,7 +37,7 @@ if ($job['maintenanceJobs_user_tagged'] != "") {
 if (count($job['tagged']) > 0 and isset($data["maintenanceJobsMessages_text"])) {
     foreach ($job['tagged'] as $user) {
         if ($user['users_userid'] == $AUTH->data['users_userid']) continue;
-        sendEmail($user['users_userid'], $AUTH->data['instance']['instances_id'], "New message to job " . $job['maintenanceJobs_title'], false, "/admin/api/maintenance/job/messageJob-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "job" => $job, "message" => $data]);
+        notify(13,$user['users_userid'], $AUTH->data['instance']['instances_id'], "New message to job " . $job['maintenanceJobs_title'], false, "api/maintenance/job/messageJob-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "job" => $job, "message" => $data]);
     }
 }
 

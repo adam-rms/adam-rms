@@ -43,7 +43,7 @@ if ($job['maintenanceJobs_user_tagged'] != "") {
 if (count($job['tagged']) > 0) {
     foreach ($job['tagged'] as $user) {
         if ($user['users_userid'] == $AUTH->data['users_userid']) continue;
-            sendEmail($user['users_userid'], $AUTH->data['instance']['instances_id'], "Status of job: " . $job['maintenanceJobs_title'] . " has been set to " . $status['maintenanceJobsStatuses_name'], false, "/admin/api/maintenance/job/changeJobStatus-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "job" => $job]);
+            notify(14,$user['users_userid'], $AUTH->data['instance']['instances_id'], "Status of job: " . $job['maintenanceJobs_title'] . " has been set to " . $status['maintenanceJobsStatuses_name'], false, "api/maintenance/job/changeJobStatus-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "job" => $job]);
     }
 }
 
