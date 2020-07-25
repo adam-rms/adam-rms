@@ -97,13 +97,13 @@ class bCMS {
             "auditLog_actionData" =>  $revelantData,
             "auditLog_timestamp" =>  date("Y-m-d H:i:s"),
             "projects_id" => $projectid,
-            "auditLog_targetID" => $this->sanitizeString($targetid)
+            "auditLog_targetID" => ($targetid ? $this->sanitizeString($targetid) : null)
         ];
         if ($userid > 0) $data["users_userid"] = $this->sanitizeString($userid);
         if ($useridTo > 0) $data["auditLog_actionUserid"] = $this->sanitizeString($useridTo);
 
         if ($DBLIB->insert("auditLog", $data)) return true;
-        else return false;
+        else throw new Exception("Could not audit log");
     }
     function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC') {
         global $DBLIB, $CONFIG;
