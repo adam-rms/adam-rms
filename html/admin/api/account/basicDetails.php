@@ -7,26 +7,26 @@ if (isset($_POST['username'])) {
     if ($_POST['userid'] == "NEW" and $AUTH->permissionCheck(4)) $newUser = true; //Are we making a new user here?
     else $newUser = false;
 
-    if ($AUTH->permissionCheck(5) && $USERDATA['users_userid'] != $_POST['userid'] && !$newUser) {
+    if ($AUTH->permissionCheck(5) && $PAGEDATA['USERDATA']['users_userid'] != $_POST['userid'] && !$newUser) {
         $DBLIB->where("users_userid", $bCMS->sanitizeString($_POST['userid']));
         $thisUser = $DBLIB->getone("users", ["users_userid", "users_email", "users_username"]);
         if (!$thisUser) die("5");
         $userid = $thisUser["users_userid"];
     } else {
-        $userid = $USERDATA['users_userid'];
+        $userid = $PAGEDATA['USERDATA']['users_userid'];
         $thisUser = false;
     }
 
 
     if (
         (
-            (!$newUser && !$thisUser && strtolower($_POST['email']) != $USERDATA['users_email']) //This users' user account
+            (!$newUser && !$thisUser && strtolower($_POST['email']) != $PAGEDATA['USERDATA']['users_email']) //This users' user account
           or ($thisUser && strtolower($_POST['email']) != $thisUser['users_email']) //Existing user account being edited
             or $newUser
         ) && $AUTH->emailTaken($bCMS->sanitizeString(strtolower($_POST['email'])))) die("Email taken");
     elseif (
         (
-            (!$newUser && !$thisUser && strtolower($_POST['username']) != $USERDATA['users_username']) //This users' user account
+            (!$newUser && !$thisUser && strtolower($_POST['username']) != $PAGEDATA['USERDATA']['users_username']) //This users' user account
             or ($thisUser && strtolower($_POST['username']) != $thisUser['users_username']) //Existing user account being edited
             or $newUser
         ) && $AUTH->usernameTaken($bCMS->sanitizeString(strtolower($_POST['username'])))) die("Username taken");
@@ -43,7 +43,7 @@ if (isset($_POST['username'])) {
         if (!$newUser) {
             $DBLIB->where('users_userid', $userid);
             if ($DBLIB->update('users', $data)) {
-                if (($thisUser && $thisUser['users_email'] != strtolower($_POST['email'])) or (!$thisUser && strtolower($_POST['email']) != $USERDATA['users_email'])) {
+                if (($thisUser && $thisUser['users_email'] != strtolower($_POST['email'])) or (!$thisUser && strtolower($_POST['email']) != $PAGEDATA['USERDATA']['users_email'])) {
                     //The email address has been changed
                     $DBLIB->where ('users_userid', $userid);
                     $DBLIB->update ('users', ["users_emailVerified" => "0"]); //Set E-Mail to unverified

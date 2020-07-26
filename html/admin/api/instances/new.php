@@ -22,7 +22,7 @@ $position = $DBLIB->insert("instancePositions", [
 if (!$position) finish(false, ["code" => "CREATE-POSITION-FAIL", "message"=> "Could not create new business"]);
 
 $userPosition = $DBLIB->insert("userInstances", [
-    "users_userid" => $USERDATA['users_userid'],
+    "users_userid" => $PAGEDATA['USERDATA']['users_userid'],
     "instancePositions_id" => $position,
     "userInstances_label" => $_POST['role'],
 ]);

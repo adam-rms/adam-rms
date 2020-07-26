@@ -6,6 +6,7 @@ use Money\Money;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\IntlMoneyFormatter;
 use Money\Formatter\DecimalMoneyFormatter;
+use Twig\Extra\String\StringExtension;
 
 $CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
 
@@ -28,7 +29,7 @@ if ($CONFIG['DEV']) {
         'charset' => 'utf-8'
     ));
 }
-
+$TWIG->addExtension(new StringExtension());
 $TWIG->addFilter(new \Twig\TwigFilter('timeago', function ($datetime) {
     $time = time() - strtotime($datetime);
     $units = array (

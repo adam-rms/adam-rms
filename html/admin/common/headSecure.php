@@ -2,6 +2,8 @@
 require_once __DIR__ . '/head.php';
 require_once __DIR__ . '/../assets/widgets/statsWidgets.php'; //Stats on homepage etc.
 
+//DON'T FORGET THIS IS DUPLICATED SOMEWHAT IN API HEAD SECURE AS SECURITY IS HANDLED SLIGHTLY DIFFERENTLY ON THE API END
+
 if (!$GLOBALS['AUTH']->login) {
     if ($CONFIG['DEV']) die("<h2>Debugging enabled - auth fail debug details</h2>" . $GLOBALS['AUTH']->debug . "<br/><br/><br/>Login false - redirect to <a href='" . $CONFIG['ROOTURL'] . "/login/'>" . $CONFIG['ROOTURL'] . "/login/</a>");
     $_SESSION['return'] = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -16,6 +18,9 @@ if (!$CONFIG['DEV']) {
 } elseif (!$AUTH->permissionCheck(17) and !$GLOBALS['AUTH']->data['viewSiteAs']) {
     die("Sorry - you can't use this development version of the site - please visit adam-rms.com");
 }
+
+$PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
+$PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
 if ($AUTH->data['instance']) {
     $DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assets.assetTypes_id=assetTypes.assetTypes_id AND assets_deleted = '0' AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "') > 0)");
@@ -67,11 +72,8 @@ if ($AUTH->data['instance']) {
         unset($dates);
         sort($AUTH->data['instance']['weekStartDates']);
     } else $AUTH->data['instance']['weekStartDates'] = false;
+} else {
+    $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false];
+    die($TWIG->render('index_noInstances.twig', $PAGEDATA));
 }
-
-$PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
-$PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
-
-
-$USERDATA = $PAGEDATA['USERDATA']; //TODO - remove as depreciated
 ?>
