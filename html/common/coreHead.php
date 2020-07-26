@@ -103,7 +103,7 @@ class bCMS {
         if ($useridTo > 0) $data["auditLog_actionUserid"] = $this->sanitizeString($useridTo);
 
         if ($DBLIB->insert("auditLog", $data)) return true;
-        else throw new Exception("Could not audit log");
+        else throw new Exception("Could not audit log - " . $DBLIB->getLastError());
     }
     function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC') {
         global $DBLIB, $CONFIG;
