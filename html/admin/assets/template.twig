@@ -240,7 +240,7 @@
                 <a class="nav-link">
                     <div class="d-none d-lg-block">
                         <i class="fas fa-shopping-basket"></i>
-                        {{ thisProject.projects_name }}
+                        {{ thisProject.projects_name|u.truncate(22, '...') }}
                     </div>
                 </a>
             </li>
