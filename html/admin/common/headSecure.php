@@ -9,6 +9,11 @@ if (!$GLOBALS['AUTH']->login) {
     die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/login/" . '" />');
 }
 
+Sentry\configureScope(function (Sentry\State\Scope $scope): void {
+    $scope->setUser(['username' => $GLOBALS['AUTH']->data['users_username'],"id"=> $GLOBALS['AUTH']->data['users_userid']]);
+    if ($GLOBALS['AUTH']->data['instance']) $scope->setExtra('instances_id', $AUTH->data['instance']['instances_id']);
+});
+
 $DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assets.assetTypes_id=assetTypes.assetTypes_id AND assets_deleted = '0' AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "') > 0)");
 $assetCategories = $DBLIB->getvalue("assetTypes", "DISTINCT assetCategories_id", null);
 if ($assetCategories) {
