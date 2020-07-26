@@ -13,7 +13,7 @@ if (!$GLOBALS['AUTH']->login) {
 if (!$CONFIG['DEV']) {
     Sentry\configureScope(function (Sentry\State\Scope $scope): void {
         $scope->setUser(['username' => $GLOBALS['AUTH']->data['users_username'],"id"=> $GLOBALS['AUTH']->data['users_userid']]);
-        if ($GLOBALS['AUTH']->data['instance']) $scope->setExtra('instances_id', $AUTH->data['instance']['instances_id']);
+        if ($GLOBALS['AUTH']->data['instance']) $scope->setExtra('instances_id', $GLOBALS['AUTH']->data['instance']['instances_id']);
     });
 } elseif (!$AUTH->permissionCheck(17) and !$GLOBALS['AUTH']->data['viewSiteAs']) {
     die("Sorry - you can't use this development version of the site - please visit adam-rms.com");
