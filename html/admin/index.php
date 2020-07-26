@@ -5,8 +5,7 @@ $PAGEDATA['pageConfig'] = ["TITLE" => "Dashboard", "BREADCRUMB" => false];
 
 if (isset($_GET['i'])) {
     if ($AUTH->permissionCheck(21)) {
-        $DBLIB->where("users_userid", $AUTH->data['users_userid']);
-        $DBLIB->update("users", ["users_selectedInstanceID" => $_GET['i']]); //It doesn't even bother to verify the instance ID as the user is trusted to be quite senior
+        $_SESSION['instanceID'] = $_GET['i']; //It doesn't even bother to verify the instance ID as the user is trusted to be BStudios Staff
         header("Location: " . $CONFIG['ROOTURL'] . "?");
     } else {
         $GLOBALS['AUTH']->setInstance($_GET['i']);
