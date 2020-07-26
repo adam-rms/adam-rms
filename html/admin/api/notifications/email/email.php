@@ -12,7 +12,7 @@ function sendEmail($user, $instanceID = false, $subject, $html = false, $templat
         $DBLIB->where("userInstances_deleted", 0);
         $DBLIB->where("instances.instances_deleted", 0);
         $instance = $DBLIB->getone("userInstances", ["instances.instances_name", "instances.instances_address", "instances.instances_emailHeader"]);
-        if ($instance['instances_emailHeader'] != null) $instance['instances_emailHeader'] = $bCMS->s3URL($instance['instances_emailHeader'],"medium");
+        if ($instance['instances_emailHeader'] != null) $instance['instances_emailHeader'] = $bCMS->s3URL($instance['instances_emailHeader'],"medium",false,"+6 days");
     } else $instance = false;
 
     $outputHTML = $TWIG->render('api/notifications/email/email_template.twig', ["SUBJECT" => $subject, "HTML"=> $html, "CONFIG" => $CONFIG, "DATA" => $emailData, "TEMPLATE" => $template, "INSTANCE" => $instance]);

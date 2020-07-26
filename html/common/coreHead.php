@@ -192,7 +192,7 @@ class bCMS {
             ]);
             $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
                 'url' => $CONFIG['AWS']["CLOUDFRONT"]["URL"] . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
-                'expires' => time() + 300, //5 mins - time() is always UTC anyway
+                'expires' => strtotime($file['expiry']),
                 'private_key' => $CONFIG['AWS']["CLOUDFRONT"]["PRIVATEKEY"],
                 'key_pair_id' => $CONFIG['AWS']["CLOUDFRONT"]["KEYPAIRID"]
             ]);
