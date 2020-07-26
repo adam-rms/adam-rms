@@ -152,7 +152,7 @@ class bID
 
     public function instancePermissionCheck($permissionId) {
         if (!$this->login) return false; //Not logged in
-        if (!$this->data['instance']) return false;
+        if (!$this->data['instance'] or $this->data['instance']['permissions'] == null) return false;
         if (in_array($permissionId, $this->data['instance']['permissions'])) return true;
         else return false;
     }
