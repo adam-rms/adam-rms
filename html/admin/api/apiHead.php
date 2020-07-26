@@ -21,6 +21,7 @@ foreach ($_GET as $key=>$item) {
 
 
 require_once __DIR__ . '/../common/head.php';
+require_once __DIR__ . '/notifications/main.php';
 //To prevent errors showing on the json output
 if ($_ENV['bCMS__ERRORS'] == "true") {
     error_reporting(E_ERROR | E_PARSE);
