@@ -60,9 +60,17 @@ foreach ($assets as $asset) {
 	if (!isset($_GET['archive'])) $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
 	if (!isset($_GET['all'])) $DBLIB->where("(assets.assets_linkedTo IS NULL)");
 	if (isset($_GET['group'])) $DBLIB->where("FIND_IN_SET(" . $bCMS->sanitizeString($_GET['group']) . ", assets.assets_assetGroups)");
+	if (isset($_GET['barcodes'])){
+		if ($_GET['barcodes'] == 1) {
+			$DBLIB->where("((SELECT COUNT(assetsBarcodes_id) FROM assetsBarcodes WHERE assetsBarcodes.assets_id = assets.assets_id AND assetsBarcodes_deleted = 0) >0)");
+		} else {
+			$DBLIB->where("((SELECT COUNT(assetsBarcodes_id) FROM assetsBarcodes WHERE assetsBarcodes.assets_id = assets.assets_id AND assetsBarcodes_deleted = 0) <1)");
+		}
+	}
 	$DBLIB->orderBy("assets.assets_tag", "ASC");
 	$assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass","assets_endDate"]);
 	$asset['count'] = count($assetTags);
+	if ($asset['count'] < 1) continue;
 	$asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
 	$asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id']);
 	$asset['tags'] = [];
