@@ -19,7 +19,10 @@ $DBLIB->where("assets.assetTypes_id", $PAGEDATA['asset']['assetTypes_id']);
 if (isset($_GET['asset'])) {
     $PAGEDATA['asset']['oneasset'] = true;
     $DBLIB->where("assets.assets_id", $_GET['asset']);
-} else $PAGEDATA['asset']['oneasset'] = false;
+} else {
+    $PAGEDATA['asset']['oneasset'] = false;
+    $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
+}
 $DBLIB->orderby("assets.asset_definableFields_1","ASC");$DBLIB->orderby("assets.asset_definableFields_2","ASC");$DBLIB->orderby("assets.asset_definableFields_3","ASC");$DBLIB->orderby("assets.asset_definableFields_4","ASC");$DBLIB->orderby("assets.asset_definableFields_5","ASC");$DBLIB->orderby("assets.asset_definableFields_6","ASC");$DBLIB->orderby("assets.asset_definableFields_7","ASC");$DBLIB->orderby("assets.asset_definableFields_8","ASC");$DBLIB->orderby("assets.asset_definableFields_9","ASC");$DBLIB->orderby("assets.asset_definableFields_10","ASC");$DBLIB->where("assets.assets_deleted", 0);
 $DBLIB->orderby("assets.assets_tag","ASC");
 $assets = $DBLIB->get("assets");
