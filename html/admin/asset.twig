@@ -534,8 +534,16 @@
                                                     When linked assets are added to a project they are discounted by {{ USERDATA.instance.instances_config_linkedDefaultDiscount }}% by default
                                                 </div>
                                                 {% endif %}
-                                                <select class="form-control select2bs4" id="assetLinkChange" placeholder="{{ assets[0]['link']['assets_tag']|aTag }} | {{ assets[0]['link']['assetTypes_name'] }}" value="{{ assets[0]['assets_linkedTo'] }}"></select>
+                                                <select class="form-control select2bs4" id="assetLinkChange">
+                                                    {% if assets[0]['assets_linkedTo'] %}
+                                                        <option value="{{ assets[0]['assets_linkedTo'] }}" selected>{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</option>
+                                                    {% endif %}
+                                                </select>
                                                 <button class="btn btn-default float-right" id="saveAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                                {% if assets[0]['assets_linkedTo'] %}
+                                                <button class="btn btn-warning float-right" id="removeAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Remove Link</button>
+                                                {% endif %}
+
                                             </div>
                                             <div class="tab-pane" style="padding: 1.25rem" id="groups">
                                                 <select class="form-control" id="assetGroups" multiple>
@@ -1426,6 +1434,21 @@
                             location.reload();
                         }, false);
                     }
+                });
+                $('#removeAssetLinkChangeButton').on('click', function() {
+                    var formData = [
+                        {
+                            "name" : "assets_id",
+                            "value" : "{{ assets[0]['assets_id'] }}"
+                        },
+                        {
+                            "name" : "assets_linkedTo",
+                            "value" : ""
+                        },
+                    ];
+                    ajaxcall("assets/editAsset.php", {formData}, function (data) {
+                        location.reload();
+                    }, false);
                 });
                 {% endif %}
 
