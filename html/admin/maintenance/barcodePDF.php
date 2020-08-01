@@ -4,6 +4,7 @@ require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck(84) or !isset($_GET['ids'])) die($TWIG->render('404.twig', $PAGEDATA));
 error_reporting(E_ERROR | E_PARSE);
 $ids = explode(",",$_GET['ids']);
+$groups = explode(",",$_GET['groups']);
 $PAGEDATA['assets'] = [];
 function checkDuplicate($value,$type) {
     global $DBLIB;
@@ -12,6 +13,15 @@ function checkDuplicate($value,$type) {
     $result = $DBLIB->getone("assetsBarcodes",["assetsBarcodes_id"]);
     if ($result) return true;
     else return false;
+}
+foreach ($groups as $group) {
+    if ($group == null) contine;
+    $DBLIB->where("FIND_IN_SET(" . $bCMS->sanitizestring($group) . ", assets.assets_assetGroups)");
+    $DBLIB->where("assets_deleted",0);
+    $groupAssets = $DBLIB->get("assets", null, ["assets_id"]);
+    foreach ($groupAssets as $asset) {
+        if ($asset) $ids[] = $asset['assets_id'];
+    }
 }
 foreach ($ids as $id) {
     if ($id == null) continue;
