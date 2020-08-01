@@ -104,6 +104,15 @@
         <div class="col-12 col-md-12 col-lg-8">
             <div class="card">
                 <div class="card-header">
+                    <h3 class="card-title">Tools</h3>
+                </div>
+                <div class="card-body">
+                    <a href="{{ CONFIG.ROOTURL }}/assets.php?listView=1&barcodes=0&pageLimit=250&all=1" class="btn btn-default">Show assets without Barcodes</a>
+                    <a href="{{ CONFIG.ROOTURL }}/assets.php?listView=1&barcodes=1&pageLimit=250&all=1" class="btn btn-default">Show assets with Barcodes</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
                     <h3 class="card-title">Assets</h3>
                 </div>
                 <div class="card-body">
@@ -112,6 +121,17 @@
                             {% for asset in preFetch %}
                                 <option value="{{asset.assets_id}}" selected="selected">{{ asset.assets_tag|aTag }} | {{ asset.assetTypes_name}} ({{ asset.manufacturers_name }})</option>
                             {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Groups</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <select class="form-control" multiple="multiple" placeholder="Select groups of assets to print barcodes for" id="assetGroups" lines>
                         </select>
                     </div>
                 </div>
@@ -135,7 +155,8 @@
         $(document).ready(function () {
             $("#generateButton").click(function () {
                 var assets = $("#assetSearch").val();
-                window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePDF.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&download=1";
+                var groups = $("#assetGroups").val();
+                window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePDF.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&groups=" + groups.join() + "&download=1";
             });
 
             $("#assetSearch").select2({
@@ -164,6 +185,40 @@
                                     return {
                                         text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
                                         id: item.assets_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $("#assetGroups").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Enter group name to search",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.assetGroups_name,
+                                        id: item.assetGroups_id
                                     }
                                 })
                             };
