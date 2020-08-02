@@ -58,7 +58,9 @@
                         background-color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],false) }};
                         color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],true) }};
                         padding:5px;">
-                    {% if asset['asset_definableFields_1'] < 10 %}
+                    {% if asset['asset_definableFields_1'] < 1 %}
+                        {% set loopCount = 5 %}
+                    {% elseif asset['asset_definableFields_1'] < 10 %}
                         {% set loopCount = 7 %}
                     {% elseif asset['asset_definableFields_1'] < 100 %}
                         {% set loopCount = 6 %}
