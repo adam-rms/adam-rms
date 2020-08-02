@@ -49,13 +49,21 @@
                                         </select>
                                     </b>
                                 </p>
-
-                                <p class="text-sm">"{{ USERDATA.instance.instances_name }}"
+                                <p class="text-sm">Length Colours<sup>1st Definable Field must be length</sup>
                                     <b class="d-block">
-                                        <select class="form-control" name="instanceName">
-                                            <option value="0">Hide</option>
-                                            <option value="1"  selected>Show</option>
+                                        <select class="form-control" name="lengthMode">
+                                            <option value="0" selected>Disabled</option>
+                                            <option value="1">Enabled</option>
                                         </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Show Business Name
+                                    <b class="d-block">
+                                        <input type="text" list="instanceNameOptionList" class="form-control" name="instanceName" />
+                                        <datalist id="instanceNameOptionList">
+                                            <option value="Hide">Hide</option>
+                                            <option selected>{{ USERDATA.instance.instances_name }}</option>
+                                        </datalist>
                                     </b>
                                 </p>
                                 <hr/>

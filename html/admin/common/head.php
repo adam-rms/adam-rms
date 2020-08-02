@@ -79,6 +79,26 @@ $TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false)
     global $bCMS;
     return $bCMS->s3URL($fileid, $size);
 }));
+$TWIG->addFilter(new \Twig\TwigFilter('cableColourConfig', function ($raw) {
+    if ($raw == null) return [];
+    $data = json_decode($raw,true);
+    return $data;
+}));
+$TWIG->addFilter(new \Twig\TwigFilter('cableColourParse', function ($raw,$length = 1,$text = false) {
+    if ($raw == null) return "";
+    $data = json_decode($raw,true);
+    if (isset($data[$length])) return $data[$length][($text ? "text":"background")];
+    else {
+        $closest = null;
+        foreach ($data as $key=>$item) {
+            if ($closest === null || abs($length - $closest) > abs($key - $length)) {
+                $closest = $key;
+            }
+        }
+        if ($closest != null) return $data[$closest][($text ? "text":"background")];
+        else return ($text ? "white":"black");
+    }
+}));
 $TWIG->addFilter(new \Twig\TwigFilter('fontAwesomeFile', function ($extension) {
     switch (strtolower($extension)) {
         case "gif":

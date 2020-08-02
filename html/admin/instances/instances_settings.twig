@@ -2,6 +2,11 @@
 {% block htmlIncludes %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css" integrity="sha512-pDpLmYKym2pnF0DNYDKxRnOk1wkM9fISpSOjt8kWFKQeDmBTjSnBZhTd41tXwh8+bRMoSaFsRnznZUiH9i3pxA==" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js" integrity="sha512-+cXPhsJzyjNGFm5zE+KPEX4Vr/1AbqCUuzAS8Cy5AfLEWm9+UI9OySleqLiSQOQ5Oa2UrzaeAOijhvV/M4apyQ==" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js" integrity="sha512-1aNp9qKP+hKU/VJwCtYqJP9tdZWbMDN5pEEXXoXT0pTAxZq1HHZhNBR/dtTNSrHO4U1FsFGGILbqG1O9nl8Mdg==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css" integrity="sha512-KuSX+43gVS5MEIJD2ewtrFPOHqC1PJnL8o2f5ciggPC0JUZ8XV0QXlfArO1mSzKkVFdRjsBDfrTU96C5SuRfqQ==" crossorigin="anonymous" />
+
+    <script src="{{ CONFIG.ROOTURL }}/assets/js/invert.min.js"></script>
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -82,13 +87,87 @@
             </script>
         </div>
         <div class="card ">
+            <form id="cableColours">
+                <div class="card-header">
+                    <h3 class="card-title">Cable Colours</h3>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    <table class="table" border="0">
+                        <tr>
+                            <th>
+                                Length
+                            </th>
+                            <th>
+                                Colour
+                            </th>
+                        </tr>
+                        {% for length,colour in USERDATA.instance['instances_cableColours']|cableColourConfig %}
+                        <tr>
+                            <td>
+                                <input type="number" class="form-control" data-type="length" value="{{ length }}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control colorpicker" data-type="colour" value="{{ colour['background'] }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-default" id="addNewCableColourOption">Add Row</button>
+                    <button type="submit" class="btn btn-default">Save</button>
+                </div>
+            </form>
+            <script>
+                $(document).ready(function() {
+                    $(".colorpicker").spectrum({
+                        showInput: true,
+                        preferredFormat: "hex",
+                    });
+                    $("#addNewCableColourOption").on("click", function(){
+                        console.log("Testing");
+                        $("#cableColours > div > table").append(`<tr>
+                            <td>
+                                <input type="number" class="form-control" data-type="length">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control colorpicker" data-type="colour">
+                            </td>
+                        </tr>`);
+                        $(".colorpicker").spectrum({
+                            showInput: true,
+                            preferredFormat: "hex",
+                        });
+                    });
+                    $("#cableColours").on("submit", function(e){
+                        e.preventDefault();
+                        var lastLength;
+                        var formData = {};
+                        $('#cableColours *').filter(':input').each(function(){
+                            if ($(this).data("type") == "colour") {
+                                if (lastLength != "" && $(this).val()) {
+                                    formData[lastLength] = {
+                                        "background": $(this).val(),
+                                        "text":invert($(this).val(),true)
+                                    }
+                                }
+                            } else {
+                                lastLength = $(this).val();
+                            }
+                        });
+                        var formData = [{"name": "instances_cableColours", "value":JSON.stringify(formData) }];
+                        ajaxcall("instances/editInstance.php", {formData});
+                    });
+                });
+            </script>
+        </div>
+        <div class="card">
             <form id="advancedSettings">
                 <div class="card-header">
-                    <h3 class="card-title">Advanced</h3>
+                    <h3 class="card-title">Week Start Dates</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label>Week Start Dates</label>
                         <textarea required class="form-control" rows="6" name="instances_weekStartDates">{{ USERDATA.instance.instances_weekStartDates }}</textarea>
                         <i>Enter one date on each line in the format "30 August 2019" for this to re-set the week counter on the calendar. This is normally used by schools and universities</i>
                     </div>

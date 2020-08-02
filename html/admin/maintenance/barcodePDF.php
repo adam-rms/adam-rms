@@ -107,6 +107,10 @@ if ($_GET['numStickers'] == 8) {
         "right" => 5
     ];
 }
+if (!isset($_GET['instanceName'])) $PAGEDATA['GET']['instanceName'] = false;
+elseif ($_GET['instanceName'] == "Hide" or $_GET['instanceName'] == null) $PAGEDATA['GET']['instanceName'] = false;
+
+
 //die($TWIG->render('maintenance/barcodePDF.twig', $PAGEDATA));
 $mpdf = new \Mpdf\Mpdf([
         'tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf',
