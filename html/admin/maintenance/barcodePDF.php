@@ -30,6 +30,7 @@ foreach ($ids as $id) {
     $DBLIB->where("assets.assets_deleted", 0);
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets.assets_id",$id);
+    $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
     $asset = $DBLIB->getOne("assets", null, ["assets.assets_id", "assetTypes.assetTypes_definableFields", "assets.asset_definableFields_1", "assetTypes.assetTypes_name", "asset.assets_mass", "assetTypes.assetTypes_mass","assets.assets_tag", "manufacturers.manufacturers_name"]);
     if ($asset) {
         $DBLIB->orderBy("assetsBarcodes.assetsBarcodes_added","DESC");
