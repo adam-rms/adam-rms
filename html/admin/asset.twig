@@ -470,7 +470,7 @@
                                         </div>
                                         <div class="tab-pane" style="padding: 1.25rem" id="thumbnail">
                                             {% if 55|instancePermissions %}
-                                                {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': false, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
+                                                {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': true, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
                                                     {% block success %}
                                                         console.log(responseJson.id);
                                                     {% endblock %}
@@ -631,7 +631,7 @@
                             <div class="callout callout-default">
                                 Use this area to store files relevant to all assets of this type such as instruction manuals
                             </div>
-                            {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-TYPE-FILE', 'paste': true, 'typeId': 3, 'subTypeId': asset.assetTypes_id, 'imagesOnly': false } %}
+                            {% embed 'common/plugins/fineuploader.twig' with {'type': 'ASSET-TYPE-FILE', 'paste': false, 'typeId': 3, 'subTypeId': asset.assetTypes_id, 'imagesOnly': false } %}
                                 {% block success %}
                                     console.log(responseJson.id);
                                 {% endblock %}
