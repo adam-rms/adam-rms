@@ -3,7 +3,7 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 if (!$AUTH->instancePermissionCheck(87)) die($TWIG->render('404.twig', $PAGEDATA));
 
-$PAGEDATA['pageConfig'] = ["TITLE" => "Locations", "BREADCRUMB" => true];
+$PAGEDATA['pageConfig'] = ["TITLE" => "Locations", "BREADCRUMB" => false];
 
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
@@ -55,6 +55,7 @@ if (isset($_GET['files']) and isset($_GET['id'])) {
     foreach ($PAGEDATA['allLocations'] as $location) {
         if ($location['locations_id'] == $_GET['id']) {
             $PAGEDATA['LOCATION'] = $location;
+            $PAGEDATA['pageConfig']["TITLE"] = $location['locations_name'] . " Files";
             echo $TWIG->render('location/location_files.twig', $PAGEDATA);
             exit;
         }
