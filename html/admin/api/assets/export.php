@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../apiHeadSecure.php';
 if (isset($_POST['csv'])) {
     header("Content-type: text/csv");
     header("Content-Disposition: attachment; filename=assets.csv");
@@ -9,7 +10,6 @@ elseif (isset($_POST['xlsx'])) {
 }
 header("Pragma: no-cache");
 header("Expires: 0");
-require_once __DIR__ . '/../apiHeadSecure.php';
 error_reporting(0); //Errors if shown mean it won't download right
 ini_set('display_errors', 0);
 
