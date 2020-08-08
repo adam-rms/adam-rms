@@ -67,7 +67,10 @@
                         <td class="project-actions text-right">
                             <div class="btn-group">
                                 {% if 100|instancePermissions %}
-                                    <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ location.files|length > 0 ? location.files|length : '' }}<i class="fas fa-paperclip"></i></a>
+                                    <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (location.files|length > 0 ? location.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
+                                {% endif %}
+                                {% if 103|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ location.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                 {% endif %}
                                 {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
@@ -112,6 +115,9 @@
                                     <div class="btn-group">
                                         {% if 99|instancePermissions %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ subLocation.locations_id }}"><i class="fas fa-edit"></i></button>
+                                        {% endif %}
+                                        {% if 103|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                         {% endif %}
                                         {% if 100|instancePermissions %}
                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-trash"></i></button>
