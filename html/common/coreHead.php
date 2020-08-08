@@ -149,7 +149,7 @@ class bCMS {
                     //They want the original
             }
         }
-
+        if ($expire == null or $expire === false) $expire = '+10 minutes';
         $file['expiry'] = $expire;
 
 
