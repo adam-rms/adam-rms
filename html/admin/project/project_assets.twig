@@ -43,7 +43,7 @@
                 <th>Discount</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="accordionTopLevel">
             {% set currentCategory = '' %}
             {% set currentType = '' %}
             {% for assetAssignment in FINANCIALS.assetsAssigned %}
@@ -58,25 +58,27 @@
                 {% if assetAssignment.assetTypes_id != currentType %}
                     {% set currentType = assetAssignment.assetTypes_id %}
                     <tr>
-                        <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
-                        <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
-                            {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
-                        </td>
-                        {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
-                            <td style="padding:0px;">
-                                <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
-                                        {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-                                            {% if field != "" %}
-                                                <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </tr></table>
+                        <a data-toggle="collapse" data-parent="#accordionTopLevel" href="#assetRow{{ assetAssignment.assetsAssignments_id }}">
+                            <td>{{ FINANCIALS.assetTypesCounter[assetAssignment.assetTypes_id] }}x</td>
+                            <td style="font-weight: bold;" {% if assetAssignment.assetTypes_definableFields == ",,,,,,,,," %}colspan="999"{% else %}colspan="2"{% endif %}>
+                                {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}
                             </td>
-                            <td colspan="999"></td>
-                        {% endif %}
+                            {% if assetAssignment.assetTypes_definableFields != ",,,,,,,,," %}
+                                <td style="padding:0px;">
+                                    <table class="table table-bordered" style="margin:0;border-top: none !important;border-bottom: none !important;"><tr>
+                                            {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                                                {% if field != "" %}
+                                                    <td style="padding-right: 0.75rem; padding-left: 0.75rem;border-top: none !important;border-bottom: none !important;">{{field}}</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr></table>
+                                </td>
+                                <td colspan="999"></td>
+                            {% endif %}
+                        </a>
                     </tr>
                 {% endif %}
-                <tr>
+                <tr class="collapse in" id="assetRow{{ assetAssignment.assetsAssignments_id }}">
                     <td>
                         <input type="checkbox" class="assetAssignmentCheckbox" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
                         {% if loadingView %}
