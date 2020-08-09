@@ -17,6 +17,12 @@ if ($AUTH->permissionCheck(18) and isset($_GET['phpversion'])) {
     exit;
 }
 
+$DBLIB->orderBy("authTokens_created","DESC");
+$DBLIB->where("users_userid",$AUTH->data['users_userid']);
+$DBLIB->where("(authTokens_deviceType != 'Web')");
+$PAGEDATA['APPLOGIN'] = $DBLIB->getone("authTokens",["authTokens_deviceType"]);
+
+
 $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']));
 
 echo $TWIG->render('dashboard.twig', $PAGEDATA);
