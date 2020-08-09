@@ -6,6 +6,7 @@ RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
 RUN a2dissite 000-default.conf
 COPY docker/apache2site.conf /etc/apache2/sites-available/apache2site.conf
 RUN a2ensite apache2site.conf
+RUN a2dismod autoindex
 
 RUN apt-get install -y \
 		libfreetype6-dev \
@@ -27,7 +28,7 @@ RUN docker-php-ext-install gd
 
 
 COPY . /var/www/
-COPY adamrmsprod.env /var/www/.env
+COPY ../adamrmsprod.env /var/www/.env
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www
