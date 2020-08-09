@@ -4,7 +4,7 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Access-Control-Allow-Origin: *");
-
+ini_set('max_execution_time', 300); //seconds
 //Copy the payload over to get&post to maintain compatibility between the app and the frontend
 $dataPayload = json_decode(file_get_contents('php://input'));
 $dataPayload = (array) $dataPayload;
