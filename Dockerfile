@@ -6,7 +6,7 @@ RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
 RUN a2dissite 000-default.conf
 COPY docker/apache2site.conf /etc/apache2/sites-available/apache2site.conf
 RUN a2ensite apache2site.conf
-RUN a2dismod autoindex
+RUN a2dismod autoindex -f
 
 RUN apt-get install -y \
 		libfreetype6-dev \
