@@ -1,12 +1,112 @@
-<footer class="site-footer">
-   <p>Bithell Studios 2020</p>
+<footer class="container py-5">
+   <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+         <a href="https://studios.jbithell.com/" target="_blank"><img src="{{ "/assets/StudiosLogo.svg" | prepend: site.baseurl }}"
+                                                                 alt="Bithell Studios"
+                                                                 style="width: auto; height: 50px;"/></a>
+         <p class="d-block mb-3 text-muted">A <a href="https://studios.jbithell.com/" target="_blank">Bithell Studios</a> Product</p>
+         <p class="d-block mb-3 text-muted">&copy;2019-2020 <a href="https://studios.jbithell.com/" target="_blank">Bithell Studios Ltd.</a></p>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+         <h5>Resources</h5>
+         <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="mailto:hi@jbithell.com">EMail Support</a></li>
+            <li><a class="text-muted" href="https://dash.adam-rms.com">Login</a></li>
+         </ul>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+         <h5>About</h5>
+         <ul class="list-unstyled text-small">
+           <li><a class="text-muted" href="https://adam-rms.com/legal/">Privacy</a></li>
+            <li><a class="text-muted" href="https://adam-rms.com/legal/">Terms</a></li>
+         </ul>
+      </div>
+   </div>
 </footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"
+        integrity="sha256-EGs9T1xMHdvM1geM8jPpoo8EZ1V1VRsmcJz8OByENLA=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.4/holder.min.js"
+        integrity="sha256-ifihHN6L/pNU1ZQikrAb7CnyMBvisKG3SUAab0F3kVU=" crossorigin="anonymous"></script>
 <script>
-var headings = document.getElementsByTagName('h2');
-for (var i = 0; i < headings.length; i++) {
-	if (headings[i].id) {
-		headings[i].innerHTML += ' <a class="section-link" href="#' + headings[i].id + '">#</a>';
-	}
-}
+   Holder.addTheme('thumb', {
+      bg: '#55595c',
+      fg: '#eceeef',
+      text: 'Thumbnail'
+   });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"
+        integrity="sha256-fdhzLBb+vMfwRwZKZPtza9iFcdVtEhrWRHhxSzEy4Ek=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.0/bootstrap-slider.min.js"
+        integrity="sha256-tDcb6zRMjjdonaeNQujdwW5FQdABco7S2Z60J4cbH9s=" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.0/css/bootstrap-slider.min.css"
+      integrity="sha256-NGswHEy6gjXxyLL+vBBHigA1kGliPHt+7BBPBzntzAw=" crossorigin="anonymous"/>
+<style>
+   /* Hack to get sliders to display a tooltip in Bootstrap 4 */
+   .slider.slider-horizontal .tooltip.tooltip-main.in,
+   .slider.slider-vertical .tooltip.tooltip-main.in {
+      opacity: 1 !important;
+   }
+</style>
+<script>
+   function calculatePrice() {
+      var priceAppend = "";
+      var delegates = $("#delegatesSlider").slider('getValue');
+      var press = $("#pressSlider").slider('getValue');
+      var days = $("#daysSlider").slider('getValue');
+
+      var price = delegates * 0.5 * days;
+      price += press * 5 * days;
+
+      if ($('#phoneSupport').is(':checked') || $('#onSiteSupport').is(':checked')) {
+         var priceAddition = delegates * days * 0.4;
+         if (priceAddition < 100) {
+            priceAddition = 100 * days;
+         }
+         price += priceAddition;
+      }
+      if ($('#onSiteSupport').is(':checked')) {
+         priceAppend = "+ staffing quote";
+         $('#phoneSupport').prop('checked', true); // Checks it
+         $('#phoneSupport').prop('disabled', true);
+      } else {
+         $('#phoneSupport').prop('disabled', false);
+      }
+
+      if (price <= 30) price = 30;
+
+      $("#priceValue").val(price + " " + priceAppend);
+   }
+
+   $(".priceSlider").on("change", function (slideEvt) {
+      calculatePrice();
+   });
+   $("#phoneSupport").on("click", function (slideEvt) {
+      calculatePrice();
+   });
+   $("#onSiteSupport").on("click", function (slideEvt) {
+      calculatePrice();
+   });
+   $(document).ready(function () {
+      calculatePrice();
+
+      $('a').smoothScroll({offset: (-1*($("#navigation").height()+20))});
+   });
+</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-68927390-3"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
+
+   gtag('config', 'UA-57012035-2');
 </script>

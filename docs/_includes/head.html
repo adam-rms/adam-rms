@@ -1,11 +1,26 @@
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
-    <meta name="description" content="{{ site.description }}" />
+    <!--Facebook Link Sharing Data-->
+    <meta property="og:title" content="AdamRMS"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://adam-rms.com"/>
+    <!--<meta property="og:image" content="assets/img/iMUN_blue_-_trans.png"/>-->
+    <meta property="og:site_name" content="AdamRMS"/>
+    <meta property="og:description"
+          content="AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast "/>
+    <link rel="shortcut icon" href="{{ "/assets/logoicon.png" | prepend: site.baseurl }}">
 
     <link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}" />
     <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}" />
+    <meta name="description" content="{{ site.description }}" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous"/>
+    <link href="{{ "/css/theme.css" | prepend: site.baseurl }}" rel="stylesheet">
+    <link href="{{ "/css/style.css" | prepend: site.baseurl }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
 </head>

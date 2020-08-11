@@ -1,4 +1,15 @@
-<header class="site-header">
-    <a href="https://dash.adam-rms.com/">Login to AdamRMS Dashboard</a>
-    <p><a class="site-title" href="{{ site.baseurl }}/">{{ site.title }}</a></p>
-</header>
+<div style="width: 100%; margin: 0px; padding: 5px; text-align: center; background-color: #f77e9d; height: 35px;">
+    <h5 style="padding: 0px; margin: 0px; font-weight: normal;"><a href="https://dash.adam-rms.com/">Looking for the Dashboard? Click to login to AdamRMS</a></h5>
+</div>
+<nav class="site-header sticky-top py-1 d-none d-sm-block d-md-block" id="navigation">
+    <!--This menu doesn't display on mobile so don't link to too much stuff using it!-->
+    <div class="container d-flex flex-column flex-md-row justify-content-between">
+        <a class="py-2" href="?">
+            <img src="{{ "/assets/logo.svg" | prepend: site.baseurl }}" style="height: 24px; width: auto;"/>
+        </a>
+        <a class="py-2 d-none d-md-inline-block" href="#product">Product</a>
+        <a class="py-2 d-none d-md-inline-block" href="#features">Features</a>
+        <a class="py-2 d-none d-md-inline-block" href="#pricing">Pricing</a>
+        <a class="py-2 d-none d-md-inline-block" href="https://dash.adam-rms.com/"><i class="fas fa-sign-in-alt"></i></a>
+    </div>
+</nav>
