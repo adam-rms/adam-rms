@@ -1,24 +1,33 @@
 <footer class="container py-5">
    <div class="row">
-      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
          <a href="https://studios.jbithell.com/" target="_blank"><img src="{{ "/assets/StudiosLogo.svg" | prepend: site.baseurl }}"
                                                                  alt="Bithell Studios"
                                                                  style="width: auto; height: 50px;"/></a>
          <p class="d-block mb-3 text-muted">A <a href="https://studios.jbithell.com/" target="_blank">Bithell Studios</a> Product</p>
-         <p class="d-block mb-3 text-muted">&copy;2019-2020 <a href="https://studios.jbithell.com/" target="_blank">Bithell Studios Ltd.</a></p>
       </div>
-      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
          <h5>Resources</h5>
          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="https://status.jbithell.com/">Status</a></li>
             <li><a class="text-muted" href="mailto:hi@jbithell.com">EMail Support</a></li>
-            <li><a class="text-muted" href="https://dash.adam-rms.com">Login</a></li>
          </ul>
       </div>
-      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
          <h5>About</h5>
          <ul class="list-unstyled text-small">
-           <li><a class="text-muted" href="https://adam-rms.com/legal/">Privacy</a></li>
-            <li><a class="text-muted" href="https://adam-rms.com/legal/">Terms</a></li>
+           <li><a class="text-muted" href="https://adam-rms.com/pages/legal.html">Privacy</a></li>
+            <li><a class="text-muted" href="https://adam-rms.com/pages/legal.html">Terms</a></li>
+         </ul>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+         <p class="d-block mb-3 text-muted">&copy;2019-2020 <a href="https://studios.jbithell.com/" target="_blank">Bithell Studios Ltd.</a></p>
+      </div>
+      <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+         <p class="d-block mb-3 text-muted">The App Store logo and Apple icon are trademarks of Apple Inc.<br/>
+               Google Play and the Google Play logo are trademarks of Google LLC.</p>
          </ul>
       </div>
    </div>
@@ -55,51 +64,6 @@
       opacity: 1 !important;
    }
 </style>
-<script>
-   function calculatePrice() {
-      var priceAppend = "";
-      var delegates = $("#delegatesSlider").slider('getValue');
-      var press = $("#pressSlider").slider('getValue');
-      var days = $("#daysSlider").slider('getValue');
-
-      var price = delegates * 0.5 * days;
-      price += press * 5 * days;
-
-      if ($('#phoneSupport').is(':checked') || $('#onSiteSupport').is(':checked')) {
-         var priceAddition = delegates * days * 0.4;
-         if (priceAddition < 100) {
-            priceAddition = 100 * days;
-         }
-         price += priceAddition;
-      }
-      if ($('#onSiteSupport').is(':checked')) {
-         priceAppend = "+ staffing quote";
-         $('#phoneSupport').prop('checked', true); // Checks it
-         $('#phoneSupport').prop('disabled', true);
-      } else {
-         $('#phoneSupport').prop('disabled', false);
-      }
-
-      if (price <= 30) price = 30;
-
-      $("#priceValue").val(price + " " + priceAppend);
-   }
-
-   $(".priceSlider").on("change", function (slideEvt) {
-      calculatePrice();
-   });
-   $("#phoneSupport").on("click", function (slideEvt) {
-      calculatePrice();
-   });
-   $("#onSiteSupport").on("click", function (slideEvt) {
-      calculatePrice();
-   });
-   $(document).ready(function () {
-      calculatePrice();
-
-      $('a').smoothScroll({offset: (-1*($("#navigation").height()+20))});
-   });
-</script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68927390-3"></script>

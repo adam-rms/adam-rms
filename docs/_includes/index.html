@@ -2,16 +2,20 @@
     <div class="col-md-5 p-lg-5 mx-auto my-5">
         <img class="display-4" alt="AdamRMS Logo" src="{{ "/assets/logoicon.svg" | prepend: site.baseurl }}"
              style="height: 100px; margin-bottom: 10px;"/>
-        <!--<h1 class="display-4 font-weight-normal">iMUN</h1>-->
         <p class="lead font-weight-normal">AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast</p>
-        <!--<a class="btn btn-outline-secondary" href="#">Coming soon</a>-->
+        <a class="btn btn-outline-secondary btn-lg" href="mailto:hi@jbithell.com">Contact Sales</a><br/>
+        <a href='https://play.google.com/store/apps/details?id=com.bstudios.adamrms&utm_source=webdashboard&utm_campaign=dashboardwidget&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' target="_blank">
+                <img alt='Get it on Google Play' src='{{ "/assets/storeIcons/google-play-badge.png" | prepend: site.baseurl }}' style="max-width:100%;width: 180px;" />
+            </a>
+            <a href='https://apps.apple.com/us/app/id1519443182?utm_source=webdashboard&utm_campaign=dashboardwidget' target="_blank">
+                <img alt='Download on the App Store' src='{{ "/assets/storeIcons/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" | prepend: site.baseurl }}' style="max-width:100%;width: 140px;" />
+            </a>
     </div>
-    <div class="product-device shadow-sm d-none d-md-block">
-        <img src=""
-             style="width: 100%; height: auto;"/>
+    <div class="product-device d-none d-md-block">
+        <img src="{{ "/assets/screenshot1Android.png" | prepend: site.baseurl }}" style="width: 100%; height: auto;"/>
     </div>
-    <div class="product-device product-device-2 shadow-sm d-none d-md-block">
-        <img src="" style="width: 100%; height: auto;"/>
+    <div class="product-device product-device-2 d-none d-md-block">
+        <img src="{{ "/assets/screenshot1iPhone.png" | prepend: site.baseurl }}" style="width: 100%; height: auto;"/>
     </div>
 </div>
 <!--
@@ -116,9 +120,7 @@
                  style="width: 100%; height: auto; border-radius: 10px;"/>
         </div>
     </div>
-</div>
-
--->
+</div>-->
 <!--
 <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
     <div class="row bg-light" style="padding-left: 10px; padding-right: 10px; padding-top: 50px; padding-bottom: 50px;">
@@ -166,29 +168,30 @@
     </div>
 </div>
 -->
-<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3" id="contact">
     <div class="row bg-dark" style="padding-left: 10px; padding-right: 10px; padding-top: 50px; padding-bottom: 50px;">
         <div id="trial" class="bg-white col-md-4 offset-md-4 col-sm-8 offset-sm-2 col-lg-4 offset-lg-4 col-xs-12"
              style="padding: 30px; border-radius: 5px;">
             <h4 style="color: black;">Try out AdamRMS</h4>
-            <p class="feature-text" style="padding-bottom: 0px; font-style: italic;">Sign up for an account today, or get in touch with us at <a href="mailto:hi@jbithell.com">hi@jbithell.com</a></p>
-            <!--<form id="trialForm">
+            <p class="feature-text" style="padding-bottom: 0px; font-style: italic;">Fill out the form below or get in touch with us at <a href="mailto:hi@jbithell.com">hi@jbithell.com</a></p>
+            <form id="trialForm" method="GET" action="https://docs.google.com/forms/d/e/1FAIpQLSfdw4eZAF8rooQ5o2t8wT-r0lvsUD0_18OC9izzIZ8Zm7pZPg/viewform">
                 <div class="form-group">
                     <label>Name</label>
-                    <input name="name" type="text" class="form-control" placeholder="e.g. John Smith" />
+                    <input name="entry.1793520971" type="text" class="form-control" placeholder="e.g. John Smith" />
                 </div>
                 <div class="form-group">
                     <label>EMail</label>
-                    <input type="email" name="email" class="form-control" placeholder="EMail address for further contact" />
+                    <input type="email" name="entry.612691923" class="form-control" placeholder="EMail address for further contact" />
                 </div>
                 <div class="form-group">
                     <label>Organization</label>
-                    <input type="text" name="org" class="form-control" placeholder="Organization name" />
+                    <input type="text" name="entry.1186756065" class="form-control" placeholder="Organization name" />
                 </div>
+                <input type="hidden" name="usp" value="pp_url">
                 <div class="form-group" style="text-align: right;">
-                    <input type="submit" class="btn btn-default" value="Request details" />
+                    <input type="submit" class="btn btn-default" value="Send" />
                 </div>
-            </form>-->
+            </form>
         </div>
     </div>
 </div>
