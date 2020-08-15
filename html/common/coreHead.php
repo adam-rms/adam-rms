@@ -8,7 +8,7 @@ use Aws\Exception\AwsException;
 
 if (!$CONFIG['DEV']) Sentry\init([
     'dsn' => $CONFIG['ERRORS']['SENTRY'],
-    'release' => $CONFIG['VERSION']['HEROKU']['COMMIT']
+    'release' => $CONFIG['VERSION']
 ]); //Setup Sentry Error Logging
 try {
     //session_set_cookie_params(0, '/', '.' . $_SERVER['SERVER_NAME']); //Fix for subdomain bug

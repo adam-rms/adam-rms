@@ -1,4 +1,6 @@
 ---
-layout: index
+layout: page
 permalink: /
 ---
+
+{% include index.html %}

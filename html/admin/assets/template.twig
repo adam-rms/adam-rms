@@ -715,7 +715,7 @@ far fa-circle
             {% if CONFIG.DEV %}
                 DEV BUILD
             {% else %}
-                {{ CONFIG.VERSION.HEROKU.VERSION }}.{{ CONFIG.VERSION.HEROKU.COMMIT[:7] }}
+                {{ CONFIG.VERSION }}
             {% endif %}
         </div>
         <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
@@ -748,7 +748,7 @@ far fa-circle
         {% endif %}
 
     });
-    console.log("Welcome to {{ CONFIG.PROJECT_NAME }} version {{ CONFIG.VERSION.TAG }}  build {{ CONFIG.VERSION.COMMITFULL }}");
+    console.log("Welcome to {{ CONFIG.PROJECT_NAME }} version {{ CONFIG.VERSION }}");
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
 <script>

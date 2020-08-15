@@ -1,6 +1,6 @@
 ---
 title: Legal Documentation
-layout: page-plain
+layout: page
 ---
 
 ## Common Preamble
