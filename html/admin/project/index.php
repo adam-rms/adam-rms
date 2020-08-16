@@ -13,7 +13,7 @@ $DBLIB->where("projects.projects_id", $_GET['id']);
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->join("locations","locations.locations_id=projects.locations_id","LEFT");
-$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "clients.*", "users.users_userid", "users.users_name1", "users.users_name2", "users.users_email","locations.locations_name","locations.locations_address"]);
+$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "clients.clients_id", "clients_name","clients_website","clients_email","clients_notes","clients_address","clients_phone","users.users_userid", "users.users_name1", "users.users_name2", "users.users_email","locations.locations_name","locations.locations_address"]);
 if (!$PAGEDATA['project']) die("404");
 
 //AuditLog
@@ -245,10 +245,10 @@ if (isset($_GET['pdf'])) {
 
     //die($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4', 'setAutoTopMargin' => 'pad', "margin_top" => 5]);
-    $mpdf->SetTitle($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name']);
+    $mpdf->SetTitle($PAGEDATA['project']['projects_name'] . ($PAGEDATA['project']['clients_name'] ? " - ". $PAGEDATA['project']['clients_name'] : ''));
     $mpdf->SetAuthor($PAGEDATA['USERDATA']['instance']['instances_name']);
     $mpdf->SetCreator("AdamRMS - the rental management system from Bithell Studios");
-    $mpdf->SetSubject($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " | " . $PAGEDATA['USERDATA']['instance']['instances_name']);
+    $mpdf->SetSubject($PAGEDATA['project']['projects_name'] . ($PAGEDATA['project']['clients_name'] ? " - ". $PAGEDATA['project']['clients_name'] : '') . " | " . $PAGEDATA['USERDATA']['instance']['instances_name']);
     $mpdf->SetKeywords("quotation,AdamRMS");
     $mpdf->SetHTMLFooter('
                 <table width="100%">
@@ -261,7 +261,7 @@ if (isset($_GET['pdf'])) {
              ');
     $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', 'I');
-} elseif (isset($_GET['list']) and count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
+} elseif (isset($_GET['list']) and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
 elseif (isset($_GET['files'])) echo $TWIG->render('project/project_files.twig', $PAGEDATA);
 else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>

@@ -33,7 +33,9 @@
 <sethtmlpageheader name="firstpage" value="on" show-this-page="1" />
 <sethtmlpageheader name="otherpages" value="on" />
 <div style="width: 100%;" align="center">
+    {% if USERDATA.instance.instances_logo %}
     <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 200px; padding:20px;">
+    {% endif %}
 </div>
 <table style="font-size: 16px;">
     <tr>
@@ -425,7 +427,7 @@
 
     </table>
 {% endif %}
-{% if showFinance %}
+{% if showFinance and USERDATA.instance.instances_termsAndPayment %}
 <table style="background-color: #F5F5F5; margin-top: 10px; font-size: 14px;">
     <tr>
         <td style="padding: 6px;">
