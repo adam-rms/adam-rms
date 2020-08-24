@@ -1,4 +1,9 @@
 # AdamRMS
+
+## Debugging Website
+
+1. `jekyll serve`
+
 ## Docker Setup
 
 1. Install `docker.io`
