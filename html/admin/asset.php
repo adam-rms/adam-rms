@@ -48,7 +48,7 @@ foreach ($assets as $asset) {
     $DBLIB->where("assetsBarcodes_deleted", 0);
     $DBLIB->orderBy("assetsBarcodes_added", "ASC");
     $DBLIB->join("users", "assetsBarcodes.users_userid=users.users_userid", "LEFT");
-    $asset['barcodes'] = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2","(SELECT assetsBarcodes_timestamp FROM assetsBarcodesScans WHERE assetsBarcodes_id=assetsBarcodes_id ORDER BY assetsBarcodes_timestamp DESC LIMIT 1) AS lastScan"]);
+    $asset['barcodes'] = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2","(SELECT assetsBarcodesScans_timestamp FROM assetsBarcodesScans WHERE assetsBarcodes_id=assetsBarcodes_id ORDER BY assetsBarcodesScans_timestamp DESC LIMIT 1) AS lastScan"]);
 
     //Calendar
     $DBLIB->where("assets_id", $asset['assets_id']);

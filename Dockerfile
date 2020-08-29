@@ -35,10 +35,7 @@ WORKDIR /var/www
 RUN composer install
 RUN chown -R www-data:www-data html/admin/common/twigCache
 
-# docker build -t adamrms .
-# docker run -d -p 80:80 --restart=always --memory=800m --name adamrms-container adamrms
 
-# docker stop adamrms-container && docker rm adamrms-container
 
 # To get in container - docker exec -t -i adamrms-container /bin/bash
 

@@ -7,7 +7,8 @@ $project = $DBLIB->insert("projects", [
     "projects_name" => $_POST['projects_name'],
     "instances_id" => $AUTH->data['instance']['instances_id'],
     "projects_created" => date('Y-m-d H:i:s'),
-    "projects_manager" => $AUTH->data['users_userid']
+    "projects_manager" => $_POST['projects_manager'],
+    "projectsTypes_id" => $_POST['projectsType_id']
 ]);
 if (!$project) finish(false, ["code" => "CREATE-PROJECT-FAIL", "message"=> "Could not create new project"]);
 

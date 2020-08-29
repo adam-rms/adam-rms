@@ -24,6 +24,11 @@
                     <th style="width: 45%">
                         Title
                     </th>
+                    {% if potentialProjectTypes|length > 1 %}
+                    <th style="width: 5%">
+                        Type
+                    </th>
+                    {% endif %}
                     <th style="width: 24%">
                         Client
                     </th>
@@ -65,10 +70,17 @@
                                 {{project.projects_dates_use_start|date("d M Y h:ia")}} - {{project.projects_dates_use_end|date("d M Y h:ia")}}
                             </small>
                         </td>
+                        {% if potentialProjectTypes|length > 1 %}
+                            <td>
+                                {{ project.projectsTypes_name }}
+                            </td>
+                        {% endif %}
                         <td>
+                            {% if project.projectsTypes_config_client == 1 %}
                             <a href="?client={{ project.clients_id }}">
                                 {{ project.clients_name }}
                             </a>
+                            {% endif %}
                         </td>
                         <td>
                             <ul class="list-inline">
@@ -80,10 +92,14 @@
                             </ul>
                         </td>
                         <td>
+                            {% if project.projectsTypes_config_finance == 1 %}
                             {{ (project.finance.projectsFinanceCache_grandTotal|moneyPositive ? project.finance.projectsFinanceCache_grandTotal|money : '') }}
+                            {% endif %}
                         </td>
                         <td>
+                            {% if project.projectsTypes_config_finance == 1 %}
                             {{ project.finance.projectsFinanceCache_paymentsReceived|money }}
+                            {% endif %}
                         </td>
                         <td class="project_progress">
                             {{ STATUSES[project.projects_status]['name'] }}<br/>

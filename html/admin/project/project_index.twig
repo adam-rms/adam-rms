@@ -68,21 +68,19 @@
         <div class="col-12 col-md-12 col-lg-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Project Detail</h3>
+                    <h3 class="card-title">Project Detail
+                        {% if potentialProjectTypes|length > 1 %}- {{ project.projectsTypes_name }}{% endif %}</h3>
 
                     <div class="card-tools">
-                        {% if 53|instancePermissions %}
-                        <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&loadingView" type="button" title="Prep/Return View" class="btn btn-tool">
-                            <i class="fas fa-truck-loading"></i>
-                        </a>
-                        {% endif %}
-                        {% if 32|instancePermissions %}
-                            <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject">
-                                <i class="fas fa-dolly"></i></button>
-                        {% endif %}
-                        {% if 31|instancePermissions %}
-                        <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" type="button" class="btn btn-tool">
-                            <i class="fas fa-shopping-basket"></i></a>
+                        {% if project.projectsTypes_config_assets == 1 %}
+                            {% if 32|instancePermissions %}
+                                <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject">
+                                    <i class="fas fa-dolly"></i></button>
+                            {% endif %}
+                            {% if 31|instancePermissions %}
+                            <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" type="button" class="btn btn-tool">
+                                <i class="fas fa-shopping-basket"></i></a>
+                            {% endif %}
                         {% endif %}
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i></button>
@@ -101,11 +99,13 @@
                             <p class="text-muted">{{ project.projects_description|nl2br }}</p>
                             <br>
                             <div class="text-muted">
+                                {% if project.projectsTypes_config_client == 1 %}
                                 <p class="text-sm">Client
                                     <b class="d-block">
                                         <a  style="color: inherit; text-decoration: inherit;"  {% if 36|instancePermissions %}href="{{ CONFIG.ROOTURL }}/clients.php"{% endif %}>
                                             {{ project.clients_name }}</a></b>
                                 </p>
+                                {% endif %}
                                 <p class="text-sm">Project Manager
                                     <b class="d-block">
                                         {% if 52|instancePermissions %}
@@ -117,9 +117,11 @@
                                         {% endif %}
                                     </b>
                                 </p>
+                                {% if project.projectsTypes_config_venue == 1 %}
                                 <p class="text-sm">Venue
                                     <b class="d-block"><a  style="color: inherit; text-decoration: inherit;"  {% if 87|instancePermissions %}href="{{ CONFIG.ROOTURL }}/location/"{% endif %}>{{ project.locations_name }}</a></b>
                                 </p>
+                                {% endif %}
                                 <p class="text-sm">Dates
                                     {% if 27|instancePermissions %}
                                     <div class="input-group">
@@ -132,6 +134,7 @@
                                         <b class="d-block">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("Y-m-d h:i:sa")}} - {{ project.projects_dates_use_end ? project.projects_dates_use_end|date("Y-m-d h:i:sa") }}</b>
                                     {% endif %}
                                 </p>
+                                {% if project.projectsTypes_config_assets == 1 %}
                                 <p class="text-sm">Dates assets in use
                                     {% if 27|instancePermissions %}
                                         <div class="input-group">
@@ -147,7 +150,9 @@
                                         <b class="d-block">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa")}} - {{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
                                         {% endif %}
                                    </p>
+                                {% endif %}
                             </div>
+                            {% if project.projectsTypes_config_notes == 1 %}
                             <h5 class="mt-5 text-muted">Project Notes</h5>
                             <ul class="list-unstyled">
                                 {% for note in project.notes %}
@@ -161,6 +166,7 @@
                                 </li>
                                 {% endfor %}
                             </ul>
+                            {% endif %}
                             <br/>
                             <div class="alert" style="background-color: {{STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
                                 <h5><b>Status: </b>{{ STATUSES[project.projects_status]['name'] }}</h5>
@@ -171,7 +177,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="btn-group float-right">
-                        {% if 45|instancePermissions %}
+                        {% if 45|instancePermissions and project.projectsTypes_config_notes == 1 %}
                             <button type="button" class="btn btn-default" id="newProjectNote">Add Note</button>
                         {% endif %}
                         {% if 29|instancePermissions %}
@@ -181,13 +187,17 @@
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
                                 <a class="dropdown-item" id="quickAddCommentButton">Add Audit Log Comment</a>
-                                {% if 28|instancePermissions %}<a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>{% endif %}
+                                {% if 28|instancePermissions %}
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
+                                {% endif %}
                                 {% if 24|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
-                                {% if 46|instancePermissions %}<a class="dropdown-item editProjectInvoiceNotes" href="#">Edit Invoice Notes</a>{% endif %}
-                                {% if 30|instancePermissions %}<a class="dropdown-item" id="editProjectAddress" href="#">Edit Venue</a>{% endif %}
+                                {% if 22|instancePermissions and project.projectsTypes_config_client == 1 %}<a class="dropdown-item" id="editProjectClient" href="#">Change Client</a>{% endif %}
                                 {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectLead" href="#">Change Project Manager</a>{% endif %}
-                                {% if 22|instancePermissions %}<a class="dropdown-item" id="editProjectClient" href="#">Change Client</a>{% endif %}
+                                {% if 30|instancePermissions and project.projectsTypes_config_venue == 1  %}<a class="dropdown-item" id="editProjectAddress" href="#">Change Venue</a>{% endif %}
+
                                 <div class="dropdown-divider"></div>
+                                {% if 104|instancePermissions and potentialProjectTypes|length > 1 %}<a class="dropdown-item" id="editProjectType" href="#">Change Project Type</a>{% endif %}
                                 {% if 25|instancePermissions %}
                                     {% if project.projects_archived == 1 %}
                                         <a class="dropdown-item" id="archiveProject" href="#">Remove from Archive</a>
@@ -202,46 +212,27 @@
                 </div>
             </div>
         </div>
-        {% if loadingView %}
-            <div class="col-12 col-md-12 col-lg-8">
-                <div class="jumbotron" style="padding-top: 2rem; padding-bottom: 2rem;">
-                    <h2>Prep/Return View</h2>
-                    <p>Use this panel to check items in/out and to track their status as they go through the project lifecycle</p>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Mark items as</span>
-                        </div>
-                        <select class="form-control" id="loadingViewOptionChanger">
-                            {% for key, status in loadingViewStatusArray %}
-                                {% if key != 0 %}
-                                    <option value="{{ key }}" {{ key == loadingViewStatusID ? "selected" }}>{{ status.name }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                </div>
-            </div>
-        {% endif %}
-        <div class="col-12 col-md-12 {{ loadingView ? "col-lg-12" : "col-lg-8" }}">
+        <div class="col-12 col-md-12 col-lg-8">
             <div class="row">
-                {% for assetAssignment in FINANCIALS.assetsAssigned %}
-                    {% for flag in assetAssignment.flagsblocks.BLOCK %}
-                        <div class="alert alert-danger">
-                            <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
-                            <h5> <i class="fas fa-ban"></i> {{ assetAssignment.assets_tag|aTag }}: {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}</h5>
-                            {{ flag.maintenanceJobs_title }} - {{ flag.maintenanceJobs_faultDescription }}
-                        </div>
+                {% if project.projectsTypes_config_assets == 1 %}
+                    {% for assetAssignment in FINANCIALS.assetsAssigned %}
+                        {% for flag in assetAssignment.flagsblocks.BLOCK %}
+                            <div class="alert alert-danger">
+                                <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                <h5> <i class="fas fa-ban"></i> {{ assetAssignment.assets_tag|aTag }}: {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}</h5>
+                                {{ flag.maintenanceJobs_title }} - {{ flag.maintenanceJobs_faultDescription }}
+                            </div>
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-                {% if STATUSES[project.projects_status]["assetsAvailable"] %}
-                    <div class="alert alert-danger">
-                        <h5>Assets not locked</h5>
-                        Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
-                    </div>
+                    {% if STATUSES[project.projects_status]["assetsAvailable"] %}
+                        <div class="alert alert-danger">
+                            <h5>Assets not locked</h5>
+                            Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
+                        </div>
+                    {% endif %}
                 {% endif %}
 
-                {% if 33|instancePermissions %}
+                {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
                 <div class="col-12">
                     <div class="card">
                     <div class="card-header">
@@ -474,7 +465,7 @@
                 </div>
                 </div>
                 {% endif %}
-                {% if 47|instancePermissions %}
+                {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
                     <div class="col-lg-8 col-md-12">
                         <div class="card">
                             <div class="card-header">
@@ -552,6 +543,7 @@
                     </div>
                 {% endif %}
                 <div class="col-lg-4 col-md-12">
+                    {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Assets</h3>
@@ -581,6 +573,7 @@
                             </table>
                         </div>
                     </div>
+                    {% endif %}
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">PDFs</h3>
@@ -588,12 +581,13 @@
                         <div class="card-body">
                         <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf" type="button" class="btn btn-default">
                             <i class="far fa-file-pdf"></i> Plain</a>
-                                {% if 33|instancePermissions %}
+                                {% if 33|instancePermissions and project.projectsTypes_config_finance == 1  %}
                                 <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf&finance" type="button" class="btn btn-default">
                                     <i class="far fa-file-pdf"></i> Finances</a>
                                 {% endif %}
                         </div>
                     </div>
+                    {% if project.projectsTypes_config_files == 1 %}
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Files</h3>
@@ -629,6 +623,7 @@
                         </div>
                         {% endif %}
                     </div>
+                    {% endif %}
                 </div>
                 {% if project.auditLog|length > 0 %}
                 <div class="col-12">
@@ -914,6 +909,33 @@
                 });
             });
             {% endif %}
+            {% if 104|instancePermissions %}
+            $("#editProjectType").click(function () {
+                bootbox.prompt({
+                    title: "Change Project Type",
+                    inputType: 'select',
+                    value: {{ project.projectsTypes_id }},
+                    inputOptions: [
+                        {% for type in potentialProjectTypes %}
+                        {
+                            text: '{{type.projectsTypes_name}}',
+                            value: '{{ type.projectsTypes_id }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result && result !== "{{ project.projectsTypes_id }}") {
+                            ajaxcall("projects/changeProjectType.php", {
+                                "projectsTypes_id": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
             {% if 23|instancePermissions %}
             $("#editProjectLead").click(function () {
                 bootbox.prompt({
@@ -927,7 +949,7 @@
                             text: 'Choose one...',
                             value: '',
                         },
-                        {% for user in potentialManagers %}
+                        {% for user in potentialProjectManagers %}
                         {
                             text: '{{user.users_name1 ~ " " ~ user.users_name2}}',
                             value: '{{ user.users_userid }}',

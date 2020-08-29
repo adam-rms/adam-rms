@@ -34,6 +34,8 @@ $PAGEDATA['clients'] = [];
 foreach ($clients as $client) {
 	$DBLIB->where("clients_id", $client['clients_id']);
 	$DBLIB->where("projects_deleted", 0);
+	$DBLIB->join("projectsTypes", "projects.projectsTypes_id=projectsTypes.projectsTypes_id");
+	$DBLIB->where("projectsTypes.projectsTypes_config_finance", 1);
 	if (!isset($_GET['future'])) {
 		$DBLIB->where("projects.projects_dates_use_end < '" . date('Y-m-d H:i:s'). "'");
 		$PAGEDATA['includeFuture'] = false;

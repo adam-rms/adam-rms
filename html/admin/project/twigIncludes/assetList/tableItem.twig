@@ -1,0 +1,72 @@
+{% if type['assets']|length > 1 %}{# If there's just one item then just display it on its own #}
+<tr class="categoryFilter categoryFilter{{ categoryid }} showHideFilter" data-filter="typeFilter{{ type['assets'][0].assetTypes_id }}">
+    <td><input type="checkbox" class="assetAssignmentCheckboxType" data-typeid="{{ type['assets'][0].assetTypes_id }}" /></td>
+    <td colspan="3">{{ type['assets']|length }}x <b>{{ type['assets'][0].manufacturers_id != 1 ? type['assets'][0].manufacturers_name ~ " - " : "" }}{{ type['assets'][0].assetTypes_name }}</b>
+    </td>
+    <td>
+        {{ type['totals']['status'] }}
+    </td>
+    <td>
+        {{ (type['totals']['mass'] > 0 ? type['totals']['mass'] ~ 'kg' : '') }}
+    </td>
+    {% if project.projectsTypes_config_finance == 1 %}
+    <td>
+        {{ type['totals']['price']|money }}
+    </td>
+    <td>
+        {{ type['totals']['discountPrice']|money }}
+    </td>
+    {% endif %}
+</tr>
+{% endif %}
+{% for assetAssignment in type['assets'] %}
+<tr id="assetRow{{ assetAssignment.assetsAssignments_id }}" class="{% if type['assets']|length > 1 %}typeFilter typeFilter{{ type['assets'][0].assetTypes_id }} categoryFilterClose{{ categoryid }}{% else %}categoryFilter categoryFilter{{ categoryid }}{% endif %}">
+    <td>
+        <input type="checkbox" class="assetAssignmentCheckbox" data-typeid="{{ type['assets'][0].assetTypes_id }}" data-instanceid="{{ instanceid }}" data-assetassignmentid="{{ assetAssignment.assetsAssignments_id }}" />
+    </td>
+    <td colspan="{{ assetAssignment.assetsAssignments_comment ? '1' : (assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '2' : '3') }}">
+        {% if type['assets']|length == 1 %}
+            <b>{{ assetAssignment.manufacturers_id != 1 ? assetAssignment.manufacturers_name ~ " - " : "" }}{{ assetAssignment.assetTypes_name }}</b>
+        {% endif %}
+        <a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a>
+        {% for flag in assetAssignment.flagsblocks.FLAG %}
+            <a  target="_blank" href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-warning"><i class="far fa-flag" title="{{ flag.maintenanceJobs_title }}"></i></a>
+        {% endfor %}
+        {% for flag in assetAssignment.flagsblocks.BLOCK %}
+            <a target="_blank" href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-danger" title="{{ flag.maintenanceJobs_title }}"><i class="fas fa-ban"></i></a>
+        {% endfor %}
+    </td>
+    {% if assetAssignment.assetsAssignments_comment %}
+    <td colspan="{{ assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2' }}">
+        {{ assetAssignment.assetsAssignments_comment }}
+    </td>
+    {% endif %}
+    {% if assetAssignment.assetTypes_definableFields_ARRAY|length > 0 %}
+    <td>
+      {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+        {% if field != "" %}
+            <b>{{ field }}: </b>{{ assetAssignment['asset_definableFields_' ~ loop.index] }}<br/>
+        {% endif %}
+    {% endfor %}
+    </td>
+    {% endif %}
+    <td>
+        {{ (assetAssignment.assetsAssignmentsStatus_name ? assetAssignment.assetsAssignmentsStatus_name ~ "/" : '') }}
+        {% if assetAssignment.latestScan %}
+            {% if assetAssignment.latestScan.locations_name %}
+                {{ assetAssignment.latestScan.locations_name }} <span class="badge badge-default" title="GPS Not Verified, but location barcode scanned"><i class="fas fa-map-marker-alt"></i></span>
+            {% elseif assetAssignment.latestScan.assetTypes_name %}
+                {{  assetAssignment.latestScan.assetTypes_name }} <span class="badge badge-info" title="Asset Scan was Verified"><i class="fas fa-check"></i></span>
+            {% elseif assetAssignment.latestScan.assetsBarcodes_customLocation %}
+                {{  assetAssignment.latestScan.assetsBarcodes_customLocation }} <span class="badge badge-danger" title="Location was entered as text"><i class="fas fa-times"></i></span>
+            {% endif %}
+            <span class="badge badge-secondary" title="Scanned by {{ assetAssignment.latestScan.users_name1 ~ " " ~ assetAssignment.latestScan.users_name2 }}"><i class="fas fa-info"></i></span>
+        {% endif %}
+    </td>
+    <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>
+    {% if project.projectsTypes_config_finance == 1 %}
+        <td>{{ assetAssignment.price|money }}</td>
+        <td>{{ assetAssignment.discountPrice|money }}{{  assetAssignment.assetsAssignments_discount > 0 ? " ("~assetAssignment.assetsAssignments_discount ~ "%)" : "" }}</td>
+    {% endif %}
+</tr>
+{% endfor %}

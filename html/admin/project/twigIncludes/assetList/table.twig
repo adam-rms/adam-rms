@@ -1,0 +1,27 @@
+<table class="table projects">
+    <thead>
+    <tr>
+        <th style="width:1px"><input type="checkbox" class="assetAssignmentCheckboxAll" data-instanceid="{{ instanceid }}" /></th>
+        <th style="width:5em">Item</th>
+        <th style="width:35em">{# Comment #}</th>
+        <th style="width:25em">{# Spec #}</th>
+        <th>Status/Location</th>
+        <th style="width:6em;">Mass</th>
+        {% if project.projectsTypes_config_finance == 1 %}
+        <th style="width:5em;">Price</th>
+        <th style="width:9em;">Discounted Price</th>
+        {% endif %}
+    </tr>
+    </thead>
+    <tbody>
+        {% block tableBody %}{% endblock %}
+    </tbody>
+</table>
+<style>
+    .categoryFilter {
+        background-color: #fafafa;
+    }
+    .table td {
+        vertical-align: top;
+    }
+</style>

@@ -6,14 +6,17 @@ use Money\Money;
 
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
 
+
+
 //The project itself
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $_GET['id']);
+$DBLIB->join("projectsTypes", "projects.projectsTypes_id=projectsTypes.projectsTypes_id", "LEFT");
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->join("locations","locations.locations_id=projects.locations_id","LEFT");
-$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "clients.clients_id", "clients_name","clients_website","clients_email","clients_notes","clients_address","clients_phone","users.users_userid", "users.users_name1", "users.users_name2", "users.users_email","locations.locations_name","locations.locations_address"]);
+$PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "projectsTypes.*", "clients.clients_id", "clients_name","clients_website","clients_email","clients_notes","clients_address","clients_phone","users.users_userid", "users.users_name1", "users.users_name2", "users.users_email","locations.locations_name","locations.locations_address"]);
 if (!$PAGEDATA['project']) die("404");
 
 //AuditLog
@@ -31,17 +34,6 @@ $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA["project"]['projects_name'], "BR
 if ($AUTH->instancePermissionCheck(22)) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $PAGEDATA['clients'] = $DBLIB->get("clients", null, ["clients_id", "clients_name"]);
-}
-if ($AUTH->instancePermissionCheck(23)) {
-    $DBLIB->orderBy("users.users_name1", "ASC");
-    $DBLIB->orderBy("users.users_name2", "ASC");
-    $DBLIB->orderBy("users.users_created", "ASC");
-    $DBLIB->where("users_deleted", 0);
-    $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
-    $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
-    $DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
-    $DBLIB->where("userInstances.userInstances_deleted",  0);
-    $PAGEDATA['potentialManagers'] = $DBLIB->get('users', null, ["users.users_name1", "users.users_name2", "users.users_userid"]);
 }
 
 //Payments and also
@@ -87,13 +79,12 @@ function projectFinancials($project) {
     $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
     $DBLIB->join("assetCategories", "assetTypes.assetCategories_id=assetCategories.assetCategories_id", "LEFT");
     $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
-    $DBLIB->join("instances", "assets.instances_id=instances.instances_id", "LEFT");
-    $DBLIB->orderBy("instances.instances_name", "ASC");
+    $DBLIB->join("assetsAssignmentsStatus", "assetsAssignments.assetsAssignmentsStatus_id=assetsAssignmentsStatus.assetsAssignmentsStatus_id", "LEFT");
     $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
     $DBLIB->where("assets.assets_deleted", 0);
-    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "instances.instances_name AS assetInstanceName", "instances.instances_id"]);
+    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignmentsStatus.assetsAssignmentsStatus_name","assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "assets.instances_id"]);
 
     $return['assetsAssigned'] = [];
     $return['assetsAssignedSUB'] = [];
@@ -102,14 +93,10 @@ function projectFinancials($project) {
     $return['prices'] = ["subTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "discounts" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])), "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))];
 
     $return['priceMaths'] = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
-    $return['assetTypesCounter'] = [];
     foreach ($assets as $asset) {
         $return['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
         $asset['value'] = new Money(($asset['assets_value'] != null ? $asset['assets_value'] : $asset['assetTypes_value']), new Currency($AUTH->data['instance']['instances_config_currency']));
         $return['value'] = $return['value']->add($asset['value']);
-
-        if (isset($return['assetTypesCounter'][$asset['assetTypes_id']])) $return['assetTypesCounter'][$asset['assetTypes_id']] += 1;
-        else $return['assetTypesCounter'][$asset['assetTypes_id']] = 1;
 
         if ($asset['assetsAssignments_customPrice'] == null) {
             //The actual pricing calculator
@@ -130,8 +117,42 @@ function projectFinancials($project) {
 
         $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));
 
-        if ($asset['instances_id'] != $project['instances_id']) $return['assetsAssignedSUB'][] = $asset;
-        else $return['assetsAssigned'][] = $asset;
+        $asset['latestScan'] = assetLatestScan($asset['assets_id']);
+
+        if ($asset['instances_id'] != $project['instances_id']) {
+            if (!isset($return['assetsAssignedSUB'][$asset['instances_id']]['assets'])) $return['assetsAssignedSUB'][$asset['instances_id']]['assets'] = [];
+            if (!isset($return['assetsAssignedSUB'][$asset['instances_id']]['assets'][$asset['assetTypes_id']])) $return['assetsAssignedSUB'][$asset['instances_id']]['assets'][$asset['assetTypes_id']]['assets'] = [];
+            $return['assetsAssignedSUB'][$asset['instances_id']]['assets'][$asset['assetTypes_id']]['assets'][] = $asset;
+        } else {
+            if (!isset($return['assetsAssigned'][$asset['assetTypes_id']])) $return['assetsAssigned'][$asset['assetTypes_id']]['assets'] = [];
+            $return['assetsAssigned'][$asset['assetTypes_id']]['assets'][] = $asset;
+        }
+    }
+    foreach ($return['assetsAssigned'] as $key => $type) {
+        if (!isset($return['assetsAssigned'][$key]['totals'])) $return['assetsAssigned'][$key]['totals'] = ["status" => null,"discountPrice"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"price"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"mass"=>0.0];
+        foreach ($type['assets'] as $asset) {
+            if ($return['assetsAssigned'][$key]['totals']['status'] == null) $return['assetsAssigned'][$key]['totals']['status'] = $asset['assetsAssignmentsStatus_name'];
+            elseif ($return['assetsAssigned'][$key]['totals']['status'] != $asset['assetsAssignmentsStatus_name']) $return['assetsAssigned'][$key]['totals']['status'] = false; //They aren't all the same
+            $return['assetsAssigned'][$key]['totals']['discountPrice'] = $return['assetsAssigned'][$key]['totals']['discountPrice']->add($asset['discountPrice']);
+            $return['assetsAssigned'][$key]['totals']['price'] = $return['assetsAssigned'][$key]['totals']['price']->add($asset['price']);
+            $return['assetsAssigned'][$key]['totals']['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
+        }
+    }
+    foreach ($return['assetsAssignedSUB'] as $instanceid => $instance) {
+        if (!isset($return['assetsAssignedSUB'][$instanceid]['instance'])) {
+            $DBLIB->where("instances_id",$instanceid);
+            $return['assetsAssignedSUB'][$instanceid]['instance'] = $DBLIB->getone("instances",["instances_id","instances_name"]);
+        }
+        foreach ($return['assetsAssignedSUB'][$instanceid]['assets'] as $key => $type) {
+            if (!isset($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals'])) $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals'] = ["status" => null,"discountPrice"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"price"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),"mass"=>0.0];
+            foreach ($type['assets'] as $asset) {
+                if ($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] == null) $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] = $asset['assetsAssignmentsStatus_name'];
+                elseif ($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] != $asset['assetsAssignmentsStatus_name']) $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['status'] = false; //They aren't all the same
+                $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['discountPrice'] = $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['discountPrice']->add($asset['discountPrice']);
+                $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price'] = $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price']->add($asset['price']);
+                $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
+            }
+        }        
     }
 
     $return['payments']['subTotal'] = $return['prices']['total']->add($return['payments']['sales']['total'],$return['payments']['subHire']['total'],$return['payments']['staff']['total']);
@@ -223,14 +244,6 @@ $DBLIB->orderBy("crewAssignments.crewAssignments_rank", "ASC");
 $DBLIB->orderBy("crewAssignments.crewAssignments_id", "ASC");
 $PAGEDATA['project']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "users.users_name1", "users.users_name2", "users.users_email"]);
 
-if (isset($_GET['loadingView'])) {
-    $PAGEDATA['loadingView'] = true;
-    $PAGEDATA['loadingViewStatusID'] = (isset($_GET['loadingViewStatus']) ? $_GET['loadingViewStatus'] : 5);
-    $PAGEDATA['loadingViewStatus'] = $GLOBALS['ASSETASSIGNMENTSTATUSES'][$PAGEDATA['loadingViewStatusID']];
-    $PAGEDATA['loadingViewStatusArray'] = $GLOBALS['ASSETASSIGNMENTSTATUSES'];
-}
-else $PAGEDATA['loadingView'] = false;
-
 //Locations
 $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->orderBy("locations.locations_name", "ASC");
@@ -241,7 +254,7 @@ $PAGEDATA['locations'] = $DBLIB->get("locations",null,["locations.locations_name
 $PAGEDATA['files'] = $bCMS->s3List(7, $PAGEDATA['project']['projects_id']);
 
 if (isset($_GET['pdf'])) {
-    if (isset($_GET['finance'])) $PAGEDATA['showFinance'] = true;
+    if (isset($_GET['finance']) and $PAGEDATA['project']['projectsTypes_config_finance'] == 1) $PAGEDATA['showFinance'] = true;
 
     //die($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf','mode' => 'utf-8', 'format' => 'A4', 'setAutoTopMargin' => 'pad', "margin_top" => 5]);
@@ -261,7 +274,7 @@ if (isset($_GET['pdf'])) {
              ');
     $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
     $mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ($PAGEDATA['project']['projects_name'] . " - ". $PAGEDATA['project']['clients_name'] . " - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', 'I');
-} elseif (isset($_GET['list']) and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
-elseif (isset($_GET['files'])) echo $TWIG->render('project/project_files.twig', $PAGEDATA);
+} elseif (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
+elseif (isset($_GET['files']) and $PAGEDATA['project']['projectsTypes_config_files'] == 1) echo $TWIG->render('project/project_files.twig', $PAGEDATA);
 else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>

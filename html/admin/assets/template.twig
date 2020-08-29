@@ -216,7 +216,7 @@
                     <div class="dropdown-divider"></div>
                     {% endif %}
                     {% for project in projects %}
-                        {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id %}
+                        {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 %}
                             <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" class="dropdown-item changeProjectBasket" data-projectid="{{ project.projects_id }}">
                                 <h3 class="dropdown-item-title">
                                     {{ project.projects_name }}
@@ -428,6 +428,17 @@
                                         <i class="fa fa-map-marked-alt nav-icon"></i>
                                         <p>
                                             Locations
+                                            <span class="right badge badge-danger">New</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 105|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
+                                        <i class="fas fa-theater-masks nav-icon"></i>
+                                        <p>
+                                            Project Types
                                             <span class="right badge badge-danger">New</span>
                                         </p>
                                     </a>
@@ -737,11 +748,50 @@ far fa-circle
         });
         {% if 21|instancePermissions %}
         $(".newProjectButton").click(function () {
-            bootbox.prompt("Enter Project Name", function (result) {
-                if (result) {
-                    ajaxcall("projects/new.php", {"projects_name": result}, function (data) {
-                        window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
-                    });
+            bootbox.prompt({
+                title: "Select Project Type",
+                inputType: 'select',
+                inputOptions: [
+                    {% for type in potentialProjectTypes %}
+                    {
+                        text: '{{type.projectsTypes_name}}',
+                        value: '{{ type.projectsTypes_id }}',
+                    },
+                    {% endfor %}
+                ],
+                callback: function (result) {
+                    if (result) {
+                        var projectType = result;
+                        bootbox.prompt({
+                            title: "Select Project Manager",
+                            inputType: 'select',
+                            value: {{ USERDATA.users_userid }},
+                            inputOptions: [
+                                {% for user in potentialProjectManagers %}
+                                {
+                                    text: '{{ user.users_name1 ~ " " ~ user.users_name2 }}',
+                                    value: '{{ user.users_userid }}',
+                                },
+                                {% endfor %}
+                            ],
+                            callback: function (result) {
+                                if (result) {
+                                    var projectManager = result;
+                                    bootbox.prompt("Enter Project Name", function (result) {
+                                        if (result) {
+                                            ajaxcall("projects/new.php", {
+                                                "projects_name": result,
+                                                "projectsType_id": projectType,
+                                                "projects_manager": projectManager
+                                            }, function (data) {
+                                                window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
                 }
             });
         });

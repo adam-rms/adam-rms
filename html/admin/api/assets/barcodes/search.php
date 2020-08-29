@@ -26,7 +26,7 @@ if (!$barcode) finish(true, null, ["asset" => false, "barcode" => false,"locatio
 $scan = [
     "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
     "users_userid" => $AUTH->data['users_userid'],
-    "assetsBarcodes_timestamp" => date('Y-m-d H:i:s'),
+    "assetsBarcodesScans_timestamp" => date('Y-m-d H:i:s'),
     "locationsBarcodes_id" => ($_POST['locationType'] == "barcode" ? $_POST['location'] : null),
     "location_assets_id" => ($_POST['locationType'] == "asset" ? $_POST['location'] : null),
     "assetsBarcodes_customLocation" => ($_POST['locationType'] == "Custom" ? $_POST['location'] : null)

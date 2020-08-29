@@ -391,6 +391,21 @@ function assetFlagsAndBlocks($assetid) {
     }
     return $return;
 }
+function assetLatestScan($assetid) {
+    if ($assetid == null) return false;
+    global $DBLIB;
+    $DBLIB->orderBy("assetsBarcodesScans.assetsBarcodesScans_timestamp","DESC");
+    $DBLIB->where("assetsBarcodes.assets_id",$assetid);
+    $DBLIB->where("assetsBarcodes.assetsBarcodes_deleted",0);
+    $DBLIB->join("assetsBarcodes","assetsBarcodes.assetsBarcodes_id=assetsBarcodesScans.assetsBarcodes_id");
+    $DBLIB->join("locationsBarcodes","locationsBarcodes.locationsBarcodes_id=assetsBarcodesScans.locationsBarcodes_id","LEFT");
+    $DBLIB->join("assets","assets.assets_id=assetsBarcodesScans.location_assets_id","LEFT");
+    $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
+    $DBLIB->join("locations","locations.locations_id=locationsBarcodes.locations_id","LEFT");
+    $DBLIB->join("users","users.users_userid=assetsBarcodesScans.users_userid");
+    return $DBLIB->getone("assetsBarcodesScans",["assetsBarcodesScans.*","users.users_name1","users.users_name2","locations.locations_name","locations.locations_id","assets.assetTypes_id","assetTypes.assetTypes_name"]);
+
+}
 class projectFinance {
     public function durationMaths($projects_dates_deliver_start,$projects_dates_deliver_end) {
         //Calculate the default pricing for all assets

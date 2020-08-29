@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(53) or !isset($_POST['assetsAssignments_id'])) die("404");
-
+exit;
 $DBLIB->where("assetsAssignments_id", $_POST['assetsAssignments_id']);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
