@@ -21,14 +21,17 @@ $assetRequiredFields = ["assetTypes_name","assets_tag","assets_id","assets_dayRa
 if (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
 elseif ($AUTH->instancePermissionCheck(32)) $DBLIB->where("(assets_linkedTo IS NULL)"); //We'll handle linked assets later in the script but for now add all assets
 else die("404"); //Can't do an add all
+$DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . $project["projects_dates_deliver_end"] . "')");
 $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("assets_deleted", 0);
 $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
 $assetIDs = $DBLIB->get("assets", null, $assetRequiredFields);
 
 function linkedAssets($assetId,$linkCount) {
-    global $DBLIB,$assetsToProcess,$assetRequiredFields;
+    global $DBLIB,$assetsToProcess,$assetRequiredFields,$project;
     $DBLIB->where("assets_linkedTo", $assetId);
+    $DBLIB->where("assets_deleted", 0);
+    $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . $project["projects_dates_deliver_end"] . "')");
     $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
     $assets = $DBLIB->get("assets",null,$assetRequiredFields);
     foreach ($assets as $asset) {
