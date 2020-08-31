@@ -34,7 +34,7 @@ header("Content-Security-Policy: default-src 'none';" .
     //          We have laods of inline JS              Libs                                Google webmaster tools                    Google analytics
     "style-src 'unsafe-inline' 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com;".
     //          We have loads of inline CSS  Libs                        GFonts
-    "font-src https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com;" .
+    "font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com;" .
     //          Loading in google fonts     more gfonts               Fonts from libs like fontawesome
     "manifest-src 'self' https://*.adam-rms.com;" .
     //          Show images on mobile devices like favicons
