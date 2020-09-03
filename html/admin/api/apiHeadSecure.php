@@ -3,7 +3,7 @@ require_once __DIR__ . '/apiHead.php';
 
 if (!$GLOBALS['AUTH']->login) {
     if ($CONFIG['DEV']) finish(false,["message"=>"AUTH FAIL - " . $GLOBALS['AUTH']->debug]);
-    else finish(false,["message"=>"AUTH FAIL"]);
+    else finish(false,["code" => "AUTH", "message"=>"AUTH FAIL"]);
 }
 if (!$CONFIG['DEV']) {
     Sentry\configureScope(function (Sentry\State\Scope $scope): void {

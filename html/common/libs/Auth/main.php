@@ -16,9 +16,14 @@ class bID
 
         if (isset($_POST['jwt'])) {
             //Prefer to process JWTs over sessions
-            $decoded = JWT::decode($_POST['jwt'], $CONFIG['JWTKey'], array('HS256'));
-            $decoded_array = (array) $decoded;
-            $token = $decoded_array['token'];
+            try {
+                $decoded = JWT::decode($_POST['jwt'], $CONFIG['JWTKey'], array('HS256'));
+                $decoded_array = (array) $decoded;
+                $token = $decoded_array['token'];
+            } catch (\Firebase\JWT\ExpiredException $e) {
+                //Token has expired
+                $token = false;
+            }
         } elseif (isset($_SESSION['token'])) $token = $_SESSION['token'];
         else $token = false;
 
