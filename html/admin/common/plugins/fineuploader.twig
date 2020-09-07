@@ -128,11 +128,15 @@ x-amz-meta-size
                 onComplete: function (id, name, responseJson, xhr) {
                     if (responseJson) {
                         console.log(responseJson);
-                        if (responseJson.resize != true) {
-                            {% block success %}
-                            {% endblock %}
+                        if (responseJson.success) {
+                            if (responseJson.resize != true) {
+                                {% block success %}
+                                {% endblock %}
+                            } else {
+                                console.log("Resize successfully uploaded");
+                            }
                         } else {
-                            console.log("Resize successfully uploaded");
+                            console.log("File upload failed");
                         }
                         {#
                             responseJson.id is the uplaoded file id
