@@ -24,8 +24,6 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th style="width: 1px">
-                        </th>
                         <th style="width: 20%">
                             Name
                         </th>
@@ -45,7 +43,7 @@
                     <tbody>
                     {% for location in locations %}
                     <tr>
-                        <td colspan="2">
+                        <td>
                             <a {% if 20|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?location={{ location.locations_id }}"{% endif %}>{{ location.locations_name }}</a>
                         </td>
                         <td>
@@ -88,11 +86,10 @@
                                         {% if loop.last %}
                                             &#8627;
                                         {% else %}
-                                            &nbsp;
+                                            &nbsp;&nbsp;
                                         {% endif %}
                                     {% endfor %}
-                                </td>
-                                <td>
+                                    &nbsp;
                                     <a {% if 20|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?location={{ subLocation.locations_id }}"{% endif %}>{{ subLocation.locations_name }}</a>
                                 </td>
                                 <td>
