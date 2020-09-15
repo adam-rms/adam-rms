@@ -13,182 +13,107 @@
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            <!--
                             {% if 106|instancePermissions %}
-                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
+                                <button type="button" class="btn btn-default" id="addType"><i class="fa fa-plus"></i></button>
                             {% endif %}
-                            -->
                         </div>
                     </form>
                 </div>
             </div>
             <div class="card-body table-responsive p-0">
                 <table class="table table-bordered">
+                    <tr>
+                        <th style="width:15rem;">
+                            Name
+                        </th>
+                        {% for id,name in options %}
+                        <th>
+                            {{ name }}
+                        </th>
+                        {% endfor %}
+                        <th style="width:70px;">
+
+                        </th>
+                    </tr>
                     {% for type in types %}
                           <tr>
                               <td>
                                   {{type.projectsTypes_name}}
                               </td>
-                              <td style="width:70px;">
-                                 <div class="btn-group" style="display:none;">
+                              {% for id,name in options %}
+                                  <td>
+                                      <input type="checkbox" data-typeid="{{ type.projectsTypes_id }}" {{ (type[id] == 1 ? 'checked' : '') }} {% if 107|instancePermissions %}{% else %}disabled{% endif %} data-option="{{ id }}">
+
+                                  </td>
+                              {% endfor %}
+                              <td>
+                                 <div class="btn-group">
                                      {% if 107|instancePermissions %}
-                                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="btn btn-default btn-sm editButton" data-typeid="{{ type.projectsTypes_id }}" data-value="{{type.projectsTypes_name}}"><i class="fas fa-edit"></i></button>
                                      {% endif %}
-                                     {% if 108|instancePermissions %}
-                                         <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
+                                     {% if 108|instancePermissions and type.count < 1 %}
+                                         <button type="button" class="btn btn-danger btn-sm deleteButton" data-typeid="{{ type.projectsTypes_id }}"><i class="fas fa-trash"></i></button>
                                      {% endif %}
                                  </div>
                               </td>
                           </tr>
-                                {% if category.instances_id is not null %}
-                                <div class="modal fade" id="editModal{{ category.assetCategories_id }}">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Edit {{category.assetCategories_name}}</h4>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="edit-form" data-id="{{ category.assetCategories_id }}">
-                                                    <input type="hidden" name="assetCategories_id" value="{{ category.assetCategories_id }}"/>
-                                                    <div class="input-group" style="margin-bottom: 5px;">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Name</span>
-                                                        </div>
-                                                        <input type="text" class="form-control" name="assetCategories_name" value="{{ category.assetCategories_name }}">
-                                                    </div>
-                                                    <div class="input-group" style="margin-bottom: 5px;">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Icon</span>
-                                                        </div>
-                                                        <div class="btn-group">
-                                                            <button type="button" class="btn btn-default iconpicker-component"><i
-                                                                        class="{{ category.assetCategories_fontAwesome }}"></i></button>
-                                                            <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle" data-toggle="dropdown" data-selected="{{ category.assetCategories_fontAwesome }}" data-id="{{ category.assetCategories_id }}">
-                                                                <span class="caret"></span>
-                                                                <span class="sr-only">Toggle Dropdown</span>
-                                                            </button>
-                                                            <div class="dropdown-menu"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Category Group</span>
-                                                        </div>
-                                                        <select class="form-control" name="assetCategoriesGroups_id">
-                                                            {% set currentCategoryGroupSub = false %}
-                                                            {% for categorySub in categories %}
-                                                                {% if currentCategoryGroupSub != categorySub.assetCategoriesGroups_name %}
-                                                                    {% set currentCategoryGroupSub = categorySub.assetCategoriesGroups_name %}
-                                                                    <option {% if category.assetCategoriesGroups_id == categorySub.assetCategoriesGroups_id %}selected{% endif %} value="{{ categorySub.assetCategoriesGroups_id }}">{{ categorySub.assetCategoriesGroups_name }}</option>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer justify-content-between">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ category.assetCategories_id }}">Save changes</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                            {% if currentCategoryGroup %}
-                            {# Close the previous category group if you had any #}
-                            </tbody>
-                    {% endif %}
+                    {% endfor %}
                 </table>
             </div>
-        </div>
-    </div>
-    {% if 90|instancePermissions %}
-    <div class="modal fade" id="newModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">New Custom Category</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="newCategoryForm">
-                        <div class="input-group" style="margin-bottom: 5px;">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Name</span>
-                            </div>
-                            <input required type="text" class="form-control" name="assetCategories_name">
-                        </div>
-                        <div class="input-group" style="margin-bottom: 5px;">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Icon</span>
-                            </div>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default iconpicker-component"><i></i></button>
-                                <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle" data-toggle="dropdown" id="newCategoryFormIcon">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <div class="dropdown-menu"></div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Category Group</span>
-                            </div>
-                            <select required class="form-control" name="assetCategoriesGroups_id">
-                                {% set currentCategoryGroupSub = false %}
-                                {% for categorySub in categories %}
-                                    {% if currentCategoryGroupSub != categorySub.assetCategoriesGroups_name %}
-                                        {% set currentCategoryGroupSub = categorySub.assetCategoriesGroups_name %}
-                                        <option value="{{ categorySub.assetCategoriesGroups_id }}">{{ categorySub.assetCategoriesGroups_name }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveNewCategory">Save changes</button>
-                </div>
+            <div class="overlay" id="loading">
+                <i class="fas fa-sync fa-spin fa-3x"></i>
             </div>
         </div>
     </div>
-    {% endif %}
     <script>
         $(document).ready(function () {
-            $('.iconpickerButtonSelector').iconpicker({ /*options*/ });
-            {% if 90|instancePermissions %}
-            $("#saveNewCategory").click(function () {
-                var formData = $("#newCategoryForm").serializeArray();
-                formData.push({"name": "assetCategories_fontAwesome", "value":$("#newCategoryFormIcon").data('iconpicker').iconpickerValue});
-                ajaxcall("categories/new.php", {formData}, function (data) {
-                    location.reload();
+            $("#loading").hide();
+            {% if 106|instancePermissions %}
+            $("#addType").click(function () {
+                bootbox.prompt({
+                    title: "Add Project Type",
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "projectsTypes_name", "value":result }];
+                            ajaxcall("instances/projectTypes/new.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
                 });
             });
             {% endif %}
-            {% if 91|instancePermissions %}
-            $(".saveEdit-button").click(function () {
-                var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
-                formData.push({"name": "assetCategories_fontAwesome", "value":$(".iconpickerButtonSelector[data-id=" + $(this).data("id") + "]").data('iconpicker').iconpickerValue});
-                console.log(formData);
-                ajaxcall("categories/edit.php", {formData}, function (data) {
-                    location.reload();
+            {% if 107|instancePermissions %}
+            $(':checkbox').change(function() {
+                $("#loading").show();
+                var id = $(this).data("typeid");
+                var formData = [{"name": "projectsTypes_id", "value":id },{"name": $(this).data("option"), "value":($(this).is(":checked") ? '1' : '0') }];
+                ajaxcall("instances/projectTypes/edit.php", {formData}, function (data) {
+                    $("#loading").hide();
+                });
+            });
+            $(".editButton").click(function () {
+                var id = $(this).data("typeid");
+                bootbox.prompt({
+                    title: "Rename Project Type",
+                    value: $(this).data("value"),
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "projectsTypes_id", "value":id },{"name": "projectsTypes_name", "value":result }];
+                            ajaxcall("instances/projectTypes/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
                 });
             });
             {% endif %}
-            {% if 92|instancePermissions %}
+            {% if 108|instancePermissions %}
             $(".deleteButton").click(function () {
-                var id = $(this).data("id");
+                var id = $(this).data("typeid");
                 bootbox.confirm({
                     title:"Are you sure?",
-                    message: "Categories aren't fully deleted until all assets in the category are moved to other categories",
+                    message: "Deleting the type cannot be undone",
                     buttons: {
                         confirm: {
                             label: 'Yes',
@@ -201,8 +126,8 @@
                     },
                     callback: function (result) {
                         if (result) {
-                            var formData = [{"name": "assetCategories_id", "value":id },{"name": "assetCategories_deleted", "value":"1" }];
-                            ajaxcall("categories/edit.php", {formData}, function (data) {
+                            var formData = [{"name": "projectsTypes_id", "value":id },{"name": "projectsTypes_deleted", "value":"1" }];
+                            ajaxcall("instances/projectTypes/edit.php", {formData}, function (data) {
                                 location.reload();
                             });
                         }

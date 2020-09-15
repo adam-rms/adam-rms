@@ -1,7 +1,5 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
-use Money\Currency;
-use Money\Money;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Project Types", "BREADCRUMB" => false];
 
@@ -19,7 +17,17 @@ if (strlen($PAGEDATA['search']) > 0) {
 		projectsTypes_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' 
     )");
 }
-$PAGEDATA['types'] = $DBLIB->get("projectsTypes");
+$PAGEDATA['types'] = $DBLIB->get("projectsTypes",null,["projectsTypes.*", "(SELECT COUNT(*) FROM projects WHERE projects.projectsTypes_id=projectsTypes.projectsTypes_id AND projects.projects_deleted=0) AS count"]);
+
+$PAGEDATA['options'] = [
+    "projectsTypes_config_finance" => "Finance",
+    "projectsTypes_config_files" => "Files",
+    "projectsTypes_config_assets" => "Assets",
+    "projectsTypes_config_client" => "Client Assignment",
+    "projectsTypes_config_venue" => "Venue",
+    "projectsTypes_config_notes" => "Notes",
+    "projectsTypes_config_crew" => "Crew"
+];
 
 echo $TWIG->render('instances/projectTypes.twig', $PAGEDATA);
 ?>
