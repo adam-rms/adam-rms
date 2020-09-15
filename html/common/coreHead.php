@@ -40,7 +40,7 @@ header("Content-Security-Policy: default-src 'none';" .
     //          Show images on mobile devices like favicons
     "img-src 'self' data: blob: https://cdnjs.cloudflare.com https://*.adam-rms.com https://www.google-analytics.com https://www.googletagmanager.com ;".
     //                    Uploads    Images from libs                 Images                Google analytics
-    "connect-src 'self' https://*.adam-rms.com https://sentry.io https://www.google-analytics.com  https://*.amazonaws.com;".
+    "connect-src 'self' https://*.adam-rms.com https://sentry.io https://www.google-analytics.com  https://*.amazonaws.com https://status.jbithell.com;".
     //                  File uploads                      Error reporting     Google analytics             File Uploads
     "frame-src ;".
     "object-src 'self' blob:;".
