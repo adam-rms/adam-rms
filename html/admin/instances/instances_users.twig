@@ -192,7 +192,7 @@
                 minimumInputLength: 1,
                 width: '100%',
                 minimumResultsForSearch: 1,
-                placeholder: "Enter email addresses to search for existing AdamRMS users to add to business",
+                placeholder: "Enter an email addresses to search for existing AdamRMS users to add to business",
                 ajax: {
                     url: "{{ CONFIG.ROOTURL }}/api/instances/searchUser.php",
                     dataType: "json",
@@ -208,7 +208,7 @@
                             return {
                                 results: $.map(data.response, function (item) {
                                     return {
-                                        text: item.users_name1 + " " + item.users_name2 + " (" + item.users_email + ")",
+                                        text: item.users_name1 + " " + item.users_name2,
                                         id: item.users_userid
                                     }
                                 })

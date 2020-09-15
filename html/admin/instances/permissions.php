@@ -19,6 +19,7 @@ foreach ($PAGEDATA['actionsCategories'] as $category) {
 
 $DBLIB->orderBy("instancePositions_rank", "ASC");
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("instancePositions_deleted",0);
 $PAGEDATA['positions'] = $DBLIB->get("instancePositions");
 
 echo $TWIG->render('instances/instances_permissions.twig', $PAGEDATA);

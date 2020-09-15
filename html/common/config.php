@@ -25,7 +25,7 @@ $CONFIG = array(
     'SENDGRID' => ['APIKEY' => $_ENV['bCMS__SendGridAPIKEY']],
     'ERRORS' => ['SENTRY' => $_ENV['bCMS__SENTRYLOGIN'], "SENTRYPublic" => $_ENV['bCMS__SENTRYLOGINPUBLIC']],
     'ANALYTICS' => ['TRACKINGID' => "G-F9FBE7ZZNM"],
-    'VERSION' => "v1.17.0",
+    'VERSION' => "v1.18.0",
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => $_ENV['bCMS__EMAIL'],
     "ROOTURL" => "", //Set on a frontend/backend basis
@@ -169,6 +169,14 @@ $CONFIG = array(
                 "name" => "Asset removed from Project",
                 "methods" => [1,3,4],
                 "default" => true,
+                "canDisable" => true
+            ],
+            [
+                "id" => 30,
+                "group" => "Business - Users",
+                "name" => "User added to Business using a signup code",
+                "methods" => [1,3,4],
+                "default" => false,
                 "canDisable" => true
             ],
         ]

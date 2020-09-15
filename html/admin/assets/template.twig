@@ -272,10 +272,11 @@
                                 <div class="dropdown-divider"></div>
                             {% endfor %}
                         {% endif  %}
+                        <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
                         {% if 8|permissions %}
                             <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
-                            {% else %}
-                                <a href="#" class="dropdown-item dropdown-footer"><i>Contact support to add new businesses</i></a>
+                        {% else %}
+                            <a href="#" class="dropdown-item dropdown-footer"><i>Contact support to add new businesses</i></a>
                         {% endif %}
                     </div>
                 </li>
@@ -367,17 +368,7 @@
                                     </p>
                                 </a>
                             </li>
-                            {% if 81|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
-                                        <i class="nav-icon fas fa-cog"></i>
-                                        <p>
-                                            Settings
-                                            <span class="right badge badge-danger">New</span>
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
+
                             {% if 36|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
@@ -400,6 +391,19 @@
                                     </a>
                                 </li>
                             {% endif %}
+
+                            {% if 87|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
+                                        <i class="fa fa-map-marked-alt nav-icon"></i>
+                                        <p>
+                                            Locations
+                                            <span class="right badge badge-danger">New</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-header">USER MANAGEMENT</li>
                             {% if 2|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
@@ -422,13 +426,24 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 87|instancePermissions %}
+                            {% if 109|instancePermissions %}
                                 <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
-                                        <i class="fa fa-map-marked-alt nav-icon"></i>
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/signupCodes.php" class="nav-link">
+                                        <i class="fas fa-key nav-icon"></i>
                                         <p>
-                                            Locations
+                                            Signup Codes
                                             <span class="right badge badge-danger">New</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-header">SETTINGS</li>
+                            {% if 81|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
+                                        <i class="nav-icon fas fa-cog"></i>
+                                        <p>
+                                            Basic Settings
                                         </p>
                                     </a>
                                 </li>
@@ -455,6 +470,7 @@
                                     </a>
                                 </li>
                             {% endif %}
+
                         </ul>
                     </li>
 

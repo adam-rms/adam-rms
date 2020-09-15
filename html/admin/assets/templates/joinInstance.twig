@@ -1,0 +1,29 @@
+<div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
+    <div class="card box-warning">
+        <div class="card-header">
+            <h3 class="card-title">Join Business</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label>Business Signup Code</label>
+                <input type="text" required class="form-control" id="joinCode" placeholder="JOIN CODE" name="instances_name">
+            </div>
+        </div>
+        <div class="card-footer">
+            <button id="joinButton" class="btn btn-default pull-right">Join</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $("#joinButton").click(function () {
+            if ($("#joinCode").val().length > 0) {
+                ajaxcall("instances/addUserFromCode.php", {
+                    "signupCodes_name":$("#joinCode").val()
+                }, function (data) {
+                    location.reload();
+                });
+            }
+        });
+    });
+</script>

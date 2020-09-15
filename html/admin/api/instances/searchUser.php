@@ -9,12 +9,13 @@ $DBLIB->where("(SELECT COUNT(*) FROM userInstances
     LEFT JOIN instancePositions ON userInstances.instancePositions_id=instancePositions.instancePositions_id
     WHERE userInstances.users_userid=users.users_userid AND userInstances.userInstances_deleted = '0' AND instancePositions.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' 
     ) < 1");
-$DBLIB->where("(
+/*$DBLIB->where("(
 		users_email LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
 		OR users_name1 LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
 		OR users_name2 LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'	
 		OR CONCAT( users_name1,  ' ', users_name2 ) LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
-    )");
-$users = $DBLIB->get("users", null, ["users_userid", "users_name1", "users_name2", "users_email"]);
-if (!$users) finish(false, ["code" => "LIST-USERS-FAIL", "message"=> "Could not search for Users"]);
+    )");*/
+$DBLIB->where("users_email", strtolower($bCMS->sanitizeString($_POST['term']))); //Only allow searching by email
+$users = $DBLIB->get("users", null, ["users_userid", "users_name1", "users_name2"]);
+if (!$users) finish(true, null, []);
 else finish(true, null, $users);
