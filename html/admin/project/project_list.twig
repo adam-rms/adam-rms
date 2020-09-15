@@ -21,27 +21,27 @@
                     <th style="width: 1%">
                         #
                     </th>
-                    <th style="width: 45%">
+                    <th>
                         Title
                     </th>
                     {% if potentialProjectTypes|length > 1 %}
-                    <th style="width: 5%">
+                    <th style="width: 10%">
                         Type
                     </th>
                     {% endif %}
                     <th style="width: 24%">
                         Client
                     </th>
-                    <th style="width: 5%">
+                    <th style="width: 6rem;">
                         Manager
                     </th>
-                    <th style="width: 5%">
+                    <th style="width: 8rem;">
                         Outstanding
                     </th>
-                    <th style="width: 5%">
+                    <th style="width: 11rem;">
                         Payments Received
                     </th>
-                    <th style="width: 35%">
+                    <th style="width: 15%">
                         Status
                     </th>
                 </tr>
@@ -52,7 +52,7 @@
                     {% if archive == false and project.projects_archived == 1 %}
                         {% set archive = true %}
                         <tr style="background-color: #ffffff;">
-                            <td colspan="7">
+                            <td colspan="{{ potentialProjectTypes|length > 1 ? 8 : 7 }}">
                                 <b>Archived Projects</b>
                             </td>
                         </tr>
