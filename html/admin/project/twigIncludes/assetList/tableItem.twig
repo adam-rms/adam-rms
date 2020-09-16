@@ -35,6 +35,10 @@
         {% for flag in assetAssignment.flagsblocks.BLOCK %}
             <a target="_blank" href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-danger" title="{{ flag.maintenanceJobs_title }}"><i class="fas fa-ban"></i></a>
         {% endfor %}
+        {% if assetAssignment.assetsAssignments_linkedTo %}
+            <button class="btn btn-sm btn-secondary" title="Asset was assigned automatically because it's linked to another asset"><i class="fas fa-link"></i></button>
+        {% endif %}
+
     </td>
     {% if assetAssignment.assetsAssignments_comment %}
     <td colspan="{{ assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2' }}">
