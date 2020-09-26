@@ -58,7 +58,7 @@
     <div class="card-body p-0">
         <div class="tab-content" id="asset-list-tabs-tabContent">
             <div class="tab-pane fade show active p-3" id="asset-list-tabs-home" role="tabpanel" aria-labelledby="asset-list-tabs-home-tab">
-                {{ FINANCIALS.assetsAssigned|length }} Asset{{ FINANCIALS.assetsAssigned|length != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})
+                {{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})
             </div>
             <div class="tab-pane fade" id="asset-list-tabs-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
                 {% embed 'project/twigIncludes/assetList/table.twig' with {"instanceid": USERDATA.instance.instances_id} %}

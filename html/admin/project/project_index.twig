@@ -152,7 +152,7 @@
                                    </p>
                                 {% endif %}
                             </div>
-                            {% if project.projectsTypes_config_notes == 1 %}
+                            {% if project.projectsTypes_config_notes == 1 and project.notes %}
                             <h5 class="mt-5 text-muted">Project Notes</h5>
                             <ul class="list-unstyled">
                                 {% for note in project.notes %}
@@ -186,7 +186,7 @@
                         <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
-                                <a class="dropdown-item" id="quickAddCommentButton">Add Audit Log Comment</a>
+                                <a class="dropdown-item" id="quickAddCommentButton">Add Comment</a>
                                 {% if 28|instancePermissions %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
@@ -465,8 +465,8 @@
                 </div>
                 </div>
                 {% endif %}
-                {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
                     <div class="col-lg-8 col-md-12">
+                        {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Project Crew</h3>
@@ -540,8 +540,76 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
+                        {% if project.auditLog|length > 0 %}
+                            <div class="card">
+                                 <div class="card-header">
+                                        <h3 class="card-title">History</h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                                <i class="fas fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <!-- The time line -->
+                                                <div class="timeline">
+                                                    {% set currentDate = '' %}
+                                                    {% for event in project.auditLog %}
+                                                        {% if event.auditLog_actionType in ['QUICKCOMMENT', 'INSERT', 'ARCHIVE','UNARCHIVE'] %}
+                                                            {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
+                                                                <div class="time-label">
+                                                                    <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
+                                                                </div>
+                                                                {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
+                                                            {% endif %}
+                                                            <div>
+                                                                {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                                    <i class="far fa-comment bg-blue"></i>
+                                                                {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                                                    <i class="fas fa-ban bg-red"></i>
+                                                                {% else %}
+                                                                    <i class="fas fa-info bg-gray-light"></i>
+                                                                {% endif %}
+                                                                <div class="timeline-item">
+                                                                    <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
+                                                                    <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a>
+                                                                        {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                                            added a comment
+                                                                        {% elseif event.auditLog_actionType == "INSERT" %}
+                                                                            created the project
+                                                                        {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                                                            archived the project
+                                                                        {% elseif event.auditLog_actionType == "UNARCHIVE" %}
+                                                                            removed the project from the archive
+                                                                        {% else %}
+                                                                            edited the project
+                                                                        {% endif %}
+                                                                    </h3>
+                                                                    {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                                                        <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
+                                                                    {% elseif event.auditLog_actionType in ['INSERT', 'ARCHIVE','UNARCHIVE'] %}
+                                                                        {# Blank #}
+                                                                    {% else %}
+                                                                        <div class="timeline-body" style="font-style: italic;">{{event.auditLog_actionData|nl2br }}</div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <div>
+                                                        <i class="fas fa-clock bg-gray"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- /.col -->
+                                        </div>
+                                    </div>
+                                </div>
+                        {% endif %}
                     </div>
-                {% endif %}
+
                 <div class="col-lg-4 col-md-12">
                     {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
                     <div class="card">
@@ -575,17 +643,117 @@
                     </div>
                     {% endif %}
                     <div class="card">
+                        <form id="pdfGenerate" method="GET">
                         <div class="card-header">
-                            <h3 class="card-title">PDFs</h3>
+                            <h3 class="card-title">Printable Version</h3>
                         </div>
                         <div class="card-body">
-                        <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf" type="button" class="btn btn-default">
-                            <i class="far fa-file-pdf"></i> Plain</a>
-                                {% if 33|instancePermissions and project.projectsTypes_config_finance == 1  %}
-                                <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}&pdf&finance" type="button" class="btn btn-default">
-                                    <i class="far fa-file-pdf"></i> Finances</a>
-                                {% endif %}
+                           <input type="hidden" name="pdf" value="true">
+                           <input type="hidden" name="id" value="{{ project.projects_id }}">
+                           <div class="form-group">
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="instancelogo" {% if USERDATA.instance.instances_logo %}checked{% else %}disabled{% endif %}>
+                                   <label class="form-check-label">Business Logo</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="addresses" checked>
+                                   <label class="form-check-label">Addresses</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="pmdetails" checked>
+                                   <label class="form-check-label">Project Manager</label>
+                               </div>
+                               {% if project.projectsTypes_config_assets == 1 %}
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="totalmass" checked>
+                                   <label class="form-check-label">Total Mass</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="totalvalue" checked>
+                                   <label class="form-check-label">Total Value</label>
+                               </div>
+                               {% endif %}
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="venue" checked>
+                                   <label class="form-check-label">Venue</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="invoiceNotes" checked>
+                                   <label class="form-check-label">Invoice Notes</label>
+                               </div>
+                               {% if project.projectsTypes_config_assets == 1 %}
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="assets" checked>
+                                   <label class="form-check-label">Equipment List</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="showAll">
+                                   <label class="form-check-label">Individual Items in Equipment List</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="flagsBlocks" checked>
+                                   <label class="form-check-label">Flags &amp; Blocks in Equipment List</label>
+                               </div>
+
+
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="checkboxes">
+                                   <label class="form-check-label">Equipment Checkboxes</label>
+                                   </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="comments">
+                                   <label class="form-check-label">Equipment Comments</label>
+                               </div>
+                                   <div class="form-check">
+                                       <input class="form-check-input" type="checkbox" name="masses" checked>
+                                       <label class="form-check-label">Equipment Masses</label>
+                                   </div>
+                               {% endif %}
+                               {% if 33|instancePermissions and project.projectsTypes_config_finance == 1  %}
+                               <hr/>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="finance" checked>
+                                   <label class="form-check-label">Financial Totals</label>
+                               </div>
+                               {% if project.projectsTypes_config_assets == 1 %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="prices" checked>
+                                    <label class="form-check-label">Equipment Prices</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="discounts" checked>
+                                    <label class="form-check-label">Equipment Discounts</label>
+                                </div>
+                               {% endif %}
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="subHires" checked>
+                                   <label class="form-check-label">Additional Hires</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="sales" checked>
+                                   <label class="form-check-label">Sales</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="staff" checked>
+                                   <label class="form-check-label">Staff</label>
+                               </div>
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="paymentTerms" checked>
+                                   <label class="form-check-label">Payment Terms</label>
+                               </div>
+                               {% endif %}
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" name="generate" disabled>
+                                   <label class="form-check-label">Generate as a PDF</label>
+                               </div>
+                            </div>
                         </div>
+                        <div class="card-footer">
+                            <div class="btn-group float-right">
+                                <button type="submit" class="btn btn-default">Generate Printout</button>
+                            </div>
+                        </div>
+                        </form>
                     </div>
                     {% if project.projectsTypes_config_files == 1 %}
                     <div class="card">
@@ -625,83 +793,7 @@
                     </div>
                     {% endif %}
                 </div>
-                {% if project.auditLog|length > 0 %}
-                <div class="col-12">
-                    <div class="card collapsed-card">
-                        <div class="card-header">
-                            <h3 class="card-title">Audit Log</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                    <i class="fas fa-plus"></i></button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <!-- The time line -->
-                                    <div class="timeline">
-                                        {% set currentDate = '' %}
-                                        {% for event in project.auditLog %}
-                                            {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
-                                                <div class="time-label">
-                                                    <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
-                                                </div>
-                                                {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
-                                            {% endif %}
-                                            <div>
-                                                {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                    <i class="far fa-comment bg-blue"></i>
-                                                {% elseif event.auditLog_actionType == "ARCHIVE" %}
-                                                    <i class="fas fa-ban bg-red"></i>
-                                                {% else %}
-                                                    <i class="fas fa-info bg-gray-light"></i>
-                                                {% endif %}
-                                                <div class="timeline-item">
-                                                    <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
-                                                    <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a>
-                                                        {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                            added a quick comment
-                                                        {% elseif event.auditLog_actionType == "INSERT" %}
-                                                            created the project
-                                                        {% elseif event.auditLog_actionType == "ARCHIVE" %}
-                                                            archived the project
-                                                        {% else %}
-                                                            edited the project
-                                                        {% endif %}
-                                                    </h3>
-                                                    {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                        <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
-                                                    {% elseif event.auditLog_actionType == "INSERT" %}
-                                                        {# Blank #}
-                                                    {% elseif event.auditLog_actionType == "ARCHIVE" %}
-                                                        {# Blank #}
-                                                    {% else %}
-                                                        <div class="timeline-body" style="font-style: italic;">{{event.auditLog_actionData|nl2br }}</div>
-                                                    {% endif %}
-                                                    {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                        {# Blank #}
-                                                    {% elseif event.auditLog_actionType == "INSERT" %}
-                                                        {# Blank #}
-                                                    {% else %}
-                                                        {#<div class="timeline-footer">
-                                                            <a class="btn btn-primary btn-sm">Read more</a>
-                                                            <a class="btn btn-danger btn-sm">Delete</a>
-                                                        </div>#}
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                        <div>
-                                            <i class="fas fa-clock bg-gray"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
+
             </div>
         </div>
     </div>
@@ -878,7 +970,6 @@
                     }
                 });
             });
-
             {% if 22|instancePermissions %}
             $("#editProjectClient").click(function () {
                 bootbox.prompt({
