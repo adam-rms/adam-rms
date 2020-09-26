@@ -222,7 +222,7 @@
                                     {{ project.projects_name }}
                                     <span class="float-right text-sm text-danger">
                                         {% if project.projects_manager == USERDATA.users_userid %}
-                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star" title="Project Manager"></i>
                                         {% endif %}
                                     </span>
                                 </h3>
@@ -575,11 +575,13 @@
                             <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
                                 <i class="nav-icon
 {% if project.projects_manager == USERDATA.users_userid %}
-far fa-dot-circle text-warning
+fas fa-star
 {% else %}
 far fa-circle
-{% endif %}"></i>
-                                <p>{{ project.projects_name }}</p>
+{% endif %}
+text-{{ STATUSES[project.projects_status]['class'] }}
+" title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                <p title="{{ project.projects_name }}">{{ project.projects_name }}</p>
                             </a>
                         </li>
                     {% endfor %}
