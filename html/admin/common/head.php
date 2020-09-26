@@ -265,6 +265,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#F5F5F5",
         "order" => 0,
         "assetsAvailable" => false,
+        "class" => "info"
     ],
     1 => [
         "name" => "Targeted",
@@ -273,6 +274,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#F5F5F5",
         "order" => 1,
         "assetsAvailable" => false,
+        "class" => "info"
     ],
     2 => [
         "name" => "Quote Sent",
@@ -281,6 +283,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#ffdd99",
         "order" => 2,
         "assetsAvailable" => false,
+        "class" => "warning"
     ],
     3 => [
         "name" => "Confirmed",
@@ -289,6 +292,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#66ff66",
         "order" => 3,
         "assetsAvailable" => false,
+        "class" => "success"
     ],
     4 => [
         "name" => "Prep",
@@ -297,6 +301,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#ffdd99",
         "order" => 4,
         "assetsAvailable" => false,
+        "class" => "success"
     ],
     5 => [
         "name" => "Dispatched",
@@ -305,6 +310,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#66ff66",
         "order" => 5,
         "assetsAvailable" => false,
+        "class" => "primary"
     ],
     6 => [
         "name" => "Returned",
@@ -313,6 +319,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#ffdd99",
         "order" => 6,
         "assetsAvailable" => false,
+        "class" => "primary"
     ],
     7 => [
         "name" => "Closed",
@@ -321,6 +328,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#F5F5F5",
         "order" => 7,
         "assetsAvailable" => false,
+        "class" => "secondary"
     ],
     8 => [
         "name" => "Cancelled",
@@ -329,6 +337,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#F5F5F5",
         "order" => 8,
         "assetsAvailable" => true,
+        "class" => "danger"
     ],
     9 => [
         "name" => "Lead Lost",
@@ -337,6 +346,7 @@ $GLOBALS['STATUSES'] = [
         "backgroundColour" => "#F5F5F5",
         "order" => 9,
         "assetsAvailable" => true,
+        "class" => "danger"
     ]
 ];
 $GLOBALS['STATUSES-AVAILABLE'] = [];
