@@ -88,7 +88,8 @@ if ($AUTH->data['instance']) {
         }
         unset($dates);
         sort($AUTH->data['instance']['weekStartDates']);
-    } else $AUTH->data['instance']['weekStartDates'] = false;
+        $PAGEDATA['USERDATA']['instance']['weekStartDates'] = $AUTH->data['instance']['weekStartDates']; //Copy the variable
+    } else $AUTH->data['instance']['weekStartDates'] = $PAGEDATA['USERDATA']['instance']['weekStartDates'] = false;
 } else {
     $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false];
     die($TWIG->render('index_noInstances.twig', $PAGEDATA));
