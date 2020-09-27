@@ -206,9 +206,9 @@
                     {% if thisProject %}
                     <a href="#" class="dropdown-item">
                         <h3 class="dropdown-item-title">
-                            {{ thisProject.projects_name }}
+                            {{ thisProject.projects_name|u.truncate(40, '...') }}
                             {% if thisProject.instances_name %}
-                                <span class="badge badge-danger">{{ thisProject.instances_name }}</span>
+                                <span class="badge badge-danger">{{ thisProject.instances_name|u.truncate(20, '...') }}</span>
                             {% endif %}
                         </h3>
                         <p class="text-sm text-muted"><i class="fas fa-shopping-basket mr-1"></i> Selected</p>
@@ -216,10 +216,10 @@
                     <div class="dropdown-divider"></div>
                     {% endif %}
                     {% for project in projects %}
-                        {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 %}
+                        {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
                             <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" class="dropdown-item changeProjectBasket" data-projectid="{{ project.projects_id }}">
                                 <h3 class="dropdown-item-title">
-                                    {{ project.projects_name }}
+                                    {{ project.projects_name|u.truncate(40, '...') }}
                                     <span class="float-right text-sm text-danger">
                                         {% if project.projects_manager == USERDATA.users_userid %}
                                         <i class="fas fa-star" title="Project Manager"></i>

@@ -72,7 +72,7 @@
                         {% if potentialProjectTypes|length > 1 %}- {{ project.projectsTypes_name }}{% endif %}</h3>
 
                     <div class="card-tools">
-                        {% if project.projectsTypes_config_assets == 1 %}
+                        {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
                             {% if 32|instancePermissions %}
                                 <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject">
                                     <i class="fas fa-dolly"></i></button>
@@ -131,7 +131,7 @@
                                         <input type="text" class="form-control float-right" id="datePickerInput">
                                     </div>
                                     {% else %}
-                                        <b class="d-block">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("Y-m-d h:i:sa")}} - {{ project.projects_dates_use_end ? project.projects_dates_use_end|date("Y-m-d h:i:sa") }}</b>
+                                        <b class="d-block">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("Y-m-d h:i:sa")  ~ ' - ' ~  project.projects_dates_use_end|date("Y-m-d h:i:sa") }}</b>
                                     {% endif %}
                                 </p>
                                 {% if project.projectsTypes_config_assets == 1 %}
@@ -143,11 +143,13 @@
                                             </div>
                                             <input type="text" class="form-control float-right" id="datePickerInputDeliver">
                                         </div>
+                                        {% if project.projects_dates_use_start %}
                                         <div style="width: 100%;text-align: right;">
                                             <a href="#" id="copyProjectDatesToDeliverDates">Copy from Project Dates</a>
                                         </div>
+                                        {% endif %}
                                     {% else %}
-                                        <b class="d-block">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa")}} - {{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
+                                        <b class="d-block">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa") ~ ' - ' ~ project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
                                         {% endif %}
                                    </p>
                                 {% endif %}
@@ -1176,8 +1178,12 @@
                 locale: {
                     format: 'DD MMM YYYY hh:mm A'
                 },
+                {% if project.projects_dates_use_start %}
                 startDate: "{{ project.projects_dates_use_start|date("j M Y h:i:sa") }}",
                 endDate: "{{ project.projects_dates_use_end|date("j M Y h:i:sa") }}"
+                {% else %}
+                autoUpdateInput: false,
+                {% endif %}
             });
             $('#datePickerInput').on('apply.daterangepicker', function(ev, picker) {
                 ajaxcall("projects/changeProjectDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_use_start":picker.startDate.format('DD MMM YYYY hh:mm A'),"projects_dates_use_end":picker.endDate.format('DD MMM YYYY hh:mm A')}, function (data) {
@@ -1190,8 +1196,12 @@
                 locale: {
                     format: 'DD MMM YYYY hh:mm A'
                 },
+            {% if project.projects_dates_deliver_start %}
                 startDate: "{{ project.projects_dates_deliver_start|date("j M Y h:i:sa") }}",
                 endDate: "{{ project.projects_dates_deliver_end|date("j M Y h:i:sa") }}"
+            {% else %}
+                autoUpdateInput: false,
+            {% endif %}
             });
             function changeProjectDeliverDates(start, end) {
                 ajaxcall("projects/changeProjectDeliverDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_deliver_start":start,"projects_dates_deliver_end":end}, function (data) {
@@ -1242,6 +1252,7 @@
             $("#copyProjectDatesToDeliverDates").click(function () {
                 changeProjectDeliverDates($("#datePickerInput").data('daterangepicker').startDate.format('DD MMM YYYY hh:mm A'),$("#datePickerInput").data('daterangepicker').endDate.format('DD MMM YYYY hh:mm A'));
             });
+
 
             {% endif %}
             {% if 28|instancePermissions %}

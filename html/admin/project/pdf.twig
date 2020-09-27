@@ -96,22 +96,30 @@
                     <td style="padding:0;">Our&nbsp;Reference:</td>
                     <td style="padding: 1px 0px 1px 5px;">{{project.projects_id}}</td>
                 </tr>
+                {% if project.projects_dates_deliver_start %}
                 <tr>
                     <td style="padding:0;">Deliver:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("j M Y h:ia")}}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_start|date("j M Y h:ia")}}</td>
                 </tr>
+                {% endif %}
+                {% if project.projects_dates_use_start %}
                 <tr>
                     <td style="padding:0;">Start:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("j M Y h:ia")}}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_start|date("j M Y h:ia")}}</td>
                 </tr>
+                {% endif %}
+                {% if project.projects_dates_use_end %}
                 <tr>
                     <td style="padding:0;">Finish:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_end ? project.projects_dates_use_end|date("j M Y h:ia") }}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_end|date("j M Y h:ia") }}</td>
                 </tr>
+                {% endif %}
+                {% if project.projects_dates_deliver_end %}
                 <tr>
                     <td style="padding:0;">Collect:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_end ? project.projects_dates_deliver_end|date("j M Y h:ia") }}</td>
+                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_end|date("j M Y h:ia") }}</td>
                 </tr>
+                {% endif %}
                 {% if GET['totalmass'] and project.projectsTypes_config_assets == 1 %}
                 <tr>
                     <td style="padding:0;">Mass Estimate:</td>
