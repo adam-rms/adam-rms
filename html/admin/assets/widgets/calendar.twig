@@ -30,6 +30,7 @@
             // -----------------------------------------------------------------
 
             var calendar = new Calendar(calendarEl, {
+                timeZone: 'UTC',
                 plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid','list' ],
                 nextDayThreshold: '05:00:00',
                 customButtons: {
@@ -62,8 +63,8 @@
                     {% for project in projects %}
                     {
                         title          : '[{{ STATUSES[project.projects_status]["name"] }}] {{ project.clients_name ? project.clients_name|raw ~ " - " }}{{ project.projects_name|raw }}',
-                        start          : Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
-                        end            : Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
+                        start          : {{ project.projects_dates_use_start|date('U') }}*1000,
+                        end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                         url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
                         backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
                         textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
