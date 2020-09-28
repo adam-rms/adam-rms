@@ -12,7 +12,7 @@ else $DBLIB->where("projects.projects_id", $AUTH->data['users_selectedProjectID'
 $project = $DBLIB->getone("projects", ["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_defaultDiscount","projects_name"]);
 if (!$project) finish(false,["message"=>"Project not found"]);
 
-if ($project["projects_dates_deliver_start"] == null or $project["projects_dates_deliver_end"] or (strtotime($project["projects_dates_deliver_start"]) >= strtotime($project["projects_dates_deliver_end"]))) finish(false,["message"=>"Please set the dates for the project before attempting to assign assets"]);
+if ($project["projects_dates_deliver_start"] == null or $project["projects_dates_deliver_end"] == null or (strtotime($project["projects_dates_deliver_start"]) >= strtotime($project["projects_dates_deliver_end"]))) finish(false,["message"=>"Please set the dates for the project before attempting to assign assets"]);
 
 $projectFinanceHelper = new projectFinance();
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
