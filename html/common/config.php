@@ -25,7 +25,7 @@ $CONFIG = array(
     'SENDGRID' => ['APIKEY' => $_ENV['bCMS__SendGridAPIKEY']],
     'ERRORS' => ['SENTRY' => $_ENV['bCMS__SENTRYLOGIN'], "SENTRYPublic" => $_ENV['bCMS__SENTRYLOGINPUBLIC']],
     'ANALYTICS' => ['TRACKINGID' => "G-F9FBE7ZZNM"],
-    'VERSION' => "v1.20.01",
+    'VERSION' => "v1.20.02",
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => $_ENV['bCMS__EMAIL'],
     "ROOTURL" => "", //Set on a frontend/backend basis
