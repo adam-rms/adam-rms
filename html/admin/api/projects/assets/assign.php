@@ -20,7 +20,16 @@ $priceMaths = $projectFinanceHelper->durationMaths($project['projects_dates_deli
 
 $assetRequiredFields = ["assetTypes_name","assets_tag","assets_id","assets_dayRate","assets_weekRate","assetTypes_dayRate","assetTypes_weekRate","assetTypes_mass","assetTypes_value","assets_value","assets_mass","assets_assetGroups"];
 
-if (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
+if (isset($_POST['assetGroups_id'])) {
+    $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");
+    $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
+    $DBLIB->where("assetGroups_id", $_POST['assetGroups_id']);
+    $DBLIB->where("assetGroups_deleted",0);
+    $group = $DBLIB->getOne("assetGroups",["assetGroups_id"]);
+    if (!$group) finish(false,["message"=>"Group not found"]);
+
+    $DBLIB->where("FIND_IN_SET(" . $group['assetGroups_id'] . ", assets.assets_assetGroups)");
+} elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
 elseif ($AUTH->instancePermissionCheck(32)) $DBLIB->where("(assets_linkedTo IS NULL)"); //We'll handle linked assets later in the script but for now add all assets
 else die("404"); //Can't do an add all
 $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . $project["projects_dates_deliver_end"] . "')");
