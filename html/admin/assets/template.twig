@@ -191,7 +191,7 @@
         <ul class="navbar-nav ml-auto">
             {% if projects and 31|instancePermissions %}
           <li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" href="#">
+                <a class="nav-link" {% if projects|length <= 20 %} data-toggle="dropdown" href="#" {% else %} href="{{ CONFIG.ROOTURL }}/project/list.php" {% endif %}>
                     <div class="d-none d-lg-block">
                         <i class="fas fa-shopping-basket"></i>
                         {% if thisProject %}
@@ -202,6 +202,7 @@
                         <i class="fas fa-shopping-basket"></i>
                     </div>
                 </a>
+              {% if projects|length <= 20 %}
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     {% if thisProject %}
                     <a href="#" class="dropdown-item">
@@ -234,6 +235,7 @@
                             {% endif %}
                         {% endfor %}
                 </div>
+              {% endif %}
             </li>
             {% elseif thisProject %}
             <li class="nav-item">
