@@ -9,6 +9,7 @@ $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","L
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
 $DBLIB->where("instancePositions.instances_id",  $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
+$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 $DBLIB->orderBy("users.users_name1", "ASC");
 $DBLIB->orderBy("users.users_name2", "ASC");
 if (strlen($_POST['term']) > 0) {

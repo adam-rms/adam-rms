@@ -55,6 +55,7 @@ foreach ($instances as $instance) {
 	$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
 	$DBLIB->where("instances_id",  $instance['instances_id']);
 	$DBLIB->where("userInstances.userInstances_deleted",  0);
+	$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 	$instance['USERS'] = $DBLIB->getValue("users","COUNT(*)");
 
 

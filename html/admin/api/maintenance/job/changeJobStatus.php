@@ -38,6 +38,7 @@ if ($job['maintenanceJobs_user_tagged'] != "") {
     $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
     $DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
     $DBLIB->where("userInstances.userInstances_deleted",  0);
+    $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
     $job['tagged'] = $DBLIB->get('users', null, ["users.users_name1", "users.users_name2", "users.users_userid"]);
 }
 if (count($job['tagged']) > 0) {

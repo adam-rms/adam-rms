@@ -28,6 +28,7 @@ foreach ($_POST['users'] as $user) {
         $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
         $DBLIB->where("instancePositions.instances_id",  $AUTH->data['instance']['instances_id']);
         $DBLIB->where("userInstances.userInstances_deleted",  0);
+        $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
         $usersql = $DBLIB->getone("users", ["users.users_userid", "users.users_name1"]);
         if (!$usersql) continue; //User not found - let's skip this for now
         else $data['users_userid'] = $usersql['users_userid'];

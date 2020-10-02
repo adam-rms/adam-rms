@@ -56,9 +56,13 @@
                                         {% endif %}>
                                     <td>
                                         {% if user.users_thumbnail %}
-                                            <img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}"></td>
+                                            <img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}">
                                         {% endif %}
+                                    </td>
                                     <td>
+                                        {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                            <span class="badge bg-danger">Archived</span>
+                                        {% endif %}
                                         {% if 52|instancePermissions %}
                                         <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
                                             {% endif %}
@@ -69,7 +73,8 @@
 
                                             {% if user.users_suspended == '1' %}
                                             <span class="label label-danger">Suspended</span><br/>
-                                        {% endif %}</td>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ user["users_name1"] }}</td>
                                     <td>{{ user["users_name2"] }}</td>
 
@@ -80,6 +85,16 @@
                                         {% if 6|instancePermissions %}
                                             <button title="Change Role" class="btn btn-default" data-toggle="modal" data-target="#userInstance{{ user.userInstances_id }}Modal"><i
                                                         class="fa fa-pencil-alt"></i></button>
+                                        {% endif %}
+                                        {% if 118|instancePermissions %}
+                                            {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                                    <button type="button" title="Remove from Archive" data-userid="{{ user.users_userid }}" class="btn btn-success unArchiveFromInstance"><i class="fas fa-archive"></i></button>
+                                                {% else %}
+                                                <button
+                                                        type="button" title="Archive" data-userid="{{ user.users_userid }}" class="btn btn-warning archiveFromInstance"><i class="fas fa-archive"></i></button>
+
+
+                                            {% endif %}
                                         {% endif %}
                                         {% if 5|instancePermissions %}
                                             <button
@@ -179,6 +194,29 @@
                 });
             });
             {% endif %}
+            {% if 118|instancePermissions %}
+            $('.archiveFromInstance').on('click', function(e){
+                var userid = $(this).data("userid");
+                bootbox.confirm("Are you sure you wish to archive this user in the business?", function(result){
+                    if (result) {
+                        ajaxcall("instances/archiveUser.php", {"userid": userid}, function() {
+                            location.reload();
+                        }, true);
+                    }
+                });
+            });
+            $('.unArchiveFromInstance').on('click', function(e){
+                var userid = $(this).data("userid");
+                bootbox.confirm("Are you sure you wish to add this user back into the business?", function(result){
+                    if (result) {
+                        ajaxcall("instances/archiveUser.php", {"userid": userid}, function() {
+                            location.reload();
+                        }, true);
+                    }
+                });
+            });
+            {% endif %}
+
             {% if 6|instancePermissions %}
             $('.saveUserInstanceModal').on('click', function(e){
                 var userinstanceid = $(this).data("userinstanceid");
