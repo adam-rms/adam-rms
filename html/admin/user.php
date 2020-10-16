@@ -37,6 +37,7 @@ $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STAT
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
+$DBLIB->where("projects.instances_id",  $AUTH->data['instance']['instances_id']);
 $PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
 
 //Project Manager Roles
