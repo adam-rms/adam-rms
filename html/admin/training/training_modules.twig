@@ -1,0 +1,177 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Modules
+                </h3>
+                <div class="card-tools pull-right">
+                    <form class="input-group input-group-sm" method="GET">
+                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            {% if 115|instancePermissions %}
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editModuleModal"><i class="fa fa-plus"></i></button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex align-items-stretch">
+        {% for module in modules %}
+            <div class="col-auto d-flex align-items-stretch">
+                <div class="card bg-light">
+                    <div class="card-header text-muted border-bottom-0">
+                        {% if module.modules_type != 3 %}
+                            <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{{ module.modules_name }}</a>
+                        {% else %}
+                            {{ module.modules_name }}
+                        {% endif %}
+                    </div>
+                    <div class="card-body pt-0" style="max-width: 350px;">
+                        {% if module.modules_show == 0 %}
+                            <div class="alert alert-warning">
+                                DRAFT
+                            </div>
+                        {% endif %}
+                        {% if module.modules_thumbnail %}
+                           <div>
+                               {% if module.modules_type != 3 %}<a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{% else %}<a href="#">{% endif %}
+                                    <img class="img-fluid" style="max-height: 340px;"
+                                         src="{{ module.modules_thumbnail|s3URL }}"
+                                         alt="{{ module.modules_name }}"></a>
+                            </div>
+                            <br/>
+                        {% endif %}
+                        <p class="text-muted">{{ module.modules_description|nl2br }}</p>
+                        <ul class="ml-4 mb-0 fa-ul text-muted">
+                            {{ module.modules_learningObjectives|nl2br  }}
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-right">
+                            <div class="btn-group">
+                                {% if 116|instancePermissions %}
+                                    <button data-toggle="modal" data-target="#editModuleModal{{ module.modules_id }}" class="btn btn-sm btn-default" title="Edit"><i class="fas fa-edit"></i></button>
+                                    {% if module.modules_type != 3 %}
+                                    <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&steps" class="btn btn-sm btn-default" title="Edit Module Steps">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if 117|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&users" class="btn btn-sm btn-default" title="User list">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </a>
+                                {% endif %}
+                                {% if module.modules_type != 3 %}
+                                <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}" class="btn btn-sm btn-default">
+                                    <i class="far fa-check-square"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% if 116|instancePermissions %}
+        {% if 115|instancePermissions %}
+            {% set  modules = modules|merge([{ "NEW": true }]) %}
+        {% endif %}
+        {% for module in modules %}
+        <div class="modal fade" id="editModuleModal{{ module.modules_id }}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ module.NEW ? 'New' : 'Edit' }} Module</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="editForm" data-id="{{ module.modules_id }}" id="{{ module.NEW ? 'editFormNew' }}">
+                            <input type="hidden" name="modules_id" value="{{ module.modules_id }}"/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Name</span>
+                                </div>
+                                <input required type="text" class="form-control" name="modules_name" value="{{ module.modules_name }}">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Description</span>
+                                </div>
+                                <textarea type="text" class="form-control" name="modules_description" rows="4">{{ module.modules_description }}</textarea>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Learning Objectives</span>
+                                </div>
+                                <textarea type="text" class="form-control" name="modules_learningObjectives" rows="8">{{ module.modules_learningObjectives }}</textarea>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Publish in the module catalogue to be completed by users</span>
+                                </div>
+                                <input required type="checkbox" class="form-control" name="modules_show" {{ module.modules_show == 1 ? 'checked' : ''}}>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Type</span>
+                                </div>
+                                <select name="modules_type" class="form-control" value="{{ module.modules_type }}">
+                                    <option value="0">Online: Users complete the module online, entirely by themselves</option>
+                                    <option value="1">Hybrid: Users complete the module online, and are then signed off by an administrator</option>
+                                    <option value="2">Physical: Users cannot complete the module themselves - they are signed off by an administrator</option>
+                                </select>
+                            </div>
+
+                            <h4>Thumbnail</h4>
+                            <input type="hidden" name="modules_thumbnail" value="{{ module.modules_thumbnail }}" id="moduleThumbnail{{ module.modules_id }}" />
+                            {% embed 'common/plugins/fineuploader.twig' with {'type': 'MODULE-THUMBNAIL', 'paste': false, 'typeId': 12, 'imagesOnly': true, 'fileLimit': 1 } %}
+                                {% block success %}
+                                    $("#moduleThumbnail{{ module.modules_id }}").val(responseJson.id);
+                                {% endblock %}
+                            {% endembed %}
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary saveEditForm" data-id="{{ module.modules_id }}">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            {% if 116|instancePermissions %}
+            $(".saveEditForm").click(function () {
+                if ($(this).data("id")) {
+                    var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+                    ajaxcall("modules/edit.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                } else {
+                    {% if 115|instancePermissions %}
+                    var formData = $("#editFormNew").serializeArray();
+                    ajaxcall("modules/new.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                    {% endif %}
+                }
+            });
+            {% endif %}
+        });
+    </script>
+</div>
+
+{% endblock %}
