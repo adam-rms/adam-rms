@@ -8,7 +8,7 @@ use Money\Formatter\IntlMoneyFormatter;
 use Money\Formatter\DecimalMoneyFormatter;
 use Twig\Extra\String\StringExtension;
 
-$CONFIG['ROOTURL'] = $_ENV['bCMS__BACKENDURL'];
+$CONFIG['ROOTURL'] = getenv('bCMS__BACKENDURL');
 
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 //TWIG
