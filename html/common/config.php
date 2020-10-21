@@ -43,7 +43,7 @@ $CONFIG = array(
             "SECRET" => getenv('bCMS__AWS_CLIENT_SECRET_KEY')
         ],
         "CLOUDFRONT" => [
-            "PRIVATEKEY" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY'),
+            "PRIVATEKEY" => str_replace("\nRSA\nPRIVATE\nKEY"," RSA PRIVATE KEY",str_replace(" ","\n", getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY'))),
             "KEYPAIRID" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID'),
             "URL" => 'https://cdn.adam-rms.com/'
         ]
