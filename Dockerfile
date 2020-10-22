@@ -28,7 +28,7 @@ RUN docker-php-ext-install gd
 
 
 COPY . /var/www/
-#COPY adamrmsprod.env /var/www/.env
+COPY adamrmsprod.env /var/www/.env
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www
