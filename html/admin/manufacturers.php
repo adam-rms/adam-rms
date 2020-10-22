@@ -14,8 +14,8 @@ $DBLIB->orderBy("manufacturers_name", "ASC");
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
-		manufacturers.manufacturers_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
-		manufacturers.manufacturers_website LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' 
+		manufacturers.manufacturers_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' OR
+		manufacturers.manufacturers_website LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' 
     )");
 	$PAGEDATA['manufacturers'] = $DBLIB->arraybuilder()->paginate('manufacturers', $page, ["manufacturers.*"]);
 } else {

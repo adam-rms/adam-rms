@@ -15,7 +15,7 @@ $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
 if (strlen($PAGEDATA['search']) > 0) {
     //Search
     $DBLIB->where("(
-		assetCategories.assetCategories_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' 
+		assetCategories.assetCategories_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' 
     )");
 }
 $DBLIB->where("(instances_id IS NULL OR instances_id = '" . $AUTH->data['instance']["instances_id"] . "')");

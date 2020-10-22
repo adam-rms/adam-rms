@@ -15,11 +15,11 @@ $DBLIB->where("instances.instances_deleted", 0);
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
-		instances_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_address LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_phone LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_email LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_website LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
+		instances_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_address LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_phone LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_email LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_website LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
     )");
 }
 $instances = $DBLIB->arraybuilder()->paginate('instances', $page, ["instances.*"]);

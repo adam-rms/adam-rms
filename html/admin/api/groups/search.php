@@ -7,7 +7,7 @@ $DBLIB->orderBy("users_userid", "DESC");
 $DBLIB->orderBy("assetGroups_name", "ASC");
 if (strlen($_POST['term']) > 0) {
     $DBLIB->where("(
-        assetGroups_name LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
+        assetGroups_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%'
     )");
 }
 $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");
