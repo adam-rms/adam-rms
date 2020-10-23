@@ -1,0 +1,105 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card card-default card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">{{ module.modules_name }}</h3>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        {% for step in module.steps %}
+                            <li>
+                                <a href="#" class="stepSelector" data-id="{{ step.modulesSteps_id }}" {% if step.modulesSteps_id in module.allStepsCompleted %}data-selectable="true"{% else %}data-selectable="false"{% endif %}>
+                                    {{ step.modulesSteps_name}}
+                                    {% if step.modulesSteps_id in module.allStepsCompleted %}
+                                        ✔
+                                    {% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            {% for step in module.steps %}
+            <div class="card card-default card-outline moduleStep" data-id="{{ step.modulesSteps_id }}">
+                <div class="card-header">
+                    <h3 class="card-title">{{ step.modulesSteps_name}}</h3>
+                </div>
+                <div class="card-body">
+                    {% embed ('training/types/' ~ step.modulesSteps_type ~ '.twig') with {'content': step.modulesSteps_content } %}
+                    {% endembed %}
+                </div>
+                {% if step.modulesSteps_id in module.allStepsCompleted %}
+                {% else %}
+                <div class="card-footer">
+                    <button class="btn btn-default markCompleted" data-id="{{ step.modulesSteps_id }}" {% if loop.last != true %}data-next="{{ module.steps[loop.index]['modulesSteps_id'] }}"{% endif %}>Mark as Completed ✔</button>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="card card-default card-outline" id="completedModule">
+                <div class="card-header">
+                    <h3 class="card-title">Module Complete</h3>
+                </div>
+                <div class="card-body">
+                    Congratulations this module has been completed 🎉!
+                    {% if module.modules_type != 1 %}
+                    This module also requires certification which might involve practical training - contact an administrator to be certified
+                    {% endif %}
+                    <br/><br/><i class="fas fa-arrow-left"></i> The steps for this module will continue to be available for you to consult in the future
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    $(document).ready(function () {
+        {% set done = false %}
+        {% for step in module.steps %}
+            {% if step.modulesSteps_id in module.allStepsCompleted %}
+                $(".moduleStep[data-id={{ step.modulesSteps_id }}]").hide();
+            {% elseif done %}
+                $(".moduleStep[data-id={{ step.modulesSteps_id }}]").hide();
+            {% else %}
+                {% set done = true %}
+            {% endif %}
+        {% endfor %}
+        if ( $( ".moduleStep:visible" ).length < 1 ) {
+            $( "#completedModule" ).show();
+        } else {
+            $( "#completedModule" ).hide();
+        }
+        $(".stepSelector").click(function () {
+            //Allow them to return to the current step
+            var currentid = $( ".moduleStep:visible" ).data("id");
+            if (currentid) {
+                $(".stepSelector[data-id=" + currentid + "]").data("selectable","true");
+            }
+            //Move to the step selected
+            if ($(this).data("selectable")) {
+                $(".moduleStep").hide();
+                $( "#completedModule" ).hide();
+                $(".moduleStep[data-id=" + $(this).data("id") + "]").show();
+            }
+        });
+        $(".markCompleted").click(function () {
+            var id = $(this).data("id");
+            var next = $(this).data("next");
+            ajaxcall("training/completeStep.php", {"id":id}, function (data) {
+                $(".stepSelector[data-id=" + id + "]").append("✔");
+                $(".stepSelector[data-id=" + id + "]").data("selectable","true");
+                $(".moduleStep").hide();
+                //Select the next step
+                if (next) {
+                    $(".moduleStep[data-id=" + next + "]").show();
+                } else {
+                    $( "#completedModule" ).show();
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock %}

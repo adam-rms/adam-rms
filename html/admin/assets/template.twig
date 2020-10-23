@@ -475,7 +475,14 @@
 
                         </ul>
                     </li>
-
+                    {% if 113|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/training" class="nav-link">
+                            <i class="nav-icon fas fa-graduation-cap"></i>
+                            <p>Training</p>
+                        </a>
+                    </li>
+                    {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
                         <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">

@@ -164,7 +164,7 @@ x-amz-meta-size
                 acceptFiles: "image/gif, image/jpeg, image/png",
                 {% endif %}
                 sizeLimit: 50000000000, //50gb
-                itemLimit: {{ fileLimit is defined ? fileLimit*5 : 1000 }} //Have to multiply by 5 because of the scaled images
+                itemLimit: {{ fileLimit is defined ? fileLimit*1 : 1000 }} //Would normally have to multiply by 5 because of the scaled images
             },
             retry: {
                 enableAuto: true
