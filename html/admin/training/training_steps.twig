@@ -27,6 +27,8 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
+                            <th style="width: 4em;">
+                            </th>
                             <th style="width: 25em;">
                                 Name
                             </th>
@@ -43,9 +45,17 @@
                             </th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="stepsSort">
                         {% for step in module.steps %}
-                            <tr>
+                            <tr data-id="{{ step.modulesSteps_id }}">
+                                <td>
+                                    {% if step.modulesSteps_locked != 1 %}
+                                    <span class="handle">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                   </span>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {{ step.modulesSteps_name }}
                                     {% if step.modulesSteps_show == 0 %}
@@ -234,7 +244,19 @@
                         }
                     });
                 });
+                $('#stepsSort').sortable({
+                    placeholder         : 'sort-highlight',
+                    handle              : '.handle',
+                    forcePlaceholderSize: true,
+                    zIndex              : 999999,
+                    update: function( event, ui ) {
+                        ajaxcall("modules/steps/sortRank.php", {
+                            "order": $("#stepsSort").sortable('toArray', {attribute: 'data-id'}),
+                            "modules_id": "{{ module.modules_id }}"
+                        }, null, true);
 
+                    }
+                });
                 $('.summernote').summernote({
                     minHeight: 300,             // set minimum height of editor
                     maxHeight: null,             // set maximum height of editor

@@ -478,7 +478,6 @@
                                 </div>
                             </div>
                             <div class="card-body p-0">
-
                                 <ul id="crewList" class="todo-list">
                                     {% for crew in project.crewAssignments %}
                                         <li value="{{crew.crewAssignments_id}}"
@@ -489,9 +488,9 @@
                                                 {% endif %}>
                                             {% if 51|instancePermissions %}
                                                 <span class="handle">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                        <i class="fas fa-ellipsis-v"></i>
-                                   </span>
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                               </span>
                                             {% endif %}
                                             <span class="text">
                                        {{crew.crewAssignments_role}} -
