@@ -10,13 +10,9 @@
                 </h3>
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">
-                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if 115|instancePermissions %}
-                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editModuleModal"><i class="fa fa-plus"></i></button>
-                            {% endif %}
-                        </div>
+                        {% if 115|instancePermissions %}
+                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModuleModal"><i class="fa fa-plus"></i></button>
+                        {% endif %}
                     </form>
                 </div>
             </div>
