@@ -1,5 +1,4 @@
-{% extends "assets/template.twig" %}
-{% block content %}
+{% if content != null %}
 <div id="player"></div>
 <script>
     // 2. This code loads the IFrame Player API code asynchronously.
@@ -30,7 +29,7 @@
                 loop: 0,
                 modestbranding: 0,
             },
-            videoId: 'jNQXAC9IVRw',
+            videoId: '{{ content }}',
             events: {
                 'onReady': onPlayerReady,
                 'onStateChange': onPlayerStateChange
@@ -50,11 +49,11 @@
     function onPlayerStateChange(event) {
         console.log(event.data)
         if (event.data == YT.PlayerState.ENDED && player.getDuration() > 0 && player.getDuration() == player.getCurrentTime()) {
-            alert("Finished");
+            console.log("Finished");
         }
     }
     function stopVideo() {
         player.stopVideo();
     }
 </script>
-{% endblock %}
+{% endif %}
