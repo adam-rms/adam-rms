@@ -20,10 +20,10 @@ $DBLIB->where("users_deleted", 0);
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
-		users_username LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR users_name1 LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR users_name2 LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR users_email LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
+		users_username LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR users_name1 LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR users_name2 LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR users_email LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
     )");
 }
 //if (!isset($_GET['suspended'])) $DBLIB->where ("users.users_suspended", "0");
@@ -43,7 +43,7 @@ foreach ($users as $user) {
 	$DBLIB->where("instances.instances_deleted", 0);
 	$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
 	$DBLIB->join("instances", "instancePositions.instances_id=instances.instances_id", "LEFT");
-	$user['instances'] = $DBLIB->get("userInstances", null, ["instances.instances_name", "instances.instances_plan", "userInstances.userInstances_label","instancePositions.instancePositions_displayName"]);
+	$user['instances'] = $DBLIB->get("userInstances", null, ["instances.instances_name", "instances.instances_plan", "userInstances.userInstances_label","userInstances.userInstances_archived","instancePositions.instancePositions_displayName"]);
 
 	$DBLIB->where("users_userid", $user['users_userid']);
 	$DBLIB->where("userPositions_end >= '" . date('Y-m-d H:i:s') . "'");

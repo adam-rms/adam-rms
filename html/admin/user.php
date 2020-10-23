@@ -9,6 +9,7 @@ $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","L
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
 $DBLIB->where("instancePositions.instances_id",  $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
+$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 if ($AUTH->instancePermissionCheck(52)) $DBLIB->where("users.users_userid", $_GET['id']);
 else $DBLIB->where("users.users_userid", $AUTH->data['users_userid']);
 $PAGEDATA['user'] = $DBLIB->getone("users", ["users.*"]);
@@ -36,6 +37,7 @@ $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STAT
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
+$DBLIB->where("projects.instances_id",  $AUTH->data['instance']['instances_id']);
 $PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
 
 //Project Manager Roles

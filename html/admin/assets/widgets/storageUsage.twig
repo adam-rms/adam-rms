@@ -21,7 +21,7 @@
     <div class="card-body">
         {% if THISWIDGET.CAPACITY > 0 %}
         <div class="progress">
-            <div class="progress-bar" style="width: {{ (THISWIDGET.USED/THISWIDGET.CAPACITY)|round(1, 'ceil') }}%"></div>
+            <div class="progress-bar" style="width: {{ ((THISWIDGET.USED/THISWIDGET.CAPACITY)*100)|round(1, 'ceil') }}%"></div>
         </div>
         {% endif %}
         <span class="progress-description">{{ THISWIDGET.USED|formatsize }} of {{ (THISWIDGET.CAPACITY ? THISWIDGET.CAPACITY|formatsize : "unlimited storage") }} used</span>

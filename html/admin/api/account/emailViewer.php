@@ -11,7 +11,7 @@ if (!$AUTH->permissionCheck(6)) die("Sorry you don't have access to this");
 					.pagebreak { page-break-before: always; }
 				</style>';
 	if (isset($_POST['email']) and  $_POST['email'] != '') {
-		$DBLIB->where ('emailSent_id IN (' . $bCMS->sanitizeString($_POST['email']) . ')');
+		$DBLIB->where ('emailSent_id IN (' . $bCMS->sanitizeStringMYSQL($_POST['email']) . ')');
 		$emails = $DBLIB->get('emailSent');
 		if (!isset($emails[0])) die('E-Mail not found');
 	} else die('Nothing to see here!');

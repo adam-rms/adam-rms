@@ -10,6 +10,7 @@ function sendEmail($user, $instanceID = false, $subject, $html = false, $templat
         $DBLIB->where("users_userid", $user["userData"]['users_userid']);
         $DBLIB->where("instances.instances_id", $instanceID);
         $DBLIB->where("userInstances_deleted", 0);
+        $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
         $DBLIB->where("instances.instances_deleted", 0);
         $instance = $DBLIB->getone("userInstances", ["instances.instances_name", "instances.instances_address", "instances.instances_emailHeader"]);
         if ($instance['instances_emailHeader'] != null) $instance['instances_emailHeader'] = $bCMS->s3URL($instance['instances_emailHeader'],"medium",false,"+6 days");

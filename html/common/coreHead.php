@@ -54,10 +54,14 @@ class bCMS {
     function sanitizeString($var) {
         global $DBLIB;
         //Setup Sanitize String Function
-        $var = strip_tags($var);
-        $var = htmlentities($var);
-        $var = stripslashes($var);
-        return $DBLIB->escape($var);
+        //$var = strip_tags($var);
+        $var = htmlspecialchars($var,ENT_NOQUOTES);
+        //$var = stripslashes($var);
+        return $var;
+    }
+    function sanitizeStringMYSQL($var) {
+        global $DBLIB;
+        return $DBLIB->escape($this->sanitizeString($var));
     }
     function randomString($length = 10, $stringonly = false) { //Generate a random string
         $characters = 'abcdefghkmnopqrstuvwxyzABCDEFGHKMNOPQRSTUVWXYZ';

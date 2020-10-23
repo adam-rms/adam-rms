@@ -8,8 +8,8 @@ $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.a
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 if (isset($_POST['term'])) {
     $DBLIB->where("(
-        assetTypes_description LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%' OR
-        assetTypes_name LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
+        assetTypes_description LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%' OR
+        assetTypes_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%'
     )");
 } else $DBLIB->orderBy("assetTypes_name", "ASC");
 $assets = $DBLIB->get("assetTypes", 15, ["assetTypes_name", "assetTypes_id", "assetCategories_name", "assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);

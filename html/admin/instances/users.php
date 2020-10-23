@@ -10,7 +10,8 @@ else $PAGEDATA['search'] = null;
 
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
-$DBLIB->pageLimit = 20; //Users per page
+$DBLIB->pageLimit = 50; //Users per page
+$DBLIB->orderBy("userInstances.userInstances_archived","ASC");
 $DBLIB->orderBy("instancePositions.instancePositions_rank", "ASC");
 $DBLIB->orderBy("users.users_name1", "ASC");
 $DBLIB->orderBy("users.users_name2", "ASC");
@@ -25,13 +26,11 @@ if (strlen($PAGEDATA['search']) > 0) {
 		OR users_email LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
     )");
 }
-//if (!isset($_GET['suspended'])) $DBLIB->where ("users.users_suspended", "0");
-
 $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
 $DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
-$users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.users_username", "users.users_name1", "users.users_name2", "users.users_userid", "users.users_email", "users.users_emailVerified", "users.users_suspended","users.users_suspended", "instancePositions.instancePositions_displayName","userInstances.userInstances_label", "userInstances.userInstances_id", "userInstances.instancePositions_id","users.users_thumbnail"]);
+$users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.users_username", "users.users_name1", "users.users_name2", "users.users_userid", "users.users_email", "users.users_emailVerified", "users.users_suspended","users.users_suspended", "instancePositions.instancePositions_displayName","userInstances.userInstances_label", "userInstances.userInstances_id", "userInstances.instancePositions_id","users.users_thumbnail","userInstances.userInstances_archived"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 foreach ($users as $user) {
 	$PAGEDATA["users"][] = $user;

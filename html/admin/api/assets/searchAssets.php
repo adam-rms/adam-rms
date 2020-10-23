@@ -10,11 +10,11 @@ $DBLIB->where("assets_deleted", 0);
 $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
 if (isset($_POST['term'])) {
     $DBLIB->where("(
-        manufacturers_name LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%' OR
-		assetTypes_description LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%' OR
-		assets_notes LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%' OR
-		assets_tag = '" . $bCMS->reverseATag($bCMS->sanitizeString($_POST['term'])). "' OR
-        assetTypes_name LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
+        manufacturers_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%' OR
+		assetTypes_description LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%' OR
+		assets_notes LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%' OR
+		assets_tag = '" . $bCMS->reverseATag($bCMS->sanitizeStringMYSQL($_POST['term'])). "' OR
+        assetTypes_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%'
     )");
 } else $DBLIB->orderBy("assetTypes_name", "ASC");
 $assets = $DBLIB->get("assets", 15, ["assets.assets_id", "assets.assets_tag", "assetTypes.assetTypes_name", "assetTypes.assetTypes_id", "assetCategories.assetCategories_name", "assetCategoriesGroups.assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);

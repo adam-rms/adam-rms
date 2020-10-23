@@ -14,8 +14,8 @@ $DBLIB->orderBy("assetGroups_name", "ASC");
 if (strlen($PAGEDATA['search']) > 0) {
     //Search
     $DBLIB->where("(
-		assetGroups_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
-		assetGroups_description LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
+		assetGroups_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' OR
+		assetGroups_description LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
     )");
 }
 $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");

@@ -15,11 +15,11 @@ $DBLIB->where("instances.instances_deleted", 0);
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
-		instances_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_address LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_phone LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_email LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
-		OR instances_website LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
+		instances_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_address LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_phone LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_email LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
+		OR instances_website LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
     )");
 }
 $instances = $DBLIB->arraybuilder()->paginate('instances', $page, ["instances.*"]);
@@ -55,6 +55,7 @@ foreach ($instances as $instance) {
 	$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
 	$DBLIB->where("instances_id",  $instance['instances_id']);
 	$DBLIB->where("userInstances.userInstances_deleted",  0);
+	$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 	$instance['USERS'] = $DBLIB->getValue("users","COUNT(*)");
 
 

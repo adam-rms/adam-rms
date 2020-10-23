@@ -21,8 +21,8 @@ $DBLIB->orderBy("payments.payments_date", "DESC");
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
-		payments.payments_reference LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
-		payments.payments_amount LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' 
+		payments.payments_reference LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' OR
+		payments.payments_amount LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' 
     )");
 }
 $payments = $DBLIB->arraybuilder()->paginate('payments', $page, ["payments.*", "projects.projects_id", "projects.projects_name","clients.clients_name"]);

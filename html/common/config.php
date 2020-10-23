@@ -11,44 +11,44 @@ if(file_exists(__DIR__ . '/../../.env')) {
     $dotEnvLib->load();
 }
 
-if ($_ENV['bCMS__ERRORS'] == "true") {
+if (getenv('bCMS__ERRORS') == "true") {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 }
 $CONFIG = array(
-    'DB_HOSTNAME' => $_ENV['bCMS__DB_HOSTNAME'],
-    'DB_DATABASE' => $_ENV['bCMS__DB_DATABASE'],
-    'DB_USERNAME' => $_ENV['bCMS__DB_USERNAME'], //CREATE INSERT SELECT UPDATE DELETE
-    'DB_PASSWORD' => $_ENV['bCMS__DB_PASSWORD'],
-    'PROJECT_NAME' => $_ENV['bCMS__SITENAME'],
-    'SENDGRID' => ['APIKEY' => $_ENV['bCMS__SendGridAPIKEY']],
-    'ERRORS' => ['SENTRY' => $_ENV['bCMS__SENTRYLOGIN'], "SENTRYPublic" => $_ENV['bCMS__SENTRYLOGINPUBLIC']],
+    'DB_HOSTNAME' => getenv('bCMS__DB_HOSTNAME'),
+    'DB_DATABASE' => getenv('bCMS__DB_DATABASE'),
+    'DB_USERNAME' => getenv('bCMS__DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
+    'DB_PASSWORD' => getenv('bCMS__DB_PASSWORD'),
+    'PROJECT_NAME' => getenv('bCMS__SITENAME'),
+    'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
+    'ERRORS' => ['SENTRY' => getenv('bCMS__SENTRYLOGIN'), "SENTRYPublic" => getenv('bCMS__SENTRYLOGINPUBLIC')],
     'ANALYTICS' => ['TRACKINGID' => "G-F9FBE7ZZNM"],
     'VERSION' => "v1.25.00",
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
-    "PROJECT_FROM_EMAIL" => $_ENV['bCMS__EMAIL'],
+    "PROJECT_FROM_EMAIL" => getenv('bCMS__EMAIL'),
     "ROOTURL" => "", //Set on a frontend/backend basis
-    "PROJECT_SUPPORT_EMAIL" => $_ENV['bCMS__SUPPORTEMAIL'],
+    "PROJECT_SUPPORT_EMAIL" => getenv('bCMS__SUPPORTEMAIL'),
     'AWS' => [
-        'KEY' => $_ENV['bCMS__AWS_SERVER_KEY'],
-        'SECRET' => $_ENV['bCMS__AWS_SERVER_SECRET_KEY'],
+        'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
+        'SECRET' => getenv('bCMS__AWS_SERVER_SECRET_KEY'),
         'DEFAULTUPLOADS' => [
-            'BUCKET' => $_ENV['bCMS__AWS_S3_BUCKET_NAME'],
-            'ENDPOINT' => $_ENV['bCMS__AWS_S3_BUCKET_ENDPOINT'],
-            'REGION' => $_ENV['bCMS__AWS_S3_BUCKET_REGION'],
+            'BUCKET' => getenv('bCMS__AWS_S3_BUCKET_NAME'),
+            'ENDPOINT' => getenv('bCMS__AWS_S3_BUCKET_ENDPOINT'),
+            'REGION' => getenv('bCMS__AWS_S3_BUCKET_REGION'),
         ],
         "FINEUPLOADER" => [
-            "KEY" => $_ENV['bCMS__AWS_CLIENT_KEY'],
-            "SECRET" => $_ENV['bCMS__AWS_CLIENT_SECRET_KEY']
+            "KEY" => getenv('bCMS__AWS_CLIENT_KEY'),
+            "SECRET" => getenv('bCMS__AWS_CLIENT_SECRET_KEY')
         ],
         "CLOUDFRONT" => [
-            "PRIVATEKEY" => $_ENV['bCMS__AWS_ACCOUNT_PRIVATE_KEY'],
-            "KEYPAIRID" => $_ENV['bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID'],
+            "PRIVATEKEY" => str_replace("\nRSA\nPRIVATE\nKEY"," RSA PRIVATE KEY",str_replace(" ","\n", getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY'))),
+            "KEYPAIRID" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID'),
             "URL" => 'https://cdn.adam-rms.com/'
         ]
     ],
-    'DEV' => ($_ENV['bCMS__ERRORS'] == "true" ? true : false),
+    'DEV' => (getenv('bCMS__ERRORS') == "true" ? true : false),
     'JWTKey' => 'WDOnxWSBZyn778OSLFDLbk0wXy1lvOLA9577XwTKhfPMjtR5sJVrHDGLiDF9SP8NSas3z081aE', //TODO save this along with other secrets
     'NOTIFICATIONS' => [
         "METHODS" => [

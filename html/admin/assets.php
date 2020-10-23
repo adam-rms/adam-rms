@@ -44,9 +44,9 @@ $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGrou
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
-		manufacturers_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
-		assetTypes_description LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
-		assetTypes_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' 
+		manufacturers_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' OR
+		assetTypes_description LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' OR
+		assetTypes_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' 
     )");
 }
 $assets = $DBLIB->arraybuilder()->paginate('assetTypes', $page, ["assetTypes.*", "manufacturers.*", "assetCategories.*", "assetCategoriesGroups_name"]);
@@ -59,7 +59,7 @@ foreach ($assets as $asset) {
 	$DBLIB->where("assets_deleted", 0);
 	if (!isset($_GET['archive'])) $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
 	if (!isset($_GET['all'])) $DBLIB->where("(assets.assets_linkedTo IS NULL)");
-	if (isset($_GET['group'])) $DBLIB->where("FIND_IN_SET(" . $bCMS->sanitizeString($_GET['group']) . ", assets.assets_assetGroups)");
+	if (isset($_GET['group'])) $DBLIB->where("FIND_IN_SET(" . $bCMS->sanitizeStringMYSQL($_GET['group']) . ", assets.assets_assetGroups)");
 	if (isset($_GET['barcodes'])){
 		if ($_GET['barcodes'] == 1) {
 			$DBLIB->where("((SELECT COUNT(assetsBarcodes_id) FROM assetsBarcodes WHERE assetsBarcodes.assets_id = assets.assets_id AND assetsBarcodes_deleted = 0) >0)");

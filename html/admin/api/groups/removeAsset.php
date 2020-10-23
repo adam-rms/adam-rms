@@ -27,7 +27,7 @@ if (!$DBLIB->update("assets", ["assets_assetGroups" => $current], 1)) finish(fal
 $bCMS->auditLog("UPDATE", "assets", "Remove asset " . $_POST['assets_id'] . " from group " . $_POST['assetGroups_id'], $AUTH->data['users_userid']);
 
 foreach ($bCMS->usersWatchingGroup($_POST['assetGroups_id']) as $user) {
-    if ($user != $AUTH->data['users_userid']) notify(17,$user, $AUTH->data['instance']['instances_id'], "Asset " . $bCMS->aTag($asset['assets_tag']) . " removed from group " . $group['assetGroups_name'], "Asset " . $bCMS->aTag($asset['assets_tag']) . " (" . $asset["assetTypes_name"] . ") has been added removed from the group " . $group['assetGroups_name'] . " by " . $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2']);
+    if ($user != $AUTH->data['users_userid']) notify(17,$user, $AUTH->data['instance']['instances_id'], "Asset " . $bCMS->aTag($asset['assets_tag']) . " removed from group " . $group['assetGroups_name'], "Asset " . $bCMS->aTag($asset['assets_tag']) . " (" . $asset["assetTypes_name"] . ") has been removed from the group " . $group['assetGroups_name'] . " by " . $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2']);
 }
 
 finish(true);

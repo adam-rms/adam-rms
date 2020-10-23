@@ -33,6 +33,7 @@ $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","L
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
 $DBLIB->where("instances_id",  $code['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
+$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 $users = $DBLIB->get('users', null, ["users.users_userid"]);
 foreach ($users as $user) {
     if ($user != $AUTH->data['users_userid']) {

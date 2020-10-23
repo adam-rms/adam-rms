@@ -96,6 +96,7 @@ class bID
                         $DBLIB->join("instances", "instancePositions.instances_id=instances.instances_id", "LEFT");
                         $DBLIB->where("users_userid", $this->data['users_userid']);
                         $DBLIB->where("userInstances_deleted", 0);
+                        $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
                         $DBLIB->where("instances.instances_deleted", 0);
                         $instances = $DBLIB->get("userInstances");
                         $this->data['instances'] = [];
