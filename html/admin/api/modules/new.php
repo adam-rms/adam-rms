@@ -9,6 +9,8 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['modules_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if ($array['modules_show']) $array['modules_show'] = 1;
+else $array['modules_show'] = 0;
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
 $array['modules_id'] = null;
 $array['users_userid'] = $AUTH->data['users_userid'];
