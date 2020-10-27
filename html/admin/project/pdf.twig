@@ -7,6 +7,7 @@
      table {
         width: 100%;
          border-collapse: collapse;
+         font-size:inherit;
     }
 
      table td {
@@ -20,15 +21,16 @@
         padding-right: 5px;
         padding-bottom: 1px;
         padding-top: 1px;
+        font-size:inherit;
     }
     @media print {
         body{
             width: 21cm;
             height: 29.7cm;
         }
-        pagebreak {
-            page-break-after: always;
-        }
+    }
+    #firstPage {
+        font-size: 21px;
     }
 </style>
 <title>Generated Document for Printing</title>
@@ -54,179 +56,181 @@
         }
     </script>
 {% endif %}
-<div style="width: 100%;" align="center">
-    {% if USERDATA.instance.instances_logo and GET['instancelogo'] %}
-    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 200px; padding:20px;">
+<div id="firstPage">
+    <div style="width: 100%;" align="center">
+        {% if USERDATA.instance.instances_logo and GET['instancelogo'] %}
+        <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 200px; padding:20px;">
+        {% endif %}
+    </div>
+    <table>
+        <tr>
+            <td>
+                {% if project.projectsTypes_config_client == 1 %}
+                    <b>{{ project.clients_name }}</b><br/>
+                    {% if GET['addresses'] %}
+                        {{ project.clients_address|nl2br }}<br/><br/>
+                        {{ project.clients_website }}<br/>
+                        {{ project.clients_email }}<br/>
+                        {{ project.clients_phone }}<br/>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td style="text-align: right;">
+                <b>{{ USERDATA['instance']['instances_name'] }}</b><br/>
+                {% if GET['addresses'] %}
+                    {{ USERDATA.instance.instances_address|nl2br }}<br/>
+                    {{ USERDATA.instance.instances_website }}<br/>
+                    {{ USERDATA.instance.instances_phone ? USERDATA.instance.instances_phone ~ "<br/>"}}
+                    {{ USERDATA.instance.instances_email }}<br/><br/>
+                {% endif %}
+                {% if GET['pmdetails'] %}
+                    <b>{{ project.users_name1 ~ " " ~ project.users_name2  }}</b><br/>
+                    {{ project.users_email }}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <h1>{{ project.projects_name }}</h1>
+    <table style="background-color: #F5F5F5;">
+        <tr>
+            <td style="padding: 8px;">
+                <table>
+                    <tr>
+                        <td style="padding:0;">Our&nbsp;Reference:</td>
+                        <td style="padding: 1px 0px 1px 5px;">{{project.projects_id}}</td>
+                    </tr>
+                    {% if project.projects_dates_deliver_start %}
+                    <tr>
+                        <td style="padding:0;">Deliver:</td>
+                        <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_start|date("j M Y h:ia")}}</td>
+                    </tr>
+                    {% endif %}
+                    {% if project.projects_dates_use_start %}
+                    <tr>
+                        <td style="padding:0;">Start:</td>
+                        <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_start|date("j M Y h:ia")}}</td>
+                    </tr>
+                    {% endif %}
+                    {% if project.projects_dates_use_end %}
+                    <tr>
+                        <td style="padding:0;">Finish:</td>
+                        <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_end|date("j M Y h:ia") }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if project.projects_dates_deliver_end %}
+                    <tr>
+                        <td style="padding:0;">Collect:</td>
+                        <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_end|date("j M Y h:ia") }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if GET['totalmass'] and project.projectsTypes_config_assets == 1 %}
+                    <tr>
+                        <td style="padding:0;">Mass Estimate:</td>
+                        <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.mass|mass }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if GET['totalvalue'] and project.projectsTypes_config_assets == 1 %}
+                    <tr>
+                        <td style="padding:0;">Value Estimate:</td>
+                        <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.value|money }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </td>
+            {% if GET['venue'] and project.projectsTypes_config_venue == 1 %}
+            <td style="text-align: right;padding: 8px;">
+                <b>Venue</b><br/>
+                {{ project.locations_name }}<br/>
+                {{ project.locations_address|nl2br }}
+            </td>
+            {% endif %}
+        </tr>
+    </table>
+    {% if GET['finance'] and 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+    <hr/>
+    <table>
+        <tr>
+           <td style="width: 35%;">
+               Equipment SubTotal
+           </td>
+            <td style="width: 15%;text-align: right;">
+                {{ FINANCIALS.prices.subTotal|money }}
+            </td>
+            <td style="width: 35%;">
+                Sales
+            </td>
+            <td style="width: 15%;text-align: right;">
+                {{ FINANCIALS.payments.sales.total|money }}
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 35%;">
+                {% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}
+            </td>
+            <td style="width: 15%;text-align: right;">
+                {% if FINANCIALS.prices.discounts|moneyPositive %}&#8209;{{ FINANCIALS.prices.discounts|money }}{% else %}None{% endif %}
+            </td>
+            <td style="width: 35%;">
+                Staffing
+            </td>
+            <td style="width: 15%;text-align: right;">
+                {{ FINANCIALS.payments.staff.total|money }}
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 35%;">
+                <b>Equipment Total</b>
+            </td>
+            <td style="width: 15%;text-align: right;">
+                {{ FINANCIALS.prices.total|money }}
+            </td>
+            <td  style="width: 35%;">
+                Sub Hires
+            </td>
+            <td style="width: 15%;text-align: right;">
+                {{ FINANCIALS.payments.subHire.total|money }}
+            </td>
+        </tr>
+    </table>
+    <hr/>
+    <table>
+        <tr>
+            <td style="width: 35%;">
+                SubTotal
+            </td>
+            <td style="width: 15%;text-align: right;">
+                {{ FINANCIALS.payments.subTotal|money }}
+            </td>
+            <td style="width: 35%;">
+                Payments Received to Date
+            </td>
+            <td style="width: 15%;text-align: right;">
+                &#8209;{{ FINANCIALS.payments.received.total|money }}
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 35%;">
+
+            </td>
+            <td style="width: 15%;text-align: right;">
+
+            </td>
+            <td style="width: 35%;">
+                <b>Grand Total Outstanding</b>
+            </td>
+            <td style="width: 15%;text-align: right;">
+                {{ FINANCIALS.payments.total|money }}
+            </td>
+        </tr>
+    </table>
+    {% endif %}
+    {% if project.projects_invoiceNotes|length > 0 and GET['invoiceNotes'] %}
+        <h2>Notes</h2>
+        <p style="font-size: 16px;">{{ project.projects_invoiceNotes }}</p>
     {% endif %}
 </div>
-<table style="font-size: 16px;">
-    <tr>
-        <td>
-            {% if project.projectsTypes_config_client == 1 %}
-                <b>{{ project.clients_name }}</b><br/>
-                {% if GET['addresses'] %}
-                    {{ project.clients_address|nl2br }}<br/><br/>
-                    {{ project.clients_website }}<br/>
-                    {{ project.clients_email }}<br/>
-                    {{ project.clients_phone }}<br/>
-                {% endif %}
-            {% endif %}
-        </td>
-        <td style="text-align: right;">
-            <b>{{ USERDATA['instance']['instances_name'] }}</b><br/>
-            {% if GET['addresses'] %}
-                {{ USERDATA.instance.instances_address|nl2br }}<br/>
-                {{ USERDATA.instance.instances_website }}<br/>
-                {{ USERDATA.instance.instances_phone ? USERDATA.instance.instances_phone ~ "<br/>"}}
-                {{ USERDATA.instance.instances_email }}<br/><br/>
-            {% endif %}
-            {% if GET['pmdetails'] %}
-                <b>{{ project.users_name1 ~ " " ~ project.users_name2  }}</b><br/>
-                {{ project.users_email }}
-            {% endif %}
-        </td>
-    </tr>
-</table>
-<h1>{{ project.projects_name }}</h1>
-<table style="background-color: #F5F5F5; font-size: 16px;">
-    <tr>
-        <td style="padding: 8px;">
-            <table>
-                <tr>
-                    <td style="padding:0;">Our&nbsp;Reference:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{project.projects_id}}</td>
-                </tr>
-                {% if project.projects_dates_deliver_start %}
-                <tr>
-                    <td style="padding:0;">Deliver:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_start|date("j M Y h:ia")}}</td>
-                </tr>
-                {% endif %}
-                {% if project.projects_dates_use_start %}
-                <tr>
-                    <td style="padding:0;">Start:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_start|date("j M Y h:ia")}}</td>
-                </tr>
-                {% endif %}
-                {% if project.projects_dates_use_end %}
-                <tr>
-                    <td style="padding:0;">Finish:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_use_end|date("j M Y h:ia") }}</td>
-                </tr>
-                {% endif %}
-                {% if project.projects_dates_deliver_end %}
-                <tr>
-                    <td style="padding:0;">Collect:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{ project.projects_dates_deliver_end|date("j M Y h:ia") }}</td>
-                </tr>
-                {% endif %}
-                {% if GET['totalmass'] and project.projectsTypes_config_assets == 1 %}
-                <tr>
-                    <td style="padding:0;">Mass Estimate:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.mass|mass }}</td>
-                </tr>
-                {% endif %}
-                {% if GET['totalvalue'] and project.projectsTypes_config_assets == 1 %}
-                <tr>
-                    <td style="padding:0;">Value Estimate:</td>
-                    <td style="padding: 1px 0px 1px 5px;">{{FINANCIALS.value|money }}</td>
-                </tr>
-                {% endif %}
-            </table>
-        </td>
-        {% if GET['venue'] and project.projectsTypes_config_venue == 1 %}
-        <td style="text-align: right;padding: 8px;">
-            <b>Venue</b><br/>
-            {{ project.locations_name }}<br/>
-            {{ project.locations_address|nl2br }}
-        </td>
-        {% endif %}
-    </tr>
-</table>
-{% if GET['finance'] and 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
-<hr/>
-<table style="font-size: 16px;">
-    <tr>
-       <td style="width: 35%;">
-           Equipment SubTotal
-       </td>
-        <td style="width: 15%;text-align: right;">
-            {{ FINANCIALS.prices.subTotal|money }}
-        </td>
-        <td style="width: 35%;">
-            Sales
-        </td>
-        <td style="width: 15%;text-align: right;">
-            {{ FINANCIALS.payments.sales.total|money }}
-        </td>
-    </tr>
-    <tr>
-        <td style="width: 35%;">
-            {% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}
-        </td>
-        <td style="width: 15%;text-align: right;">
-            {% if FINANCIALS.prices.discounts|moneyPositive %}&#8209;{{ FINANCIALS.prices.discounts|money }}{% else %}None{% endif %}
-        </td>
-        <td style="width: 35%;">
-            Staffing
-        </td>
-        <td style="width: 15%;text-align: right;">
-            {{ FINANCIALS.payments.staff.total|money }}
-        </td>
-    </tr>
-    <tr>
-        <td style="width: 35%;">
-            <b>Equipment Total</b>
-        </td>
-        <td style="width: 15%;text-align: right;">
-            {{ FINANCIALS.prices.total|money }}
-        </td>
-        <td  style="width: 35%;">
-            Sub Hires
-        </td>
-        <td style="width: 15%;text-align: right;">
-            {{ FINANCIALS.payments.subHire.total|money }}
-        </td>
-    </tr>
-</table>
-<hr/>
-<table style="font-size: 16px;">
-    <tr>
-        <td style="width: 35%;">
-            SubTotal
-        </td>
-        <td style="width: 15%;text-align: right;">
-            {{ FINANCIALS.payments.subTotal|money }}
-        </td>
-        <td style="width: 35%;">
-            Payments Received to Date
-        </td>
-        <td style="width: 15%;text-align: right;">
-            &#8209;{{ FINANCIALS.payments.received.total|money }}
-        </td>
-    </tr>
-    <tr>
-        <td style="width: 35%;">
-
-        </td>
-        <td style="width: 15%;text-align: right;">
-
-        </td>
-        <td style="width: 35%;">
-            <b>Grand Total Outstanding</b>
-        </td>
-        <td style="width: 15%;text-align: right;">
-            {{ FINANCIALS.payments.total|money }}
-        </td>
-    </tr>
-</table>
-{% endif %}
-{% if project.projects_invoiceNotes|length > 0 and GET['invoiceNotes'] %}
-    <h2>Notes</h2>
-    <p style="font-size: 16px;">{{ project.projects_invoiceNotes }}</p>
-{% endif %}
 {% if GET['assets'] and project.projectsTypes_config_assets == 1 %}
-<pagebreak/>
+    <pagebreak/><p style="page-break-before: always"></p>
 <h2>Equipment</h2>
 {% if FINANCIALS.assetsAssigned|length > 0 %}
     {% embed 'project/twigIncludes/assetList/tablePDF.twig' with {"instanceid": USERDATA.instance.instances_id} %}
@@ -353,9 +357,8 @@
 
 
 
-
+<pagebreak/><p style="page-break-before: always"></p>
 {% if FINANCIALS.payments.subHire.ledger|length > 0 and project.projectsTypes_config_finance == 1 and GET['subHires']  %}
-    <pagebreak/>
     <h2>Additional Hire Items</h2>
     <table border="0">
         <tbody>
@@ -364,19 +367,19 @@
             {% if currentSupplier != payment.payments_supplier %}
                 {% set currentSupplier = payment.payments_supplier %}
             <tr>
-                <td colspan="{{ showFinance ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
+                <td colspan="{{ GET['prices'] ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
             </tr>
             {% endif %}
             <tr>
                 <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
-                {% if showFinance %}
+                {% if GET['prices'] %}
                     <td style="width:100px;text-align: right;">{{ payment.payments_amount|money }}</td>
                     <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                 {% endif %}
             </tr>
         {% endfor %}
-        {% if showFinance %}
+        {% if GET['prices'] %}
         <tr>
             <td colspan="4" style="text-align: right;"><b>Total: </b>{{ FINANCIALS.payments.subHire.total|money }}</td>
         </tr>
@@ -385,7 +388,7 @@
 
     </table>
 {% endif %}
-{% if FINANCIALS.payments.sales.ledger|length > 0 and project.projectsTypes_config_finance == 1 and GET['sale'] %}
+{% if FINANCIALS.payments.sales.ledger|length > 0 and project.projectsTypes_config_finance == 1 and GET['sales'] %}
     <h2>Sales</h2>
     <table border="0">
         <tbody>
@@ -394,19 +397,19 @@
             {% if currentSupplier != payment.payments_supplier %}
                 {% set currentSupplier = payment.payments_supplier %}
                 <tr>
-                    <td colspan="{{ showFinance ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
+                    <td colspan="{{ GET['prices'] ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
                 </tr>
             {% endif %}
             <tr>
                 <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
-                {% if showFinance %}
+                {% if GET['prices'] %}
                     <td style="width:100px;text-align: right;">{{ payment.payments_amount|money }}</td>
                     <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                 {% endif %}
             </tr>
         {% endfor %}
-        {% if showFinance %}
+        {% if GET['prices'] %}
             <tr>
                 <td colspan="4" style="text-align: right;"><b>Total: </b>{{ FINANCIALS.payments.sales.total|money }}</td>
             </tr>
@@ -423,19 +426,19 @@
             {% if currentSupplier != payment.payments_supplier %}
                 {% set currentSupplier = payment.payments_supplier %}
                 <tr>
-                    <td colspan="{{ showFinance ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
+                    <td colspan="{{ GET['prices'] ? 4 : 2 }}" style="background-color: #F5F5F5;"><h3>{{ payment.payments_supplier }}</h3></td>
                 </tr>
             {% endif %}
             <tr>
                 <td style="width: 10px;">{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}</td>
                 <td>{{ payment.payments_comment|nl2br }}</td>
-                {% if showFinance %}
+                {% if GET['prices'] %}
                     <td style="width:100px;text-align: right;">{{ payment.payments_amount|money }}</td>
                     <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                 {% endif %}
             </tr>
         {% endfor %}
-        {% if showFinance %}
+        {% if GET['prices'] %}
             <tr>
                 <td colspan="4" style="text-align: right;"><b>Total: </b>{{ FINANCIALS.payments.staff.total|money }}</td>
             </tr>
@@ -445,7 +448,7 @@
     </table>
 {% endif %}
 {% if GET['paymentTerms'] %}
-<table style="background-color: #F5F5F5; margin-top: 10px; font-size: 14px;">
+<table style="background-color: #F5F5F5; margin-top: 10px; font-size: 16px;">
     <tr>
         <td style="padding: 6px;">
             {{ USERDATA.instance.instances_termsAndPayment|raw|nl2br }}

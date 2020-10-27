@@ -1,7 +1,7 @@
-{% if type['assets']|length > 1 %}{# If there's just one item then just display it on its own #}
+{% if type['assets']|length > 1 %}{# If there's just one item then just display it on its own below, otherwise display just a header #}
 <tr>
     {% if GET['checkboxes'] %}<td>&#9744;</td>{% endif %}
-    <td colspan="3">
+    <td colspan="{{ GET['comments'] ? 3 : 2 }}">
         {{ type['assets']|length }}x <b>{{ type['assets'][0].manufacturers_id != 1 ? type['assets'][0].manufacturers_name ~ " - " : "" }}{{ type['assets'][0].assetTypes_name }}</b>
     </td>
     {% if GET['masses'] %}<td>
@@ -20,11 +20,8 @@
 {% for assetAssignment in type['assets'] %}
     {% if type['assets']|length == 1 or GET['showAll'] %}
     <tr>
-        {% if GET['checkboxes'] %}
-        <td>
-            &#9744;
-        </td>{% endif %}
-        <td colspan="{{ assetAssignment.assetsAssignments_comment and GET['comments'] ? '1' : (assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '2' : '3') }}">
+        {% if GET['checkboxes'] %}<td>&#9744;</td>{% endif %}
+        <td colspan="{{ (assetAssignment.assetsAssignments_comment and GET['comments'] ? 1 : assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? (GET['comments'] ? 2 : 1) : (GET['comments'] ? 3 : 2)) }}">
             {% if type['assets']|length == 1 %}
                 <b>{{ assetAssignment.manufacturers_id != 1 ? assetAssignment.manufacturers_name ~ " - " : "" }}{{ assetAssignment.assetTypes_name }}</b>
             {% else %}
@@ -44,8 +41,6 @@
                 {% if assetAssignment.assetsAssignments_linkedTo %}
                     &#128279;
                 {% endif %}
-
-
         </td>
         {% if assetAssignment.assetsAssignments_comment and GET['comments'] %}
         <td colspan="{{ assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2' }}">
@@ -58,15 +53,17 @@
             {% if field != "" %}
                 <b>{{ field }}: </b>{{ assetAssignment['asset_definableFields_' ~ loop.index] }}<br/>
             {% endif %}
-        {% endfor %}
+          {% endfor %}
         </td>
+        {% elseif assetAssignment.assetsAssignments_comment and GET['comments'] %}
+            <td></td>
         {% endif %}
         {% if GET['masses'] %}
         <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>
         {% endif %}
         {% if project.projectsTypes_config_finance == 1 %}
             {% if GET['prices'] %}<td>{{ assetAssignment.price|money }}</td>{% endif %}
-            {% if GET['discounts'] %}<td>{{ assetAssignment.discountPrice|money }}{{  assetAssignment.assetsAssignments_discount > 0 ? " ("~assetAssignment.assetsAssignments_discount ~ "%)" : "" }}</td>{% endif %}
+            {% if GET['discounts'] %}<td>{{ assetAssignment.discountPrice|money }}{# {{  assetAssignment.assetsAssignments_discount > 0 ? " ("~assetAssignment.assetsAssignments_discount ~ "%)" : "" }} #}</td>{% endif %}
         {% endif %}
     </tr>
     {% endif %}
