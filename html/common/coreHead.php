@@ -140,7 +140,7 @@ class bCMS {
         return $DBLIB->get("s3files", null, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
     }
     function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes', $cloudfront = true) {
-        global $DBLIB, $CONFIG;
+        global $DBLIB, $CONFIG,$AUTH;
         /*
          * File interface for Amazon AWS S3.
          *  Parameters
@@ -177,18 +177,21 @@ class bCMS {
         if ($expire == null or $expire === false) $expire = '+10 minutes';
         $file['expiry'] = $expire;
 
-
+        $instanceIgnore = false;
         switch ($file['s3files_meta_type']) {
             case 1:
+                $instanceIgnore = true;
                 //This is a user thumbnail
                 break;
             case 2:
+                $instanceIgnore = true;
                 // Asset type thumbnail
             case 3:
                 // Asset type file
             case 4:
                 // Asset file
             case 5:
+                $instanceIgnore = true;
                 // Instance thumbnail
             case 6:
                 // Instance file
@@ -197,16 +200,21 @@ class bCMS {
             case 8:
                 // Maintenance job file
             case 9:
+                $instanceIgnore = true;
                 // User thumbnail
             case 10:
+                $instanceIgnore = true;
                 //Instance email thumbnail
             case 11:
                 // Location file
             case 12:
                 //Module thumbnail
+            case 13:
+                //Module step image
             default:
                 //There are no specific requirements for this file so not to worry.
         }
+        if ($instanceIgnore != true and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
 
         //Generate the url
 
