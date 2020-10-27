@@ -29,13 +29,13 @@
                     <h3 class="card-title">{{ step.modulesSteps_name}}</h3>
                 </div>
                 <div class="card-body">
-                    {% embed ('training/types/' ~ step.modulesSteps_type ~ '.twig') with {'content': step.modulesSteps_content } %}
+                    {% embed ('training/types/' ~ step.modulesSteps_type ~ '.twig') with {'content': step.modulesSteps_content, 'step': step } %}
                     {% endembed %}
                 </div>
                 {% if step.modulesSteps_id in module.allStepsCompleted %}
                 {% else %}
                 <div class="card-footer">
-                    <button class="btn btn-default markCompleted" data-id="{{ step.modulesSteps_id }}" {% if loop.last != true %}data-next="{{ module.steps[loop.index]['modulesSteps_id'] }}"{% endif %}>Mark as Completed ✔</button>
+                    <button class="btn btn-default markCompleted" disabled data-id="{{ step.modulesSteps_id }}" {% if loop.last != true %}data-next="{{ module.steps[loop.index]['modulesSteps_id'] }}"{% endif %}>Mark as Completed ✔</button>
                 </div>
                 {% endif %}
             </div>
@@ -99,7 +99,12 @@
                 }
             });
         });
-
     });
+    function unlockCompleteStep(id) {
+        if (id) {
+            $(".markCompleted[data-id=" + id + "]").prop('disabled', false);
+        }
+    }
 </script>
+    {% embed ('training/types/youtubePageFooter.twig') %}{% endembed %}
 {% endblock %}

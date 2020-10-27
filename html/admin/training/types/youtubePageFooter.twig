@@ -1,0 +1,59 @@
+<script>
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+        var i;
+        for (i = 0; i < youtubeVideos.length; i++) {
+            var stepid = youtubeVideos[i]['stepid'];
+            youtubeVideos[i]['player'] = new YT.Player(youtubeVideos[i]['div'], {
+                height: '468',
+                width: '768',
+                playerVars: {
+                    autoplay: 0,
+                    cc_load_policy: 0,
+                    cc_lang_pref: 'en',
+                    controls: 1,
+                    disablekb: 1,
+                    rel: 0,
+                    origin:window.location.origin,
+                    host:"https://www.youtube.com",
+                    playsinline: 1,
+                    fs: 1,
+                    hl: 'en',
+                    iv_load_policy: 1,
+                    loop: 0,
+                    modestbranding: 0,
+                },
+                videoId: youtubeVideos[i]['videoid'],
+                events: {
+                    'onReady': function (event) {
+                        //event.target.playVideo();
+                    },
+                    'onStateChange': function (event) {
+                        if (event.data == YT.PlayerState.PLAYING) {
+                            var loop;
+                            for (loop = 0; loop < youtubeVideos.length; loop++) {
+                                if (event.target != youtubeVideos[loop]['player']) {
+                                    //Pause all the other videos
+                                    youtubeVideos[loop]['player'].pauseVideo();
+                                }
+                            }
+                        }
+
+                        if (event.data == YT.PlayerState.ENDED && event.target.getDuration() > 0 && event.target.getDuration() == event.target.getCurrentTime()) {
+                            var id = event.target.l.id;
+                            if (id) {
+                                id = id.replace("player", "");
+                                unlockCompleteStep(id);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+</script>

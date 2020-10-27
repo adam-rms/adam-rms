@@ -66,7 +66,7 @@
                                     {{ step.modulesSteps_internalNotes|nl2br }}
                                 </td>
                                 <td>
-                                    {% embed ('training/types/' ~ step.modulesSteps_type ~ '.twig') with {'content': step.modulesSteps_content } %}
+                                    {% embed ('training/types/' ~ step.modulesSteps_type ~ '.twig') with {'content': step.modulesSteps_content, 'step': step } %}
                                     {% endembed %}
                                 </td>
                                 <td>
@@ -282,6 +282,7 @@
                 });
             });
         </script>
+        {% embed ('training/types/youtubePageFooter.twig') %}{% endembed %}
     </div>
 
 {% endblock %}
