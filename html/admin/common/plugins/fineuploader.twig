@@ -121,7 +121,8 @@ x-amz-meta-size
                 accessKey: "{{ CONFIG.AWS.FINEUPLOADER.KEY }}"
             },
             signature: {
-                endpoint: "{{ CONFIG.ROOTURL }}/api/upload/signatureHandler.php"
+                endpoint: "{{ CONFIG.ROOTURL }}/api/upload/signatureHandler.php",
+                version: 4,
             },
             uploadSuccess: {
                 endpoint: "{{ CONFIG.ROOTURL }}/api/upload/uploadSuccess.php",
@@ -151,6 +152,7 @@ x-amz-meta-size
                 }
             },
             objectProperties: {
+                region: "{{ CONFIG.AWS.DEFAULTUPLOADS.REGION }}",
                 bucket: "{{ CONFIG.AWS.DEFAULTUPLOADS.BUCKET }}",
                 key: function (fileId) {
                     var filename = $("#{{ thisElementID }}").fineUploader("getName", fileId);
