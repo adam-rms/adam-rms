@@ -19,3 +19,7 @@
 cd adam-rms
 bash updater.sh
 ```
+
+## AWS 
+
+`serverless deploy --aws-profile aws`
