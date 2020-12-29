@@ -33,7 +33,7 @@ RUN apt-get install -y \
 		libicu-dev \
 		unzip \
 	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
-	&& docker-php-ext-install -j$(nproc) gd
+	&& docker-php-ext-install -j$(nproc) gd \
 	&& apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install mbstring
