@@ -18,8 +18,8 @@ x-amz-meta-size
 #}
 
 
-<link href="{{CONFIG.ROOTURL}}/assets/libs/s3.fine-uploader/fine-uploader-gallery.css" rel="stylesheet">
-<script src="{{CONFIG.ROOTURL}}/assets/libs/s3.fine-uploader/s3.jquery.fine-uploader.min.js"></script>
+<link href="{{ CONFIG.ASSETCDNURL }}/libs/s3.fine-uploader/fine-uploader-gallery.css" rel="stylesheet">
+<script src="{{ CONFIG.ASSETCDNURL }}/libs/s3.fine-uploader/s3.jquery.fine-uploader.min.js"></script>
 <script type="text/template" id="qq-template">
     <div class="qq-uploader-selector qq-uploader qq-gallery" qq-drop-area-text="{% if customText is defined %}{{ customText }}{% elseif imagesOnly is defined and imagesOnly %}Drop images here{% else %}Drop files here{% endif %}">
         <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
@@ -129,7 +129,7 @@ x-amz-meta-size
 
             },
             iframeSupport: {
-                localBlankPagePath: "{{CONFIG.ROOTURL}}/assets/libs/s3.fine-uploader/success.html"
+                localBlankPagePath: "{{ CONFIG.ASSETCDNURL }}/libs/s3.fine-uploader/success.html"
             },
             callbacks: {
                 onComplete: function (id, name, responseJson, xhr) {

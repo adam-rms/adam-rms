@@ -22,6 +22,7 @@ $CONFIG = array(
     'DB_USERNAME' => getenv('bCMS__DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
     'DB_PASSWORD' => getenv('bCMS__DB_PASSWORD'),
     'PROJECT_NAME' => "AdamRMS",
+    'ASSETCDNURL' => 'https://assets.adam-rms.com/file/AdamRMS-assets',
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
     'ERRORS' => ['SENTRY' => getenv('bCMS__SENTRYLOGIN'), "SENTRYPublic" => getenv('bCMS__SENTRYLOGINPUBLIC')],
     'ANALYTICS' => ['TRACKINGID' => "G-F9FBE7ZZNM"],

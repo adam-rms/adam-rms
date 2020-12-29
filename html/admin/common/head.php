@@ -57,7 +57,7 @@ if ($CONFIG['DEV']) {
     $TWIG = new \Twig\Environment($TWIGLOADER, array(
         'debug' => false,
         'auto_reload' => false,
-        'cache' => __DIR__ . '/twigCache/',
+        'cache' =>'/tmp/',
         'charset' => 'utf-8'
     ));
 }
