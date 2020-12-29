@@ -44,8 +44,6 @@ RUN docker-php-ext-install -j "$(nproc)" opcache
 
 COPY . /var/www/
 #COPY .env /var/www/.env
-RUN echo "$COMMIT_SHA,$TAG_NAME" \
-   > "/var/www/html/admin/version.csv"
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www
