@@ -21,16 +21,16 @@ try {
 }
 
 header("Content-Security-Policy: default-src 'none';" .
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com  https://www.googletagmanager.com https://www.google-analytics.com    https://www.youtube.com https://*.ytimg.com;".
-    //          We have laods of inline JS              Libs                                Google webmaster tools                    Google analytics   Training
-    "style-src 'unsafe-inline' 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com;".
-    //          We have loads of inline CSS  Libs                        GFonts
-    "font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com;" .
-    //          Loading in google fonts     more gfonts               Fonts from libs like fontawesome
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.adam-rms.com https://cdnjs.cloudflare.com  https://www.googletagmanager.com https://www.google-analytics.com    https://www.youtube.com https://*.ytimg.com;".
+    //          We have laods of inline JS                                  Libs                                Google webmaster tools                    Google analytics   Training
+    "style-src 'unsafe-inline' 'self' https://assets.adam-rms.com https://cdnjs.cloudflare.com https://fonts.googleapis.com;".
+    //          We have loads of inline CSS                 Libs                        GFonts
+    "font-src 'self' data: https://assets.adam-rms.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com;" .
+    //                                               Loading in google fonts     more gfonts               Fonts from libs like fontawesome
     "manifest-src 'self' https://*.adam-rms.com;" .
     //          Show images on mobile devices like favicons
-    "img-src 'self' data: blob: https://cdnjs.cloudflare.com https://*.adam-rms.com https://www.google-analytics.com https://www.googletagmanager.com https://*.ytimg.com;".
-    //                    Uploads    Images from libs                 Images                Google analytics                                            Training
+    "img-src 'self' data: blob: https://assets.adam-rms.com https://cdnjs.cloudflare.com https://*.adam-rms.com https://www.google-analytics.com https://www.googletagmanager.com https://*.ytimg.com;".
+    //                                                    Uploads    Images from libs                 Images                Google analytics                                            Training
     "connect-src 'self' https://*.adam-rms.com https://sentry.io https://www.google-analytics.com  https://*.amazonaws.com https://status.jbithell.com;".
     //                  File uploads                      Error reporting     Google analytics             File Uploads
     "frame-src https://www.youtube.com;".
