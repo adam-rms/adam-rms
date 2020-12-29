@@ -21,15 +21,15 @@ $CONFIG = array(
     'DB_DATABASE' => getenv('bCMS__DB_DATABASE'),
     'DB_USERNAME' => getenv('bCMS__DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
     'DB_PASSWORD' => getenv('bCMS__DB_PASSWORD'),
-    'PROJECT_NAME' => getenv('bCMS__SITENAME'),
+    'PROJECT_NAME' => "AdamRMS",
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
     'ERRORS' => ['SENTRY' => getenv('bCMS__SENTRYLOGIN'), "SENTRYPublic" => getenv('bCMS__SENTRYLOGINPUBLIC')],
     'ANALYTICS' => ['TRACKINGID' => "G-F9FBE7ZZNM"],
     'VERSION' => "v1.26.01",
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
-    "PROJECT_FROM_EMAIL" => getenv('bCMS__EMAIL'),
+    "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
     "ROOTURL" => "", //Set on a frontend/backend basis
-    "PROJECT_SUPPORT_EMAIL" => getenv('bCMS__SUPPORTEMAIL'),
+    "PROJECT_SUPPORT_EMAIL" => "studios@jbithell.com",
     'AWS' => [
         'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
         'SECRET' => getenv('bCMS__AWS_SERVER_SECRET_KEY'),
