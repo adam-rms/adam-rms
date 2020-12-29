@@ -56,7 +56,7 @@
                                         {% endif %}>
                                     <td>
                                         {% if user.users_thumbnail %}
-                                            <img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}">
+                                            <img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : '{{ CONFIG.ASSETCDNURL }}/imgdefault-profile-picture.jpg' }}">
                                         {% endif %}
                                     </td>
                                     <td>

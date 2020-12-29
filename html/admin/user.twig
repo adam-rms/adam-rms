@@ -36,7 +36,7 @@
                 <div class="card-body box-profile">
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
-                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : 'https://cdn.adam-rms.com/default-profile-picture.jpg' }}"
+                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : '{{ CONFIG.ASSETCDNURL }}/imgdefault-profile-picture.jpg' }}"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
                     <h3 class="profile-username text-center">{{ user.users_name1 }} {{ user.users_name2 }}</h3>
