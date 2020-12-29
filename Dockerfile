@@ -14,10 +14,8 @@ RUN set -ex; \
     echo "; Configure Opcache Memory (Application-specific)"; \
     echo "opcache.memory_consumption = 32"; \
   } > "$PHP_INI_DIR/conf.d/cloud-run.ini"
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-#COPY docker/php.ini /var/www/php.ini
-#RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
+COPY docker/php.ini /var/www/php.ini
+RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
 
 RUN a2dissite 000-default.conf
 COPY docker/apache2site.conf /etc/apache2/sites-available/apache2site.conf
