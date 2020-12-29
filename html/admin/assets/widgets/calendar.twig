@@ -62,7 +62,7 @@
                     {% set latestEnd = false %}
                     {% for project in projects %}
                     {
-                        title          : '[{{ STATUSES[project.projects_status]["name"] }}] {{ project.clients_name ? project.clients_name|raw ~ " - " }}{{ project.projects_name|raw }}',
+                        title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|raw|escape("js") ~ " - " }}{{ project.projects_name|raw|escape("js") }}",
                         start          : {{ project.projects_dates_use_start|date('U') }}*1000,
                         end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                         url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
