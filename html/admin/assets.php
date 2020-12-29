@@ -72,7 +72,7 @@ foreach ($assets as $asset) {
 	$asset['count'] = count($assetTags);
 	if ($asset['count'] < 1) continue;
 	$asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
-	$asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id']);
+	$asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id'],'s3files_meta_uploaded','ASC',1);
 	$asset['tags'] = [];
 	foreach ($assetTags as $tag) {
 		if ($AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {

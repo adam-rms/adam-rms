@@ -98,14 +98,14 @@ class bCMS {
         if ($DBLIB->insert("auditLog", $data)) return true;
         else throw new Exception("Could not audit log - " . $DBLIB->getLastError());
     }
-    function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC') {
+    function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC', $limit = null) {
         global $DBLIB, $CONFIG;
         $DBLIB->where("s3files_meta_type", $typeid);
         if ($subTypeid) $DBLIB->where("s3files_meta_subType", $subTypeid);
         $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
         $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
         $DBLIB->orderBy($sort, $sortOrder);
-        return $DBLIB->get("s3files", null, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
+        return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
     }
     function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes', $cloudfront = true) {
         global $DBLIB, $CONFIG,$AUTH;
