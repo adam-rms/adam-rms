@@ -392,9 +392,6 @@ foreach ($GLOBALS['STATUSES'] as $key => $status) {
 usort($GLOBALS['STATUSES'], function($a, $b) {
     return $a['order'] - $b['order'];
 });
-$PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
-$PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
-
 
 $GLOBALS['ASSETASSIGNMENTSTATUSES'] = [
     0 => ["name" => "None applicable"],

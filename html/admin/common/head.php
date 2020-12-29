@@ -43,6 +43,10 @@ header("Content-Security-Policy: default-src 'none';" .
 $CONFIG['ROOTURL'] = getenv('bCMS__BACKENDURL');
 
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
+$PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
+$PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
+
+
 //TWIG
 //Twig_Autoloader::register();
 $TWIGLOADER = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../');
