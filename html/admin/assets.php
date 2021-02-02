@@ -75,7 +75,7 @@ foreach ($assets as $asset) {
 	$asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id'],'s3files_meta_uploaded','ASC',1);
 	$asset['tags'] = [];
 	foreach ($assetTags as $tag) {
-		if ($AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {
+		if ($AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31) and $PAGEDATA['thisProject']["projects_dates_deliver_start"] != null and $PAGEDATA['thisProject']["projects_dates_deliver_end"] != null) {
 			//Check availability
 			$DBLIB->where("assets_id", $tag['assets_id']);
 			$DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
