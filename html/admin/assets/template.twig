@@ -314,7 +314,7 @@
             <!-- Sidebar user (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("small") : '{{ CONFIG.ASSETCDNURL }}/imgdefault-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;">
+                    <img src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;">
                 </div>
                 <a href="{{ CONFIG.ROOTURL }}/account.php" class="d-block">
                 <div class="info">

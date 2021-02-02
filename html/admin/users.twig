@@ -62,7 +62,7 @@
                                         {% if user.users_suspended == '1' %}
                                         class="danger"
                                         {% endif %}>
-                                    <td><img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : '{{ CONFIG.ASSETCDNURL }}/imgdefault-profile-picture.jpg' }}"></td>
+                                    <td><img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}"></td>
                                     <td>{{ user.users_username }}</td>
                                     <td>{{ user["users_name1"] }}</td>
                                     <td>{{ user["users_name2"] }}</td>
