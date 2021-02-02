@@ -496,7 +496,7 @@ class projectFinance {
         return $return;
     }
 }
-
+use Money\Money;
 class projectFinanceCacher {
     //This class assumes that the projectid has been validated as within the instance
     private $data,$projectid;
