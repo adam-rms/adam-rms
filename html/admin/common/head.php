@@ -17,14 +17,6 @@ if (!$CONFIG['DEV']) {
     ]);
 }
 
-try {
-    //session_set_cookie_params(0, '/', '.' . $_SERVER['SERVER_NAME']); //Fix for subdomain bug
-    session_set_cookie_params(43200); //12hours
-    session_start(); //Open up the session
-} catch (Exception $e) {
-    //Do Nothing
-}
-
 header("Content-Security-Policy: default-src 'none';" .
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.adam-rms.com https://cdnjs.cloudflare.com  https://www.googletagmanager.com https://www.google-analytics.com    https://www.youtube.com https://*.ytimg.com;".
     //          We have laods of inline JS                                  Libs                                Google webmaster tools                    Google analytics   Training

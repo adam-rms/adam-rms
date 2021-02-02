@@ -24,8 +24,7 @@ class bID
                 //Token has expired
                 $token = false;
             }
-        } elseif (isset($_SESSION['token'])) $token = $_SESSION['token'];
-        else $token = false;
+        } else $token = false;
 
         if ($token and strlen($token) > 0) {
             //Time to check whether it is valid
@@ -136,7 +135,7 @@ class bID
                                 array_push($this->data['instance_ids'], $_SESSION['instanceID']);
                                 $this->data['instance'] = $instance;
                                 $this->data['instances'][] = $instance;
-                            } elseif ($_SESSION['instanceID'] != null) $this->setInstance($_SESSION['instanceID']); //Set instance normally
+                            }
                         }
                         if (!$this->data['instance'] and count($this->data['instances']) >0) {
                             //No instance has been found
@@ -172,7 +171,6 @@ class bID
             //Check they have this instance available
             if ($instance['instances_id'] == $instanceId) {
                 $this->data['instance'] = $instance;
-                if (!isset($_SESSION['instanceID']) or $this->data['instance']['instances_id'] != $_SESSION['instanceID']) $_SESSION['instanceID'] = $this->data['instance']['instances_id'];
                 return true;
             }
         }
@@ -207,27 +205,17 @@ class bID
 
         if (!$token) throw new Exception("Cannot insert a newly created token into DB");
 
-        $_SESSION['token'] = $tokenalias;
-
-        if ($redirect) {
-            //If the function call has asked for a redirect
-            try {
-                header('Location: ' . (isset($_SESSION['return']) ? $_SESSION['return'] :  $CONFIG['ROOTURL'])); //Check for session url to redirect to
-            } catch (Exception $e) {
-                die('<meta http-equiv="refresh" content="0;url=' . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']) . '" />');
-            }
-        } else if ($returntoken) return $tokenalias;
+        if ($returntoken) return $tokenalias;
         else return true;
     }
 
     function logout()
     {
         global $DBLIB;
-        if (isset($_SESSION['token'])) {
-            $DBLIB->where("authTokens_token", $_SESSION['token']);
+        if ($this->token) {
+            $DBLIB->where("authTokens_token", $this->token['authTokens_token']);
             $DBLIB->update('authTokens', ["authTokens_valid" => 0]);
         }
-        $_SESSION = array();
     }
 
     public function emailTaken($email)
