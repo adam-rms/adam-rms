@@ -8,10 +8,15 @@ use Money\Formatter\IntlMoneyFormatter;
 use Money\Formatter\DecimalMoneyFormatter;
 use Twig\Extra\String\StringExtension;
 
-if (!$CONFIG['DEV']) Sentry\init([
-    'dsn' => $CONFIG['ERRORS']['SENTRY'],
-    'release' => $CONFIG['VERSION']
-]); //Setup Sentry Error Logging
+if (!$CONFIG['DEV']) {
+    Sentry\init([
+        'dsn' => $CONFIG['ERRORS']['SENTRY'],
+        'traces_sample_rate' => 0.1, //Capture 10% of pageloads for perforamnce monitoring
+        'release' => $CONFIG['VERSION'],
+        'sample_rate' => 1.0,
+    ]);
+}
+
 try {
     //session_set_cookie_params(0, '/', '.' . $_SERVER['SERVER_NAME']); //Fix for subdomain bug
     session_set_cookie_params(43200); //12hours

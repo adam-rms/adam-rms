@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../apiHead.php';
-function sendEmail($user, $instanceID = false, $subject, $html = false, $template = false, $emailData = false) {
+function sendEmail($user, $instanceID, $subject, $html = false, $template = false, $emailData = false) {
 	global $DBLIB, $CONFIG,$TWIG,$bCMS;
 	if (!$user or $user["userData"]["users_email"] == '') return false; //If the user hasn't entered an E-Mail address yet
 
