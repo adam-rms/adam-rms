@@ -14,9 +14,9 @@ foreach ($_POST['formData'] as $item) {
 if (strlen($array['assetTypes_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 $currencies = new ISOCurrencies();
 $moneyParser = new DecimalMoneyParser($currencies);
-$array['assetTypes_value'] = $moneyParser->parse($array['assetTypes_value'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
-$array['assetTypes_dayRate'] = $moneyParser->parse($array['assetTypes_dayRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
-$array['assetTypes_weekRate'] = $moneyParser->parse($array['assetTypes_weekRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
+$array['assetTypes_value'] = $moneyParser->parse(($array['assetTypes_value'] ?? "0.00"), $AUTH->data['instance']['instances_config_currency'])->getAmount();
+$array['assetTypes_dayRate'] = $moneyParser->parse(($array['assetTypes_dayRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
+$array['assetTypes_weekRate'] = $moneyParser->parse(($array['assetTypes_weekRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
 
 if (!$AUTH->permissionCheck(19)) {
     $DBLIB->where("(instances_id IS NOT NULL)");
