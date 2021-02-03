@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdamRMS</title><!--TODO title--> 
+
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- CSS SECTION-->
+    <!--Include fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="assets/css/adminlte.min.css">
+
+    <!-- JS Scripts/Plugins-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Bootstrap 3.3.5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha256-OUFW7hFO0/r5aEGTQOz9F/aXQOt+TwqI1Z4fbVvww04=" crossorigin="anonymous"></script>
+    <!--Bootbox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
+    <!--Scrollbars-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/js/OverlayScrollbars.min.js" integrity="sha512-q5PymqHsbnrSSku455zVV6Q4WJ5FegIKtgfQbugb5D7Gbl6tsGPkG4upZlMDT10MBARZyBtmsIPPd6HMPyH9sw==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/css/OverlayScrollbars.min.css" integrity="sha512-fWgz39WeLATUXnAhIimPHnEUoSuZh5cgcOTteRFeVPW1opB0OPQ2/JwPAAWMDZtHy8IomUEOyaYJsOdCM9tcYg==" crossorigin="anonymous" />
+    <!--Pace Loader-->
+    <script>
+        window.paceOptions = {
+            startOnPageLoad: false,
+            document: false,
+            eventLag: false,
+            ajax: {
+                trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE'],
+                ignoreURLs: ['searchUser.php'] //Ignore user searches
+            }
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="assets/css/pace.css">
+
+    <!--TODO Htmlincludes-->
+
+    <!-- AdminLTE App -->
+    <script src="assets/js/adminlte.js"></script>
+
+    <script>
+        function pad(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+        function aTag(number) {
+            if (number == null) return number;
+            if (number <= 9999) return "A-" + pad(number, 4);
+            else return "A-" + number;
+        }
+        function insertURLQueryParam(key, value) {
+            //https://stackoverflow.com/questions/486896/adding-a-parameter-to-the-url-with-javascript
+            key = encodeURI(key);
+            value = encodeURI(value);
+
+            var kvp = document.location.search.substr(1).split('&');
+
+            var i = kvp.length;
+            var x;
+            while (i--) {
+                x = kvp[i].split('=');
+
+                if (x[0] == key) {
+                    x[1] = value;
+                    kvp[i] = x.join('=');
+                    break;
+                }
+            }
+
+            if (i < 0) {
+                kvp[kvp.length] = [key, value].join('=');
+            }
+
+            //this will reload the page, it's likely better to store this until finished
+            document.location.search = kvp.join('&');
+        }
+        $(document).ajaxStart(function() { Pace.restart(); });
+        function ajaxcall(path, data, callback, reloadIfError) {
+            if (data !== null) var senddata = data;
+            else var senddata = {};
+            if (reloadIfError == null){
+                reloadIfError = true;
+            }
+            $.ajax({
+                url: '/api/' + path, <!--TODO APIURL-->
+                type: "POST",
+                data: senddata,
+                cache: false,
+                success: function (result, status, data) {
+                    if (result.result) {
+                        if (typeof callback === "function") {
+                            callback(result);
+                        }
+                    } else {
+                        if (result.error && result.error.message) {
+                            var errorMessage = result.error.message; //Putting this inline breaks the function below
+                        } else {
+                            var errorMessage = "";
+                        }
+                        bootbox.alert('Sorry we couldn\'t complete this action - please try again!<br/><br/>' + errorMessage, function () {
+                            if (reloadIfError) {
+                                location.reload();
+                            }
+                        });
+                    }
+                    return false;
+                }, error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+                    console.log("Connection Error");
+                    bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection', function () {
+                        if (reloadIfError) {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
+        $(document).ready(function () {
+
+        })
+    </script>
+    <style>
+        .nav-item {
+            /*
+                Fix for an odd error where items in the navbar were not displaying in a helpful way
+             */
+            max-width: 234px;
+        }
+        .todo-list > li .tools {
+            /*
+                Fix for crew roles list delete icon not displaying in a helpful way
+             */
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+    </style>
+
+    <!--Favicons-->
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/img/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/img/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/img/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/img/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/img/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/img/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/img/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="assets/img/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/img/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/icons/favicon-16x16.png">
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<div class="container" id="login">
+    <style>
+        #masterBox {
+            box-shadow: 0px 1px 5px #888888;
+            background: white;
+            text-align: center;
+            border-radius: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin: 0px;
+        }
+    </style>
+    <div class="row align-items-center" id="masterRow">
+        <div class="col-lg-6 offset-lg-3
+                            col-md-6 offset-md-3
+                            col-sm-8 offset-sm-2
+                            col-xs-10 offset-xs-1">
+            <div id="masterBox">
+                <img src="assets/img/logo.svg" style="width:30%; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader" />
+                <div id="status">
+
+                </div>
+                <form id="loginForm">
+                    <input class="form-control form-control-lg" id="login-username" autofocus placeholder="Username or Email" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+                    <input class="form-control form-control-lg" id="login-password" placeholder="Password" type="password" style="margin-top: 10px; margin-bottom: 10px;">
+                    <div style="width: 100%; text-align:right;">
+                        <button type="button" class="btn btn-default" id="passwordResetButton">Reset my password</button>
+                        <button class="btn btn-primary" type="button" onclick="myApp.auth.login()">Login</button>
+                    </div>
+                </form>
+                <form id="signupForm">
+                    <input class="form-control form-control-lg" id="form3aaInput" placeholder="First Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+                    <input class="form-control form-control-lg" id="form3aaInputLastName" placeholder="Last Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+                    <div style="width: 100%; text-align:right;">
+                        <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+                    </div>
+                </form>
+                <form id="form3a">
+                    <input class="form-control form-control-lg" id="form3aInput" placeholder="Choose a password" type="password" style="margin-top: 10px; margin-bottom: 10px;">
+                    <input class="form-control form-control-lg" id="form3aInputConfirm" placeholder="Confirm your choice of password" type="password" style="margin-top: 0px; margin-bottom: 10px;">
+                    <div style="width: 100%; text-align:right;">
+                        <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+                    </div>
+                </form>
+                <form id="form3b">
+                    <input class="form-control form-control-lg" id="form3bInput" placeholder="Choose an email address" type="email" style="margin-top: 10px; margin-bottom: 10px;">
+                    <div style="width: 100%; text-align:right;">
+                        <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+                    </div>
+                </form>
+                <form id="form3c">
+                    <input class="form-control form-control-lg" id="form3cInput" placeholder="Choose a username" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+                    <div style="width: 100%; text-align:right;">
+                        <button class="btn btn-primary" type="submit" value="Submit">Next</button>
+                    </div>
+                </form>
+                <form id="form3d">
+                    <p>Please confirm you have read and accept our <a href="https://adam-rms.com/pages/legal.html" target="_blank">terms</a></p>
+                    <div style="width: 100%; text-align:right;">
+                        <button class="btn btn-success" type="submit" value="Submit">I accept</button>
+                    </div>
+                </form>
+                <form id="formVerifyEmail">
+                    <p>Please check your email address for our verification email</p>
+                    <p><i>Every now and again our E-Mails get sucked up by hungry spam filters - If you can't find our E-Mail please check your spam/junk folder</i></p>
+                    <div style="width: 100%; text-align:right;">
+                        <button class="btn btn-warning" type="submit" value="Submit">Send again</button>
+                        <button class="btn btn-primary setToLoginButton" type="button">Continue to login</button>
+                    </div>
+                </form>
+                <form id="form3e">
+                    <p>Your account has been created - welcome to {{ CONFIG.PROJECT_NAME}}!</p>
+                    <div style="width: 100%; text-align:right;">
+                        <button class="btn btn-primary setToLoginButton"  type="button">Continue to login</button>
+                    </div>
+                </form>
+                <script>
+                    function isEmail(email) {
+                        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                        return regex.test(email);
+                    }
+                    var initialData;
+
+
+                    $( document ).ready(function() {
+                        //Find out if there are any status issues
+                        $("#status").html("");
+                        if(/chrom(e|ium)/.test(navigator.userAgent.toLowerCase()) !== true){
+                            $("#status").append('<div class="alert alert-warning" role="alert"><h4 class="alert-heading">Unsupported Browser</h4>Sorry - Google Chrome is the only supported browser for AdamRMS, you may experience issues using the site in this browser. </div>');
+                        }
+                        $.ajax({
+                            url: "https://status.jbithell.com/static/content/api/v0/systems.en.json",
+                            type: "GET",
+                            dataType: 'json',
+                            cache: false,
+                            success: function(result) {
+                                if (result) {
+                                    var foundthis = false;
+                                    $(result).each(function (key,item) {
+                                        if (item.name && item.name == "adamrms-dashboard") {
+                                            foundthis = true;
+                                            if (item.status !== "operational") {
+                                                $.ajax({
+                                                    url: "https://status.jbithell.com/static/content/api/v0/incidents.page-1.en.json",
+                                                    type: "GET",
+                                                    dataType: 'json',
+                                                    cache: false,
+                                                    success: function (result) {
+                                                        if (result && result.count > 0) {
+                                                            $(result.incidents).each(function (key, incident) {
+                                                                if (incident.resolved !== true) {
+                                                                    if (incident.affectedsystems.includes(item.name)) {
+                                                                        var style="alert alert-warning";
+                                                                        switch (incident.severity) {
+                                                                            case "under-maintenance":
+                                                                                incident.severity = "Under Maintenance"
+                                                                                style="alert alert-warning";
+                                                                                break;
+                                                                            case "major-outage":
+                                                                                incident.severity = "Major Outage"
+                                                                                style="alert alert-danger";
+                                                                                break;
+                                                                            case "partial-outage":
+                                                                                incident.severity = "Partial Outage"
+                                                                                style="alert alert-warning";
+                                                                                break;
+                                                                            case "degraded-performance":
+                                                                                incident.severity = "Degraded Performance"
+                                                                                style="alert alert-info";
+                                                                                break;
+                                                                        }
+                                                                        $("#status").append('<div class="' + style + '" role="alert"><h4 class="alert-heading"><b>' + incident.severity + '</b><br/>' + incident.title + '</h4>' + incident.description + '<hr/>' +  '<a href="https://status.jbithell.com" target="_blank" class="alert-link">Learn more on the status page</a></div>');
+                                                                    }
+                                                                }
+                                                            });
+                                                            $("#form1").fadeIn();
+                                                        } else {
+                                                            $("#form1").fadeIn();
+                                                        }
+                                                    },
+                                                    error: function () {
+                                                        $("#form1").fadeIn();
+                                                    }
+                                                });
+                                            } else {
+                                                $("#form1").fadeIn();
+                                            }
+                                        }
+                                    });
+                                    if (!foundthis) {
+                                        $("#form1").fadeIn();
+                                    }
+                                } else {
+                                    $("#form1").fadeIn();
+                                }
+                            },
+                            error: function(){
+                                $("#form1").fadeIn();
+                            }
+                        });
+                    });
+
+                    $("#form1").submit(function(){
+                        loginStep1();
+                        return false;
+                    });
+                    $('#joinButton').click(function(){
+                        $("#form1").fadeOut(function () {
+                            $("#form3aa").fadeIn(function () { //Request an email
+                                $("#form3aaInput").focus();
+                            });
+                        });
+                    });
+                    $(".setToLoginButton").on("click",function(){
+                        $("form").fadeOut(function () {
+                            $("input").val(""); //Reset all the forms
+                            $("#form1").fadeIn(function () {
+                                $("#form1Input").focus();
+                            });
+                        });
+                    });
+                    var userid = "";
+                    function loginStep1() {
+                        if ($("#form1Input").val().length <= 0) {
+                            toastr.warning("Please enter something into the login box");
+                        } else {
+                            $.ajax({
+                                url: "../api/login/authStep1.php",
+                                type: "POST",
+                                dataType: 'json',
+                                data: {"formInput" : $("#form1Input").val()},
+                                success: function(result) {
+                                    initialData = result;
+                                    if (result.result) {
+                                        if (result.response.user) {
+                                            userid = result.response.data.users_userid;
+                                            //This is a normal user login
+                                            $("#form1").fadeOut(function () {
+                                                $("#form2").fadeIn(function () {
+                                                    $("#form2Input").focus();
+                                                });
+                                            });
+                                        } else {
+                                            toastr.error("Problem connecting to server - please contact support");
+                                        }
+                                    } else {
+                                        if (result.error.code == "VERIFYEMAIL") {
+                                            //They need to verify their email address
+                                            $("#form1").fadeOut(function () {
+                                                $("#formVerifyEmail").fadeIn();
+                                            });
+                                        } else {
+                                            toastr.error(result.error.message);
+                                        }
+                                    }
+                                },
+                                error: function(){
+                                    toastr.error("Please refresh the page and check your internet connection");
+                                }
+                            });
+                        }
+                    }
+
+                    $("#form2").submit(function(){
+                        loginStep2();
+                        return false;
+                    });
+                    $('#passwordResetButton').click(function(){
+                        $.ajax({
+                            url: "../api/login/forgotPassword.php",
+                            type: "POST",
+                            dataType: 'json',
+                            data: {"userid" : userid},
+                            success: function(result) {
+                                if (result.result) {
+                                    toastr.success("Password reset link sent to your registered email address");
+                                } else {
+                                    oastr.warning("Please contact the support team for a new password");
+                                }
+                            }, error: function(){
+                                toastr.error("Please refresh the page and check your internet connection");
+                            }
+                        });
+
+                    });
+                    function loginStep2() {
+                        if ($("#form2Input").val().length <= 0) {
+                            toastr.warning("Please enter something into the password box");
+                        } else {
+                            $.ajax({
+                                url: "../api/login/authStep2Password.php",
+                                type: "POST",
+                                dataType: 'json',
+                                data: {"formInput" : $("#form1Input").val(),"password": $("#form2Input").val()},
+                                success: function(result) {
+                                    if (result.result) {
+                                        window.location.href = "{{ return }}";
+                                    } else {
+                                        toastr.error(result.error.message);
+                                    }
+                                },
+                                error: function(){
+                                    toastr.error("Please refresh the page and check your internet connection");
+                                }
+                            });
+                        }
+                    }
+
+                    //Step 3 is a token sign up
+                    $("#form3aa").submit(function(){
+                        loginStep3aa();
+                        return false;
+                    });
+                    function loginStep3aa() {
+                        if ($("#form3aaInput").val().length <= 1) {
+                            toastr.warning("Please enter a first name");
+                        } else if ($("#form3aaInputLastName").val().length <= 1) {
+                            toastr.warning("Please enter a second name");
+                        } else {
+                            $("#form3aa").fadeOut(function () {
+                                $("#form3a").fadeIn(function () { //Request an email
+                                    $("#form3aInput").focus();
+                                });
+                            });
+
+                        }
+                    }
+
+                    //Step 3 is a token sign up
+                    $("#form3a").submit(function(){
+                        loginStep3a();
+                        return false;
+                    });
+                    function loginStep3a() {
+                        if ($("#form3aInput").val().length <= 8) {
+                            toastr.warning("Please enter a longer password");
+                        } else if ($("#form3aInput").val() != $("#form3aInputConfirm").val()) {
+                            toastr.warning("Please ensure that both password boxes match");
+                        } else {
+                            $("#form3a").fadeOut(function () {
+                                $("#form3b").fadeIn(function () { //Request an email
+                                    $("#form3bInput").focus();
+                                });
+                            });
+
+                        }
+                    }
+                    $("#form3b").submit(function(){
+                        loginStep3b();
+                        return false;
+                    });
+                    function loginStep3b() {
+                        if (!isEmail($("#form3bInput").val())) {
+                            toastr.warning("Please enter a valid email address");
+                        } else {
+                            $.ajax({
+                                url: "../api/login/usernameOrEmailTaken.php",
+                                type: "POST",
+                                dataType: 'json',
+                                data: {
+                                    "email":$("#form3bInput").val()
+                                }, success: function(result) {
+                                    if (result.result) {
+                                        if (result.response) {
+                                            toastr.warning("Sorry this email address is taken - please try choosing another");
+                                        } else {
+                                            $("#form3b").fadeOut(function () {
+                                                $("#form3c").fadeIn(function () { //Request an email
+                                                    $("#form3cInput").focus();
+                                                });
+                                            });
+                                        }
+                                    } else {
+                                        toastr.error(result.error.message);
+                                    }
+                                }, error: function(){
+                                    toastr.error("Please refresh the page and check your internet connection");
+                                }
+                            });
+                        }
+                    }
+                    $("#form3c").submit(function(){
+                        loginStep3c();
+                        return false;
+                    });
+                    function loginStep3c() {
+                        if ($("#form3cInput").val().length < 5) {
+                            toastr.warning("Please enter a longer username");
+                        } else {
+                            $.ajax({
+                                url: ".." +
+                                    "1965" +
+                                    "/api/login/usernameOrEmailTaken.php",
+                                type: "POST",
+                                dataType: 'json',
+                                data: {
+                                    "username":$("#form3cInput").val()
+                                }, success: function(result) {
+                                    if (result.result) {
+                                        if (result.response) {
+                                            toastr.warning("Sorry this username is taken - please try choosing another");
+                                        } else {
+                                            $("#form3c").fadeOut(function () {
+                                                $("#form3d").fadeIn();
+                                            });
+                                        }
+                                    } else {
+                                        toastr.error(result.error.message);
+                                    }
+                                }, error: function(){
+                                    toastr.error("Please refresh the page and check your internet connection");
+                                }
+                            });
+                        }
+                    }
+                    $("#form3d").submit(function(){
+                        loginStep3d();
+                        return false;
+                    });
+                    function loginStep3d() {
+                        //Terms and conditions now accepted
+                        $.ajax({
+                            url: "../api/login/signup.php",
+                            type: "POST",
+                            dataType: 'json',
+                            data: {
+                                "name1": $("#form3aaInput").val(),
+                                "name2": $("#form3aaInputLastName").val(),
+                                "password": $("#form3aInput").val(),
+                                "username": $("#form3cInput").val(),
+                                "email":$("#form3bInput").val()
+                            }, success: function(result) {
+                                if (result.result) {
+                                    $("#form3d").fadeOut(function () {
+                                        $("#formVerifyEmail").fadeIn(); //Show them that they were supposed to verify email address
+                                    });
+                                } else {
+                                    toastr.error(result.error.message);
+                                }
+                            }, error: function(){
+                                toastr.error("Please refresh the page and check your internet connection");
+                            }
+                        });
+                    }
+
+                    $("#formVerifyEmail").submit(function(){
+                        formVerifyEmail();
+                        return false;
+                    });
+                    function formVerifyEmail() {
+                        //They want us to send out another verification email
+                        if (initialData.hasOwnProperty("error") && initialData.error.hasOwnProperty("userid")) {
+                            var userid = initialData.error.userid;
+                        } else {
+                            var userid = initialData.response.data.userid;
+                        }
+                        $.ajax({
+                            url: "../api/login/reSendVerificationEmail.php",
+                            type: "POST",
+                            dataType: 'json',
+                            data: {
+                                "userid" : userid
+                            }, success: function(result) {
+                                if (result.result) {
+                                    toastr.success("E-Mail re-sent");
+                                } else {
+                                    toastr.error("Error verifying email address - please contact support");
+                                }
+                            }, error: function(){
+                                toastr.error("Please refresh the page and check your internet connection");
+                            }
+                        });
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="footer fixed-bottom">
+        <div class="row">
+            <div class="col-4">
+                PWA VERSION
+            </div>
+            <div class="col-8" style="text-align: right;">
+                <a style="margin-right: 15px;" href="https://status.jbithell.com">Status</a><a style="margin-right: 15px;" href="https://adam-rms.com">About</a><a href="https://adam-rms.com/pages/legal.html" target="_blank">Terms &amp; Privacy</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="wrapper" id="app-mainview">
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link js-auth-logout">Logout</a>
+            </li>
+        </ul>
+        <div class="js-hide-no-instance">
+        <!--<form class="form-inline ml-3 d-none d-sm-block" method="GET">
+            <div class="input-group input-group-sm">
+                <input class="form-control form-control-navbar" name="q" type="search" placeholder="Search Assets" aria-label="Search Assets">
+                <div class="input-group-append">
+                    <button class="btn btn-navbar" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>-->
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link"  data-toggle="dropdown" href="#">
+                    <div class="d-none d-sm-block js-instance-fill-name">
+                    </div>
+                    <div class="d-block d-sm-none">
+                        <i class="fas fa-building"></i>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <span class="dropdown-item dropdown-header">Your Businesses</span>
+                    <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
+                    <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer js-auth-permission" data-permission="8">Create new business</a>
+                    <a href="#" class="dropdown-item dropdown-footer js-auth-not-permission" data-permission="8"><i>Contact support to add new businesses</i></a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{CONFIG.ROOTURL}}/user.php?id={{ USERDATA.users_userid }}">
+                    <i class="fas fa-calendar-alt"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
+                    <i class="fas fa-th-large"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="#" class="brand-link navbar-light" style="color: rgba(0,0,0,.8);">
+            <img src="assets/img/logoicon.png"
+                 alt="AdamRMS Logo"
+                 class="brand-image img-circle elevation-3"
+                 style="opacity: .8;">
+            <span class="brand-text font-weight-light">Adam RMS</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar js-hide-no-instance">
+            <!-- Sidebar user (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="assets/img/default-profile-picture.jpg" class="img-circle elevation-2" alt="User Image" style="background-color: white;">
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/account.php" class="d-block">
+                    <div class="info js-auth-data-fill-name">
+
+                    </div>
+                    <div class="info">
+                        <i class="fa fa-cog"></i>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <!-- Add icons to the links using the .nav-icon class
+                         with font-awesome or any other icon font library -->
+
+                    <div class="js-hide-no-instance">
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/" class="nav-link">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Dashboard
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-city"></i>
+                            <p>
+                                Business
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item js-auth-permission" data-permission="80">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/stats.php" class="nav-link">
+                                    <i class="nav-icon fas fa-chart-bar"></i>
+                                    <p>
+                                        Stats
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php" class="nav-link">
+                                    <i class="nav-icon far fa-calendar-alt"></i>
+                                    <p>
+                                        Calendar
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item js-auth-permission" data-permission="36">
+                                <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
+                                    <i class="nav-icon fas fa-briefcase"></i>
+                                    <p>
+                                        Clients
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item js-auth-permission" data-permission="40">
+                                <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
+                                    <i class="nav-icon fas fa-coins"></i>
+                                    <p>
+                                        Payments
+                                    </p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item js-auth-permission" data-permission="57">
+                                <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
+                                    <i class="fa fa-map-marked-alt nav-icon"></i>
+                                    <p>
+                                        Locations
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-header">USER MANAGEMENT</li>
+                            <li class="nav-item js-auth-permission" data-permission="2">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        Users
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item js-auth-permission" data-permission="11">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
+                                    <i class="nav-icon fas fa-unlock-alt"></i>
+                                    <p>
+                                        Permissions
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item js-auth-permission" data-permission="109">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/signupCodes.php" class="nav-link">
+                                    <i class="fas fa-key nav-icon"></i>
+                                    <p>
+                                        Signup Codes
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-header">SETTINGS</li>
+                            <li class="nav-item js-auth-permission" data-permission="81">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
+                                    <i class="nav-icon fas fa-cog"></i>
+                                    <p>
+                                        Basic Settings
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item js-auth-permission" data-permission="105">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
+                                    <i class="fas fa-theater-masks nav-icon"></i>
+                                    <p>
+                                        Project Types
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item js-auth-permission" data-permission="89">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
+                                    <i class="fas fa-list nav-icon"></i>
+                                    <p>
+                                        Custom Categories
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item js-auth-permission" data-permission="113">
+                        <a href="{{ CONFIG.ROOTURL}}/training" class="nav-link">
+                            <i class="nav-icon fas fa-graduation-cap"></i>
+                            <p>Training</p>
+                            <span class="right badge badge-danger">New</span>
+                        </a>
+                    </li>
+                    <li class="nav-header">ASSETS</li>
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
+                            <i class="nav-icon fas fa-warehouse"></i>
+                            <p>View All</p>
+                        </a>
+                    </li>
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/manufacturers.php" class="nav-link">
+                        <i class="nav-icon fas fa-industry"></i>
+                        <p>
+                            Manufacturers
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/instances/groups.php" class="nav-link">
+                        <i class="nav-icon fas fa-layer-group"></i>
+                        <p>
+                            Groups
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item js-auth-permission" data-permission="17">
+                    <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
+                        <i class="fas fa-plus nav-icon"></i>
+                        <p>New Asset</p>
+                    </a>
+                </li>
+                <li class="nav-item js-auth-permission" data-permission="63">
+                    <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
+                        <i class="nav-icon fas fa-paint-roller"></i>
+                        <p>
+                            Maintenance
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item js-auth-permission" data-permission="84">
+                    <a href="{{ CONFIG.ROOTURL}}/maintenance/barcode.php" class="nav-link">
+                        <i class="fas fa-barcode nav-icon"></i>
+                        <p>Barcodes</p>
+                    </a>
+                </li>
+                <div class="js-auth-permission" data-permission="20"></div>
+                    <li class="nav-header">PROJECTS</li>
+                    {% set archive = false %}
+                    {% for project in projects %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
+                            <i class="nav-icon
+    {% if project.projects_manager == USERDATA.users_userid %}
+    fas fa-star
+    {% else %}
+    far fa-circle
+    {% endif %}
+    text-{{ STATUSES[project.projects_status]['class'] }}
+    " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                            <p title="{{ project.projects_name }}">{{ project.projects_name }}</p>
+                        </a>
+                    </li>
+                    {% endfor %}
+                    <li class="nav-item">
+                        <a href="{{CONFIG.ROOTURL}}/project/list.php" class="nav-link">
+                            <i class="nav-icon fas fa-list-ol"></i>
+                            <p>List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item js-auth-permission" data-permission="21">
+                        <a href="#" class="nav-link newProjectButton">
+                            <i class="nav-icon fas fa-plus"></i>
+                            <p>New Project</p>
+                        </a>
+                    </li>
+                </div>
+                <li class="nav-item js-auth-permission" data-permission="2">
+                    <a href="{{ CONFIG.ROOTURL }}/users.php" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Users
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item js-auth-permission" data-permission="11">
+                    <a href="{{ CONFIG.ROOTURL }}/permissions.php" class="nav-link">
+                        <i class="nav-icon fas fa-unlock-alt"></i>
+                        <p>
+                            Permissions
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item js-auth-permission" data-permission="20">
+                    <a href="{{ CONFIG.ROOTURL }}/instances.php" class="nav-link">
+                        <i class="nav-icon fas fa-city"></i>
+                        <p>
+                            Instances
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item js-auth-permission" data-permission="7">
+                    <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
+                        <i class="nav-icon fas fa-gavel"></i>
+                        <p>
+                            Audit Log
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp hidden-lg hidden-md hidden-sm"></div>-->
+    <div class="content-wrapper" id="content-wrapper">
+        <div class="content">
+            <div class="container-fluid">
+                <!--<div class="row">
+                    <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
+                        <div class="card card-default">
+                            <div class="card-body" style="text-align: center;">
+                                <h2>Change your Password</h2>
+                                <p>Please enter a new password:</p>
+                                <input type="password" id="forcechangepass1" class="form-control input-lg"
+                                       placeholder="New Password" style="margin-bottom: 5px;" />
+                                <input type="password" id="forcechangepass2" class="form-control input-lg"
+                                       placeholder="Confirm New Password"  style="margin-bottom: 5px;" />
+                                <p>Choose a strong password longer than 8 characters that is a random alphanumeric string</p>
+                                <button id="forcechangepassbutton" class="btn btn-default">Save</button>
+
+                            </div>
+                            <div class="card-footer">
+                                <a href="mailto:{{ CONFIG.PROJECT_SUPPORT_EMAIL }}">Contact Support</a>
+                            </div>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#forcechangepassbutton').click(function () {
+                                        if ($("#forcechangepass1").val() != $("#forcechangepass2").val()) bootbox.alert("Sorry - Your passwords do not match!");
+                                        else if ($("#forcechangepass1").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
+                                        else {
+                                            $.ajax({
+                                                url: '{{ CONFIG.ROOTURL }}/api/account/forcePasswordChange.php?pass=' + $("#forcechangepass1").val(),
+                                                success: function (result) {
+                                                    if (result == '1') {
+                                                        location.reload();
+                                                    } else {
+                                                        bootbox.alert('Error - Could not send E-Mail again - Please refresh the page and try again!');
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>--><!--TODO sort password reset - could be a modal? -->
+                <div id="pagecontent">
+                    <!--TODO CONTENT-->
+                </div>
+            </div><!-- /.container-fluid -->
+        </div><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+    <footer class="main-footer" id="main-footer">
+        <div class="float-right d-none d-sm-block">
+            PWA Version
+        </div>
+        <strong>&copy;2018-2021 <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
+        reserved.
+    </footer>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+        <div class="p-3 control-sidebar-content">
+            <h5>Coming Soon</h5>
+        </div>
+    </aside>
+</div>
+<script src="app.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F9FBE7ZZNM"></script>
+<script>
+    //Google Analytics
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-F9FBE7ZZNM');
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+.pace.pace-inactive {
+    display: none;
+}
+
+.pace {
+    -webkit-pointer-events: none;
+    pointer-events: none;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+
+    z-index: 2000;
+    position: fixed;
+    height: 120px;
+    width: 200px;
+    margin: auto;
+    top: -40px;
+    left: 42.5px;
+    right: 0;
+    bottom: 0;
+}
+
+.pace .pace-progress {
+    z-index: 2000;
+    position: absolute;
+    height: 120px;
+    width: 200px;
+
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    -ms-transform: translate3d(0, 0, 0) !important;
+    transform: translate3d(0, 0, 0) !important;
+}
+
+.pace .pace-progress:before {
+    /*
+    This is the parcan clamp
+     */
+    content: attr(data-progress-text);
+    text-align: center;
+    border-radius: 5px 5px 10px 10px;
+    color: #fff;
+    background: #000000;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 1;
+    padding-top: 7px;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    width: 40px;
+    height: 150px;
+
+    display: block;
+    z-index: 999;
+    position: absolute;
+}
+
+.pace .pace-activity {
+    font-size: 15px;
+    line-height: 1;
+    z-index: 998;
+    position: absolute;
+
+    display: block;
+
+    -webkit-animation: pace-theme-parcan 5s linear infinite;
+    -moz-animation: pace-theme-parcan 5s linear infinite;
+    -o-animation: pace-theme-parcan 5s linear infinite;
+    animation: pace-theme-parcan 5s linear infinite;
+
+    /*
+    Parcan
+     */
+    border-radius: 40px 40px 0 0;
+    background: #000000;
+    border-bottom: 0;
+    content: ' ';
+    display: block;
+    top: 40px;
+    left: -42.5px;
+    height: 220px;
+    width: 125px;
+}
+
+.pace .pace-activity:after {
+    /*
+    Handle at the back
+     */
+    content: ' ';
+    border-radius: 5px 5px 0 0;
+    background-color: black;
+    display: block;
+    position: absolute;
+    top: -10px;
+    left: 42.5px;
+    height: 20px;
+    width: 40px;
+}
+
+.pace .pace-activity:before {
+    /*
+    Light output
+     */
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: 220px;
+    width: 125px;
+    height: 1px;
+    left: -80px;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    border-bottom: 100px solid rgb(255,255,27, .5);
+    box-sizing: content-box;
+}
+
+@-webkit-keyframes pace-theme-parcan {
+    0%   { -webkit-transform: rotate(0deg) }
+    25% { -webkit-transform: rotate(30deg) }
+    50% { -webkit-transform: rotate(0deg) }
+    75% { -webkit-transform: rotate(-30deg) }
+    100% { -webkit-transform: rotate(0deg) }
+}
+@-moz-keyframes pace-theme-parcan {
+    0%   { -webkit-transform: rotate(0deg) }
+    25% { -webkit-transform: rotate(30deg) }
+    50% { -webkit-transform: rotate(0deg) }
+    75% { -webkit-transform: rotate(-30deg) }
+    100% { -webkit-transform: rotate(0deg) }
+}
+@-o-keyframes pace-theme-parcan {
+    0%   { -webkit-transform: rotate(0deg) }
+    25% { -webkit-transform: rotate(30deg) }
+    50% { -webkit-transform: rotate(0deg) }
+    75% { -webkit-transform: rotate(-30deg) }
+    100% { -webkit-transform: rotate(0deg) }
+}
+@keyframes pace-theme-parcan {
+    0%   { -webkit-transform: rotate(0deg) }
+    25% { -webkit-transform: rotate(30deg) }
+    50% { -webkit-transform: rotate(0deg) }
+    75% { -webkit-transform: rotate(-30deg) }
+    100% { -webkit-transform: rotate(0deg) }
+}
