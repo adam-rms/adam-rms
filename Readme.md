@@ -1,8 +1,5 @@
 # AdamRMS
 
-## Debugging Website
-
-1. `jekyll serve`
 
 ## Docker Setup
 
