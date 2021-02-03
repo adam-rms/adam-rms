@@ -5,5 +5,8 @@
         var youtubeVideos = [];
     }
     youtubeVideos.push({"videoid": "{{ content }}","div":"player{{ step.modulesSteps_id }}","stepid":{{ step.modulesSteps_id }}});
+    $(document).ready(function () {
+        unlockCompleteStep({{ step.modulesSteps_id }});
+    });
 </script>
 {% endif %}

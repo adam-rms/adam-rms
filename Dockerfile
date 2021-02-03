@@ -32,6 +32,7 @@ RUN apt-get install -y \
 		zlib1g-dev \
 		libicu-dev \
 		unzip \
+		git \
 	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
 	&& docker-php-ext-install -j$(nproc) gd \
 	&& apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
