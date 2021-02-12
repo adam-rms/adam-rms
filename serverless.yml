@@ -1,9 +1,10 @@
 service: adamrms
+useDotenv: true
 provider:
   name: aws
-  runtime: provided.al2
   region: eu-west-1
   stage: prod
+  runtime: provided.al2
   apiGateway:
     binaryMediaTypes:
       - '*/*'
@@ -11,10 +12,10 @@ provider:
       BREF_BINARY_RESPONSES: '1'
 plugins:
   - ./vendor/bref/bref
-  - serverless-dotenv-plugin
+  - serverless-python-requirements
 custom:
-  dotenv:
-    path: ./.env.aws
+  pythonRequirements:
+    dockerizePip: non-linux
 package:
   exclude:
     - node_modules/**
@@ -47,3 +48,19 @@ functions:
       #- httpApi: '*'
       - http: 'ANY /'
       - http: 'ANY /{proxy+}'
+  s3deletor:
+    name: ${opt:stage, self:provider.stage, 'dev'}-AdamRMS-S3Deletor # optional, Deployed Lambda name
+    runtime: python3.8
+    description: AdamRMS S3 Deletor
+    memorySize: 128
+    reservedConcurrency: 1
+    tags:
+      project: adam-rms
+    handler: functions/s3deletor/lambda_function.py
+    timeout: 900
+    events:
+      - schedule:
+         name: 6am-daily
+         description: 'Run the Deletor at 6am Daily'
+         rate: cron(00 6 * * ? *)
+         enabled: true
