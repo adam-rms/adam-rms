@@ -1,0 +1,103 @@
+{% set THISWIDGET = WIDGETS.widget('inventoryTotal', {'instanceid': USERDATA.instance.instances_id}) %}
+<div class="card card-primary">
+    <div class="card-body p-0">
+        <div id="calendar"></div>
+    </div>
+    <script>
+        $(function () {
+            /* initialize the calendar
+             -----------------------------------------------------------------*/
+            var Calendar = FullCalendar.Calendar;
+            var Draggable = FullCalendarInteraction.Draggable;
+            var calendarEl = document.getElementById('calendar');
+
+            // initialize the external events
+            // -----------------------------------------------------------------
+
+            var calendar = new Calendar(calendarEl, {
+                timeZone: 'UTC',
+                plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid','list' ],
+                nextDayThreshold: '05:00:00',
+                customButtons: {
+                    {% if 21|instancePermissions and false %}
+                    addProjectButton: {
+                        text: 'Add Project',
+                        click: function() {
+                            $("#newProjectButton").click();
+                        }
+                    }
+                    {% endif %}
+                },
+                buttonText:  {
+                    today:    'Today',
+                    month:    'Month',
+                    week:     'Week',
+                    day:      'Day',
+                    list:     'List'
+                },
+                header    : {
+                    left  : 'prev,next today{% if 21|instancePermissions %} addProjectButton{% endif %}',
+                    center: 'title',
+                    right : 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
+                },
+
+                //Random default events
+                events    : [
+                    {% set earliestStart = false %}
+                    {% set latestEnd = false %}
+                    {% for project in projects %}
+                    {
+                        title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|raw|escape("js") ~ " - " }}{{ project.projects_name|raw|escape("js") }}",
+                        start          : {{ project.projects_dates_use_start|date('U') }}*1000,
+                        end            : {{ project.projects_dates_use_end|date('U') }}*1000,
+                        url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
+                        backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
+                        textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                    },
+                    {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
+                    {% set earliestStart = project.projects_dates_use_start|date("c") %}
+                    {% endif %}
+                    {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
+                    {% set latestEnd = project.projects_dates_use_end|date("c") %}
+                    {% endif %}
+                    {% endfor %}
+                ],
+                validRange: {
+                    start: '{{ earliestStart|date("c") }}',
+                    end: '{{ latestEnd|date("c") }}'
+                },
+                editable  : false,
+                droppable : false, // this allows things to be dropped onto the calendar !!!
+                drop      : function(info) {
+
+                },
+                height: 800,
+                firstDay: 1,
+                weekNumbers: true,
+                weekNumbersWithinDays:true,
+                {% if USERDATA.instance.weekStartDates %}
+                weekNumberCalculation: function(date) {
+                    var dates = [{{ USERDATA.instance.weekStartDates|join(",") }}];
+                    var today = new Date();
+                    var thisDate = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', { month: 'long' })) + ' ' + date.getFullYear() + ' 00:00:00');
+                    var idOfThis;
+                    for (var i = 0; i < dates.length; i++) {
+                        if (thisDate <= (dates[i])-(7 * 24 * 60 * 60 * 1000)) {
+                            if (i == 0) {
+                                return "";
+                            }
+                            idOfThis = i-1;
+                            break;
+                        }
+                    }
+                    return (Math.round((thisDate-dates[idOfThis]) / (7 * 24 * 60 * 60 * 1000))+1);
+                },
+                {% else %}
+                weekNumberCalculation: "ISO",
+                {% endif %}
+            });
+
+            calendar.render();
+        })
+    </script>
+</div>

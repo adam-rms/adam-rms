@@ -9,7 +9,7 @@ class bID
     private $token;
     public $data;
     public $debug = '';
-    private $permissions;
+    public $permissions;
     function __construct()
     {
         global $DBLIB, $CONFIG;

@@ -1,0 +1,232 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="row">
+    <div class="col-12 col-md-8">
+        <div class="card ">
+            <form id="basicSettings">
+                <div class="card-header">
+                    <h3 class="card-title">Basics</h3>
+                </div>
+                <div class="card-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" required class="form-control" value="{{ USERDATA.instance.instances_name }}" name="instances_name" placeholder="Your Busineses Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Street Address</label>
+                            <textarea required class="form-control" rows="6" name="instances_address">{{ USERDATA.instance.instances_address }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Public Email address</label>
+                            <input type="email" class="form-control" value="{{ USERDATA.instance.instances_email }}" name="instances_email">
+                        </div>
+                        <div class="form-group">
+                            <label>Public Phone Number</label>
+                            <input type="phone" class="form-control" value="{{ USERDATA.instance.instances_phone }}" name="instances_phone">
+                        </div>
+                        <div class="form-group">
+                            <label>Public Website</label>
+                            <input required type="url" class="form-control" value="{{ USERDATA.instance.instances_website }}" name="instances_website">
+                        </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-default">Save</button>
+                </div>
+            </form>
+            <script>
+                $(document).ready(function() {
+                    $("#basicSettings").on("submit", function(e){
+                        e.preventDefault();
+                        var formData = $("#basicSettings").serializeArray();
+                        ajaxcall("instances/editInstance.php", {formData});
+                    });
+                });
+            </script>
+        </div>
+        <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">Invoice Footer</h3>
+                </div>
+                <div class="card-body">
+                    <textarea class="textarea" id="instances_termsAndPayment" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
+                        {{ USERDATA.instance.instances_termsAndPayment }}
+                    </textarea>
+                </div>
+                <div class="card-footer">
+                    <button id="saveTermsAndPayment" class="btn btn-default">Save</button>
+                </div>
+            <script>
+                $(document).ready(function() {
+                    $('#instances_termsAndPayment').summernote({
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'italic', 'underline', 'clear']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['insert', ['link', 'hr']],
+                            ['view', ['codeview']]
+                        ]
+                    });
+                    $('#saveTermsAndPayment').on('click', function() {
+                        var formData = $("#editAssetDetailsOverridesForm").serializeArray();
+                        ajaxcall("instances/editInstance.php", {
+                            'formData': [{ 'name': 'instances_termsAndPayment','value':$('#instances_termsAndPayment').summernote('code') }]
+                        }, function (data) {
+                            location.reload();
+                        }, false);
+                    });
+                });
+            </script>
+        </div>
+        <div class="card ">
+            <form id="cableColours">
+                <div class="card-header">
+                    <h3 class="card-title">Cable Colours</h3>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    <table class="table" border="0">
+                        <tr>
+                            <th>
+                                Length
+                            </th>
+                            <th>
+                                Colour
+                            </th>
+                        </tr>
+                        {% for length,colour in USERDATA.instance['instances_cableColours']|cableColourConfig %}
+                        <tr>
+                            <td>
+                                <input type="number" class="form-control" data-type="length" value="{{ length }}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control colorpicker" data-type="colour" value="{{ colour['background'] }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-default" id="addNewCableColourOption">Add Row</button>
+                    <button type="submit" class="btn btn-default">Save</button>
+                </div>
+            </form>
+            <script>
+                $(document).ready(function() {
+                    $(".colorpicker").spectrum({
+                        showInput: true,
+                        preferredFormat: "hex",
+                    });
+                    $("#addNewCableColourOption").on("click", function(){
+                        console.log("Testing");
+                        $("#cableColours > div > table").append(`<tr>
+                            <td>
+                                <input type="number" class="form-control" data-type="length">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control colorpicker" data-type="colour">
+                            </td>
+                        </tr>`);
+                        $(".colorpicker").spectrum({
+                            showInput: true,
+                            preferredFormat: "hex",
+                        });
+                    });
+                    $("#cableColours").on("submit", function(e){
+                        e.preventDefault();
+                        var lastLength;
+                        var formData = {};
+                        $('#cableColours *').filter(':input').each(function(){
+                            if ($(this).data("type") == "colour") {
+                                if (lastLength != "" && $(this).val()) {
+                                    formData[lastLength] = {
+                                        "background": $(this).val(),
+                                        "text":invert($(this).val(),true)
+                                    }
+                                }
+                            } else {
+                                lastLength = $(this).val();
+                            }
+                        });
+                        var formData = [{"name": "instances_cableColours", "value":JSON.stringify(formData) }];
+                        ajaxcall("instances/editInstance.php", {formData});
+                    });
+                });
+            </script>
+        </div>
+        <div class="card">
+            <form id="advancedSettings">
+                <div class="card-header">
+                    <h3 class="card-title">Week Start Dates</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <textarea required class="form-control" rows="6" name="instances_weekStartDates">{{ USERDATA.instance.instances_weekStartDates }}</textarea>
+                        <i>Enter one date on each line in the format "30 August 2019" for this to re-set the week counter on the calendar. This is normally used by schools and universities</i>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-default">Save</button>
+                </div>
+            </form>
+            <script>
+                $(document).ready(function() {
+                    $("#advancedSettings").on("submit", function(e){
+                        e.preventDefault();
+                        var formData = $("#advancedSettings").serializeArray();
+                        ajaxcall("instances/editInstance.php", {formData});
+                    });
+                });
+            </script>
+        </div>
+   </div>
+    <div class="col-12 col-md-4">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">Logo</h3>
+            </div>
+            <div class="card-body">
+                {% if USERDATA.instance.instances_logo != null %}
+                    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 100%;">
+                {% else %}
+                    <i>None currently set</i>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <b>Logos are publicly accessible</b>
+                {% embed 'common/plugins/fineuploader.twig' with {'publicBool': true, 'type': 'INSTANCE-THUMBNAIL', 'paste': false, 'typeId': 5, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}
+                    {% block success %}
+                        ajaxcall("instances/editInstance.php", {
+                            'formData': [{ 'name': 'instances_logo','value':responseJson.id }]
+                        }, function (data) {
+                            location.reload();
+                        });
+                    {% endblock %}
+                {% endembed %}
+            </div>
+        </div>
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">Email Header</h3>
+            </div>
+            <div class="card-body">
+                {% if USERDATA.instance.instances_emailHeader != null %}
+                    <img src="{{ USERDATA.instance.instances_emailHeader|s3URL("medium") }}" style="width: 100%;">
+                {% else %}
+                    <i>None currently set</i>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <b>Email Headers are publicly accessible</b>
+                {% embed 'common/plugins/fineuploader.twig' with {'publicBool': true, 'type': 'INSTANCE-EMAILHEADER', 'paste': false, 'typeId': 10, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}
+                    {% block success %}
+                        ajaxcall("instances/editInstance.php", {
+                        'formData': [{ 'name': 'instances_emailHeader','value':responseJson.id }]
+                        }, function (data) {
+                        location.reload();
+                        });
+                    {% endblock %}
+                {% endembed %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

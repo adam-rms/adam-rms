@@ -1,0 +1,293 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="card card-solid">
+    <div class="card-header">
+        <h3 class="card-title">
+            {% if search|length > 0 %}
+                Search results for assets matching <b>{{ search }}</b>
+            {% elseif thisGroup %}
+                <i class="fas fa-layer-group"></i> {{ thisGroup.assetGroups_name }} Assets
+            {% elseif thisCategory %}
+                {{ thisCategory.assetCategoriesGroups_name }} - {{ thisCategory.assetCategories_name}} Assets
+            {% elseif thisManufacturer %}
+                Assets by {{ thisManufacturer.manufacturers_name}}
+                {% if thisManufacturer.manufacturers_website != "" %}
+                    <a style="margin-left: 10px;" class="btn btn-sm btn-default" target="_blank" href="{{ thisManufacturer.manufacturers_website }}">{{ thisManufacturer.manufacturers_website }}</a>
+                {% endif %}
+            {% else %}
+                All Assets
+            {% endif %}
+        </h3>
+        <div class="card-tools pull-right">
+            <form class="input-group input-group-sm"  method="GET">
+                <input type="text" name="q" class="form-control" placeholder="Search all assets" value="{{ search }}" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
+                    <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?xlsx" class="btn btn-default" title="Excel Export"><i class="fas fa-file-excel"></i></a>
+                    <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?csv" class="btn btn-default" title="CSV Export"><i class="fas fa-file-csv"></i></a>
+                    {% if 84|instancePermissions %}
+                        {% if search|length > 0 %}
+                        {% elseif thisCategory %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?category={{ thisCategory.assetCategories_id }}" class="btn btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                        {% elseif thisManufacturer %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?manufacturer={{ thisManufacturer.manufacturers_id }}" class="btn btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                        {% else %}
+                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?all" class="btn btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card-body pb-0">
+        <div class="row d-flex align-items-stretch">
+            {% for asset in assets %}
+                <div class="col-auto d-flex align-items-stretch">
+                    <div class="card bg-light">
+                        <div class="card-header text-muted border-bottom-0">
+                            <a href="?category={{  asset.assetCategories_id }}">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
+                        </div>
+                        <div class="card-body pt-0" style="max-width: 250px;">
+                            {% if asset.thumbnail|length > 0 %}
+                                <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}">
+                                    {% for thumb in asset.thumbnail %}
+                                        <div>
+                                            <a href="asset.php?id={{ asset.assetTypes_id }}">
+                                            <img class="img-fluid" style="max-height: 340px;"
+                                                 src="{{ thumb.s3files_id|s3URL }}"
+                                                 alt="{{asset.assetTypes_name}}"></a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
+                            <p class="text-muted text-sm">{{ asset.assetTypes_description|length > 60 ? (asset.assetTypes_description|slice(0, 60)|nl2br ~ '...')|raw : asset.assetTypes_description|nl2br  }}</p>
+                            <ul class="ml-4 mb-0 fa-ul text-muted">
+                                {% if asset.manufacturers_id != 1 %}<li class="small"><span class="fa-li"><i class="fas fa-industry"></i></span> <a href="?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a></li>{% endif %}
+                                {% if asset.count == 1 %}
+                                    {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
+                                    <li class="small">
+                                        <span class="fa-li"><i class="fas fa-weight"></i></span> {{ (asset.tags[0]['assets_mass'] ? asset.tags[0]['assets_mass']|number_format(2) : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}
+                                    </li>
+                                    <li class="small">
+                                        <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|money }}<br/>
+                                        {{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money }}/day<br/>{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}/week
+                                    </li>
+                                {% else %}
+                                    {% if asset.assetTypes_mass != "" and asset.assetTypes_mass != 0  %}
+                                        <li class="small">
+                                            <span class="fa-li"><i class="fas fa-weight"></i></span> {{ asset.assetTypes_mass|mass }}
+                                        </li>
+                                    {% endif %}
+                                    <li class="small">
+                                        <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ asset.assetTypes_value|money }}<br/>
+                                        {{ asset.assetTypes_dayRate|money }}/day<br/>{{ asset.assetTypes_weekRate|money }}/week
+                                    </li>
+                                    <li class="small" title="Number owned"><span class="fa-li"><i class="fas fa-boxes"></i></span> {{asset.count}}</li>
+                                {% endif %}
+
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <div class="btn-group">
+                                    {% if 84|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-sm btn-default" title="Barcodes"><i class="fa fa-barcode"></i></a>
+                                    {% endif %}
+                                    {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+                                        {% if asset.count == 1 %}
+                                            {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}
+                                                <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                            {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
+                                                <button title="Remove from project" {% if (not asset.tags[0].assignment) or USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                {% if asset.tags[0].assignment and USERDATA.users_selectedProjectID != asset.tags[0].assignment[0].projects_id %}
+                                                    <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                {% endif %}
+                                                <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                            {% else %}
+                                                <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
+                                            {% endif %}
+                                        {% else %}
+                                            {% set someassignable = false %}
+                                            <div class="modal fade" id="assetDetailsModal{{ asset.assetTypes_id }}">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">{{ asset.assetTypes_name }}</h4>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body" style="padding:0;text-align:left;overflow-x: auto;">
+                                                            <table class="table table-striped">
+                                                                <tr>
+                                                                    <th style="width:70px;">ID</th>
+                                                                    {% for field in asset.fields %}
+                                                                        <th>{{ field }}</th>
+                                                                    {% endfor %}
+                                                                    <th>Notes</th>
+                                                                    <th>&pound;/day</th>
+                                                                    <th>&pound;/week</th>
+                                                                    <th style="width:1%"><i class="fas fa-flag"></i></th>
+                                                                    <th style="width:30px;"></th>
+                                                                </tr>
+                                                                {% for thisasset in asset.tags %}
+                                                                    <tr>
+                                                                        <td>{{ thisasset.assets_tag|aTag }}</td>
+                                                                        {% for field in asset.fields %}
+                                                                            <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
+                                                                        {% endfor %}
+                                                                        <td>{{ thisasset['assets_notes']|nl2br }}</td>
+                                                                        <td>
+                                                                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="btn-group">
+                                                                                {% if thisasset.assets_endDate != null and thisasset.assets_endDate < thisProject["projects_dates_deliver_end"] %}
+                                                                                    <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                                                {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
+                                                                                    <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                    {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
+                                                                                        <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                                                    {% endif %}
+                                                                                    <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% else %}{% set someassignable = true %}{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                {% else %}
+                                                                                    <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
+                                                                                {% endif %}
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
+                                        {% endif %}
+                                    {% endif %}
+                                    <a href="asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}" class="btn btn-sm btn-default">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card-footer clearfix">
+        <div class="btn-group" role="group">
+            <button class="btn btn-sm btn-default listViewButton">List View</button>
+            <button class="btn btn-sm btn-default viewMore" data-count="100">View 100</button>
+            <button class="btn btn-sm btn-default viewMore" data-count="250">View 250</button>
+            <button class="btn btn-sm btn-default showLinkedButton">Show assets linked to others</button>
+            <button class="btn btn-sm btn-default showArchivedButton">Show archived assets</button>
+        </div>
+
+        {% if pagination.total > 1 %}
+            <ul class="pagination pagination-sm m-0 float-right">
+                {% if pagination.page > 1 %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                {% endif %}
+
+                {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                            {% if pagination.page == i %}
+                                <b>{{ i }}</b>
+                            {% else %}
+                                {{ i }}
+                            {% endif %}
+                        </a></li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.total %}
+                    <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(".listViewButton").click(function () {
+            insertURLQueryParam("listView", "1");
+        });
+        $(".viewMore").click(function () {
+            insertURLQueryParam("pageLimit", $(this).data("count"));
+        });
+        $(".showLinkedButton").click(function () {
+            insertURLQueryParam("all", "1");
+        });
+        $(".showArchivedButton").click(function () {
+            insertURLQueryParam("archive", "1");
+        });
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        $('.slick').slick({
+            dots: false,
+            arrows: false,
+            focusOnSelect: true,
+            pauseOnHover: true,
+            draggable: false,
+            infinite: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 2000,
+        });
+        {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+        $(".addToBasketAssetButton").click(function () {
+            var assetId=$(this).data("assetid");
+            ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid")}, function (data) {
+                $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+                Toast.fire({
+                    type: 'success',
+                    title: 'Added to {{ thisProject.projects_name }}'
+                });
+            });
+        });
+        $(".removeFromBasketAssetButton").click(function () {
+            var assetId = $(this).data("assetid");
+            bootbox.confirm({
+                message: "Are you sure you wish to remove this asset from the project?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-danger'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-success'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
+                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                        ajaxcall("projects/assets/unassign.php", {"assets_id":assetId}, function (data) {
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Removed from {{ thisProject.projects_name }}'
+                            });
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}
