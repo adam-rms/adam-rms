@@ -186,9 +186,6 @@
                 }
             });
         }
-        $(document).ready(function () {
-
-        })
     </script>
     <style>
         .nav-item {
@@ -297,7 +294,7 @@
                     </div>
                 </form>
                 <form id="form3e">
-                    <p>Your account has been created - welcome to {{ CONFIG.PROJECT_NAME}}!</p>
+                    <p>Your account has been created - welcome to AdamRMS!</p>
                     <div style="width: 100%; text-align:right;">
                         <button class="btn btn-primary setToLoginButton"  type="button">Continue to login</button>
                     </div>
@@ -681,7 +678,7 @@
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link js-auth-logout">Logout</a>
+                <a href="#" class="nav-link" onclick="myApp.auth.logout()">Logout</a>
             </li>
         </ul>
         <div class="js-hide-no-instance">
@@ -706,13 +703,14 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <span class="dropdown-item dropdown-header">Your Businesses</span>
-                    <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
-                    <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer js-auth-permission" data-permission="8">Create new business</a>
+                    <div id="instanceList"></div>
+                    <a href="#" onclick="myApp.controllers.window.open('instances/join.php')" class="dropdown-item dropdown-footer">Join business</a>
+                    <a href="#" onclick="myApp.controllers.window.open('instances/new.php')" class="dropdown-item dropdown-footer js-auth-permission" data-permission="8">Create new business</a>
                     <a href="#" class="dropdown-item dropdown-footer js-auth-not-permission" data-permission="8"><i>Contact support to add new businesses</i></a>
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{CONFIG.ROOTURL}}/user.php?id={{ USERDATA.users_userid }}">
+                <a class="nav-link" href="#" onclick="" id="user-calendar-link">
                     <i class="fas fa-calendar-alt"></i>
                 </a>
             </li>
@@ -730,7 +728,7 @@
                  alt="AdamRMS Logo"
                  class="brand-image img-circle elevation-3"
                  style="opacity: .8;">
-            <span class="brand-text font-weight-light">Adam RMS</span>
+            <span class="brand-text font-weight-light">AdamRMS<sup>BETA</sup></span>
         </a>
 
         <!-- Sidebar -->
@@ -738,9 +736,9 @@
             <!-- Sidebar user (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="assets/img/default-profile-picture.jpg" class="img-circle elevation-2" alt="User Image" style="background-color: white;">
+                    <img src="assets/img/default-profile-picture.jpg" class="img-circle elevation-2 js-auth-data-fill-image" alt="User Image" style="background-color: white;">
                 </div>
-                <a href="{{ CONFIG.ROOTURL }}/account.php" class="d-block">
+                <a href="#" onclick="myApp.controllers.window.open('account.php')" class="d-block">
                     <div class="info js-auth-data-fill-name">
 
                     </div>
@@ -758,7 +756,7 @@
 
                     <div class="js-hide-no-instance">
                     <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/" class="nav-link">
+                        <a href="#" onclick="myApp.controllers.window.open('/')" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
                                 Dashboard
@@ -774,8 +772,8 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item js-auth-permission" data-permission="80">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/stats.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="80">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/stats.php')" class="nav-link">
                                     <i class="nav-icon fas fa-chart-bar"></i>
                                     <p>
                                         Stats
@@ -783,23 +781,23 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php" class="nav-link">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/calendar.php')" class="nav-link">
                                     <i class="nav-icon far fa-calendar-alt"></i>
                                     <p>
                                         Calendar
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item js-auth-permission" data-permission="36">
-                                <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="36">
+                                <a href="#" onclick="myApp.controllers.window.open('clients.php')" class="nav-link">
                                     <i class="nav-icon fas fa-briefcase"></i>
                                     <p>
                                         Clients
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item js-auth-permission" data-permission="40">
-                                <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="40">
+                                <a href="#" onclick="myApp.controllers.window.open('ledger.php')" class="nav-link">
                                     <i class="nav-icon fas fa-coins"></i>
                                     <p>
                                         Payments
@@ -807,8 +805,8 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item js-auth-permission" data-permission="57">
-                                <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="57">
+                                <a href="#" onclick="myApp.controllers.window.open('location/')" class="nav-link">
                                     <i class="fa fa-map-marked-alt nav-icon"></i>
                                     <p>
                                         Locations
@@ -816,24 +814,24 @@
                                 </a>
                             </li>
                             <li class="nav-header">USER MANAGEMENT</li>
-                            <li class="nav-item js-auth-permission" data-permission="2">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="2">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/users.php')" class="nav-link">
                                     <i class="nav-icon fas fa-users"></i>
                                     <p>
                                         Users
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item js-auth-permission" data-permission="11">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="11">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/permissions.php')" class="nav-link">
                                     <i class="nav-icon fas fa-unlock-alt"></i>
                                     <p>
                                         Permissions
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item js-auth-permission" data-permission="109">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/signupCodes.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="109">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/signupCodes.php')" class="nav-link">
                                     <i class="fas fa-key nav-icon"></i>
                                     <p>
                                         Signup Codes
@@ -841,24 +839,24 @@
                                 </a>
                             </li>
                             <li class="nav-header">SETTINGS</li>
-                            <li class="nav-item js-auth-permission" data-permission="81">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="81">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/settings.php')" class="nav-link">
                                     <i class="nav-icon fas fa-cog"></i>
                                     <p>
                                         Basic Settings
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item js-auth-permission" data-permission="105">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="105">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/projectTypes.php')" class="nav-link">
                                     <i class="fas fa-theater-masks nav-icon"></i>
                                     <p>
                                         Project Types
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item js-auth-permission" data-permission="89">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
+                            <li class="nav-item js-auth-instance-permission" data-permission="89">
+                                <a href="#" onclick="myApp.controllers.window.open('instances/customCategories.php')" class="nav-link">
                                     <i class="fas fa-list nav-icon"></i>
                                     <p>
                                         Custom Categories
@@ -867,8 +865,8 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item js-auth-permission" data-permission="113">
-                        <a href="{{ CONFIG.ROOTURL}}/training" class="nav-link">
+                    <li class="nav-item js-auth-instance-permission" data-permission="113">
+                        <a  href="#" onclick="myApp.controllers.window.open('training')" class="nav-link">
                             <i class="nav-icon fas fa-graduation-cap"></i>
                             <p>Training</p>
                             <span class="right badge badge-danger">New</span>
@@ -876,13 +874,13 @@
                     </li>
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
+                        <a  href="#" onclick="myApp.controllers.window.open('assets.php')" class="nav-link">
                             <i class="nav-icon fas fa-warehouse"></i>
                             <p>View All</p>
                         </a>
                     </li>
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/manufacturers.php" class="nav-link">
+                    <a href="#" onclick="myApp.controllers.window.open('manufacturers.php')" class="nav-link">
                         <i class="nav-icon fas fa-industry"></i>
                         <p>
                             Manufacturers
@@ -890,58 +888,43 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/instances/groups.php" class="nav-link">
+                    <a href="#" onclick="myApp.controllers.window.open('instances/groups.php')" class="nav-link">
                         <i class="nav-icon fas fa-layer-group"></i>
                         <p>
                             Groups
                         </p>
                     </a>
                 </li>
-                <li class="nav-item js-auth-permission" data-permission="17">
-                    <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
+                <li class="nav-item js-auth-instance-permission" data-permission="17">
+                    <a  href="#" onclick="myApp.controllers.window.open('newAsset.php')" class="nav-link">
                         <i class="fas fa-plus nav-icon"></i>
                         <p>New Asset</p>
                     </a>
                 </li>
-                <li class="nav-item js-auth-permission" data-permission="63">
-                    <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
+                <li class="nav-item js-auth-instance-permission" data-permission="63">
+                    <a href="#" onclick="myApp.controllers.window.open('maintenance/')" class="nav-link">
                         <i class="nav-icon fas fa-paint-roller"></i>
                         <p>
                             Maintenance
                         </p>
                     </a>
                 </li>
-                <li class="nav-item js-auth-permission" data-permission="84">
-                    <a href="{{ CONFIG.ROOTURL}}/maintenance/barcode.php" class="nav-link">
+                <li class="nav-item js-auth-instance-permission" data-permission="84">
+                    <a  href="#" onclick="myApp.controllers.window.open('maintenance/barcode.php')" class="nav-link">
                         <i class="fas fa-barcode nav-icon"></i>
                         <p>Barcodes</p>
                     </a>
                 </li>
-                <div class="js-auth-permission" data-permission="20"></div>
+                <div class="js-auth-instance-permission" data-permission="20"></div>
                     <li class="nav-header">PROJECTS</li>
-                    {% set archive = false %}
-                    {% for project in projects %}
+                    <div id="projectsList"></div>
                     <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
-                            <i class="nav-icon
-    {% if project.projects_manager == USERDATA.users_userid %}
-    fas fa-star
-    {% else %}
-    far fa-circle
-    {% endif %}
-    text-{{ STATUSES[project.projects_status]['class'] }}
-    " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
-                            <p title="{{ project.projects_name }}">{{ project.projects_name }}</p>
-                        </a>
-                    </li>
-                    {% endfor %}
-                    <li class="nav-item">
-                        <a href="{{CONFIG.ROOTURL}}/project/list.php" class="nav-link">
+                        <a href="#" onclick="myApp.controllers.window.open('project/list.php')" class="nav-link">
                             <i class="nav-icon fas fa-list-ol"></i>
                             <p>List</p>
                         </a>
                     </li>
-                    <li class="nav-item js-auth-permission" data-permission="21">
+                    <li class="nav-item js-auth-instance-permission" data-permission="21">
                         <a href="#" class="nav-link newProjectButton">
                             <i class="nav-icon fas fa-plus"></i>
                             <p>New Project</p>
@@ -949,7 +932,7 @@
                     </li>
                 </div>
                 <li class="nav-item js-auth-permission" data-permission="2">
-                    <a href="{{ CONFIG.ROOTURL }}/users.php" class="nav-link">
+                    <a href="#" onclick="myApp.controllers.window.open('users.php')" class="nav-link">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Users
@@ -958,7 +941,7 @@
                     </a>
                 </li>
                 <li class="nav-item js-auth-permission" data-permission="11">
-                    <a href="{{ CONFIG.ROOTURL }}/permissions.php" class="nav-link">
+                    <a href="#" onclick="myApp.controllers.window.open('permissions.php')" class="nav-link">
                         <i class="nav-icon fas fa-unlock-alt"></i>
                         <p>
                             Permissions
@@ -967,7 +950,7 @@
                     </a>
                 </li>
                 <li class="nav-item js-auth-permission" data-permission="20">
-                    <a href="{{ CONFIG.ROOTURL }}/instances.php" class="nav-link">
+                    <a href="#" onclick="myApp.controllers.window.open('instances.php')" class="nav-link">
                         <i class="nav-icon fas fa-city"></i>
                         <p>
                             Instances
@@ -976,7 +959,7 @@
                     </a>
                 </li>
                 <li class="nav-item js-auth-permission" data-permission="7">
-                    <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
+                    <a href="#" onclick="myApp.controllers.window.open('auditLog.php')" class="nav-link">
                         <i class="nav-icon fas fa-gavel"></i>
                         <p>
                             Audit Log
@@ -1035,8 +1018,7 @@
                         </div>
                     </div>
                 </div>--><!--TODO sort password reset - could be a modal? -->
-                <div id="pagecontent">
-                    <!--TODO CONTENT-->
+                <div id="pageContent">
                 </div>
             </div><!-- /.container-fluid -->
         </div><!-- /.content -->
