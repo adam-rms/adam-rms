@@ -8,6 +8,7 @@ $return = [
     "users_created" => $AUTH->data["users_created"],
     "users_thumbnail" => $AUTH->data["users_thumbnail"],
     "users_changepass" => ($AUTH->data["users_changepass"] == 1 ? true : false),
+    "users_userid" => $AUTH->data['users_userid'],
     "permissions" => $AUTH->permissions
 ];
 finish(true, null, $return);
