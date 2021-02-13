@@ -414,11 +414,11 @@ myApp.controllers = {
             if (myApp.data.instanceID !== null) {
                 data['instances_id'] = myApp.data.instanceID;
             }
-            history.pushState({}, null, path);
+            //history.pushState({}, null, path);
             $(".loadingDialog").show();
             $.ajax({
                 type: "POST",
-                url: myApp.config.endpoint + path,
+                url: (myApp.config.endpoint + path).replace(/(https?:\/\/)|(\/){2,}/g, "$1$2"),
                 dataType: "html",
                 data: data,
                 success: function (response) {

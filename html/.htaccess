@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule !router\.php$ router.php [L]
+ErrorDocument 404 /router.php

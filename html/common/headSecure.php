@@ -5,8 +5,12 @@ require_once __DIR__ . '/../assets/widgets/statsWidgets.php'; //Stats on homepag
 //DON'T FORGET THIS IS DUPLICATED SOMEWHAT IN API HEAD SECURE AS SECURITY IS HANDLED SLIGHTLY DIFFERENTLY ON THE API END
 
 if (!$GLOBALS['AUTH']->login) {
-    if ($CONFIG['DEV']) die("<h2>Debugging enabled - auth fail debug details</h2>" . $GLOBALS['AUTH']->debug . "<br/><br/><br/>Login false - redirect to <a href='" . $CONFIG['ROOTURL'] . "/login/'>" . $CONFIG['ROOTURL'] . "/login/</a>");
-    else die("Authentication Error - please reload the page");
+    if ($CONFIG['DEV']) die($GLOBALS['AUTH']->debug);
+    else {
+        http_response_code(401);
+        include "404.html";
+        exit;
+    }
 }
 
 if (!$CONFIG['DEV']) {

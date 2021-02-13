@@ -1,5 +1,4 @@
 service: adamrms
-useDotenv: true
 provider:
   name: aws
   region: eu-west-1
@@ -13,34 +12,31 @@ provider:
 plugins:
   - ./vendor/bref/bref
   - serverless-python-requirements
+  - serverless-dotenv-plugin
+
 custom:
   pythonRequirements:
     dockerizePip: non-linux
+  dotenv:
+    path: ./.env.aws
 package:
   exclude:
     - node_modules/**
     - .jekyll-cache/**
-    - cdnAssets/
-    - AWSLambda/**
-    - docker/**
+    - .idea/**
     - docs/**
     - tests/**
     - .env
-    - Dockerfile
-    - docker-compose-yml
-    - Readme.md
-    - updater.sh
-    - Procfile
-    - html/admin/**
+    - .env.aws
 functions:
   app:
     name: ${opt:stage, self:provider.stage, 'dev'}-AdamRMS # optional, Deployed Lambda name
     description: AdamRMS Main Lambda
-    memorySize: 1024 # memorySize for this specific function.
+    memorySize: 512 # memorySize for this specific function.
     reservedConcurrency: 5
     tags:
       project: adam-rms
-    handler: html/AWSLambdaAPI/index.php
+    handler: html/router.php
     timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
     layers:
       - ${bref:layer.php-74-fpm}
