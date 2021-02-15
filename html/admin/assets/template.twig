@@ -54,9 +54,7 @@
             return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
         }
         function aTag(number) {
-            if (number == null) return number;
-            if (number <= 9999) return "A-" + pad(number, 4);
-            else return "A-" + number;
+            return(number);
         }
         function insertURLQueryParam(key, value) {
             //https://stackoverflow.com/questions/486896/adding-a-parameter-to-the-url-with-javascript
