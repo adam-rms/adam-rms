@@ -5,12 +5,15 @@ if (!$AUTH->instancePermissionCheck(63)) die($TWIG->render('404.twig', $PAGEDATA
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Maintenance Jobs", "BREADCRUMB" => false];
 
+$PAGEDATA['showCompleted'] = isset($_GET['completed']);
+
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 60);
 $DBLIB->where("maintenanceJobs.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
 $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
+$DBLIB->where("maintenanceJobsStatuses.maintenanceJobsStatuses_showJobInMainList", ($PAGEDATA['showCompleted'] ? '0':'1'));
 $DBLIB->join("users AS userCreator", "userCreator.users_userid=maintenanceJobs.maintenanceJobs_user_creator", "LEFT");
 $DBLIB->join("users AS userAssigned", "userAssigned.users_userid=maintenanceJobs.maintenanceJobs_user_assignedTo", "LEFT");
 $DBLIB->orderBy("maintenanceJobsStatuses.maintenanceJobsStatuses_order", "ASC");
