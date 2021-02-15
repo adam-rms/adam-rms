@@ -245,17 +245,10 @@ class bCMS {
         }
     }
     function aTag($id) {
-        if ($id == null) return null;
-        if ($id <= 9999) return "A-" . sprintf('%04d', $id);
-        else return "A-" . $id;
+        //This is an old function we no longer use - kept to save refactoring
+        return $id;
     }
     function reverseATag($tag) {
-        //Reverse the process above, being sure to pick out any leading 0s
-        $tag = strtolower($tag);
-        $tag = str_replace("a-000",null,$tag);
-        $tag = str_replace("a-00",null,$tag);
-        $tag = str_replace("a-0",null,$tag);
-        $tag = str_replace("a-",null,$tag);
         return $tag;
     }
     function notificationSettings($userid) {
@@ -309,9 +302,14 @@ function generateNewTag() {
     global $DBLIB;
     //Get highest current tag
     $DBLIB->orderBy("assets_tag", "DESC");
+    $DBLIB->where ("assets_tag", 'A-%', 'like');
     $tag = $DBLIB->getone("assets", ["assets_tag"]);
-    if ($tag) return intval($tag["assets_tag"])+1;
-    else return 1;
+    if ($tag and is_int(str_replace("A-","",$tag["assets_tag"]))){
+        $value = intval(str_replace("A-","",$tag["assets_tag"]))+1;
+        if ($value <= 9999) $value = sprintf('%04d', $value);
+        return "A-" . $value;
+    }
+    else return "A-1";
 }
 
 $GLOBALS['STATUSES'] = [
