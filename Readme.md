@@ -9,6 +9,7 @@
 - [ ] Javascript redirects
 - [ ] Generating/printing PDFs
 - [ ] S3 Deletor
+- [ ] Database support - https://github.com/Nemo64/dbal-rds-data?
 
 ## AWS 
 
