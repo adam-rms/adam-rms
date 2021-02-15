@@ -21,9 +21,7 @@ $assets = $DBLIB->get("assets", 15, ["assets.assets_id", "assets.assets_tag", "a
 if (!$assets) finish(false, ["code" => "LIST-ASSETS-FAIL", "message"=> "Could not search"]);
 $assetsReturn = [];
 foreach ($assets as $asset) {
-    if ($asset['assets_tag'] == null) $asset['tag']= '';
-    if ($asset['assets_tag'] <= 9999) $asset['tag'] = "A-" . sprintf('%04d', $asset['assets_tag']);
-    else $asset['tag'] = "A-" . $asset['assets_tag'];
+    $asset['tag'] = $asset['assets_tag'];
     $assetsReturn[] = $asset;
 }
 finish(true, null, $assetsReturn);
