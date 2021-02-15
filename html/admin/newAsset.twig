@@ -281,6 +281,7 @@
                     formData.push({"name": "assets_assetGroups", "value":assetGroups.join(',')});
                     ajaxcall("assets/newAssetFromType.php", {formData}, function (data) {
                         $("#saveButton").text("Add Another");
+                        $('#assetTag').val("");
                         Toast.fire({
                             type: 'success',
                             title: (counter + 'x Asset&nbsp;<a href="{{ CONFIG.ROOTURL }}/asset.php?id=' + data.response['assetTypes_id'] + '&asset=' + data.response['assets_id'] + '">' + aTag(data.response['assets_tag']) + ' added</a>'),
