@@ -227,9 +227,6 @@ class bCMS {
         //This is an old function we no longer use - kept to save refactoring
         return $id;
     }
-    function reverseATag($tag) {
-        return $tag;
-    }
     function notificationSettings($userid) {
         global $DBLIB,$CONFIG;
         $DBLIB->where("users_userid", $userid);

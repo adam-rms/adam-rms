@@ -13,7 +13,7 @@ if (isset($_POST['term'])) {
         manufacturers_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%' OR
 		assetTypes_description LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%' OR
 		assets_notes LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%' OR
-		assets_tag = '" . $bCMS->reverseATag($bCMS->sanitizeStringMYSQL($_POST['term'])). "' OR
+		assets_tag LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']). "' OR
         assetTypes_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%'
     )");
 } else $DBLIB->orderBy("assetTypes_name", "ASC");

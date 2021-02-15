@@ -14,19 +14,7 @@ if (isset($_GET['p'])) {
 if (isset($_GET['showtags'])) $PAGEDATA['showTags'] = true;
 else $PAGEDATA['showTags'] = false;
 
-if (isset($_GET['q'])) {
-	$PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
-	if (is_numeric($bCMS->reverseATag($PAGEDATA['search']))) {
-		$DBLIB->where("assets_tag", $bCMS->reverseATag($PAGEDATA['search']));
-		$DBLIB->where("assets_deleted", 0);
-		$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
-		$assetTagSearch = $DBLIB->getOne("assets",['assets_id',"assetTypes_id"]);
-		if ($assetTagSearch) {
-			header("Location: " . $CONFIG['ROOTURL'] . '/asset.php?id=' . $assetTagSearch['assetTypes_id'] . '&asset=' . $assetTagSearch['assets_id']);
-			die('<a href="' . $CONFIG['ROOTURL'] . '/asset.php?id=' . $assetTagSearch['assetTypes_id'] . '&asset=' . $assetTagSearch['assets_id'] . '">Continue</a>');
-		}
-	}
-}
+if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
 
 

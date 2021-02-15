@@ -5,9 +5,8 @@ if (!$AUTH->instancePermissionCheck(88)) die("Sorry - you can't access this page
 
 if (!isset($_POST['tag'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
-$tag = $bCMS->reverseATag($_POST['tag']);
 $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->where("assets.assets_tag", $tag);
+$DBLIB->where("assets.assets_tag", "%" . $_POST['tag'], "like");
 $asset = $DBLIB->getone("assets",["assets_id","assetTypes_id"]);
 if (!$asset) finish(false, ["message"=> "Asset not found"]);
 if ($_POST['barcodeid'] === "false") {
