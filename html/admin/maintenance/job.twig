@@ -288,7 +288,6 @@
                                     {% if message.s3files_extension|lower in ["gif", "jpeg", "jpg", "png"] %}
                                         <img src="{{ message.maintenanceJobsMessages_file|s3URL }}" alt="{{ message.s3files_name }}" style="width: 100%;">
                                     {% else %}
-                                        {{ dump(message) }}
                                         <a href="{{ message.maintenanceJobsMessages_file|s3URL }}" target="_blank" style="color:white;"><i class="fa {{ message.s3files_extension|fontAwesomeFile }}"></i> {{ message.s3files_name }}</a>
                                     {% endif %}
                                 {% endif %}
