@@ -7,7 +7,12 @@ if (isset($_SESSION['return'])) {
 	$PAGEDATA['return'] = $_SESSION['return'];
 } else $PAGEDATA['return'] =$CONFIG['ROOTURL'];
 
-$AUTH->logout(); //Log em out even if they didn't want to - It solves a few issues!
+if (isset($_GET['logout'])) $AUTH->logout();
+elseif ($GLOBALS['AUTH']->login) {
+	//If they're logged in, take them back to root
+	header("Location: " . $CONFIG['ROOTURL'] . "/");
+	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
+}
 
 echo $TWIG->render('login/login1.twig', $PAGEDATA);
 ?>
