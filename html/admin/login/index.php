@@ -9,7 +9,7 @@ if (isset($_SESSION['return'])) {
 
 if (isset($_GET['logout'])) $AUTH->logout();
 elseif ($GLOBALS['AUTH']->login) {
-	//If they're logged in, take them back to root
+	//If they're logged in, take them back to root - this fixes a loop redirect issue
 	header("Location: " . $CONFIG['ROOTURL'] . "/");
 	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
 }
