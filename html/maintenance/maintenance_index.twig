@@ -4,8 +4,12 @@
     <div class="card-header">
         <h3 class="card-title">Maintenance Jobs</h3>
 
-        <div class="card-tools">
-
+        <div class="card-tools pull-right">
+            {% if showCompleted %}
+                <a href="?" class="btn btn-sm btn-default">Show Outstanding Jobs</a>
+            {% else %}
+                <a href="?completed" class="btn btn-sm btn-default">Show Completed Jobs</a>
+            {% endif %}
         </div>
     </div>
     <div class="card-body p-0">

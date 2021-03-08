@@ -494,6 +494,10 @@
                                             <div class="active tab-pane" style="padding: 1.25rem" id="editAssetDetails">
                                                 <form id="editAssetDetailsForm">
                                                     <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Asset ID</span></div>
+                                                        <input class="form-control" name="assets_tag" value="{{ assets[0]['assets_tag'] }}" />
+                                                    </div>
+                                                    <div class="input-group">
                                                         <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
                                                         <textarea class="form-control" rows="2" name="assets_notes" placeholder="">{{ assets[0]['assets_notes'] }}</textarea>
                                                     </div>

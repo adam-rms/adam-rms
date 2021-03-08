@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ (pageConfig.TITLE != null ? pageConfig.TITLE  ~  " | " : "")  }}{{ CONFIG.PROJECT_NAME }} </title>
+
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- CSS SECTION-->
+        <!--Include fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/css/adminlte.min.css">
+
+    <!-- JS Scripts/Plugins-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Bootstrap 3.3.5 -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha256-OUFW7hFO0/r5aEGTQOz9F/aXQOt+TwqI1Z4fbVvww04=" crossorigin="anonymous"></script>
+    <!--Bootbox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
+    <!--Scrollbars-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/js/OverlayScrollbars.min.js" integrity="sha512-q5PymqHsbnrSSku455zVV6Q4WJ5FegIKtgfQbugb5D7Gbl6tsGPkG4upZlMDT10MBARZyBtmsIPPd6HMPyH9sw==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/css/OverlayScrollbars.min.css" integrity="sha512-fWgz39WeLATUXnAhIimPHnEUoSuZh5cgcOTteRFeVPW1opB0OPQ2/JwPAAWMDZtHy8IomUEOyaYJsOdCM9tcYg==" crossorigin="anonymous" />
+    <!--Pace Loader-->
+    <script>
+        window.paceOptions = {
+            startOnPageLoad: false,
+            document: false,
+            eventLag: false,
+            ajax: {
+                trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE'],
+                ignoreURLs: ['searchUser.php'] //Ignore user searches
+            }
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/css/pace.css">
+
+    {% block htmlIncludes %}{% endblock %}
+            <!--Fastclick - increases speed of response-->
+        {#<script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js" integrity="sha256-t6SrqvTQmKoGgi5LOl0AUy+lBRtIvEJ+++pLAsfAjWs=" crossorigin="anonymous"></script>#}
+
+    <!-- AdminLTE App -->
+    <script src="{{ CONFIG.ASSETCDNURL }}/js/adminlte.js"></script>
+
+
+    <script>
+        function pad(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+        function aTag(number) {
+            return(number);
+        }
+        function insertURLQueryParam(key, value) {
+            //https://stackoverflow.com/questions/486896/adding-a-parameter-to-the-url-with-javascript
+            key = encodeURI(key);
+            value = encodeURI(value);
+
+            var kvp = document.location.search.substr(1).split('&');
+
+            var i = kvp.length;
+            var x;
+            while (i--) {
+                x = kvp[i].split('=');
+
+                if (x[0] == key) {
+                    x[1] = value;
+                    kvp[i] = x.join('=');
+                    break;
+                }
+            }
+
+            if (i < 0) {
+                kvp[kvp.length] = [key, value].join('=');
+            }
+
+            //this will reload the page, it's likely better to store this until finished
+            document.location.search = kvp.join('&');
+        }
+        $(document).ajaxStart(function() { Pace.restart(); });
+        function ajaxcall(path, data, callback, reloadIfError) {
+            if (data !== null) var senddata = data;
+            else var senddata = {};
+            if (reloadIfError == null){
+                reloadIfError = true;
+            }
+            $.ajax({
+                url: '{{ CONFIG.ROOTURL }}/api/' + path,
+                type: "POST",
+                data: senddata,
+                cache: false,
+                success: function (result, status, data) {
+                    if (result.result) {
+                        if (typeof callback === "function") {
+                            callback(result);
+                        }
+                    } else {
+                        if (result.error && result.error.message) {
+                            var errorMessage = result.error.message; //Putting this inline breaks the function below
+                        } else {
+                            var errorMessage = "";
+                        }
+                        bootbox.alert('Sorry we couldn\'t complete this action - please try again!<br/><br/>' + errorMessage, function () {
+                            if (reloadIfError) {
+                                location.reload();
+                            }
+                        });
+                    }
+                    return false;
+                }, error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+                    console.log("Connection Error");
+                    bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection', function () {
+                        if (reloadIfError) {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+    <style>
+        .nav-item {
+            /*
+                Fix for an odd error where items in the navbar were not displaying in a helpful way
+             */
+            max-width: 234px;
+        }
+        .todo-list > li .tools {
+            /*
+                Fix for crew roles list delete icon not displaying in a helpful way
+             */
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+    </style>
+
+    <!--Favicons-->
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ CONFIG.ASSETCDNURL }}/img/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.ASSETCDNURL }}/img/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ CONFIG.ASSETCDNURL }}/img/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ASSETCDNURL }}/img/icons/favicon-16x16.png">
+
+</head>
+{% if BODY %}
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<div class="wrapper">
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+            </li>
+            {% if USERDATA.viewSiteAs != false %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php" class="nav-link">Back to Admin</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/login/?logout" class="nav-link">Logout</a>
+                </li>
+            {% endif %}
+        </ul>
+        {% if USERDATA.instances|length > 0 %}
+        <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/assets.php" method="GET">
+            <div class="input-group input-group-sm">
+                <input class="form-control form-control-navbar" name="q" type="search" placeholder="Search Assets" aria-label="Search Assets">
+                <div class="input-group-append">
+                    <button class="btn btn-navbar" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <ul class="navbar-nav ml-auto">
+            {% if projects and 31|instancePermissions %}
+          <li class="nav-item dropdown">
+                <a class="nav-link" {% if projects|length <= 20 %} data-toggle="dropdown" href="#" {% else %} href="{{ CONFIG.ROOTURL }}/project/list.php" {% endif %}>
+                    <div class="d-none d-lg-block">
+                        <i class="fas fa-shopping-basket"></i>
+                        {% if thisProject %}
+                            {{ thisProject.projects_name|u.truncate(22, '...') }}
+                        {% endif %}
+                    </div>
+                    <div class="d-block d-lg-none">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                </a>
+              {% if projects|length <= 20 %}
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    {% if thisProject %}
+                    <a href="#" class="dropdown-item">
+                        <h3 class="dropdown-item-title">
+                            {{ thisProject.projects_name|u.truncate(40, '...') }}
+                            {% if thisProject.instances_name %}
+                                <span class="badge badge-danger">{{ thisProject.instances_name|u.truncate(20, '...') }}</span>
+                            {% endif %}
+                        </h3>
+                        <p class="text-sm text-muted"><i class="fas fa-shopping-basket mr-1"></i> Selected</p>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    {% endif %}
+                    {% for project in projects %}
+                        {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
+                            <a href="{{ CONFIG.ROOTURL }}/assets.php?p={{ project.projects_id }}" class="dropdown-item changeProjectBasket" data-projectid="{{ project.projects_id }}">
+                                <h3 class="dropdown-item-title">
+                                    {{ project.projects_name|u.truncate(40, '...') }}
+                                    <span class="float-right text-sm text-danger">
+                                        {% if project.projects_manager == USERDATA.users_userid %}
+                                        <i class="fas fa-star" title="Project Manager"></i>
+                                        {% endif %}
+                                    </span>
+                                </h3>
+                                {% if USERDATA.users_selectedProjectID == project.projects_id %}
+                                <p class="text-sm text-muted"><i class="fas fa-shopping-basket mr-1"></i> Selected</p>
+                                {% endif %}
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            {% endif %}
+                        {% endfor %}
+                </div>
+              {% endif %}
+            </li>
+            {% elseif thisProject %}
+            <li class="nav-item">
+                <a class="nav-link">
+                    <div class="d-none d-lg-block">
+                        <i class="fas fa-shopping-basket"></i>
+                        {{ thisProject.projects_name|u.truncate(22, '...') }}
+                    </div>
+                </a>
+            </li>
+            {% endif %}
+            {% if USERDATA.instances|length > 0 %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link"  data-toggle="dropdown" href="#">
+                        <div class="d-none d-sm-block">
+                            {{ USERDATA.instance.instances_name|u.truncate(25, '...') }}
+                        </div>
+                        <div class="d-block d-sm-none">
+                           <i class="fas fa-building"></i>
+                        </div>
+
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        {% if USERDATA.instances|length > 1 %}
+                            <span class="dropdown-item dropdown-header">Your Businesses</span>
+                            {% for instance in USERDATA.instances %}
+                                <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item">
+                                    {{instance.instances_name}}
+                                    <p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
+                                    {% if USERDATA.instance.instances_id == instance.instances_id %}
+                                    <div class="d-block d-sm-none">
+                                        <span class="float-right text-muted text-sm">Selected</span>
+                                    </div>
+                                    {% endif %}
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            {% endfor %}
+                        {% endif  %}
+                        <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
+                        {% if 8|permissions %}
+                            <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
+                        {% else %}
+                            <a href="#" class="dropdown-item dropdown-footer"><i>Contact support to add new businesses</i></a>
+                        {% endif %}
+                    </div>
+                </li>
+
+            {% endif %}
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{CONFIG.ROOTURL}}/user.php?id={{ USERDATA.users_userid }}">
+                    <i class="fas fa-calendar-alt"></i>
+                </a>
+            </li>
+            <!--<li class="nav-item">
+                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
+                    <i class="fas fa-th-large"></i>
+                </a>
+            </li>-->
+        </ul>
+        {% endif %}
+    </nav>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="{{CONFIG.ROOTURL}}" class="brand-link navbar-light" style="color: rgba(0,0,0,.8);">
+            <img src="{{ CONFIG.ASSETCDNURL }}/img/logoicon.png"
+                 alt="AdamRMS Logo"
+                 class="brand-image img-circle elevation-3"
+                 style="opacity: .8;">
+            <span class="brand-text font-weight-light">Adam RMS</span>
+        </a>
+
+        <!-- Sidebar -->
+        {% if USERDATA.instances|length > 0 %}
+        <div class="sidebar">
+            <!-- Sidebar user (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;">
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/account.php" class="d-block">
+                <div class="info">
+                    {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
+                </div>
+                <div class="info">
+                    <i class="fa fa-cog"></i>
+                </div>
+                </a>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <!-- Add icons to the links using the .nav-icon class
+                         with font-awesome or any other icon font library -->
+
+                {% if USERDATA.instances|length > 0 %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/" class="nav-link">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Dashboard
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-city"></i>
+                            <p>
+                                Business
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {% if 80|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/stats.php" class="nav-link">
+                                        <i class="nav-icon fas fa-chart-bar"></i>
+                                        <p>
+                                            Stats
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php" class="nav-link">
+                                    <i class="nav-icon far fa-calendar-alt"></i>
+                                    <p>
+                                        Calendar
+                                    </p>
+                                </a>
+                            </li>
+
+                            {% if 36|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
+                                        <i class="nav-icon fas fa-briefcase"></i>
+                                        <p>
+                                            Clients
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 40|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
+                                        <i class="nav-icon fas fa-coins"></i>
+                                        <p>
+                                            Payments
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% if 87|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
+                                        <i class="fa fa-map-marked-alt nav-icon"></i>
+                                        <p>
+                                            Locations
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-header">USER MANAGEMENT</li>
+                            {% if 2|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>
+                                            Users
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 11|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
+                                        <i class="nav-icon fas fa-unlock-alt"></i>
+                                        <p>
+                                            Permissions
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 109|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/signupCodes.php" class="nav-link">
+                                        <i class="fas fa-key nav-icon"></i>
+                                        <p>
+                                            Signup Codes
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-header">SETTINGS</li>
+                            {% if 81|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
+                                        <i class="nav-icon fas fa-cog"></i>
+                                        <p>
+                                            Basic Settings
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 105|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
+                                        <i class="fas fa-theater-masks nav-icon"></i>
+                                        <p>
+                                            Project Types
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 89|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
+                                        <i class="fas fa-list nav-icon"></i>
+                                        <p>
+                                            Custom Categories
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                        </ul>
+                    </li>
+                    {% if 113|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/training" class="nav-link">
+                            <i class="nav-icon fas fa-graduation-cap"></i>
+                            <p>Training</p>
+                            <span class="right badge badge-danger">New</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-header">ASSETS</li>
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
+                            <i class="nav-icon fas fa-warehouse"></i>
+                            <p>View All</p>
+                        </a>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-list nav-icon"></i>
+                            <p>
+                                Categories
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {% set currentCategoryGroup = false %}
+                            {% for category in assetCategories %}
+                                {% if currentCategoryGroup != category.assetCategoriesGroups_name %}
+                                {% if currentCategoryGroup %}
+                                    {# Close the previous one for starting a new one #}
+                                    </ul>
+                                    </li>
+                                {% endif %}
+                                {% set currentCategoryGroup = category.assetCategoriesGroups_name %}
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i style="margin-left: 5px;" class="{{ category.assetCategoriesGroups_fontAwesome }} nav-icon"></i>
+                                        <p>
+                                            {{ category.assetCategoriesGroups_name }}
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+
+                                    {% endif %}
+                                <li class="nav-item">
+                                    <a href="{{CONFIG.ROOTURL}}/assets.php?category={{ category.assetCategories_id }}" class="nav-link">
+                                        <p style="padding-left: 20px;">{{category.assetCategories_name}}</p>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            {% if currentCategoryGroup %}
+                                {# Close the previous category group if you had any #}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/manufacturers.php" class="nav-link">
+                        <i class="nav-icon fas fa-industry"></i>
+                        <p>
+                            Manufacturers
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/instances/groups.php" class="nav-link">
+                        <i class="nav-icon fas fa-layer-group"></i>
+                        <p>
+                            Groups
+                        </p>
+                    </a>
+                </li>
+                {% if 17|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
+                            <i class="fas fa-plus nav-icon"></i>
+                            <p>New Asset</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if 63|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
+                            <i class="nav-icon fas fa-paint-roller"></i>
+                            <p>
+                                Maintenance
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if 84|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/maintenance/barcode.php" class="nav-link">
+                            <i class="fas fa-barcode nav-icon"></i>
+                            <p>Barcodes</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if 20|instancePermissions %}
+                    <li class="nav-header">PROJECTS</li>
+                    {% set archive = false %}
+                    {% for project in projects %}
+                        <li class="nav-item">
+                            <a href="{{ CONFIG.ROOTURL }}/project?id={{ project.projects_id }}" class="nav-link">
+                                <i class="nav-icon
+{% if project.projects_manager == USERDATA.users_userid %}
+fas fa-star
+{% else %}
+far fa-circle
+{% endif %}
+text-{{ STATUSES[project.projects_status]['class'] }}
+" title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                <p title="{{ project.projects_name }}">{{ project.projects_name }}</p>
+                            </a>
+                        </li>
+                    {% endfor %}
+                    <li class="nav-item">
+                        <a href="{{CONFIG.ROOTURL}}/project/list.php" class="nav-link">
+                            <i class="nav-icon fas fa-list-ol"></i>
+                            <p>List</p>
+                        </a>
+                    </li>
+                    {% if 21|instancePermissions %}
+                        <li class="nav-item">
+                            <a href="#" class="nav-link newProjectButton">
+                                <i class="nav-icon fas fa-plus"></i>
+                                <p>New Project</p>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+                {% if 2|permissions or 11|permissions or 7|permissions %}
+                <li class="nav-header">BITHELL STUDIOS STAFF</li>
+                {% endif %}
+            {% if 2|permissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/users.php" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Users
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if 11|permissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/permissions.php" class="nav-link">
+                        <i class="nav-icon fas fa-unlock-alt"></i>
+                        <p>
+                            Permissions
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if 20|permissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/instances.php" class="nav-link">
+                        <i class="nav-icon fas fa-city"></i>
+                        <p>
+                            Instances
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if 7|permissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
+                        <i class="nav-icon fas fa-gavel"></i>
+                        <p>
+                            Audit Log
+                            <span class="right badge badge-danger">AdamRMS</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+
+                {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </aside>
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp hidden-lg hidden-md hidden-sm"></div>-->
+    <div class="content-wrapper" id="content-wrapper">
+        {% endif %}
+        <div class="content-header">
+            <div class="container-fluid">
+                {%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>
+                            {{ pageConfig.TITLE }}
+                        </h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{{CONFIG.ROOTURL}}">Home</a></li>
+                            <li class="breadcrumb-item active">{{ pageConfig.TITLE }}</li>
+                        </ol>
+                    </div>
+
+                </div>
+                {% endif %}
+                {% if CONFIG.DEV %}
+                <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 0px;">
+                    <h4>
+                        <i class="fa fa-terminal"></i> DEVELOPMENT BUILD - NOT FOR EXTERNAL USE
+                    </h4>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="content">
+            <div class="container-fluid">
+            {% if USERDATA.users_changepass == '1' %}
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
+                        <div class="card card-default">
+                            <div class="card-body" style="text-align: center;">
+                               <h2>Change your Password</h2>
+                                    <p>Please enter a new password:</p>
+                                    <input type="password" id="forcechangepass1" class="form-control input-lg"
+                                           placeholder="New Password" style="margin-bottom: 5px;" />
+                                    <input type="password" id="forcechangepass2" class="form-control input-lg"
+                                           placeholder="Confirm New Password"  style="margin-bottom: 5px;" />
+                                    <p>Choose a strong password longer than 8 characters that is a random alphanumeric string</p>
+                                    <button id="forcechangepassbutton" class="btn btn-default">Save</button>
+
+                            </div>
+                            <div class="card-footer">
+                                <a href="mailto:{{ CONFIG.PROJECT_SUPPORT_EMAIL }}">Contact Support</a>
+                            </div>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#forcechangepassbutton').click(function () {
+                                        if ($("#forcechangepass1").val() != $("#forcechangepass2").val()) bootbox.alert("Sorry - Your passwords do not match!");
+                                        else if ($("#forcechangepass1").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
+                                        else {
+                                            $.ajax({
+                                                url: '{{ CONFIG.ROOTURL }}/api/account/forcePasswordChange.php?pass=' + $("#forcechangepass1").val(),
+                                                success: function (result) {
+                                                    if (result == '1') {
+                                                        location.reload();
+                                                    } else {
+                                                        bootbox.alert('Error - Could not send E-Mail again - Please refresh the page and try again!');
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                        </div>
+            {% else %}
+                {% block content %}
+                {% endblock %}
+            {% endif %}
+
+            {% if BODY %}
+            </div><!-- /.container-fluid -->
+        </div><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+    <footer class="main-footer" id="main-footer">
+        <div class="float-right d-none d-sm-block">
+            {% if CONFIG.DEV %}
+                DEV BUILD
+            {% else %}
+                {{ CONFIG.VERSION }}
+            {% endif %}
+        </div>
+        <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
+        reserved.
+    </footer>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+        <div class="p-3 control-sidebar-content">
+            <h5>Coming Soon</h5>
+        </div>
+    </aside>
+</div>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover({
+            html: true,
+        });
+        {% if 21|instancePermissions %}
+        $(".newProjectButton").click(function () {
+            bootbox.prompt({
+                title: "Select Project Type",
+                inputType: 'select',
+                inputOptions: [
+                    {% for type in potentialProjectTypes %}
+                    {
+                        text: '{{type.projectsTypes_name}}',
+                        value: '{{ type.projectsTypes_id }}',
+                    },
+                    {% endfor %}
+                ],
+                callback: function (result) {
+                    if (result) {
+                        var projectType = result;
+                        bootbox.prompt({
+                            title: "Select Project Manager",
+                            inputType: 'select',
+                            value: {{ USERDATA.users_userid }},
+                            inputOptions: [
+                                {% for user in potentialProjectManagers %}
+                                {
+                                    text: '{{ user.users_name1 ~ " " ~ user.users_name2 }}',
+                                    value: '{{ user.users_userid }}',
+                                },
+                                {% endfor %}
+                            ],
+                            callback: function (result) {
+                                if (result) {
+                                    var projectManager = result;
+                                    bootbox.prompt("Enter Project Name", function (result) {
+                                        if (result) {
+                                            ajaxcall("projects/new.php", {
+                                                "projects_name": result,
+                                                "projectsType_id": projectType,
+                                                "projects_manager": projectManager
+                                            }, function (data) {
+                                                window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+
+    });
+    console.log("Welcome to {{ CONFIG.PROJECT_NAME }} version {{ CONFIG.VERSION }}");
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
+<script>
+    //Google Analytics
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '{{ CONFIG.ANALYTICS.TRACKINGID }}');
+</script>
+</body>
+{% endif %}
+</html>

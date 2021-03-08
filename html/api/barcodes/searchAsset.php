@@ -10,7 +10,7 @@ $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURREN
 $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 if (strlen($_POST['term']) > 0) {
     $DBLIB->where("(
-		assets.assets_tag = '" . $bCMS->reverseATag($bCMS->sanitizeStringMYSQL($_POST['term'])) . "'
+		assets.assets_tag LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "'
 		OR assetTypes.assetTypes_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%'
     )");
 }

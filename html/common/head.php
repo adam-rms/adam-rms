@@ -248,9 +248,6 @@ class bCMS {
         //This is an old function we no longer use - kept to save refactoring
         return $id;
     }
-    function reverseATag($tag) {
-        return $tag;
-    }
     function notificationSettings($userid) {
         global $DBLIB,$CONFIG;
         $DBLIB->where("users_userid", $userid);
@@ -304,12 +301,13 @@ function generateNewTag() {
     $DBLIB->orderBy("assets_tag", "DESC");
     $DBLIB->where ("assets_tag", 'A-%', 'like');
     $tag = $DBLIB->getone("assets", ["assets_tag"]);
-    if ($tag and is_int(str_replace("A-","",$tag["assets_tag"]))){
-        $value = intval(str_replace("A-","",$tag["assets_tag"]))+1;
-        if ($value <= 9999) $value = sprintf('%04d', $value);
-        return "A-" . $value;
-    }
-    else return "A-1";
+    if ($tag) {
+        if (is_numeric(str_replace("A-","",$tag["assets_tag"]))) {
+            $value = intval(str_replace("A-","",$tag["assets_tag"]))+1;
+            if ($value <= 9999) $value = sprintf('%04d', $value);
+            return "A-" . $value;
+        } else return "A-1";
+    } else return "A-1";
 }
 
 $GLOBALS['STATUSES'] = [
@@ -515,6 +513,8 @@ class projectFinance {
         return $return;
     }
 }
+use Money\Money;
+use Money\Currency;
 class projectFinanceCacher {
     //This class assumes that the projectid has been validated as within the instance
     private $data,$projectid;

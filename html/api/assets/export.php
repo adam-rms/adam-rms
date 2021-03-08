@@ -70,8 +70,6 @@ foreach ($PAGEDATA['assets'] as $assetType) {
     if (count($assetType['definableFields']) != 10) $assetType['definableFields'] = ["","","","","","","","","","",""];
     foreach ($assetType['assets'] as $asset) {
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
-        if ($asset['assets_tag'] <= 9999) $asset['assets_tag'] = "A-" . sprintf('%04d', $asset['assets_tag']);
-        else $asset['assets_tag'] = "A-" . $asset['assets_tag'];
         $array = [
             $asset['assets_tag'],
             $assetType['assetCategoriesGroups_name'] . " - " . $assetType['assetCategories_name'],

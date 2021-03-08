@@ -44,9 +44,4 @@ $DBLIB->where("assets.assets_id",$barcode['assets_id']);
 $asset = $DBLIB->getone("assets", ["assets.assets_id", "assets.assets_tag", "assetTypes.assetTypes_name", "assetTypes.assetTypes_id", "assetCategories.assetCategories_name", "assetCategoriesGroups.assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);
 if (!$asset) finish(true, null, ["asset" => false, "barcode" => $barcode['assetsBarcodes_id'],"location" => ($location ? $location : false)]);
 
-//Format asset tag
-if ($asset['assets_tag'] == null) $asset['tag']= '';
-if ($asset['assets_tag'] <= 9999) $asset['tag'] = "A-" . sprintf('%04d', $asset['assets_tag']);
-else $asset['tag'] = "A-" . $asset['assets_tag'];
-
 finish(true, null, ["asset" => $asset, "barcode" => $barcode['assetsBarcodes_id'],"location" => ($location ? $location : false)]);

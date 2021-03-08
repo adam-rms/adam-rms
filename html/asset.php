@@ -48,7 +48,15 @@ foreach ($assets as $asset) {
     $DBLIB->where("assetsBarcodes_deleted", 0);
     $DBLIB->orderBy("assetsBarcodes_added", "ASC");
     $DBLIB->join("users", "assetsBarcodes.users_userid=users.users_userid", "LEFT");
-    $asset['barcodes'] = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2","(SELECT assetsBarcodesScans_timestamp FROM assetsBarcodesScans WHERE assetsBarcodes_id=assetsBarcodes_id ORDER BY assetsBarcodesScans_timestamp DESC LIMIT 1) AS lastScan"]);
+
+    $lastScan = $DBLIB->subQuery ("lastScan");
+    //$lastScan->orderBy("assetsBarcodesScans_timestamp","DESC");
+    $lastScan->groupBy ("assetsBarcodes_id");
+    $lastScan->get ("assetsBarcodesScans",null,["MAX(assetsBarcodesScans_timestamp)","assetsBarcodesScans_id","assetsBarcodes_id"]);
+    $DBLIB->join($lastScan, "assetsBarcodes.assetsBarcodes_id=lastScan.assetsBarcodes_id", "LEFT LATERAL");
+    $asset['barcodes'] = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2","lastScan.*"]);
+    var_dump($asset['barcodes']);
+    echo $DBLIB->getLastQuery();
 
     //Calendar
     $DBLIB->where("assets_id", $asset['assets_id']);

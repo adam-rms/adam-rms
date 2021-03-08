@@ -270,7 +270,7 @@
                             <div class="direct-chat-text">
                                 {% if message.maintenanceJobsMessages_text|length > 0 %}
                                     {{ message.maintenanceJobsMessages_text|nl2br }}
-                                {% else %}
+                                {% elseif message.maintenanceJobsMessages_file != "" %}
                                     {% if message.s3files_extension|lower in ["gif", "jpeg", "jpg", "png"] %}
                                         <img src="{{ message.maintenanceJobsMessages_file|s3URL }}" alt="{{ message.s3files_name }}" style="width: 100%;">
                                     {% else %}
