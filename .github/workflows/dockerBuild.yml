@@ -2,7 +2,7 @@ name: Build AdamRMS
 on:
   push:
     tags:
-      - '*'
+      - "v*.*.*"
   workflow_dispatch:
 jobs:
   build:
@@ -10,11 +10,15 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
         with:
-          fetch-depth: 0
-      - name: 'Get Previous tag'
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+          images: adam-rms/main
+          tag-sha: true
+          tag-semver: |
+            {{version}}
+            {{major}}.{{minor}}
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v1
       - name: Log in to GitHub Container Registry
@@ -28,7 +32,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags:
-            - ghcr.io/jbithell/adam-rms/main:latest
-            - ghcr.io/jbithell/adam-rms/main:${{ steps.previoustag.outputs.tag }}
-          push: false
+          platforms: linux/amd64,linux/arm64,linux/386
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
