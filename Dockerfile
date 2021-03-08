@@ -1,6 +1,6 @@
 FROM php:7-fpm
 
-COPY docker/php.ini /var/www/php.ini
+COPY ./php.ini /var/www/php.ini
 RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
 
 RUN apt-get update
