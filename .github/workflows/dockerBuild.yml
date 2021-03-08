@@ -28,5 +28,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: ghcr.io/jbithell/adam-rms/main:${{ steps.previoustag.outputs.tag }}
+          tags:
+            ghcr.io/jbithell/adam-rms/main:latest
+            ghcr.io/jbithell/adam-rms/main:${{ steps.previoustag.outputs.tag }}
           push: true
