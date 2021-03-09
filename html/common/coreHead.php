@@ -107,7 +107,7 @@ class bCMS {
         $DBLIB->orderBy($sort, $sortOrder);
         return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
     }
-    function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes', $cloudfront = true) {
+    function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes') {
         global $DBLIB, $CONFIG,$AUTH;
         /*
          * File interface for Amazon AWS S3.
@@ -186,7 +186,7 @@ class bCMS {
 
         //Generate the url
 
-        if ($cloudfront) {
+        if (false) {
             // Create a CloudFront Client to sign the string
             $CloudFrontClient = new Aws\CloudFront\CloudFrontClient([
                 'profile' => 'default',
@@ -216,7 +216,7 @@ class bCMS {
                 'Bucket' => $file['s3files_bucket'],
                 'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
             ];
-            if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . $CONFIG['PROJECT_NAME'] . ' ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
+            if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . 'AdamRMS ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
             $cmd = $s3Client->getCommand('GetObject', $parameters);
             $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
             $presignedUrl = (string)$request->getUri();
