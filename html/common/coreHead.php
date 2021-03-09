@@ -204,7 +204,7 @@ class bCMS {
             //Download direct from S3
             $s3Client = new Aws\S3\S3Client([
                 'region' => $file["s3files_region"],
-                'endpoint' => "https://" . $file["s3files_endpoint"],
+                'endpoint' => ($file['s3files_cdn_endpoint'] ? $file['s3files_cdn_endpoint'] : "https://" . $file["s3files_endpoint"]),
                 'version' => 'latest',
                 'credentials' => array(
                     'key' => $CONFIG['AWS']['KEY'],
