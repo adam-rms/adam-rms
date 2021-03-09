@@ -1,1 +1,0 @@
-Twig Cache Directory - used for storing twig templates at runtime on Heroku
