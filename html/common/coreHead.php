@@ -124,22 +124,24 @@ class bCMS {
         $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
         $file = $DBLIB->getone("s3files");
         if (!$file) return false;
-        if ($size and false) { //disabled as at the moment the filenames are random so there's no way that this ever works out correct!
+        if ($file['s3files_compressed'] == 1) {
+            //If we have a compressed version of this file opt to use it!
             switch ($size) {
                 case "tiny":
-                    $file['s3files_filename'] .= ' (tiny)';
-                    break; //The want the original
+                    $file['s3files_filename'] .= '_tiny';
+                    break;
                 case "small":
-                    $file['s3files_filename'] .= ' (small)';
-                    break; //The want the original
+                    $file['s3files_filename'] .= '_small';
+                    break;
                 case "medium":
-                    $file['s3files_filename'] .= ' (medium)';
-                    break; //The want the original
+                    $file['s3files_filename'] .= '_medium';
+                    break;
                 case "large":
-                    $file['s3files_filename'] .= ' (large)';
-                    break; //The want the original
+                    $file['s3files_filename'] .= '_large';
+                    break;
                 default:
-                    //They want the original
+                    $file['s3files_filename'] .= '_comp'; //TODO evaluate whether this is a good idea - or whether in some cases it's better to serve a fully uncompressed version
+                    break;
             }
         }
         if ($expire == null or $expire === false) $expire = '+10 minutes';
