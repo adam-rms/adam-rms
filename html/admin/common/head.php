@@ -34,8 +34,8 @@ header("Content-Security-Policy: default-src 'none';" .
     //                                               Loading in google fonts     more gfonts               Fonts from libs like fontawesome
     "manifest-src 'self' https://*.adam-rms.com;" .
     //          Show images on mobile devices like favicons
-    "img-src 'self' data: blob: https://assets.adam-rms.com https://cdnjs.cloudflare.com https://*.adam-rms.com https://www.google-analytics.com https://www.googletagmanager.com https://*.ytimg.com;".
-    //                                                    Uploads    Images from libs                 Images                Google analytics                                            Training
+    "img-src 'self' data: blob: https://assets.adam-rms.com https://cdnjs.cloudflare.com https://*.adam-rms.com https://www.google-analytics.com https://www.googletagmanager.com https://*.ytimg.com https://*.backblazeb2.com;".
+    //                                                    Uploads    Images from libs                 Images                Google analytics                                            Training                Uploads
     "connect-src 'self' https://*.adam-rms.com https://sentry.io https://www.google-analytics.com  https://*.amazonaws.com https://status.jbithell.com;".
     //                  File uploads                      Error reporting     Google analytics             File Uploads
     "frame-src https://www.youtube.com;".
