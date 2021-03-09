@@ -740,7 +740,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
             {% if CONFIG.DEV %}
                 DEV BUILD
             {% else %}
-                {{ CONFIG.VERSION }}
+                {{ CONFIG.VERSION.TAG }}
             {% endif %}
         </div>
         <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
@@ -812,7 +812,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
         {% endif %}
 
     });
-    console.log("Welcome to {{ CONFIG.PROJECT_NAME }} version {{ CONFIG.VERSION }}");
+    console.log("Welcome to {{ CONFIG.PROJECT_NAME }} version {{ CONFIG.VERSION.TAG }}");
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
 <script>
