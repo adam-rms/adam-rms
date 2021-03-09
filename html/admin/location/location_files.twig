@@ -42,7 +42,7 @@
             </div>
             {% if 101|instancePermissions %}
             <div class="card-footer">
-                {% embed 'common/plugins/fineuploader.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 11, 'subTypeId': LOCATION['locations_id'], 'imagesOnly': false } %}
+                {% embed 'common/plugins/uppy.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 11, 'subTypeId': LOCATION['locations_id'], 'imagesOnly': false } %}
                     {% block success %}
                         console.log(responseJson.id);
                     {% endblock %}

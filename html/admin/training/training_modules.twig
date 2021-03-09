@@ -167,7 +167,7 @@
 
                             <h4>Thumbnail</h4>
                             <input type="hidden" name="modules_thumbnail" value="{{ module.modules_thumbnail }}" id="moduleThumbnail{{ module.modules_id }}" />
-                            {% embed 'common/plugins/fineuploader.twig' with {'type': 'MODULE-THUMBNAIL', 'paste': false, 'typeId': 12, 'imagesOnly': true, 'fileLimit': 1 } %}
+                            {% embed 'common/plugins/uppy.twig' with {'type': 'MODULE-THUMBNAIL', 'paste': false, 'typeId': 12, 'imagesOnly': true, 'fileLimit': 1 } %}
                                 {% block success %}
                                     $("#moduleThumbnail{{ module.modules_id }}").val(responseJson.id);
                                 {% endblock %}

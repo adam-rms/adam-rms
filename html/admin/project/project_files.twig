@@ -44,7 +44,7 @@
             {% endif %}
             {% if 102|instancePermissions %}
             <div class="card-footer">
-                {% embed 'common/plugins/fineuploader.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
+                {% embed 'common/plugins/uppy.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
                     {% block success %}
                         console.log(responseJson.id);
                     {% endblock %}

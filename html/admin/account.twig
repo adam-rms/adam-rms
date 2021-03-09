@@ -442,7 +442,7 @@
 				</div>
 				{% if 14|permissions or USER.users_userid == USERDATA.users_userid %}
 				<div class="card-footer">
-					{% embed 'common/plugins/fineuploader.twig' with {'publicBool': false, 'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
+					{% embed 'common/plugins/uppy.twig' with {'publicBool': false, 'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
 						{% block success %}
 							console.log(responseJson);
 							ajaxcall("account/thumbnail.php", {

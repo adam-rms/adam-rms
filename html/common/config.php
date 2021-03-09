@@ -38,6 +38,7 @@ $CONFIG = array(
             'BUCKET' => getenv('bCMS__AWS_S3_BUCKET_NAME'),
             'ENDPOINT' => getenv('bCMS__AWS_S3_BUCKET_ENDPOINT'),
             'REGION' => getenv('bCMS__AWS_S3_BUCKET_REGION'),
+            'CDNEndpoint' => getenv('bCMS__AWS_S3_CDN'),
         ]
         /*,"FINEUPLOADER" => [
             "KEY" => getenv('bCMS__AWS_CLIENT_KEY'),
