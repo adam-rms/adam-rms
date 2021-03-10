@@ -61,20 +61,22 @@
                     {% set earliestStart = false %}
                     {% set latestEnd = false %}
                     {% for project in projects %}
-                    {
-                        title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|raw|escape("js") ~ " - " }}{{ project.projects_name|raw|escape("js") }}",
-                        start          : {{ project.projects_dates_use_start|date('U') }}*1000,
-                        end            : {{ project.projects_dates_use_end|date('U') }}*1000,
-                        url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
-                        backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
-                        textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
-                    },
-                    {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
-                    {% set earliestStart = project.projects_dates_use_start|date("c") %}
-                    {% endif %}
-                    {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
-                    {% set latestEnd = project.projects_dates_use_end|date("c") %}
-                    {% endif %}
+                        {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
+                        {
+                            title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|raw|escape("js") ~ " - " }}{{ project.projects_name|raw|escape("js") }}",
+                            start          : {{ project.projects_dates_use_start|date('U') }}*1000,
+                            end            : {{ project.projects_dates_use_end|date('U') }}*1000,
+                            url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
+                            backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
+                            textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                        },
+                            {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
+                                {% set earliestStart = project.projects_dates_use_start|date("c") %}
+                            {% endif %}
+                            {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
+                                {% set latestEnd = project.projects_dates_use_end|date("c") %}
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
                 ],
                 validRange: {
