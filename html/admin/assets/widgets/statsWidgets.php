@@ -33,6 +33,15 @@ class statsWidgets
     private function upcomingEventsCount($arguments = []) {
 
     }
+    private function userCount($arguments = []) {
+        global $DBLIB;
+        if (!$arguments['instanceid']) return [];
+
+        $DBLIB->join("instancePositions","instancePositions.instancePositions_id=userInstances.instancePositions_id","LEFT");
+        $DBLIB->where("instances_id", $arguments['instanceid']);
+        $DBLIB->where("userInstances_archived IS NULL");
+        return ["COUNT" => $DBLIB->getValue ("userInstances", "count(*)")];
+    }
     private function inventoryValueGraph($arguments = []) {
         global $DBLIB,$AUTH;
         if (!$arguments['instanceid']) return [];
