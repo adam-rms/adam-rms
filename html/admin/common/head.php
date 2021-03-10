@@ -116,8 +116,8 @@ $TWIG->addFilter(new \Twig\TwigFilter('randomString', function ($characters) {
     return $bCMS->randomString($characters);
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false) {
-    global $bCMS;
-    return $bCMS->s3URL($fileid, $size);
+    global $CONFIG;
+    return $CONFIG['ROOTURL'] . "/api/file/index.php?r&f=" . $fileid . "&s=" . $size;
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('cableColourConfig', function ($raw) {
     if ($raw == null) return [];
