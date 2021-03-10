@@ -477,22 +477,8 @@
                                                 {% endembed %}
                                                 <br/>
                                             {% endif %}
-                                            <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
-                                                {% for file in asset.thumbnail %}
-                                                    <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
-                                                        <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
-                                                        <div class="mailbox-attachment-info">
-                                                            <span class="mailbox-attachment-size clearfix mt-1">
-                                                                <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span><br/>
-                                                                <span>{{ file.s3files_meta_size|formatsize }}</span>
-                                                                {% if 57|instancePermissions %}
-                                                                    <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
-                                                                {% endif %}
-                                                            </span>
-                                                        </div>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
+                                            {% embed 'common/plugins/fileBox.twig' with {'files': asset.thumbnail, 'galleryOnly': true } %}
+                                            {% endembed %}
                                         </div>
                                     </div>
                                     <!-- /.tab-content -->
@@ -642,35 +628,8 @@
                             {% endembed %}
                             <br/>
                             {% endif %}
-                            <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
-                                {% for file in asset.files %}
-                                    <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
-                                        {% if file.s3files_extension|lower in ["gif", "jpeg", "jpg", "png"] %}
-                                        <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
-                                        {% else %}
-                                        <span class="mailbox-attachment-icon"><i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i></span>
-                                        {% endif %}
-                                        <div class="mailbox-attachment-info">
-                                            <a href="{{ file.s3files_id|s3URL }}" class="mailbox-attachment-name" target="_blank">
-                                                <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i> {{ file.s3files_name }}
-                                            </a>
-                                            <span class="mailbox-attachment-size clearfix mt-1">
-                                                <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span>
-
-                                            <br/><br/>
-                                                <span>{{ file.s3files_meta_size|formatsize }}</span>
-                                          <a href="{{ file.s3files_id|s3URL }}" target="_blank" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
-                                          {% if 56|instancePermissions %}
-                                            <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
-                                          {% endif %}
-                                          {% if 57|instancePermissions %}
-                                              <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
-                                          {% endif %}
-</span>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% embed 'common/plugins/fileBox.twig' with {'files': asset.files } %}
+                            {% endembed %}
                         </div>
                         {% endif %}
 
@@ -687,35 +646,8 @@
                                     {% endembed %}
                                     <br/>
                                 {% endif %}
-                                <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
-                                    {% for file in assets[0]['files'] %}
-                                        <li class="fileBox"  data-s3fileid="{{ file.s3files_id }}">
-                                            {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
-                                                <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
-                                            {% else %}
-                                                <span class="mailbox-attachment-icon"><i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i></span>
-                                            {% endif %}
-                                            <div class="mailbox-attachment-info">
-                                                <a href="{{ file.s3files_id|s3URL }}" class="mailbox-attachment-name" target="_blank">
-                                                    <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i> {{ file.s3files_name }}
-                                                </a>
-                                                <span class="mailbox-attachment-size clearfix mt-1">
-                                                <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span>
-
-                                            <br/><br/>
-                                                <span>{{ file.s3files_meta_size|formatsize }}</span>
-                                          <a href="{{ file.s3files_id|s3URL }}" target="_blank" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
-                                          {% if 56|instancePermissions %}
-                                              <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
-                                          {% endif %}
-                                        {% if 57|instancePermissions %}
-                                            <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
-                                        {% endif %}
-</span>
-                                            </div>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
+                                {% embed 'common/plugins/fileBox.twig' with {'files': assets[0]['files'] } %}
+                                {% endembed %}
                             </div>
                         {% endif %}
                         {% if assets|length == 1 and 84|instancePermissions %}
@@ -1239,57 +1171,7 @@
                     });
                 });
                 {% endif %}
-                {% if 56|instancePermissions %}
-                $(".renameFile").click(function () {
-                    var id = $(this).data("s3fileid");
-                    var filename = $(this).data("s3filename");
-                    bootbox.prompt({
-                        title: "Edit file name",
-                        inputType: 'textarea',
-                        value: filename,
-                        callback: function (result) {
-                            if (result) {
-                                ajaxcall("file/rename.php", {
-                                    "s3files_id": id,
-                                    "s3files_name": result
-                                }, function (data) {
-                                    location.reload();
-                                });
-                            }
-                        }
-                    });
-                });
-                {% endif %}
-                {% if 57|instancePermissions %}
-                $(".deleteFile").click(function () {
-                    var id = $(this).data("s3fileid");
-                    bootbox.confirm({
-                        message: "Are you sure you wish to delete this file?",
-                        buttons: {
-                            confirm: {
-                                label: 'Yes',
-                                className: 'btn-success'
-                            },
-                            cancel: {
-                                label: 'Cancel',
-                                className: 'btn-default'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                ajaxcall("file/delete.php", {
-                                    "s3files_id": id
-                                }, function (data) {
-                                    //Hide the file in the display
-                                    $(".fileBox[data-s3fileid=" + id + "]").hide();
-                                });
-                            }
-                        }
-                    });
-                });
-                {% endif %}
                 {% if 58|instancePermissions %}
-
                 $("#addNewType-value").change(function() {
                     $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
                     $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
@@ -1556,4 +1438,6 @@
                 {% endif %}
             });
         </script>
+        {% embed 'common/plugins/fileBoxJS.twig' %}
+        {% endembed %}
 {% endblock %}
