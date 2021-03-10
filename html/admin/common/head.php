@@ -45,7 +45,6 @@ header("Content-Security-Policy: default-src 'none';" .
     //          Use of camera
     "frame-ancestors 'self';");
 
-$CONFIG['ROOTURL'] = getenv('bCMS__BACKENDURL');
 
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 $PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
