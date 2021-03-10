@@ -27,7 +27,6 @@ if ($AUTH->instancePermissionCheck(22)) {
 
 
 if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
-elseif (isset($_GET['files']) and $PAGEDATA['project']['projectsTypes_config_files'] == 1) echo $TWIG->render('project/project_files.twig', $PAGEDATA);
 elseif (isset($_GET['pdf']) and $_GET['pdf']) {
     $PAGEDATA['GET'] = $_GET;
     if (isset($_GET['generate'])) {

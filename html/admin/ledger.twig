@@ -35,6 +35,9 @@
                                 <th>Comment</th>
                                 <th>Amount</th>
                                 <th>Project</th>
+                                {% if 121|instancePermissions %}
+                                <th></th>
+                                {% endif %}
                             </tr>
                             </thead>
                             <tbody>
@@ -47,6 +50,12 @@
                                     <td>{{ payment.payments_comment|nl2br }}</td>
                                     <td>{{ payment.payments_amount|money }}</td>
                                     <td><a href="{{ CONFIG.ROOTURL }}/project/?id={{ payment.projects_id }}">{{ payment.projects_name }}</a></td>
+                                    {% if 121|instancePermissions %}
+                                        <td>
+                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
+                                        </button>
+                                        </td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -54,9 +63,6 @@
                     {% else %}
                         <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
                     {% endif %}
-                </div>
-                <div class="overlay" id="loadingoverlay">
-                    <i class="fas fa-sync fa-spin fa-3x"></i>
                 </div>
                 {% if pagination.total > 1 %}
                 <div class="card-footer clearfix">
@@ -83,10 +89,36 @@
                 {% endif %}
             </div>
         </div>
-        <script>
-            $(document).ready(function () {
-                $("#loadingoverlay").hide();
-            });
-        </script>
+        {% if 121|instancePermissions %}
+            {% for payment in payments %}
+            <div class="modal fade" id="filesModal{{ payment.payments_id }}">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Payment Files</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% embed 'common/plugins/fileBox.twig' with {'files': payment.files } %}
+                            {% endembed %}
+                        </div>
+                        {% if 122|instancePermissions %}
+                            <div class="modal-footer">
+                                {% embed 'common/plugins/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+                                    {% block success %}
+                                        console.log(responseJson.id);
+                                    {% endblock %}
+                                {% endembed %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% embed 'common/plugins/fileBoxJS.twig' %}
+            {% endembed %}
+       {% endif %}
     </div>
 {% endblock %}

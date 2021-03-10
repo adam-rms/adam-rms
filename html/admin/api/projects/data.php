@@ -28,7 +28,7 @@ if (!$PAGEDATA['project']) die("404");
 
 //Payments and also
 function projectFinancials($project) {
-    global $DBLIB,$AUTH;
+    global $DBLIB,$AUTH,$bCMS;
     $projectFinanceHelper = new projectFinance();
     $return = [];
 
@@ -38,6 +38,7 @@ function projectFinancials($project) {
     $payments = $DBLIB->get("payments");
     $return['payments'] = ["received" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))], "sales" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))], "subHire" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))], "staff" => ["ledger" => [], "total" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']))]];
     foreach ($payments as $payment) {
+        $payment['files'] = $bCMS->s3List(14, $payment['payments_id']);
         $key = false;
         switch ($payment['payments_type']) {
             case 1:

@@ -335,7 +335,7 @@
                                         <th>Method</th>
                                         <th>Comment</th>
                                         <th>Amount</th>
-                                        {% if 35|instancePermissions %}<th></th>{% endif %}
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -346,7 +346,14 @@
                                             <td>{{ payment.payments_method }}</td>
                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                             <td>{{ payment.payments_amount|money }}</td>
-                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                            <td style="min-width:140px;">
+                                                {% if 121|instancePermissions %}
+                                                <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                {% endif %}
+                                                {% if 35|instancePermissions %}
+                                                <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -360,7 +367,7 @@
                                         <th style="width: 100%;">Comment</th>
                                         <th>Amount</th>
                                         <th>Total</th>
-                                        {% if 35|instancePermissions %}<th></th>{% endif %}
+                                        <th style="min-width:140px;"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -379,7 +386,14 @@
                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                             <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                             <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
-                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                            <td>
+                                                {% if 121|instancePermissions %}
+                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                {% endif %}
+                                                {% if 35|instancePermissions %}
+                                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -393,7 +407,7 @@
                                         <th style="width: 100%;">Comment</th>
                                         <th>Amount</th>
                                         <th>Total</th>
-                                        {% if 35|instancePermissions %}<th></th>{% endif %}
+                                        <th style="min-width:140px;"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -412,7 +426,14 @@
                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                             <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                             <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
-                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                            <td>
+                                                {% if 121|instancePermissions %}
+                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                {% endif %}
+                                                {% if 35|instancePermissions %}
+                                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -427,7 +448,7 @@
                                         <th style="width: 100%;">Comment</th>
                                         <th>Amount</th>
                                         <th>Total</th>
-                                        {% if 35|instancePermissions %}<th></th>{% endif %}
+                                        <th style="min-width:140px;"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -438,7 +459,14 @@
                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                             <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                             <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
-                                            {% if 35|instancePermissions %}<td><button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button></td>{% endif %}
+                                            <td>
+                                                {% if 121|instancePermissions %}
+                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                {% endif %}
+                                                {% if 35|instancePermissions %}
+                                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -761,7 +789,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Files</h3>
                             <div class="card-tools">
-                                <a href="?id={{ project.projects_id }}&files" type="button" class="btn btn-tool">
+                                <a data-toggle="modal" data-target="#projectFilesModal" type="button" class="btn btn-tool">
                                     <i class="fas fa-external-link-alt"></i></a>
                             </div>
                         </div>
@@ -949,6 +977,62 @@
                 </div>
             </div>
         </div>
+    {% endif %}
+    {% if 121|instancePermissions %}
+    {% for payment in []|merge(FINANCIALS.payments.received.ledger)|merge(FINANCIALS.payments.sales.ledger)|merge(FINANCIALS.payments.subHire.ledger)|merge(FINANCIALS.payments.staff.ledger) %}
+        <div class="modal fade" id="filesModal{{ payment.payments_id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Payment Files</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% embed 'common/plugins/fileBox.twig' with {'files': payment.files } %}
+                        {% endembed %}
+                    </div>
+                    {% if 122|instancePermissions %}
+                        <div class="modal-footer">
+                            {% embed 'common/plugins/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+                                {% block success %}
+                                    console.log(responseJson.id);
+                                {% endblock %}
+                            {% endembed %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    {% if project.projectsTypes_config_files == 1 %}
+    <div class="modal fade" id="projectFilesModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Project Files</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% embed 'common/plugins/fileBox.twig' with {'files': files } %}
+                    {% endembed %}
+                </div>
+                {% if 102|instancePermissions %}
+                    <div class="modal-footer">
+                        {% embed 'common/plugins/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
+                            {% block success %}
+                                console.log(responseJson.id);
+                            {% endblock %}
+                        {% endembed %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     {% endif %}
     <script>
         $(document).ready(function () {
@@ -1661,4 +1745,6 @@
             {% endif %}
         });
     </script>
+    {% embed 'common/plugins/fileBoxJS.twig' %}
+    {% endembed %}
 {% endblock %}

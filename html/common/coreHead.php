@@ -189,6 +189,8 @@ class bCMS {
                 //Module thumbnail
             case 13:
                 //Module step image
+            case 14:
+                //Payment file attachment
             default:
                 //There are no specific requirements for this file so not to worry.
         }

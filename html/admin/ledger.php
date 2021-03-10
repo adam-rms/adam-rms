@@ -31,6 +31,7 @@ $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 $PAGEDATA['payments'] = [];
 foreach ($payments as $payment) {
 	$payment['payments_amount'] = new Money($payment['payments_amount'], new Currency($AUTH->data['instance']['instances_config_currency']));
+	$payment['files'] = $bCMS->s3List(14, $payment['payments_id']);
 	$PAGEDATA['payments'][] = $payment;
 }
 echo $TWIG->render('ledger.twig', $PAGEDATA);
