@@ -5,7 +5,7 @@ if (!$AUTH->instancePermissionCheck(57) or !isset($_POST['s3files_id'])) die("40
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("s3files_id", $_POST['s3files_id']);
-$update = $DBLIB->update("s3files", ["s3files_meta_deleteOn" => date('Y-m-d H:i:s', strtotime('-5 minutes', time()))]); //Take account of an annoying timing issue
+$update = $DBLIB->update("s3files", ["s3files_meta_deleteOn" => date('Y-m-d H:i:s', strtotime('-5 minutes', time()))],1); //Take account of an annoying timing issue
 if (!$update) finish(false);
 
 $bCMS->auditLog("DELETE-FILE", "s3files", null, $AUTH->data['users_userid'],null, $_POST['s3files_id']);
