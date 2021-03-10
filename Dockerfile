@@ -26,9 +26,9 @@ RUN docker-php-ext-install -j "$(nproc)" opcache
 
 COPY . /var/www/
 
-RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/html/common/COMMIT.txt
-RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/html/common/COMMITFULL.txt
-RUN git describe --tags --abbrev=0 > /var/www/html/common/TAG.txt
+RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/html/common/version/COMMIT.txt
+RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/html/common/version/COMMITFULL.txt
+RUN git describe --tags --abbrev=0 > /var/www/html/common/version/TAG.txt
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www
