@@ -33,14 +33,16 @@ foreach ($_POST['users'] as $user) {
         if (!$usersql) continue; //User not found - let's skip this for now
         else $data['users_userid'] = $usersql['users_userid'];
         //Search for clashes for that user - (duplicated in the clash checker system for the frontend)
-        $DBLIB->where("users_userid", $usersql['users_userid']);
-        $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
-        $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
-        $DBLIB->where("projects.projects_deleted", 0);
-        $DBLIB->where("(crewAssignments.projects_id != " . $project['projects_id'] . ")");
-        $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
-        $DBLIB->where("((projects_dates_use_start >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_end <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_end"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_start"] . "'))");
-        $existingAssignments = $DBLIB->get("crewAssignments", null, ["crewAssignments.projects_id", "projects.projects_name", "crewAssignments.crewAssignments_role"]);
+        if ($project["projects_dates_use_start"] and $project["projects_dates_use_end"]) {
+            $DBLIB->where("users_userid", $usersql['users_userid']);
+            $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
+            $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
+            $DBLIB->where("projects.projects_deleted", 0);
+            $DBLIB->where("(crewAssignments.projects_id != " . $project['projects_id'] . ")");
+            $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
+            $DBLIB->where("((projects_dates_use_start >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_end <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_end"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_start"] . "'))");
+            $existingAssignments = $DBLIB->get("crewAssignments", null, ["crewAssignments.projects_id", "projects.projects_name", "crewAssignments.crewAssignments_role"]);
+        } else $existingAssignments = [];
         //Allow crew to be clashed - but it'll warn them in the notification.
     } else {
         $data['crewAssignments_personName'] = $user;

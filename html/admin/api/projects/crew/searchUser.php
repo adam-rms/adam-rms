@@ -32,18 +32,20 @@ else {
     $userOutput = [];
     foreach ($users as $user) {
         //Search for clashes for that user - (duplicated in the clash checker system for the frontend)
-        $DBLIB->where("users_userid", $user['users_userid']);
-        $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
-        $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
-        $DBLIB->where("projects.projects_deleted", 0);
-        $DBLIB->where("(crewAssignments.projects_id != " . $project['projects_id'] . ")");
-        $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
-        $DBLIB->where("((projects_dates_use_start >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_end <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_end"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_start"] . "'))");
-        $existingAssignments = $DBLIB->get("crewAssignments", null, ["projects.projects_name"]);
-        $user['clashes'] = [];
-        foreach ($existingAssignments as $assignment) {
-            $user['clashes'][] = $assignment['projects_name'];
-        }
+        if ($project["projects_dates_use_start"] and $project["projects_dates_use_end"]) {
+            $DBLIB->where("users_userid", $user['users_userid']);
+            $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
+            $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
+            $DBLIB->where("projects.projects_deleted", 0);
+            $DBLIB->where("(crewAssignments.projects_id != " . $project['projects_id'] . ")");
+            $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
+            $DBLIB->where("((projects_dates_use_start >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_end <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_end"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_start"] . "'))");
+            $existingAssignments = $DBLIB->get("crewAssignments", null, ["projects.projects_name"]);
+            $user['clashes'] = [];
+            foreach ($existingAssignments as $assignment) {
+                $user['clashes'][] = $assignment['projects_name'];
+            }
+        } else $user['clashes'] = [];
         $userOutput[] = $user;
     }
     finish(true, null, $userOutput);
