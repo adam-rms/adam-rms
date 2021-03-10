@@ -2,7 +2,7 @@
 ini_set('max_execution_time', 300); //seconds
 require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck(84) or !isset($_GET['ids'])) die($TWIG->render('404.twig', $PAGEDATA));
-error_reporting(E_ERROR | E_PARSE);
+
 $ids = explode(",",$_GET['ids']);
 $groups = explode(",",$_GET['groups']);
 $PAGEDATA['assets'] = [];
