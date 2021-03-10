@@ -185,24 +185,23 @@ elseif (round($projectFinanceCache["projectsFinanceCache_mass"]*100000) != round
 
 if ($projectFinancesCacheMismatch) {
     //So there's a serious project finance mismatch - you can force a rebuild of the cache by passing a get parameter - otherwise throw an error so support are notified
-    if (isset($_GET['forceReloadCache'])) {
-        $projectFinanceCacheInsert = [
-            "projects_id" => $PAGEDATA['project']['projects_id'],
-            "projectsFinanceCache_timestamp" => date("Y-m-d H:i:s"),
-            "projectsFinanceCache_equipmentSubTotal" =>$PAGEDATA['FINANCIALS']['prices']['subTotal']->getAmount(),
-            "projectsFinanceCache_equiptmentDiscounts" =>$PAGEDATA['FINANCIALS']['prices']['discounts']->getAmount(),
-            "projectsFinanceCache_equiptmentTotal" =>$PAGEDATA['FINANCIALS']['prices']['total']->getAmount(),
-            "projectsFinanceCache_salesTotal" =>$PAGEDATA['FINANCIALS']['payments']['sales']['total']->getAmount(),
-            "projectsFinanceCache_staffTotal" =>$PAGEDATA['FINANCIALS']['payments']['staff']['total']->getAmount(),
-            "projectsFinanceCache_externalHiresTotal" => $PAGEDATA['FINANCIALS']['payments']['subHire']['total']->getAmount(),
-            "projectsFinanceCache_paymentsReceived" =>$PAGEDATA['FINANCIALS']['payments']['received']['total']->getAmount(),
-            "projectsFinanceCache_grandTotal" =>$PAGEDATA['FINANCIALS']['payments']['total']->getAmount(),
-            "projectsFinanceCache_mass"=>$PAGEDATA['FINANCIALS']['mass'],
-            "projectsFinanceCache_value"=>$PAGEDATA['FINANCIALS']['value']->getAmount(),
-        ];
-        $newCache = $DBLIB->insert("projectsFinanceCache", $projectFinanceCacheInsert); //Add a cache for the finance of the project
-        if($newCache) die("Cache force reloaded - now reload the page without the URL parameter");
-    } else throw new Exception('Project finances don\'t match - on cache ' . $projectFinanceCache['projectsFinanceCache_id']);
+    $projectFinanceCacheInsert = [
+        "projects_id" => $PAGEDATA['project']['projects_id'],
+        "projectsFinanceCache_timestamp" => date("Y-m-d H:i:s"),
+        "projectsFinanceCache_equipmentSubTotal" =>$PAGEDATA['FINANCIALS']['prices']['subTotal']->getAmount(),
+        "projectsFinanceCache_equiptmentDiscounts" =>$PAGEDATA['FINANCIALS']['prices']['discounts']->getAmount(),
+        "projectsFinanceCache_equiptmentTotal" =>$PAGEDATA['FINANCIALS']['prices']['total']->getAmount(),
+        "projectsFinanceCache_salesTotal" =>$PAGEDATA['FINANCIALS']['payments']['sales']['total']->getAmount(),
+        "projectsFinanceCache_staffTotal" =>$PAGEDATA['FINANCIALS']['payments']['staff']['total']->getAmount(),
+        "projectsFinanceCache_externalHiresTotal" => $PAGEDATA['FINANCIALS']['payments']['subHire']['total']->getAmount(),
+        "projectsFinanceCache_paymentsReceived" =>$PAGEDATA['FINANCIALS']['payments']['received']['total']->getAmount(),
+        "projectsFinanceCache_grandTotal" =>$PAGEDATA['FINANCIALS']['payments']['total']->getAmount(),
+        "projectsFinanceCache_mass"=>$PAGEDATA['FINANCIALS']['mass'],
+        "projectsFinanceCache_value"=>$PAGEDATA['FINANCIALS']['value']->getAmount(),
+    ];
+    $newCache = $DBLIB->insert("projectsFinanceCache", $projectFinanceCacheInsert); //Add a cache for the finance of the project
+    if(!$newCache) throw new \Exception('Cache reload error');
+    else trigger_error("Project finance cache mismatch " . json_encode($projectFinanceCacheInsert) . " vs " . json_encode($projectFinanceCache), E_USER_WARNING);
 }
 
 
