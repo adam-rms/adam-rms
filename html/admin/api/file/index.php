@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../apiHeadSecure.php';
+require_once __DIR__ . '/../apiHead.php';
 /*
  * File interface for Amazon AWS S3.
  *  Parameters

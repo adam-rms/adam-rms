@@ -107,7 +107,7 @@ class bCMS {
         $DBLIB->orderBy($sort, $sortOrder);
         return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
     }
-    function s3URL($fileid, $size = false, $forceDownload = false, $expire = '+10 minutes') {
+    function s3URL($fileid, $size = "comp", $forceDownload = false, $expire = '+10 minutes') {
         global $DBLIB, $CONFIG,$AUTH;
         /*
          * File interface for Amazon AWS S3.
@@ -139,15 +139,21 @@ class bCMS {
                 case "large":
                     $file['s3files_filename'] .= '_large';
                     break;
+                case "comp":
+                    $file['s3files_filename'] .= '_comp';
+                    break;
+                case "full":
+                    break;
                 default:
-                    $file['s3files_filename'] .= '_comp'; //TODO evaluate whether this is a good idea - or whether in some cases it's better to serve a fully uncompressed version
+                    $file['s3files_filename'] .= '_comp';
                     break;
             }
         }
-        if ($expire == null or $expire === false) $expire = '+10 minutes';
+        if ($expire == null or $expire === false) $expire = '+1 minute';
         $file['expiry'] = $expire;
 
         $instanceIgnore = false;
+        $secure = true;
         switch ($file['s3files_meta_type']) {
             case 1:
                 $instanceIgnore = true;
@@ -162,6 +168,7 @@ class bCMS {
                 // Asset file
             case 5:
                 $instanceIgnore = true;
+                $secure = false;
                 // Instance thumbnail
             case 6:
                 // Instance file
@@ -174,6 +181,7 @@ class bCMS {
                 // User thumbnail
             case 10:
                 $instanceIgnore = true;
+                $secure = false;
                 //Instance email thumbnail
             case 11:
                 // Location file
@@ -184,7 +192,8 @@ class bCMS {
             default:
                 //There are no specific requirements for this file so not to worry.
         }
-        if ($instanceIgnore != true and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
+        if ($secure and !$GLOBALS['AUTH']->login) return false;
+        if ($secure and !$instanceIgnore and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
 
         //Generate the url
 
