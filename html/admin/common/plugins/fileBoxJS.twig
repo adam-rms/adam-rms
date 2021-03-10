@@ -1,0 +1,53 @@
+<script>
+    $(document).ready(function () {
+        {% if 56|instancePermissions %}
+        $(".renameFile").click(function () {
+            var id = $(this).data("s3fileid");
+            var filename = $(this).data("s3filename");
+            bootbox.prompt({
+                title: "Edit file name",
+                inputType: 'textarea',
+                value: filename,
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("file/rename.php", {
+                            "s3files_id": id,
+                            "s3files_name": result
+                        }, function (data) {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+        {% if 57|instancePermissions %}
+        $(".deleteFile").click(function () {
+            var id = $(this).data("s3fileid");
+            bootbox.confirm({
+                message: "Are you sure you wish to delete this file?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("file/delete.php", {
+                            "s3files_id": id
+                        }, function (data) {
+                            //Hide the file in the display
+                            $(".fileBox[data-s3fileid=" + id + "]").hide();
+                        });
+                    }
+                }
+            });
+        });
+        {% endif %}
+    });
+</script>
