@@ -55,7 +55,7 @@
                            <div>
                                {% if module.modules_type != 3 %}<a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{% else %}<a href="#">{% endif %}
                                     <img class="img-fluid" style="max-height: 340px;"
-                                         src="{{ module.modules_thumbnail|s3URL }}"
+                                         src="{{ module.modules_thumbnail|s3URL("small") }}"
                                          alt="{{ module.modules_name }}"></a>
                             </div>
                             <br/>

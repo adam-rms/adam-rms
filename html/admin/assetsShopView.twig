@@ -63,7 +63,7 @@
                                         <div>
                                             <a href="asset.php?id={{ asset.assetTypes_id }}">
                                             <img class="img-fluid" style="max-height: 340px;"
-                                                 src="{{ thumb.s3files_id|s3URL }}"
+                                                 src="{{ thumb.s3files_id|s3URL("small") }}"
                                                  alt="{{asset.assetTypes_name}}"></a>
                                         </div>
                                     {% endfor %}
