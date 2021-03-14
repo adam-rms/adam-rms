@@ -10,6 +10,9 @@ if (!$AUTH->instancePermissionCheck(36)) die($TWIG->render('404.twig', $PAGEDATA
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
 
+if (!isset($_GET['cancelled'])) $PAGEDATA['includeCancelled'] = false;
+else $PAGEDATA['includeCancelled'] = true;
+
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = 20; //Users per page
@@ -40,16 +43,20 @@ foreach ($clients as $client) {
 		$DBLIB->where("projects.projects_dates_use_end < '" . date('Y-m-d H:i:s'). "'");
 		$PAGEDATA['includeFuture'] = false;
 	} else $PAGEDATA['includeFuture'] = true;
-	$projects = $DBLIB->get("projects", null, ["projects_id"]);
+	$projects = $DBLIB->get("projects", null, ["projects_id","projects_status"]);
 	$client['totalPayments'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
 	$client['totalOutstanding'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
 	foreach ($projects as $project) {
 		$DBLIB->where("projects_id", $project['projects_id']);
 		$DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
 		$project['finance'] = $DBLIB->getOne("projectsFinanceCache");
-		if (!$project['finance']) die('<a href="' . $CONFIG['ROOTURL'] . '/project/?id=' . $project['projects_id'] . '" target="_blank">Project</a> lacks cache error');
+		if (!$project['finance']) throw new Exception("Project lacks cache error");
 
 		$client['totalPayments'] = $client['totalPayments']->add(new Money($project['finance']['projectsFinanceCache_paymentsReceived'], new Currency($AUTH->data['instance']['instances_config_currency'])));
+
+		if (!$PAGEDATA['includeCancelled']) {
+			if ($GLOBALS['STATUSES'][$project['projects_status']]['isCancelled']) continue; //Skip this project
+		}
 		$client['totalOutstanding'] = $client['totalOutstanding']->add(new Money($project['finance']['projectsFinanceCache_grandTotal'], new Currency($AUTH->data['instance']['instances_config_currency'])));
 	}
 

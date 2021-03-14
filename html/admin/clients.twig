@@ -21,6 +21,11 @@
                                 {% else %}
                                     <a href="?future" type="button" class="btn btn-default">Include future projects</a>
                                 {% endif %}
+                                {% if includeCancelled %}
+                                    <a href="?" type="button" class="btn btn-default">Hide cancelled projects</a>
+                                {% else %}
+                                    <a href="?cancelled" type="button" class="btn btn-default">Include cancelled projects</a>
+                                {% endif %}
                             </div>
                             <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
