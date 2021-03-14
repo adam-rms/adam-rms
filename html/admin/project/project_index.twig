@@ -1067,7 +1067,7 @@
                         },
                         {% for client in clients %}
                         {
-                            text: '{{client.clients_name}}',
+                            text: '{{client.clients_name|escape('js') }}',
                             value: '{{ client.clients_id }}',
                         },
                         {% endfor %}
@@ -1094,7 +1094,7 @@
                     inputOptions: [
                         {% for type in potentialProjectTypes %}
                         {
-                            text: '{{type.projectsTypes_name}}',
+                            text: '{{type.projectsTypes_name|escape('js') }}',
                             value: '{{ type.projectsTypes_id }}',
                         },
                         {% endfor %}
@@ -1127,7 +1127,7 @@
                         },
                         {% for user in potentialProjectManagers %}
                         {
-                            text: '{{user.users_name1 ~ " " ~ user.users_name2}}',
+                            text: '{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}',
                             value: '{{ user.users_userid }}',
                         },
                         {% endfor %}
@@ -1412,7 +1412,7 @@
                     inputOptions: [
                         {% for id,status in STATUSES %}
                         {
-                            text: '{{status.name ~ " (" ~ status.description ~ ')'}}',
+                            text: '{{ (status.name ~ " (" ~ status.description ~ ')')|escape('js') }}',
                             value: '{{ id }}',
                         },
                         {% endfor %}
@@ -1459,7 +1459,7 @@
                         },
                         {% for location in locations %}
                         {
-                            text: '{{ location.locations_name }}',
+                            text: '{{ location.locations_name|escape('js') }}',
                             value: '{{ location.locations_id }}',
                         },
                         {% endfor %}
