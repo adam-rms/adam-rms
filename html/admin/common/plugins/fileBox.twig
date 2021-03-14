@@ -1,7 +1,7 @@
 {#
     !!!! DON'T FORGET TO INCLUDE FILEBOX JS AS WELL! !!!!!
 #}
-<ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+<ul class="mailbox-attachments d-flex flex-wrap align-items-stretch clearfix">
     {% for file in files %}
         <li class="fileBox" data-s3fileid="{{ file.s3files_id }}">
             {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
