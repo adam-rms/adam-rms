@@ -812,7 +812,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
         {% endif %}
 
     });
-    console.log("Welcome to {{ CONFIG.PROJECT_NAME }} version {{ CONFIG.VERSION.TAG }}");
+    console.log("Welcome to {{ CONFIG.PROJECT_NAME|escape("js") }} version {{ CONFIG.VERSION.TAG|escape("js") }}");
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
 <script>
