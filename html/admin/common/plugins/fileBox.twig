@@ -3,7 +3,7 @@
 #}
 <ul class="mailbox-attachments d-flex flex-wrap align-items-stretch clearfix">
     {% for file in files %}
-        <li class="fileBox" data-s3fileid="{{ file.s3files_id }}">
+        <li class="fileBox" data-s3fileid="{{ file.s3files_id }}" style="overflow-x: hidden;">
             {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
                 <span class="mailbox-attachment-icon has-img"><img src="{{ file.s3files_id|s3URL("small") }}" alt="{{ file.s3files_name }}" style="max-height: 132.5px;"></span>
             {% else %}
@@ -11,7 +11,7 @@
             {% endif %}
             <div class="mailbox-attachment-info">
                 {% if galleryOnly != true %}
-                <a href="{{ file.s3files_id|s3URL }}" class="mailbox-attachment-name" target="_blank">
+                <a href="{{ file.s3files_id|s3URL }}" class="mailbox-attachment-name" target="_blank" style="white-space: nowrap;" title="{{ file.s3files_name }}">
                     <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i> {{ file.s3files_name }}
                 </a>
                 {% endif %}
