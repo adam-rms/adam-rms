@@ -768,7 +768,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
                 inputOptions: [
                     {% for type in potentialProjectTypes %}
                     {
-                        text: '{{type.projectsTypes_name}}',
+                        text: '{{type.projectsTypes_name|escape('js')}}',
                         value: '{{ type.projectsTypes_id }}',
                     },
                     {% endfor %}
@@ -783,7 +783,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
                             inputOptions: [
                                 {% for user in potentialProjectManagers %}
                                 {
-                                    text: '{{ user.users_name1 ~ " " ~ user.users_name2 }}',
+                                    text: '{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}',
                                     value: '{{ user.users_userid }}',
                                 },
                                 {% endfor %}
