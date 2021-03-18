@@ -36,11 +36,11 @@
                             {% if asset.thumbnail|length > 0 %}
                                 <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                     {% for thumb in asset.thumbnail %}
-                                        <div style="height:100%;width:100%;">
-                                            <a href="asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}" target="_blank">
-                                            <img class="img-fluid" style="max-height: 100%;max-width:100%;"
+                                        <div>
+                                            <a href="asset.php?id={{ asset.assetTypes_id }}">
+                                            <img class="img-fluid" style="max-height: 340px;"
                                                  src="{{ thumb.s3files_id|s3URL("small") }}"
-                                                 alt="Image of {{asset.assetTypes_name}}"></a>
+                                                 alt="{{asset.assetTypes_name}}"></a>
                                         </div>
                                     {% endfor %}
                                 </div>

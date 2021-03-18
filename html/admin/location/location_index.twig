@@ -195,6 +195,7 @@
         {% for location in allLocations %}
         <div class="modal fade" id="editModal{{ location.locations_id }}">
             <div class="modal-dialog">
+                <form class="editForm" data-id="{{ location.locations_id }}">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">New Location</h4>
@@ -203,7 +204,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="editForm" data-id="{{ location.locations_id }}">
                             <input type="hidden" name="locations_id" value="{{ location.locations_id }}"/>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
@@ -247,12 +247,13 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                        </form>
+
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary saveEdit" data-id="{{ location.locations_id }}">Save</button>
+                        <button type="submit" class="btn btn-primary saveEdit" data-id="{{ location.locations_id }}">Save</button>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -269,8 +270,9 @@
             });
             {% endif %}
             {% if 99|instancePermissions %}
-            $(".saveEdit").click(function () {
+            $(".editForm").submit(function (event) {
                 var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+                event.preventDefault();
                 ajaxcall("locations/edit.php", {formData}, function (data) {
                     location.reload();
                 });

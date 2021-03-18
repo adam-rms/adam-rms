@@ -27,38 +27,83 @@
 {% block content %}
     <div class="row">
         <div class="col-md-3">
-
-            <!-- Profile Image -->
-            <div class="card card-primary card-outline">
+            {% if assets|length == 1 %}
+                <div class="card card-secondary card-outline">
+                    <div class="card-body box-profile">
+                        <h3 class="profile-username text-center">{{ assets[0].assets_tag|aTag }}</h3>
+                        {% if assets[0].assets_endDate is not null and assets[0].assets_endDate|date("U") <= "now"|date("U")  %}
+                            <div class="alert alert-danger">
+                                <h5> <i class="fas fa-archive"></i> Asset Archived</h5>
+                                Asset has been {{ assets[0].assets_archived }}
+                            </div>
+                        {% endif %}
+                        {% if assets[0]['link'] %}
+                            <div class="callout callout-success">
+                                Asset is linked to asset <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
+                            </div>
+                        {% endif %}
+                        {% if assets[0]['assets_notes']|length > 0 %}
+                            <p>{{ assets[0]['assets_notes']|nl2br }}</p>
+                        {% endif %}
+                        <ul class="list-group list-group-unbordered mb-3">
+                            {% set assetFieldsLength = 0 %}
+                            {% for field in asset.fields %}
+                                {% if field != "" %}
+                                    {% set assetFieldsLength = assetFieldsLength +1 %}{# Build a count of the number of fields use to help editing an asset #}
+                                    <li class="list-group-item">
+                                        <b>{{field}}</b> <a class="float-right">{{ assets[0]['asset_definableFields_' ~ loop.index] }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            <li class="list-group-item">
+                                <b>Mass</b> <a class="float-right">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Value</b> <a class="float-right">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Day Rate</b> <a class="float-right">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
+                            </li>
+                        </ul>
+                        {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
+                            {% if assets[0].assets_endDate != null and assets[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}
+                                <button title="Asset to be removed" class="btn btn-block btn-success" disabled>Can't add to project</button>
+                            {% elseif assets[0].flagsblocks.COUNT.BLOCK < 1 %}
+                                <button title="Remove from project" {% if (not assets[0].assignment) or USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-block btn-warning removeFromBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Remove from Project</button>
+                                {%  if assets[0].assignment and USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}
+                                    <button title="Assigned to {{ assets[0].assignment[0]['projects_name'] }}" class="btn btn-block btn-success" disabled>Can't add to project</button>
+                                {% endif %}
+                                <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
+                            {% endif %}
+                        {% endif %}
+                        {% if 97|instancePermissions %}
+                            <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
+                        {% endif %}
+                        {% if 19|instancePermissions %}
+                            <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="card card-outline">
                 <div class="card-body box-profile">
                     {% if asset.thumbnail %}
                     <div class="text-center {{ asset.thumbnail|length > 1 ? 'slick' : '' }}">
                         {% for thumb in asset.thumbnail %}
                             <div>
                                 <img class="img-fluid" style="max-height: 340px;"
-                                     src="{{ thumb.s3files_id|s3URL }}"
+                                     src="{{ thumb.s3files_id|s3URL("small") }}"
                                      alt="{{asset.assetTypes_name}}">
                             </div>
                         {% endfor %}
                     </div>
                     {% endif %}
                     <h3 class="profile-username text-center">{{asset.assetTypes_name}}</h3>
-                    {% if assets|length == 1 %}
-                    <p class="text-muted text-center">{{ assets[0].assets_tag|aTag }}</p>
-                    {% endif %}
 
                     <ul class="list-group list-group-unbordered mb-3">
-                        {% if assets|length == 1 %}
-                            {% set assetFieldsLength = 0 %}
-                            {% for field in asset.fields %}
-                                {% if field != "" %}
-                                    {% set assetFieldsLength = assetFieldsLength +1 %}{# Build a count of the number of fields use to help editing an asset #}
-                                <li class="list-group-item">
-                                    <b>{{field}}</b> <a class="float-right">{{ assets[0]['asset_definableFields_' ~ loop.index] }}</a>
-                                </li>
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
                         {% if asset.assetTypes_productLink != null %}
                         <li class="list-group-item">
                             <b>Product Web Link</b> <a class="float-right" href="{{ asset.assetTypes_productLink }}" target="_blank">{{ asset.assetTypes_productLink|length > 25 ? asset.assetTypes_productLink|slice(0, 25) ~ '...': asset.assetTypes_productLink  }}</a>
@@ -70,21 +115,6 @@
                         <li class="list-group-item">
                             <b>Manufacturer</b> <a class="float-right" href="assets.php?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a>
                         </li>
-                        {% if assets|length == 1 %}
-                        {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
-                        <li class="list-group-item">
-                            <b>Mass</b> <a class="float-right">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Value</b> <a class="float-right">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money }}</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Day Rate</b> <a class="float-right">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money }}</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
-                        </li>
-                        {% else %}
                         <li class="list-group-item">
                             <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
                         </li>
@@ -97,58 +127,23 @@
                         <li class="list-group-item">
                             <b>Week Rate</b> <a class="float-right">{{ asset.assetTypes_weekRate|money }}</a>
                         </li>
-                        {% endif %}
                     </ul>
                     {% if asset.oneasset %}
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
                     {% endif %}
                     {% if assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") >= "now"|date("U")  %}
-                        {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions and assets|length == 1 %}
-                            {% if assets[0].assets_endDate != null and assets[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}
-                                <button title="Asset to be removed" class="btn btn-block btn-success" disabled>Can't add to project</button>
-                            {% elseif assets[0].flagsblocks.COUNT.BLOCK < 1 %}
-                            <button title="Remove from project" {% if (not assets[0].assignment) or USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-block btn-warning removeFromBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Remove from Project</button>
-                            {%  if assets[0].assignment and USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}
-                                <button title="Assigned to {{ assets[0].assignment[0]['projects_name'] }}" class="btn btn-block btn-success" disabled>Can't add to project</button>
-                            {% endif %}
-                            <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
-                            {% endif %}
-                        {% endif %}
                         {% if 84|instancePermissions %}
                             <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
                         {% endif %}
-                        {% if 97|instancePermissions and assets|length == 1 %}
-                            <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
-                        {% endif %}
-                        {% if 19|instancePermissions and assets|length == 1 %}
-                            <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
-                        {% endif %}
                     {% endif %}
-                    {{asset.assetTypes_description|nl2br}}
+                    <p>{{asset.assetTypes_description|nl2br}}</p>
                 </div>
-                <!-- /.card-body -->
             </div>
-            <!-- /.card -->
         </div>
-        <!-- /.col -->
+
+
         <div class="col-md-9">
             {% if assets|length == 1 %}
-                {% if assets[0].assets_endDate is not null and assets[0].assets_endDate|date("U") <= "now"|date("U")  %}
-                    <div class="alert alert-danger">
-                        <h5> <i class="fas fa-archive"></i> Asset Archived</h5>
-                        Asset has been {{ assets[0].assets_archived }}
-                    </div>
-                {% endif %}
-                {% if assets[0]['assets_notes']|length > 0 %}
-                <div class="callout callout-default">
-                    {{ assets[0]['assets_notes']|nl2br }}
-                </div>
-                {% endif %}
-                {% if assets[0]['link'] %}
-                    <div class="callout callout-success">
-                        Asset is linked to asset <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
-                    </div>
-                {% endif %}
                 {% for flag in assets[0].flagsblocks.BLOCK %}
                     <div class="alert alert-danger">
                         <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
@@ -199,26 +194,607 @@
                     </div>
                 {% endif %}
             {% endif %}
+            {% if assets|length == 1 %}
+            <div class="card card-secondary card-outline">
+                <div class="card-header p-2">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link active" href="#calendarBoxAsset" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
+                        {% if 59|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit {{ assets[0].assets_tag|aTag }}</a></li>{% endif %}
+                        {% if 61|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
+                        {% if 84|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
+                        {% if  63|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
+                    </ul>
+                </div><!-- /.card-header -->
+                <div class="card-body" style="padding: 0;">
+                    <div class="tab-content">
+                        <div class="active tab-pane" style="padding: 1.25rem" id="calendarBoxAsset">
+                            <div id="calendar"></div>
+                            <script>
+                                $(function () {
+                                    /* initialize the calendar
+                                     -----------------------------------------------------------------*/
+                                    var Calendar = FullCalendar.Calendar;
+                                    var Draggable = FullCalendarInteraction.Draggable;
+
+                                    var calendarEl = document.getElementById('calendar');
+
+                                    // initialize the external events
+                                    // -----------------------------------------------------------------
+
+                                    var calendar = new Calendar(calendarEl, {
+                                        plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                                        buttonText:  {
+                                            today:    'Today',
+                                            month:    'Month',
+                                            week:     'Week',
+                                            day:      'Day',
+                                            list:     'List'
+                                        },
+                                        header    : {
+                                            left  : 'prev,next today',
+                                            center: 'title',
+                                            right : 'dayGridMonth,timeGridWeek'
+                                        },
+                                        //Random default events
+                                        events    : [
+                                            {% set earliestStart = false %}
+                                            {% set latestEnd = false %}
+                                            {% for thisasset in assets %}
+                                            {% for assignment in thisasset.assignments %}
+                                            {
+                                                title          : '{{ thisasset.assets_tag|aTag }} [{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
+                                                start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
+                                                end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
+                                                url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
+                                                backgroundColor: '{{ STATUSES[assignment.projects_status]["backgroundColour"] }}',
+                                                textColor    : '{{ STATUSES[assignment.projects_status]["foregroundColour"] }}'
+                                            },
+                                            {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
+                                            {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
+                                            {% endif %}
+                                            {% if latestEnd < assignment.projects_dates_deliver_end|date("c") or latestEnd == false %}
+                                            {% set latestEnd = assignment.projects_dates_deliver_end|date("c") %}
+                                            {% endif %}
+                                            {% endfor %}
+                                            {% endfor %}
+                                        ],
+                                        validRange: {
+                                            start: '{{ earliestStart|date("c") }}',
+                                            end: '{{ latestEnd|date("c") }}'
+                                        },
+                                        editable  : false,
+                                        droppable : false, // this allows things to be dropped onto the calendar !!!
+                                        drop      : function(info) {
+
+                                        },
+                                        height: 600,
+                                        firstDay: 1,
+                                    });
+
+                                    calendar.render();
+                                })
+                            </script>
+                        </div>
+                        {% if 59|instancePermissions %}
+                            <div class="tab-pane" style="padding:0"  id="editAsset">
+                                <div class="card" style="margin-bottom:0;">
+                                    <div class="card-header p-2">
+                                        <ul class="nav nav-pills">
+                                            <li class="nav-item"><a class="nav-link active" href="#editAssetDetails" data-toggle="tab">Details</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#linked" data-toggle="tab">Asset Link</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#groups" data-toggle="tab">Groups</a></li>
+                                            {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
+                                            {% if 82|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
+                                        </ul>
+                                    </div><!-- /.card-header -->
+                                    <div class="card-body" style="padding: 0;">
+                                        <div class="tab-content">
+                                            <div class="active tab-pane" style="padding: 1.25rem" id="editAssetDetails">
+                                                <form id="editAssetDetailsForm">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Asset ID</span></div>
+                                                        <input class="form-control" name="assets_tag" value="{{ assets[0]['assets_tag'] }}" />
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
+                                                        <textarea class="form-control" rows="2" name="assets_notes" placeholder="">{{ assets[0]['assets_notes'] }}</textarea>
+                                                    </div>
+                                                </form>
+                                                <button class="btn btn-default float-right" id="saveAssetSettingsButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            <div class="tab-pane" style="padding: 1.25rem" id="linked">
+                                                <div class="callout">
+                                                    Linking this asset to another means that whenever that asset is added to a project this asset is also added. For example, you might link an assets power supply to the asset
+                                                </div>
+                                                {% if USERDATA.instance.instances_config_linkedDefaultDiscount > 0 %}
+                                                    <div class="callout callout-danger">
+                                                        When linked assets are added to a project they are discounted by {{ USERDATA.instance.instances_config_linkedDefaultDiscount }}% by default
+                                                    </div>
+                                                {% endif %}
+                                                <select class="form-control select2bs4" id="assetLinkChange">
+                                                    {% if assets[0]['assets_linkedTo'] %}
+                                                        <option value="{{ assets[0]['assets_linkedTo'] }}" selected>{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</option>
+                                                    {% endif %}
+                                                </select>
+                                                <button class="btn btn-default float-right" id="saveAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                                {% if assets[0]['assets_linkedTo'] %}
+                                                    <button class="btn btn-warning float-right" id="removeAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Remove Link</button>
+                                                {% endif %}
+
+                                            </div>
+                                            <div class="tab-pane" style="padding: 1.25rem" id="groups">
+                                                <select class="form-control" id="assetGroups" multiple>
+                                                    {% for group in assets[0]['groups'] %}
+                                                        <option value="{{ group.assetGroups_id }}" selected="selected">{{group.assetGroups_name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetFields">
+                                                <form id="editAssetDefinableFieldsForm">
+                                                    {% for field in asset.fields %}
+                                                        {% if field != "" %}
+                                                            <div class="input-group definableFieldsGroup" data-fieldcount="{{loop.index}}">
+                                                                <div class="input-group-prepend"><span class="input-group-text">{{field}}</span></div>
+                                                                <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_{{ loop.index }}" value="{{ assets[0]['asset_definableFields_' ~ loop.index] }}" data-fieldcount="{{loop.index}}" />
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </form>
+                                                <button class="btn btn-default float-right" id="saveAssetDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            {% if 82|instancePermissions %}
+                                                <div class="tab-pane" style="padding: 1.25rem" id="editAssetDetailsOverrides">
+                                                    <div class="callout">
+                                                        Overriding the details of the asset means that these settings below will take precedence over the properties for the type - this allows you to have multiple assets within a type with different masses for example
+                                                    </div>
+                                                    <form id="editAssetDetailsOverridesForm">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Mass
+                                                    </span>
+                                                            </div>
+                                                            <input type="number" step="0.001" min="0" name="assets_mass" value="{{ assets[0].assets_mass }}" class="form-control" />
+                                                            <div class="input-group-append">
+                                                                <div class="input-group-text">kg</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Value - £
+                                                    </span>
+                                                            </div>
+                                                            <input type="number" step="0.001" min="0" name="assets_value" value="{{ assets[0].assets_value|moneyDecimal }}" class="form-control" />
+                                                        </div>
+
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      Day Rate - £
+                                                    </span>
+                                                            </div>
+                                                            <input type="number" step="0.001" min="0" name="assets_dayRate" value="{{ assets[0].assets_dayRate|moneyDecimal }}" class="form-control"  />
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                              Weekly Rate - £
+                                                            </span>
+                                                            </div>
+                                                            <input type="number" step="0.001" min="0" name="assets_weekRate" class="form-control" value="{{ assets[0].assets_weekRate|moneyDecimal }}" />
+                                                        </div>
+                                                    </form>
+                                                    <button class="btn btn-default float-right" id="editAssetDetailsOverridesButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                                </div>
+                                            {% endif %}
+                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetType">
+                                                <div class="callout callout-danger">
+                                                    Changing the asset type for this asset can have significant implications especially with cost of existing projects and definable fields
+                                                </div>
+                                                <select class="form-control  select2bs4" id="assetTypeChange" placeholder="{{ asset.assetTypes_name }}" value="{{ asset.assetTypes_id }}"></select>
+                                                <button class="btn btn-default float-right" id="saveAssetTypeChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div><!-- /.card-body -->
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if 61|instancePermissions %}
+                            <div class="tab-pane" style="padding: 1.25rem"  id="files">
+                                {% if 62|instancePermissions %}
+                                    <div class="callout callout-default">
+                                        Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
+                                    </div>
+                                    {% embed 'common/plugins/uppy.twig' with {'type': 'ASSET-FILE', 'paste': false, 'typeId': 4, 'subTypeId': assets[0]['assets_id'], 'imagesOnly': false } %}
+                                        {% block success %}
+                                            console.log(responseJson.id);
+                                        {% endblock %}
+                                    {% endembed %}
+                                    <br/>
+                                {% endif %}
+                                {% embed 'common/plugins/fileBox.twig' with {'files': assets[0]['files'] } %}
+                                {% endembed %}
+                            </div>
+                        {% endif %}
+                        {% if 84|instancePermissions %}
+                            <div class="tab-pane" style="padding: 0" id="barcodes">
+                                <table class="table table-striped projects">
+                                    <thead>
+                                    <tr>
+                                        <th>
+
+                                        </th>
+                                        <th>
+                                            Notes
+                                        </th>
+                                        <th>
+                                            Creator
+                                        </th>
+                                        <th>
+                                            Last Scanned
+                                        </th>
+                                        <th style="width:1%;">
+
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for barcode in assets[0].barcodes %}
+                                        <tr>
+                                            <td>
+                                                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ barcode.assetsBarcodes_value }}&size=50&type={{ barcode.assetsBarcodes_type }}" alt="Barcode">
+                                            </td>
+                                            <td>
+                                                {{ barcode.assetsBarcodes_notes }}
+                                            </td>
+                                            <td>
+                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.users_userid }}">
+                                                    {{ barcode.users_name1 ~ ' ' ~ barcode.users_name2}}
+                                                </a>
+                                                <br/>
+                                                <small>
+                                                    Created {{barcode.assetsBarcodes_added|date("d M Y h:i:sa")}}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                {% if barcode.lastScan != null %}
+                                                    {{barcode.lastScan|date("d M Y h:i:sa")}}
+                                                {% else %}
+                                                    <i>Never scanned</i>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if 86|instancePermissions %}
+                                                    <button title="Delete" class="btn btn-sm btn-danger deleteBarcodeButton" data-barcodeid="{{ barcode['assetsBarcodes_id'] }}"><i class="fa fa-trash"></i></button>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                        {% if 63|instancePermissions %}
+                            <div class="tab-pane" style="padding:0"  id="maintenance">
+                                <div class="card" style="margin-bottom:0;">
+                                    <div class="card-header p-2">
+                                        <ul class="nav nav-pills">
+                                            {% if 64|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link active" href="#maintenance-flags" data-toggle="tab">Blocks &amp; Flags</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-jobsOutstanding" data-toggle="tab">Jobs Outstanding</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-jobsCompleted" data-toggle="tab">Jobs Completed</a></li>
+                                        </ul>
+                                    </div><!-- /.card-header -->
+                                    <div class="card-body" style="padding: 0;">
+                                        <div class="tab-content">
+                                            <div class="tab-pane" style="padding: 1.25rem" id="maintenance-newJob">
+                                                <style>
+                                                    .input-group {
+                                                        margin-bottom: 5px;
+                                                    }
+                                                </style>
+                                                <form id="addNewJobForm">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Asset</span></div>
+                                                        <input type="text" class="form-control" disabled value="{{ assets[0].assets_tag|aTag }}" />
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Title</span></div>
+                                                        <input type="text" class="form-control" name="maintenanceJobs_title" id="maintenanceJobstitle" placeholder="Drum revolve key missing" />
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend"><span class="input-group-text">Fault Description</span></div>
+                                                        <textarea class="form-control" rows="5" name="maintenanceJobs_faultDescription" id="maintenanceJobsfaultDescription" placeholder="Details of the fault"></textarea>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                              Priority
+                                                            </span>
+                                                        </div>
+                                                        <select class="form-control" name="maintenanceJobs_priority">
+                                                            <option value="1">Emergency</option>
+                                                            <option value="2">Business Critical</option>
+                                                            <option value="3">Exceptionally Urgent</option>
+                                                            <option value="4">Very Urgent</option>
+                                                            <option value="5">Urgent</option>
+                                                            <option value="6">Urgent Upgrade</option>
+                                                            <option value="7">Short-term Upgrade</option>
+                                                            <option value="8" selected>Routine</option>
+                                                            <option value="9">Long Term</option>
+                                                            <option value="10">Log only</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <label>Tag Users</label>
+                                                        <select class="form-control" multiple="multiple" placeholder="Select users to be tagged for updates in the job" id="tagUserInJob">
+                                                        </select>
+                                                    </div>
+                                                </form>
+
+                                                <button class="btn btn-default float-right" id="addNewJobButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
+                                            </div>
+                                            <div class="active tab-pane" style="padding: 1.25rem" id="maintenance-flags">
+                                                {% for flag in assets[0].flagsblocks.BLOCK %}
+                                                    <div class="alert alert-danger">
+                                                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                        <h5><i class="fas fa-ban"></i> {{ flag.maintenanceJobs_title }}</h5>
+                                                        {{ flag.maintenanceJobs_faultDescription }}
+                                                    </div>
+                                                {% endfor %}
+                                                {% for flag in assets[0].flagsblocks.FLAG %}
+                                                    <div class="alert alert-warning">
+                                                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                        <h5><i class="far fa-flag"></i> {{ flag.maintenanceJobs_title }}</h5>
+                                                        {{ flag.maintenanceJobs_faultDescription }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="tab-pane" style="padding: 0;" id="maintenance-jobsOutstanding">
+                                                <table class="table table-striped projects">
+                                                    <thead>
+                                                    <tr>
+                                                        <th style="width: 1%">
+                                                            #
+                                                        </th>
+                                                        <th>
+                                                            Title
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Creator
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Assigned
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Priority
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Status
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-flag"></i>
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-ban"></i>
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for job in assets[0].jobs %}
+                                                        {% if job.maintenanceJobsStatuses_id != 2 %}
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                                </td>
+                                                                <td>
+                                                                    <a>
+                                                                        {{ job.maintenanceJobs_title }}
+                                                                    </a>
+                                                                    <br/>
+                                                                    <small>
+                                                                        Created {{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}
+                                                                    </small>
+                                                                </td>
+                                                                <td>
+                                                                    <ul class="list-inline">
+                                                                        <li class="list-inline-item">
+                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </td>
+                                                                <td>
+                                                                    {% if job.userAssignedUserName1 != null %}
+                                                                        <ul class="list-inline">
+                                                                            <li class="list-inline-item">
+                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="project-state">
+                                                                    {% if job.maintenanceJobs_priority %}
+                                                                        <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
+                                                                        <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
+                                                                        <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
+                                                                        <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
+                                                                        <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
+                                                                        <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
+                                                                        <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
+                                                                        <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
+                                                                        <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
+                                                                        <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
+                                                                    {% else %}
+
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="project-state">
+                                                                    {% if job.maintenanceJobsStatuses_name %}
+                                                                        <span class="badge badge-default">{{ job.maintenanceJobsStatuses_name }}</span>
+                                                                    {% else %}
+                                                                        <span class="badge badge-default">Awaiting Sorting</span>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td >
+                                                                    {% if job.maintenanceJobs_flagAssets == 1 %}
+                                                                        <i class="fas fa-flag"></i>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td >
+                                                                    {% if job.maintenanceJobs_blockAssets == 1 %}
+                                                                        <i class="fas fa-ban"></i>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane" style="padding: 0" id="maintenance-jobsCompleted">
+                                                <table class="table table-striped projects">
+                                                    <thead>
+                                                    <tr>
+                                                        <th style="width: 1%">
+                                                            #
+                                                        </th>
+                                                        <th>
+                                                            Title
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Creator
+                                                        </th>
+                                                        <th style="width: 5%">
+                                                            Assigned
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Priority
+                                                        </th>
+                                                        <th style="width: 8%" class="text-center">
+                                                            Status
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-flag"></i>
+                                                        </th>
+                                                        <th style="width: 1%" class="text-center">
+                                                            <i class="fas fa-ban"></i>
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for job in assets[0].jobs %}
+                                                        {% if job.maintenanceJobsStatuses_id == 2 %}
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                                </td>
+                                                                <td>
+                                                                    <a>
+                                                                        {{ job.maintenanceJobs_title }}
+                                                                    </a>
+                                                                    <br/>
+                                                                    <small>
+                                                                        Created {{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}
+                                                                    </small>
+                                                                </td>
+                                                                <td>
+                                                                    <ul class="list-inline">
+                                                                        <li class="list-inline-item">
+                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </td>
+                                                                <td>
+                                                                    {% if job.userAssignedUserName1 != null %}
+                                                                        <ul class="list-inline">
+                                                                            <li class="list-inline-item">
+                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="project-state">
+                                                                    {% if job.maintenanceJobs_priority %}
+                                                                        <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
+                                                                        <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
+                                                                        <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
+                                                                        <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
+                                                                        <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
+                                                                        <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
+                                                                        <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
+                                                                        <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
+                                                                        <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
+                                                                        <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
+                                                                    {% else %}
+
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="project-state">
+                                                                    {% if job.maintenanceJobsStatuses_name %}
+                                                                        <span class="badge badge-default">{{ job.maintenanceJobsStatuses_name }}</span>
+                                                                    {% else %}
+                                                                        <span class="badge badge-default">Awaiting Sorting</span>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td >
+                                                                    {% if job.maintenanceJobs_flagAssets == 1 %}
+                                                                        <i class="fas fa-flag"></i>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td >
+                                                                    {% if job.maintenanceJobs_blockAssets == 1 %}
+                                                                        <i class="fas fa-ban"></i>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div><!-- /.card-body -->
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- /.tab-content -->
+                </div><!-- /.card-body -->
+            </div>
+            {% endif %}
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
                         {% if asset.oneasset %}
-                           <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}">View All</a></li>
-                            {% elseif assets|length > 1 %}
-                                <li class="nav-item"><a class="nav-link" href="#assets" data-toggle="tab">Assets</a></li>
-
+                            <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}">View All</a></li>
+                        {% elseif assets|length > 1 %}
+                            <li class="nav-item"><a class="nav-link" href="#assets" data-toggle="tab">Assets</a></li>
                         {% endif %}
+
+                        {% if assets|length > 1 %}
                         <li class="nav-item"><a class="nav-link active" href="#calendarBox" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
+                        {% endif %}
+
+
                         {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) %}
                             <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Edit Type</a></li>
                         {% elseif 58|instancePermissions %}
                             <li class="nav-item"><a class="nav-link" href="#" title="Locked as this asset type was built by AdamRMS">Edit Type</a></li>
                         {% endif %}
-                        {% if assets|length == 1 and 59|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit Asset</a></li>{% endif %}
                         {% if 54|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
-                        {% if assets|length == 1 and 61|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
-                        {% if assets|length == 1 and 84|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
-                        {% if assets|length == 1 and 63|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -292,6 +868,7 @@
                             </table>
                         </div>
                         <!-- /.tab-pane -->
+                        {% if assets|length > 1 %}
                         <div class="active tab-pane" style="padding: 1.25rem" id="calendarBox">
                             <div id="calendar"></div>
                             <script>
@@ -318,7 +895,7 @@
                                         header    : {
                                             left  : 'prev,next today',
                                             center: 'title',
-                                            right : 'dayGridMonth{% if assets|length == 1 %},timeGridWeek{% endif %}'
+                                            right : 'dayGridMonth'
                                         },
                                         //Random default events
                                         events    : [
@@ -327,7 +904,7 @@
                                             {% for thisasset in assets %}
                                                 {% for assignment in thisasset.assignments %}
                                                 {
-                                                    title          : '{% if assets|length > 1 %}{{ thisasset.assets_tag|aTag }} {% endif %}[{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
+                                                    title          : '[{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
                                                     start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                     end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
@@ -360,7 +937,7 @@
                                 })
                             </script>
                         </div>
-                        <!-- /.tab-pane -->
+                        {% endif %}
                         {% if 58|instancePermissions %}
                         <div class="tab-pane" style="padding:0"  id="settings">
                             <div class="card" style="margin-bottom:0;">
@@ -487,134 +1064,6 @@
                         </div>
                         {% endif %}
 
-                        {% if assets|length == 1 and 59|instancePermissions %}
-                            <div class="tab-pane" style="padding:0"  id="editAsset">
-                                <div class="card" style="margin-bottom:0;">
-                                    <div class="card-header p-2">
-                                        <ul class="nav nav-pills">
-                                            <li class="nav-item"><a class="nav-link active" href="#editAssetDetails" data-toggle="tab">Details</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="#linked" data-toggle="tab">Asset Link</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="#groups" data-toggle="tab">Groups</a></li>
-                                            {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
-                                            {% if 82|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
-                                            <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
-                                        </ul>
-                                    </div><!-- /.card-header -->
-                                    <div class="card-body" style="padding: 0;">
-                                        <div class="tab-content">
-                                            <div class="active tab-pane" style="padding: 1.25rem" id="editAssetDetails">
-                                                <form id="editAssetDetailsForm">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend"><span class="input-group-text">Asset ID</span></div>
-                                                        <input class="form-control" name="assets_tag" value="{{ assets[0]['assets_tag'] }}" />
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
-                                                        <textarea class="form-control" rows="2" name="assets_notes" placeholder="">{{ assets[0]['assets_notes'] }}</textarea>
-                                                    </div>
-                                                </form>
-                                                <button class="btn btn-default float-right" id="saveAssetSettingsButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
-                                            </div>
-                                            <div class="tab-pane" style="padding: 1.25rem" id="linked">
-                                                <div class="callout">
-                                                    Linking this asset to another means that whenever that asset is added to a project this asset is also added. For example, you might link an assets power supply to the asset
-                                                </div>
-                                                {% if USERDATA.instance.instances_config_linkedDefaultDiscount > 0 %}
-                                                <div class="callout callout-danger">
-                                                    When linked assets are added to a project they are discounted by {{ USERDATA.instance.instances_config_linkedDefaultDiscount }}% by default
-                                                </div>
-                                                {% endif %}
-                                                <select class="form-control select2bs4" id="assetLinkChange">
-                                                    {% if assets[0]['assets_linkedTo'] %}
-                                                        <option value="{{ assets[0]['assets_linkedTo'] }}" selected>{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</option>
-                                                    {% endif %}
-                                                </select>
-                                                <button class="btn btn-default float-right" id="saveAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
-                                                {% if assets[0]['assets_linkedTo'] %}
-                                                <button class="btn btn-warning float-right" id="removeAssetLinkChangeButton" style="margin-top:10px;margin-bottom:10px;">Remove Link</button>
-                                                {% endif %}
-
-                                            </div>
-                                            <div class="tab-pane" style="padding: 1.25rem" id="groups">
-                                                <select class="form-control" id="assetGroups" multiple>
-                                                    {% for group in assets[0]['groups'] %}
-                                                        <option value="{{ group.assetGroups_id }}" selected="selected">{{group.assetGroups_name}}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetFields">
-                                                <form id="editAssetDefinableFieldsForm">
-                                                    {% for field in asset.fields %}
-                                                        {% if field != "" %}
-                                                        <div class="input-group definableFieldsGroup" data-fieldcount="{{loop.index}}">
-                                                            <div class="input-group-prepend"><span class="input-group-text">{{field}}</span></div>
-                                                            <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_{{ loop.index }}" value="{{ assets[0]['asset_definableFields_' ~ loop.index] }}" data-fieldcount="{{loop.index}}" />
-                                                        </div>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </form>
-                                                <button class="btn btn-default float-right" id="saveAssetDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
-                                            </div>
-                                            {% if 82|instancePermissions %}
-                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetDetailsOverrides">
-                                                <div class="callout">
-                                                    Overriding the details of the asset means that these settings below will take precedence over the properties for the type - this allows you to have multiple assets within a type with different masses for example
-                                                </div>
-                                                <form id="editAssetDetailsOverridesForm">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                      Mass
-                                                    </span>
-                                                        </div>
-                                                        <input type="number" step="0.001" min="0" name="assets_mass" value="{{ assets[0].assets_mass }}" class="form-control" />
-                                                        <div class="input-group-append">
-                                                            <div class="input-group-text">kg</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                      Value - £
-                                                    </span>
-                                                        </div>
-                                                        <input type="number" step="0.001" min="0" name="assets_value" value="{{ assets[0].assets_value|moneyDecimal }}" class="form-control" />
-                                                    </div>
-
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                      Day Rate - £
-                                                    </span>
-                                                        </div>
-                                                        <input type="number" step="0.001" min="0" name="assets_dayRate" value="{{ assets[0].assets_dayRate|moneyDecimal }}" class="form-control"  />
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">
-                                                              Weekly Rate - £
-                                                            </span>
-                                                        </div>
-                                                        <input type="number" step="0.001" min="0" name="assets_weekRate" class="form-control" value="{{ assets[0].assets_weekRate|moneyDecimal }}" />
-                                                    </div>
-                                                </form>
-                                                <button class="btn btn-default float-right" id="editAssetDetailsOverridesButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
-                                            </div>
-                                            {% endif %}
-                                            <div class="tab-pane" style="padding: 1.25rem" id="editAssetType">
-                                                <div class="callout callout-danger">
-                                                    Changing the asset type for this asset can have significant implications especially with cost of existing projects and definable fields
-                                                </div>
-                                                <select class="form-control  select2bs4" id="assetTypeChange" placeholder="{{ asset.assetTypes_name }}" value="{{ asset.assetTypes_id }}"></select>
-                                                <button class="btn btn-default float-right" id="saveAssetTypeChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
-                                            </div>
-                                        </div>
-                                        <!-- /.tab-content -->
-                                    </div><!-- /.card-body -->
-                                </div>
-                            </div>
-                        {% endif %}
-                        <!-- /.tab-pane -->
                         {% if 54|instancePermissions %}
                         <div class="tab-pane" style="padding: 1.25rem"  id="typeFiles">
                             {% if 55|instancePermissions %}
@@ -631,82 +1080,6 @@
                             {% embed 'common/plugins/fileBox.twig' with {'files': asset.files } %}
                             {% endembed %}
                         </div>
-                        {% endif %}
-
-                        {% if assets|length == 1 and 61|instancePermissions %}
-                            <div class="tab-pane" style="padding: 1.25rem"  id="files">
-                               {% if 62|instancePermissions %}
-                                   <div class="callout callout-default">
-                                       Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
-                                   </div>
-                                   {% embed 'common/plugins/uppy.twig' with {'type': 'ASSET-FILE', 'paste': false, 'typeId': 4, 'subTypeId': assets[0]['assets_id'], 'imagesOnly': false } %}
-                                        {% block success %}
-                                            console.log(responseJson.id);
-                                        {% endblock %}
-                                    {% endembed %}
-                                    <br/>
-                                {% endif %}
-                                {% embed 'common/plugins/fileBox.twig' with {'files': assets[0]['files'] } %}
-                                {% endembed %}
-                            </div>
-                        {% endif %}
-                        {% if assets|length == 1 and 84|instancePermissions %}
-                            <div class="tab-pane" style="padding: 0" id="barcodes">
-                                <table class="table table-striped projects">
-                                    <thead>
-                                    <tr>
-                                        <th>
-
-                                        </th>
-                                        <th>
-                                            Notes
-                                        </th>
-                                        <th>
-                                            Creator
-                                        </th>
-                                        <th>
-                                            Last Scanned
-                                        </th>
-                                        <th style="width:1%;">
-
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for barcode in assets[0].barcodes %}
-                                        <tr>
-                                            <td>
-                                                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ barcode.assetsBarcodes_value }}&size=50&type={{ barcode.assetsBarcodes_type }}" alt="Barcode">
-                                            </td>
-                                            <td>
-                                                {{ barcode.assetsBarcodes_notes }}
-                                            </td>
-                                            <td>
-                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.users_userid }}">
-                                                    {{ barcode.users_name1 ~ ' ' ~ barcode.users_name2}}
-                                                </a>
-                                                <br/>
-                                                <small>
-                                                    Created {{barcode.assetsBarcodes_added|date("d M Y h:i:sa")}}
-                                                </small>
-                                            </td>
-                                            <td>
-                                                {% if barcode.lastScan != null %}
-                                                    {{barcode.lastScan|date("d M Y h:i:sa")}}
-                                                {% else %}
-                                                    <i>Never scanned</i>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {% if 86|instancePermissions %}
-                                                    <button title="Delete" class="btn btn-sm btn-danger deleteBarcodeButton" data-barcodeid="{{ barcode['assetsBarcodes_id'] }}"><i class="fa fa-trash"></i></button>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
                         {% endif %}
                         {% if 63|instancePermissions %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
@@ -1004,7 +1377,6 @@
                     <!-- /.tab-content -->
                 </div><!-- /.card-body -->
             </div>
-            <!-- /.nav-tabs-custom -->
         </div>
     </div>
 

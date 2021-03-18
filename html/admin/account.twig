@@ -435,7 +435,7 @@
 				</div>
 				<div class="card-body">
 					{% if USER.users_thumbnail != null %}
-						<img src="{{ USER.users_thumbnail|s3URL("") }}" style="width: 100%;">
+						<img src="{{ USER.users_thumbnail|s3URL("small") }}" style="width: 100%;">
 						{% else %}
 						<i>None currently set</i>
 					{% endif %}
