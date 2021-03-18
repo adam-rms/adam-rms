@@ -1,6 +1,5 @@
-Public site
 <?php
-echo $_SERVER['SERVER_NAME'];
-echo "\n";
-echo $_SERVER['REQUEST_URI'];
+require_once 'common/head.php';
+
+echo $TWIG->render('indexPublic.twig', $PAGEDATA);
 ?>

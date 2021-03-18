@@ -1,0 +1,64 @@
+{% extends 'templatePublic.twig' %}
+{% block main %}
+    <style>
+
+        .mailbox-attachments {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .mailbox-attachments li {
+            border: 1px solid #eee;
+            float: left;
+            margin-bottom: 10px;
+            margin-right: 10px;
+            width: 200px;
+        }
+
+        .mailbox-attachment-name {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .mailbox-attachment-icon,
+        .mailbox-attachment-info,
+        .mailbox-attachment-size {
+            display: block;
+        }
+
+        .mailbox-attachment-info {
+            background: #f8f9fa;
+            padding: 10px;
+        }
+
+        .mailbox-attachment-size {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .mailbox-attachment-size > span {
+            display: inline-block;
+            padding-top: 0.75rem;
+        }
+
+        .mailbox-attachment-icon {
+            color: #666;
+            font-size: 65px;
+            max-height: 132.5px;
+            padding: 20px 10px;
+            text-align: center;
+        }
+
+        .mailbox-attachment-icon.has-img {
+            padding: 0;
+        }
+
+        .mailbox-attachment-icon.has-img > img {
+            height: auto;
+            max-width: 100%;
+        }
+
+    </style>
+    {% embed 'common/plugins/fileBox.twig' with {'files': INSTANCE.FILES } %}
+    {% endembed %}
+{% endblock %}

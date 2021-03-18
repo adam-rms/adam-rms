@@ -1,0 +1,8 @@
+{% extends 'templatePublic.twig' %}
+{% block menu %}
+    {% embed 'assets/searchForm.twig' with {'instance': INSTANCE.instances_id, 'instancePublicData': INSTANCE.publicData, 'CONFIG':CONFIG, 'PUBLIC': true } only %}
+    {% endembed %}
+{% endblock %}
+{% block main %}
+    <div id="pageContent"></div>
+{% endblock %}

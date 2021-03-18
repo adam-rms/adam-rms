@@ -191,6 +191,10 @@ class bCMS {
                 //Module step image
             case 14:
                 //Payment file attachment
+            case 15:
+                //Public file
+                $secure = false;
+                $instanceIgnore = true;
             default:
                 //There are no specific requirements for this file so not to worry.
         }
@@ -277,6 +281,175 @@ class bCMS {
             array_push($return,$user['users_userid']);
         }
         return $return;
+    }
+    function deepSearch($instanceid=false,$page=1,$pageLimit=20,$category=null,$keyword="",$manufacturer=false,$group=false,$showLinked=false,$showArchived=false,$dateStart = false,$dateEnd = false) {
+        global $DBLIB,$AUTH;
+        $scriptStartTime = microtime (true);
+        $DBLIB->setTrace(true, $_SERVER['SERVER_ROOT']);
+        $SEARCH = [
+            "INSTANCE_ID" => $instanceid,
+            "PAGE" =>  $page ? intval($page) : 1,
+            "PAGE_LIMIT" => $pageLimit ? intval($pageLimit) : 20,
+            "TERMS" => [
+                "CATEGORY" => $category,
+                "KEYWORDS" => (strlen(trim($keyword)) > 0 ? trim($keyword) : false),
+                "MANUFACTURER" => $manufacturer,
+                "GROUPS" => ($group ? explode(",",$group) : false),
+                "DATE-START" => $dateStart,
+                "DATE-END" => $dateEnd
+            ],
+            "SETTINGS" => [
+                "SHOWLINKED" => $showLinked,
+                "SHOWARCHIVED" => $showArchived
+            ]
+        ];
+        $RETURN = [
+            "PAGINATION" => [
+                "PAGE" => $SEARCH['PAGE']
+            ],
+            "ASSETS" => [],
+            "PROJECT" => [
+                "ID" => false
+            ]
+        ];
+
+
+        //Evaluate instance id
+        if ($SEARCH['INSTANCE_ID'] == null) {
+            if ($AUTH->login) $SEARCH['INSTANCE_ID'] = $AUTH->data['instance']['instances_id'];
+            else return false;
+        }
+        $DBLIB->where("instances_id",$SEARCH['INSTANCE_ID']);
+        $DBLIB->where("instances_deleted",0);
+        $SEARCH['INSTANCE'] = $DBLIB->getone("instances");
+        if (!$SEARCH['INSTANCE']) return false;
+        $SEARCH['INSTANCE']['instances_publicConfig'] = json_decode($SEARCH['INSTANCE']['instances_publicConfig'],true);
+        if (!$SEARCH['INSTANCE']['instances_publicConfig']['enableAssets'] and !$AUTH->login) return false;
+
+        //Evaluate dates
+        if ($dateStart and $dateEnd and ($SEARCH['INSTANCE']['instances_publicConfig']['enableAssetAvailability'] or $AUTH->login)) {
+            $dateStart = strtotime($dateStart);
+            $dateEnd = strtotime($dateEnd);
+            if ($dateEnd <= $dateStart) {
+                $dateStart = false;
+                $dateEnd = false;
+            }
+        } elseif ($AUTH->login and $AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {
+            $DBLIB->where("projects_id",$AUTH->data['users_selectedProjectID']);
+            $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")"); //Duplicated elsewhere
+            $DBLIB->where("projects.projects_deleted", 0);
+            $DBLIB->where("projects_dates_deliver_start",NULL,"IS NOT");
+            $DBLIB->where("projects_dates_deliver_end",NULL,"IS NOT");
+            $thisProject = $DBLIB->getone("projects",["projects_dates_deliver_start","projects_dates_deliver_end"]);
+            if (!$thisProject) {
+                $dateStart = false;
+                $dateEnd = false;
+            } else {
+                $dateStart = strtotime($thisProject['projects_dates_deliver_start']);
+                $dateEnd = strtotime($thisProject['projects_dates_deliver_end']);
+                $RETURN['PROJECT']['ID'] = $AUTH->data['users_selectedProjectID'];
+            }
+        } else {
+            $dateStart = false;
+            $dateEnd = false;
+        }
+        $RETURN['PROJECT']['DATESTART'] = $dateStart;
+        $RETURN['PROJECT']['DATEEND'] = $dateEnd;
+        
+        //**START QUERY**
+
+        //Evaluate categories
+        $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
+        $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
+        if ($SEARCH['TERMS']['CATEGORY']) $DBLIB->where('assetTypes.assetCategories_id', explode(",",$SEARCH['TERMS']['CATEGORY']), 'IN');
+
+        //Evaluate manufacturers
+        $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
+        if ($SEARCH['TERMS']['MANUFACTURER']) $DBLIB->where('manufacturers.manufacturers_id', explode(",",$SEARCH['TERMS']['MANUFACTURER']), 'IN');
+
+        //Evaluate groups
+
+
+
+        //Sorting
+        //TODO better sorting
+        $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
+        $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
+
+        //Keywords
+        if (strlen($SEARCH['TERMS']['KEYWORDS']) > 0) {
+            //Search
+            $DBLIB->where ("manufacturers.manufacturers_name", '%' . $SEARCH['TERMS']['KEYWORDS'] . '%', 'like');
+            $DBLIB->orWhere ("assetTypes.assetTypes_description", '%' . $SEARCH['TERMS']['KEYWORDS'] . '%', 'like');
+            $DBLIB->orWhere ("assetTypes.assetTypes_name", '%' . $SEARCH['TERMS']['KEYWORDS'] . '%', 'like');
+        }
+
+
+        //The actual select
+        $DBLIB->pageLimit = $SEARCH["PAGE_LIMIT"];
+        $DBLIB->where("assetTypes.instances_id",$SEARCH['INSTANCE_ID']);
+        $DBLIB->orWhere("assetTypes.instances_id", NULL, 'IS');
+        $assets = $DBLIB->arraybuilder()->paginate('assetTypes', $SEARCH["PAGE"], ["assetTypes.*", "manufacturers.*", "assetCategories.*", "assetCategoriesGroups_name"]);
+        $RETURN['PAGINATION']['COUNT'] = $DBLIB->getValue ("assetTypes", "count(*)");
+        $RETURN['PAGINATION']['TOTAL-PAGES'] = $DBLIB->totalPages;
+        foreach ($assets as $asset) {
+            $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
+            $DBLIB->where("assets.instances_id",$SEARCH['INSTANCE_ID']);
+            $DBLIB->where("assets_deleted",0);
+            if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) {
+                $DBLIB->where ("assets.assets_endDate", NULL, 'IS');
+                $DBLIB->orWhere("assets.assets_endDate",date ("Y-m-d H:i:s"),">=");
+            }
+            if ($SEARCH['TERMS']['GROUPS']) {
+                $DBLIB->where ('1=0');//Workaround to allow use of or command
+                foreach ($SEARCH['GROUPS'] as $group) {
+                    if ($group != null) $DBLIB->orWhere(intval($group) . ' IN (assets.assets_assetGroups)');
+                }
+            }
+            if (!$SEARCH['SETTINGS']['SHOWLINKED']) $DBLIB->where ("assets.assets_linkedTo", NULL, 'IS');
+            $DBLIB->orderBy("assets.assets_tag", "ASC");
+            /*
+            if (isset($_GET['barcodes'])){
+                if ($_GET['barcodes'] == 1) {
+                    $DBLIB->where("((SELECT COUNT(assetsBarcodes_id) FROM assetsBarcodes WHERE assetsBarcodes.assets_id = assets.assets_id AND assetsBarcodes_deleted = 0) >0)");
+                } else {
+                    $DBLIB->where("((SELECT COUNT(assetsBarcodes_id) FROM assetsBarcodes WHERE assetsBarcodes.assets_id = assets.assets_id AND assetsBarcodes_deleted = 0) <1)");
+                }
+            }*/
+            $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass","assets_endDate"]);
+            if (!$assetTags) continue;
+            $asset['count'] = count($assetTags);
+            $asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
+            $asset['thumbnail'] = $this->s3List(2, $asset['assetTypes_id'],'s3files_meta_uploaded','ASC',1);
+            $asset['tags'] = [];
+            foreach ($assetTags as $tag) {
+                if ($dateStart and $dateEnd) {
+                    //Check availability
+                    $DBLIB->where("assets_id", $tag['assets_id']);
+                    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
+                    $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . ")" . ($RETURN['PROJECT']['ID'] ? "OR (projects.projects_id = '" . $RETURN['PROJECT']['ID'] . "')" : '') . ")");
+                    $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+                    $DBLIB->where("projects.projects_deleted", 0);
+                    $DBLIB->where("((projects_dates_deliver_start >= '" . date ("Y-m-d H:i:s",$dateStart)  . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateStart) . "' AND projects_dates_deliver_end <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateEnd) . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateStart) . "'))");
+                    $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name"]);
+                }
+                if (!$SEARCH['INSTANCE']['instances_publicConfig']['enableAssetsPrices'] and !$AUTH->login) {
+                    $tag['assets_dayRate'] = null;
+                    $tag['assets_weekRate'] = null;
+                } if (!$SEARCH['INSTANCE']['instances_publicConfig']["enableAssetsValues"] and !$AUTH->login) $tag['assets_value'] = null;
+                $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
+                $asset['tags'][] = $tag;
+            }
+            if (!$SEARCH['INSTANCE']['instances_publicConfig']['enableAssetsPrices'] and !$AUTH->login) {
+                $asset['assetTypes_weekRate'] = null;
+                $asset['assetTypes_dayRate'] = null;
+            } if (!$SEARCH['INSTANCE']['instances_publicConfig']["enableAssetsValues"] and !$AUTH->login) $asset['assetTypes_value'] = null;
+            $RETURN['ASSETS'][] = $asset;
+        }
+        //$RETURN['MYSQL-TRACE'] = $DBLIB->trace;
+        $RETURN['SEARCH'] = $SEARCH; //TODO Hide
+        $RETURN['SPEED'] = microtime (true)-$scriptStartTime;
+        return $RETURN;
     }
 }
 
@@ -579,3 +752,12 @@ class projectFinanceCacher {
         return $this->adjust($key,$value,$subtract);
     }
 }
+
+
+$PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
+$PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
+$PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
+
+
+
+require_once __DIR__ . '/libs/twig.php';

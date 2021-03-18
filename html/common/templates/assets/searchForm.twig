@@ -1,0 +1,103 @@
+<form method="post" id="deepSearchAssetForm">
+    <input type="hidden" name="instance_id" value="{{ instance }}" />
+    <input type="hidden" name="html" value="please" />
+    {% if PUBLIC %}
+        <input type="hidden" name="public" value="true" />{# Nothing too exciting, just makes sure  #}
+    {% endif %}
+    <div class="form-group">
+        <button type="submit" class="btn btn-default btn-outline-success">Search</button>
+        <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
+    </div>
+    <div class="form-group">
+        <label>Keywords</label>
+        <input class="form-control" type="text" name="keyword" placeholder="SD11, Viper, Shure, Canon" />
+    </div>
+    <div class="form-group">
+        <label>Category</label>
+        <input class="form-control" type="text" name="category" placeholder="SD11, Viper, Shure, Canon" />
+    </div>
+    <div class="form-group">
+        <label>Manufacturer</label>
+        <input class="form-control" type="text" name="manufacturer" placeholder="SD11, Viper, Shure, Canon" />
+    </div>
+    {% if AUTH.login %}
+    <div class="form-group">
+        <label>Group</label>
+        <input class="form-control" type="text" name="group" placeholder="SD11, Viper, Shure, Canon" />
+    </div>
+    {% endif %}
+    {% if AUTH.login or instancePublicData.enableAssetAvailability %}
+    <div class="form-group">
+        <label>Show availability between</label>
+        <input type="text" class="form-control float-right" name="dates">
+    </div>
+    {% endif %}
+    <div class="form-group">
+        <label>Page Limit</label>
+        <select class="form-control" name="page_limit">
+            <option>10</option>
+            <option selected>20</option>
+            <option>50</option>
+            <option>100</option>
+        </select>
+    </div>
+    {% if AUTH.login %}
+    <div class="mb-1">
+        <input type="checkbox" name="showlinked" value="0" class="mr-1">
+        <span>Show Assets linked to others</span>
+    </div>
+    <div class="mb-1">
+        <input type="checkbox" name="showarchived" value="0" class="mr-1">
+        <span>Show Archived Assets</span>
+    </div>
+    <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?xlsx" class="btn btn-default" title="Excel Export"><i class="fas fa-file-excel"></i></a>
+    <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?csv" class="btn btn-default" title="CSV Export"><i class="fas fa-file-csv"></i></a>
+    {% endif %}
+</form>
+<script>
+    function triggerDeepSearch(data) {
+        $.ajax({
+            url: '{{CONFIG.ROOTURL}}/api/assets/deepSearch.php',
+            dataType: 'json',
+            cache: false,
+            method: 'post',
+            data: data,
+            success: function (result) {
+                if (result.result) {
+                    $("#pageContent").html(result['response']['html']);
+                    console.log(result['response']);
+                }
+            }, error: function (result) {
+                console.log(result);
+                alert("Error");
+            }
+        });
+    }
+    $(document).ready(function () {
+       $("#deepSearchAssetForm").submit(function (event) {
+           event.preventDefault();
+           var search = $(this).serializeArray();
+           triggerDeepSearch(search);
+       });
+       $(document).on("click",".page-link",function () {
+           var data = $("#deepSearchAssetForm").serializeArray();
+           data.push({"name": "page", "value": $(this).data("page")});
+           triggerDeepSearch(data);
+       });
+        $('#deepSearchAssetForm input[name ="dates"]').daterangepicker({
+            timePicker: true,
+            timePickerIncrement: 15,
+            locale: {
+                format: 'DD MMM YYYY hh:mm A'
+            },
+            autoUpdateInput: false
+        });
+        $('#deepSearchAssetForm input[name ="dates"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD MMM YYYY hh:mm A') + ' - ' + picker.endDate.format('DD MMM YYYY hh:mm A'));
+        });
+
+        $('#deepSearchAssetForm input[name ="dates"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+    });
+</script>
