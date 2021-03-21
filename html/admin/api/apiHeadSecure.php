@@ -12,5 +12,6 @@ if (!$CONFIG['DEV']) {
     });
 } elseif (!$AUTH->permissionCheck(17) and !$GLOBALS['AUTH']->data['viewSiteAs']) finish(false,["message"=>"Can't use dev site"]);
 
+$PAGEDATA['AUTH'] = $GLOBALS['AUTH'];
 $PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);

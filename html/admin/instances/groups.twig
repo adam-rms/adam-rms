@@ -1,16 +1,5 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js" integrity="sha256-FcVIknBiVRk5KLQeIBb9VQdtFRMqwffXyZ+D8q0gQro=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" integrity="sha256-xJOZHfpxLR/uhh1BwYFS5fhmOAdIRQaiOul5F/b7v3s=" crossorigin="anonymous" />
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/select2-bootstrap4.min.css" />
-    <style>
-        .select2-selection--multiple {
-            max-height: 10rem;
-            overflow-y: auto
-        }
-    </style>
-
-
     <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
     <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
 {% endblock %}
@@ -44,7 +33,7 @@
                     {% for group in groups %}
                     <tr>
                         <td style="width: 10%;">
-                            <a href="{{ CONFIG.ROOTURL }}/assets.php?group={{ group.assetGroups_id }}">{{ group.assetGroups_name }}</a>
+                            {{ group.assetGroups_name }}
                             {% if group.users_userid is not null %}
                                 <br/><span class="badge badge-secondary">Visible only to me</span>
                             {% endif %}

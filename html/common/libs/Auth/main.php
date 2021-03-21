@@ -228,6 +228,7 @@ class bID
             $DBLIB->update('authTokens', ["authTokens_valid" => 0]);
         }
         $_SESSION = array();
+        $this->login = false;
     }
 
     public function emailTaken($email)

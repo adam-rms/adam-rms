@@ -1,10 +1,4 @@
 {% extends "assets/template.twig" %}
-{% block htmlIncludes %}
-    <!--Select2-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js" integrity="sha256-FcVIknBiVRk5KLQeIBb9VQdtFRMqwffXyZ+D8q0gQro=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" integrity="sha256-xJOZHfpxLR/uhh1BwYFS5fhmOAdIRQaiOul5F/b7v3s=" crossorigin="anonymous" />
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/select2-bootstrap4.min.css" />
-{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-12 col-md-12 col-lg-4">
@@ -110,15 +104,6 @@
             </div>
         </div>
         <div class="col-12 col-md-12 col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Tools</h3>
-                </div>
-                <div class="card-body">
-                    <a href="{{ CONFIG.ROOTURL }}/assets.php?listView=1&barcodes=0&pageLimit=250&all=1" class="btn btn-default">Show assets without Barcodes</a>
-                    <a href="{{ CONFIG.ROOTURL }}/assets.php?listView=1&barcodes=1&pageLimit=250&all=1" class="btn btn-default">Show assets with Barcodes</a>
-                </div>
-            </div>
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Assets</h3>
