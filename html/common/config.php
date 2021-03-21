@@ -34,7 +34,7 @@ $CONFIG = array(
     'VERSION' => ['COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')],
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
-    "ROOTURL" => getenv('bCMS__ROOTURL'), //Set on a frontend/backend basis
+    "ROOTURL" => getenv('bCMS__ROOTURL'),
     "PROJECT_SUPPORT_EMAIL" => "studios@jbithell.com",
     'AWS' => [
         'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
