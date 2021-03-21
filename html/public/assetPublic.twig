@@ -34,10 +34,10 @@
             </li>
         {% endif %}
         <li class="list-group-item">
-            <b>Category</b> <a class="float-right" href="#">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
+            <b>Category</b> {{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}
         </li>
         <li class="list-group-item">
-            <b>Manufacturer</b> <a class="float-right" href="#">{{ asset.manufacturers_name }}</a>
+            <b>Manufacturer</b> {{ asset.manufacturers_name }}
         </li>
         {% if assets|length == 1 %}
             {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
