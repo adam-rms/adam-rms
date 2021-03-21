@@ -12,6 +12,14 @@ if (isset($_POST['instance_id'])) {
 } elseif ($AUTH->login) $instanceID = $AUTH->data['instance']["instances_id"];
 else finish (false);
 
+$assetCategories= $DBLIB->subQuery();
+$assetCategories->where("assets.instances_id",$instanceID);
+$assetCategories->where("assets_deleted",0);
+$assetCategories->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
+$assetCategories->groupBy ("assetTypes.assetCategories_id");
+$assetCategories->get ("assets", null, "assetCategories_id");
+$DBLIB->where("assetCategories_id", $assetCategories, "IN");
+$DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
 $DBLIB->orderBy("assetCategories_rank", "ASC");
 $DBLIB->where("assetCategories_deleted",0);
 $DBLIB->where("(instances_id IS NULL OR instances_id = '" . $instanceID . "')");
