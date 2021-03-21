@@ -690,7 +690,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
                                 {% endif %}
                             {% endfor %}
                             {% if thisProject %}
-                                 <option selected>{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</option>
+                                 <option selected value="{{ thisProject.projects_id }}">{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</option>
                             {% endif %}
                         </select>
                     </div>
