@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../apiHead.php';
 
+if ($AUTH->login and isset($_POST['projectid']) and $_POST['projectid'] != $AUTH->data["users_selectedProjectID"]) {
+    $DBLIB->where("users_userid", $AUTH->data['users_userid']);
+    $update = $DBLIB->update("users", ["users_selectedProjectID" => $_POST['projectid']], 1);
+    if (!$update) finish(false);
+}
+
 if (isset($_POST['public']) and $AUTH->login) {
     //Simulate not being logged out, even if they are logged in, on public mode
     $GLOBALS['AUTH']->login = false;

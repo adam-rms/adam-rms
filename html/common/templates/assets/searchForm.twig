@@ -26,6 +26,8 @@
         <select class="form-control  select2bs4" name="group[]" multiple></select>
     </div>
     {% endif %}
+    {% block formExtras %}
+    {% endblock %}
     {% if AUTH.login or instancePublicData.enableAssetAvailability %}
     <div class="form-group">
         <label>Show availability between</label>

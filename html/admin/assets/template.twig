@@ -211,64 +211,6 @@
             </div>
         </form>
         <ul class="navbar-nav ml-auto">
-            {% if projects and 31|instancePermissions %}
-          <li class="nav-item dropdown">
-                <a class="nav-link" {% if projects|length <= 20 %} data-toggle="dropdown" href="#" {% else %} href="{{ CONFIG.ROOTURL }}/project/list.php" {% endif %}>
-                    <div class="d-none d-lg-block">
-                        <i class="fas fa-shopping-basket"></i>
-                        {% if thisProject %}
-                            {{ thisProject.projects_name|u.truncate(22, '...') }}
-                        {% endif %}
-                    </div>
-                    <div class="d-block d-lg-none">
-                        <i class="fas fa-shopping-basket"></i>
-                    </div>
-                </a>
-              {% if projects|length <= 20 %}
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                    {% if thisProject %}
-                    <a href="#" class="dropdown-item">
-                        <h3 class="dropdown-item-title">
-                            {{ thisProject.projects_name|u.truncate(40, '...') }}
-                            {% if thisProject.instances_name %}
-                                <span class="badge badge-danger">{{ thisProject.instances_name|u.truncate(20, '...') }}</span>
-                            {% endif %}
-                        </h3>
-                        <p class="text-sm text-muted"><i class="fas fa-shopping-basket mr-1"></i> Selected</p>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    {% endif %}
-                    {% for project in projects %}
-                        {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
-                            <a href="#" class="dropdown-item changeProjectBasket" data-projectid="{{ project.projects_id }}">
-                                <h3 class="dropdown-item-title">
-                                    {{ project.projects_name|u.truncate(40, '...') }}
-                                    <span class="float-right text-sm text-danger">
-                                        {% if project.projects_manager == USERDATA.users_userid %}
-                                        <i class="fas fa-star" title="Project Manager"></i>
-                                        {% endif %}
-                                    </span>
-                                </h3>
-                                {% if USERDATA.users_selectedProjectID == project.projects_id %}
-                                <p class="text-sm text-muted"><i class="fas fa-shopping-basket mr-1"></i> Selected</p>
-                                {% endif %}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            {% endif %}
-                        {% endfor %}
-                </div>
-              {% endif %}
-            </li>
-            {% elseif thisProject %}
-            <li class="nav-item">
-                <a class="nav-link">
-                    <div class="d-none d-lg-block">
-                        <i class="fas fa-shopping-basket"></i>
-                        {{ thisProject.projects_name|u.truncate(22, '...') }}
-                    </div>
-                </a>
-            </li>
-            {% endif %}
             {% if USERDATA.instances|length > 0 %}
                 <li class="nav-item dropdown">
                     <a class="nav-link"  data-toggle="dropdown" href="#">
@@ -736,7 +678,29 @@ text-{{ STATUSES[project.projects_status]['class'] }}
         <!-- Control sidebar content goes here -->
         <div class="p-3 control-sidebar-content">
             <h5>Search assets</h5>
-            {% embed 'assets/searchForm.twig' with {'instance': USERDATA.instance.instances_id, 'AUTH': AUTH, 'CONFIG':CONFIG } only %}
+            {% embed 'assets/searchForm.twig' with {'instance': USERDATA.instance.instances_id } %}
+                {% block formExtras %}
+                    {% if projects and 31|instancePermissions %}
+                    <div class="form-group">
+                        <label>Show availability for project</label>
+                        <select class="form-control" name="projectid">
+                            {% for project in projects %}
+                                {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
+                                    <option {% if USERDATA.users_selectedProjectID == project.projects_id %}selected{% endif %} value="{{ project.projects_id }}">{{ project.projects_name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                            {% if thisProject %}
+                                 <option selected>{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    {% elseif thisProject %}
+                        <div class="form-group">
+                            <label>Show availability for project</label>
+                            <p>{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</p>
+                        </div>
+                    {% endif %}
+                {% endblock %}
             {% endembed %}
         </div>
     </aside>
