@@ -2,7 +2,7 @@
 <div class="card card-solid">
     <div class="card-header">
         <h3 class="card-title" style="margin-top: 0.4rem;">
-            Showing {{ PAGINATION.OFFSET>0 ? 'results ' ~ PAGINATION.OFFSET ~ '-' ~ (PAGINATION.OFFSET+(ASSETS|length)) : ASSETS|length }} of {{ PAGINATION.COUNT }} result{{ PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ SPEED|round(1) }} seconds
+            Showing {{ PAGINATION.OFFSET>0 ? 'results ' ~ PAGINATION.OFFSET ~ '-' ~ (PAGINATION.OFFSET+(ASSETS|length)) : ASSETS|length }} of {{ PAGINATION.COUNT }} result{{ PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ SPEED|round(1) }} second{{ SPEED|round(1) != 1 ? 's':'' }}
         </h3>
         <div class="card-tools pull-right">
         {% if PAGINATION['TOTAL-PAGES'] > 1 %}
