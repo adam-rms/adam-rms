@@ -8,7 +8,7 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
 	else {
         if (filter_var($input, FILTER_VALIDATE_EMAIL)) $DBLIB->where ("users_email", $input);
         else $DBLIB->where ("users_username", $input);
-        $user = $DBLIB->getOne("users",["users.users_salty1", "users.users_suspended", "users.users_salty2", "users.users_password", "users.users_userid", "users.users_hash"]);
+        $user = $DBLIB->getOne("users",["users.users_salty1", "users.users_suspended", "users.users_salty2", "users.users_password", "users.users_userid", "users.users_hash","users.users_emailVerified",]);
         if (!$user) finish(false, ["code" => null, "message" => "No user found with associated email address or username"]);
 
         if ($user['users_password'] != hash($user['users_hash'], $user['users_salty1'] . $password . $user['users_salty2'])) $successful = false;
@@ -33,6 +33,7 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         if ($bruteforceattempt && !$successful) finish(false, ["code" => null, "message" => "Sorry - you've tried too many times to login - please try again in 5 minutes"]);
         elseif (!$successful) finish(false, ["code" => null, "message" => "Password incorrect"]);
         elseif ($user['users_suspended'] != '0') finish(false, ["code" => 5, "message" => "User suspended"]);
+        elseif ($user['users_emailVerified'] != 1) finish(false, ["code" => "VERIFYEMAIL", "message" => "Please verify your email address using the link we sent you to login","userid" => $user['users_userid']]);
 		else {
 		    $GLOBALS['AUTH']->generateToken($user['users_userid'], false);
             finish(true);

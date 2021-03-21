@@ -5,17 +5,11 @@
     </div>
     <form id="form1">
 		<input class="form-control form-control-lg" id="form1Input" autocomplete="username" placeholder="Username or Email" type="text" style="margin-top: 10px; margin-bottom: 10px;" autofocus>
+        <input class="form-control form-control-lg" id="form2Input" placeholder="Password" autocomplete="current-password" type="password" style="margin-top: 10px; margin-bottom: 10px;">
 		<div style="width: 100%; text-align:right;">
             <button type="button" class="btn btn-default" id="joinButton">Create Account</button>
-            <button class="btn btn-primary" type="submit" value="Submit" >Next</button>
-		</div>
-	</form>
-		<!--Normal password login-->
-	<form id="form2">
-		<input class="form-control form-control-lg" id="form2Input" placeholder="Password" autocomplete="current-password" type="password" style="margin-top: 10px; margin-bottom: 10px;">
-		<div style="width: 100%; text-align:right;">
-			<button type="button" class="btn btn-default" id="passwordResetButton">Reset my password</button>
-			<button class="btn btn-primary" type="submit" value="Submit">Login</button>
+            <button type="button" class="btn btn-default" id="passwordResetButton">Reset my password</button>
+            <button class="btn btn-primary" type="submit" value="Submit">Login</button>
 		</div>
 	</form>
     <form id="form3aa">
@@ -149,11 +143,6 @@
                 }
             });
 		});
-
-		$("#form1").submit(function(){
-			loginStep1();
-			return false;
-		});
         $('#joinButton').click(function(){
             $("#form1").fadeOut(function () {
                 $("#form3aa").fadeIn(function () { //Request an email
@@ -169,49 +158,8 @@
                 });
             });
         });
-        var userid = "";
-		function loginStep1() {
-			if ($("#form1Input").val().length <= 0) {
-                toastr.warning("Please enter something into the login box");
-			} else {
-				$.ajax({
-					url: "../api/login/authStep1.php",
-					type: "POST",
-                    dataType: 'json',
-					data: {"formInput" : $("#form1Input").val()},
-					success: function(result) {
-                        initialData = result;
-					    if (result.result) {
-                            if (result.response.user) {
-                                userid = result.response.data.users_userid;
-                                //This is a normal user login
-                                $("#form1").fadeOut(function () {
-                                    $("#form2").fadeIn(function () {
-                                        $("#form2Input").focus();
-									});
-								});
-							} else {
-                                toastr.error("Problem connecting to server - please contact support");
-							}
-						} else {
-                            if (result.error.code == "VERIFYEMAIL") {
-                                //They need to verify their email address
-                                $("#form1").fadeOut(function () {
-                                    $("#formVerifyEmail").fadeIn();
-                                });
-                            } else {
-                                toastr.error(result.error.message);
-                            }
-						}
-					},
-					error: function(){
-                        toastr.error("Please refresh the page and check your internet connection");
-					}
-				});
-			}
-		}
 
-        $("#form2").submit(function(){
+        $("#form1").submit(function(){
             loginStep2();
             return false;
         });
@@ -220,12 +168,12 @@
                 url: "../api/login/forgotPassword.php",
                 type: "POST",
                 dataType: 'json',
-                data: {"userid" : userid},
+                data: {"formInput" : $("#form1Input").val()},
                 success: function(result) {
                     if (result.result) {
                         toastr.success("Password reset link sent to your registered email address");
                     } else {
-                        oastr.warning("Please contact the support team for a new password");
+                        toastr.warning("Please contact the support team for a new password");
                     }
                 }, error: function(){
                     toastr.error("Please refresh the page and check your internet connection");

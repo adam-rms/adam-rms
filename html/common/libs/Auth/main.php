@@ -286,7 +286,8 @@ class bID
         $DBLIB->where('users_userid', $userid);
         $DBLIB->update('passwordResetCodes', ["passwordResetCodes_valid" => "0"]); //Set all the previous codes to invalid
         $code = md5($GLOBALS['bCMS']->randomString(100) . $userid . time()) . time();
-        $data = Array("users_userid" => $userid,
+        $data = Array(
+            "users_userid" => $userid,
             "passwordResetCodes_timestamp" => date('Y-m-d G:i:s'),
             "passwordResetCodes_code" => $code
         );
