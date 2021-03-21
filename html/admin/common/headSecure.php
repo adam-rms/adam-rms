@@ -24,16 +24,6 @@ $PAGEDATA['USERDATA'] = $AUTH->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
 if ($AUTH->data['instance']) {
-    $DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assets.assetTypes_id=assetTypes.assetTypes_id AND assets_deleted = '0' AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "') > 0)");
-    $assetCategories = $DBLIB->getvalue("assetTypes", "DISTINCT assetCategories_id", null);
-    if ($assetCategories) {
-        $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
-        $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
-        $DBLIB->where("(assetCategories_id IN (" . implode(",", $assetCategories) . "))");
-        $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
-        $PAGEDATA['assetCategories'] = $DBLIB->get("assetCategories", null, ["assetCategories.assetCategories_name", "assetCategories.assetCategories_id", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups_name", "assetCategoriesGroups_fontAwesome"]);
-    } else $PAGEDATA['assetCategories'] = [];
-
     //Potential project types
     $DBLIB->where("projectsTypes_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
