@@ -19,7 +19,8 @@ if (!$CONFIG['DEV']) {
     die("Sorry - you can't use this development version of the site - please visit adam-rms.com");
 }
 
-$PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
+$PAGEDATA['AUTH'] = $AUTH;
+$PAGEDATA['USERDATA'] = $AUTH->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
 if ($AUTH->data['instance']) {

@@ -10,26 +10,26 @@
     </div>
     <div class="form-group">
         <label>Keywords</label>
-        <input class="form-control" type="text" name="keyword" placeholder="SD11, Viper, Shure, Canon" />
+        <input class="form-control" type="text" name="keyword" placeholder="SD7T, Viper, Wash" />
     </div>
     <div class="form-group">
         <label>Category</label>
-        <input class="form-control" type="text" name="category" placeholder="SD11, Viper, Shure, Canon" />
+        <select class="form-control select2bs4" multiple name="category[]"></select>
     </div>
     <div class="form-group">
         <label>Manufacturer</label>
-        <input class="form-control" type="text" name="manufacturer" placeholder="SD11, Viper, Shure, Canon" />
+        <select class="form-control select2bs4" multiple name="manufacturer[]"></select>
     </div>
     {% if AUTH.login %}
     <div class="form-group">
         <label>Group</label>
-        <input class="form-control" type="text" name="group" placeholder="SD11, Viper, Shure, Canon" />
+        <select class="form-control  select2bs4" name="group[]" multiple></select>
     </div>
     {% endif %}
     {% if AUTH.login or instancePublicData.enableAssetAvailability %}
     <div class="form-group">
         <label>Show availability between</label>
-        <input type="text" class="form-control float-right" name="dates">
+        <input type="text" class="form-control" name="dates" />
     </div>
     {% endif %}
     <div class="form-group">
@@ -39,6 +39,23 @@
             <option selected>20</option>
             <option>50</option>
             <option>100</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Sort by</label>
+        <select class="form-control" name="sort">
+            {% if AUTH.login or instancePublicData.enableAssetsPrices %}
+            <option value="price-a">Weekly Price (low-high)</option>
+            <option value="price-d">Weekly Price (high-low)</option>
+            {% endif %}
+            {% if AUTH.login or instancePublicData.enableAssetsValues %}
+            <option value="value-a">Value (low-high)</option>
+            <option value="value-d">Value (high-low)</option>
+            {% endif %}
+            <option selected value="alphabet-a">Alphabetical (A-Z)</option>
+            <option value="alphabet-d">Alphabetical (Z-A)</option>
+            <option value="mass-a">Mass (low-high)</option>
+            <option value="mass-d">Mass (high-low)</option>
         </select>
     </div>
     {% if AUTH.login %}
@@ -98,6 +115,110 @@
 
         $('#deepSearchAssetForm input[name ="dates"]').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
+        });
+        $('#deepSearchAssetForm select[name ="manufacturer[]"]').select2({
+            tags: false,
+            multiple: true,
+            theme: "bootstrap4",
+            minimumInputLength: 1,
+            width: '100%',
+            minimumResultsForSearch: 1,
+            placeholder: "Enter some manufacturer names to search",
+            ajax: {
+                url: "{{ CONFIG.ROOTURL }}/api/manufacturer/search.php",
+                dataType: "json",
+                type: "POST",
+                data: function (params) {
+                    var queryParameters = {
+                        term: params.term,
+                        instance_id: "{{ instance }}"
+                    }
+                    return queryParameters;
+                },
+                processResults: function (data) {
+                    if (data && data.result && data.response) {
+                        return {
+                            results: $.map(data.response, function (item) {
+                                return {
+                                    text: item.manufacturers_name,
+                                    id: item.manufacturers_id
+                                }
+                            })
+                        };
+                    } else return {
+                        results: []
+                    };
+                }
+            }
+        });
+        $('#deepSearchAssetForm select[name ="category[]"]').select2({
+            tags: false,
+            multiple: true,
+            theme: "bootstrap4",
+            minimumInputLength: 0,
+            width: '100%',
+            minimumResultsForSearch: 1,
+            placeholder: "Enter some group names to search",
+            ajax: {
+                url: "{{ CONFIG.ROOTURL }}/api/categories/search.php",
+                dataType: "json",
+                type: "POST",
+                data: function (params) {
+                    var queryParameters = {
+                        term: params.term,
+                        instance_id: "{{ instance }}"
+                    }
+                    return queryParameters;
+                },
+                processResults: function (data) {
+                    if (data && data.result && data.response) {
+                        return {
+                            results: $.map(data.response, function (item) {
+                                return {
+                                    text: item.assetCategoriesGroups_name + " - " + item.assetCategories_name,
+                                    id: item.assetCategories_id
+                                }
+                            })
+                        };
+                    } else return {
+                        results: []
+                    };
+                }
+            }
+        });
+        $('#deepSearchAssetForm select[name ="group[]"]').select2({
+            tags: false,
+            multiple: true,
+            theme: "bootstrap4",
+            minimumInputLength: 1,
+            width: '100%',
+            minimumResultsForSearch: 1,
+            placeholder: "Enter some group names to search",
+            ajax: {
+                url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+                dataType: "json",
+                type: "POST",
+                data: function (params) {
+                    var queryParameters = {
+                        term: params.term
+                    }
+                    return queryParameters;
+                },
+                processResults: function (data) {
+                    if (data && data.result && data.response) {
+                        return {
+                            results: $.map(data.response, function (item) {
+                                return {
+                                    text: item.assetGroups_name,
+                                    id: item.assetGroups_id
+                                }
+                            })
+                        };
+                    } else return {
+                        results: []
+                    };
+                }
+            }
         });
     });
 </script>

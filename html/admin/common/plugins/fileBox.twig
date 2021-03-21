@@ -23,6 +23,7 @@
                     {% if galleryOnly != true %}
                         <a href="{{ file.s3files_id|s3URL }}" target="_blank" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
                     {% endif %}
+
                     {% if AUTH.login and 56|instancePermissions and galleryOnly != true %}
                         <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
                     {% endif %}

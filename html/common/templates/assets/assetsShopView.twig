@@ -1,7 +1,8 @@
+{% if ASSETS %}
 <div class="card card-solid">
     <div class="card-header">
         <h3 class="card-title" style="margin-top: 0.4rem;">
-            Showing {{ ASSETS|length }} of {{ PAGINATION.COUNT }} result{{ PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ SPEED|round(1) }} seconds
+            Showing {{ PAGINATION.OFFSET>0 ? 'results ' ~ PAGINATION.OFFSET ~ '-' ~ (PAGINATION.OFFSET+(ASSETS|length)) : ASSETS|length }} of {{ PAGINATION.COUNT }} result{{ PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ SPEED|round(1) }} seconds
         </h3>
         <div class="card-tools pull-right">
         {% if PAGINATION['TOTAL-PAGES'] > 1 %}
@@ -26,10 +27,10 @@
         {% endif %}
         </div>
     </div>
-    <div class="card-body pb-0">
+    <div class="card-body">
         <div class="row d-flex align-items-stretch">
             {% for asset in ASSETS %}
-                <div class="col-auto d-flex align-items-stretch">
+                <div class="col-auto d-flex align-items-stretch" style="padding: 10px;">
                     <div class="card bg-light">
                         <div class="card-body" style="max-width: 250px;">
                             <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
@@ -37,8 +38,8 @@
                                 <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                     {% for thumb in asset.thumbnail %}
                                         <div>
-                                            <a href="asset.php?id={{ asset.assetTypes_id }}">
-                                            <img class="img-fluid" style="max-height: 340px;"
+                                            <a href="/asset.php?id={{ asset.assetTypes_id }}">
+                                            <img class="img-fluid" style="max-height: 200px;"
                                                  src="{{ thumb.s3files_id|s3URL("small") }}"
                                                  alt="{{asset.assetTypes_name}}"></a>
                                         </div>
@@ -47,12 +48,15 @@
                             {% endif %}
                             <p class="text-muted text-sm">{{ asset.assetTypes_description|length > 60 ? (asset.assetTypes_description|slice(0, 60)|nl2br ~ '...')|raw : asset.assetTypes_description|nl2br  }}</p>
                             <ul class="ml-4 mb-0 fa-ul text-muted">
-                                {% if asset.manufacturers_id != 1 %}<li class="small"><span class="fa-li"><i class="fas fa-industry"></i></span> <a href="?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a></li>{% endif %}
+                                <li class="small"><span class="fa-li"><i class="{{ asset.assetCategories_fontAwesome }}"></i></span> {{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</li>
+                                {% if asset.manufacturers_id != 1 %}<li class="small"><span class="fa-li"><i class="fas fa-industry"></i></span> {{ asset.manufacturers_name }}</li>{% endif %}
                                 {% if asset.count == 1 %}
                                     {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
+                                    {% if asset.tags[0]['assets_mass'] != 0 or asset.assetTypes_mass != 0 %}
                                     <li class="small">
                                         <span class="fa-li"><i class="fas fa-weight"></i></span> {{ (asset.tags[0]['assets_mass'] ? asset.tags[0]['assets_mass']|number_format(2) : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}
                                     </li>
+                                        {% endif %}
                                     <li class="small">
                                         {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsValues'] or AUTH.login %}
                                             <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
@@ -166,7 +170,7 @@
                                                 <button title="Asset to be archived" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                             {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
                                                 {% if asset.tags[0].assignment %}
-                                                    <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                    <button title="Assigned to {{ if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? asset.tags[0].assignment[0]['projects_name'] : 'an event'}}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                 {% else %}
                                                     <button title="Available" class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                 {% endif %}
@@ -192,8 +196,10 @@
                                                                         <th>{{ field }}</th>
                                                                     {% endfor %}
                                                                     <th>Notes</th>
+                                                                    {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsPrices'] or AUTH.login %}
                                                                     <th>&pound;/day</th>
                                                                     <th>&pound;/week</th>
+                                                                    {% endif %}
                                                                     <th style="width:1%"><i class="fas fa-flag"></i></th>
                                                                     <th style="width:30px;"></th>
                                                                 </tr>
@@ -204,12 +210,14 @@
                                                                             <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
                                                                         {% endfor %}
                                                                         <td>{{ thisasset['assets_notes']|nl2br }}</td>
+                                                                        {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsPrices'] or AUTH.login %}
                                                                         <td>
                                                                             {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                         </td>
                                                                         <td>
                                                                             {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                         </td>
+                                                                        {% endif %}
                                                                         <td>
                                                                             {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
                                                                         </td>
@@ -219,7 +227,7 @@
                                                                                     <button title="Asset to be removed" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                 {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
                                                                                     {%  if thisasset.assignment %}
-                                                                                        <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                                                        <button title="Assigned to {{ if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? thisasset.assignment[0]['projects_name'] : ' an event' }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                     {% else %}
                                                                                     <button title="Available" {% set someassignable = true %} class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                                                     {% endif %}
@@ -238,7 +246,7 @@
                                             <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                     {% endif %}
                                 {% endif %}
-                                    <a href="asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}" class="btn btn-sm btn-default" target="_blank">
+                                    <a href="/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}" class="btn btn-sm btn-default" target="_blank">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
                                 </div>
@@ -313,3 +321,12 @@
         {% endif %}
     });
 </script>
+{% else %}
+<div class="card card-solid">
+    <div class="card-header">
+        <h3 class="card-title" style="margin-top: 0.4rem;">
+            No results found
+        </h3>
+    </div>
+</div>
+{% endif %}

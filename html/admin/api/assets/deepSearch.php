@@ -14,7 +14,7 @@ if (count($dates) == 2) {
     $start = false;
     $end = false;
 }
-$result = $bCMS->deepSearch($_POST['instance_id'],$_POST['page'],$_POST['page_limit'],$_POST['category'],$_POST['keyword'],$_POST['manufacturer'],$_POST['group'],($_POST['showlinked'] == 1 ? true : false),($_POST['showarchived'] == 1 ? true : false),$start,$end);
+$result = $bCMS->deepSearch($_POST['instance_id'],$_POST['page'],$_POST['page_limit'],$_POST['sort'],$_POST['category'],$_POST['keyword'],$_POST['manufacturer'],$_POST['group'],($_POST['showlinked'] == 1 ? true : false),($_POST['showarchived'] == 1 ? true : false),$start,$end);
 if ($result) {
     if (isset($_POST['html'])) {
         $PAGEDATA['SEARCH'] = $result['SEARCH'];

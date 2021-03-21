@@ -4,10 +4,6 @@
     <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
     <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js" integrity="sha256-FcVIknBiVRk5KLQeIBb9VQdtFRMqwffXyZ+D8q0gQro=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" integrity="sha256-xJOZHfpxLR/uhh1BwYFS5fhmOAdIRQaiOul5F/b7v3s=" crossorigin="anonymous" />
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/select2-bootstrap4.min.css" />
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
@@ -110,10 +106,10 @@
                         </li>
                         {% endif %}
                         <li class="list-group-item">
-                            <b>Category</b> <a class="float-right" href="assets.php?category={{ asset.assetCategories_id }}">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
+                            <b>Category</b> <a class="float-right" href="#">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
                         </li>
                         <li class="list-group-item">
-                            <b>Manufacturer</b> <a class="float-right" href="assets.php?manufacturer={{ asset.manufacturers_id }}">{{ asset.manufacturers_name }}</a>
+                            <b>Manufacturer</b> <a class="float-right" href="#">{{ asset.manufacturers_name }}</a>
                         </li>
                         <li class="list-group-item">
                             <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
@@ -1425,7 +1421,7 @@
                         callback: function (result) {
                             if (result) {
                                 ajaxcall("assets/delete.php", {"assets_id":assetid}, function (data) {
-                                    window.location.href = "{{CONFIG.ROOTURL}}/assets.php";
+                                    window.location.href = "{{CONFIG.ROOTURL}}/";
                                 });
                             }
                         }
