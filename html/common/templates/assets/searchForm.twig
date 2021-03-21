@@ -9,8 +9,8 @@
         <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
     </div>
     <div class="form-group">
-        <label>Keywords</label>
-        <input class="form-control" type="text" name="keyword" placeholder="SD7T, Viper, Wash" />
+        <label>Keywords (comma separated)</label>
+        <select class="form-control select2bs4" multiple="multiple" name="keyword[]"></select>
     </div>
     <div class="form-group">
         <label>Category</label>
@@ -26,14 +26,14 @@
         <select class="form-control  select2bs4" name="group[]" multiple></select>
     </div>
     {% endif %}
-    {% block formExtras %}
-    {% endblock %}
     {% if AUTH.login or instancePublicData.enableAssetAvailability %}
     <div class="form-group">
         <label>Show availability between</label>
         <input type="text" class="form-control" name="dates" />
     </div>
     {% endif %}
+    {% block formExtras %}
+    {% endblock %}
     <div class="form-group">
         <label>Page Limit</label>
         <select class="form-control" name="page_limit">
@@ -117,6 +117,15 @@
 
         $('#deepSearchAssetForm input[name ="dates"]').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
+        });
+        $('#deepSearchAssetForm select[name ="keyword[]"]').select2({
+            tags: true,
+            tokenSeparators: [',', ';'],
+            multiple: true,
+            theme: "bootstrap4",
+            minimumInputLength: 1,
+            width: '100%',
+            placeholder: "SD7T, Viper, Wash, Condenser, CYC, Dynamic, Clamp",
         });
         $('#deepSearchAssetForm select[name ="manufacturer[]"]').select2({
             tags: false,

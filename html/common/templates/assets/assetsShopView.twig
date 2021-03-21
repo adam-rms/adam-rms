@@ -286,7 +286,7 @@
                 $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
                 Toast.fire({
                     type: 'success',
-                    title: 'Added to {{ thisProject.projects_name }}'
+                    title: 'Added to project'
                 });
             });
         });
@@ -311,7 +311,7 @@
                         ajaxcall("projects/assets/unassign.php", {"assets_id":assetId}, function (data) {
                             Toast.fire({
                                 type: 'success',
-                                title: 'Removed from {{ thisProject.projects_name }}'
+                                title: 'Removed from project'
                             });
                         });
                     }

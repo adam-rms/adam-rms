@@ -24,6 +24,7 @@ $result = $bCMS->deepSearch($_POST['instance_id'],$_POST['page'],$_POST['page_li
 if ($result) {
     if (isset($_POST['html'])) {
         $PAGEDATA['SEARCH'] = $result['SEARCH'];
+        if ($AUTH->login) $result['AUTH'] = $GLOBALS['AUTH']; //Provide an auth context
         $result['html'] = $TWIG->render('assets/assetsShopView.twig', $result);
     }
     finish(true,null,$result);

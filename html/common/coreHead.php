@@ -282,7 +282,7 @@ class bCMS {
         }
         return $return;
     }
-    function deepSearch($instanceid=false,$page=1,$pageLimit=20,$sort="alphabet-a",$category=null,$keyword="",$manufacturer=false,$group=false,$showLinked=false,$showArchived=false,$dateStart = false,$dateEnd = false) {
+    function deepSearch($instanceid=false,$page=1,$pageLimit=20,$sort="alphabet-a",$category=null,$keyword=[],$manufacturer=false,$group=false,$showLinked=false,$showArchived=false,$dateStart = false,$dateEnd = false) {
         global $DBLIB,$AUTH;
         $scriptStartTime = microtime (true);
         $DBLIB->setTrace(true, $_SERVER['SERVER_ROOT']);
@@ -292,7 +292,7 @@ class bCMS {
             "PAGE_LIMIT" => $pageLimit ? intval($pageLimit) : 20,
             "TERMS" => [
                 "CATEGORY" => $category,
-                "KEYWORDS" => (strlen(trim($keyword)) > 0 ? trim($keyword) : false),
+                "KEYWORDS" => (is_array($keyword)) ? $keyword : [],
                 "MANUFACTURER" => $manufacturer,
                 "GROUPS" => $group ?: false,
                 "DATE-START" => $dateStart,
@@ -380,7 +380,17 @@ class bCMS {
         $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 
         //Keywords
-        if (strlen($SEARCH['TERMS']['KEYWORDS']) > 0) $DBLIB->where ("(manufacturers.manufacturers_name LIKE ? OR assetTypes.assetTypes_description LIKE ? OR assetTypes.assetTypes_name LIKE ?)", ['%' . $SEARCH['TERMS']['KEYWORDS'] . '%','%' . $SEARCH['TERMS']['KEYWORDS'] . '%','%' . $SEARCH['TERMS']['KEYWORDS'] . '%']);
+        if (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
+            $thisWhere = "(1=0";
+            $thisValues = [];
+            foreach ($SEARCH['TERMS']['KEYWORDS'] as $word) {
+                if ($word != null) {
+                    $thisWhere .= " OR manufacturers.manufacturers_name LIKE ? OR assetTypes.assetTypes_description LIKE ? OR assetTypes.assetTypes_name LIKE ?";
+                    array_push($thisValues,'%' . $word . '%','%' . $word . '%','%' . $word . '%');
+                }
+            }
+            $DBLIB->where($thisWhere . ")",$thisValues);
+        }
 
 
         //Limit the assets correctly

@@ -682,7 +682,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
                 {% block formExtras %}
                     {% if projects and 31|instancePermissions %}
                     <div class="form-group">
-                        <label>Show availability for project</label>
+                        <label>Or, show availability for project</label>
                         <select class="form-control" name="projectid">
                             {% for project in projects %}
                                 {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
