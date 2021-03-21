@@ -18,5 +18,7 @@ elseif ($GLOBALS['AUTH']->login) {
 	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
 }
 
-echo $TWIG->render('login/login1.twig', $PAGEDATA);
+if (isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
+if (isset($_GET['login'])) echo $TWIG->render('login/login1.twig', $PAGEDATA);
+echo $TWIG->render('login/login.twig', $PAGEDATA);
 ?>
