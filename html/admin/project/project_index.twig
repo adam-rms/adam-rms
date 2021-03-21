@@ -180,15 +180,15 @@
                 <div class="card-footer">
                     <div class="btn-group float-right">
                         {% if 45|instancePermissions and project.projectsTypes_config_notes == 1 %}
-                            <button type="button" class="btn btn-default" id="newProjectNote">Add Note</button>
+                            <button type="button" class="btn btn-default" id="newProjectNote">New Note</button>
                         {% endif %}
+                        <button type="button" class="btn btn-default" id="quickAddCommentButton">Add Comment</button>
                         {% if 29|instancePermissions %}
-                        <button type="button" class="btn btn-info" id="editProjectStatus">Change Status</button>
+                        <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
                         {% endif %}
                         <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
-                                <a class="dropdown-item" id="quickAddCommentButton">Add Comment</a>
                                 {% if 28|instancePermissions %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
