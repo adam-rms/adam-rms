@@ -159,7 +159,7 @@
             background-position: center;
             background-size:cover;
             background-color: #cccccc;
-            background-image: url("{{ INSTANCE.publicData.headerImage|s3URL("medium")|raw }}");
+            background-image: url("{{ INSTANCE.publicData.headerImage|s3URL("small")|raw }}");
             margin-bottom:10px;
         }
 
@@ -169,7 +169,7 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-sm-12 col-md-12 col-lg-2 bg-light sidebar">
+        <nav class="col-sm-12 col-md-2 bg-light sidebar">
             <div class="sidebar-sticky">
                 <div class="logo">
                     <a href="/" class="nav-link">
@@ -220,7 +220,7 @@
                 {% endblock %}
             </div>
         </nav>
-        <main role="main" class="col-sm-12 col-md-12 col-lg-10 p-0">
+        <main role="main" class="col-sm-12 col-md-9 col-lg-10 p-0">
             {% block header %}
             {% if INSTANCE.publicData.headerImage %}
                 <div class="headerImage"></div>
