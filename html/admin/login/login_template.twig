@@ -94,19 +94,7 @@
         </div>
     </div>
 </div>
-
-
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', '{{ CONFIG.ANALYTICS.TRACKINGID }}');
-</script>
-
-
-
+{% include 'analytics.twig' %}
 </body>
 </html>
 

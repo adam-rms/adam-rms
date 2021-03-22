@@ -772,16 +772,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
     });
     console.log("Welcome to {{ CONFIG.PROJECT_NAME|escape("js") }} version {{ CONFIG.VERSION.TAG|escape("js") }}");
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
-<script>
-    //Google Analytics
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', '{{ CONFIG.ANALYTICS.TRACKINGID }}');
-</script>
+{% include 'analytics.twig' %}
 </body>
 {% endif %}
 </html>
