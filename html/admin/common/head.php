@@ -2,15 +2,6 @@
 require_once __DIR__ . '/../../common/coreHead.php';
 require_once __DIR__ . '/../../common/libs/Auth/main.php';
 
-if (!$CONFIG['DEV']) {
-    Sentry\init([
-        'dsn' => $CONFIG['ERRORS']['SENTRY'],
-        'traces_sample_rate' => 0.1, //Capture 10% of pageloads for perforamnce monitoring
-        'release' => $CONFIG['VERSION']['TAG'] . "." . $CONFIG['VERSION']['COMMIT'],
-        'sample_rate' => 1.0,
-    ]);
-}
-
 try {
     //session_set_cookie_params(0, '/', '.' . $_SERVER['SERVER_NAME']); //Fix for subdomain bug
     session_set_cookie_params(43200); //12hours
