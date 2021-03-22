@@ -84,11 +84,10 @@
             success: function (result) {
                 if (result.result) {
                     $("#pageContent").html(result['response']['html']);
-                    console.log(result['response']);
                 }
             }, error: function (result) {
                 console.log(result);
-                alert("Error");
+                alert("Error loading results - please check your internet connection");
             }
         });
     }
