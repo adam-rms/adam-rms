@@ -12,6 +12,8 @@ if (strlen($array['modulesSteps_id']) <1) finish(false, ["code" => "PARAM-ERROR"
 if ($array['modulesSteps_show']) $array['modulesSteps_show'] = 1;
 else $array['modulesSteps_show'] = 0;
 
+$array['modulesSteps_content'] = $bCMS->cleanString($array['modulesSteps_content']);
+
 $DBLIB->where("modules.modules_deleted", 0);
 $DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->join("modules","modules.modules_id=modulesSteps.modules_id","LEFT");

@@ -46,7 +46,7 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
-                            <p class="text-muted text-sm">{{ asset.assetTypes_description|length > 60 ? (asset.assetTypes_description|slice(0, 60)|nl2br ~ '...')|raw : asset.assetTypes_description|nl2br  }}</p>
+                            <p class="text-muted text-sm">{{ asset.assetTypes_description|length > 60 ? (asset.assetTypes_description|slice(0, 60)|nl2br ~ '...') : asset.assetTypes_description|nl2br  }}</p>
                             <ul class="ml-4 mb-0 fa-ul text-muted">
                                 <li class="small"><span class="fa-li"><i class="{{ asset.assetCategories_fontAwesome }}"></i></span> {{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</li>
                                 {% if asset.manufacturers_id != 1 %}<li class="small"><span class="fa-li"><i class="fas fa-industry"></i></span> {{ asset.manufacturers_name }}</li>{% endif %}

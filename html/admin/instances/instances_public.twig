@@ -103,9 +103,14 @@
                 <h3 class="card-title">Homepage Content</h3>
             </div>
             <div class="card-body">
-                    <textarea class="textarea" id="homepageHTML" rows="6" placeholder="Place some text here to display on the homepage" style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                        {{ publicData.homepageHTML }}
-                    </textarea>
+                {% embed 'common/plugins/uppy.twig' with {'type': 'PUBLIC-HOMEPAGECONTENT-IMAGE', 'paste': true, 'typeId': 16, 'subTypeId': USERDATA.instance.instances_id, 'imagesOnly': true } %}
+                    {% block success %}
+                        $('#homepageHTML').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                    {% endblock %}
+                {% endembed %}
+                <textarea class="textarea" id="homepageHTML" rows="6" placeholder="Place some text here to display on the homepage" style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
+                    {{ publicData.homepageHTML }}
+                </textarea>
             </div>
             {% if 83|instancePermissions %}
             <div class="card-footer">

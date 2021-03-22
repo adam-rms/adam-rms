@@ -9,6 +9,8 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 
+$array['instances_termsAndPayment'] = $bCMS->cleanString($array['instances_termsAndPayment']);
+
 $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
 $result = $DBLIB->update("instances", array_intersect_key( $array, array_flip( ["instances_name","instances_address","instances_phone","instances_email","instances_website","instances_weekStartDates","instances_logo","instances_emailHeader","instances_termsAndPayment","instances_cableColours"] ) ));
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update instance"]);

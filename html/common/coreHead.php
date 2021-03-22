@@ -47,17 +47,9 @@ class bCMS {
 
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.DefinitionImpl', null);
-        $config->set('AutoFormat.Linkify', true);
+        //$config->set('AutoFormat.Linkify', true);
         $purifier = new HTMLPurifier($config);
-        $clean_html = $purifier->purify($var);
-
-        $clean_html = urlencode($clean_html); //Url encoding stops \ problems!
-
-        global $DBLIB;
-        return $DBLIB->escape($clean_html);
-    }
-    function unCleanString($var) {
-        return urldecode($var);
+        return $purifier->purify($var); //NOTE THAT THIS REQUIRES THE USE OF PREPARED STATEMENTS AS IT'S NOT ESCAPED
     }
     function formatSize($bytes) {
         if ($bytes >= 1073741824) {
@@ -193,6 +185,10 @@ class bCMS {
                 //Payment file attachment
             case 15:
                 //Public file
+                $secure = false;
+                $instanceIgnore = true;
+            case 16:
+                //Public homepage content image
                 $secure = false;
                 $instanceIgnore = true;
             default:

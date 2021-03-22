@@ -185,7 +185,6 @@
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
                                 {% if 28|instancePermissions %}
-                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
                                 {% endif %}
                                 {% if 24|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
@@ -450,7 +449,7 @@
                                     {% for payment in FINANCIALS.payments.staff.ledger %}
                                         <tr>
                                             <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                            <td>{{ payment.payments_supplier|replace({" ":"&nbsp;"})|raw }}</td>
+                                            <td>{{ payment.payments_supplier|replace({" ":"&nbsp;"})}}</td>
                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                             <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                             <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
@@ -1062,7 +1061,7 @@
                         },
                         {% for client in clients %}
                         {
-                            text: '{{client.clients_name|escape('js') }}',
+                            text: "{{client.clients_name|escape('js') }}",
                             value: '{{ client.clients_id }}',
                         },
                         {% endfor %}
@@ -1089,7 +1088,7 @@
                     inputOptions: [
                         {% for type in potentialProjectTypes %}
                         {
-                            text: '{{type.projectsTypes_name|escape('js') }}',
+                            text: "{{type.projectsTypes_name|escape('js') }}",
                             value: '{{ type.projectsTypes_id }}',
                         },
                         {% endfor %}
@@ -1122,7 +1121,7 @@
                         },
                         {% for user in potentialProjectManagers %}
                         {
-                            text: '{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}',
+                            text: "{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}",
                             value: '{{ user.users_userid }}',
                         },
                         {% endfor %}
@@ -1145,7 +1144,7 @@
                 bootbox.prompt({
                     title: "Edit Project Description",
                     inputType: 'textarea',
-                    value: `{{ project.projects_description|raw }}`,
+                    value: "{{ project.projects_description|escape("js") }}",
                     callback: function (result) {
                         if (result) {
                             ajaxcall("projects/changeDescription.php", {
@@ -1164,7 +1163,7 @@
                 bootbox.prompt({
                     title: "Edit Project Invoice Notes",
                     inputType: 'textarea',
-                    value: `{{ project.projects_invoiceNotes|raw }}`,
+                    value: `{{ project.projects_invoiceNotes|escape("js") }}`,
                     callback: function (result) {
                         if (result) {
                             ajaxcall("projects/changeInvoiceNotes.php", {
@@ -1338,7 +1337,7 @@
                 bootbox.prompt({
                     title: "Change Project Name",
                     inputType: 'text',
-                    value: `{{ project.projects_name|raw }}`,
+                    value: `{{ project.projects_name|escape("js") }}`,
                     callback: function (result) {
                         if (result) {
                             ajaxcall("projects/changeName.php", {
@@ -1407,7 +1406,7 @@
                     inputOptions: [
                         {% for id,status in STATUSES %}
                         {
-                            text: '{{ (status.name ~ " (" ~ status.description ~ ')')|escape('js') }}',
+                            text: "{{ (status.name ~ " (" ~ status.description ~ ')')|escape('js') }}",
                             value: '{{ id }}',
                         },
                         {% endfor %}
@@ -1454,7 +1453,7 @@
                         },
                         {% for location in locations %}
                         {
-                            text: '{{ location.locations_name|escape('js') }}',
+                            text: "{{ location.locations_name|escape('js') }}",
                             value: '{{ location.locations_id }}',
                         },
                         {% endfor %}

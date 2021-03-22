@@ -182,7 +182,7 @@
                                             {% set latestEnd = false %}
                                             {% for project in user.crewAssignments %}
                                             {
-                                                title: '[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|raw ~ " - " }}{{ project.projects_name|raw }} ({{ STATUSES[project.projects_status]["name"] }})',
+                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }} ({{ STATUSES[project.projects_status]["name"] }})",
                                                 start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
                                                 end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
                                                 url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',

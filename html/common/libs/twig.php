@@ -47,10 +47,6 @@ $TWIG->addFilter(new \Twig\TwigFilter('formatsize', function ($var) {
     global $bCMS;
     return $bCMS->formatSize($var);
 }));
-$TWIG->addFilter(new \Twig\TwigFilter('unclean', function ($var) {
-    global $bCMS;
-    return $bCMS->unCleanString($var);
-}));
 $TWIG->addFilter(new \Twig\TwigFilter('permissions', function ($permissionid) {
     global $AUTH;
     if (!$AUTH->login) return false;

@@ -470,7 +470,7 @@
                 bootbox.prompt({
                     title: "Change job Name",
                     inputType: 'text',
-                    value: `{{ job.maintenanceJobs_title|raw }}`,
+                    value: `{{ job.maintenanceJobs_title|escape("js") }}`,
                     callback: function (result) {
                         if (result) {
                             ajaxcall("maintenance/job/changeName.php", {

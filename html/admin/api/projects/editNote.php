@@ -16,7 +16,7 @@ $note = $DBLIB->getone("projectsNotes", ["projectsNotes_title"]);
 if (!$note) finish(false);
 
 $DBLIB->where("projectsNotes_id", $_POST['projectsNotes_id']);
-$update = $DBLIB->update("projectsNotes", ["projectsNotes_text" => $_POST['projectsNotes_text']]);
+$update = $DBLIB->update("projectsNotes", ["projectsNotes_text" => $bCMS->cleanString($_POST['projectsNotes_text'])]);
 if (!$update) finish(false);
 
 $bCMS->auditLog("UPDATE-PROJECTNOTETEXT", "projects", "Updated the notes for ". $note['projectsNotes_title'] . " to ". $_POST['projectsNotes_text'], $AUTH->data['users_userid'],null, $_POST['projects_id']);
