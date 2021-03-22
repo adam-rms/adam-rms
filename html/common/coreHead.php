@@ -191,6 +191,10 @@ class bCMS {
                 //Public homepage content image
                 $secure = false;
                 $instanceIgnore = true;
+            case 17:
+                //Public homepage header image
+                $secure = false;
+                $instanceIgnore = true;
             default:
                 //There are no specific requirements for this file so not to worry.
         }
