@@ -106,10 +106,10 @@
                         </li>
                         {% endif %}
                         <li class="list-group-item">
-                            <b>Category</b> <a class="float-right" href="#">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
+                            <b>Category</b> {{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}
                         </li>
                         <li class="list-group-item">
-                            <b>Manufacturer</b> <a class="float-right" href="#">{{ asset.manufacturers_name }}</a>
+                            <b>Manufacturer</b> {{ asset.manufacturers_name }}
                         </li>
                         <li class="list-group-item">
                             <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
