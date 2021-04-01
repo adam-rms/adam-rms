@@ -21,6 +21,7 @@ foreach($roles as $role) {
     $DBLIB->where("projectsVacantRoles_id",$role['projectsVacantRoles_id']);
     $DBLIB->where("projectsVacantRolesApplications_deleted",0);
     $DBLIB->where("projectsVacantRolesApplications_withdrawn",0);
+    $DBLIB->where("users_userid",$AUTH->data['users_userid']);
     $role['application'] = $DBLIB->getOne("projectsVacantRolesApplications",["projectsVacantRolesApplications_id"]);
     $role['projectsVacantRoles_questions'] = json_decode($role['projectsVacantRoles_questions'],true);
     $PAGEDATA['roles'][] = $role;
