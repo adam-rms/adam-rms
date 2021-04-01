@@ -177,7 +177,7 @@
                         {% if 45|instancePermissions and project.projectsTypes_config_notes == 1 %}
                             <button type="button" class="btn btn-default" id="newProjectNote">New Note</button>
                         {% endif %}
-                        <button type="button" class="btn btn-default" id="quickAddCommentButton">Add Comment</button>
+                        <button type="button" class="btn btn-default" id="quickAddCommentButton">New Comment</button>
                         {% if 29|instancePermissions %}
                         <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
                         {% endif %}
@@ -567,7 +567,7 @@
                         {% if project.auditLog|length > 0 %}
                             <div class="card">
                                  <div class="card-header">
-                                        <h3 class="card-title">History</h3>
+                                        <h3 class="card-title">Comments & History</h3>
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                                 <i class="fas fa-minus"></i></button>
