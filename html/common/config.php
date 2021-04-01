@@ -185,6 +185,22 @@ $CONFIG = array(
                 "default" => false,
                 "canDisable" => true
             ],
+            [
+                "id" => 40,
+                "group" => "Project",
+                "name" => "Application made for a crew vacancy on a project you manage",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
+                "id" => 41,
+                "group" => "Project",
+                "name" => "Application updates for a crew vacancy you applied to",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => false
+            ],
         ]
     ]
 );

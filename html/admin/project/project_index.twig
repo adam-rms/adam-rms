@@ -549,16 +549,11 @@
                                     {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
                                         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
                                     {% endif %}
-                                    {% if 48|instancePermissions %}
-                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
+                                    {% if 123|instancePermissions %}
+                                        <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary">Crew Recruitment</a>
                                     {% endif %}
                                     {% if 48|instancePermissions %}
-                                        <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                            <span class="sr-only">Toggle Dropdown</span>
-                                            <div class="dropdown-menu" role="menu">
-                                                <a class="dropdown-item" id="addCrewVacant" href="#">Add Vacant Crew Position</a>
-                                            </div>
-                                        </button>
+                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
                                     {% endif %}
                                 </div>
                             </div>
@@ -1704,22 +1699,6 @@
                         location.reload();
                     }, true);
                 }
-            });
-            $('#addCrewVacant').on('click', function(e){
-                bootbox.prompt({
-                    title: "Name vacant role",
-                    callback: function(result) {
-                        if (result && result.length > 0) {
-                            var rolename = result;
-                            ajaxcall("projects/crew/addVacantSlot.php", {
-                                "crewAssignments_role": rolename,
-                                "projects_id": "{{ project.projects_id }}"
-                            }, function () {
-                                location.reload();
-                            }, true);
-                        }
-                    }
-                });
             });
             {% endif %}
             {% if 51|instancePermissions %}

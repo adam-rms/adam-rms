@@ -442,9 +442,17 @@
                         <a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
                             <i class="nav-icon fas fa-graduation-cap"></i>
                             <p>Training</p>
-                            <span class="right badge badge-danger">New</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if 124|instancePermissions %}
+                        <li class="nav-item">
+                            <a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
+                                <i class="nav-icon fas fa-ad"></i>
+                                <p>Crew Vacancies</p>
+                                <span class="right badge badge-danger">New</span>
+                            </a>
+                        </li>
                     {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">

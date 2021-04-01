@@ -7,7 +7,7 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
-
+//Duplicated in application section for vacancies
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $array['projects_id']);

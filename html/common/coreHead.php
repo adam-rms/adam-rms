@@ -204,6 +204,8 @@ class bCMS {
                 //Public homepage header image
                 $secure = false;
                 $instanceIgnore = true;
+            case 18:
+                //Vacant role application
             default:
                 //There are no specific requirements for this file so not to worry.
         }
