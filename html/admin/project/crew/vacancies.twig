@@ -33,11 +33,18 @@
             {% for role in roles %}
                 <tr>
                     <td>
-                        {{ role.projects_name }}
+                        {% if project != role.projects_id %}
+                            {{ role.projects_name }}
+                        {% else %}
+                            &#8627;
+                        {% endif %}
                     </td>
                     <td>
-                        {{role.projects_dates_use_start ? role.projects_dates_use_start|date("d M Y h:ia") }}<br/>
-                        {{ role.projects_dates_use_end? role.projects_dates_use_end|date("d M Y h:ia") }}
+                        {% if project != role.projects_id %}
+                            {{role.projects_dates_use_start ? role.projects_dates_use_start|date("d M Y h:ia") }}<br/>
+                            {{ role.projects_dates_use_end? role.projects_dates_use_end|date("d M Y h:ia") }}
+                        {% endif %}
+                        {% set project = role.projects_id %}
                     </td>
                     <td>
                         {{ role.projectsVacantRoles_name }}
