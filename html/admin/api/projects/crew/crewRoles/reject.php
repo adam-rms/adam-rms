@@ -17,6 +17,6 @@ if (!$application) finish(false,["message"=>"Application not found"]);
 $DBLIB->where("projectsVacantRolesApplications_id",$application["projectsVacantRolesApplications_id"]);
 $DBLIB->update("projectsVacantRolesApplications",["projectsVacantRolesApplications_status"=>2]);
 
-notify(41,$application['users_userid'], $AUTH->data['instance']['instances_id'], "Application unsuccessful for " . $application['projects_name'], "Unfortunately your application for the role of " . $application['projectsVacantRoles_name'] . " on " . $application['projects_name'] . "wasn't successful.<br/><br/>" . $bCMS->sanitizeString($_POST['message']) . "<br/><br/>If you have any queries please contact " . $AUTH->data['users_name1'] . " " .  $AUTH->data['users_name2'] . " (" . $AUTH->data['users_email'] . ")");
+notify(41,$application['users_userid'], $AUTH->data['instance']['instances_id'], "Application unsuccessful for " . $application['projects_name'], "Unfortunately your application for the role of " . $application['projectsVacantRoles_name'] . " on " . $application['projects_name'] . " wasn't successful.<br/><br/>" . $bCMS->sanitizeString($_POST['message']) . "<br/><br/>If you have any queries please contact " . $AUTH->data['users_name1'] . " " .  $AUTH->data['users_name2'] . " (" . $AUTH->data['users_email'] . ")");
 
 finish(true);
