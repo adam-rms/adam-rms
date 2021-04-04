@@ -14,6 +14,8 @@ if (strlen($array['projectsVacantRoles_id']) <1) finish(false, ["code" => "PARAM
 $DBLIB->where("projectsVacantRoles_deleted",0);
 $DBLIB->join("projects","projectsVacantRoles.projects_id=projects.projects_id","LEFT");
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("projects.projects_archived", 0);
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->where("projectsVacantRoles_open",1);
 $DBLIB->where("projectsVacantRoles_id",$array['projectsVacantRoles_id']);
