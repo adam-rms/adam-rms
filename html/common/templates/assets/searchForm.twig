@@ -100,7 +100,7 @@
            var search = $(this).serializeArray();
            triggerDeepSearch(search);
        });
-       $(document).on("click",".page-link",function () {
+       $(document).on("click",".page-link[data-page]",function () {
            var data = $("#deepSearchAssetForm").serializeArray();
            data.push({"name": "page", "value": $(this).data("page")});
            triggerDeepSearch(data);
