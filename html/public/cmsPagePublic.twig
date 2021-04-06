@@ -1,0 +1,6 @@
+{% extends 'templatePublic.twig' %}
+{% block main %}
+    <h2>{{ PAGE.cmsPages_name }}</h2>
+    {% embed 'cmsPage.twig' with {'pageData': PAGE } only %}
+    {% endembed %}
+{% endblock %}

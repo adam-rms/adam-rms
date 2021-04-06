@@ -1,0 +1,351 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
+    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css"/>
+
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        CMS Pages
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <form class="input-group input-group-sm" method="GET">
+                            {% if includeArchived %}
+                                <a href="?" type="button" class="btn btn-default btn-sm">Hide Archived Pages</a>
+                            {% else %}
+                                <a href="?archive=1" type="button" class="btn btn-default  btn-sm">Show Archived Pages</a>
+                            {% endif %}
+                            <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-search"></i></button>
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModalNEW"><i class="fa fa-plus"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-bordered"  id="pageListSortable">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Page ID</th>
+                                <th>Icon</th>
+                                <th>Name</th>
+                                <th>Security</th>
+                                <th>Page URLs</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        {% for page in CMSPages %}
+                            <tbody value="{{ page.cmsPages_id }}">
+                            <tr>
+                                <td>
+                                    {% if 126|instancePermissions %}
+                                    <span class="handle">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                   </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ page.cmsPages_id }}
+                                </td>
+                                <td>
+                                    <i class="{{ page.cmsPages_fontAwesome }}"></i>
+                                </td>
+                                <td style="font-weight:bold;">
+                                    {{ page.cmsPages_name }}
+                                </td>
+                                <td>
+                                    {% if page.cmsPages_showPublic == 1 and publicData.enabled %}
+                                        Public on the Internet
+                                    {% elseif page.cmsPages_visibleToGroups %}
+                                        Only AdamRMS users with role
+                                        {% set first = true %}
+                                        {% for position in positions %}
+                                            {% if position.instancePositions_id in page.cmsPages_visibleToGroups|split(',') %}
+                                                {% if first %}
+                                                    {% set first = false %}
+                                                {% else %}
+                                                    {{ " or " }}
+                                                {% endif %}
+                                                {{ position.instancePositions_displayName }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        All users in {{ USERDATA.instance.instances_name }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}</a><br/>
+                                    {% if page.cmsPages_showPublic == 1 and publicData.enabled and publicData.customDomains %}
+                                        {% for domain in publicData.customDomains %}
+                                            <a href="https://{{ domain }}/p.php?p={{ page.cmsPages_id }}">https://{{ domain }}/?p={{ page.cmsPages_id }}</a><br/>
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td style="width:70px;">
+                                    <div class="btn-group">
+                                        {% if 126|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
+                                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ page.cmsPages_id }}"><i class="fas fa-cog"></i></button>
+                                            {% if page.cmsPages_archived == 0 %}
+                                            <button type="button" class="btn btn-danger btn-sm archiveButton" title="Archive"  data-id="{{ page.cmsPages_id }}"><i class="fas fa-archive"></i></button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-success btn-sm unArchiveButton" title="Remove from Archive" data-id="{{ page.cmsPages_id }}"><i class="fas fa-archive"></i></button>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% for page in page.SUBPAGES %}
+                                <tr>
+                                    <td>
+                                        &#8627;
+                                    </td>
+                                    <td>
+                                        &nbsp;{{ page.cmsPages_id }}
+                                    </td>
+                                    <td>
+                                        <i class="{{ page.cmsPages_fontAwesome }}"></i>
+                                    </td>
+                                    <td style="font-weight:bold;">
+                                        {{ page.cmsPages_name }}
+                                    </td>
+                                    <td>
+                                        {% if page.cmsPages_showPublic == 1 and publicData.enabled %}
+                                            Public on the Internet
+                                        {% elseif page.cmsPages_visibleToGroups %}
+                                            Only AdamRMS users with role
+                                            {% set first = true %}
+                                            {% for position in positions %}
+                                                {% if position.instancePositions_id in page.cmsPages_visibleToGroups|split(',') %}
+                                                    {% if first %}
+                                                        {% set first = false %}
+                                                    {% else %}
+                                                        {{ " or " }}
+                                                    {% endif %}
+                                                    {{ position.instancePositions_displayName }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            All users in {{ USERDATA.instance.instances_name }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}</a><br/>
+                                        {% if page.cmsPages_showPublic == 1 and publicData.enabled and publicData.customDomains %}
+                                            {% for domain in publicData.customDomains %}
+                                                <a href="https://{{ domain }}/?p={{ page.cmsPages_id }}">https://{{ domain }}/?p={{ page.cmsPages_id }}</a><br/>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td style="width:70px;">
+                                        <div class="btn-group">
+                                            {% if 126|instancePermissions %}
+                                                <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
+                                                <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ page.cmsPages_id }}"><i class="fas fa-cog"></i></button>
+                                                {% if page.cmsPages_archived == 0 %}
+                                                    <button type="button" class="btn btn-danger btn-sm archiveButton" title="Archive"  data-id="{{ page.cmsPages_id }}"><i class="fas fa-archive"></i></button>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-success btn-sm unArchiveButton" title="Remove from Archive" data-id="{{ page.cmsPages_id }}"><i class="fas fa-archive"></i></button>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% if 126|instancePermissions %}
+            {% if CMSPagesAll %}
+                {% set  CMSPagesAll = CMSPagesAll|merge([{ "NEW": true, "cmsPages_id": "NEW" }]) %}
+            {% else %}
+                {% set CMSPagesAll = [{ "NEW": true, "cmsPages_id": "NEW" }] %}
+            {% endif %}
+            {% for page in CMSPagesAll %}
+            <div class="modal fade" id="editModal{{ page.cmsPages_id }}">
+                    <div class="modal-dialog modal-lg">
+                        <form class="editForm" data-id="{{ page.cmsPages_id }}">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Page Configuration</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="cmsPages_id" value="{{ page.cmsPages_id }}"/>
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Name</span>
+                                        </div>
+                                        <input required type="text" class="form-control" placeholder="Lowering Instructions" name="cmsPages_name" value="{{ page.cmsPages_name }}">
+                                    </div>
+
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Description</span>
+                                        </div>
+                                        <textarea type="text" class="form-control" placeholder="Instructions on how to lower the drum revolve" name="cmsPages_description" rows="2">{{ page.cmsPages_description }}</textarea>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Icon</span>
+                                        </div>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default iconpicker-component"><i></i></button>
+                                            <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle"  data-selected="{{ page.cmsPages_fontAwesome }}" data-id="{{ page.cmsPages_id }}" data-toggle="dropdown">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="dropdown-menu"></div>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <h3>Public Site</h3>
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Accessible on Public Site</span>
+                                        </div>
+                                        <input type="checkbox" class="form-control" name="cmsPages_showPublic" {% if publicData.enabled != true %}disabled title="Public Site is Disabled" {% elseif page.cmsPages_showPublic == 1 or page.NEW %}checked{% endif %}  />
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Show in Public Navigation Menu</span>
+                                        </div>
+                                        <input type="checkbox" class="form-control" name="cmsPages_showPublicNav" {% if publicData.enabled != true %}disabled title="Public Site is Disabled" {% elseif page.cmsPages_showPublicNav == 1 or page.NEW %}checked{% endif %}  />
+                                    </div>
+                                    <hr/>
+                                    <h3>AdamRMS Dashboard</h3>
+                                    <div class="form-group">
+                                        <label>Limit visibility to:</label>
+                                        <select multiple class="form-control select2 select2bs4" name="cmsPages_visibleToGroups">
+                                            {% for position in positions %}
+                                                <option value="{{ position.instancePositions_id }}" {% if position.instancePositions_id in page.cmsPages_visibleToGroups|split(',') %}selected{% endif %}>{{ position.instancePositions_displayName }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Show in Navigation Menu</label>
+                                        <input type="checkbox" class="form-control" name="cmsPages_showNav" {{ page.cmsPages_showNav == 1 or page.NEW ? 'checked' : ''  }}  />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Sub-page of</label>
+                                        <select class="form-control select2 select2bs4" name="cmsPages_subOf">
+                                            <option value="">None</option>
+                                            {% for pageList in CMSPages %}
+                                                {% if pageList.cmsPages_id != page.cmsPages_id %}
+                                                    <option value="{{ pageList.cmsPages_id }}" {% if pageList.cmsPages_id == page.cmsPages_subOf %}selected{% endif %}>{{ pageList.cmsPages_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary saveEdit">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        {% endfor %}
+        {% endif %}
+        <script>
+            $(document).ready(function () {
+                $('.iconpickerButtonSelector').iconpicker({ /*options*/ });
+                {% if 126|instancePermissions %}
+                $('#pageListSortable').sortable({
+                    placeholder         : 'sort-highlight',
+                    handle              : '.handle',
+                    forcePlaceholderSize: true,
+                    zIndex              : 999999,
+                    update: function( event, ui ) {
+                        console.log("HI");
+                        ajaxcall("cms/editPageRank.php", {
+                            "order": $("#pageListSortable").sortable('toArray', {attribute: 'value'})
+                        }, null, true);
+
+                    }
+                });
+                $(".editForm").submit(function (event) {
+                    var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+                    formData.push({"name": "cmsPages_fontAwesome", "value":$(".iconpickerButtonSelector[data-id=" + $(this).data("id") + "]").data('iconpicker').iconpickerValue});
+                    event.preventDefault();
+                    ajaxcall("cms/editPageConfig.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                });
+                $('.editForm .select2').select2({
+                    theme: "bootstrap4",
+                    width: '100%'
+                });
+                $(".archiveButton").click(function () {
+                    var id = $(this).data("id");
+                    bootbox.confirm({
+                        message: "Are you sure you want to archive this page?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                var formData = [{"name": "cmsPages_id", "value":id },{"name": "cmsPages_archived", "value":"1" }];
+                                ajaxcall("cms/editPageConfig.php", {formData}, function (data) {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                $(".unArchiveButton").click(function () {
+                    var id = $(this).data("id");
+                    bootbox.confirm({
+                        message: "Are you sure you want to remove this page from the archive?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                var formData = [{"name": "cmsPages_id", "value":id },{"name": "cmsPages_archived", "value":"0" }];
+                                ajaxcall("cms/editPageConfig.php", {formData}, function (data) {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+            });
+        </script>
+    </div>
+
+{% endblock %}
