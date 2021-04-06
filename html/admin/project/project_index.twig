@@ -449,7 +449,7 @@
                                     {% for payment in FINANCIALS.payments.staff.ledger %}
                                         <tr>
                                             <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                            <td>{{ payment.payments_supplier|replace({" ":"&nbsp;"})}}</td>
+                                            <td>{{ payment.payments_supplier|nbsp}}</td>
                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                             <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                             <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
