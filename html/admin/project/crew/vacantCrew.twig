@@ -46,7 +46,7 @@
                                     {{ role.projectsVacantRoles_name }}
                                 </td>
                                 <td>
-                                    {{ role.projectsVacantRoles_open == 1 ? 'OPEN' : 'CLOSED' }}
+                                    {{ role.projectsVacantRoles_slotsFilled >= role.projectsVacantRoles_slots ? 'FULL' : role.projectsVacantRoles_open == 1 ? 'OPEN' : 'HIDDEN' }}
                                 </td>
                                 <td>
                                     {{ role.projectsVacantRoles_deadline ? role.projectsVacantRoles_deadline|date("d M Y h:ia") : '' }}
@@ -121,7 +121,7 @@
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Open for Applications</span>
+                                    <span class="input-group-text">Visible on Crew Vacancies List</span>
                                 </div>
                                 <input type="checkbox" class="form-control" name="projectsVacantRoles_open" {{ role.projectsVacantRoles_open == 1 or role.NEW ? 'checked' : ''  }}  />
                             </div>
