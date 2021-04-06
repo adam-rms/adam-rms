@@ -30,7 +30,6 @@ $CONFIG = array(
     'ASSETCDNURL' => 'https://assets.adam-rms.com/file/AdamRMS-assets',
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
     'ERRORS' => ['SENTRY' => getenv('bCMS__SENTRYLOGIN'), "SENTRYPublic" => getenv('bCMS__SENTRYLOGINPUBLIC')],
-    'ANALYTICS' => ['TRACKINGID' => "G-F9FBE7ZZNM"],
     'VERSION' => ['COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')],
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
@@ -185,6 +184,22 @@ $CONFIG = array(
                 "methods" => [1,3,4],
                 "default" => false,
                 "canDisable" => true
+            ],
+            [
+                "id" => 40,
+                "group" => "Project",
+                "name" => "Application made for a crew vacancy on a project you manage",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
+                "id" => 41,
+                "group" => "Project",
+                "name" => "Application updates for a crew vacancy you applied to",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => false
             ],
         ]
     ]

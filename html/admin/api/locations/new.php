@@ -12,7 +12,7 @@ if (strlen($array['locations_name']) <1) finish(false, ["code" => "PARAM-ERROR",
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
 
 $location = $DBLIB->insert("locations", $array);
-if (!$location) finish(false, ["message" => $DBLIB->getLastError()]);
+if (!$location) finish(false);
 
 $bCMS->auditLog("INSERT", "locations", json_encode($array), $AUTH->data['users_userid']);
 finish(true);

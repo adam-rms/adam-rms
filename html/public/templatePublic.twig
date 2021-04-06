@@ -62,7 +62,6 @@
             font-size: 1rem;
         }
         .sidebar {
-            margin-top: 48px;
             padding: 10px;
             box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
         }
@@ -75,7 +74,7 @@
         }
         @media (min-width:992px) {
             .sidebar-sticky {
-                height: calc(100vh - 128px);
+                height: calc(100vh - 80px);
             }
         }
         @supports ((position: -webkit-sticky) or (position: sticky)) {
@@ -109,16 +108,9 @@
             text-transform: uppercase;
         }
         [role="main"] {
-            margin-top: 48px; /* Space for fixed navbar */
             padding: 10px;
         }
-        .navbar-brand {
-            padding-top: .75rem;
-            padding-bottom: .75rem;
-            font-size: 1rem;
-            background-color: rgba(0, 0, 0, .25);
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
-        }
+
         .navbar-dark .navbar-nav .nav-link {
             color: white;
         }
@@ -130,35 +122,66 @@
         }
         @media (min-width:992px) {
             .footer {
+                padding:0;
                 height: 60px;
-                line-height: 60px;
+                line-height: 40px;
+            }
+            div#footer-left {
+                padding:10px;
+            }
+            div#footer-right {
+                text-align: right;
+                padding:10px;
             }
         }
+        @media (max-width:991px) {
+            div#footer-left {
+                padding:5px;
+                text-align:center;
+            }
+            div#footer-right {
+                text-align:center;
+                padding:5px;
+            }
+        }
+        img.logo {
+            width:80%;
+            margin:5px;
+        }
+        div.logo {
+            width: 100%;
+            text-align:center;
+        }
+        div.headerImage {
+            width: 100%;
+            min-height:200px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size:cover;
+            background-color: #cccccc;
+            background-image: url("{{ INSTANCE.publicData.headerImage|s3URL("medium")|raw }}");
+            margin-bottom:10px;
+        }
+
     </style>
 </head>
 
 <body>
-<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">{{ INSTANCE.instances_name }}</a>
-    <ul class="navbar-nav px-3 d-none d-md-block">
-        {% if INSTANCE.FILES and false %}
-            <li class="nav-item text-nowrap">
-                <a class="nav-link" href="files.php">Downloads</a>
-            </li>
-        {% endif %}
-        {% if INSTANCE.publicData.enableAssets %}
-            <li class="nav-item text-nowrap">
-                <a class="nav-link" href="assets.php">Assets</a>
-            </li>
-        {% endif %}
-
-    </ul>
-</nav>
-
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-sm-12 col-md-2 bg-light sidebar">
+        <nav class="col-sm-12 col-md-12 col-lg-2 bg-light sidebar">
             <div class="sidebar-sticky">
+                <div class="logo">
+                    <a href="/" class="nav-link">
+                    {% if INSTANCE.instances_logo %}
+                        <img src="{{ INSTANCE.instances_logo|s3URL("small") }}" class="logo" alt="{{ INSTANCE.instances_name }} Logo" />
+                    {% else %}
+                         <h3>{{ INSTANCE.instances_name }}</h3>
+                    {% endif %}
+                    </a>
+                    <hr/>
+                </div>
+
                 {% block menu %}
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -197,22 +220,27 @@
                 {% endblock %}
             </div>
         </nav>
-        <main role="main" class="col-sm-12 col-md-9 col-lg-10 px-4">
-            {% block main %}
+        <main role="main" class="col-sm-12 col-md-12 col-lg-10 p-0">
+            {% block header %}
+            {% if INSTANCE.publicData.headerImage %}
+                <div class="headerImage"></div>
+            {% endif %}
             {% endblock %}
+            <div class="px-4">
+                {% block main %}
+                {% endblock %}
+            </div>
         </main>
         <footer class="footer">
-            <div class="row" style="width: 100%;">
-                <div class="col-sm-12 col-md-6 p-0 text-muted">
-                    <div style="padding-left:25px;">
-                        {% if INSTANCE.publicData.footerText %}
-                            {{ INSTANCE.publicData.footerText }}
-                        {% else %}
-                            Proudly powered by <a href="https://adam-rms.com">AdamRMS</a>
-                        {% endif %}
-                    </div>
+            <div class="row" style="width: 100%;margin:0;">
+                <div class="col-sm-12 col-md-6 text-muted" id="footer-left">
+                    {% if INSTANCE.publicData.footerText %}
+                        {{ INSTANCE.publicData.footerText }}
+                    {% else %}
+                        Proudly powered by <a href="https://adam-rms.com">AdamRMS</a>
+                    {% endif %}
                 </div>
-                <div class="col-sm-12 col-md-6 text-muted p-0" style="text-align: right;">
+                <div class="col-sm-12 col-md-6 text-muted" id="footer-right">
                     <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://studios.jbithell.com">Bithell Studios Ltd</a>.</strong> All rights
                     reserved.
                 </div>
@@ -230,5 +258,8 @@
 <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick-theme.css" />
 <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/jquery-migrate-1.2.1.min.js"></script>
 <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.min.js"></script>
+
+
+{% include 'analytics.twig' %}
 </body>
 </html>

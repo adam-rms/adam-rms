@@ -442,15 +442,31 @@
                         <a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
                             <i class="nav-icon fas fa-graduation-cap"></i>
                             <p>Training</p>
-                            <span class="right badge badge-danger">New</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if 124|instancePermissions %}
+                        <li class="nav-item">
+                            <a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
+                                <i class="nav-icon fas fa-ad"></i>
+                                <p>Crew Vacancies</p>
+                                <span class="right badge badge-danger">New</span>
+                            </a>
+                        </li>
                     {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
                         <a data-widget="control-sidebar" data-slide="true" href="#" class="nav-link">
                             <i class="nav-icon fas fa-warehouse"></i>
                             <p>Search Assets</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL }}/manufacturers.php" class="nav-link">
+                            <i class="nav-icon fas fa-industry"></i>
+                            <p>
+                                Manufacturers
+                            </p>
                         </a>
                     </li>
                    <li class="nav-item">
@@ -772,16 +788,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
     });
     console.log("Welcome to {{ CONFIG.PROJECT_NAME|escape("js") }} version {{ CONFIG.VERSION.TAG|escape("js") }}");
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ CONFIG.ANALYTICS.TRACKINGID }}"></script>
-<script>
-    //Google Analytics
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', '{{ CONFIG.ANALYTICS.TRACKINGID }}');
-</script>
+{% include 'analytics.twig' %}
 </body>
 {% endif %}
 </html>

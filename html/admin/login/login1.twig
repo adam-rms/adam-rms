@@ -22,9 +22,6 @@
 		$( document ).ready(function() {
 		    //Find out if there are any status issues
 		    $("#status").html("");
-            if(/chrom(e|ium)/.test(navigator.userAgent.toLowerCase()) !== true){
-                $("#status").append('<div class="alert alert-warning" role="alert"><h4 class="alert-heading">Unsupported Browser</h4>Sorry - Google Chrome is the only supported browser for AdamRMS, you may experience issues using the site in this browser. </div>');
-            }
             $.ajax({
                 url: "https://status.jbithell.com/static/content/api/v0/systems.en.json",
                 type: "GET",

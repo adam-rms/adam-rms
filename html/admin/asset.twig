@@ -106,10 +106,10 @@
                         </li>
                         {% endif %}
                         <li class="list-group-item">
-                            <b>Category</b> <a class="float-right" href="#">{{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}</a>
+                            <b>Category</b> {{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}
                         </li>
                         <li class="list-group-item">
-                            <b>Manufacturer</b> <a class="float-right" href="#">{{ asset.manufacturers_name }}</a>
+                            <b>Manufacturer</b> {{ asset.manufacturers_name }}
                         </li>
                         <li class="list-group-item">
                             <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
@@ -308,7 +308,7 @@
                                                         When linked assets are added to a project they are discounted by {{ USERDATA.instance.instances_config_linkedDefaultDiscount }}% by default
                                                     </div>
                                                 {% endif %}
-                                                <select class="form-control select2bs4" id="assetLinkChange">
+                                                <select class="form-control select2bs4 assetSelect2" id="assetLinkChange">
                                                     {% if assets[0]['assets_linkedTo'] %}
                                                         <option value="{{ assets[0]['assets_linkedTo'] }}" selected>{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</option>
                                                     {% endif %}
@@ -389,7 +389,7 @@
                                                 <div class="callout callout-danger">
                                                     Changing the asset type for this asset can have significant implications especially with cost of existing projects and definable fields
                                                 </div>
-                                                <select class="form-control  select2bs4" id="assetTypeChange" placeholder="{{ asset.assetTypes_name }}" value="{{ asset.assetTypes_id }}"></select>
+                                                <select class="form-control  select2bs4 assetSelect2" id="assetTypeChange" placeholder="{{ asset.assetTypes_name }}" value="{{ asset.assetTypes_id }}"></select>
                                                 <button class="btn btn-default float-right" id="saveAssetTypeChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
                                         </div>
@@ -1009,14 +1009,14 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Category</label>
-                                                <select class="form-control  select2bs4" id="category" name="assetCategories_id">
+                                                <select class="form-control  select2bs4 assetSelect2" id="category" name="assetCategories_id">
                                                     {% for category in categories %}
                                                         <option  {%  if category.assetCategories_id == asset.assetCategories_id %} selected {% endif %} value="{{ category.assetCategories_id }}">{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
                                             <label>Manufacturer</label>
-                                            <select class="form-control  select2bs4" id="manufacturer">
+                                            <select class="form-control  select2bs4 assetSelect2" id="manufacturer">
                                                 {% for manufacturer in manufacturers %}
                                                     <option {%  if manufacturer.manufacturers_id == asset.manufacturers_id %} selected {% endif %} value="{{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</option>
                                                 {% endfor %}
@@ -1380,7 +1380,7 @@
 
         <script>
             $(document).ready(function () {
-                $(".select2bs4").select2({
+                $(".assetSelect2").select2({
                     theme: "bootstrap4",
                     width: '100%'
                 });

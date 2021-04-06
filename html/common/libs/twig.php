@@ -230,3 +230,9 @@ $TWIG->addFilter(new \Twig\TwigFilter('moneyPositive', function ($variable) {
 $TWIG->addFilter(new \Twig\TwigFilter('mass', function ($variable) {
     return number_format((float)$variable, 2, '.', '') . "kg";
 }));
+$TWIG->addFilter(new \Twig\TwigFilter('nbsp', function ($string) {
+    return str_replace(" ","&nbsp;", $string);
+}, [
+    'pre_escape' => 'html',
+    'is_safe' => ['html'],
+]));

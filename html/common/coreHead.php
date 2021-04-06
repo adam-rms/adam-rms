@@ -6,6 +6,15 @@ use Aws\S3\Exception\S3Exception;
 use Aws\CloudFront\CloudFrontClient;
 use Aws\Exception\AwsException;
 
+if (!$CONFIG['DEV']) {
+    Sentry\init([
+        'dsn' => $CONFIG['ERRORS']['SENTRY'],
+        'traces_sample_rate' => 0.1, //Capture 10% of pageloads for perforamnce monitoring
+        'release' => $CONFIG['VERSION']['TAG'] . "." . $CONFIG['VERSION']['COMMIT'],
+        'sample_rate' => 1.0,
+    ]);
+}
+
 /* DATBASE CONNECTION */
 $DBLIB = new MysqliDb ([
                 'host' => $CONFIG['DB_HOSTNAME'],
@@ -191,6 +200,12 @@ class bCMS {
                 //Public homepage content image
                 $secure = false;
                 $instanceIgnore = true;
+            case 17:
+                //Public homepage header image
+                $secure = false;
+                $instanceIgnore = true;
+            case 18:
+                //Vacant role application
             default:
                 //There are no specific requirements for this file so not to worry.
         }

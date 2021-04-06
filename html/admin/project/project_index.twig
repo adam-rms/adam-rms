@@ -177,7 +177,7 @@
                         {% if 45|instancePermissions and project.projectsTypes_config_notes == 1 %}
                             <button type="button" class="btn btn-default" id="newProjectNote">New Note</button>
                         {% endif %}
-                        <button type="button" class="btn btn-default" id="quickAddCommentButton">Add Comment</button>
+                        <button type="button" class="btn btn-default" id="quickAddCommentButton">New Comment</button>
                         {% if 29|instancePermissions %}
                         <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
                         {% endif %}
@@ -449,7 +449,7 @@
                                     {% for payment in FINANCIALS.payments.staff.ledger %}
                                         <tr>
                                             <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                            <td>{{ payment.payments_supplier|replace({" ":"&nbsp;"})}}</td>
+                                            <td>{{ payment.payments_supplier|nbsp}}</td>
                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                             <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                             <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
@@ -549,16 +549,11 @@
                                     {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
                                         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
                                     {% endif %}
-                                    {% if 48|instancePermissions %}
-                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
+                                    {% if 123|instancePermissions %}
+                                        <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary">Crew Recruitment</a>
                                     {% endif %}
                                     {% if 48|instancePermissions %}
-                                        <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                            <span class="sr-only">Toggle Dropdown</span>
-                                            <div class="dropdown-menu" role="menu">
-                                                <a class="dropdown-item" id="addCrewVacant" href="#">Add Vacant Crew Position</a>
-                                            </div>
-                                        </button>
+                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
                                     {% endif %}
                                 </div>
                             </div>
@@ -567,7 +562,7 @@
                         {% if project.auditLog|length > 0 %}
                             <div class="card">
                                  <div class="card-header">
-                                        <h3 class="card-title">History</h3>
+                                        <h3 class="card-title">Comments & History</h3>
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                                 <i class="fas fa-minus"></i></button>
@@ -1658,7 +1653,7 @@
                     }
                 },
                 multiple: true,
-                theme: "bootstrap",
+                theme: "bootstrap4",
                 minimumInputLength: 0,
                 width: '100%',
                 placeholder: "Search for existing AdamRMS users to add to crew",
@@ -1704,22 +1699,6 @@
                         location.reload();
                     }, true);
                 }
-            });
-            $('#addCrewVacant').on('click', function(e){
-                bootbox.prompt({
-                    title: "Name vacant role",
-                    callback: function(result) {
-                        if (result && result.length > 0) {
-                            var rolename = result;
-                            ajaxcall("projects/crew/addVacantSlot.php", {
-                                "crewAssignments_role": rolename,
-                                "projects_id": "{{ project.projects_id }}"
-                            }, function () {
-                                location.reload();
-                            }, true);
-                        }
-                    }
-                });
             });
             {% endif %}
             {% if 51|instancePermissions %}

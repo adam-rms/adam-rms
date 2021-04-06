@@ -62,6 +62,7 @@
                             <label>Public Website</label>
                             <input required type="url" class="form-control" value="{{ USERDATA.instance.instances_website }}" disabled>
                         </div>
+                        <input type="hidden" name="headerImage" value="{{ publicData.headerImage }}"/>
                 </div>
                 {% if 83|instancePermissions %}
                 <div class="card-footer">
@@ -73,6 +74,39 @@
                 $(document).ready(function() {
                     $("#basicSettings").on("submit", function(e){
                         e.preventDefault();
+                    });
+                });
+            </script>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Homepage Content</h3>
+            </div>
+            <div class="card-body">
+                {% embed 'common/plugins/uppy.twig' with {'type': 'PUBLIC-HOMEPAGECONTENT-IMAGE', 'paste': true, 'typeId': 16, 'subTypeId': USERDATA.instance.instances_id, 'imagesOnly': true } %}
+                    {% block success %}
+                        $('#homepageHTML').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                    {% endblock %}
+                {% endembed %}
+                <textarea class="textarea" id="homepageHTML" rows="6" placeholder="Place some text here to display on the homepage" style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
+                    {{ publicData.homepageHTML }}
+                </textarea>
+            </div>
+            {% if 83|instancePermissions %}
+                <div class="card-footer">
+                    <button class="btn btn-default save">Save</button>
+                </div>
+            {% endif %}
+            <script>
+                $(document).ready(function() {
+                    $('#homepageHTML').summernote({
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'italic', 'underline', 'clear']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['insert', ['link', 'hr']],
+                            ['view', ['codeview']]
+                        ]
                     });
                 });
             </script>
@@ -98,38 +132,27 @@
             </div>
             {% endif %}
         </div>
-        <div class="card">
+        <div class="card ">
             <div class="card-header">
-                <h3 class="card-title">Homepage Content</h3>
+                <h3 class="card-title">Header Image</h3>
             </div>
             <div class="card-body">
-                {% embed 'common/plugins/uppy.twig' with {'type': 'PUBLIC-HOMEPAGECONTENT-IMAGE', 'paste': true, 'typeId': 16, 'subTypeId': USERDATA.instance.instances_id, 'imagesOnly': true } %}
+                {% if publicData.headerImage %}
+                    <img src="{{ publicData.headerImage|s3URL("medium") }}" style="width: 100%;" id="currentHeaderImage" />
+                {% endif %}
+                <p>Header images should be much wider than they are tall, and avoid containing any logos/text</p>
+                {% embed 'common/plugins/uppy.twig' with {'type': 'PUBLIC-HEADER-IMAGE', 'paste': false, 'typeId': 17, 'subTypeId': USERDATA.instance.instances_id, 'imagesOnly': true } %}
                     {% block success %}
-                        $('#homepageHTML').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                        $('input[name="headerImage"]').val(responseJson.id);
+                        $("#currentHeaderImage").hide();
                     {% endblock %}
                 {% endembed %}
-                <textarea class="textarea" id="homepageHTML" rows="6" placeholder="Place some text here to display on the homepage" style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                    {{ publicData.homepageHTML }}
-                </textarea>
             </div>
             {% if 83|instancePermissions %}
-            <div class="card-footer">
-                <button class="btn btn-default save">Save</button>
-            </div>
+                <div class="card-footer">
+                    <button class="btn btn-default save">Save</button>
+                </div>
             {% endif %}
-            <script>
-                $(document).ready(function() {
-                    $('#homepageHTML').summernote({
-                        toolbar: [
-                            ['style', ['style']],
-                            ['font', ['bold', 'italic', 'underline', 'clear']],
-                            ['para', ['ul', 'ol', 'paragraph']],
-                            ['insert', ['link', 'hr']],
-                            ['view', ['codeview']]
-                        ]
-                    });
-                });
-            </script>
         </div>
     </div>
     <script>

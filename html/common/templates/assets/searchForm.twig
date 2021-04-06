@@ -7,6 +7,9 @@
     <div class="form-group">
         <button type="submit" class="btn btn-default btn-outline-success">Search</button>
         <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
+        {% if PUBLIC %}
+        <a href="/" class="btn btn-default btn-outline-info"><i class="fas fa-home"></i></a>
+        {% endif %}
     </div>
     <div class="form-group">
         <label>Keywords (comma separated)</label>
@@ -84,11 +87,10 @@
             success: function (result) {
                 if (result.result) {
                     $("#pageContent").html(result['response']['html']);
-                    console.log(result['response']);
                 }
             }, error: function (result) {
                 console.log(result);
-                alert("Error");
+                alert("Error loading results - please check your internet connection");
             }
         });
     }
@@ -98,7 +100,7 @@
            var search = $(this).serializeArray();
            triggerDeepSearch(search);
        });
-       $(document).on("click",".page-link",function () {
+       $(document).on("click",".page-link[data-page]",function () {
            var data = $("#deepSearchAssetForm").serializeArray();
            data.push({"name": "page", "value": $(this).data("page")});
            triggerDeepSearch(data);
@@ -118,7 +120,7 @@
         $('#deepSearchAssetForm input[name ="dates"]').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
         });
-        $('.select2').select2({
+        $('#deepSearchAssetForm .select2').select2({
             theme: "bootstrap4",
             width: '100%'
         });

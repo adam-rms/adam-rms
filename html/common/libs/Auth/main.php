@@ -139,8 +139,10 @@ class bID
                             } elseif ($_SESSION['instanceID'] != null) $this->setInstance($_SESSION['instanceID']); //Set instance normally
                         }
                         if (!$this->data['instance'] and count($this->data['instances']) >0) {
-                            //No instance has been found
-                            $this->setInstance($this->data['instances'][0]['instances_id']);
+                            foreach ($this->data['instances'] as $instance) {
+                                if ($instance['instances_id'] == $this->data['users_selectedInstanceIDLast']) $this->setInstance($instance['instances_id']); //Try and pick the instance they last selected to make life nicer for them
+                            }
+                            if (!$this->data['instance']) $this->setInstance($this->data['instances'][0]['instances_id']); //No instance has been found - pick the first
                         }
                     }
                 }
@@ -172,7 +174,11 @@ class bID
             //Check they have this instance available
             if ($instance['instances_id'] == $instanceId) {
                 $this->data['instance'] = $instance;
-                if (!isset($_SESSION['instanceID']) or $this->data['instance']['instances_id'] != $_SESSION['instanceID']) $_SESSION['instanceID'] = $this->data['instance']['instances_id'];
+                if (!isset($_SESSION['instanceID']) or $this->data['instance']['instances_id'] != $_SESSION['instanceID']) {
+                    $_SESSION['instanceID'] = $this->data['instance']['instances_id'];
+                    $DBLIB->where("users_userid",$this->data['users_userid']);
+                    $DBLIB->update("users",["users_selectedInstanceIDLast"=>$this->data['instance']['instances_id']],1);
+                }
                 return true;
             }
         }
