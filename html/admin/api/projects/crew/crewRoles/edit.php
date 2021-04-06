@@ -9,7 +9,7 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 
-$checkboxes = ['projectsVacantRoles_open','projectsVacantRoles_firstComeFirstServed','projectsVacantRoles_fileUploads','projectsVacantRoles_collectPhone','projectsVacantRoles_privateToPM'];
+$checkboxes = ['projectsVacantRoles_open','projectsVacantRoles_firstComeFirstServed','projectsVacantRoles_fileUploads','projectsVacantRoles_collectPhone','projectsVacantRoles_privateToPM','projectsVacantRoles_showPublic'];
 foreach ($checkboxes as $checkbox) {
     if (isset($array[$checkbox]) and $array[$checkbox] == "on") $array[$checkbox] = 1;
     else $array[$checkbox] = 0;

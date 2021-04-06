@@ -127,6 +127,13 @@
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
+                                    <span class="input-group-text">Visible on Public Site (if enabled)</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_showPublic" {{ role.projectsVacantRoles_showPublic == 1 or role.NEW ? 'checked' : ''  }}  />
+                            </div>
+
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
                                     <span class="input-group-text">Applications visible to the Project Manager Only</span>
                                 </div>
                                 <input type="checkbox" class="form-control" name="projectsVacantRoles_privateToPM" {{ role.projectsVacantRoles_privateToPM == 1 ? 'checked disabled' : (role.NEW ? 'checked')  }}  />

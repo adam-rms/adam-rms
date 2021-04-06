@@ -46,6 +46,11 @@
                             <label class="form-check-label">Show Asset Notes</label>
                         </div>
                         <hr/>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="enableVacancies" {{ publicData.enableVacancies ? 'checked' : '' }}>
+                            <label class="form-check-label">Show Crew Vacancies</label>
+                        </div>
+                        <hr/>
                         <div class="form-group">
                             <label>Footer Text</label>
                             <textarea class="form-control" rows="2" name="footerText">{{ publicData.footerText }}</textarea>
