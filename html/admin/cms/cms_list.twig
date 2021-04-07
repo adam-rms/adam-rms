@@ -90,7 +90,9 @@
                                     <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}</a><br/>
                                     {% if page.cmsPages_showPublic == 1 and publicData.enabled and publicData.customDomains %}
                                         {% for domain in publicData.customDomains %}
+                                            {% if domain != "localhost" %}
                                             <a href="https://{{ domain }}/p.php?p={{ page.cmsPages_id }}">https://{{ domain }}/?p={{ page.cmsPages_id }}</a><br/>
+                                            {% endif %}
                                         {% endfor %}
                                     {% endif %}
                                 </td>
@@ -147,7 +149,9 @@
                                         <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}</a><br/>
                                         {% if page.cmsPages_showPublic == 1 and publicData.enabled and publicData.customDomains %}
                                             {% for domain in publicData.customDomains %}
+                                                {% if domain != "localhost" %}
                                                 <a href="https://{{ domain }}/?p={{ page.cmsPages_id }}">https://{{ domain }}/?p={{ page.cmsPages_id }}</a><br/>
+                                                {% endif %}
                                             {% endfor %}
                                         {% endif %}
                                     </td>

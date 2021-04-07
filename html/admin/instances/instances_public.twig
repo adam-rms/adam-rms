@@ -125,7 +125,9 @@
             <div class="card-body">
                 {% if publicData.customDomains %}
                     {% for domain in publicData.customDomains %}
+                        {% if domain != "localhost" %}
                         <input type="url" class="form-control" value="{{ domain }}" disabled /><br/>
+                        {% endif %}
                     {% endfor %}
                 {% else %}
                     <i>Not currently setup, please contact support</i>
