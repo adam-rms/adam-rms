@@ -1,6 +1,16 @@
 {% extends 'templatePublic.twig' %}
 {% block main %}
     <h2>{{ PAGE.cmsPages_name }}</h2>
-    {% embed 'cmsPage.twig' with {'pageData': PAGE } only %}
-    {% endembed %}
+    <div id="cmsPageContent">
+        {% embed 'cmsPage.twig' with {'pageData': PAGE } only %}
+        {% endembed %}
+    </div>
+    <style>
+        #cmsPageContent h3 {
+            margin:0;
+        }
+        #cmsPageContent .cell {
+            padding:15px;
+        }
+    </style>
 {% endblock %}

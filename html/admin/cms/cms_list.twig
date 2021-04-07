@@ -96,8 +96,9 @@
                                 </td>
                                 <td style="width:70px;">
                                     <div class="btn-group">
+                                        <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ page.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
                                         {% if 126|instancePermissions %}
-                                            <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
+                                            <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="d-none d-sm-block btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
                                             <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ page.cmsPages_id }}"><i class="fas fa-cog"></i></button>
                                             {% if page.cmsPages_archived == 0 %}
                                             <button type="button" class="btn btn-danger btn-sm archiveButton" title="Archive"  data-id="{{ page.cmsPages_id }}"><i class="fas fa-archive"></i></button>
@@ -152,8 +153,9 @@
                                     </td>
                                     <td style="width:70px;">
                                         <div class="btn-group">
+                                            <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ page.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
                                             {% if 126|instancePermissions %}
-                                                <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
+                                                <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="d-none d-sm-block btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
                                                 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ page.cmsPages_id }}"><i class="fas fa-cog"></i></button>
                                                 {% if page.cmsPages_archived == 0 %}
                                                     <button type="button" class="btn btn-danger btn-sm archiveButton" title="Archive"  data-id="{{ page.cmsPages_id }}"><i class="fas fa-archive"></i></button>

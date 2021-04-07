@@ -12,5 +12,16 @@ $DBLIB->orderBy("cmsPages_id","ASC");
 $PAGEDATA['PAGE'] = $DBLIB->getOne("cmsPages");
 if (!$PAGEDATA['PAGE']) die($TWIG->render('401.twig', $PAGEDATA));
 
+$DBLIB->where("cmsPages_id",$PAGEDATA['PAGE']['cmsPages_id']);
+$DBLIB->orderBy("cmsPagesDrafts_timestamp","DESC");
+$PAGEDATA['PAGE']['DRAFTS'] = $DBLIB->getOne("cmsPagesDrafts",["cmsPagesDrafts_id","cmsPagesDrafts_data"]);
+if ($PAGEDATA['PAGE']['DRAFTS']) $PAGEDATA['PAGE']['DRAFTS']['cmsPagesDrafts_dataARRAY'] = json_decode($PAGEDATA['PAGE']['DRAFTS']['cmsPagesDrafts_data'],true);
+
+$DBLIB->insert("cmsPagesViews",[
+    "cmsPages_id" => $PAGEDATA['PAGE']['cmsPages_id'],
+    "cmsPagesViews_timestamp" => date("Y-m-d H:i:s"),
+    "users_userid" => $AUTH->data['users_userid']
+]);
+
 echo $TWIG->render('cms/cms_index.twig', $PAGEDATA);
 ?>
