@@ -163,51 +163,69 @@ class bCMS {
             case 2:
                 $instanceIgnore = true;
                 // Asset type thumbnail
+                break;
             case 3:
                 // Asset type file
+                break;
             case 4:
                 // Asset file
+                break;
             case 5:
                 $instanceIgnore = true;
                 $secure = false;
                 // Instance thumbnail
+                break;
             case 6:
                 // Instance file
+                break;
             case 7:
                 //Project file
+                break;
             case 8:
                 // Maintenance job file
+                break;
             case 9:
                 $instanceIgnore = true;
                 // User thumbnail
+                break;
             case 10:
                 $instanceIgnore = true;
                 $secure = false;
                 //Instance email thumbnail
+                break;
             case 11:
                 // Location file
+                break;
             case 12:
                 //Module thumbnail
+                break;
             case 13:
                 //Module step image
+                break;
             case 14:
                 //Payment file attachment
+                break;
             case 15:
                 //Public file
                 $secure = false;
                 $instanceIgnore = true;
+                break;
             case 16:
                 //Public homepage content image
                 $secure = false;
                 $instanceIgnore = true;
+                break;
             case 17:
                 //Public homepage header image
                 $secure = false;
                 $instanceIgnore = true;
+                break;
             case 18:
                 //Vacant role application
+                break;
             default:
                 //There are no specific requirements for this file so not to worry.
+                break;
         }
         if ($secure and !$GLOBALS['AUTH']->login) return false;
         if ($secure and !$instanceIgnore and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
