@@ -1,0 +1,29 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+{% endblock %}
+{% block content %}
+    {% if specificRevision %}
+        <div class="alert alert-warning" style="border: 0px;">
+            <h4>
+                <i class="fas fa-history"></i> PREVIEWING REVISION v{{ PAGE.DRAFTS.cmsPagesDrafts_revisionID }}
+            </h4>
+        </div>
+    {% endif %}
+    <div class="card ">
+        <div class="card-header">
+            <h3 class="card-title">
+                {{ PAGE.cmsPages_name }}
+            </h3>
+            {% if specificRevision != true and 126|instancePermissions %}
+            <div class="card-tools pull-right">
+                <div class="input-group input-group-sm">
+                        <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ PAGE.cmsPages_id }}" type="button" class="d-none d-sm-block btn btn-default btn-sm" title="Edit Page"><i class="fas fa-edit"></i></a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% embed 'cmsPage.twig' with {'pageData': PAGE } only %}
+    {% endembed %}
+{% endblock %}

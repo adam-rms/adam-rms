@@ -434,7 +434,17 @@
                                     </a>
                                 </li>
                             {% endif %}
-
+                            {% if 125|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
+                                        <i class="far fa-newspaper nav-icon"></i>
+                                        <p>
+                                            CMS Pages
+                                        </p>
+                                        <span class="right badge badge-danger">New</span>
+                                    </a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </li>
                     {% if 113|instancePermissions %}
@@ -453,6 +463,45 @@
                                 <span class="right badge badge-danger">New</span>
                             </a>
                         </li>
+                    {% endif %}
+                    {% if NAVIGATIONCMSPages %}
+                        <li class="nav-header">PAGES</li>
+                        {% for page in NAVIGATIONCMSPages %}
+                            {% if page.SUBPAGES %}
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+                                        <p>
+                                            {{ page.cmsPages_name }}
+                                            <i class="fas fa-angle-left right"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
+                                                <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+                                                <p>{{ page.cmsPages_name }}</p>
+                                            </a>
+                                        </li>
+                                        {% for page in page.SUBPAGES %}
+                                            <li class="nav-item">
+                                                <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
+                                                    <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+                                                    <p>{{ page.cmsPages_name }}</p>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
+                                        <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+                                        <p>{{ page.cmsPages_name }}</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
