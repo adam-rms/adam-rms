@@ -19,7 +19,7 @@
                 <div class="btn-group  btn-group-sm" role="group">
                     <button type="button" class="btn btn-default btn-sm" id="addNewCard" title="Add new Card">Add Card</button>
                     <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ PAGE.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
-                    <button type="button" class="btn btn-default btn-sm" title="Edit History" data-toggle="modal" data-target="#editCardModal"><i class="fas fa-history"></i></button>
+                    <button type="button" class="btn btn-default btn-sm" title="Edit History" data-toggle="modal" data-target="#revisionHistoryModal"><i class="fas fa-history"></i></button>
                     <button type="button" class="btn btn-success btn-sm" id="masterSave" title="Save"><i class="fas fa-save"></i></button>
                 </div>
             </div>
@@ -147,6 +147,68 @@
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="revisionHistoryModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editConfigForm">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Page Revision History</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        #
+                                    </th>
+                                    <th>
+                                        User
+                                    </th>
+                                    <th>
+                                        Timestamp
+                                    </th>
+                                    <th>
+                                        Comment
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="revisionTableBody">
+                            {% for draft in PAGE.DRAFTS %}
+                                <tr>
+                                    <td>
+                                        v{{ draft.cmsPagesDrafts_revisionID }}
+                                    </td>
+                                    <td>
+                                        {{ draft.users_name1 ~ " " ~ draft.users_name2 }}
+                                    </td>
+                                    <td>
+                                        {{ draft.cmsPagesDrafts_timestamp|date("d M Y h:ia") }}
+                                    </td>
+                                    <td>
+                                        {{ draft.cmsPagesDrafts_changelog }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}&r={{ draft.cmsPagesDrafts_id }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                            <button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="{{ draft.cmsPagesDrafts_revisionID }}" title="Rollback to this change"><i class="fas fa-history"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>
@@ -332,18 +394,36 @@
                 gs.insertCell($('#templateCard').children(".cell").prop('outerHTML'),0);
             });
 
-
-
-            function uploadSave(data) {
+            $(document).on("click",".restoreRevisionButton[data-id]",function(event) {
+                var change = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you wish to restore the page to this point?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("cms/editPageContent-rollback.php", {"cmsPages_id":"{{ PAGE.cmsPages_id }}","change":change}, function (response) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            function uploadSave(data,changelog) {
                console.log(data);
-               bootbox.prompt("Revision Comment", function(result) {
-                   if (result && result.length > 0) {
-                       ajaxcall("cms/editPageContent.php", {"pageData": data,"cmsPages_id":"{{ PAGE.cmsPages_id }}","changelog":result}, function (data) {
-                           //Add to revision list
-                           lastSaveData = data;
-                       });
-                   }
-               });
+                ajaxcall("cms/editPageContent.php", {"pageData": data,"cmsPages_id":"{{ PAGE.cmsPages_id }}","changelog":changelog}, function (response) {
+                    //Add to revision list
+                    lastSaveData = data;
+                    $("#revisionTableBody").prepend('<tr><td>v' + response.response.revision + '</td><td>{{ USERDATA.users_name1 ~ " " ~ USERDATA.users_name2 }}</td><td><i>Just now</i></td><td>' + changelog + '</td><td><div class="btn-group btn-group-sm" role="group"><a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}&r=' + response.response.revisionID + '" target="_blank"><i class="fas fa-external-link-alt"></i></a><button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="' + response.response.revisionID + '" title="Rollback to this change"><i class="fas fa-history"></i></button></div></td></tr>');
+                });
             }
             function generateSave() {
                 var saveData = {
@@ -395,7 +475,13 @@
                 }
             });
             $(document).on("click","#masterSave",function(event) {
-                uploadSave(generateSave());
+                var saveData = generateSave();
+                bootbox.prompt("Please enter a comment about this revision", function(result) {
+                    if (result && result.length > 0) {
+                        uploadSave(saveData,result);
+                    }
+                });
+
             });
         });
     </script>

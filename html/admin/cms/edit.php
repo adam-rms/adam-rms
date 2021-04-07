@@ -14,7 +14,8 @@ if (!$PAGEDATA['PAGE']) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->where("cmsPages_id",$PAGEDATA['PAGE']['cmsPages_id']);
 $DBLIB->orderBy("cmsPagesDrafts_timestamp","DESC");
-$PAGEDATA['PAGE']['DRAFTS'] = $DBLIB->get("cmsPagesDrafts");
+$DBLIB->join("users","cmsPagesDrafts.users_userid=users.users_userid","LEFT");
+$PAGEDATA['PAGE']['DRAFTS'] = $DBLIB->get("cmsPagesDrafts",null,['cmsPagesDrafts.*',"users.users_name1","users.users_name2"]);
 if ($PAGEDATA['PAGE']['DRAFTS']) {
     $PAGEDATA['PAGE']['DRAFTS'][0]['cmsPagesDrafts_dataARRAY'] = json_decode($PAGEDATA['PAGE']['DRAFTS'][0]['cmsPagesDrafts_data'],true);
 }

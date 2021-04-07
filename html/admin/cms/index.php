@@ -14,7 +14,11 @@ if (!$PAGEDATA['PAGE']) die($TWIG->render('401.twig', $PAGEDATA));
 
 $DBLIB->where("cmsPages_id",$PAGEDATA['PAGE']['cmsPages_id']);
 $DBLIB->orderBy("cmsPagesDrafts_timestamp","DESC");
-$PAGEDATA['PAGE']['DRAFTS'] = $DBLIB->getOne("cmsPagesDrafts",["cmsPagesDrafts_id","cmsPagesDrafts_data"]);
+if (isset($_GET['r']) and $AUTH->instancePermissionCheck(126)) {
+    $DBLIB->where("cmsPagesDrafts_id",$_GET['r']);
+    $PAGEDATA['specificRevision'] = true;
+}
+$PAGEDATA['PAGE']['DRAFTS'] = $DBLIB->getOne("cmsPagesDrafts",["cmsPagesDrafts_id","cmsPagesDrafts_data","cmsPagesDrafts_revisionID"]);
 if ($PAGEDATA['PAGE']['DRAFTS']) $PAGEDATA['PAGE']['DRAFTS']['cmsPagesDrafts_dataARRAY'] = json_decode($PAGEDATA['PAGE']['DRAFTS']['cmsPagesDrafts_data'],true);
 
 $DBLIB->insert("cmsPagesViews",[
