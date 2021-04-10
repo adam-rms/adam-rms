@@ -9,7 +9,11 @@ if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 20);
 $DBLIB->where("modules.modules_deleted", 0);
-if (!$AUTH->instancePermissionCheck(114)) $DBLIB->where("modules.modules_show", 1);
+if ($AUTH->instancePermissionCheck(114) and isset($_GET['drafts'])) {
+    $PAGEDATA['drafts'] = true;
+    $DBLIB->where("modules.modules_show", 0);
+}
+else $DBLIB->where("modules.modules_show", 1);
 $DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->orderBy("modules.modules_name","ASC");
 $modules = $DBLIB->arraybuilder()->paginate('modules', $page, ["modules.*"]);

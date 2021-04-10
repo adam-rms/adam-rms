@@ -9,11 +9,16 @@
                     Modules
                 </h3>
                 <div class="card-tools pull-right">
-                    <form class="input-group input-group-sm" method="GET">
+                    <div class="btn-group">
+                        {% if drafts %}
+                            <a type="button" class="btn btn-default btn-sm" href="?">Published Modules</a>
+                        {% elseif 114|instancePermissions %}
+                            <a type="button" class="btn btn-default btn-sm" href="?drafts">Draft Modules</a>
+                        {% endif %}
                         {% if 115|instancePermissions %}
                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModuleModal"><i class="fa fa-plus"></i></button>
                         {% endif %}
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -196,7 +201,7 @@
                     {% if 115|instancePermissions %}
                     var formData = $("#editFormNew").serializeArray();
                     ajaxcall("modules/new.php", {formData}, function (data) {
-                        location.reload();
+                        window.location.href = "?drafts";
                     });
                     {% endif %}
                 }
