@@ -10,7 +10,7 @@ header("Access-Control-Allow-Methods: GET, PUT, POST, HEAD");
 header('Access-Control-Allow-Origin: ' . $origin);
 $headersSet = true;
 require_once __DIR__ . '/../apiHeadSecure.php';
-
+$bCMS->auditLog("TEST", "forJames",$origin . "|" . json_encode(getallheaders ()), 1);
 $bucket = $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'];
 // Directory to place uploaded files in.
 use Aws\S3\S3Client;
