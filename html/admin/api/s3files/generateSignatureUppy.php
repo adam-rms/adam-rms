@@ -5,10 +5,9 @@ foreach ($body as $key=>$item) {
     $_POST[$key] = $item;
 }
 header("Access-Control-Allow-Headers: Content-Type, Accept, Origin, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-require_once __DIR__ . '/../apiHeadSecure.php';
-
+header("Access-Control-Allow-Methods: *");
 header('Access-Control-Allow-Origin: *');
-
+require_once __DIR__ . '/../apiHeadSecure.php';
 
 $bucket = $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'];
 // Directory to place uploaded files in.
