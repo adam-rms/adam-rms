@@ -5,7 +5,8 @@ foreach ($body as $key=>$item) {
     $_POST[$key] = $item;
 }
 $origin = $_SERVER['HTTP_ORIGIN'];
-header("Access-Control-Allow-Headers: Content-Type, Accept, Origin, Referer, User-Agent, Access-Control-Allow-Headers, Authorization, X-Requested-With, Range, Content-Length, Accept-Language, Host, Accept-Encoding, Connection");
+if ($origin == null) $origin = "*";
+header("Access-Control-Allow-Headers: Content-Type, Accept, Origin, Referer, User-Agent, Access-Control-Allow-Headers, Authorization, X-Requested-With, Range, Content-Length, Accept-Language, Host, Accept-Encoding, Connection, Cf-Request-Id, Cf-Connecting-Ip, X-Forwarded-For, X-Forwarded-Proto, Cf-Ray,Cf-Ipcountry, Accept-Encoding, Cookie");
 header("Access-Control-Allow-Methods: GET, PUT, POST, HEAD");
 header('Access-Control-Allow-Origin: ' . $origin);
 $headersSet = true;
