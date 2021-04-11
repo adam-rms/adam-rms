@@ -1,4 +1,9 @@
 <?php
+//Bit of a hack to get the JWT working on the mobile app
+$body = json_decode(file_get_contents('php://input'),true);
+foreach ($body as $key=>$item) {
+    $_POST[$key] = $item;
+}
 require_once __DIR__ . '/../apiHeadSecure.php';
 
 header('Access-Control-Allow-Origin: *');
@@ -18,10 +23,8 @@ $s3 = new Aws\S3\S3Client([
     )
 ]);
 
-// Retrieve data about the file to be uploaded from the request body.
-$body = json_decode(file_get_contents('php://input'));
-$filename = $body->filename;
-$contentType = $body->contentType;
+$filename = $_POST['filename'];
+$contentType = $_POST['contentType'];
 
 // Prepare a PutObject command.
 $command = $s3->getCommand('putObject', [
