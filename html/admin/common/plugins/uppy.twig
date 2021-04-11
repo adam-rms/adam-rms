@@ -139,8 +139,8 @@ x-amz-meta-size
                     "name": file.name,
                     "public": "{{ (publicBool ? 1 : 0) }}",
                     "size": file.size,
-                    "typeid": "{{ typeId }}",
-                    "subtype": "{{ subTypeId }}",
+                    "typeid": file.meta.typeid,
+                    "subtype":  file.meta.subtype,
                     "originalName": file.data.name
                 },
                 success: function (result) {
