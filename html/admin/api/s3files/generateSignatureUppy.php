@@ -4,10 +4,11 @@ $body = json_decode(file_get_contents('php://input'),true);
 foreach ($body as $key=>$item) {
     $_POST[$key] = $item;
 }
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 require_once __DIR__ . '/../apiHeadSecure.php';
 
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Headers: GET");
+
 
 $bucket = $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'];
 // Directory to place uploaded files in.
