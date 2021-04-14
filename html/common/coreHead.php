@@ -162,6 +162,7 @@ class bCMS {
                 break;
             case 2:
                 $instanceIgnore = true;
+                $secure = false; //Needs to be viewed on the public site
                 // Asset type thumbnail
                 break;
             case 3:
@@ -221,7 +222,7 @@ class bCMS {
                 $instanceIgnore = true;
                 break;
             case 18:
-                //Vacant role application
+                //Vacant role application attachment
                 break;
             case 19:
                 //CMS image
