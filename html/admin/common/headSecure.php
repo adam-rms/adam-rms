@@ -77,7 +77,7 @@ if ($AUTH->data['instance']) {
     $DBLIB->where("cmsPages_archived",0);
     $DBLIB->where("cmsPages_showNav",1);
     $DBLIB->where("cmsPages_subOf",NULL,"IS");
-    $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))");
+    if ($AUTH->data['instance']["instancePositions_id"]) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're bstudios staff
     $DBLIB->orderBy("cmsPages_navOrder","ASC");
     $DBLIB->orderBy("cmsPages_id","ASC");
     $PAGEDATA['NAVIGATIONCMSPages'] = [];
@@ -87,7 +87,7 @@ if ($AUTH->data['instance']) {
         $DBLIB->where("cmsPages_archived",0);
         $DBLIB->where("cmsPages_showNav",1);
         $DBLIB->where("cmsPages_subOf",$page['cmsPages_id']);
-        $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))");
+        if ($AUTH->data['instance']["instancePositions_id"]) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're bstudios staff
         $DBLIB->orderBy("cmsPages_name","ASC");
         $page['SUBPAGES'] = $DBLIB->get("cmsPages");
         $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
