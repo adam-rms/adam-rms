@@ -130,6 +130,18 @@ x-amz-meta-size
                 cropWidescreen: false,
                 cropWidescreenVertical: false,
             }*/
+        }).use(Uppy.Webcam, {
+            countdown: false,
+            target: Uppy.Dashboard,
+            mirror: true,
+            showVideoSourceDropdown: true,
+            preferredImageMimeType:'image/jpg',
+            preferredVideoMimeType: 'video/mp4',
+            showRecordingLength: true,
+            modes: [
+                'picture',
+                'video-audio'
+            ]
         }).on('upload-success', (file, response) => {
             $.ajax({
                 url: "{{ CONFIG.ROOTURL }}/api/s3files/uploadSuccess.php",
