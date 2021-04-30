@@ -444,11 +444,14 @@ class bCMS {
         if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $subQuery->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
 
         if ($SEARCH['TERMS']['GROUPS']) {
-            $thisWhere = "(1=0";
+            $thisWhere = false;
             $thisValues = [];
+
             foreach ($SEARCH['TERMS']['GROUPS'] as $group) {
                 if ($group != null) {
-                    $thisWhere .= " OR ? IN (assets.assets_assetGroups)";
+                    if ($thisWhere != false) $thisWhere .= ' OR ';
+                    else $thisWhere = "(";
+                    $thisWhere .= "FIND_IN_SET(?, assets.assets_assetGroups)";
                     array_push($thisValues,intval($group));
                 }
             }
@@ -466,18 +469,20 @@ class bCMS {
         $RETURN['PAGINATION']['TOTAL-PAGES'] = $DBLIB->totalPages;
         $RETURN['PAGINATION']['COUNT'] = $DBLIB->totalCount;
         $RETURN['PAGINATION']['OFFSET'] = $SEARCH["PAGE_LIMIT"]*($SEARCH["PAGE"]-1);
-
         foreach ($assets as $asset) {
             $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
             $DBLIB->where("assets.instances_id",$SEARCH['INSTANCE_ID']);
             $DBLIB->where("assets_deleted",0);
             if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $DBLIB->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
             if ($SEARCH['TERMS']['GROUPS']) {
-                $thisWhere = "(1=0";
+                $thisWhere = false;
                 $thisValues = [];
+
                 foreach ($SEARCH['TERMS']['GROUPS'] as $group) {
                     if ($group != null) {
-                        $thisWhere .= " OR ? IN (assets.assets_assetGroups)";
+                        if ($thisWhere != false) $thisWhere .= ' OR ';
+                        else $thisWhere = "(";
+                        $thisWhere .= "FIND_IN_SET(?, assets.assets_assetGroups)";
                         array_push($thisValues,intval($group));
                     }
                 }
