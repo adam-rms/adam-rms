@@ -16,7 +16,7 @@ It is available as a hosted solution (not currently open to new customers) or to
 ## Docker Images
 
  - Docker Hub: [bithellstudios/adam-rms](https://hub.docker.com/r/bithellstudios/adam-rms)
- - GitHub Packages: [bstudios/adam-rms](https://github.com/orgs/bstudios/packages?repo_name=adam-rms-app)
+ - GitHub Packages: [bstudios/adam-rms](https://github.com/orgs/bstudios/packages?repo_name=adam-rms)
 
 ## Deploying & Using
 
