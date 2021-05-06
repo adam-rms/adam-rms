@@ -4,6 +4,8 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, wri
 
 It is available as a hosted solution (not currently open to new customers) or to be self-hosted as a docker container. 
 
+![Banner](.github/banner.jpg)
+
 ## Repositories
 
  - [*This repo* Project Source Code __adam-rms__](https://github.com/bstudios/adam-rms)
