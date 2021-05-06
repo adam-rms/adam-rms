@@ -44,18 +44,9 @@ $CONFIG = array(
             'REGION' => getenv('bCMS__AWS_S3_BUCKET_REGION'),
             'CDNEndpoint' => getenv('bCMS__AWS_S3_CDN'),
         ]
-        /*,"FINEUPLOADER" => [
-            "KEY" => getenv('bCMS__AWS_CLIENT_KEY'),
-            "SECRET" => getenv('bCMS__AWS_CLIENT_SECRET_KEY')
-        ]
-        ,"CLOUDFRONT" => [
-            "PRIVATEKEY" => str_replace("\nRSA\nPRIVATE\nKEY"," RSA PRIVATE KEY",str_replace(" ","\n", getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY'))),
-            "KEYPAIRID" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID'),
-            "URL" => 'https://cdn.adam-rms.com/'
-        ]*/
     ],
     'DEV' => (getenv('bCMS__ERRORS') == "true" ? true : false),
-    'JWTKey' => 'WDOnxWSBZyn778OSLFDLbk0wXy1lvOLA9577XwTKhfPMjtR5sJVrHDGLiDF9SP8NSas3z081aE', //TODO save this along with other secrets
+    'JWTKey' => getenv('bCMS__JWT'),
     'NOTIFICATIONS' => [
         "METHODS" => [
             0 => "Post",
