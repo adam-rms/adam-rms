@@ -7,16 +7,16 @@ if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
 
 $DBLIB->where("(manufacturers.instances_id IS NULL OR manufacturers.instances_id = '" . $AUTH->data['instance']['instances_id'] . "')");
-$DBLIB->orderBy("manufacturers_name", "ASC");
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
 		manufacturers.manufacturers_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' OR
 		manufacturers.manufacturers_website LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' 
     )");
-	$PAGEDATA['manufacturers'] = $DBLIB->arraybuilder()->paginate('manufacturers', $page, ["manufacturers.*"]);
+	$PAGEDATA['manufacturers'] = $DBLIB->get('manufacturers', null, ["manufacturers.*"]);
 } else {
 	//Limit it to where there are assets in the project
+	$DBLIB->orderBy("manufacturers_name", "ASC");
 	$DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
 	$DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 	$DBLIB->where("(assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0)");
