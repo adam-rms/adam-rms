@@ -16,13 +16,18 @@
                 </a>
                 {% endif %}
                 <span class="mailbox-attachment-size clearfix mt-1">
-                    <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span>
-                    <br/>
+                    <span style="padding-top: 0;">{{ file.s3files_meta_uploaded|date("d M Y G:i") }}</span><br/>
+                    {% if galleryOnly != true %}
+                    <span style="padding-top: 0;">{{ file.s3files_extension }}</span><br/>
+                    {% endif %}
                     {% if galleryOnly != true %}<br/>{% endif %}
+
                     <span>{{ file.s3files_meta_size|formatsize }}</span>
+
                     {% if galleryOnly != true %}
                         <a href="{{ file.s3files_id|s3URL }}" target="_blank" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
                     {% endif %}
+
 
                     {% if AUTH.login and 56|instancePermissions and galleryOnly != true and readOnly != true  %}
                         <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
