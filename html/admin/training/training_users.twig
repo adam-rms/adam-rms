@@ -128,7 +128,7 @@
             $('.certifyButton').on('click', function(e){
                 var userid = $(this).data("userid");
                 bootbox.prompt("Certification Comment", function(result){
-                    if (result.length > 0) {
+                    if (result && result.length > 0) {
                         ajaxcall("training/certify.php", {
                             "userid": userid,
                             "modules_id": "{{ module.modules_id }}",
