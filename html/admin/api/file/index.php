@@ -10,7 +10,7 @@ require_once __DIR__ . '/../apiHead.php';
  *      e (optional, default 1 minute) - when should the link expire? Must be a string describing how long in words basically. If this file type has security features then it will default to 1 minute.
  */
 $file = $bCMS->s3URL($_POST['f'], (isset($_POST['s']) ? $_POST['s'] : null), (isset($_POST['d'])),(isset($_POST['e']) ? $_POST['e'] : null));
-if (!$file) finish(false,["message"=>"File not found"]);
+if (!$file) finish(false,["message"=>"File not found - please check to ensure you are still logged in"]);
 else {
     if (isset($_POST['r'])) {
         header("Location: " . $file);
