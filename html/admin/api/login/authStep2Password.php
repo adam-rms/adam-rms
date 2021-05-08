@@ -1,6 +1,6 @@
 <?php
 require_once 'loginAjaxHead.php';
-
+use \Firebase\JWT\JWT;
 if (isset($_POST['formInput']) and isset($_POST['password'])) {
 	$input = trim(strtolower($GLOBALS['bCMS']->sanitizeString($_POST['formInput'])));
     $password = $GLOBALS['bCMS']->sanitizeString($_POST['password']);
@@ -35,8 +35,21 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         elseif ($user['users_suspended'] != '0') finish(false, ["code" => 5, "message" => "User suspended"]);
         elseif ($user['users_emailVerified'] != 1) finish(false, ["code" => "VERIFYEMAIL", "message" => "Please verify your email address using the link we sent you to login","userid" => $user['users_userid']]);
 		else {
-		    $GLOBALS['AUTH']->generateToken($user['users_userid'], false);
-            finish(true);
+            if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
+                //Duplicated in index.php
+                $token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, null, true, "App OAuth");
+                $jwt = JWT::encode(array(
+                    "iss" => $CONFIG['ROOTURL'],
+                    "uid" => $user['users_userid'],
+                    "token" => $token,
+                    "exp" => time()+21*24*60*60, //21 days token expiry
+                    "iat" => time()
+                ), $CONFIG['JWTKey']);
+                finish(true,null,["redirect" => $_SESSION['app-oauth'] . "://oauth_callback?token=" . $jwt]);
+            } else {
+                $GLOBALS['AUTH']->generateToken($user['users_userid'], false);
+                finish(true,null,["redirect" => (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL'])]);
+            }
         }
 	}
 } else finish(false, ["code" => null, "message" => "Unknown error"]);

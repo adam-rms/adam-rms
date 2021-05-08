@@ -126,7 +126,7 @@
                     data: {"formInput" : $("#form1Input").val(),"password": $("#form2Input").val()},
                     success: function(result) {
                         if (result.result) {
-                            window.location.href = "{{ return }}";
+                            window.location.href = result.response.redirect;
                     	} else {
                             toastr.error(result.error.message);
                         }

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHead.php';
 use \Firebase\JWT\JWT;
-
+//USED BY LEGACY APP ONLY
 if (isset($_POST['email']) and isset($_POST['password'])) {
     $input = trim(strtolower($GLOBALS['bCMS']->sanitizeString($_POST['email'])));
     $password = $GLOBALS['bCMS']->sanitizeString($_POST['password']);
