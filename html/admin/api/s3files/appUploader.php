@@ -32,7 +32,7 @@ if(isset($_FILES['file'])) {
             "s3files_meta_subType" => is_numeric($_POST['subtype']) ? $bCMS->sanitizeString($_POST['subtype']) : null,
             "users_userid" => $AUTH->data['users_userid'],
             "s3files_original_name" => $bCMS->sanitizeString($_POST['filename']),
-            "s3files_filename" => preg_replace('/\\.[^.\\s]{3,4}$/', '', pathinfo($bCMS->sanitizeString($filename), PATHINFO_BASENAME)),
+            "s3files_filename" => pathinfo($bCMS->sanitizeString($filename), PATHINFO_FILENAME),
             "s3files_name" => pathinfo($bCMS->sanitizeString($_POST['filename']), PATHINFO_FILENAME),
             "s3files_cdn_endpoint" => $CONFIG['AWS']['DEFAULTUPLOADS']['CDNEndpoint'],
             "s3files_meta_public" => $bCMS->sanitizeString($_POST['public']),
