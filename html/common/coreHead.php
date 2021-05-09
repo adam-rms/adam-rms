@@ -162,52 +162,85 @@ class bCMS {
                 break;
             case 2:
                 $instanceIgnore = true;
+                $secure = false; //Needs to be viewed on the public site
                 // Asset type thumbnail
+                break;
             case 3:
                 // Asset type file
+                break;
             case 4:
                 // Asset file
+                break;
             case 5:
                 $instanceIgnore = true;
                 $secure = false;
                 // Instance thumbnail
+                break;
             case 6:
                 // Instance file
+                break;
             case 7:
                 //Project file
+                break;
             case 8:
                 // Maintenance job file
+                break;
             case 9:
                 $instanceIgnore = true;
                 // User thumbnail
+                break;
             case 10:
                 $instanceIgnore = true;
                 $secure = false;
                 //Instance email thumbnail
+                break;
             case 11:
                 // Location file
+                break;
             case 12:
                 //Module thumbnail
+                break;
             case 13:
                 //Module step image
+                break;
             case 14:
                 //Payment file attachment
+                break;
             case 15:
                 //Public file
                 $secure = false;
                 $instanceIgnore = true;
+                break;
             case 16:
                 //Public homepage content image
                 $secure = false;
                 $instanceIgnore = true;
+                break;
             case 17:
                 //Public homepage header image
                 $secure = false;
                 $instanceIgnore = true;
+                break;
             case 18:
-                //Vacant role application
+                //Vacant role application attachment
+                break;
+            case 19:
+                //CMS image
+                $DBLIB->where("cmsPages_deleted",0);
+                $DBLIB->where("cmsPages_id",$file['s3files_meta_subType']);
+                $page = $DBLIB->getone("cmsPages",["cmsPages_showPublic"]);
+                if ($page and $page['cmsPages_showPublic'] == 1) {
+                    //Images on that page should be public on the web
+                    $secure = false;
+                    $instanceIgnore = true;
+                } else {
+                    $secure = true;
+                    $instanceIgnore = false;
+                }
+                break;
             default:
                 //There are no specific requirements for this file so not to worry.
+                break;
         }
         if ($secure and !$GLOBALS['AUTH']->login) return false;
         if ($secure and !$instanceIgnore and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
@@ -411,11 +444,14 @@ class bCMS {
         if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $subQuery->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
 
         if ($SEARCH['TERMS']['GROUPS']) {
-            $thisWhere = "(1=0";
+            $thisWhere = false;
             $thisValues = [];
+
             foreach ($SEARCH['TERMS']['GROUPS'] as $group) {
                 if ($group != null) {
-                    $thisWhere .= " OR ? IN (assets.assets_assetGroups)";
+                    if ($thisWhere != false) $thisWhere .= ' OR ';
+                    else $thisWhere = "(";
+                    $thisWhere .= "FIND_IN_SET(?, assets.assets_assetGroups)";
                     array_push($thisValues,intval($group));
                 }
             }
@@ -433,18 +469,20 @@ class bCMS {
         $RETURN['PAGINATION']['TOTAL-PAGES'] = $DBLIB->totalPages;
         $RETURN['PAGINATION']['COUNT'] = $DBLIB->totalCount;
         $RETURN['PAGINATION']['OFFSET'] = $SEARCH["PAGE_LIMIT"]*($SEARCH["PAGE"]-1);
-
         foreach ($assets as $asset) {
             $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
             $DBLIB->where("assets.instances_id",$SEARCH['INSTANCE_ID']);
             $DBLIB->where("assets_deleted",0);
             if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $DBLIB->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
             if ($SEARCH['TERMS']['GROUPS']) {
-                $thisWhere = "(1=0";
+                $thisWhere = false;
                 $thisValues = [];
+
                 foreach ($SEARCH['TERMS']['GROUPS'] as $group) {
                     if ($group != null) {
-                        $thisWhere .= " OR ? IN (assets.assets_assetGroups)";
+                        if ($thisWhere != false) $thisWhere .= ' OR ';
+                        else $thisWhere = "(";
+                        $thisWhere .= "FIND_IN_SET(?, assets.assets_assetGroups)";
                         array_push($thisValues,intval($group));
                     }
                 }

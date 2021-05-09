@@ -37,3 +37,25 @@ foreach ($instances as $instance) {
 if (!$PAGEDATA['INSTANCE'] or !isset($PAGEDATA['INSTANCE']['publicData']['enabled']) or !$PAGEDATA['INSTANCE']['publicData']['enabled']) die("404");
 
 $PAGEDATA['INSTANCE']['FILES'] = $bCMS->s3List(15, $PAGEDATA['INSTANCE']['instances_id']);
+
+
+$DBLIB->where("instances_id",$PAGEDATA['INSTANCE']['instances_id']);
+$DBLIB->where("cmsPages_deleted",0);
+$DBLIB->where("cmsPages_archived",0);
+$DBLIB->where("cmsPages_showPublic",1);
+$DBLIB->where("cmsPages_showPublicNav",1);
+$DBLIB->where("cmsPages_subOf",NULL,"IS");
+$DBLIB->orderBy("cmsPages_navOrder","ASC");
+$DBLIB->orderBy("cmsPages_id","ASC");
+$PAGEDATA['NAVIGATIONCMSPages'] = [];
+foreach ($DBLIB->get("cmsPages",null,["cmsPages.*"]) as $page) {
+    $DBLIB->where("instances_id",$PAGEDATA['INSTANCE']['instances_id']);
+    $DBLIB->where("cmsPages_deleted",0);
+    $DBLIB->where("cmsPages_archived",0);
+    $DBLIB->where("cmsPages_showPublic",1);
+    $DBLIB->where("cmsPages_showPublicNav",1);
+    $DBLIB->where("cmsPages_subOf",$page['cmsPages_id']);
+    $DBLIB->orderBy("cmsPages_name","ASC");
+    $page['SUBPAGES'] = $DBLIB->get("cmsPages");
+    $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
+}

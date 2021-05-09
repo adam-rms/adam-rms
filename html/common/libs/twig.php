@@ -6,7 +6,6 @@ use Money\Formatter\IntlMoneyFormatter;
 use Money\Formatter\DecimalMoneyFormatter;
 use Twig\Extra\String\StringExtension;
 //TWIG
-//Twig_Autoloader::register();
 $TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../../admin/',__DIR__ . '/../../public/',__DIR__ . '/../templates/']);
 if ($CONFIG['DEV']) {
     $TWIG = new \Twig\Environment($TWIGLOADER, array(

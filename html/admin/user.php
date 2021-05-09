@@ -13,6 +13,7 @@ $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.us
 if ($AUTH->instancePermissionCheck(52)) $DBLIB->where("users.users_userid", $_GET['id']);
 else $DBLIB->where("users.users_userid", $AUTH->data['users_userid']);
 $PAGEDATA['user'] = $DBLIB->getone("users", ["users.*"]);
+if (!$PAGEDATA['user']) die($TWIG->render('404.twig', $PAGEDATA));
 
 if ($PAGEDATA['user']['users_calendarHash'] == null) {
    $characters = 'abcdefghijklmnopqrstuvwxyz';
@@ -21,10 +22,10 @@ if ($PAGEDATA['user']['users_calendarHash'] == null) {
    for ($i = 0; $i < 50; $i++) {
     $randomString .= $characters[rand(0, $charactersLength - 1)];
    }
- $DBLIB->where("users.users_userid", $PAGEDATA['user']['users_userid']);
+   $DBLIB->where("users.users_userid", $PAGEDATA['user']['users_userid']);
    $DBLIB->update("users", ['users_calendarHash' => $randomString]);
    //Generate a calendar hash
- $PAGEDATA['user']['users_calendarHash'] = $randomString;
+   $PAGEDATA['user']['users_calendarHash'] = $randomString;
 }
 $PAGEDATA['user']['users_email_md5'] = md5($PAGEDATA['user']['users_email']);
 
@@ -50,9 +51,6 @@ $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->orderBy("projects.projects_name", "ASC");
 $PAGEDATA['user']['projectManagement'] = $DBLIB->get("projects", null, ["projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
-
-
-
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['user']['users_name1'] . " " . $PAGEDATA['user']['users_name2'], "BREADCRUMB" => false];
 

@@ -203,6 +203,22 @@
                                 </a>
                             </li>
                         {% endif %}
+                        {% if INSTANCE.publicData.enableVacancies %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="jobs.php">
+                                   Internal Crew Vacancies
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for page in NAVIGATIONCMSPages %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="p.php?p={{ page.cmsPages_id }}">
+                                    {{ page.cmsPages_name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+
                     </ul>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                         <span>Other</span>

@@ -29,6 +29,22 @@ $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 
 $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
+    $asset['thumbnails'] = [];
+    foreach ($bCMS->s3List(2, $asset['assetTypes_id']) as $thumbnail) {
+        $thumbnail['url'] = $bCMS->s3URL($thumbnail['s3files_id'], ($_POST['imageComp'] ? $_POST['imageComp'] : false), false, '+1 hour');
+        $asset['thumbnails'][] = $thumbnail;
+    }
+
+    //Format finances
+    $asset['assetTypes_mass_format'] = apiMass($asset['assetTypes_mass']);
+    $asset['assetTypes_value_format'] = apiMoney($asset['assetTypes_value']);
+    $asset['assetTypes_dayRate_format'] = apiMoney($asset['assetTypes_dayRate']);
+    $asset['assetTypes_weekRate_format'] = apiMoney($asset['assetTypes_weekRate']);
+
+
+
+
+
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
     $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
@@ -38,33 +54,22 @@ foreach ($assets as $asset) {
     $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass"]);
     $asset['count'] = count($assetTags);
     $asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
-    $asset['thumbnails'] = [];
-    foreach ($bCMS->s3List(2, $asset['assetTypes_id']) as $thumbnail) {
-        $thumbnail['url'] = $bCMS->s3URL($thumbnail['s3files_id'], false, false, '+1 hour');
-        $asset['thumbnails'][] = $thumbnail;
-    }
-    //Format finances
-    $asset['assetTypes_mass_format'] = apiMass($asset['assetTypes_mass']);
-    $asset['assetTypes_value_format'] = apiMoney($asset['assetTypes_value']);
-    $asset['assetTypes_dayRate_format'] = apiMoney($asset['assetTypes_dayRate']);
-    $asset['assetTypes_weekRate_format'] = apiMoney($asset['assetTypes_weekRate']);
-    
     $asset['tags'] = [];
     foreach ($assetTags as $tag) {
-        $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
         $tag['assets_tag_format'] = $bCMS->aTag($tag['assets_tag']);
-        //Format finances
         $tag['assets_mass_format'] = apiMass($tag['assets_mass']);
         $tag['assets_value_format'] = apiMoney($tag['assets_value']);
         $tag['assets_dayRate_format'] = apiMoney($tag['assets_dayRate']);
         $tag['assets_weekRate_format'] = apiMoney($tag['assets_weekRate']);
 
-        $tag['files'] = $bCMS->s3List(4, $tag['assets_id']);
-
+        if (!isset($_POST['abridgedList']) or $_POST['abridgedList'] == false) {
+            $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
+            $tag['files'] = $bCMS->s3List(4, $tag['assets_id']);
+        }
         $asset['tags'][] = $tag;
-    }
 
-    $asset['files'] = $bCMS->s3List(3, $asset['assetTypes_id']);
+    }
+    if (!isset($_POST['abridgedList']) or $_POST['abridgedList'] == false)  $asset['files'] = $bCMS->s3List(3, $asset['assetTypes_id']);
 
     $PAGEDATA['assets'][] = $asset;
 }
