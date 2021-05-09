@@ -8,6 +8,11 @@ use Money\Parser\DecimalMoneyParser;
 if (!$AUTH->instancePermissionCheck(59)) die("Sorry - you can't access this page");
 $array = [];
 
+foreach ($_POST as $key=>$value) {
+    if ($key == "formData") continue;
+    if ($value == '') $value = null;
+    $array[$key] = $value;
+}
 foreach ($_POST['formData'] as $item) {
     if ($item['value'] == '') $item['value'] = null;
     $array[$item['name']] = $item['value'];
