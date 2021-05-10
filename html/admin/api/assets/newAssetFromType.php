@@ -16,7 +16,12 @@ $DBLIB->where("assetTypes_id", $array['assetTypes_id']);
 $asset = $DBLIB->getone("assetTypes");
 if (!$asset) finish(false, ["code" => "LIST-ASSETTYPES-FAIL", "message"=> "Could not find asset type"]);
 
-if ($array['assets_tag'] == "") $array['assets_tag'] = generateNewTag();
+if (isset($array['assets_tag']) and $array['assets_tag'] != null) {
+    $DBLIB->where("assets.instances_id",$AUTH->data['instance']['instances_id']);
+    $DBLIB->where("assets.assets_tag", $array['assets_tag']);
+    $duplicateAssetTag = $DBLIB->getValue ("assets", "count(*)");
+    if ($duplicateAssetTag > 0) finish(false, ["code" => "INSERT-FAIL", "message"=> "Sorry that tag you chose was a duplicate - please choose another one"]);
+} else $array['assets_tag'] = generateNewTag();
 
 $result = $DBLIB->insert("assets", array_intersect_key( $array, array_flip( ['assets_tag','assetTypes_id','assets_notes','instances_id','asset_definableFields_1','asset_definableFields_2','asset_definableFields_3','asset_definableFields_4','asset_definableFields_5','asset_definableFields_6','asset_definableFields_7','asset_definableFields_8','asset_definableFields_9','asset_definableFields_10','assets_assetGroups'] ) ));
 
