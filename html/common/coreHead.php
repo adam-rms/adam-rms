@@ -704,6 +704,23 @@ $GLOBALS['ASSETASSIGNMENTSTATUSES'] = [
     11 => ["name" => "Stored"]
 ];
 
+$GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
+    1 => [
+        "text" => "Emergency",
+        "id" => 1,
+        "class" => "danger"
+        ],
+    2 => ["class" => "danger", "id" => "2", "text" => "Business Critical"],
+    3 => ["class" => "danger", "id" => "3", "text" => "Exceptionally Urgent"],
+    4 => ["class" => "danger", "id" => "4", "text" => "Very Urgent"],
+    5 => ["class" => "warning", "id" => "5", "text" => "Urgent"],
+    6 => ["class" => "warning", "id" => "6", "text" => "Urgent Upgrade"],
+    7 => ["class" => "warning", "id" => "7", "text" => "Short-term Upgrade"],
+    8 => ["class" => "success", "id" => "8", "text" => "Routine","default"=>true],
+    9 => ["class" => "success", "id" => "9", "text" => "Long Term"],
+    10 => ["class" => "info", "id" => "10", "text" => "Log only"],
+];
+
 function assetFlagsAndBlocks($assetid) {
     global $DBLIB;
     $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
@@ -871,7 +888,7 @@ class projectFinanceCacher {
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 $PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
 $PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
-
+$PAGEDATA['MAINTENANCEJOBPRIORITIES'] = $GLOBALS['MAINTENANCEJOBPRIORITIES'];
 
 
 require_once __DIR__ . '/libs/twig.php';

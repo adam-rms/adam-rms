@@ -124,16 +124,9 @@
                                 <p class="text-sm">Priority
                                     <b class="d-block">
                                         <select class="form-control" id="jobPriority" {% if 77|instancePermissions != true %} disabled {% endif %}>
-                                            <option value="1" {% if job.maintenanceJobs_priority == 1 %} selected {% endif %}>Emergency</option>
-                                            <option value="2" {% if job.maintenanceJobs_priority == 2 %} selected {% endif %}>Business Critical</option>
-                                            <option value="3" {% if job.maintenanceJobs_priority == 3 %} selected {% endif %}>Exceptionally Urgent</option>
-                                            <option value="4" {% if job.maintenanceJobs_priority == 4 %} selected {% endif %}>Very Urgent</option>
-                                            <option value="5" {% if job.maintenanceJobs_priority == 5 %} selected {% endif %}>Urgent</option>
-                                            <option value="6" {% if job.maintenanceJobs_priority == 6 %} selected {% endif %}>Urgent Upgrade</option>
-                                            <option value="7" {% if job.maintenanceJobs_priority == 7 %} selected {% endif %}>Short-term Upgrade</option>
-                                            <option value="8" {% if job.maintenanceJobs_priority == 8 %} selected {% endif %}>Routine</option>
-                                            <option value="9" {% if job.maintenanceJobs_priority == 9 %} selected {% endif %}>Long Term</option>
-                                            <option value="10" {% if job.maintenanceJobs_priority == 10 %} selected {% endif %}>Log only</option>
+                                            {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                <option value="{{ type.id }}" {% if job.maintenanceJobs_priority == type.id %} selected {% endif %}>{{ type.text }}</option>
+                                            {% endfor %}
                                         </select>
                                     </b>
                                 </p>
