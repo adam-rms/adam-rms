@@ -705,20 +705,16 @@ $GLOBALS['ASSETASSIGNMENTSTATUSES'] = [
 ];
 
 $GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
-    1 => [
-        "text" => "Emergency",
-        "id" => 1,
-        "class" => "danger"
-        ],
-    2 => ["class" => "danger", "id" => "2", "text" => "Business Critical"],
-    3 => ["class" => "danger", "id" => "3", "text" => "Exceptionally Urgent"],
-    4 => ["class" => "danger", "id" => "4", "text" => "Very Urgent"],
-    5 => ["class" => "warning", "id" => "5", "text" => "Urgent"],
-    6 => ["class" => "warning", "id" => "6", "text" => "Urgent Upgrade"],
-    7 => ["class" => "warning", "id" => "7", "text" => "Short-term Upgrade"],
-    8 => ["class" => "success", "id" => "8", "text" => "Routine","default"=>true],
-    9 => ["class" => "success", "id" => "9", "text" => "Long Term"],
-    10 => ["class" => "info", "id" => "10", "text" => "Log only"],
+    1 => ["class" => "danger","id" => 1,"text" => "Emergency"],
+    2 => ["class" => "danger", "id" => 2, "text" => "Business Critical"],
+    3 => ["class" => "danger", "id" => 3, "text" => "Urgent"],
+    4 => ["class" => "danger", "id" => 4, "text" => "Routine - High"],
+    5 => ["class" => "warning", "id" => 5, "text" => "Routine - Medium", "default"=>true],
+    6 => ["class" => "warning", "id" => 6, "text" => "Routine - Low"],
+    7 => ["class" => "warning", "id" => 7, "text" => "Monthly-cycle Maintenance"],
+    8 => ["class" => "success", "id" => 8, "text" => "Annual-cycle Maintenance"],
+    9 => ["class" => "success", "id" => 9, "text" => "Long Term"],
+    10 => ["class" => "info", "id" => 10, "text" => "Log only"]
 ];
 
 function assetFlagsAndBlocks($assetid) {
