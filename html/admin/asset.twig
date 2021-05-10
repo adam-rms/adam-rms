@@ -1190,8 +1190,6 @@
                                                             <td class="project-state">
                                                                 {% if job.maintenanceJobs_priority %}
                                                                     {% for type in MAINTENANCEJOBPRIORITIES %}
-                                                                        {{ dump(type.class) }}
-
                                                                         <span class="badge badge-{{ type.class }}" value="{{ type.id }}" {% if job.maintenanceJobs_priority != type.id %} style="display: none;" {% endif %}>{{ type.text }}</span>
                                                                     {% endfor %}
                                                                 {% endif %}
