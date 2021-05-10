@@ -47,7 +47,7 @@
                 </div>
             </div>
         {% endif %}
-        {% set widgets = WIDGETS.getAllUser() %}
+        {% set widgets = WIDGETS.getAllDashboard() %}
         {% for widget in widgets %}
             {% embed 'assets/widgets/' ~ widget ~ '.twig' %}
             {% endembed %}

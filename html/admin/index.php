@@ -23,7 +23,7 @@ $DBLIB->where("(authTokens_deviceType != 'Web')");
 $PAGEDATA['APPLOGIN'] = $DBLIB->getone("authTokens",["authTokens_deviceType"]);
 
 
-$PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']));
+$PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),false);
 
 echo $TWIG->render('dashboard.twig', $PAGEDATA);
 ?>
