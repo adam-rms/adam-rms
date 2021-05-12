@@ -20,9 +20,15 @@ It is available as a hosted solution (not currently open to new customers) or to
  - Docker Hub: [bithellstudios/adam-rms](https://hub.docker.com/r/bithellstudios/adam-rms)
  - GitHub Packages: [bstudios/adam-rms](https://github.com/orgs/bstudios/packages?repo_name=adam-rms)
 
-## Deploying & Using
+## Developing Locally
 
-*To be developed further in the future*
+The following assumes you already have a local development environment setup and are familiar with deploying LAMP-style stacks locally. The deployment strategy is somewhat different, but this is covered in a seperate repo. 
+
+1. An example database is provided as `database.sql` - this can be run in MySQL 8 to provide a local development database.
+1. Rename `example.dev.env` to `.env`
+1. Set the document root of your local web server to `html/`
+1. Browse to `http://localhost/admin`
+1. Default credentials are `username` & `password!`
 
 ## Contributing 
 
