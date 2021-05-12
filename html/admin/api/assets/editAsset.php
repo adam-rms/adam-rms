@@ -27,9 +27,9 @@ $array['assets_weekRate'] = ($array['assets_weekRate'] == null ? null : $moneyPa
 $DBLIB->where("assets_id", $array['assets_id']);
 $DBLIB->where("assets.instances_id",$AUTH->data['instance']["instances_id"]);
 $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
-$asset = $DBLIB->getone("assets", ['assets.assets_dayRate','assets.assets_weekRate','assets.assets_mass','assets.assets_value','assetTypes.assetTypes_mass','assetTypes.assetTypes_value',"assetTypes.assetTypes_dayRate","assetTypes.assetTypes_weekRate"]);
+$asset = $DBLIB->getone("assets", ['assets.assets_dayRate','assets.assets_tag','assets.assets_weekRate','assets.assets_mass','assets.assets_value','assetTypes.assetTypes_mass','assetTypes.assetTypes_value',"assetTypes.assetTypes_dayRate","assetTypes.assetTypes_weekRate"]);
 
-if (isset($array['assets_tag'])) {
+if (isset($array['assets_tag']) and $array['assets_tag'] != $asset['assets_tag']) {
     $DBLIB->where("assets.instances_id",$AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets.assets_tag", $array['assets_tag']);
     $duplicateAssetTag = $DBLIB->getValue ("assets", "count(*)");
