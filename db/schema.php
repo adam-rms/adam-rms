@@ -190,18 +190,18 @@ return array (
           'TABLE_NAME' => 'actions',
           'COLUMN_NAME' => 'actionsCategories_id',
           'CONSTRAINT_NAME' => 'actions_actionsCategories_actionsCategories_id_fk',
-          'REFERENCED_TABLE_NAME' => 'actionscategories',
+          'REFERENCED_TABLE_NAME' => 'actionsCategories',
           'REFERENCED_COLUMN_NAME' => 'actionsCategories_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
       ),
     ),
-    'actionscategories' => 
+    'actionsCategories' => 
     array (
       'table' => 
       array (
-        'table_name' => 'actionscategories',
+        'table_name' => 'actionsCategories',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -213,7 +213,7 @@ return array (
         'actionsCategories_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'actionscategories',
+          'TABLE_NAME' => 'actionsCategories',
           'COLUMN_NAME' => 'actionsCategories_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -237,7 +237,7 @@ return array (
         'actionsCategories_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'actionscategories',
+          'TABLE_NAME' => 'actionsCategories',
           'COLUMN_NAME' => 'actionsCategories_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -261,7 +261,7 @@ return array (
         'actionsCategories_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'actionscategories',
+          'TABLE_NAME' => 'actionsCategories',
           'COLUMN_NAME' => 'actionsCategories_order',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => '0',
@@ -289,7 +289,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'actionscategories',
+            'Table' => 'actionsCategories',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -306,11 +306,11 @@ return array (
       ),
       'foreign_keys' => NULL,
     ),
-    'assetcategories' => 
+    'assetCategories' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetcategories',
+        'table_name' => 'assetCategories',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -322,7 +322,7 @@ return array (
         'assetCategories_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategories_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -346,7 +346,7 @@ return array (
         'assetCategories_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategories_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -370,7 +370,7 @@ return array (
         'assetCategories_fontAwesome' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategories_fontAwesome',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -394,7 +394,7 @@ return array (
         'assetCategories_rank' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategories_rank',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '999',
@@ -418,7 +418,7 @@ return array (
         'assetCategoriesGroups_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategoriesGroups_id',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -442,7 +442,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -466,7 +466,7 @@ return array (
         'assetCategories_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategories_deleted',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => '0',
@@ -494,7 +494,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetcategories',
+            'Table' => 'assetCategories',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -512,7 +512,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetcategories',
+            'Table' => 'assetCategories',
             'Non_unique' => '1',
             'Key_name' => 'assetCategories_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -530,7 +530,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetcategories',
+            'Table' => 'assetCategories',
             'Non_unique' => '1',
             'Key_name' => 'assetCategories_Groups_id_fk',
             'Seq_in_index' => '1',
@@ -549,17 +549,17 @@ return array (
       array (
         'assetCategories_Groups_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategoriesGroups_id',
           'CONSTRAINT_NAME' => 'assetCategories_Groups_id_fk',
-          'REFERENCED_TABLE_NAME' => 'assetcategoriesgroups',
+          'REFERENCED_TABLE_NAME' => 'assetCategoriesgroups',
           'REFERENCED_COLUMN_NAME' => 'assetCategoriesGroups_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'assetCategories_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetcategories',
+          'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'assetCategories_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -569,11 +569,11 @@ return array (
         ),
       ),
     ),
-    'assetcategoriesgroups' => 
+    'assetCategoriesgroups' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetcategoriesgroups',
+        'table_name' => 'assetCategoriesgroups',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -585,7 +585,7 @@ return array (
         'assetCategoriesGroups_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesgroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -609,7 +609,7 @@ return array (
         'assetCategoriesGroups_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesgroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -633,7 +633,7 @@ return array (
         'assetCategoriesGroups_fontAwesome' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesgroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_fontAwesome',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -657,7 +657,7 @@ return array (
         'assetCategoriesGroups_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetcategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesgroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_order',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '999',
@@ -685,7 +685,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetcategoriesgroups',
+            'Table' => 'assetCategoriesgroups',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -702,11 +702,11 @@ return array (
       ),
       'foreign_keys' => NULL,
     ),
-    'assetgroups' => 
+    'assetGroups' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetgroups',
+        'table_name' => 'assetGroups',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -718,7 +718,7 @@ return array (
         'assetGroups_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'assetGroups_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -742,7 +742,7 @@ return array (
         'assetGroups_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'assetGroups_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -766,7 +766,7 @@ return array (
         'assetGroups_description' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'assetGroups_description',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -790,7 +790,7 @@ return array (
         'assetGroups_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'assetGroups_deleted',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '0',
@@ -814,7 +814,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -838,7 +838,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -866,7 +866,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetgroups',
+            'Table' => 'assetGroups',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -884,7 +884,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetgroups',
+            'Table' => 'assetGroups',
             'Non_unique' => '1',
             'Key_name' => 'assetGroups_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -902,7 +902,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetgroups',
+            'Table' => 'assetGroups',
             'Non_unique' => '1',
             'Key_name' => 'assetGroups_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -921,7 +921,7 @@ return array (
       array (
         'assetGroups_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'assetGroups_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -931,7 +931,7 @@ return array (
         ),
         'assetGroups_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'assetgroups',
+          'TABLE_NAME' => 'assetGroups',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'assetGroups_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -1713,7 +1713,7 @@ return array (
           'TABLE_NAME' => 'assets',
           'COLUMN_NAME' => 'assetTypes_id',
           'CONSTRAINT_NAME' => 'assets_assetTypes_assetTypes_id_fk',
-          'REFERENCED_TABLE_NAME' => 'assettypes',
+          'REFERENCED_TABLE_NAME' => 'assetTypes',
           'REFERENCED_COLUMN_NAME' => 'assetTypes_id',
           'UPDATE_RULE' => 'NO ACTION',
           'DELETE_RULE' => 'NO ACTION',
@@ -1740,11 +1740,11 @@ return array (
         ),
       ),
     ),
-    'assetsassignments' => 
+    'assetsAssignments' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetsassignments',
+        'table_name' => 'assetsAssignments',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -1756,7 +1756,7 @@ return array (
         'assetsAssignments_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -1780,7 +1780,7 @@ return array (
         'assets_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assets_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -1804,7 +1804,7 @@ return array (
         'projects_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'projects_id',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -1828,7 +1828,7 @@ return array (
         'assetsAssignments_comment' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_comment',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -1852,7 +1852,7 @@ return array (
         'assetsAssignments_customPrice' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_customPrice',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '0',
@@ -1876,7 +1876,7 @@ return array (
         'assetsAssignments_discount' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_discount',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '0',
@@ -1900,7 +1900,7 @@ return array (
         'assetsAssignments_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_timestamp',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -1924,7 +1924,7 @@ return array (
         'assetsAssignments_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_deleted',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '0',
@@ -1948,7 +1948,7 @@ return array (
         'assetsAssignmentsStatus_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignmentsStatus_id',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => NULL,
@@ -1983,7 +1983,7 @@ return array (
         'assetsAssignments_linkedTo' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_linkedTo',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -2011,7 +2011,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsassignments',
+            'Table' => 'assetsAssignments',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -2029,7 +2029,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsassignments',
+            'Table' => 'assetsAssignments',
             'Non_unique' => '1',
             'Key_name' => 'assetsAssignments_assets_assets_id_fk',
             'Seq_in_index' => '1',
@@ -2047,7 +2047,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsassignments',
+            'Table' => 'assetsAssignments',
             'Non_unique' => '1',
             'Key_name' => 'assetsAssignments_projects_projects_id_fk',
             'Seq_in_index' => '1',
@@ -2065,7 +2065,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsassignments',
+            'Table' => 'assetsAssignments',
             'Non_unique' => '1',
             'Key_name' => 'assetsAssignments_assetsAssignments_assetsAssignments_id_fk',
             'Seq_in_index' => '1',
@@ -2084,17 +2084,17 @@ return array (
       array (
         'assetsAssignments_assetsAssignments_assetsAssignments_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assetsAssignments_linkedTo',
           'CONSTRAINT_NAME' => 'assetsAssignments_assetsAssignments_assetsAssignments_id_fk',
-          'REFERENCED_TABLE_NAME' => 'assetsassignments',
+          'REFERENCED_TABLE_NAME' => 'assetsAssignments',
           'REFERENCED_COLUMN_NAME' => 'assetsAssignments_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'assetsAssignments_assets_assets_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'assets_id',
           'CONSTRAINT_NAME' => 'assetsAssignments_assets_assets_id_fk',
           'REFERENCED_TABLE_NAME' => 'assets',
@@ -2104,7 +2104,7 @@ return array (
         ),
         'assetsAssignments_projects_projects_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsassignments',
+          'TABLE_NAME' => 'assetsAssignments',
           'COLUMN_NAME' => 'projects_id',
           'CONSTRAINT_NAME' => 'assetsAssignments_projects_projects_id_fk',
           'REFERENCED_TABLE_NAME' => 'projects',
@@ -2114,11 +2114,11 @@ return array (
         ),
       ),
     ),
-    'assetsassignmentsstatus' => 
+    'assetsAssignmentsstatus' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetsassignmentsstatus',
+        'table_name' => 'assetsAssignmentsstatus',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -2130,7 +2130,7 @@ return array (
         'assetsAssignmentsStatus_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsstatus',
           'COLUMN_NAME' => 'assetsAssignmentsStatus_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -2154,7 +2154,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsstatus',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -2178,7 +2178,7 @@ return array (
         'assetsAssignmentsStatus_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsstatus',
           'COLUMN_NAME' => 'assetsAssignmentsStatus_name',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -2202,7 +2202,7 @@ return array (
         'assetsAssignmentsStatus_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsassignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsstatus',
           'COLUMN_NAME' => 'assetsAssignmentsStatus_order',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '999',
@@ -2230,7 +2230,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsassignmentsstatus',
+            'Table' => 'assetsAssignmentsstatus',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -2248,7 +2248,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsassignmentsstatus',
+            'Table' => 'assetsAssignmentsstatus',
             'Non_unique' => '1',
             'Key_name' => 'assetsAssignmentsStatus_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -2267,7 +2267,7 @@ return array (
       array (
         'assetsAssignmentsStatus_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsassignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsstatus',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'assetsAssignmentsStatus_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -2277,11 +2277,11 @@ return array (
         ),
       ),
     ),
-    'assetsbarcodes' => 
+    'assetsBarcodes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetsbarcodes',
+        'table_name' => 'assetsBarcodes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -2293,7 +2293,7 @@ return array (
         'assetsBarcodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assetsBarcodes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -2317,7 +2317,7 @@ return array (
         'assets_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assets_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -2341,7 +2341,7 @@ return array (
         'assetsBarcodes_value' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assetsBarcodes_value',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -2365,7 +2365,7 @@ return array (
         'assetsBarcodes_type' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assetsBarcodes_type',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -2389,7 +2389,7 @@ return array (
         'assetsBarcodes_notes' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assetsBarcodes_notes',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -2413,7 +2413,7 @@ return array (
         'assetsBarcodes_added' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assetsBarcodes_added',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -2437,7 +2437,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -2461,7 +2461,7 @@ return array (
         'assetsBarcodes_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assetsBarcodes_deleted',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '0',
@@ -2489,7 +2489,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodes',
+            'Table' => 'assetsBarcodes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -2507,7 +2507,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodes',
+            'Table' => 'assetsBarcodes',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodes_assets_assets_id_fk',
             'Seq_in_index' => '1',
@@ -2525,7 +2525,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodes',
+            'Table' => 'assetsBarcodes',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodes_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -2544,7 +2544,7 @@ return array (
       array (
         'assetsBarcodes_assets_assets_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'assets_id',
           'CONSTRAINT_NAME' => 'assetsBarcodes_assets_assets_id_fk',
           'REFERENCED_TABLE_NAME' => 'assets',
@@ -2554,7 +2554,7 @@ return array (
         ),
         'assetsBarcodes_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'assetsbarcodes',
+          'TABLE_NAME' => 'assetsBarcodes',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'assetsBarcodes_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -2564,11 +2564,11 @@ return array (
         ),
       ),
     ),
-    'assetsbarcodesscans' => 
+    'assetsBarcodesscans' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetsbarcodesscans',
+        'table_name' => 'assetsBarcodesscans',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -2580,7 +2580,7 @@ return array (
         'assetsBarcodesScans_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'assetsBarcodesScans_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -2604,7 +2604,7 @@ return array (
         'assetsBarcodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'assetsBarcodes_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -2628,7 +2628,7 @@ return array (
         'assetsBarcodesScans_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'assetsBarcodesScans_timestamp',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -2652,7 +2652,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -2676,7 +2676,7 @@ return array (
         'locationsBarcodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'locationsBarcodes_id',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -2700,7 +2700,7 @@ return array (
         'location_assets_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'location_assets_id',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -2724,7 +2724,7 @@ return array (
         'assetsBarcodes_customLocation' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'assetsBarcodes_customLocation',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -2752,7 +2752,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodesscans',
+            'Table' => 'assetsBarcodesscans',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -2770,7 +2770,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodesscans',
+            'Table' => 'assetsBarcodesscans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk',
             'Seq_in_index' => '1',
@@ -2788,7 +2788,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodesscans',
+            'Table' => 'assetsBarcodesscans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -2806,7 +2806,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodesscans',
+            'Table' => 'assetsBarcodesscans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk',
             'Seq_in_index' => '1',
@@ -2824,7 +2824,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsbarcodesscans',
+            'Table' => 'assetsBarcodesscans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_assets_assets_id_fk',
             'Seq_in_index' => '1',
@@ -2843,17 +2843,17 @@ return array (
       array (
         'assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'assetsBarcodes_id',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk',
-          'REFERENCED_TABLE_NAME' => 'assetsbarcodes',
+          'REFERENCED_TABLE_NAME' => 'assetsBarcodes',
           'REFERENCED_COLUMN_NAME' => 'assetsBarcodes_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'assetsBarcodesScans_assets_assets_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'location_assets_id',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_assets_assets_id_fk',
           'REFERENCED_TABLE_NAME' => 'assets',
@@ -2863,17 +2863,17 @@ return array (
         ),
         'assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'locationsBarcodes_id',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk',
-          'REFERENCED_TABLE_NAME' => 'locationsbarcodes',
+          'REFERENCED_TABLE_NAME' => 'locationsBarcodes',
           'REFERENCED_COLUMN_NAME' => 'locationsBarcodes_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'assetsBarcodesScans_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'assetsbarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesscans',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -2883,11 +2883,11 @@ return array (
         ),
       ),
     ),
-    'assettypes' => 
+    'assetTypes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assettypes',
+        'table_name' => 'assetTypes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -2899,7 +2899,7 @@ return array (
         'assetTypes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -2923,7 +2923,7 @@ return array (
         'assetTypes_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -2947,7 +2947,7 @@ return array (
         'assetCategories_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetCategories_id',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -2971,7 +2971,7 @@ return array (
         'manufacturers_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'manufacturers_id',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -2995,7 +2995,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -3019,7 +3019,7 @@ return array (
         'assetTypes_description' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_description',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -3043,7 +3043,7 @@ return array (
         'assetTypes_productLink' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_productLink',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -3067,7 +3067,7 @@ return array (
         'assetTypes_definableFields' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_definableFields',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -3091,7 +3091,7 @@ return array (
         'assetTypes_mass' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_mass',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => NULL,
@@ -3115,7 +3115,7 @@ return array (
         'assetTypes_inserted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_inserted',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -3139,7 +3139,7 @@ return array (
         'assetTypes_dayRate' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_dayRate',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => NULL,
@@ -3163,7 +3163,7 @@ return array (
         'assetTypes_weekRate' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_weekRate',
           'ORDINAL_POSITION' => '12',
           'COLUMN_DEFAULT' => NULL,
@@ -3187,7 +3187,7 @@ return array (
         'assetTypes_value' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetTypes_value',
           'ORDINAL_POSITION' => '13',
           'COLUMN_DEFAULT' => NULL,
@@ -3215,7 +3215,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assettypes',
+            'Table' => 'assetTypes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -3233,7 +3233,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assettypes',
+            'Table' => 'assetTypes',
             'Non_unique' => '1',
             'Key_name' => 'assetTypes_assetCategories_assetCategories_id_fk',
             'Seq_in_index' => '1',
@@ -3251,7 +3251,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assettypes',
+            'Table' => 'assetTypes',
             'Non_unique' => '1',
             'Key_name' => 'assetTypes_manufacturers_manufacturers_id_fk',
             'Seq_in_index' => '1',
@@ -3269,7 +3269,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assettypes',
+            'Table' => 'assetTypes',
             'Non_unique' => '1',
             'Key_name' => 'assetTypes_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -3288,17 +3288,17 @@ return array (
       array (
         'assetTypes_assetCategories_assetCategories_id_fk' => 
         array (
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'assetCategories_id',
           'CONSTRAINT_NAME' => 'assetTypes_assetCategories_assetCategories_id_fk',
-          'REFERENCED_TABLE_NAME' => 'assetcategories',
+          'REFERENCED_TABLE_NAME' => 'assetCategories',
           'REFERENCED_COLUMN_NAME' => 'assetCategories_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'assetTypes_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'assetTypes_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -3308,7 +3308,7 @@ return array (
         ),
         'assetTypes_manufacturers_manufacturers_id_fk' => 
         array (
-          'TABLE_NAME' => 'assettypes',
+          'TABLE_NAME' => 'assetTypes',
           'COLUMN_NAME' => 'manufacturers_id',
           'CONSTRAINT_NAME' => 'assetTypes_manufacturers_manufacturers_id_fk',
           'REFERENCED_TABLE_NAME' => 'manufacturers',
@@ -3318,11 +3318,11 @@ return array (
         ),
       ),
     ),
-    'auditlog' => 
+    'auditLog' => 
     array (
       'table' => 
       array (
-        'table_name' => 'auditlog',
+        'table_name' => 'auditLog',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -3334,7 +3334,7 @@ return array (
         'auditLog_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -3358,7 +3358,7 @@ return array (
         'auditLog_actionType' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_actionType',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -3382,7 +3382,7 @@ return array (
         'auditLog_actionTable' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_actionTable',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -3406,7 +3406,7 @@ return array (
         'auditLog_actionData' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_actionData',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -3430,7 +3430,7 @@ return array (
         'auditLog_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_timestamp',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -3454,7 +3454,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -3478,7 +3478,7 @@ return array (
         'auditLog_actionUserid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_actionUserid',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -3502,7 +3502,7 @@ return array (
         'projects_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'projects_id',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -3526,7 +3526,7 @@ return array (
         'auditLog_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_deleted',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => '0',
@@ -3550,7 +3550,7 @@ return array (
         'auditLog_targetID' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_targetID',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -3578,7 +3578,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'auditlog',
+            'Table' => 'auditLog',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -3596,7 +3596,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'auditlog',
+            'Table' => 'auditLog',
             'Non_unique' => '1',
             'Key_name' => 'auditLog_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -3614,7 +3614,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'auditlog',
+            'Table' => 'auditLog',
             'Non_unique' => '1',
             'Key_name' => 'auditLog_users_users_userid_fk_2',
             'Seq_in_index' => '1',
@@ -3633,7 +3633,7 @@ return array (
       array (
         'auditLog_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'auditLog_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -3643,7 +3643,7 @@ return array (
         ),
         'auditLog_users_users_userid_fk_2' => 
         array (
-          'TABLE_NAME' => 'auditlog',
+          'TABLE_NAME' => 'auditLog',
           'COLUMN_NAME' => 'auditLog_actionUserid',
           'CONSTRAINT_NAME' => 'auditLog_users_users_userid_fk_2',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -3653,11 +3653,11 @@ return array (
         ),
       ),
     ),
-    'authtokens' => 
+    'authTokens' => 
     array (
       'table' => 
       array (
-        'table_name' => 'authtokens',
+        'table_name' => 'authTokens',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -3669,7 +3669,7 @@ return array (
         'authTokens_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -3693,7 +3693,7 @@ return array (
         'authTokens_token' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_token',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -3717,7 +3717,7 @@ return array (
         'authTokens_created' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_created',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -3741,7 +3741,7 @@ return array (
         'authTokens_ipAddress' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_ipAddress',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -3765,7 +3765,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -3789,7 +3789,7 @@ return array (
         'authTokens_valid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_valid',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '1',
@@ -3813,7 +3813,7 @@ return array (
         'authTokens_adminId' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_adminId',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -3837,7 +3837,7 @@ return array (
         'authTokens_deviceType' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_deviceType',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -3865,7 +3865,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'authtokens',
+            'Table' => 'authTokens',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -3883,7 +3883,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'authtokens',
+            'Table' => 'authTokens',
             'Non_unique' => '0',
             'Key_name' => 'token',
             'Seq_in_index' => '1',
@@ -3901,7 +3901,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'authtokens',
+            'Table' => 'authTokens',
             'Non_unique' => '1',
             'Key_name' => 'authTokens_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -3919,7 +3919,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'authtokens',
+            'Table' => 'authTokens',
             'Non_unique' => '1',
             'Key_name' => 'authTokens_users_users_userid_fk_2',
             'Seq_in_index' => '1',
@@ -3938,7 +3938,7 @@ return array (
       array (
         'authTokens_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'authTokens_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -3948,7 +3948,7 @@ return array (
         ),
         'authTokens_users_users_userid_fk_2' => 
         array (
-          'TABLE_NAME' => 'authtokens',
+          'TABLE_NAME' => 'authTokens',
           'COLUMN_NAME' => 'authTokens_adminId',
           'CONSTRAINT_NAME' => 'authTokens_users_users_userid_fk_2',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -4241,11 +4241,11 @@ return array (
         ),
       ),
     ),
-    'cmspages' => 
+    'cmsPages' => 
     array (
       'table' => 
       array (
-        'table_name' => 'cmspages',
+        'table_name' => 'cmsPages',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -4257,7 +4257,7 @@ return array (
         'cmsPages_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -4281,7 +4281,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -4305,7 +4305,7 @@ return array (
         'cmsPages_showNav' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_showNav',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => '0',
@@ -4329,7 +4329,7 @@ return array (
         'cmsPages_showPublic' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_showPublic',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '0',
@@ -4353,7 +4353,7 @@ return array (
         'cmsPages_showPublicNav' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_showPublicNav',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '1',
@@ -4377,7 +4377,7 @@ return array (
         'cmsPages_visibleToGroups' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_visibleToGroups',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -4401,7 +4401,7 @@ return array (
         'cmsPages_navOrder' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_navOrder',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => '999',
@@ -4425,7 +4425,7 @@ return array (
         'cmsPages_fontAwesome' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_fontAwesome',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -4449,7 +4449,7 @@ return array (
         'cmsPages_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_name',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => NULL,
@@ -4473,7 +4473,7 @@ return array (
         'cmsPages_description' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_description',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -4497,7 +4497,7 @@ return array (
         'cmsPages_archived' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_archived',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => '0',
@@ -4521,7 +4521,7 @@ return array (
         'cmsPages_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_deleted',
           'ORDINAL_POSITION' => '12',
           'COLUMN_DEFAULT' => '0',
@@ -4545,7 +4545,7 @@ return array (
         'cmsPages_added' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_added',
           'ORDINAL_POSITION' => '13',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -4569,7 +4569,7 @@ return array (
         'cmsPages_subOf' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_subOf',
           'ORDINAL_POSITION' => '14',
           'COLUMN_DEFAULT' => NULL,
@@ -4597,7 +4597,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspages',
+            'Table' => 'cmsPages',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -4615,7 +4615,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspages',
+            'Table' => 'cmsPages',
             'Non_unique' => '1',
             'Key_name' => 'cmsPages_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -4633,7 +4633,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspages',
+            'Table' => 'cmsPages',
             'Non_unique' => '1',
             'Key_name' => 'cmsPages_cmsPages_cmsPages_id_fk',
             'Seq_in_index' => '1',
@@ -4652,17 +4652,17 @@ return array (
       array (
         'cmsPages_cmsPages_cmsPages_id_fk' => 
         array (
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'cmsPages_subOf',
           'CONSTRAINT_NAME' => 'cmsPages_cmsPages_cmsPages_id_fk',
-          'REFERENCED_TABLE_NAME' => 'cmspages',
+          'REFERENCED_TABLE_NAME' => 'cmsPages',
           'REFERENCED_COLUMN_NAME' => 'cmsPages_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'SET NULL',
         ),
         'cmsPages_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'cmspages',
+          'TABLE_NAME' => 'cmsPages',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'cmsPages_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -4672,11 +4672,11 @@ return array (
         ),
       ),
     ),
-    'cmspagesdrafts' => 
+    'cmsPagesdrafts' => 
     array (
       'table' => 
       array (
-        'table_name' => 'cmspagesdrafts',
+        'table_name' => 'cmsPagesdrafts',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -4688,7 +4688,7 @@ return array (
         'cmsPagesDrafts_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -4712,7 +4712,7 @@ return array (
         'cmsPages_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'cmsPages_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -4736,7 +4736,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -4760,7 +4760,7 @@ return array (
         'cmsPagesDrafts_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_timestamp',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -4784,7 +4784,7 @@ return array (
         'cmsPagesDrafts_data' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_data',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -4808,7 +4808,7 @@ return array (
         'cmsPagesDrafts_changelog' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_changelog',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -4832,7 +4832,7 @@ return array (
         'cmsPagesDrafts_revisionID' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_revisionID',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -4860,7 +4860,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesdrafts',
+            'Table' => 'cmsPagesdrafts',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -4878,7 +4878,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesdrafts',
+            'Table' => 'cmsPagesdrafts',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesDrafts_cmsPages_cmsPages_id_fk',
             'Seq_in_index' => '1',
@@ -4896,7 +4896,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesdrafts',
+            'Table' => 'cmsPagesdrafts',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesDrafts_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -4914,7 +4914,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesdrafts',
+            'Table' => 'cmsPagesdrafts',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesDrafts_cmsPagesDrafts_timestamp_index',
             'Seq_in_index' => '1',
@@ -4933,17 +4933,17 @@ return array (
       array (
         'cmsPagesDrafts_cmsPages_cmsPages_id_fk' => 
         array (
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'cmsPages_id',
           'CONSTRAINT_NAME' => 'cmsPagesDrafts_cmsPages_cmsPages_id_fk',
-          'REFERENCED_TABLE_NAME' => 'cmspages',
+          'REFERENCED_TABLE_NAME' => 'cmsPages',
           'REFERENCED_COLUMN_NAME' => 'cmsPages_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'cmsPagesDrafts_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'cmspagesdrafts',
+          'TABLE_NAME' => 'cmsPagesdrafts',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'cmsPagesDrafts_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -4953,11 +4953,11 @@ return array (
         ),
       ),
     ),
-    'cmspagesviews' => 
+    'cmsPagesviews' => 
     array (
       'table' => 
       array (
-        'table_name' => 'cmspagesviews',
+        'table_name' => 'cmsPagesviews',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -4969,7 +4969,7 @@ return array (
         'cmsPagesViews_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesviews',
+          'TABLE_NAME' => 'cmsPagesviews',
           'COLUMN_NAME' => 'cmsPagesViews_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -4993,7 +4993,7 @@ return array (
         'cmsPages_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesviews',
+          'TABLE_NAME' => 'cmsPagesviews',
           'COLUMN_NAME' => 'cmsPages_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -5017,7 +5017,7 @@ return array (
         'cmsPagesViews_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesviews',
+          'TABLE_NAME' => 'cmsPagesviews',
           'COLUMN_NAME' => 'cmsPagesViews_timestamp',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -5041,7 +5041,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesviews',
+          'TABLE_NAME' => 'cmsPagesviews',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -5065,7 +5065,7 @@ return array (
         'cmsPages_type' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmspagesviews',
+          'TABLE_NAME' => 'cmsPagesviews',
           'COLUMN_NAME' => 'cmsPages_type',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '1',
@@ -5093,7 +5093,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesviews',
+            'Table' => 'cmsPagesviews',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -5111,7 +5111,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesviews',
+            'Table' => 'cmsPagesviews',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesViews_cmsPages_cmsPages_id_fk',
             'Seq_in_index' => '1',
@@ -5129,7 +5129,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesviews',
+            'Table' => 'cmsPagesviews',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesViews_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -5147,7 +5147,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmspagesviews',
+            'Table' => 'cmsPagesviews',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesViews_cmsPagesViews_timestamp_index',
             'Seq_in_index' => '1',
@@ -5166,17 +5166,17 @@ return array (
       array (
         'cmsPagesViews_cmsPages_cmsPages_id_fk' => 
         array (
-          'TABLE_NAME' => 'cmspagesviews',
+          'TABLE_NAME' => 'cmsPagesviews',
           'COLUMN_NAME' => 'cmsPages_id',
           'CONSTRAINT_NAME' => 'cmsPagesViews_cmsPages_cmsPages_id_fk',
-          'REFERENCED_TABLE_NAME' => 'cmspages',
+          'REFERENCED_TABLE_NAME' => 'cmsPages',
           'REFERENCED_COLUMN_NAME' => 'cmsPages_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'cmsPagesViews_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'cmspagesviews',
+          'TABLE_NAME' => 'cmsPagesviews',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'cmsPagesViews_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -5186,11 +5186,11 @@ return array (
         ),
       ),
     ),
-    'crewassignments' => 
+    'crewAssignments' => 
     array (
       'table' => 
       array (
-        'table_name' => 'crewassignments',
+        'table_name' => 'crewAssignments',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -5202,7 +5202,7 @@ return array (
         'crewAssignments_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'crewAssignments_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -5226,7 +5226,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -5250,7 +5250,7 @@ return array (
         'projects_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'projects_id',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -5274,7 +5274,7 @@ return array (
         'crewAssignments_personName' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'crewAssignments_personName',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -5298,7 +5298,7 @@ return array (
         'crewAssignments_role' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'crewAssignments_role',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -5322,7 +5322,7 @@ return array (
         'crewAssignments_comment' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'crewAssignments_comment',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -5346,7 +5346,7 @@ return array (
         'crewAssignments_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'crewAssignments_deleted',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => '0',
@@ -5370,7 +5370,7 @@ return array (
         'crewAssignments_rank' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'crewAssignments_rank',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '99',
@@ -5398,7 +5398,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'crewassignments',
+            'Table' => 'crewAssignments',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -5416,7 +5416,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'crewassignments',
+            'Table' => 'crewAssignments',
             'Non_unique' => '1',
             'Key_name' => 'crewAssignments_projects_projects_id_fk',
             'Seq_in_index' => '1',
@@ -5434,7 +5434,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'crewassignments',
+            'Table' => 'crewAssignments',
             'Non_unique' => '1',
             'Key_name' => 'crewAssignments_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -5453,7 +5453,7 @@ return array (
       array (
         'crewAssignments_projects_projects_id_fk' => 
         array (
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'projects_id',
           'CONSTRAINT_NAME' => 'crewAssignments_projects_projects_id_fk',
           'REFERENCED_TABLE_NAME' => 'projects',
@@ -5463,7 +5463,7 @@ return array (
         ),
         'crewAssignments_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'crewassignments',
+          'TABLE_NAME' => 'crewAssignments',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'crewAssignments_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -5473,11 +5473,11 @@ return array (
         ),
       ),
     ),
-    'emailsent' => 
+    'emailSent' => 
     array (
       'table' => 
       array (
-        'table_name' => 'emailsent',
+        'table_name' => 'emailSent',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -5489,7 +5489,7 @@ return array (
         'emailSent_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -5513,7 +5513,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -5537,7 +5537,7 @@ return array (
         'emailSent_html' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_html',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -5561,7 +5561,7 @@ return array (
         'emailSent_subject' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_subject',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -5585,7 +5585,7 @@ return array (
         'emailSent_sent' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_sent',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -5609,7 +5609,7 @@ return array (
         'emailSent_fromEmail' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_fromEmail',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -5633,7 +5633,7 @@ return array (
         'emailSent_fromName' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_fromName',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -5657,7 +5657,7 @@ return array (
         'emailSent_toName' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_toName',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -5681,7 +5681,7 @@ return array (
         'emailSent_toEmail' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'emailSent_toEmail',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => NULL,
@@ -5709,7 +5709,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'emailsent',
+            'Table' => 'emailSent',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -5727,7 +5727,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'emailsent',
+            'Table' => 'emailSent',
             'Non_unique' => '1',
             'Key_name' => 'emailSent_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -5746,7 +5746,7 @@ return array (
       array (
         'emailSent_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'emailsent',
+          'TABLE_NAME' => 'emailSent',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'emailSent_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -5756,11 +5756,11 @@ return array (
         ),
       ),
     ),
-    'emailverificationcodes' => 
+    'emailVerificationCodes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'emailverificationcodes',
+        'table_name' => 'emailVerificationCodes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -5772,7 +5772,7 @@ return array (
         'emailVerificationCodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailverificationcodes',
+          'TABLE_NAME' => 'emailVerificationCodes',
           'COLUMN_NAME' => 'emailVerificationCodes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -5796,7 +5796,7 @@ return array (
         'emailVerificationCodes_code' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailverificationcodes',
+          'TABLE_NAME' => 'emailVerificationCodes',
           'COLUMN_NAME' => 'emailVerificationCodes_code',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -5820,7 +5820,7 @@ return array (
         'emailVerificationCodes_used' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailverificationcodes',
+          'TABLE_NAME' => 'emailVerificationCodes',
           'COLUMN_NAME' => 'emailVerificationCodes_used',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => '0',
@@ -5844,7 +5844,7 @@ return array (
         'emailVerificationCodes_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailverificationcodes',
+          'TABLE_NAME' => 'emailVerificationCodes',
           'COLUMN_NAME' => 'emailVerificationCodes_timestamp',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -5868,7 +5868,7 @@ return array (
         'emailVerificationCodes_valid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailverificationcodes',
+          'TABLE_NAME' => 'emailVerificationCodes',
           'COLUMN_NAME' => 'emailVerificationCodes_valid',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '1',
@@ -5892,7 +5892,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'emailverificationcodes',
+          'TABLE_NAME' => 'emailVerificationCodes',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -5920,7 +5920,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'emailverificationcodes',
+            'Table' => 'emailVerificationCodes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -5938,7 +5938,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'emailverificationcodes',
+            'Table' => 'emailVerificationCodes',
             'Non_unique' => '1',
             'Key_name' => 'emailVerificationCodes_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -5957,7 +5957,7 @@ return array (
       array (
         'emailVerificationCodes_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'emailverificationcodes',
+          'TABLE_NAME' => 'emailVerificationCodes',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'emailVerificationCodes_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -5967,11 +5967,11 @@ return array (
         ),
       ),
     ),
-    'instanceactions' => 
+    'instanceActions' => 
     array (
       'table' => 
       array (
-        'table_name' => 'instanceactions',
+        'table_name' => 'instanceActions',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -5983,7 +5983,7 @@ return array (
         'instanceActions_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactions',
+          'TABLE_NAME' => 'instanceActions',
           'COLUMN_NAME' => 'instanceActions_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -6007,7 +6007,7 @@ return array (
         'instanceActions_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactions',
+          'TABLE_NAME' => 'instanceActions',
           'COLUMN_NAME' => 'instanceActions_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -6031,7 +6031,7 @@ return array (
         'instanceActionsCategories_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactions',
+          'TABLE_NAME' => 'instanceActions',
           'COLUMN_NAME' => 'instanceActionsCategories_id',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -6055,7 +6055,7 @@ return array (
         'instanceActions_dependent' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactions',
+          'TABLE_NAME' => 'instanceActions',
           'COLUMN_NAME' => 'instanceActions_dependent',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -6079,7 +6079,7 @@ return array (
         'instanceActions_incompatible' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactions',
+          'TABLE_NAME' => 'instanceActions',
           'COLUMN_NAME' => 'instanceActions_incompatible',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -6107,7 +6107,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'instanceactions',
+            'Table' => 'instanceActions',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -6125,7 +6125,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'instanceactions',
+            'Table' => 'instanceActions',
             'Non_unique' => '1',
             'Key_name' => 'categories_fk',
             'Seq_in_index' => '1',
@@ -6144,21 +6144,21 @@ return array (
       array (
         'categories_fk' => 
         array (
-          'TABLE_NAME' => 'instanceactions',
+          'TABLE_NAME' => 'instanceActions',
           'COLUMN_NAME' => 'instanceActionsCategories_id',
           'CONSTRAINT_NAME' => 'categories_fk',
-          'REFERENCED_TABLE_NAME' => 'instanceactionscategories',
+          'REFERENCED_TABLE_NAME' => 'instanceActionsCategories',
           'REFERENCED_COLUMN_NAME' => 'instanceActionsCategories_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
       ),
     ),
-    'instanceactionscategories' => 
+    'instanceActionsCategories' => 
     array (
       'table' => 
       array (
-        'table_name' => 'instanceactionscategories',
+        'table_name' => 'instanceActionsCategories',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -6170,7 +6170,7 @@ return array (
         'instanceActionsCategories_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactionscategories',
+          'TABLE_NAME' => 'instanceActionsCategories',
           'COLUMN_NAME' => 'instanceActionsCategories_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -6194,7 +6194,7 @@ return array (
         'instanceActionsCategories_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactionscategories',
+          'TABLE_NAME' => 'instanceActionsCategories',
           'COLUMN_NAME' => 'instanceActionsCategories_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -6218,7 +6218,7 @@ return array (
         'instanceActionsCategories_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instanceactionscategories',
+          'TABLE_NAME' => 'instanceActionsCategories',
           'COLUMN_NAME' => 'instanceActionsCategories_order',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => '999',
@@ -6246,7 +6246,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'instanceactionscategories',
+            'Table' => 'instanceActionsCategories',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -6263,11 +6263,11 @@ return array (
       ),
       'foreign_keys' => NULL,
     ),
-    'instancepositions' => 
+    'instancePositions' => 
     array (
       'table' => 
       array (
-        'table_name' => 'instancepositions',
+        'table_name' => 'instancePositions',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -6279,7 +6279,7 @@ return array (
         'instancePositions_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instancepositions',
+          'TABLE_NAME' => 'instancePositions',
           'COLUMN_NAME' => 'instancePositions_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -6303,7 +6303,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instancepositions',
+          'TABLE_NAME' => 'instancePositions',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -6327,7 +6327,7 @@ return array (
         'instancePositions_displayName' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instancepositions',
+          'TABLE_NAME' => 'instancePositions',
           'COLUMN_NAME' => 'instancePositions_displayName',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -6351,7 +6351,7 @@ return array (
         'instancePositions_rank' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instancepositions',
+          'TABLE_NAME' => 'instancePositions',
           'COLUMN_NAME' => 'instancePositions_rank',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '999',
@@ -6375,7 +6375,7 @@ return array (
         'instancePositions_actions' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instancepositions',
+          'TABLE_NAME' => 'instancePositions',
           'COLUMN_NAME' => 'instancePositions_actions',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -6399,7 +6399,7 @@ return array (
         'instancePositions_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'instancepositions',
+          'TABLE_NAME' => 'instancePositions',
           'COLUMN_NAME' => 'instancePositions_deleted',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '0',
@@ -6427,7 +6427,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'instancepositions',
+            'Table' => 'instancePositions',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -6445,7 +6445,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'instancepositions',
+            'Table' => 'instancePositions',
             'Non_unique' => '1',
             'Key_name' => 'instancePositions_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -6464,7 +6464,7 @@ return array (
       array (
         'instancePositions_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'instancepositions',
+          'TABLE_NAME' => 'instancePositions',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'instancePositions_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -7234,11 +7234,11 @@ return array (
         ),
       ),
     ),
-    'locationsbarcodes' => 
+    'locationsBarcodes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'locationsbarcodes',
+        'table_name' => 'locationsBarcodes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -7250,7 +7250,7 @@ return array (
         'locationsBarcodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'locationsBarcodes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -7274,7 +7274,7 @@ return array (
         'locations_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'locations_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -7298,7 +7298,7 @@ return array (
         'locationsBarcodes_value' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'locationsBarcodes_value',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -7322,7 +7322,7 @@ return array (
         'locationsBarcodes_type' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'locationsBarcodes_type',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -7346,7 +7346,7 @@ return array (
         'locationsBarcodes_notes' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'locationsBarcodes_notes',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -7370,7 +7370,7 @@ return array (
         'locationsBarcodes_added' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'locationsBarcodes_added',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -7394,7 +7394,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -7418,7 +7418,7 @@ return array (
         'locationsBarcodes_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'locationsBarcodes_deleted',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '0',
@@ -7446,7 +7446,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'locationsbarcodes',
+            'Table' => 'locationsBarcodes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -7464,7 +7464,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'locationsbarcodes',
+            'Table' => 'locationsBarcodes',
             'Non_unique' => '1',
             'Key_name' => 'locationsBarcodes_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -7483,7 +7483,7 @@ return array (
       array (
         'locationsBarcodes_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'locationsbarcodes',
+          'TABLE_NAME' => 'locationsBarcodes',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'locationsBarcodes_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -7493,11 +7493,11 @@ return array (
         ),
       ),
     ),
-    'loginattempts' => 
+    'loginAttempts' => 
     array (
       'table' => 
       array (
-        'table_name' => 'loginattempts',
+        'table_name' => 'loginAttempts',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -7509,7 +7509,7 @@ return array (
         'loginAttempts_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'loginattempts',
+          'TABLE_NAME' => 'loginAttempts',
           'COLUMN_NAME' => 'loginAttempts_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -7533,7 +7533,7 @@ return array (
         'loginAttempts_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'loginattempts',
+          'TABLE_NAME' => 'loginAttempts',
           'COLUMN_NAME' => 'loginAttempts_timestamp',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -7557,7 +7557,7 @@ return array (
         'loginAttempts_textEntered' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'loginattempts',
+          'TABLE_NAME' => 'loginAttempts',
           'COLUMN_NAME' => 'loginAttempts_textEntered',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -7581,7 +7581,7 @@ return array (
         'loginAttempts_ip' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'loginattempts',
+          'TABLE_NAME' => 'loginAttempts',
           'COLUMN_NAME' => 'loginAttempts_ip',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -7605,7 +7605,7 @@ return array (
         'loginAttempts_blocked' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'loginattempts',
+          'TABLE_NAME' => 'loginAttempts',
           'COLUMN_NAME' => 'loginAttempts_blocked',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -7629,7 +7629,7 @@ return array (
         'loginAttempts_successful' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'loginattempts',
+          'TABLE_NAME' => 'loginAttempts',
           'COLUMN_NAME' => 'loginAttempts_successful',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -7657,7 +7657,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'loginattempts',
+            'Table' => 'loginAttempts',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -7674,11 +7674,11 @@ return array (
       ),
       'foreign_keys' => NULL,
     ),
-    'maintenancejobs' => 
+    'maintenanceJobs' => 
     array (
       'table' => 
       array (
-        'table_name' => 'maintenancejobs',
+        'table_name' => 'maintenanceJobs',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -7690,7 +7690,7 @@ return array (
         'maintenanceJobs_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -7714,7 +7714,7 @@ return array (
         'maintenanceJobs_assets' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_assets',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -7738,7 +7738,7 @@ return array (
         'maintenanceJobs_timestamp_added' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_timestamp_added',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -7762,7 +7762,7 @@ return array (
         'maintenanceJobs_timestamp_due' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_timestamp_due',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -7786,7 +7786,7 @@ return array (
         'maintenanceJobs_user_tagged' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_user_tagged',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -7810,7 +7810,7 @@ return array (
         'maintenanceJobs_user_creator' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_user_creator',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -7834,7 +7834,7 @@ return array (
         'maintenanceJobs_user_assignedTo' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_user_assignedTo',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -7858,7 +7858,7 @@ return array (
         'maintenanceJobs_title' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_title',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -7882,7 +7882,7 @@ return array (
         'maintenanceJobs_faultDescription' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_faultDescription',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => NULL,
@@ -7906,7 +7906,7 @@ return array (
         'maintenanceJobs_priority' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_priority',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => '5',
@@ -7930,7 +7930,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => NULL,
@@ -7954,7 +7954,7 @@ return array (
         'maintenanceJobs_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_deleted',
           'ORDINAL_POSITION' => '12',
           'COLUMN_DEFAULT' => '0',
@@ -7978,7 +7978,7 @@ return array (
         'maintenanceJobsStatuses_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_id',
           'ORDINAL_POSITION' => '13',
           'COLUMN_DEFAULT' => NULL,
@@ -8002,7 +8002,7 @@ return array (
         'maintenanceJobs_flagAssets' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_flagAssets',
           'ORDINAL_POSITION' => '14',
           'COLUMN_DEFAULT' => '0',
@@ -8026,7 +8026,7 @@ return array (
         'maintenanceJobs_blockAssets' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_blockAssets',
           'ORDINAL_POSITION' => '15',
           'COLUMN_DEFAULT' => '0',
@@ -8054,7 +8054,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenancejobs',
+            'Table' => 'maintenanceJobs',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -8072,7 +8072,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenancejobs',
+            'Table' => 'maintenanceJobs',
             'Non_unique' => '1',
             'Key_name' => 'maintenanceJobs_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -8091,7 +8091,7 @@ return array (
       array (
         'maintenanceJobs_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'maintenancejobs',
+          'TABLE_NAME' => 'maintenanceJobs',
           'COLUMN_NAME' => 'maintenanceJobs_user_creator',
           'CONSTRAINT_NAME' => 'maintenanceJobs_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -8101,11 +8101,11 @@ return array (
         ),
       ),
     ),
-    'maintenancejobsmessages' => 
+    'maintenanceJobsmessages' => 
     array (
       'table' => 
       array (
-        'table_name' => 'maintenancejobsmessages',
+        'table_name' => 'maintenanceJobsmessages',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -8117,7 +8117,7 @@ return array (
         'maintenanceJobsMessages_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -8141,7 +8141,7 @@ return array (
         'maintenanceJobs_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobs_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -8165,7 +8165,7 @@ return array (
         'maintenanceJobsMessages_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_timestamp',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -8189,7 +8189,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -8213,7 +8213,7 @@ return array (
         'maintenanceJobsMessages_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_deleted',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '0',
@@ -8237,7 +8237,7 @@ return array (
         'maintenanceJobsMessages_text' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_text',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -8261,7 +8261,7 @@ return array (
         'maintenanceJobsMessages_file' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_file',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -8289,7 +8289,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenancejobsmessages',
+            'Table' => 'maintenanceJobsmessages',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -8307,7 +8307,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenancejobsmessages',
+            'Table' => 'maintenanceJobsmessages',
             'Non_unique' => '1',
             'Key_name' => 'maintenanceJobsMessages___files',
             'Seq_in_index' => '1',
@@ -8325,7 +8325,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenancejobsmessages',
+            'Table' => 'maintenanceJobsmessages',
             'Non_unique' => '1',
             'Key_name' => 'maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk',
             'Seq_in_index' => '1',
@@ -8344,17 +8344,17 @@ return array (
       array (
         'maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk' => 
         array (
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobs_id',
           'CONSTRAINT_NAME' => 'maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk',
-          'REFERENCED_TABLE_NAME' => 'maintenancejobs',
+          'REFERENCED_TABLE_NAME' => 'maintenanceJobs',
           'REFERENCED_COLUMN_NAME' => 'maintenanceJobs_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'maintenanceJobsMessages___files' => 
         array (
-          'TABLE_NAME' => 'maintenancejobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsmessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_file',
           'CONSTRAINT_NAME' => 'maintenanceJobsMessages___files',
           'REFERENCED_TABLE_NAME' => 's3files',
@@ -8364,11 +8364,11 @@ return array (
         ),
       ),
     ),
-    'maintenancejobsstatuses' => 
+    'maintenanceJobsstatuses' => 
     array (
       'table' => 
       array (
-        'table_name' => 'maintenancejobsstatuses',
+        'table_name' => 'maintenanceJobsstatuses',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -8380,7 +8380,7 @@ return array (
         'maintenanceJobsStatuses_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsstatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -8404,7 +8404,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsstatuses',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -8428,7 +8428,7 @@ return array (
         'maintenanceJobsStatuses_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsstatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_name',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -8452,7 +8452,7 @@ return array (
         'maintenanceJobsStatuses_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsstatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_order',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '99',
@@ -8476,7 +8476,7 @@ return array (
         'maintenanceJobsStatuses_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsstatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_deleted',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '0',
@@ -8500,7 +8500,7 @@ return array (
         'maintenanceJobsStatuses_showJobInMainList' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenancejobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsstatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_showJobInMainList',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '1',
@@ -8528,7 +8528,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenancejobsstatuses',
+            'Table' => 'maintenanceJobsstatuses',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -8546,7 +8546,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenancejobsstatuses',
+            'Table' => 'maintenanceJobsstatuses',
             'Non_unique' => '1',
             'Key_name' => 'maintenanceJobsStatuses_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -8565,7 +8565,7 @@ return array (
       array (
         'maintenanceJobsStatuses_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'maintenancejobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsstatuses',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'maintenanceJobsStatuses_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -9149,11 +9149,11 @@ return array (
         ),
       ),
     ),
-    'modulessteps' => 
+    'modulesSteps' => 
     array (
       'table' => 
       array (
-        'table_name' => 'modulessteps',
+        'table_name' => 'modulesSteps',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -9165,7 +9165,7 @@ return array (
         'modulesSteps_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -9189,7 +9189,7 @@ return array (
         'modules_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modules_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -9213,7 +9213,7 @@ return array (
         'modulesSteps_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_deleted',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => '0',
@@ -9237,7 +9237,7 @@ return array (
         'modulesSteps_show' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_show',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '1',
@@ -9261,7 +9261,7 @@ return array (
         'modulesSteps_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_name',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -9285,7 +9285,7 @@ return array (
         'modulesSteps_type' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_type',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -9309,7 +9309,7 @@ return array (
         'modulesSteps_content' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_content',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -9333,7 +9333,7 @@ return array (
         'modulesSteps_completionTime' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_completionTime',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '0',
@@ -9357,7 +9357,7 @@ return array (
         'modulesSteps_internalNotes' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_internalNotes',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => NULL,
@@ -9381,7 +9381,7 @@ return array (
         'modulesSteps_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_order',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => '999',
@@ -9405,7 +9405,7 @@ return array (
         'modulesSteps_locked' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modulesSteps_locked',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => '0',
@@ -9433,7 +9433,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'modulessteps',
+            'Table' => 'modulesSteps',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -9451,7 +9451,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'modulessteps',
+            'Table' => 'modulesSteps',
             'Non_unique' => '1',
             'Key_name' => 'modulesSteps_modules_modules_id_fk',
             'Seq_in_index' => '1',
@@ -9470,7 +9470,7 @@ return array (
       array (
         'modulesSteps_modules_modules_id_fk' => 
         array (
-          'TABLE_NAME' => 'modulessteps',
+          'TABLE_NAME' => 'modulesSteps',
           'COLUMN_NAME' => 'modules_id',
           'CONSTRAINT_NAME' => 'modulesSteps_modules_modules_id_fk',
           'REFERENCED_TABLE_NAME' => 'modules',
@@ -9480,11 +9480,11 @@ return array (
         ),
       ),
     ),
-    'passwordresetcodes' => 
+    'passwordResetCodes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'passwordresetcodes',
+        'table_name' => 'passwordResetCodes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -9496,7 +9496,7 @@ return array (
         'passwordResetCodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'passwordresetcodes',
+          'TABLE_NAME' => 'passwordResetCodes',
           'COLUMN_NAME' => 'passwordResetCodes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -9520,7 +9520,7 @@ return array (
         'passwordResetCodes_code' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'passwordresetcodes',
+          'TABLE_NAME' => 'passwordResetCodes',
           'COLUMN_NAME' => 'passwordResetCodes_code',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -9544,7 +9544,7 @@ return array (
         'passwordResetCodes_used' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'passwordresetcodes',
+          'TABLE_NAME' => 'passwordResetCodes',
           'COLUMN_NAME' => 'passwordResetCodes_used',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => '0',
@@ -9568,7 +9568,7 @@ return array (
         'passwordResetCodes_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'passwordresetcodes',
+          'TABLE_NAME' => 'passwordResetCodes',
           'COLUMN_NAME' => 'passwordResetCodes_timestamp',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -9592,7 +9592,7 @@ return array (
         'passwordResetCodes_valid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'passwordresetcodes',
+          'TABLE_NAME' => 'passwordResetCodes',
           'COLUMN_NAME' => 'passwordResetCodes_valid',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '1',
@@ -9616,7 +9616,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'passwordresetcodes',
+          'TABLE_NAME' => 'passwordResetCodes',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -9644,7 +9644,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'passwordresetcodes',
+            'Table' => 'passwordResetCodes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -9662,7 +9662,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'passwordresetcodes',
+            'Table' => 'passwordResetCodes',
             'Non_unique' => '1',
             'Key_name' => 'passwordResetCodes_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -9681,7 +9681,7 @@ return array (
       array (
         'passwordResetCodes_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'passwordresetcodes',
+          'TABLE_NAME' => 'passwordResetCodes',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'passwordResetCodes_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -10315,11 +10315,11 @@ return array (
       ),
       'foreign_keys' => NULL,
     ),
-    'positionsgroups' => 
+    'positionsGroups' => 
     array (
       'table' => 
       array (
-        'table_name' => 'positionsgroups',
+        'table_name' => 'positionsGroups',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -10331,7 +10331,7 @@ return array (
         'positionsGroups_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'positionsgroups',
+          'TABLE_NAME' => 'positionsGroups',
           'COLUMN_NAME' => 'positionsGroups_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -10355,7 +10355,7 @@ return array (
         'positionsGroups_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'positionsgroups',
+          'TABLE_NAME' => 'positionsGroups',
           'COLUMN_NAME' => 'positionsGroups_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -10379,7 +10379,7 @@ return array (
         'positionsGroups_actions' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'positionsgroups',
+          'TABLE_NAME' => 'positionsGroups',
           'COLUMN_NAME' => 'positionsGroups_actions',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -10407,7 +10407,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'positionsgroups',
+            'Table' => 'positionsGroups',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -11025,11 +11025,11 @@ return array (
         ),
       ),
     ),
-    'projectsfinancecache' => 
+    'projectsFinanceCache' => 
     array (
       'table' => 
       array (
-        'table_name' => 'projectsfinancecache',
+        'table_name' => 'projectsFinanceCache',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -11041,7 +11041,7 @@ return array (
         'projectsFinanceCache_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -11065,7 +11065,7 @@ return array (
         'projects_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projects_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -11089,7 +11089,7 @@ return array (
         'projectsFinanceCache_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_timestamp',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -11113,7 +11113,7 @@ return array (
         'projectsFinanceCache_timestampUpdated' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_timestampUpdated',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -11137,7 +11137,7 @@ return array (
         'projectsFinanceCache_equipmentSubTotal' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_equipmentSubTotal',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -11161,7 +11161,7 @@ return array (
         'projectsFinanceCache_equiptmentDiscounts' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_equiptmentDiscounts',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -11185,7 +11185,7 @@ return array (
         'projectsFinanceCache_equiptmentTotal' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_equiptmentTotal',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -11209,7 +11209,7 @@ return array (
         'projectsFinanceCache_salesTotal' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_salesTotal',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -11233,7 +11233,7 @@ return array (
         'projectsFinanceCache_staffTotal' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_staffTotal',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => NULL,
@@ -11257,7 +11257,7 @@ return array (
         'projectsFinanceCache_externalHiresTotal' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_externalHiresTotal',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -11281,7 +11281,7 @@ return array (
         'projectsFinanceCache_paymentsReceived' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_paymentsReceived',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => NULL,
@@ -11305,7 +11305,7 @@ return array (
         'projectsFinanceCache_grandTotal' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_grandTotal',
           'ORDINAL_POSITION' => '12',
           'COLUMN_DEFAULT' => NULL,
@@ -11329,7 +11329,7 @@ return array (
         'projectsFinanceCache_value' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_value',
           'ORDINAL_POSITION' => '13',
           'COLUMN_DEFAULT' => NULL,
@@ -11353,7 +11353,7 @@ return array (
         'projectsFinanceCache_mass' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projectsFinanceCache_mass',
           'ORDINAL_POSITION' => '14',
           'COLUMN_DEFAULT' => NULL,
@@ -11381,7 +11381,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsfinancecache',
+            'Table' => 'projectsFinanceCache',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -11399,7 +11399,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsfinancecache',
+            'Table' => 'projectsFinanceCache',
             'Non_unique' => '1',
             'Key_name' => 'projectsFinanceCache_projects_projects_id_fk',
             'Seq_in_index' => '1',
@@ -11417,7 +11417,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsfinancecache',
+            'Table' => 'projectsFinanceCache',
             'Non_unique' => '1',
             'Key_name' => 'projectFinnaceCacheTimestamp',
             'Seq_in_index' => '1',
@@ -11436,7 +11436,7 @@ return array (
       array (
         'projectsFinanceCache_projects_projects_id_fk' => 
         array (
-          'TABLE_NAME' => 'projectsfinancecache',
+          'TABLE_NAME' => 'projectsFinanceCache',
           'COLUMN_NAME' => 'projects_id',
           'CONSTRAINT_NAME' => 'projectsFinanceCache_projects_projects_id_fk',
           'REFERENCED_TABLE_NAME' => 'projects',
@@ -11446,11 +11446,11 @@ return array (
         ),
       ),
     ),
-    'projectsnotes' => 
+    'projectsNotes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'projectsnotes',
+        'table_name' => 'projectsNotes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -11462,7 +11462,7 @@ return array (
         'projectsNotes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projectsNotes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -11486,7 +11486,7 @@ return array (
         'projectsNotes_title' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projectsNotes_title',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -11510,7 +11510,7 @@ return array (
         'projectsNotes_text' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projectsNotes_text',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -11534,7 +11534,7 @@ return array (
         'projectsNotes_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projectsNotes_userid',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -11558,7 +11558,7 @@ return array (
         'projects_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projects_id',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -11582,7 +11582,7 @@ return array (
         'projectsNotes_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projectsNotes_deleted',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '0',
@@ -11610,7 +11610,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsnotes',
+            'Table' => 'projectsNotes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -11628,7 +11628,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsnotes',
+            'Table' => 'projectsNotes',
             'Non_unique' => '1',
             'Key_name' => 'projectsNotes_projects_projects_id_fk',
             'Seq_in_index' => '1',
@@ -11646,7 +11646,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsnotes',
+            'Table' => 'projectsNotes',
             'Non_unique' => '1',
             'Key_name' => 'projectsNotes_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -11665,7 +11665,7 @@ return array (
       array (
         'projectsNotes_projects_projects_id_fk' => 
         array (
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projects_id',
           'CONSTRAINT_NAME' => 'projectsNotes_projects_projects_id_fk',
           'REFERENCED_TABLE_NAME' => 'projects',
@@ -11675,7 +11675,7 @@ return array (
         ),
         'projectsNotes_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'projectsnotes',
+          'TABLE_NAME' => 'projectsNotes',
           'COLUMN_NAME' => 'projectsNotes_userid',
           'CONSTRAINT_NAME' => 'projectsNotes_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -11685,11 +11685,11 @@ return array (
         ),
       ),
     ),
-    'projectstypes' => 
+    'projectsTypes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'projectstypes',
+        'table_name' => 'projectsTypes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -11701,7 +11701,7 @@ return array (
         'projectsTypes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -11725,7 +11725,7 @@ return array (
         'projectsTypes_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -11749,7 +11749,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -11773,7 +11773,7 @@ return array (
         'projectsTypes_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_deleted',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '0',
@@ -11797,7 +11797,7 @@ return array (
         'projectsTypes_config_finance' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_config_finance',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '1',
@@ -11821,7 +11821,7 @@ return array (
         'projectsTypes_config_files' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_config_files',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '1',
@@ -11845,7 +11845,7 @@ return array (
         'projectsTypes_config_assets' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_config_assets',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => '1',
@@ -11869,7 +11869,7 @@ return array (
         'projectsTypes_config_client' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_config_client',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '1',
@@ -11893,7 +11893,7 @@ return array (
         'projectsTypes_config_venue' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_config_venue',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => '1',
@@ -11917,7 +11917,7 @@ return array (
         'projectsTypes_config_notes' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_config_notes',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => '1',
@@ -11941,7 +11941,7 @@ return array (
         'projectsTypes_config_crew' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'projectsTypes_config_crew',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => '1',
@@ -11969,7 +11969,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectstypes',
+            'Table' => 'projectsTypes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -11987,7 +11987,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectstypes',
+            'Table' => 'projectsTypes',
             'Non_unique' => '1',
             'Key_name' => 'projectsTypes_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -12006,7 +12006,7 @@ return array (
       array (
         'projectsTypes_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'projectstypes',
+          'TABLE_NAME' => 'projectsTypes',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'projectsTypes_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -12016,11 +12016,11 @@ return array (
         ),
       ),
     ),
-    'projectsvacantroles' => 
+    'projectsVacantRoles' => 
     array (
       'table' => 
       array (
-        'table_name' => 'projectsvacantroles',
+        'table_name' => 'projectsVacantRoles',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -12032,7 +12032,7 @@ return array (
         'projectsVacantRoles_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -12056,7 +12056,7 @@ return array (
         'projects_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projects_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -12080,7 +12080,7 @@ return array (
         'projectsVacantRoles_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_name',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -12104,7 +12104,7 @@ return array (
         'projectsVacantRoles_description' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_description',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -12128,7 +12128,7 @@ return array (
         'projectsVacantRoles_personSpecification' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_personSpecification',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -12152,7 +12152,7 @@ return array (
         'projectsVacantRoles_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_deleted',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '0',
@@ -12176,7 +12176,7 @@ return array (
         'projectsVacantRoles_open' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_open',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => '0',
@@ -12200,7 +12200,7 @@ return array (
         'projectsVacantRoles_showPublic' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_showPublic',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '0',
@@ -12224,7 +12224,7 @@ return array (
         'projectsVacantRoles_added' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_added',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -12248,7 +12248,7 @@ return array (
         'projectsVacantRoles_deadline' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_deadline',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -12272,7 +12272,7 @@ return array (
         'projectsVacantRoles_firstComeFirstServed' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_firstComeFirstServed',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => '0',
@@ -12296,7 +12296,7 @@ return array (
         'projectsVacantRoles_fileUploads' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_fileUploads',
           'ORDINAL_POSITION' => '12',
           'COLUMN_DEFAULT' => '1',
@@ -12320,7 +12320,7 @@ return array (
         'projectsVacantRoles_slots' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_slots',
           'ORDINAL_POSITION' => '13',
           'COLUMN_DEFAULT' => '1',
@@ -12344,7 +12344,7 @@ return array (
         'projectsVacantRoles_slotsFilled' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_slotsFilled',
           'ORDINAL_POSITION' => '14',
           'COLUMN_DEFAULT' => '0',
@@ -12368,7 +12368,7 @@ return array (
         'projectsVacantRoles_questions' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_questions',
           'ORDINAL_POSITION' => '15',
           'COLUMN_DEFAULT' => NULL,
@@ -12392,7 +12392,7 @@ return array (
         'projectsVacantRoles_collectPhone' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_collectPhone',
           'ORDINAL_POSITION' => '16',
           'COLUMN_DEFAULT' => '0',
@@ -12416,7 +12416,7 @@ return array (
         'projectsVacantRoles_privateToPM' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projectsVacantRoles_privateToPM',
           'ORDINAL_POSITION' => '17',
           'COLUMN_DEFAULT' => '1',
@@ -12444,7 +12444,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsvacantroles',
+            'Table' => 'projectsVacantRoles',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -12462,7 +12462,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsvacantroles',
+            'Table' => 'projectsVacantRoles',
             'Non_unique' => '1',
             'Key_name' => 'projectsVacantRoles_projects_projects_id_fk',
             'Seq_in_index' => '1',
@@ -12481,7 +12481,7 @@ return array (
       array (
         'projectsVacantRoles_projects_projects_id_fk' => 
         array (
-          'TABLE_NAME' => 'projectsvacantroles',
+          'TABLE_NAME' => 'projectsVacantRoles',
           'COLUMN_NAME' => 'projects_id',
           'CONSTRAINT_NAME' => 'projectsVacantRoles_projects_projects_id_fk',
           'REFERENCED_TABLE_NAME' => 'projects',
@@ -12491,11 +12491,11 @@ return array (
         ),
       ),
     ),
-    'projectsvacantrolesapplications' => 
+    'projectsVacantRolesapplications' => 
     array (
       'table' => 
       array (
-        'table_name' => 'projectsvacantrolesapplications',
+        'table_name' => 'projectsVacantRolesapplications',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -12507,7 +12507,7 @@ return array (
         'projectsVacantRolesApplications_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -12531,7 +12531,7 @@ return array (
         'projectsVacantRoles_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRoles_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -12555,7 +12555,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -12579,7 +12579,7 @@ return array (
         'projectsVacantRolesApplications_files' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_files',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -12603,7 +12603,7 @@ return array (
         'projectsVacantRolesApplications_phone' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_phone',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -12627,7 +12627,7 @@ return array (
         'projectsVacantRolesApplications_applicantComment' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_applicantComment',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -12651,7 +12651,7 @@ return array (
         'projectsVacantRolesApplications_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_deleted',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => '0',
@@ -12675,7 +12675,7 @@ return array (
         'projectsVacantRolesApplications_withdrawn' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_withdrawn',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '0',
@@ -12699,7 +12699,7 @@ return array (
         'projectsVacantRolesApplications_submitted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_submitted',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -12723,7 +12723,7 @@ return array (
         'projectsVacantRolesApplications_questionAnswers' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_questionAnswers',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -12747,7 +12747,7 @@ return array (
         'projectsVacantRolesApplications_status' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_status',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => '0',
@@ -12776,7 +12776,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsvacantrolesapplications',
+            'Table' => 'projectsVacantRolesapplications',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -12794,7 +12794,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsvacantrolesapplications',
+            'Table' => 'projectsVacantRolesapplications',
             'Non_unique' => '1',
             'Key_name' => 'projectsVacantRolesApplications_projectsVacantRolesid_fk',
             'Seq_in_index' => '1',
@@ -12812,7 +12812,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsvacantrolesapplications',
+            'Table' => 'projectsVacantRolesapplications',
             'Non_unique' => '1',
             'Key_name' => 'projectsVacantRolesApplications_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -12831,17 +12831,17 @@ return array (
       array (
         'projectsVacantRolesApplications_projectsVacantRolesid_fk' => 
         array (
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'projectsVacantRoles_id',
           'CONSTRAINT_NAME' => 'projectsVacantRolesApplications_projectsVacantRolesid_fk',
-          'REFERENCED_TABLE_NAME' => 'projectsvacantroles',
+          'REFERENCED_TABLE_NAME' => 'projectsVacantRoles',
           'REFERENCED_COLUMN_NAME' => 'projectsVacantRoles_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'projectsVacantRolesApplications_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'projectsvacantrolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesapplications',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'projectsVacantRolesApplications_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -13429,11 +13429,11 @@ Rest are set out in corehead
         ),
       ),
     ),
-    'signupcodes' => 
+    'signupCodes' => 
     array (
       'table' => 
       array (
-        'table_name' => 'signupcodes',
+        'table_name' => 'signupCodes',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -13445,7 +13445,7 @@ Rest are set out in corehead
         'signupCodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'signupCodes_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -13469,7 +13469,7 @@ Rest are set out in corehead
         'signupCodes_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'signupCodes_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -13493,7 +13493,7 @@ Rest are set out in corehead
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -13517,7 +13517,7 @@ Rest are set out in corehead
         'signupCodes_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'signupCodes_deleted',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '0',
@@ -13541,7 +13541,7 @@ Rest are set out in corehead
         'signupCodes_valid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'signupCodes_valid',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '1',
@@ -13565,7 +13565,7 @@ Rest are set out in corehead
         'signupCodes_notes' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'signupCodes_notes',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -13589,7 +13589,7 @@ Rest are set out in corehead
         'signupCodes_role' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'signupCodes_role',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -13613,7 +13613,7 @@ Rest are set out in corehead
         'instancePositions_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'instancePositions_id',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -13641,7 +13641,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'signupcodes',
+            'Table' => 'signupCodes',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -13659,7 +13659,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'signupcodes',
+            'Table' => 'signupCodes',
             'Non_unique' => '0',
             'Key_name' => 'signupCodes_signupCodes_name_uindex',
             'Seq_in_index' => '1',
@@ -13677,7 +13677,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'signupcodes',
+            'Table' => 'signupCodes',
             'Non_unique' => '1',
             'Key_name' => 'signupCodes_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -13695,7 +13695,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'signupcodes',
+            'Table' => 'signupCodes',
             'Non_unique' => '1',
             'Key_name' => 'signupCodes_instancePositions_instancePositions_id_fk',
             'Seq_in_index' => '1',
@@ -13714,17 +13714,17 @@ Rest are set out in corehead
       array (
         'signupCodes_instancePositions_instancePositions_id_fk' => 
         array (
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'instancePositions_id',
           'CONSTRAINT_NAME' => 'signupCodes_instancePositions_instancePositions_id_fk',
-          'REFERENCED_TABLE_NAME' => 'instancepositions',
+          'REFERENCED_TABLE_NAME' => 'instancePositions',
           'REFERENCED_COLUMN_NAME' => 'instancePositions_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'SET NULL',
         ),
         'signupCodes_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'signupcodes',
+          'TABLE_NAME' => 'signupCodes',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'signupCodes_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
@@ -13734,11 +13734,11 @@ Rest are set out in corehead
         ),
       ),
     ),
-    'userinstances' => 
+    'userInstances' => 
     array (
       'table' => 
       array (
-        'table_name' => 'userinstances',
+        'table_name' => 'userInstances',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -13750,7 +13750,7 @@ Rest are set out in corehead
         'userInstances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'userInstances_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -13774,7 +13774,7 @@ Rest are set out in corehead
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -13798,7 +13798,7 @@ Rest are set out in corehead
         'instancePositions_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'instancePositions_id',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -13822,7 +13822,7 @@ Rest are set out in corehead
         'userInstances_extraPermissions' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'userInstances_extraPermissions',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -13846,7 +13846,7 @@ Rest are set out in corehead
         'userInstances_label' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'userInstances_label',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -13870,7 +13870,7 @@ Rest are set out in corehead
         'userInstances_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'userInstances_deleted',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '0',
@@ -13894,7 +13894,7 @@ Rest are set out in corehead
         'signupCodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'signupCodes_id',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -13918,7 +13918,7 @@ Rest are set out in corehead
         'userInstances_archived' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'userInstances_archived',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => NULL,
@@ -13946,7 +13946,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userinstances',
+            'Table' => 'userInstances',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -13964,7 +13964,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userinstances',
+            'Table' => 'userInstances',
             'Non_unique' => '1',
             'Key_name' => 'userInstances_instancePositions_instancePositions_id_fk',
             'Seq_in_index' => '1',
@@ -13982,7 +13982,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userinstances',
+            'Table' => 'userInstances',
             'Non_unique' => '1',
             'Key_name' => 'userInstances_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -14000,7 +14000,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userinstances',
+            'Table' => 'userInstances',
             'Non_unique' => '1',
             'Key_name' => 'userInstances_signupCodes_signupCodes_id_fk',
             'Seq_in_index' => '1',
@@ -14019,27 +14019,27 @@ Rest are set out in corehead
       array (
         'userInstances_instancePositions_instancePositions_id_fk' => 
         array (
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'instancePositions_id',
           'CONSTRAINT_NAME' => 'userInstances_instancePositions_instancePositions_id_fk',
-          'REFERENCED_TABLE_NAME' => 'instancepositions',
+          'REFERENCED_TABLE_NAME' => 'instancePositions',
           'REFERENCED_COLUMN_NAME' => 'instancePositions_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
         ),
         'userInstances_signupCodes_signupCodes_id_fk' => 
         array (
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'signupCodes_id',
           'CONSTRAINT_NAME' => 'userInstances_signupCodes_signupCodes_id_fk',
-          'REFERENCED_TABLE_NAME' => 'signupcodes',
+          'REFERENCED_TABLE_NAME' => 'signupCodes',
           'REFERENCED_COLUMN_NAME' => 'signupCodes_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'SET NULL',
         ),
         'userInstances_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'userinstances',
+          'TABLE_NAME' => 'userInstances',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'userInstances_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -14049,11 +14049,11 @@ Rest are set out in corehead
         ),
       ),
     ),
-    'usermodules' => 
+    'userModules' => 
     array (
       'table' => 
       array (
-        'table_name' => 'usermodules',
+        'table_name' => 'userModules',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -14065,7 +14065,7 @@ Rest are set out in corehead
         'userModules_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'userModules_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -14089,7 +14089,7 @@ Rest are set out in corehead
         'modules_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'modules_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -14113,7 +14113,7 @@ Rest are set out in corehead
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -14137,7 +14137,7 @@ Rest are set out in corehead
         'userModules_stepsCompleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'userModules_stepsCompleted',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -14161,7 +14161,7 @@ Rest are set out in corehead
         'userModules_currentStep' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'userModules_currentStep',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -14185,7 +14185,7 @@ Rest are set out in corehead
         'userModules_started' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'userModules_started',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -14209,7 +14209,7 @@ Rest are set out in corehead
         'userModules_updated' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'userModules_updated',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -14237,7 +14237,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodules',
+            'Table' => 'userModules',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -14255,7 +14255,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodules',
+            'Table' => 'userModules',
             'Non_unique' => '1',
             'Key_name' => 'userModules_modules_modules_id_fk',
             'Seq_in_index' => '1',
@@ -14273,7 +14273,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodules',
+            'Table' => 'userModules',
             'Non_unique' => '1',
             'Key_name' => 'userModules_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -14291,7 +14291,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodules',
+            'Table' => 'userModules',
             'Non_unique' => '1',
             'Key_name' => 'userModules_modulesSteps_modulesSteps_id_fk',
             'Seq_in_index' => '1',
@@ -14310,17 +14310,17 @@ Rest are set out in corehead
       array (
         'userModules_modulesSteps_modulesSteps_id_fk' => 
         array (
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'userModules_currentStep',
           'CONSTRAINT_NAME' => 'userModules_modulesSteps_modulesSteps_id_fk',
-          'REFERENCED_TABLE_NAME' => 'modulessteps',
+          'REFERENCED_TABLE_NAME' => 'modulesSteps',
           'REFERENCED_COLUMN_NAME' => 'modulesSteps_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'SET NULL',
         ),
         'userModules_modules_modules_id_fk' => 
         array (
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'modules_id',
           'CONSTRAINT_NAME' => 'userModules_modules_modules_id_fk',
           'REFERENCED_TABLE_NAME' => 'modules',
@@ -14330,7 +14330,7 @@ Rest are set out in corehead
         ),
         'userModules_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'usermodules',
+          'TABLE_NAME' => 'userModules',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'userModules_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -14340,11 +14340,11 @@ Rest are set out in corehead
         ),
       ),
     ),
-    'usermodulescertifications' => 
+    'userModulescertifications' => 
     array (
       'table' => 
       array (
-        'table_name' => 'usermodulescertifications',
+        'table_name' => 'userModulescertifications',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -14356,7 +14356,7 @@ Rest are set out in corehead
         'userModulesCertifications_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'userModulesCertifications_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -14380,7 +14380,7 @@ Rest are set out in corehead
         'modules_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'modules_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -14404,7 +14404,7 @@ Rest are set out in corehead
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -14428,7 +14428,7 @@ Rest are set out in corehead
         'userModulesCertifications_revoked' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'userModulesCertifications_revoked',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '0',
@@ -14452,7 +14452,7 @@ Rest are set out in corehead
         'userModulesCertifications_approvedBy' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'userModulesCertifications_approvedBy',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -14476,7 +14476,7 @@ Rest are set out in corehead
         'userModulesCertifications_approvedComment' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'userModulesCertifications_approvedComment',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -14500,7 +14500,7 @@ Rest are set out in corehead
         'userModulesCertifications_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'userModulesCertifications_timestamp',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -14528,7 +14528,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodulescertifications',
+            'Table' => 'userModulescertifications',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -14546,7 +14546,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodulescertifications',
+            'Table' => 'userModulescertifications',
             'Non_unique' => '1',
             'Key_name' => 'userModulesCertifications_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -14564,7 +14564,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodulescertifications',
+            'Table' => 'userModulescertifications',
             'Non_unique' => '1',
             'Key_name' => 'userModulesCertifications_users_users_userid_fk_2',
             'Seq_in_index' => '1',
@@ -14582,7 +14582,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'usermodulescertifications',
+            'Table' => 'userModulescertifications',
             'Non_unique' => '1',
             'Key_name' => 'userModulesCertifications_modules_modules_id_fk',
             'Seq_in_index' => '1',
@@ -14601,7 +14601,7 @@ Rest are set out in corehead
       array (
         'userModulesCertifications_modules_modules_id_fk' => 
         array (
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'modules_id',
           'CONSTRAINT_NAME' => 'userModulesCertifications_modules_modules_id_fk',
           'REFERENCED_TABLE_NAME' => 'modules',
@@ -14611,7 +14611,7 @@ Rest are set out in corehead
         ),
         'userModulesCertifications_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'userModulesCertifications_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -14621,7 +14621,7 @@ Rest are set out in corehead
         ),
         'userModulesCertifications_users_users_userid_fk_2' => 
         array (
-          'TABLE_NAME' => 'usermodulescertifications',
+          'TABLE_NAME' => 'userModulescertifications',
           'COLUMN_NAME' => 'userModulesCertifications_approvedBy',
           'CONSTRAINT_NAME' => 'userModulesCertifications_users_users_userid_fk_2',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -14631,11 +14631,11 @@ Rest are set out in corehead
         ),
       ),
     ),
-    'userpositions' => 
+    'userPositions' => 
     array (
       'table' => 
       array (
-        'table_name' => 'userpositions',
+        'table_name' => 'userPositions',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -14647,7 +14647,7 @@ Rest are set out in corehead
         'userPositions_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'userPositions_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -14671,7 +14671,7 @@ Rest are set out in corehead
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -14695,7 +14695,7 @@ Rest are set out in corehead
         'userPositions_start' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'userPositions_start',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -14719,7 +14719,7 @@ Rest are set out in corehead
         'userPositions_end' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'userPositions_end',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -14743,7 +14743,7 @@ Rest are set out in corehead
         'positions_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'positions_id',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -14767,7 +14767,7 @@ Rest are set out in corehead
         'userPositions_displayName' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'userPositions_displayName',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -14791,7 +14791,7 @@ Rest are set out in corehead
         'userPositions_extraPermissions' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'userPositions_extraPermissions',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -14816,7 +14816,7 @@ Rest are set out in corehead
         'userPositions_show' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'userPositions_show',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '1',
@@ -14844,7 +14844,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userpositions',
+            'Table' => 'userPositions',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -14862,7 +14862,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userpositions',
+            'Table' => 'userPositions',
             'Non_unique' => '1',
             'Key_name' => 'userPositions_positions_positions_id_fk',
             'Seq_in_index' => '1',
@@ -14880,7 +14880,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userpositions',
+            'Table' => 'userPositions',
             'Non_unique' => '1',
             'Key_name' => 'userPositions_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -14899,7 +14899,7 @@ Rest are set out in corehead
       array (
         'userPositions_positions_positions_id_fk' => 
         array (
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'positions_id',
           'CONSTRAINT_NAME' => 'userPositions_positions_positions_id_fk',
           'REFERENCED_TABLE_NAME' => 'positions',
@@ -14909,7 +14909,7 @@ Rest are set out in corehead
         ),
         'userPositions_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'userpositions',
+          'TABLE_NAME' => 'userPositions',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'userPositions_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
