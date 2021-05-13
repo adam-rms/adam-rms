@@ -33,3 +33,5 @@ RUN git describe --tags --abbrev=0 > /var/www/html/common/version/TAG.txt
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www
 RUN composer install --optimize-autoloader --no-dev
+
+ENTRYPOINT ["/var/www/migrate.sh"]
