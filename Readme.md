@@ -24,15 +24,20 @@ It is available as a hosted solution (not currently open to new customers) or to
 
 The following assumes you already have a local development environment setup and are familiar with deploying LAMP-style stacks locally. The deployment strategy is somewhat different, but this is covered in a seperate repo. 
 
-1. An example database is provided as `database.sql` - this can be run in MySQL 8 to provide a local development database.
-1. Rename `example.dev.env` to `.env`
+1. Rename `example.dev.env` to `.env`, setting database credentials for your local MySQL server as you go
 1. Set the document root of your local web server to `html/`
+1. Run `php vendor/bin/phinx migrate` (or `vendor\bin\phinx migrate` on Windows) to set up the database
+1. *If setting up for the first time* run `php vendor/bin/phinx seed:run` (or `vendor\bin\phinx seed:run` on Windows) to seed some data to allow you to login
 1. Browse to `http://localhost/admin`
 1. Default credentials are `username` & `password!`
+
+Each time you pull new changes written by others you will likely need to update your local database by running the Phinx migrate command. Phinx migrations are automatically run on the production server in the dockerfile.
 
 ## Contributing 
 
 Contributions are very welcome - please see [CONTRIBUTING.md](CONTRIBUTING.md) for a guide, or feel free to open a [Discussion](https://github.com/bstudios/adam-rms/discussions)
+
+Database migrations, written in Phinx, are provided in `db/migrations`
 
 ## Licence
 
