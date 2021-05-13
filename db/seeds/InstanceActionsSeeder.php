@@ -908,11 +908,9 @@ class InstanceActionsSeeder extends AbstractSeed
         ];
 
         $table = $this->table('instanceActionsCategories');
-        $table->truncate();
         $table->insert($categoryData)
             ->saveData();
         $table = $this->table('instanceActions');
-        $table->truncate();
         $table->insert($actionData)
             ->saveData();
     }

@@ -186,11 +186,9 @@ class ActionsSeeder extends AbstractSeed
         ];
 
         $table = $this->table('actionsCategories');
-        $table->truncate();
         $table->insert($categoryData)
             ->saveData();
         $table = $this->table('actions');
-        $table->truncate();
         $table->insert($actionData)
             ->saveData();
     }
