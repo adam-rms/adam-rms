@@ -7,8 +7,6 @@ $DBLIB->where("cmsPages_deleted",0);
 $DBLIB->where("cmsPages_archived",0);
 if ($AUTH->data['instance']["instancePositions_id"]) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))");
 $DBLIB->where("cmsPages_id",$_GET['p']);
-$DBLIB->orderBy("cmsPages_navOrder","ASC");
-$DBLIB->orderBy("cmsPages_id","ASC");
 $PAGEDATA['PAGE'] = $DBLIB->getOne("cmsPages");
 if (!$PAGEDATA['PAGE']) die($TWIG->render('401.twig', $PAGEDATA));
 
@@ -24,7 +22,8 @@ if ($PAGEDATA['PAGE']['DRAFTS']) $PAGEDATA['PAGE']['DRAFTS']['cmsPagesDrafts_dat
 $DBLIB->insert("cmsPagesViews",[
     "cmsPages_id" => $PAGEDATA['PAGE']['cmsPages_id'],
     "cmsPagesViews_timestamp" => date("Y-m-d H:i:s"),
-    "users_userid" => $AUTH->data['users_userid']
+    "users_userid" => $AUTH->data['users_userid'],
+    "cmsPages_type" => 1
 ]);
 
 echo $TWIG->render('cms/cms_index.twig', $PAGEDATA);

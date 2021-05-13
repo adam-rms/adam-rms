@@ -326,7 +326,7 @@ class bCMS {
         }
         return $return;
     }
-    function deepSearch($instanceid=false,$page=1,$pageLimit=20,$sort="alphabet-a",$category=null,$keyword=[],$manufacturer=false,$group=false,$showLinked=false,$showArchived=false,$dateStart = false,$dateEnd = false) {
+    function deepSearch($instanceid=false,$page=1,$pageLimit=20,$sort="alphabet-a",$category=null,$keyword=[],$manufacturer=false,$group=false,$showLinked=false,$showArchived=false,$dateStart = false,$dateEnd = false,$tags=[]) {
         global $DBLIB,$AUTH;
         $scriptStartTime = microtime (true);
         $DBLIB->setTrace(true, $_SERVER['SERVER_ROOT']);
@@ -341,7 +341,8 @@ class bCMS {
                 "GROUPS" => $group ?: false,
                 "DATE-START" => $dateStart,
                 "DATE-END" => $dateEnd,
-                "SORT" => $sort
+                "SORT" => $sort,
+                "TAGS" => (is_array($tags)) ? $tags : [],
             ],
             "SETTINGS" => [
                 "SHOWLINKED" => $showLinked,
@@ -425,11 +426,13 @@ class bCMS {
 
         //Keywords
         if (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
-            $thisWhere = "(1=0";
+            $thisWhere = false;
             $thisValues = [];
             foreach ($SEARCH['TERMS']['KEYWORDS'] as $word) {
                 if ($word != null) {
-                    $thisWhere .= " OR manufacturers.manufacturers_name LIKE ? OR assetTypes.assetTypes_description LIKE ? OR assetTypes.assetTypes_name LIKE ?";
+                    if ($thisWhere != false) $thisWhere .= ' OR ';
+                    else $thisWhere = "(";
+                    $thisWhere .= "manufacturers.manufacturers_name LIKE ? OR assetTypes.assetTypes_description LIKE ? OR assetTypes.assetTypes_name LIKE ?";
                     array_push($thisValues,'%' . $word . '%','%' . $word . '%','%' . $word . '%');
                 }
             }
@@ -455,9 +458,22 @@ class bCMS {
                     array_push($thisValues,intval($group));
                 }
             }
-            $subQuery->where($thisWhere . ")",$thisValues);
+            if ($thisWhere) $subQuery->where($thisWhere . ")",$thisValues);
         }
         if (!$SEARCH['SETTINGS']['SHOWLINKED']) $subQuery->where ("assets.assets_linkedTo", NULL, 'IS');
+        if ($SEARCH['TERMS']['TAGS']) {
+            $thisWhere = false;
+            $thisValues = [];
+            foreach ($SEARCH['TERMS']['TAGS'] as $word) {
+                if ($word != null) {
+                    if ($thisWhere != false) $thisWhere .= ' OR ';
+                    else $thisWhere = "(";
+                    $thisWhere .= "assets.assets_tag LIKE ?";
+                    array_push($thisValues,'%' . $word . '%');
+                }
+            }
+            if ($thisWhere) $subQuery->where($thisWhere . ")",$thisValues);
+        }
         $subQuery->groupBy ("assetTypes_id");
         $subQuery->get ("assets", null, "assetTypes_id");
         $DBLIB->where ("assetTypes_id", $subQuery, 'in');
@@ -486,9 +502,22 @@ class bCMS {
                         array_push($thisValues,intval($group));
                     }
                 }
-                $DBLIB->where($thisWhere . ")",$thisValues);
+                if ($thisWhere) $DBLIB->where($thisWhere . ")",$thisValues);
             }
             if (!$SEARCH['SETTINGS']['SHOWLINKED']) $DBLIB->where ("assets.assets_linkedTo", NULL, 'IS');
+            if ($SEARCH['TERMS']['TAGS']) {
+                $thisWhere = false;
+                $thisValues = [];
+                foreach ($SEARCH['TERMS']['TAGS'] as $word) {
+                    if ($word != null) {
+                        if ($thisWhere != false) $thisWhere .= ' OR ';
+                        else $thisWhere = "(";
+                        $thisWhere .= "assets.assets_tag LIKE ?";
+                        array_push($thisValues,'%' . $word . '%');
+                    }
+                }
+                if ($thisWhere) $DBLIB->where($thisWhere . ")",$thisValues);
+            }
             $DBLIB->orderBy("assets.assets_tag", "ASC");
             $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass","assets_endDate"]);
             if (!$assetTags) continue;
@@ -675,6 +704,19 @@ $GLOBALS['ASSETASSIGNMENTSTATUSES'] = [
     11 => ["name" => "Stored"]
 ];
 
+$GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
+    1 => ["class" => "danger","id" => 1,"text" => "Emergency"],
+    2 => ["class" => "danger", "id" => 2, "text" => "Business Critical"],
+    3 => ["class" => "danger", "id" => 3, "text" => "Urgent"],
+    4 => ["class" => "danger", "id" => 4, "text" => "Routine - High"],
+    5 => ["class" => "warning", "id" => 5, "text" => "Routine - Medium", "default"=>true],
+    6 => ["class" => "warning", "id" => 6, "text" => "Routine - Low"],
+    7 => ["class" => "warning", "id" => 7, "text" => "Monthly-cycle Maintenance"],
+    8 => ["class" => "success", "id" => 8, "text" => "Annual-cycle Maintenance"],
+    9 => ["class" => "success", "id" => 9, "text" => "Long Term"],
+    10 => ["class" => "info", "id" => 10, "text" => "Log only"]
+];
+
 function assetFlagsAndBlocks($assetid) {
     global $DBLIB;
     $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
@@ -842,7 +884,7 @@ class projectFinanceCacher {
 $PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
 $PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
 $PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
-
+$PAGEDATA['MAINTENANCEJOBPRIORITIES'] = $GLOBALS['MAINTENANCEJOBPRIORITIES'];
 
 
 require_once __DIR__ . '/libs/twig.php';

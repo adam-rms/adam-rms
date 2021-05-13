@@ -513,16 +513,9 @@
                                                             </span>
                                                         </div>
                                                         <select class="form-control" name="maintenanceJobs_priority">
-                                                            <option value="1">Emergency</option>
-                                                            <option value="2">Business Critical</option>
-                                                            <option value="3">Exceptionally Urgent</option>
-                                                            <option value="4">Very Urgent</option>
-                                                            <option value="5">Urgent</option>
-                                                            <option value="6">Urgent Upgrade</option>
-                                                            <option value="7">Short-term Upgrade</option>
-                                                            <option value="8" selected>Routine</option>
-                                                            <option value="9">Long Term</option>
-                                                            <option value="10">Log only</option>
+                                                            {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                                <option value="{{ type.id }}" {% if type.default %}selected{% endif %}>{{ type.text }}</option>
+                                                            {% endfor %}
                                                         </select>
                                                     </div>
                                                     <div class="input-group">
@@ -618,18 +611,9 @@
                                                                 </td>
                                                                 <td class="project-state">
                                                                     {% if job.maintenanceJobs_priority %}
-                                                                        <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
-                                                                        <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
-                                                                        <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
-                                                                        <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
-                                                                        <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
-                                                                        <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
-                                                                        <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
-                                                                        <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
-                                                                        <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
-                                                                        <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
-                                                                    {% else %}
-
+                                                                        {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                                            <span class="badge badge-{{ type.class }}" value="{{ type.id }}" {% if job.maintenanceJobs_priority != type.id %} style="display: none;" {% endif %}>{{ type.text }}</span>
+                                                                        {% endfor %}
                                                                     {% endif %}
                                                                 </td>
                                                                 <td class="project-state">
@@ -723,18 +707,9 @@
                                                                 </td>
                                                                 <td class="project-state">
                                                                     {% if job.maintenanceJobs_priority %}
-                                                                        <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
-                                                                        <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
-                                                                        <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
-                                                                        <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
-                                                                        <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
-                                                                        <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
-                                                                        <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
-                                                                        <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
-                                                                        <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
-                                                                        <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
-                                                                    {% else %}
-
+                                                                        {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                                            <span class="badge badge-{{ type.class }}" value="{{ type.id }}" {% if job.maintenanceJobs_priority != type.id %} style="display: none;" {% endif %}>{{ type.text }}</span>
+                                                                        {% endfor %}
                                                                     {% endif %}
                                                                 </td>
                                                                 <td class="project-state">
@@ -1116,16 +1091,9 @@
                                                             </span>
                                                         </div>
                                                         <select class="form-control" name="maintenanceJobs_priority">
-                                                            <option value="1">Emergency</option>
-                                                            <option value="2">Business Critical</option>
-                                                            <option value="3">Exceptionally Urgent</option>
-                                                            <option value="4">Very Urgent</option>
-                                                            <option value="5">Urgent</option>
-                                                            <option value="6">Urgent Upgrade</option>
-                                                            <option value="7">Short-term Upgrade</option>
-                                                            <option value="8" selected>Routine</option>
-                                                            <option value="9">Long Term</option>
-                                                            <option value="10">Log only</option>
+                                                            {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                                <option value="{{ type.id }}" {% if type.default %} selected {% endif %}>{{ type.text }}</option>
+                                                            {% endfor %}
                                                         </select>
                                                     </div>
                                                     <div class="input-group">
@@ -1221,18 +1189,9 @@
                                                             </td>
                                                             <td class="project-state">
                                                                 {% if job.maintenanceJobs_priority %}
-                                                                    <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
-                                                                    <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
-                                                                    <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
-                                                                    <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
-                                                                    <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
-                                                                    <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
-                                                                    <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
-                                                                    <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
-                                                                    <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
-                                                                    <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
-                                                                {% else %}
-
+                                                                    {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                                        <span class="badge badge-{{ type.class }}" value="{{ type.id }}" {% if job.maintenanceJobs_priority != type.id %} style="display: none;" {% endif %}>{{ type.text }}</span>
+                                                                    {% endfor %}
                                                                 {% endif %}
                                                             </td>
                                                             <td class="project-state">
@@ -1326,18 +1285,9 @@
                                                                 </td>
                                                                 <td class="project-state">
                                                                     {% if job.maintenanceJobs_priority %}
-                                                                        <span class="badge badge-danger" value="1" {% if job.maintenanceJobs_priority != 1 %} style="display: none;" {% endif %}>Emergency</span>
-                                                                        <span class="badge badge-danger" value="2" {% if job.maintenanceJobs_priority != 2 %} style="display: none;" {% endif %}>Business Critical</span>
-                                                                        <span class="badge badge-danger" value="3" {% if job.maintenanceJobs_priority != 3 %} style="display: none;" {% endif %}>Exceptionally Urgent</span>
-                                                                        <span class="badge badge-danger" value="4" {% if job.maintenanceJobs_priority != 4 %} style="display: none;" {% endif %}>Very Urgent</span>
-                                                                        <span class="badge badge-warning" value="5" {% if job.maintenanceJobs_priority != 5 %} style="display: none;" {% endif %}>Urgent</span>
-                                                                        <span class="badge badge-warning" value="6" {% if job.maintenanceJobs_priority != 6 %} style="display: none;" {% endif %}>Urgent Upgrade</span>
-                                                                        <span class="badge badge-warning" value="7" {% if job.maintenanceJobs_priority != 7 %} style="display: none;" {% endif %}>Short-term Upgrade</span>
-                                                                        <span class="badge badge-success" value="8" {% if job.maintenanceJobs_priority != 8 %} style="display: none;" {% endif %}>Routine</span>
-                                                                        <span class="badge badge-success" value="9" {% if job.maintenanceJobs_priority != 9 %} style="display: none;" {% endif %}>Long Term</span>
-                                                                        <span class="badge badge-info" value="10" {% if job.maintenanceJobs_priority != 10 %} style="display: none;" {% endif %}>Log only</span>
-                                                                    {% else %}
-
+                                                                        {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                                            <span class="badge badge-{{ type.class }}" value="{{ type.id }}" {% if job.maintenanceJobs_priority != type.id %} style="display: none;" {% endif %}>{{ type.text }}</span>
+                                                                        {% endfor %}
                                                                     {% endif %}
                                                                 </td>
                                                                 <td class="project-state">

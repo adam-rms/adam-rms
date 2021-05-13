@@ -299,7 +299,7 @@
                     },
                     callback: function (result) {
                         if (result) {
-                            var formData = [{"name": "projectsVacantRoles_id", "value":id },{"name": "projectsVacantRoles_deleted", "value":"1" }];
+                            var formData = [{"name": "projects_id", "value":"{{ project.projects_id }}" },{"name": "projectsVacantRoles_id", "value":id },{"name": "projectsVacantRoles_deleted", "value":"1" }];
                             ajaxcall("projects/crew/crewRoles/edit.php", {formData}, function (data) {
                                 location.reload();
                             });

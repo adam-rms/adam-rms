@@ -8,6 +8,11 @@ use Money\Parser\DecimalMoneyParser;
 if (!$AUTH->instancePermissionCheck(59)) die("Sorry - you can't access this page");
 $array = [];
 
+foreach ($_POST as $key=>$value) {
+    if ($key == "formData") continue;
+    if ($value == '') $value = null;
+    $array[$key] = $value;
+}
 foreach ($_POST['formData'] as $item) {
     if ($item['value'] == '') $item['value'] = null;
     $array[$item['name']] = $item['value'];
@@ -22,7 +27,14 @@ $array['assets_weekRate'] = ($array['assets_weekRate'] == null ? null : $moneyPa
 $DBLIB->where("assets_id", $array['assets_id']);
 $DBLIB->where("assets.instances_id",$AUTH->data['instance']["instances_id"]);
 $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
-$asset = $DBLIB->getone("assets", ['assets.assets_dayRate','assets.assets_weekRate','assets.assets_mass','assets.assets_value','assetTypes.assetTypes_mass','assetTypes.assetTypes_value',"assetTypes.assetTypes_dayRate","assetTypes.assetTypes_weekRate"]);
+$asset = $DBLIB->getone("assets", ['assets.assets_dayRate','assets.assets_tag','assets.assets_weekRate','assets.assets_mass','assets.assets_value','assetTypes.assetTypes_mass','assetTypes.assetTypes_value',"assetTypes.assetTypes_dayRate","assetTypes.assetTypes_weekRate"]);
+
+if (isset($array['assets_tag']) and $array['assets_tag'] != $asset['assets_tag']) {
+    $DBLIB->where("assets.instances_id",$AUTH->data['instance']['instances_id']);
+    $DBLIB->where("assets.assets_tag", $array['assets_tag']);
+    $duplicateAssetTag = $DBLIB->getValue ("assets", "count(*)");
+    if ($duplicateAssetTag > 0) finish(false,["message" => "Sorry that Asset Tag is a duplicate of one already in your Business"]);
+}
 
 $DBLIB->where("assets_id", $array['assets_id']);
 $DBLIB->where("assets.instances_id",$AUTH->data['instance']["instances_id"]);

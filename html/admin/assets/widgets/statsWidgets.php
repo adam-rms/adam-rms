@@ -1,26 +1,39 @@
 <?php
 use Money\Currency;
 use Money\Money;
+/*
+ * HOW TO ADD A NEW STATS WIDGET
+ * - Duplicate & edit one of the .twig files (maintenanceOutstanding.twig is a good one to start)
+ * - Create a class for it here - whatever name you give the class set in the top of the twig file
+ * - Add it to the "$widgetsList" variable at the top of this class
+ * - Add it to instances/instances_stats.twig
+ */
 class statsWidgets
 {
     /*
      * Designed to be accessed by Twig
      */
     protected $widgetsArray = [];
-    public function __construct($widgetsArray = []) {
-        foreach ($widgetsArray as $widgetName) {
+    protected $userWidgetsExcludeArray = [];
+    protected $showAll = false;
+    protected $widgetsList = ["inventoryValueGraph","inventoryTotal","storageUsage","userCount","maintenanceOutstanding","myMaintenance"];
+    public function __construct($userWidgetsExcludeArray = [],$showAll=false) {
+        $this->showAll = $showAll;
+        foreach ($userWidgetsExcludeArray as $widgetName) {
+            //Get a list of widgets the user wants to hide from the dashboard
+            if (method_exists($this, $widgetName)) $this->userWidgetsExcludeArray[] = $widgetName;
+        }
+        foreach ($this->widgetsList as $widgetName) {
             //Add all the requested widgets
-            if (method_exists($this, $widgetName)) $this->widgetsArray[] = $widgetName;
+            if (method_exists($this, $widgetName) and (!in_array($widgetName,$this->userWidgetsExcludeArray) or $showAll)) $this->widgetsArray[] = $widgetName;
         }
     }
-    public function getAllUser() {
+    public function getAllDashboard() {
         return $this->widgetsArray;
     }
     public function checkUser($widgetName) {
-        $key = array_search($widgetName, $this->widgetsArray);
-
-        if ($key !== false) return true;
-        else return false;
+        if (in_array($widgetName, $this->userWidgetsExcludeArray)) return false;
+        else return true;
     }
     public function widget($widgetName, $arguments = []) {
         if(method_exists($this, $widgetName)) return $this->$widgetName($arguments);
@@ -30,9 +43,6 @@ class statsWidgets
     /*
      * ACTUAL WIDGETS GO BELOW - TWIG CALLS EM
      */
-    private function upcomingEventsCount($arguments = []) {
-
-    }
     private function userCount($arguments = []) {
         global $DBLIB;
         if (!$arguments['instanceid']) return [];
@@ -134,5 +144,42 @@ class statsWidgets
         $DBLIB->where("s3files_meta_physicallyStored", 1);
         $return['USED'] = $DBLIB->getValue("s3files", "SUM(s3files_meta_size)");
         return $return;
+    }
+    private function maintenanceOutstanding($arguments = []) {
+        global $DBLIB;
+        if (!$arguments['instanceid']) return [];
+        if (!$arguments['userid']) return [];
+
+        $DBLIB->where("maintenanceJobs.instances_id", $arguments['instanceid']);
+        $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
+        $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
+        $DBLIB->where("(maintenanceJobsStatuses.maintenanceJobsStatuses_showJobInMainList = 1 OR maintenanceJobs.maintenanceJobsStatuses_id IS NULL)");
+        $totalJobCount = $DBLIB->getValue("maintenanceJobs", "COUNT(*)");
+
+        $DBLIB->where("maintenanceJobs.instances_id", $arguments['instanceid']);
+        $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
+        $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
+        $DBLIB->where("(maintenanceJobsStatuses.maintenanceJobsStatuses_showJobInMainList = 1 OR maintenanceJobs.maintenanceJobsStatuses_id IS NULL)");
+        $DBLIB->where("maintenanceJobs_user_assignedTo",$arguments['userid']);
+        $myJobCount = $DBLIB->getValue("maintenanceJobs", "COUNT(*)");
+
+        return ["TOTAL" => $totalJobCount, "MY" => $myJobCount];
+    }
+    private function myMaintenance($arguments = []) {
+        global $DBLIB;
+        if (!$arguments['instanceid']) return [];
+        if (!$arguments['userid']) return [];
+
+        $DBLIB->where("maintenanceJobs.instances_id", $arguments['instanceid']);
+        $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
+        $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
+        $DBLIB->where("(maintenanceJobsStatuses.maintenanceJobsStatuses_showJobInMainList = 1 OR maintenanceJobs.maintenanceJobsStatuses_id IS NULL)");
+        $DBLIB->where("maintenanceJobs_user_assignedTo",$arguments['userid']);
+        $DBLIB->orderBy("maintenanceJobsStatuses.maintenanceJobsStatuses_order", "ASC");
+        $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_priority", "ASC");
+        $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_due", "ASC");
+        $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_added", "ASC");
+        $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
+        return $jobs;
     }
 }
