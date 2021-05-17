@@ -23,6 +23,7 @@ RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install intl
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install -j "$(nproc)" opcache
+RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 
 COPY . /var/www/
 
