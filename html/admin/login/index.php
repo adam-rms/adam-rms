@@ -71,8 +71,20 @@ elseif (isset($_GET['google'])) {
 			exit;
 		} else {
 			//Log them in successfully - duplicated below for signup
-        	$GLOBALS['AUTH']->generateToken($user['users_userid'], false,null, true, "Web - Google");
-			header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));exit;
+			if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
+				$token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, null, true, "App OAuth - Google");
+				$jwt = JWT::encode(array(
+					"iss" => $CONFIG['ROOTURL'],
+					"uid" => $user['users_userid'],
+					"token" => $token,
+					"exp" => time()+21*24*60*60, //21 days token expiry
+					"iat" => time()
+				), $CONFIG['JWTKey']);
+				header("Location: " . $_SESSION['app-oauth'] . "://oauth_callback?token=" . $jwt);exit;
+			} else {
+				$GLOBALS['AUTH']->generateToken($user['users_userid'], false,null, true, "Web - Google");
+				header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));exit;
+			}
         }
 	} elseif (strlen($userProfile->emailVerified)<1) {
 		$PAGEDATA['ERROR'] = "Please verify your email with Google to continue to login";
@@ -109,8 +121,21 @@ elseif (isset($_GET['google'])) {
 		exit;
 	}
 	$bCMS->auditLog("INSERT", "users", json_encode($data), null,$newUser);
-	$GLOBALS['AUTH']->generateToken($newUser, false,null, true, "Web - Google");
-    header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));exit;
+	if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
+		//Duplicated in index.php
+		$token = $GLOBALS['AUTH']->generateToken($newUser, false, null, true, "App OAuth - Google");
+		$jwt = JWT::encode(array(
+			"iss" => $CONFIG['ROOTURL'],
+			"uid" => $newUser,
+			"token" => $token,
+			"exp" => time()+21*24*60*60, //21 days token expiry
+			"iat" => time()
+		), $CONFIG['JWTKey']);
+		header("Location: " . $_SESSION['app-oauth'] . "://oauth_callback?token=" . $jwt);exit;
+	} else {
+		$GLOBALS['AUTH']->generateToken($newUser, false,null, true, "Web - Google");
+		header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));exit;
+	}
 }
 else echo $TWIG->render('login/login.twig', $PAGEDATA);
 ?>
