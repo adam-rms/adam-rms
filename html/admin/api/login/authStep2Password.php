@@ -8,6 +8,7 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
 	else {
         if (filter_var($input, FILTER_VALIDATE_EMAIL)) $DBLIB->where ("users_email", $input);
         else $DBLIB->where ("users_username", $input);
+        $DBLIB->where("users_password", NULL, "IS NOT"); //To cover oauth users
         $user = $DBLIB->getOne("users",["users.users_salty1", "users.users_suspended", "users.users_salty2", "users.users_password", "users.users_userid", "users.users_hash","users.users_emailVerified",]);
         if (!$user) finish(false, ["code" => null, "message" => "No user found with associated email address or username"]);
 
