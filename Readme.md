@@ -64,6 +64,17 @@ Each time you pull new changes written by others you will likely need to update 
 
  - Instance = Business 
 
+## OAuth
+
+### Google
+
+#### Endpoints Required
+
+```
+https://dash.adam-rms.com/login/index.php?google
+https://dash.adam-rms.com/api/account/linkOAuth.php?google
+```
+
 ## Licence
 
 AdamRMS is a web-based Rental Management System

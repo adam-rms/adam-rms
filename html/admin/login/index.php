@@ -28,6 +28,89 @@ if (isset($_GET['app-oauth'])) {
 }
 
 if (isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
-if (isset($_GET['login'])) echo $TWIG->render('login/login1.twig', $PAGEDATA);
-echo $TWIG->render('login/login.twig', $PAGEDATA);
+elseif (isset($_GET['login'])) echo $TWIG->render('login/login1.twig', $PAGEDATA);
+elseif (isset($_GET['google'])) {
+	//Similar setup can be found in the link provider api endpoint
+	$CONFIG['AUTH-PROVIDERS']['GOOGLE']['callback'] = $CONFIG['ROOTURL'] . '/login/index.php?google';
+
+	$adapter = new Hybridauth\Provider\Google($CONFIG['AUTH-PROVIDERS']['GOOGLE']);
+	/**
+	 * 3. Sign in a user with Google
+	 *
+	 * Hybridauth will attempt to negotiate with the Google api and authenticate the user.
+	 * This call will basically do one of 3 things...
+	 * 1) Redirect (with exit) away to show an authentication screen for a provider (e.g. Facebook's OAuth confirmation page)
+	 * 2) Finalize an incoming authentication and store access data in a session
+	 * 3) Confirm a session exists and do nothing
+	 * If for whatever reason the process fails, Hybridauth will then throw an exception.
+	 *
+	 * Note that if the user is already authenticated, then any subsequent call to this method will be ignored.
+	 */
+	$adapter->authenticate();
+	$accessToken = $adapter->getAccessToken(); //We don't actually use this - we could in theory just drop it?
+	$userProfile = $adapter->getUserProfile();
+	$adapter->disconnect(); //Disconnect this authentication from the session, so they can pick another account
+	if (strlen($userProfile->identifier) < 1) {
+		//ISSUE WITH PROFILE
+		$PAGEDATA['ERROR'] = "Sorry, something went wrong authenticating with Google";
+		echo $TWIG->render('login/error.twig', $PAGEDATA);
+		exit;
+	}
+
+	$DBLIB->where("users_oauth_googleid",$userProfile->identifier);
+	$user = $DBLIB->getOne("users",["users.users_suspended", "users.users_userid", "users.users_hash","users.users_emailVerified"]);
+	if ($user) {
+		if ($user['users_suspended'] != '0') {
+			$PAGEDATA['ERROR'] = "Sorry, your user account is suspended";
+			echo $TWIG->render('login/error.twig', $PAGEDATA);
+			exit;
+		}
+        elseif ($user['users_emailVerified'] != 1 and strlen($userProfile->emailVerified)<1) {
+			$PAGEDATA['ERROR'] = "Please verify your email address using the link we sent you to login, or verify your email with Google to login";
+			echo $TWIG->render('login/error.twig', $PAGEDATA);
+			exit;
+		} else {
+			//Log them in successfully - duplicated below for signup
+        	$GLOBALS['AUTH']->generateToken($user['users_userid'], false,null, true, "Web - Google");
+			header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));exit;
+        }
+	} elseif (strlen($userProfile->emailVerified)<1) {
+		$PAGEDATA['ERROR'] = "Please verify your email with Google to continue to login";
+		echo $TWIG->render('login/error.twig', $PAGEDATA);
+		exit;
+	} else {
+		//See if an email is found, but not linked to google. We don't want to auto-link them because its a good attack vector, so instead prompt a password login and then link in account settings.
+		$DBLIB->where("users_email",strtolower($userProfile->emailVerified));
+		$user = $DBLIB->getOne("users",["users.users_suspended", "users.users_userid", "users.users_hash","users.users_emailVerified"]);
+		if ($user) {
+			$PAGEDATA['ERROR'] = "An AdamRMS account associated with the email address you selected has been found. Please login again using your AdamRMS username & password to link your account to a Google Account in AdamRMS account settings";
+			echo $TWIG->render('login/error.twig', $PAGEDATA);
+			exit;
+		}
+	}
+
+	//Okay we can't find them, so lets sign them up to an account
+	$username = preg_replace("/[^a-zA-Z0-9]+/", "", $userProfile->firstName.$userProfile->lastName);
+	while ($AUTH->usernameTaken($username)) {
+		$username .= "1";
+	}
+	$data = Array (
+		'users_email' => strtolower($userProfile->emailVerified),
+		'users_oauth_googleid'=>$userProfile->identifier,
+		'users_username' => $username,
+		'users_name1' => $userProfile->firstName,
+		'users_name2' => $userProfile->lastName,
+		'users_hash' => $CONFIG['nextHash']
+	);
+    $newUser = $DBLIB->insert("users", $data);
+    if (!$newUser) {
+		$PAGEDATA['ERROR'] = "Sorry something went wrong trying to create a new user account";
+		echo $TWIG->render('login/error.twig', $PAGEDATA);
+		exit;
+	}
+	$bCMS->auditLog("INSERT", "users", json_encode($data), null,$newUser);
+	$GLOBALS['AUTH']->generateToken($newUser, false,null, true, "Web - Google");
+    header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));exit;
+}
+else echo $TWIG->render('login/login.twig', $PAGEDATA);
 ?>

@@ -47,6 +47,15 @@ $CONFIG = array(
     ],
     'DEV' => (getenv('bCMS__ERRORS') == "true" ? true : false),
     'JWTKey' => getenv('bCMS__JWT'),
+    'AUTH-PROVIDERS' => [
+        "GOOGLE" => [
+            'keys' => [
+                'id' => getenv('bCMS__OAUTH__GOOGLEKEY'),
+                'secret' => getenv('bCMS__OAUTH__GOOGLESECRET')
+            ],
+            'scope' => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
+        ]
+    ],
     'NOTIFICATIONS' => [
         "METHODS" => [
             0 => "Post",
