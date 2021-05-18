@@ -32,12 +32,9 @@
                     {% embed ('training/types/' ~ step.modulesSteps_type ~ '.twig') with {'content': step.modulesSteps_content, 'step': step } %}
                     {% endembed %}
                 </div>
-                {% if step.modulesSteps_id in module.allStepsCompleted %}
-                {% else %}
                 <div class="card-footer">
-                    <button class="btn btn-default markCompleted" disabled data-id="{{ step.modulesSteps_id }}" {% if loop.last != true %}data-next="{{ module.steps[loop.index]['modulesSteps_id'] }}"{% endif %}>Mark as Completed ✔</button>
+                    <button class="btn btn-default markCompleted" disabled data-id="{{ step.modulesSteps_id }}" {% if loop.last != true %}data-next="{{ module.steps[loop.index]['modulesSteps_id'] }}"{% endif %} {% if step.modulesSteps_id in module.allStepsCompleted %}style="display:none;"{% endif %}>Mark as Completed ✔</button>
                 </div>
-                {% endif %}
             </div>
             {% endfor %}
             <div class="card card-default card-outline" id="completedModule">
@@ -90,10 +87,19 @@
             ajaxcall("training/completeStep.php", {"id":id}, function (data) {
                 $(".stepSelector[data-id=" + id + "]").append("✔");
                 $(".stepSelector[data-id=" + id + "]").data("selectable","true");
+                $(".markCompleted[data-id=" + id + "]").hide();
                 $(".moduleStep").hide();
                 //Select the next step
                 if (next) {
-                    $(".moduleStep[data-id=" + next + "]").show();
+                    while ($(".stepSelector[data-id=" + next + "]").data("selectable")) {
+                        next = $(".markCompleted[data-id=" + next + "]").data("next");
+                    }
+                    if (next) {
+                        $(".moduleStep[data-id=" + next + "]").show();
+                        $(".stepSelector[data-id=" + next + "]").data("selectable","true");
+                    } else {
+                        $( "#completedModule" ).show();
+                    }
                 } else {
                     $( "#completedModule" ).show();
                 }
