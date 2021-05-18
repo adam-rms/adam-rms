@@ -83,7 +83,13 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12">
+                        <style>
+                            #projectDetailBox p {
+                                margin-bottom: 6px;
+                                margin-top: 4px;
+                            }
+                        </style>
+                        <div class="col-12" id="projectDetailBox">
                             {% if project.projects_archived == 1 %}
                                 <div class="alert alert-danger">
                                     <h5><i class="icon fas fa-ban"></i> Archived</h5>
@@ -91,16 +97,37 @@
                                 </div>
                             {% endif %}
                             <h3 class="text-primary">{{project.projects_name}}</h3>
+                            {% if project.projects_description %}
                             <p class="text-muted">{{ project.projects_description|nl2br }}</p>
-                            <br>
+                            <hr/>
+                            {% endif %}
                             <div class="text-muted">
-                                {% if project.projectsTypes_config_client == 1 %}
-                                <p class="text-sm">Client
-                                    <b class="d-block">
-                                        <a  style="color: inherit; text-decoration: inherit;"  {% if 36|instancePermissions %}href="{{ CONFIG.ROOTURL }}/clients.php"{% endif %}>
-                                            {{ project.clients_name }}</a></b>
-                                </p>
+                                {% if 22|instancePermissions and project.projectsTypes_config_client == 1 %}
+                                    <p class="text-sm">Client</p>
+                                    <select class="form-control select2bs4" multiple id="editProjectClient">
+                                        {% if project.clients_id == "" %}
+                                        <option value="" disabled selected>No Client Selected....</option>
+                                        {% endif %}
+                                        {% for client in clients %}
+                                            <option value="{{ client.clients_id }}" {{ project.clients_id == client.clients_id ? 'selected' }}>{{ client.clients_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% elseif project.projectsTypes_config_client == 1  %}
+                                    <p class="text-sm">Client
+                                        <b class="d-block">
+                                            <a  style="color: inherit; text-decoration: inherit;"  {% if 36|instancePermissions %}href="{{ CONFIG.ROOTURL }}/clients.php"{% endif %}>
+                                                {{ project.clients_name }}</a>
+                                        </b>
+                                    </p>
                                 {% endif %}
+                                {% if 23|instancePermissions %}
+                                    <p class="text-sm">Project Manager</p>
+                                    <select class="form-control select2bs4" multiple id="editProjectManager">
+                                        {% for user in potentialProjectManagers %}
+                                            <option value="{{ user.users_userid }}" {{ project.users_userid == user.users_userid ? 'selected' }}>{{ (user.users_name1 ~ " " ~ user.users_name2) }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
                                 <p class="text-sm">Project Manager
                                     <b class="d-block">
                                         {% if 52|instancePermissions %}
@@ -112,7 +139,24 @@
                                         {% endif %}
                                     </b>
                                 </p>
-                                {% if project.projectsTypes_config_venue == 1 %}
+                                {% endif %}
+                                {% if 30|instancePermissions and project.projectsTypes_config_venue == 1  %}
+                                    <p class="text-sm">Venue</p>
+                                    <select class="form-control select2bs4" multiple id="editProjectAddress">
+                                        {% if project.locations_id == "" %}
+                                        <option value="" disabled selected>No Location Selected....</option>
+                                        {% endif %}
+                                        {% for location in locations %}
+                                            <option value="{{ location.locations_id }}" {{ project.locations_id == location.locations_id ? 'selected' }}>{{ location.locations_name }}</option>
+                                            {% for subLocation in location.linkedToThis %}
+
+                                                <option value="{{ subLocation.locations_id }}" {{ project.locations_id == subLocation.locations_id ? 'selected' }} title="{% for i in range(1, subLocation['tier']) %}{% if loop.last %}&#8627;{% else %}&nbsp;&nbsp;{% endif %}{% endfor %}">
+                                                     {{ subLocation.locations_name }}
+                                                </option>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </select>
+                                {% elseif project.projectsTypes_config_venue == 1 %}
                                 <p class="text-sm">Venue
                                     <b class="d-block"><a  style="color: inherit; text-decoration: inherit;"  {% if 87|instancePermissions %}href="{{ CONFIG.ROOTURL }}/location/"{% endif %}>{{ project.locations_name }}</a></b>
                                 </p>
@@ -188,10 +232,6 @@
                                     <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
                                 {% endif %}
                                 {% if 24|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
-                                {% if 22|instancePermissions and project.projectsTypes_config_client == 1 %}<a class="dropdown-item" id="editProjectClient" href="#">Change Client</a>{% endif %}
-                                {% if 23|instancePermissions %}<a class="dropdown-item" id="editProjectLead" href="#">Change Project Manager</a>{% endif %}
-                                {% if 30|instancePermissions and project.projectsTypes_config_venue == 1  %}<a class="dropdown-item" id="editProjectAddress" href="#">Change Venue</a>{% endif %}
-
                                 <div class="dropdown-divider"></div>
                                 {% if 104|instancePermissions and potentialProjectTypes|length > 1 %}<a class="dropdown-item" id="editProjectType" href="#">Change Project Type</a>{% endif %}
                                 {% if 25|instancePermissions %}
@@ -1045,32 +1085,20 @@
                 });
             });
             {% if 22|instancePermissions %}
-            $("#editProjectClient").click(function () {
-                bootbox.prompt({
-                    title: "Set project client",
-                    inputType: 'select',
-                    inputOptions: [
-                        {
-                            text: 'Choose one...',
-                            value: '',
-                        },
-                        {% for client in clients %}
-                        {
-                            text: "{{client.clients_name|escape('js') }}",
-                            value: '{{ client.clients_id }}',
-                        },
-                        {% endfor %}
-                    ],
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/changeClient.php", {
-                                "clients_id": result,
-                                "projects_id": "{{ project.projects_id }}"
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
+            $('#editProjectClient').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1
+            });
+            $('#editProjectClient').on("change", function (e) {
+                ajaxcall("projects/changeClient.php", {
+                    "clients_id": $(this).val(),
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    location.reload();
                 });
             });
             {% endif %}
@@ -1102,35 +1130,20 @@
             });
             {% endif %}
             {% if 23|instancePermissions %}
-            $("#editProjectLead").click(function () {
-                bootbox.prompt({
-                    title: "Set project manager",
-                    inputType: 'select',
-                    {% if project.users_userid != "" %}
-                    value: {{ project.users_userid }},
-                    {% endif %}
-                    inputOptions: [
-                        {
-                            text: 'Choose one...',
-                            value: '',
-                        },
-                        {% for user in potentialProjectManagers %}
-                        {
-                            text: "{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}",
-                            value: '{{ user.users_userid }}',
-                        },
-                        {% endfor %}
-                    ],
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/changeProjectManager.php", {
-                                "users_userid": result,
-                                "projects_id": "{{ project.projects_id }}"
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
+            $('#editProjectManager').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1
+            });
+            $('#editProjectManager').on("change", function (e) {
+                ajaxcall("projects/changeProjectManager.php", {
+                    "users_userid": $(this).val(),
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    location.reload();
                 });
             });
             {% endif %}
@@ -1437,30 +1450,29 @@
             });
             {% endif %}
             {% if 30|instancePermissions %}
-            $("#editProjectAddress").click(function () {
-                bootbox.prompt({
-                    title: "Change Project Venue",
-                    inputType: 'select',
-                    inputOptions: [
-                        {
-                            text: 'No Venue',
-                            value: '',
-                        },
-                        {% for location in locations %}
-                        {
-                            text: "{{ location.locations_name|escape('js') }}",
-                            value: '{{ location.locations_id }}',
-                        },
-                        {% endfor %}
-                    ],
-                    callback: function (result) {
-                        ajaxcall("projects/changeVenue.php", {
-                            "locations_id": result,
-                            "projects_id": "{{ project.projects_id }}"
-                        }, function (data) {
-                            location.reload();
-                        });
+            $('#editProjectAddress').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                templateResult: function (input) {
+                    if (!input.id || !input.title) {
+                        return input.text;
                     }
+                    var $result = $(
+                        '<span><b>' + input.title + ' </b>' + input.text + '</span>'
+                    );
+                    return $result;
+                }
+            });
+            $('#editProjectAddress').on("change", function (e) {
+                ajaxcall("projects/changeVenue.php", {
+                    "locations_id": $(this).val(),
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    location.reload();
                 });
             });
             {% endif %}

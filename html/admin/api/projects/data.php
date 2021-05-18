@@ -220,14 +220,6 @@ usort($PAGEDATA['FINANCIALS']['payments']['staff']['ledger'], function ($a, $b) 
     return $a['payments_supplier'] <=> $b['payments_supplier'];
 });
 
-
-//Locations
-$DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->orderBy("locations.locations_name", "ASC");
-$DBLIB->where("locations.locations_deleted", 0);
-$PAGEDATA['locations'] = $DBLIB->get("locations",null,["locations.locations_name","locations.locations_id"]);
-
-
 //Notes
 $DBLIB->where("projectsNotes_deleted", 0);
 $DBLIB->where("projects_id", $PAGEDATA['project']['projects_id']);
@@ -250,8 +242,7 @@ $PAGEDATA['pdfs'] = $bCMS->s3List(12, $PAGEDATA['project']['projects_id']);
 
 $DATA = [
     "project" => $PAGEDATA['project'],
-    'FINANCIALS' => $PAGEDATA['FINANCIALS'],
-    'locations' => $PAGEDATA['locations']
+    'FINANCIALS' => $PAGEDATA['FINANCIALS']
 ]; //Data that's safe to return
 
 

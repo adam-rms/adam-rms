@@ -10,6 +10,7 @@ else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 60);
 
 $PAGEDATA['allLocations'] = [];
+$PAGEDATA['locations'] = [];
 
 $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
 if (isset($_GET['client'])) $DBLIB->where("locations.clients_id", $_GET['client']);
