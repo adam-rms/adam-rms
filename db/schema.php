@@ -8364,11 +8364,11 @@ return array (
         ),
       ),
     ),
-    'maintenanceJobsstatuses' => 
+    'maintenanceJobsStatuses' => 
     array (
       'table' => 
       array (
-        'table_name' => 'maintenanceJobsstatuses',
+        'table_name' => 'maintenanceJobsStatuses',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -8380,7 +8380,7 @@ return array (
         'maintenanceJobsStatuses_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsStatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -8404,7 +8404,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsStatuses',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -8428,7 +8428,7 @@ return array (
         'maintenanceJobsStatuses_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsStatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_name',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -8452,7 +8452,7 @@ return array (
         'maintenanceJobsStatuses_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsStatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_order',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '99',
@@ -8476,7 +8476,7 @@ return array (
         'maintenanceJobsStatuses_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsStatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_deleted',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '0',
@@ -8500,7 +8500,7 @@ return array (
         'maintenanceJobsStatuses_showJobInMainList' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsStatuses',
           'COLUMN_NAME' => 'maintenanceJobsStatuses_showJobInMainList',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => '1',
@@ -8528,7 +8528,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenanceJobsstatuses',
+            'Table' => 'maintenanceJobsStatuses',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -8546,7 +8546,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenanceJobsstatuses',
+            'Table' => 'maintenanceJobsStatuses',
             'Non_unique' => '1',
             'Key_name' => 'maintenanceJobsStatuses_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -8565,7 +8565,7 @@ return array (
       array (
         'maintenanceJobsStatuses_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'maintenanceJobsstatuses',
+          'TABLE_NAME' => 'maintenanceJobsStatuses',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'maintenanceJobsStatuses_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
