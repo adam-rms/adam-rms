@@ -4672,11 +4672,11 @@ return array (
         ),
       ),
     ),
-    'cmsPagesdrafts' => 
+    'cmsPagesDrafts' =>
     array (
       'table' => 
       array (
-        'table_name' => 'cmsPagesdrafts',
+        'table_name' => 'cmsPagesDrafts',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -4688,7 +4688,7 @@ return array (
         'cmsPagesDrafts_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -4712,7 +4712,7 @@ return array (
         'cmsPages_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'cmsPages_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -4736,7 +4736,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -4760,7 +4760,7 @@ return array (
         'cmsPagesDrafts_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_timestamp',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -4784,7 +4784,7 @@ return array (
         'cmsPagesDrafts_data' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_data',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -4808,7 +4808,7 @@ return array (
         'cmsPagesDrafts_changelog' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_changelog',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -4832,7 +4832,7 @@ return array (
         'cmsPagesDrafts_revisionID' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'cmsPagesDrafts_revisionID',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -4860,7 +4860,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesdrafts',
+            'Table' => 'cmsPagesDrafts',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -4878,7 +4878,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesdrafts',
+            'Table' => 'cmsPagesDrafts',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesDrafts_cmsPages_cmsPages_id_fk',
             'Seq_in_index' => '1',
@@ -4896,7 +4896,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesdrafts',
+            'Table' => 'cmsPagesDrafts',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesDrafts_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -4914,7 +4914,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesdrafts',
+            'Table' => 'cmsPagesDrafts',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesDrafts_cmsPagesDrafts_timestamp_index',
             'Seq_in_index' => '1',
@@ -4933,7 +4933,7 @@ return array (
       array (
         'cmsPagesDrafts_cmsPages_cmsPages_id_fk' => 
         array (
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'cmsPages_id',
           'CONSTRAINT_NAME' => 'cmsPagesDrafts_cmsPages_cmsPages_id_fk',
           'REFERENCED_TABLE_NAME' => 'cmsPages',
@@ -4943,7 +4943,7 @@ return array (
         ),
         'cmsPagesDrafts_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'cmsPagesdrafts',
+          'TABLE_NAME' => 'cmsPagesDrafts',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'cmsPagesDrafts_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',

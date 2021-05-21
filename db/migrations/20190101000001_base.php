@@ -1230,7 +1230,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('cmsPagesdrafts', [
+        $this->table('cmsPagesDrafts', [
                 'id' => false,
                 'primary_key' => ['cmsPagesDrafts_id'],
                 'engine' => 'InnoDB',
