@@ -12491,11 +12491,11 @@ return array (
         ),
       ),
     ),
-    'projectsVacantRolesapplications' => 
+    'projectsVacantRolesApplications' =>
     array (
       'table' => 
       array (
-        'table_name' => 'projectsVacantRolesapplications',
+        'table_name' => 'projectsVacantRolesApplications',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -12507,7 +12507,7 @@ return array (
         'projectsVacantRolesApplications_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -12531,7 +12531,7 @@ return array (
         'projectsVacantRoles_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRoles_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -12555,7 +12555,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -12579,7 +12579,7 @@ return array (
         'projectsVacantRolesApplications_files' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_files',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -12603,7 +12603,7 @@ return array (
         'projectsVacantRolesApplications_phone' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_phone',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -12627,7 +12627,7 @@ return array (
         'projectsVacantRolesApplications_applicantComment' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_applicantComment',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -12651,7 +12651,7 @@ return array (
         'projectsVacantRolesApplications_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_deleted',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => '0',
@@ -12675,7 +12675,7 @@ return array (
         'projectsVacantRolesApplications_withdrawn' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_withdrawn',
           'ORDINAL_POSITION' => '8',
           'COLUMN_DEFAULT' => '0',
@@ -12699,7 +12699,7 @@ return array (
         'projectsVacantRolesApplications_submitted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_submitted',
           'ORDINAL_POSITION' => '9',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -12723,7 +12723,7 @@ return array (
         'projectsVacantRolesApplications_questionAnswers' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_questionAnswers',
           'ORDINAL_POSITION' => '10',
           'COLUMN_DEFAULT' => NULL,
@@ -12747,7 +12747,7 @@ return array (
         'projectsVacantRolesApplications_status' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRolesApplications_status',
           'ORDINAL_POSITION' => '11',
           'COLUMN_DEFAULT' => '0',
@@ -12776,7 +12776,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsVacantRolesapplications',
+            'Table' => 'projectsVacantRolesApplications',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -12794,7 +12794,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsVacantRolesapplications',
+            'Table' => 'projectsVacantRolesApplications',
             'Non_unique' => '1',
             'Key_name' => 'projectsVacantRolesApplications_projectsVacantRolesid_fk',
             'Seq_in_index' => '1',
@@ -12812,7 +12812,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'projectsVacantRolesapplications',
+            'Table' => 'projectsVacantRolesApplications',
             'Non_unique' => '1',
             'Key_name' => 'projectsVacantRolesApplications_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -12831,7 +12831,7 @@ return array (
       array (
         'projectsVacantRolesApplications_projectsVacantRolesid_fk' => 
         array (
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'projectsVacantRoles_id',
           'CONSTRAINT_NAME' => 'projectsVacantRolesApplications_projectsVacantRolesid_fk',
           'REFERENCED_TABLE_NAME' => 'projectsVacantRoles',
@@ -12841,7 +12841,7 @@ return array (
         ),
         'projectsVacantRolesApplications_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'projectsVacantRolesapplications',
+          'TABLE_NAME' => 'projectsVacantRolesApplications',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'projectsVacantRolesApplications_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',

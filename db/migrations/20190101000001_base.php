@@ -3188,7 +3188,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('projectsVacantRolesapplications', [
+        $this->table('projectsVacantRolesApplications', [
                 'id' => false,
                 'primary_key' => ['projectsVacantRolesApplications_id'],
                 'engine' => 'InnoDB',
