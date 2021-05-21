@@ -1,4 +1,10 @@
 <?php
+if(file_exists(__DIR__ . '/.env')) {
+    //Load local env file
+    $dotEnvLib = Dotenv\Dotenv::createMutable(__DIR__);
+    $dotEnvLib->load();
+}
+
 return
 [
     'paths' => [

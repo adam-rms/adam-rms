@@ -143,7 +143,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'name' => 'assetCategories_Groups_id_fk',
                 'unique' => false,
             ])
-            ->addForeignKey('assetCategoriesGroups_id', 'assetCategoriesgroups', 'assetCategoriesGroups_id', [
+            ->addForeignKey('assetCategoriesGroups_id', 'assetCategoriesGroups', 'assetCategoriesGroups_id', [
                 'constraint' => 'assetCategories_Groups_id_fk',
                 'update' => 'CASCADE',
                 'delete' => 'CASCADE',
@@ -154,7 +154,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('assetCategoriesgroups', [
+        $this->table('assetCategoriesGroups', [
                 'id' => false,
                 'primary_key' => ['assetCategoriesGroups_id'],
                 'engine' => 'InnoDB',
@@ -567,7 +567,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('assetsAssignmentsstatus', [
+        $this->table('assetsAssignmentsStatus', [
                 'id' => false,
                 'primary_key' => ['assetsAssignmentsStatus_id'],
                 'engine' => 'InnoDB',
@@ -684,7 +684,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'SET_NULL',
             ])
             ->create();
-        $this->table('assetsBarcodesscans', [
+        $this->table('assetsBarcodesScans', [
                 'id' => false,
                 'primary_key' => ['assetsBarcodesScans_id'],
                 'engine' => 'InnoDB',
@@ -1230,7 +1230,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('cmsPagesdrafts', [
+        $this->table('cmsPagesDrafts', [
                 'id' => false,
                 'primary_key' => ['cmsPagesDrafts_id'],
                 'engine' => 'InnoDB',
@@ -1298,7 +1298,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'SET_NULL',
             ])
             ->create();
-        $this->table('cmsPagesviews', [
+        $this->table('cmsPagesViews', [
                 'id' => false,
                 'primary_key' => ['cmsPagesViews_id'],
                 'engine' => 'InnoDB',
@@ -2117,7 +2117,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('maintenanceJobsmessages', [
+        $this->table('maintenanceJobsMessages', [
                 'id' => false,
                 'primary_key' => ['maintenanceJobsMessages_id'],
                 'engine' => 'InnoDB',
@@ -3188,7 +3188,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('projectsVacantRolesapplications', [
+        $this->table('projectsVacantRolesApplications', [
                 'id' => false,
                 'primary_key' => ['projectsVacantRolesApplications_id'],
                 'engine' => 'InnoDB',
@@ -3674,7 +3674,7 @@ Rest are set out in corehead
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('userModulescertifications', [
+        $this->table('userModulesCertifications', [
                 'id' => false,
                 'primary_key' => ['userModulesCertifications_id'],
                 'engine' => 'InnoDB',
