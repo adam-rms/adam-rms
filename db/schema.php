@@ -2114,11 +2114,11 @@ return array (
         ),
       ),
     ),
-    'assetsAssignmentsstatus' => 
+    'assetsAssignmentsStatus' =>
     array (
       'table' => 
       array (
-        'table_name' => 'assetsAssignmentsstatus',
+        'table_name' => 'assetsAssignmentsStatus',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -2130,7 +2130,7 @@ return array (
         'assetsAssignmentsStatus_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsAssignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsStatus',
           'COLUMN_NAME' => 'assetsAssignmentsStatus_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -2154,7 +2154,7 @@ return array (
         'instances_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsAssignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsStatus',
           'COLUMN_NAME' => 'instances_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -2178,7 +2178,7 @@ return array (
         'assetsAssignmentsStatus_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsAssignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsStatus',
           'COLUMN_NAME' => 'assetsAssignmentsStatus_name',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -2202,7 +2202,7 @@ return array (
         'assetsAssignmentsStatus_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsAssignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsStatus',
           'COLUMN_NAME' => 'assetsAssignmentsStatus_order',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '999',
@@ -2230,7 +2230,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsAssignmentsstatus',
+            'Table' => 'assetsAssignmentsStatus',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -2248,7 +2248,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsAssignmentsstatus',
+            'Table' => 'assetsAssignmentsStatus',
             'Non_unique' => '1',
             'Key_name' => 'assetsAssignmentsStatus_instances_instances_id_fk',
             'Seq_in_index' => '1',
@@ -2267,7 +2267,7 @@ return array (
       array (
         'assetsAssignmentsStatus_instances_instances_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsAssignmentsstatus',
+          'TABLE_NAME' => 'assetsAssignmentsStatus',
           'COLUMN_NAME' => 'instances_id',
           'CONSTRAINT_NAME' => 'assetsAssignmentsStatus_instances_instances_id_fk',
           'REFERENCED_TABLE_NAME' => 'instances',
