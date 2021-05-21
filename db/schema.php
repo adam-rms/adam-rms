@@ -8101,11 +8101,11 @@ return array (
         ),
       ),
     ),
-    'maintenanceJobsmessages' => 
+    'maintenanceJobsMessages' => 
     array (
       'table' => 
       array (
-        'table_name' => 'maintenanceJobsmessages',
+        'table_name' => 'maintenanceJobsMessages',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'latin1_swedish_ci',
@@ -8117,7 +8117,7 @@ return array (
         'maintenanceJobsMessages_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -8141,7 +8141,7 @@ return array (
         'maintenanceJobs_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobs_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -8165,7 +8165,7 @@ return array (
         'maintenanceJobsMessages_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_timestamp',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -8189,7 +8189,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -8213,7 +8213,7 @@ return array (
         'maintenanceJobsMessages_deleted' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_deleted',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '0',
@@ -8237,7 +8237,7 @@ return array (
         'maintenanceJobsMessages_text' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_text',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -8261,7 +8261,7 @@ return array (
         'maintenanceJobsMessages_file' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_file',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -8289,7 +8289,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenanceJobsmessages',
+            'Table' => 'maintenanceJobsMessages',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -8307,7 +8307,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenanceJobsmessages',
+            'Table' => 'maintenanceJobsMessages',
             'Non_unique' => '1',
             'Key_name' => 'maintenanceJobsMessages___files',
             'Seq_in_index' => '1',
@@ -8325,7 +8325,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'maintenanceJobsmessages',
+            'Table' => 'maintenanceJobsMessages',
             'Non_unique' => '1',
             'Key_name' => 'maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk',
             'Seq_in_index' => '1',
@@ -8344,7 +8344,7 @@ return array (
       array (
         'maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk' => 
         array (
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobs_id',
           'CONSTRAINT_NAME' => 'maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk',
           'REFERENCED_TABLE_NAME' => 'maintenanceJobs',
@@ -8354,7 +8354,7 @@ return array (
         ),
         'maintenanceJobsMessages___files' => 
         array (
-          'TABLE_NAME' => 'maintenanceJobsmessages',
+          'TABLE_NAME' => 'maintenanceJobsMessages',
           'COLUMN_NAME' => 'maintenanceJobsMessages_file',
           'CONSTRAINT_NAME' => 'maintenanceJobsMessages___files',
           'REFERENCED_TABLE_NAME' => 's3files',
