@@ -552,7 +552,7 @@ return array (
           'TABLE_NAME' => 'assetCategories',
           'COLUMN_NAME' => 'assetCategoriesGroups_id',
           'CONSTRAINT_NAME' => 'assetCategories_Groups_id_fk',
-          'REFERENCED_TABLE_NAME' => 'assetCategoriesgroups',
+          'REFERENCED_TABLE_NAME' => 'assetCategoriesGroups',
           'REFERENCED_COLUMN_NAME' => 'assetCategoriesGroups_id',
           'UPDATE_RULE' => 'CASCADE',
           'DELETE_RULE' => 'CASCADE',
@@ -569,11 +569,11 @@ return array (
         ),
       ),
     ),
-    'assetCategoriesgroups' => 
+    'assetCategoriesGroups' =>
     array (
       'table' => 
       array (
-        'table_name' => 'assetCategoriesgroups',
+        'table_name' => 'assetCategoriesGroups',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -585,7 +585,7 @@ return array (
         'assetCategoriesGroups_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetCategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesGroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -609,7 +609,7 @@ return array (
         'assetCategoriesGroups_name' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetCategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesGroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_name',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -633,7 +633,7 @@ return array (
         'assetCategoriesGroups_fontAwesome' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetCategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesGroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_fontAwesome',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -657,7 +657,7 @@ return array (
         'assetCategoriesGroups_order' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetCategoriesgroups',
+          'TABLE_NAME' => 'assetCategoriesGroups',
           'COLUMN_NAME' => 'assetCategoriesGroups_order',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '999',
@@ -685,7 +685,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetCategoriesgroups',
+            'Table' => 'assetCategoriesGroups',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',

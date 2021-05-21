@@ -143,7 +143,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'name' => 'assetCategories_Groups_id_fk',
                 'unique' => false,
             ])
-            ->addForeignKey('assetCategoriesGroups_id', 'assetCategoriesgroups', 'assetCategoriesGroups_id', [
+            ->addForeignKey('assetCategoriesGroups_id', 'assetCategoriesGroups', 'assetCategoriesGroups_id', [
                 'constraint' => 'assetCategories_Groups_id_fk',
                 'update' => 'CASCADE',
                 'delete' => 'CASCADE',
@@ -154,7 +154,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('assetCategoriesgroups', [
+        $this->table('assetCategoriesGroups', [
                 'id' => false,
                 'primary_key' => ['assetCategoriesGroups_id'],
                 'engine' => 'InnoDB',
