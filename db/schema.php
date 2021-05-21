@@ -14340,11 +14340,11 @@ Rest are set out in corehead
         ),
       ),
     ),
-    'userModulescertifications' => 
+    'userModulesCertifications' => 
     array (
       'table' => 
       array (
-        'table_name' => 'userModulescertifications',
+        'table_name' => 'userModulesCertifications',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -14356,7 +14356,7 @@ Rest are set out in corehead
         'userModulesCertifications_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'userModulesCertifications_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -14380,7 +14380,7 @@ Rest are set out in corehead
         'modules_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'modules_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -14404,7 +14404,7 @@ Rest are set out in corehead
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -14428,7 +14428,7 @@ Rest are set out in corehead
         'userModulesCertifications_revoked' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'userModulesCertifications_revoked',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => '0',
@@ -14452,7 +14452,7 @@ Rest are set out in corehead
         'userModulesCertifications_approvedBy' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'userModulesCertifications_approvedBy',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -14476,7 +14476,7 @@ Rest are set out in corehead
         'userModulesCertifications_approvedComment' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'userModulesCertifications_approvedComment',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -14500,7 +14500,7 @@ Rest are set out in corehead
         'userModulesCertifications_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'userModulesCertifications_timestamp',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -14528,7 +14528,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userModulescertifications',
+            'Table' => 'userModulesCertifications',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -14546,7 +14546,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userModulescertifications',
+            'Table' => 'userModulesCertifications',
             'Non_unique' => '1',
             'Key_name' => 'userModulesCertifications_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -14564,7 +14564,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userModulescertifications',
+            'Table' => 'userModulesCertifications',
             'Non_unique' => '1',
             'Key_name' => 'userModulesCertifications_users_users_userid_fk_2',
             'Seq_in_index' => '1',
@@ -14582,7 +14582,7 @@ Rest are set out in corehead
         array (
           1 => 
           array (
-            'Table' => 'userModulescertifications',
+            'Table' => 'userModulesCertifications',
             'Non_unique' => '1',
             'Key_name' => 'userModulesCertifications_modules_modules_id_fk',
             'Seq_in_index' => '1',
@@ -14601,7 +14601,7 @@ Rest are set out in corehead
       array (
         'userModulesCertifications_modules_modules_id_fk' => 
         array (
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'modules_id',
           'CONSTRAINT_NAME' => 'userModulesCertifications_modules_modules_id_fk',
           'REFERENCED_TABLE_NAME' => 'modules',
@@ -14611,7 +14611,7 @@ Rest are set out in corehead
         ),
         'userModulesCertifications_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'userModulesCertifications_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
@@ -14621,7 +14621,7 @@ Rest are set out in corehead
         ),
         'userModulesCertifications_users_users_userid_fk_2' => 
         array (
-          'TABLE_NAME' => 'userModulescertifications',
+          'TABLE_NAME' => 'userModulesCertifications',
           'COLUMN_NAME' => 'userModulesCertifications_approvedBy',
           'CONSTRAINT_NAME' => 'userModulesCertifications_users_users_userid_fk_2',
           'REFERENCED_TABLE_NAME' => 'users',

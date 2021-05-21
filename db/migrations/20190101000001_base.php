@@ -3674,7 +3674,7 @@ Rest are set out in corehead
                 'delete' => 'CASCADE',
             ])
             ->create();
-        $this->table('userModulescertifications', [
+        $this->table('userModulesCertifications', [
                 'id' => false,
                 'primary_key' => ['userModulesCertifications_id'],
                 'engine' => 'InnoDB',
