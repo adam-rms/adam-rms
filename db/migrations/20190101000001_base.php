@@ -1298,7 +1298,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'SET_NULL',
             ])
             ->create();
-        $this->table('cmsPagesviews', [
+        $this->table('cmsPagesViews', [
                 'id' => false,
                 'primary_key' => ['cmsPagesViews_id'],
                 'engine' => 'InnoDB',

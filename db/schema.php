@@ -4953,11 +4953,11 @@ return array (
         ),
       ),
     ),
-    'cmsPagesviews' => 
+    'cmsPagesViews' =>
     array (
       'table' => 
       array (
-        'table_name' => 'cmsPagesviews',
+        'table_name' => 'cmsPagesViews',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -4969,7 +4969,7 @@ return array (
         'cmsPagesViews_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesviews',
+          'TABLE_NAME' => 'cmsPagesViews',
           'COLUMN_NAME' => 'cmsPagesViews_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -4993,7 +4993,7 @@ return array (
         'cmsPages_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesviews',
+          'TABLE_NAME' => 'cmsPagesViews',
           'COLUMN_NAME' => 'cmsPages_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -5017,7 +5017,7 @@ return array (
         'cmsPagesViews_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesviews',
+          'TABLE_NAME' => 'cmsPagesViews',
           'COLUMN_NAME' => 'cmsPagesViews_timestamp',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => 'CURRENT_TIMESTAMP',
@@ -5041,7 +5041,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesviews',
+          'TABLE_NAME' => 'cmsPagesViews',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -5065,7 +5065,7 @@ return array (
         'cmsPages_type' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'cmsPagesviews',
+          'TABLE_NAME' => 'cmsPagesViews',
           'COLUMN_NAME' => 'cmsPages_type',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => '1',
@@ -5093,7 +5093,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesviews',
+            'Table' => 'cmsPagesViews',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -5111,7 +5111,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesviews',
+            'Table' => 'cmsPagesViews',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesViews_cmsPages_cmsPages_id_fk',
             'Seq_in_index' => '1',
@@ -5129,7 +5129,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesviews',
+            'Table' => 'cmsPagesViews',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesViews_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -5147,7 +5147,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'cmsPagesviews',
+            'Table' => 'cmsPagesViews',
             'Non_unique' => '1',
             'Key_name' => 'cmsPagesViews_cmsPagesViews_timestamp_index',
             'Seq_in_index' => '1',
@@ -5166,7 +5166,7 @@ return array (
       array (
         'cmsPagesViews_cmsPages_cmsPages_id_fk' => 
         array (
-          'TABLE_NAME' => 'cmsPagesviews',
+          'TABLE_NAME' => 'cmsPagesViews',
           'COLUMN_NAME' => 'cmsPages_id',
           'CONSTRAINT_NAME' => 'cmsPagesViews_cmsPages_cmsPages_id_fk',
           'REFERENCED_TABLE_NAME' => 'cmsPages',
@@ -5176,7 +5176,7 @@ return array (
         ),
         'cmsPagesViews_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'cmsPagesviews',
+          'TABLE_NAME' => 'cmsPagesViews',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'cmsPagesViews_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',
