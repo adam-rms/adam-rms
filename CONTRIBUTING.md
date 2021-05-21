@@ -4,6 +4,8 @@ Thanks for you interest in contributing to the AdamRMS project!
 
 All contributions are covered by the existing project licence - please have a look at this to ensure you're familiar with it before contributing. 
 
+We use the [Git Feature Branch Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) for writing new features/bug fixes etc, and for code review.
+
 When doing so, we ask that you follow the guidelines below:
 
 ## Writing Commits
@@ -46,7 +48,8 @@ List broken
 
 ## Making Pull Requests
 
-Similarly to commits, please write your PR title in the present/imperative tense, and describe what problem it fixes.  
-Additionally, include the issue number its related to at the end of the title; this makes it easier to track which PRs are related to which issues.
+Similarly to commits, please write your PR title in the present/imperative tense, and describe what problem it fixes. Please ensure you name your branch in a way that relates to the issue/pull request (such as `80-fixAssetSearch` would be a good branch name).
+
+Additionally, link the issue to the Pull Request. 
 
 In the PR's description, it would be helpful to write a brief summary of the changes you made, too.
