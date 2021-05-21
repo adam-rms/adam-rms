@@ -2564,11 +2564,11 @@ return array (
         ),
       ),
     ),
-    'assetsBarcodesscans' => 
+    'assetsBarcodesScans' => 
     array (
       'table' => 
       array (
-        'table_name' => 'assetsBarcodesscans',
+        'table_name' => 'assetsBarcodesScans',
         'engine' => 'InnoDB',
         'table_comment' => '',
         'table_collation' => 'utf8mb4_0900_ai_ci',
@@ -2580,7 +2580,7 @@ return array (
         'assetsBarcodesScans_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'assetsBarcodesScans_id',
           'ORDINAL_POSITION' => '1',
           'COLUMN_DEFAULT' => NULL,
@@ -2604,7 +2604,7 @@ return array (
         'assetsBarcodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'assetsBarcodes_id',
           'ORDINAL_POSITION' => '2',
           'COLUMN_DEFAULT' => NULL,
@@ -2628,7 +2628,7 @@ return array (
         'assetsBarcodesScans_timestamp' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'assetsBarcodesScans_timestamp',
           'ORDINAL_POSITION' => '3',
           'COLUMN_DEFAULT' => NULL,
@@ -2652,7 +2652,7 @@ return array (
         'users_userid' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'users_userid',
           'ORDINAL_POSITION' => '4',
           'COLUMN_DEFAULT' => NULL,
@@ -2676,7 +2676,7 @@ return array (
         'locationsBarcodes_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'locationsBarcodes_id',
           'ORDINAL_POSITION' => '5',
           'COLUMN_DEFAULT' => NULL,
@@ -2700,7 +2700,7 @@ return array (
         'location_assets_id' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'location_assets_id',
           'ORDINAL_POSITION' => '6',
           'COLUMN_DEFAULT' => NULL,
@@ -2724,7 +2724,7 @@ return array (
         'assetsBarcodes_customLocation' => 
         array (
           'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'assetsBarcodes_customLocation',
           'ORDINAL_POSITION' => '7',
           'COLUMN_DEFAULT' => NULL,
@@ -2752,7 +2752,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsBarcodesscans',
+            'Table' => 'assetsBarcodesScans',
             'Non_unique' => '0',
             'Key_name' => 'PRIMARY',
             'Seq_in_index' => '1',
@@ -2770,7 +2770,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsBarcodesscans',
+            'Table' => 'assetsBarcodesScans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk',
             'Seq_in_index' => '1',
@@ -2788,7 +2788,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsBarcodesscans',
+            'Table' => 'assetsBarcodesScans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_users_users_userid_fk',
             'Seq_in_index' => '1',
@@ -2806,7 +2806,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsBarcodesscans',
+            'Table' => 'assetsBarcodesScans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk',
             'Seq_in_index' => '1',
@@ -2824,7 +2824,7 @@ return array (
         array (
           1 => 
           array (
-            'Table' => 'assetsBarcodesscans',
+            'Table' => 'assetsBarcodesScans',
             'Non_unique' => '1',
             'Key_name' => 'assetsBarcodesScans_assets_assets_id_fk',
             'Seq_in_index' => '1',
@@ -2843,7 +2843,7 @@ return array (
       array (
         'assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'assetsBarcodes_id',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk',
           'REFERENCED_TABLE_NAME' => 'assetsBarcodes',
@@ -2853,7 +2853,7 @@ return array (
         ),
         'assetsBarcodesScans_assets_assets_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'location_assets_id',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_assets_assets_id_fk',
           'REFERENCED_TABLE_NAME' => 'assets',
@@ -2863,7 +2863,7 @@ return array (
         ),
         'assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk' => 
         array (
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'locationsBarcodes_id',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk',
           'REFERENCED_TABLE_NAME' => 'locationsBarcodes',
@@ -2873,7 +2873,7 @@ return array (
         ),
         'assetsBarcodesScans_users_users_userid_fk' => 
         array (
-          'TABLE_NAME' => 'assetsBarcodesscans',
+          'TABLE_NAME' => 'assetsBarcodesScans',
           'COLUMN_NAME' => 'users_userid',
           'CONSTRAINT_NAME' => 'assetsBarcodesScans_users_users_userid_fk',
           'REFERENCED_TABLE_NAME' => 'users',

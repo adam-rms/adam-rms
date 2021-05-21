@@ -684,7 +684,7 @@ class Base extends Phinx\Migration\AbstractMigration
                 'delete' => 'SET_NULL',
             ])
             ->create();
-        $this->table('assetsBarcodesscans', [
+        $this->table('assetsBarcodesScans', [
                 'id' => false,
                 'primary_key' => ['assetsBarcodesScans_id'],
                 'engine' => 'InnoDB',
