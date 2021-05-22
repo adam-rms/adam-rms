@@ -457,8 +457,15 @@
                                                 </small>
                                             </td>
                                             <td>
-                                                {% if barcode.lastScan != null %}
-                                                    {{barcode.lastScan|date("d M Y h:i:sa")}}
+                                                {% if barcode.latestScan %}
+                                                    {% if barcode.latestScan.locations_name %}
+                                                        {{ barcode.latestScan.locations_name }} <span class="badge badge-default" title="GPS Not Verified, but location barcode scanned"><i class="fas fa-map-marker-alt"></i></span>
+                                                    {% elseif barcode.latestScan.assetTypes_name %}
+                                                        {{  barcode.latestScan.assetTypes_name }} <span class="badge badge-info" title="Asset Scan was Verified"><i class="fas fa-check"></i></span>
+                                                    {% elseif barcode.latestScan.assetsBarcodes_customLocation %}
+                                                        {{  barcode.latestScan.assetsBarcodes_customLocation }} <span class="badge badge-danger" title="Location was entered as text"><i class="fas fa-times"></i></span>
+                                                    {% endif %}
+                                                    <span class="badge badge-secondary" title="Scanned by {{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}  {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}"><i class="fas fa-info"></i></span>
                                                 {% else %}
                                                     <i>Never scanned</i>
                                                 {% endif %}

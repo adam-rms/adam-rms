@@ -48,17 +48,19 @@ foreach ($assets as $asset) {
     $DBLIB->where("assetsBarcodes_deleted", 0);
     $DBLIB->orderBy("assetsBarcodes_added", "ASC");
     $DBLIB->join("users", "assetsBarcodes.users_userid=users.users_userid", "LEFT");
-    $asset['barcodes'] = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2","(SELECT assetsBarcodesScans_timestamp FROM assetsBarcodesScans WHERE assetsBarcodes_id=assetsBarcodes_id ORDER BY assetsBarcodesScans_timestamp DESC LIMIT 1) AS lastScan"]);
-
-    /*
-    $lastScan = $DBLIB->subQuery ("lastScan");
-    //$lastScan->orderBy("assetsBarcodesScans_timestamp","DESC");
-    $lastScan->groupBy ("assetsBarcodes_id");
-    $lastScan->get ("assetsBarcodesScans",null,["MAX(assetsBarcodesScans_timestamp)","assetsBarcodesScans_id","assetsBarcodes_id"]);
-    $DBLIB->join($lastScan, "assetsBarcodes.assetsBarcodes_id=lastScan.assetsBarcodes_id", "LEFT LATERAL");
-    $asset['barcodes'] = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2","lastScan.*"]);
-    var_dump($asset['barcodes']);
-    echo $DBLIB->getLastQuery();*/
+    $barcodes = $DBLIB->get("assetsBarcodes",null,["assetsBarcodes.*", "users.users_name1", "users.users_name2"]);
+    $asset['barcodes'] = [];
+    foreach ($barcodes as $barcode) {
+        $DBLIB->orderBy("assetsBarcodesScans.assetsBarcodesScans_timestamp","DESC");
+        $DBLIB->where("assetsBarcodesScans.assetsBarcodes_id",$barcode["assetsBarcodes_id"]);
+        $DBLIB->join("locationsBarcodes","locationsBarcodes.locationsBarcodes_id=assetsBarcodesScans.locationsBarcodes_id","LEFT");
+        $DBLIB->join("assets","assets.assets_id=assetsBarcodesScans.location_assets_id","LEFT");
+        $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
+        $DBLIB->join("locations","locations.locations_id=locationsBarcodes.locations_id","LEFT");
+        $DBLIB->join("users","users.users_userid=assetsBarcodesScans.users_userid");
+        $barcode['latestScan'] = $DBLIB->getone("assetsBarcodesScans",["assetsBarcodesScans.*","users.users_name1","users.users_name2","locations.locations_name","locations.locations_id","assets.assetTypes_id","assetTypes.assetTypes_name"]);
+        $asset['barcodes'][] = $barcode;
+    }
 
     //Calendar
     $DBLIB->where("assets_id", $asset['assets_id']);
