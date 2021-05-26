@@ -113,13 +113,24 @@
             });
             return selected;
         }
-        $(".assetAssignmentCheckboxAll").click(function () {
+        $(".assetAssignmentCheckboxAll[data-instanceid]").click(function () {
             var instance = $(this).data("instanceid");
             $(".assetAssignmentCheckbox[data-instanceid=" + instance + "]").prop('checked', $(this).prop('checked'));
+            $(".assetAssignmentCheckboxType[data-instanceid=" + instance + "]").prop('checked', $(this).prop('checked'));
         });
-        $(".assetAssignmentCheckboxType").click(function () {
+        $(".assetAssignmentCheckboxType[data-typeid][data-instanceid]").click(function () {
             var type = $(this).data("typeid");
-            $(".assetAssignmentCheckbox[data-typeid=" + type + "]").prop('checked', $(this).prop('checked'));
+            var instance = $(this).data("instanceid");
+            $(".assetAssignmentCheckbox[data-typeid=" + type + "][data-instanceid=" + instance + "]").prop('checked', $(this).prop('checked'));
+        });
+        $(".assetAssignmentCheckbox[data-typeid][data-instanceid]").click(function () {
+            var type = $(this).data("typeid");
+            var instance = $(this).data("instanceid");
+            if ($(".assetAssignmentCheckbox[data-typeid=" + type + "][data-instanceid=" + instance + "]:checked").length == $(".assetAssignmentCheckbox[data-typeid=" + type + "][data-instanceid=" + instance + "]").length) {
+                $(".assetAssignmentCheckboxType[data-typeid=" + type + "][data-instanceid=" + instance + "]").prop('checked', true);
+            } else {
+                $(".assetAssignmentCheckboxType[data-typeid=" + type + "][data-instanceid=" + instance + "]").prop('checked', false);
+            }
         });
 
 
