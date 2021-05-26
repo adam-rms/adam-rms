@@ -1,11 +1,14 @@
 {% extends 'templatePublic.twig' %}
-{% block menu %}
-    {% embed 'assets/searchForm.twig' with {'instance': INSTANCE.instances_id, 'instancePublicData': INSTANCE.publicData, 'CONFIG':CONFIG, 'PUBLIC': true } only %}
-    {% endembed %}
-{% endblock %}
-{% block header %}{% endblock %}
 {% block main %}
-    <div id="pageContent"></div>
+    <div class="row ">
+        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-10">
+            <div id="pageContent" class="m-2"></div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-2 sidebar-sticky bg-light p-3 border-left">
+            {% embed 'assets/searchForm.twig' with {'instance': INSTANCE.instances_id, 'instancePublicData': INSTANCE.publicData, 'CONFIG':CONFIG, 'PUBLIC': true } %}
+            {% endembed %}
+        </div>
+    </div>
     <script>
         $(document).ready(function() {
             $( "#deepSearchAssetForm" ).submit();
