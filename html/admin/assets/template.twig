@@ -196,7 +196,8 @@
 
 </head>
 {% if BODY %}
-<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide">
+<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}">
+
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
         <ul class="navbar-nav">
