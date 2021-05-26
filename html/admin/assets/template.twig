@@ -820,9 +820,13 @@ text-{{ STATUSES[project.projects_status]['class'] }}
         function changeTheme(isDark){
             if(isDark){
                 $('body').addClass("dark-mode");
+                //Trigger the theme change in js so that other plugins can change their theme
+                $(document).trigger("themeChange", 'dark');
                 $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
             } else {
                 $('body').removeClass("dark-mode");
+                //Trigger the theme change in js so that other plugins can change their theme
+                $(document).trigger("themeChange", 'light');
                 $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
             }
         }
