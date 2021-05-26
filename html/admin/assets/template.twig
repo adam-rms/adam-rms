@@ -177,7 +177,19 @@
             cursor: pointer;
             margin-right: 5px;
         }
+
+
+        /**
+            Styles for Full Calendar when in darkmode
+         */
+        .dark-mode .fc-week-number, .dark-mode .fc-day-header {
+            background-color: #2C3E50 !important;
+        }
+        .dark-mode .fc-today {
+            background-color: #3f6791 !important;
+        }
     </style>
+
 
     <!--Favicons-->
     <link rel="apple-touch-icon" sizes="57x57" href="{{ CONFIG.ASSETCDNURL }}/img/icons/apple-icon-57x57.png">
@@ -837,7 +849,6 @@ text-{{ STATUSES[project.projects_status]['class'] }}
 
         //Triggers when the storage is changed in other tabs. Used to see if the theme has been updated
         $(window).on('storage', function (event) {
-            console.log("hi")
             // ignore other keys
             if (event.originalEvent.key!='theme') return;
 
