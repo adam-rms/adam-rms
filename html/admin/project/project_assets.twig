@@ -141,7 +141,16 @@
             }
         });
         $("#expandAll").click(function () {
-            $(".categoryFilter").show();
+            if ($(".categoryFilter").is(":visible")) {
+                if ($(".typeFilter").is(":visible")) {
+                    $(".typeFilter").hide();
+                    $(".categoryFilter").hide();
+                } else {
+                    $(".typeFilter").show();
+                }
+            } else {
+                $(".categoryFilter").show();
+            }
         });
         $(".categoryFilter").hide();
         $(".typeFilter").hide();
