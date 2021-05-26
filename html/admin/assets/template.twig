@@ -180,13 +180,24 @@
 
 
         /**
-            Styles for Full Calendar when in darkmode
+            Styles for Full Calendar when in dark mode
          */
         .dark-mode .fc-week-number, .dark-mode .fc-day-header {
             background-color: #2C3E50 !important;
         }
         .dark-mode .fc-today {
             background-color: #3f6791 !important;
+        }
+
+        /**
+            Styles for the icon picker when in dark mode
+         */
+         .dark-mode .iconpicker-popover .popover-title,
+         .dark-mode .iconpicker-popover .iconpicker-items {
+             background-color: #343a40 !important;
+         }
+        .dark-mode .iconpicker-popover .iconpicker-items a:hover{
+            color: #343a40 !important;
         }
     </style>
 
@@ -772,7 +783,7 @@ text-{{ STATUSES[project.projects_status]['class'] }}
     </footer>
 
 
-    <aside class="control-sidebar control-sidebar-light">
+    <aside class="control-sidebar {% if USERDATA.users_dark_mode %}control-sidebar-dark{% else %}control-sidebar-light{% endif %}" id="assetSearchSidebar">
         <!-- Control sidebar content goes here -->
         <div class="p-3 control-sidebar-content">
             <h5>Search assets</h5>
@@ -823,11 +834,13 @@ text-{{ STATUSES[project.projects_status]['class'] }}
                 //Trigger the theme change in js so that other plugins can change their theme
                 $(document).trigger("themeChange", 'dark');
                 $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
+                $('#assetSearchSidebar').removeClass("control-sidebar-light").addClass("control-sidebar-dark");
             } else {
                 $('body').removeClass("dark-mode");
                 //Trigger the theme change in js so that other plugins can change their theme
                 $(document).trigger("themeChange", 'light');
                 $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
+                $('#assetSearchSidebar').removeClass("control-sidebar-dark").addClass("control-sidebar-light");
             }
         }
 
