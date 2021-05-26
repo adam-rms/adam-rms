@@ -828,6 +828,9 @@ text-{{ STATUSES[project.projects_status]['class'] }}
                     //Used to trigger other adamRMS windows to change their theme
                     localStorage.setItem('theme', isDark ? "dark" : "light");
                     localStorage.removeItem('theme');
+                },
+                error: function (){
+                    bootbox.alert("Sorry - Operation could not be completed! Please reload the page")
                 }
             });
         });
