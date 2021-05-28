@@ -25,7 +25,7 @@ x-amz-meta-size
             var extension = re.exec(fileName)[1];
             return extension.toLowerCase();
         }
-        new Uppy.Core({
+        {{ thisElementID }} = new Uppy.Core({
             debug: true,
             allowMultipleUploads: true,
             autoProceed: false,
@@ -73,7 +73,9 @@ x-amz-meta-size
             showLinkToFileUploadResult: false,
             proudlyDisplayPoweredByUppy: false,
             hideProgressAfterFinish: true,
-            
+
+            theme: '{% if USERDATA.users_dark_mode %}dark{% else %}light{% endif %}',
+
             {% if fileLimit is defined and fileLimit == 1 and imagesOnly is defined and imagesOnly %}
             autoOpenFileEditor: true,
             {% endif %}
@@ -177,4 +179,11 @@ x-amz-meta-size
                 }
             });
         })
+
+        //Update the theme when a themChange is triggered.
+        $(document).on('themeChange', function(event, theme) {
+            {{ thisElementID }}.getPlugin('Dashboard').setOptions({theme: theme});
+        });
+
+
     </script>

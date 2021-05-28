@@ -10,7 +10,7 @@ $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePo
 $DBLIB->where("instancePositions.instances_id",  $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
 $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
-if ($AUTH->instancePermissionCheck(52)) $DBLIB->where("users.users_userid", $_GET['id']);
+if ($AUTH->instancePermissionCheck(52) or $AUTH->permissionCheck(5)) $DBLIB->where("users.users_userid", $_GET['id']);
 else $DBLIB->where("users.users_userid", $AUTH->data['users_userid']);
 $PAGEDATA['user'] = $DBLIB->getone("users", ["users.*"]);
 if (!$PAGEDATA['user']) die($TWIG->render('404.twig', $PAGEDATA));
@@ -51,6 +51,23 @@ $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->orderBy("projects.projects_name", "ASC");
 $PAGEDATA['user']['projectManagement'] = $DBLIB->get("projects", null, ["projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
+
+$DBLIB->where("users_userid", $PAGEDATA['user']['users_userid']);
+$DBLIB->orderBy("userPositions_start", "ASC");
+$DBLIB->orderBy("userPositions_end", "ASC");
+$DBLIB->join("positions", "positions.positions_id=userPositions.positions_id", "LEFT");
+$PAGEDATA['user']['POSITIONS'] = $DBLIB->get("userPositions");
+
+$DBLIB->where("users_userid", $PAGEDATA['user']['users_userid']);
+$DBLIB->where("userPositions_end >= '" . date('Y-m-d H:i:s') . "'");
+$DBLIB->where("userPositions_start <= '" . date('Y-m-d H:i:s') . "'");
+$PAGEDATA['user']['currentPositions'] = $DBLIB->getvalue("userPositions","COUNT(*)"); //To see if they can login
+
+$DBLIB->orderBy("positions_rank", "ASC");
+$DBLIB->orderBy("positions_displayName", "ASC");
+$PAGEDATA['POSSIBLEPOSITIONS'] = $DBLIB->get("positions");
+
+$PAGEDATA['user']['notifications'] = $bCMS->notificationSettings($PAGEDATA['user']['users_userid']);
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['user']['users_name1'] . " " . $PAGEDATA['user']['users_name2'], "BREADCRUMB" => false];
 
