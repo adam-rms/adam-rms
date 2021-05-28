@@ -222,7 +222,7 @@
 <body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}">
 
 <div class="wrapper">
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <nav class="main-header navbar navbar-expand {% if USERDATA.users_dark_mode %}navbar-dark{% else %}navbar-white navbar-light{% endif %}">
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
@@ -288,9 +288,9 @@
             {% endif %}
 
             <li class="nav-item">
-                <button class="nav-link" id="toggle-theme">
-                    <i class="fas {% if USERDATA.users_dark_mode %}fa-moon{%else%}fa-sun{% endif %}" id="theme-icon"></i>
-                </button>
+                <a href="#" class="nav-link" id="toggle-theme" title="Toggle Theme Color">
+                    <i class="fas {% if USERDATA.users_dark_mode %}fa-sun{%else%}fa-moon{% endif %}" id="theme-icon"></i>
+                </a>
             </li>
 
             <li class="nav-item">
@@ -307,9 +307,9 @@
         {% endif %}
     </nav>
     <!-- Left side column. contains the logo and sidebar -->
-    <aside class="main-sidebar sidebar-dark-primary nav-compact elevation-4">
-        <a href="{{CONFIG.ROOTURL}}" class="brand-link navbar-light" style="color: rgba(0,0,0,.8);">
-            <img src="{{ CONFIG.ASSETCDNURL }}/img/logoicon.png"
+    <aside class="main-sidebar {% if USERDATA.users_dark_mode or true %}{# Keep the sidebar dark, always (looks nicer) #}sidebar-dark-pink{% else%}sidebar-light-pink{% endif%} nav-compact elevation-4">
+        <a href="{{CONFIG.ROOTURL}}" class="brand-link {% if USERDATA.users_dark_mode %}navbar-dark{% else%}navbar-white{% endif%}" style="color: {% if USERDATA.users_dark_mode %}rgba(255,255,255,.8);{% else %}rgba(0,0,0,.8);{% endif %}">
+            <img src="{% if USERDATA.users_dark_mode %}{{ CONFIG.ASSETCDNURL }}/img/logoicon-white.png{% else %}{{ CONFIG.ASSETCDNURL }}/img/logoicon.png{% endif %}"
                  alt="AdamRMS Logo"
                  class="brand-image img-circle elevation-3"
                  style="opacity: .8;">
@@ -832,15 +832,23 @@ text-{{ STATUSES[project.projects_status]['class'] }}
             if(isDark){
                 $('body').addClass("dark-mode");
                 //Trigger the theme change in js so that other plugins can change their theme
+                $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
                 $(document).trigger("themeChange", 'dark');
-                $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
                 $('#assetSearchSidebar').removeClass("control-sidebar-light").addClass("control-sidebar-dark");
+                $('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
+                $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon-white.png");
+                $('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
+                $('.brand-link').css("color","rgba(255,255,255,.8)");
             } else {
                 $('body').removeClass("dark-mode");
                 //Trigger the theme change in js so that other plugins can change their theme
                 $(document).trigger("themeChange", 'light');
-                $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
+                $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
                 $('#assetSearchSidebar').removeClass("control-sidebar-dark").addClass("control-sidebar-light");
+                $('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
+                $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon.png");
+                $('.brand-link').removeClass("navbar-dark").addClass("navbar-white");
+                $('.brand-link').css("color","rgba(0,0,0,.8)");
             }
         }
 
@@ -863,7 +871,6 @@ text-{{ STATUSES[project.projects_status]['class'] }}
                 }
             });
         });
-
         //Triggers when the storage is changed in other tabs. Used to see if the theme has been updated
         $(window).on('storage', function (event) {
             // ignore other keys
