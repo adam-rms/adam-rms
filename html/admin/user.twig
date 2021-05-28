@@ -1,5 +1,9 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
+    <!--Password Strength-->
+    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/css/strength.css"/>
+    <script src="{{ CONFIG.ASSETCDNURL }}/js/libs/strength.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
             integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
@@ -82,9 +86,6 @@
                             </li>
                         {% endif %}
                     </ul>
-                    {% if user.users_userid == USERDATA.users_userid %}
-                        <a href="{{ CONFIG.ROOTURL }}/account.php" class="btn btn-default btn-block">Account Settings</a>
-                    {% endif %}
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -95,16 +96,375 @@
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
+                        {% if user.users_userid == USERDATA.users_userid or 5|permissions %}
+                            <li class="nav-item"><a class="nav-link" href="#account" data-toggle="tab">Account Settings</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#notifications" data-toggle="tab">Notifications</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#profilepicture" data-toggle="tab">Profile Picture</a></li>
+                        {% endif %}
+                        {% if user.users_userid == USERDATA.users_userid %}
+                            <li class="nav-item"><a class="nav-link" href="#passwordsocial" data-toggle="tab">Password & Sign-in</a></li>
+                        {% endif %}
+                        {% if (16|permissions and user.users_userid == USERDATA.users_userid) or 5|permissions %}
+                            <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">AdamRMS Positions</a></li>
+                        {% endif %}
                         {% if user.crewAssignments|length > 0 %}<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Crew Roles</a></li>{% endif %}
                         {% if user.projectManagement|length > 0 %}<li class="nav-item"><a class="nav-link" href="#projects" data-toggle="tab">Projects Managed</a></li>{% endif %}
-                        <li class="nav-item"><a class="nav-link active" href="#calendar" data-toggle="tab">Calendar</a></li>
                         {% if user.users_userid == USERDATA.users_userid %}
-                        <li class="nav-item"><a class="nav-link" href="#export" data-toggle="tab">Export</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#export" data-toggle="tab">Export Calendar</a></li>
                         {% endif %}
+                        <li class="nav-item"><a class="nav-link active" href="#calendar" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
                     <div class="tab-content">
+                        {% if user.users_userid == USERDATA.users_userid or 5|permissions %}
+                            <div class="tab-pane p-3" id="account">
+                                <form id="account-form">
+                                    <div class="form-group">
+                                        <label for="username">Username:</label>
+                                        <input type="username" class="form-control" name="users_username" required  value="{{user['users_username']}}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>First Name:</label>
+                                        <input type="text" class="form-control" name="users_name1" required value="{{user['users_name1']}}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name:</label>
+                                        <input type="text" class="form-control" name="users_name2" required  value="{{user['users_name2']}}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email address:</label>
+                                        <input type="email" class="form-control" name="users_email" required value="{{user['users_email']}}" />
+                                    </div>
+                                    <p>Share links to your social media profiles to be displayed on your user profile page</p>
+                                    <label>Facebook</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://facebook.com/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_facebook" value="{{ user.users_social_facebook }}">
+                                    </div>
+                                    <br/>
+                                    <label>Twitter</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://twitter.com/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_twitter" value="{{ user.users_social_twitter }}">
+                                    </div><br/>
+                                    <label>Instagram</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://instagram.com/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_instagram" value="{{ user.users_social_instagram }}">
+                                    </div><br/>
+                                    <label>Linkedin</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://linkedin.com/ln/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_linkedin" value="{{ user.users_social_linkedin }}">
+                                    </div><br/>
+                                    <label>Snapchat</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"><i class="fab fa-snapchat-ghost"></i></span></div>
+                                        <input type="text" class="form-control" name="users_social_snapchat" value="{{ user.users_social_snapchat }}">
+                                    </div><br/>
+                                    <input type="hidden" name="users_userid" value="{{ user.users_userid }}" />
+                                    <button type="submit" class="btn btn-default">Save</button>
+                                </form>
+                                <script>
+                                    $(document).ready(function() {
+                                        $("#account-form").on("submit", function(e){
+                                            e.preventDefault();
+                                            var formData = $(this).serializeArray();
+                                            ajaxcall("account/basicDetails.php", {formData});
+                                        });
+                                    });
+                                </script>
+                            </div>
+                            <div class="tab-pane p-0" id="notifications">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th><button type="button" id="save-notification-settings" class="btn btn-success btn-sm">Save</button></th>
+                                        {% for method in CONFIG.NOTIFICATIONS.METHODS %}
+                                            <th>{{method}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set category = "" %}
+                                    {% for notification in CONFIG.NOTIFICATIONS.TYPES %}
+                                        {% if category != notification.group %}
+                                            <tr>
+                                                <td colspan="{{ 1+CONFIG.NOTIFICATIONS.METHODS|length }}"><h3>{{ notification.group }}</h3></td>
+                                            </tr>
+                                            {% set category = notification.group %}
+                                        {% endif %}
+                                        <tr>
+                                            <td>{{ notification.name }}</td>
+                                            {% for methodid,method in CONFIG.NOTIFICATIONS.METHODS %}
+                                                <td>
+                                                    {% if methodid in notification.methods %}
+                                                        <input type="checkbox" class="notificationsetting" data-methodid="{{methodid}}" data-typeid="{{notification.id}}"
+                                                                {% if notification.canDisable != true %}
+                                                                    disabled
+                                                                {% endif %}
+                                                                {% if user['notifications']["settings"][notification.id]["methodsUser"][methodid] %}
+                                                                    checked
+                                                                {% endif %}
+                                                        />
+                                                    {% endif %}
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <script>
+                                    $(document).ready(function() {
+                                        $('#save-notification-settings').click(function() {
+                                            var config = [];
+                                            $(".notificationsetting").each(function( index ) {
+                                                if ($( this ).prop('disabled') !== true) {
+                                                    config.push({"method":$( this ).data("methodid"),"type":$( this ).data("typeid"),"setting":$( this ).prop('checked')})
+                                                }
+                                            });
+                                            ajaxcall("account/notifications.php", {
+                                                "users_userid": "{{ user.users_userid }}",
+                                                'settings' : config,
+                                            });
+                                        });
+                                    });
+                                </script>
+                            </div>
+                            <div class="tab-pane table-responsive p-3" id="profilepicture">
+                                {% if user.users_thumbnail != null %}
+                                    <img src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
+                                {% endif %}
+                                {% if 14|permissions or user.users_userid == USERDATA.users_userid %}
+                                    {% embed 'common/plugins/uppy.twig' with {'publicBool': false, 'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
+                                        {% block success %}
+                                            ajaxcall("account/thumbnail.php", {
+                                                "users_userid": "{{ user.users_userid }}",
+                                                'thumbnail' : responseJson.id,
+                                            }, function (data) {
+                                                location.reload();
+                                            });
+                                        {% endblock %}
+                                    {% endembed %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        {% if user.users_userid == USERDATA.users_userid %}
+                        <div class="tab-pane p-3" id="passwordsocial">
+                            <h2>Password</h2>
+                            <div class="form-group">
+                                <label for="username">Current Password</label>
+                                <input type="password" placeholder="Current Password" class="form-control" id="current_pass" />
+                            </div>
+                            <div class="form-group">
+                                <style>
+                                    .button_strength {
+                                        display: none;
+                                    }
+                                </style>
+                                <label for="username">New Password</label>
+                                <input type="password" placeholder="New Password" class="form-control" id="passnew" /><br/>
+                                <input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
+                            </div>
+                            <button id="save-password-settings" class="btn btn-default">Change Password</button>
+                            <script>
+                                $(document).ready(function() {
+                                    $("#passnew").strength();
+                                    $('#save-password-settings').click(function() {
+                                        if ($('#passnew').val() != $('#passconf').val()) {
+                                            bootbox.alert("Sorry - Your new password's don't match!");
+                                        } else if ($("#passnew").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
+                                        else {
+                                            ajaxcall("account/changePass.php", {
+                                                "users_userid": "{{ user.users_userid }}",
+                                                'newpass': $("#passnew").val(),
+                                                'oldpass': $("#current_pass").val()
+                                            }, function () {
+                                                location.reload();
+                                            });
+                                        }
+                                    });
+                                });
+                            </script>
+                            <hr/>
+                            <h2>Authentication Providers</h2>
+                            <h4>Google</h4>
+                            {% if USER.users_oauth_googleid %}
+                                <button class="btn btn-danger" id="disconnectOAuthGoogle"><i class="fab fa-google"></i> Disconnect Google Account</button>
+                                <script>
+                                    $(document).ready(function() {
+                                        $('#disconnectOAuthGoogle').click(function() {
+                                            ajaxcall("account/disconnectOAuth.php", {
+                                                "users_userid": "{{ USER.users_userid }}",
+                                                'provider' : "google",
+                                            }, function (data) {
+                                                location.reload();
+                                            });
+                                        });
+                                    });
+                                </script>
+                            {% else %}
+                                <a href="{{ CONFIG.ROOTURL }}/api/account/linkOAuth.php?google" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% if (16|permissions and user.users_userid == USERDATA.users_userid) or 5|permissions %}
+                        <div class="tab-pane table-responsive p-0" id="positions" style="height: 600px;">
+                            <table class="table" border="0" style="overflow-x: scroll;">
+                                <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    {% if user.users_userid != USERDATA.users_userid and 13|permissions %}
+                                        <th></th>
+                                    {% endif %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for position in user.POSITIONS %}
+                                    <tr>
+                                        {% if 13|permissions and user.users_userid != USERDATA.users_userid %}
+                                            <td>
+                                                <div class="form-group">
+                                                    <select class="form-control positionID">
+                                                        {% for subposition in POSSIBLEPOSITIONS %}
+
+                                                            <option {{ subposition.positions_id == position.positions_id ? 'selected' : '' }} value="{{ subposition.positions_id }}">{{ subposition.positions_displayName }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type='datetime-local' value="{{ position.userPositions_start|date("Y-m-d\\TH:i") }}" class="form-control positionStart" id="position{{ position.userPositions_id }}Start" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type='datetime-local' value="{{ position.userPositions_end|date("Y-m-d\\TH:i") }}" class="form-control positionEnd" id="position{{ position.userPositions_id }}End" />
+                                                </div>
+                                            </td>
+                                            {# <td>
+                                                <div class="checkbox">
+                                                    <label><input type="checkbox" class="positionPublic" {{ (position.userPositions_show == 1 ? 'checked' : '') }} ></label>
+                                                </div>
+                                            </td>#}
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button type="button" title="Delete" data-positionid="{{ position.userPositions_id }}" class="btn btn-danger deletePermissionEdit"><i class="fa fa-trash"></i></button>
+                                                    <button type="button" title="Save" data-positionid="{{ position.userPositions_id }}" class="btn btn-default savePermissionEdit"><i class="fa fa-save"></i></button>
+                                                </div>
+                                            </td>
+                                        {% else %}
+                                            <td>
+                                                {% if position.userPositions_displayName != null %}
+                                                    {{ position.userPositions_displayName }}
+                                                {% else %}
+                                                    {{ position.positions_displayName }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ position.userPositions_start }}</td>
+                                            <td>{{ position.userPositions_end }}</td>
+                                            {# <td>{{ (position.userPositions_show == 1 ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>') }}</td> #}
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                {% if user.users_userid != USERDATA.users_userid and 13|permissions %}
+                                    <tr><td colspan="999" style="font-weight: bold;">Add position</td></tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                <select class="form-control positionID" id="newPositionID">
+                                                    {% for position in POSSIBLEPOSITIONS %}
+                                                        <option value="{{ position.positions_id }}">{{ position.positions_displayName }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type='datetime-local' class="form-control positionStart" id="newPositionStart" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type='datetime-local' class="form-control positionEnd" id="newPositionEnd" />
+                                            </div>
+                                        </td>
+                                        {# <td>
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" class="positionPublic" checked id="newPositionShow"></label>
+                                            </div>
+                                        </td> #}
+                                        <td>
+                                            <button type="button" title="Save" data-positionid="new" class="btn btn-default savePermissionEdit"><i class="fa fa-plus"></i></button>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                <script>
+                                    $(document).ready(function() {
+                                        {% if 13|permissions %}
+                                        $('.savePermissionEdit').click(function() {
+                                            ajaxcall("account/permissions.php", {
+                                                "users_userid":"{{ user.users_userid }}",
+                                                "userPositions_id":$(this).data("positionid"),
+                                                "positions_id":$(this).closest('tr').find('.positionID').val(),
+                                                "userPositions_start":$(this).closest('tr').find('.positionStart').val(),
+                                                "userPositions_end":$(this).closest('tr').find('.positionEnd').val(),
+                                                "userPositions_show":0, //($(this).closest('tr').find('.positionPublic').is(':checked') ? 1 : 0),
+                                                "action":"EDIT"
+                                            }, function (data) {
+                                                location.reload();
+                                            });
+                                        });
+                                        var thispositonid = "";
+                                        $('.deletePermissionEdit').click(function() {
+                                            thispositonid = $(this).data("positionid");
+                                            bootbox.confirm({
+                                                message: "Are you sure you wish to delete this position record? <br/> Positions should be normally kept as an important matter of record - if this user has now left the position please instead set the end date as appropriate",
+                                                buttons: {
+                                                    confirm: {
+                                                        label: 'Yes',
+                                                        className: 'btn-success'
+                                                    },
+                                                    cancel: {
+                                                        label: 'No',
+                                                        className: 'btn-danger'
+                                                    }
+                                                },
+                                                callback: function (result) {
+                                                    if (result) {
+                                                        ajaxcall("account/permissions.php", {
+                                                            "userPositions_id": thispositonid,
+                                                            "users_userid":"{{ user.users_userid }}",
+                                                            "action": "DELETE"
+                                                        }, function (data) {
+                                                            location.reload();
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        });
+                                        {% endif %}
+                                    });
+                                </script>
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
                         <div class="tab-pane table-responsive p-0" id="roles" style="height: 600px;">
                             <table class="table table-head-fixed">
                                 <tr>

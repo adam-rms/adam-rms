@@ -314,11 +314,6 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{CONFIG.ROOTURL}}/user.php?id={{ USERDATA.users_userid }}">
-                    <i class="fas fa-calendar-alt"></i>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#">
                     <i class="fas fa-warehouse"></i>
                 </a>
@@ -344,7 +339,7 @@
                 <div class="image">
                     <img src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;"  loading="lazy">
                 </div>
-                <a href="{{ CONFIG.ROOTURL }}/account.php" class="d-block">
+                <a href="{{ CONFIG.ROOTURL }}/user.php" class="d-block">
                 <div class="info">
                     {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
                 </div>
