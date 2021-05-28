@@ -575,8 +575,8 @@ function generateNewTag() {
             $value = intval(str_replace("A-","",$tag["assets_tag"]))+1;
             if ($value <= 9999) $value = sprintf('%04d', $value);
             return "A-" . $value;
-        } else return "A-1";
-    } else return "A-1";
+        } else return "A-0001";
+    } else return "A-0001";
 }
 
 $GLOBALS['STATUSES'] = [
