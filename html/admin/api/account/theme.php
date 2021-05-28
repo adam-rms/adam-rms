@@ -1,16 +1,8 @@
 <?php
-    require_once __DIR__ . '/../apiHeadSecure.php';
-    header('Content-Type:text/plain');
+require_once __DIR__ . '/../apiHeadSecure.php';
 
-    $userid = $PAGEDATA['USERDATA']['users_userid'];
-
-    $isDarkTheme = isset($_POST['dark']);
-
-
-    $DBLIB->where("users_userid", $userid);
-    if ($DBLIB->update ('users', ["users_dark_mode" => $isDarkTheme ? 1 : 0])) {
-        die("1");
-    }
-    else die("0");
+$DBLIB->where("users_userid", $AUTH->data['users_userid']);
+if ($DBLIB->update ('users', ["users_dark_mode" => isset($_POST['dark']) ? 1 : 0])) finish(true);
+else finish(false);
 
 

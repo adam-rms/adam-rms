@@ -869,21 +869,13 @@ text-{{ STATUSES[project.projects_status]['class'] }}
 
         $(document).on("click","#toggle-theme", function () {
             const isDark = !$('body').hasClass('dark-mode');
-            $.ajax({
-                url: '{{CONFIG.ROOTURL}}/api/account/theme.php',
-                data: isDark ? {'dark': 1} : {},
-                type: "POST",
-                success: function (result) {
-                    //Change Theme
-                    changeTheme(isDark);
+            ajaxcall("account/theme.php", isDark ? {'dark': 1} : {}, function (data) {
+                //Change Theme
+                changeTheme(isDark);
 
-                    //Used to trigger other adamRMS windows to change their theme
-                    localStorage.setItem('theme', isDark ? "dark" : "light");
-                    localStorage.removeItem('theme');
-                },
-                error: function (){
-                    bootbox.alert("Sorry - Operation could not be completed! Please reload the page")
-                }
+                //Used to trigger other adamRMS windows to change their theme
+                localStorage.setItem('theme', isDark ? "dark" : "light");
+                localStorage.removeItem('theme');
             });
         });
         //Triggers when the storage is changed in other tabs. Used to see if the theme has been updated
