@@ -28,7 +28,7 @@
             {% endif %}
             {% for instance in FINANCIALS.assetsAssignedSUB %}
                 <li class="nav-item">
-                    <a class="nav-link" id="asset-list-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-list-tabs-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-list-tabs-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }}</a>
+                    <a class="nav-link" id="asset-list-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-list-tabs-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-list-tabs-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
                 </li>
             {% endfor %}
             <li class="pt-2 px-3">
@@ -50,7 +50,7 @@
                             <i class="fas fa-trash"></i></button>
                     {% endif %}
                     <button type="button" class="btn btn-tool" title="Expand All" id="expandAll">
-                        <i class="fas fa-angle-down"></i></button>
+                        <i class="fas fa-angle-down"></i> Expand</button>
                 </div>
             </li>
         </ul>
@@ -58,7 +58,12 @@
     <div class="card-body p-0">
         <div class="tab-content" id="asset-list-tabs-tabContent">
             <div class="tab-pane fade show active p-3" id="asset-list-tabs-home" role="tabpanel" aria-labelledby="asset-list-tabs-home-tab">
-                {{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})
+                <p style="font-style: italic;">To view assets assigned to this project, select a business above</p>
+                <p>{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})</p>
+                {% if project.projectsTypes_config_finance == 1 %}
+                    <h5>Hire Charges</h5>
+                    <p>{{ FINANCIALS['priceMaths']["string"]|nl2br }}</p>
+                {% endif %}
             </div>
             <div class="tab-pane fade" id="asset-list-tabs-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
                 {% embed 'project/twigIncludes/assetList/table.twig' with {"instanceid": USERDATA.instance.instances_id} %}
