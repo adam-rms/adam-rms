@@ -26,14 +26,6 @@
                             <input type="text" name="q" class="form-control pull-right" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                {% if 4|permissions %}
-                                    <button type="button" title="Add new User" id="addNewUserButton" class="btn btn-default"><i class="fa fa-plus"></i></button>
-                                    <script>
-                                        $("#addNewUserButton").click(function () {
-                                            window.location.href = "{{ CONFIG.ROOTURL }}/account.php?new";
-                                        });
-                                    </script>
-                                {% endif %}
                             </div>
 
                         </form>
