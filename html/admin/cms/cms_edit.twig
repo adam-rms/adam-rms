@@ -40,8 +40,8 @@
                                     <button type="button" class="btn btn-default btn-sm editCardButton"><i class="fas fa-edit"></i></button>
                                     <button type="button" class="btn btn-default btn-sm editConfigButton"><i class="fas fa-cog"></i></button>
                                     <button type="button" class="btn btn-default btn-sm delete"><i class="fas fa-trash"></i></button>
-                                    <button type="button" class="btn btn-default btn-sm resize" data-type="shrink"><i class="fas fa-compress-arrows-alt"></i></button>
-                                    <button type="button" class="btn btn-default btn-sm resize" data-type="expand"><i class="fas fa-expand-arrows-alt"></i></button>
+                                    <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="shrink"><i class="fas fa-compress-arrows-alt"></i></button>
+                                    <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="expand"><i class="fas fa-expand-arrows-alt"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -68,8 +68,8 @@
                             <button type="button" class="btn btn-default btn-sm editCardButton"><i class="fas fa-edit"></i></button>
                             <button type="button" class="btn btn-default btn-sm editConfigButton"><i class="fas fa-cog"></i></button>
                             <button type="button" class="btn btn-default btn-sm delete"><i class="fas fa-trash"></i></button>
-                            <button type="button" class="btn btn-default btn-sm resize" data-type="shrink"><i class="fas fa-compress-arrows-alt"></i></button>
-                            <button type="button" class="btn btn-default btn-sm resize" data-type="expand"><i class="fas fa-expand-arrows-alt"></i></button>
+                            <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="shrink"><i class="fas fa-compress-arrows-alt"></i></button>
+                            <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="expand"><i class="fas fa-expand-arrows-alt"></i></button>
                         </div>
                     </div>
                 </div>
@@ -222,6 +222,7 @@
         {% endif %}
         $(document).ready(function () {
             $('#resize-grid').gridstrap({
+                dragCellHandleSelector: ".card-title",
                 getHtmlOfSourceCell: function ($cell) { // function to return the html of a 'source' cell.
                     return $cell[0].outerHTML;
                 }
