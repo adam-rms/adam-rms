@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="row">{% include 'assets/templates/joinInstance.twig' %}</div>
-    {% if 8|permissions or true %}
+    {% if 8|permissions %}
         <div class="row">{% include 'assets/templates/newInstance.twig' %}</div>
     {% endif %}
 {% endblock %}
