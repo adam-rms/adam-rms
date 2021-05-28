@@ -1754,7 +1754,7 @@
                 $('#addNewJobButton').on('click', function() {
                     var formData = $("#addNewJobForm").serializeArray();
                     if ($("#maintenanceJobstitle").val().length > 0 && $("#maintenanceJobsfaultDescription").val().length > 0) {
-                        formData.push({"name": "maintenanceJobs_assets", "value": ["{{assets[0]['assets_id']}}"]},{"name": "maintenanceJobs_user_tagged", "value": $("#tagUserInJob").val()},{"name": "maintenanceJobs_user_creator", "value": "{{ USERDATA.users_userid }}"});
+                        formData.push({"name": "maintenanceJobs_assets", "value": "{{assets[0]['assets_id']}}"},{"name": "maintenanceJobs_user_tagged", "value": $("#tagUserInJob").val()},{"name": "maintenanceJobs_user_creator", "value": "{{ USERDATA.users_userid }}"});
                         ajaxcall("maintenance/newJob.php", {formData}, function (data) {
                             window.location.href = "{{ CONFIG.ROOTURL }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
                         }, false);
