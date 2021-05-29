@@ -238,6 +238,9 @@ class bCMS {
                     $instanceIgnore = false;
                 }
                 break;
+            case 20:
+                //Project invoice
+                break;
             default:
                 //There are no specific requirements for this file so not to worry.
                 break;
