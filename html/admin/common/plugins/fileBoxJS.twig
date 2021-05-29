@@ -49,5 +49,36 @@
             });
         });
         {% endif %}
+        {% if 127|instancePermissions %}
+        $(".shareFile").click(function () {
+            var id = $(this).data("s3fileid");
+            /*
+            bootbox.confirm({
+                message: "Are you sure you wish to delete this file?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("file/delete.php", {
+                            "s3files_id": id
+                        }, function (data) {
+                            //Hide the file in the display
+                            $(".fileBox[data-s3fileid=" + id + "]").hide();
+                        });
+                    }
+                }
+            });
+            */
+        });
+        {% endif %}
+
     });
 </script>
