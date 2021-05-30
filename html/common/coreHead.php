@@ -106,9 +106,9 @@ class bCMS {
         $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
         $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
         $DBLIB->orderBy($sort, $sortOrder);
-        return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded"]);
+        return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded","s3files_shareKey"]);
     }
-    function s3URL($fileid, $size = "comp", $forceDownload = false, $expire = '+10 minutes') {
+    function s3URL($fileid, $size = "comp", $forceDownload = false, $expire = '+10 minutes', $shareKey = false) {
         global $DBLIB, $CONFIG,$AUTH;
         /*
          * File interface for Amazon AWS S3.
@@ -238,12 +238,17 @@ class bCMS {
                     $instanceIgnore = false;
                 }
                 break;
+            case 20:
+                //Project invoice
+                break;
             default:
                 //There are no specific requirements for this file so not to worry.
                 break;
         }
+        if ($shareKey and ($shareKey == hash('sha256', $file['s3files_shareKey'] . "|" . $file['s3files_id']))) $secure = false; //File has been shared publicly, and the key matches
+
         if ($secure and !$GLOBALS['AUTH']->login) return false;
-        if ($secure and !$instanceIgnore and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
+        elseif ($secure and !$instanceIgnore and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
 
         //Generate the url
 
@@ -575,8 +580,8 @@ function generateNewTag() {
             $value = intval(str_replace("A-","",$tag["assets_tag"]))+1;
             if ($value <= 9999) $value = sprintf('%04d', $value);
             return "A-" . $value;
-        } else return "A-1";
-    } else return "A-1";
+        } else return "A-0001";
+    } else return "A-0001";
 }
 
 $GLOBALS['STATUSES'] = [

@@ -5,7 +5,7 @@ $PAGEDATA['pageConfig'] = ["TITLE" => "Public Site Settings", "BREADCRUMB" => fa
 
 if (!$AUTH->instancePermissionCheck(81)) die($TWIG->render('404.twig', $PAGEDATA));
 
-$PAGEDATA['publicData'] = json_decode($AUTH->data['instance']['instances_publicConfig'],true);
+$PAGEDATA['publicData'] = $AUTH->data['instance']['publicData'];
 
 $PAGEDATA['files'] = $bCMS->s3List(15, $AUTH->data['instance']['instances_id']);
 

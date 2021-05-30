@@ -2,7 +2,11 @@
 if (isset($_GET['pdf'])) ini_set('max_execution_time', 300); //seconds
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(63) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck(63)) die($TWIG->render('404.twig', $PAGEDATA));
+elseif (!isset($_GET['id'])) {
+    $PAGEDATA['pageConfig'] = ["TITLE" => "New Maintenance Job", "BREADCRUMB" => false];
+    die($TWIG->render('maintenance/maintenance_newJob.twig', $PAGEDATA));
+}
 
 $DBLIB->where("maintenanceJobs.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);

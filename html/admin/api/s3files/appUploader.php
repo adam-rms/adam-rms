@@ -1,4 +1,5 @@
 <?php
+//Very similar code in generator for PDF invoices from projects
 require_once __DIR__ . '/../apiHeadSecure.php';
 if(isset($_FILES['file'])) {
     $temp_file_location = $_FILES['file']['tmp_name'];
