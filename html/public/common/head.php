@@ -34,7 +34,7 @@ foreach ($instances as $instance) {
         }
     }
 }
-if (!$PAGEDATA['INSTANCE'] or !isset($PAGEDATA['INSTANCE']['publicData']['enabled']) or !$PAGEDATA['INSTANCE']['publicData']['enabled']) die("404");
+if (!$PAGEDATA['INSTANCE'] or !isset($PAGEDATA['INSTANCE']['publicData']['enabled']) or !$PAGEDATA['INSTANCE']['publicData']['enabled']) die($TWIG->render('404Public.twig', $PAGEDATA));
 
 $PAGEDATA['INSTANCE']['FILES'] = $bCMS->s3List(15, $PAGEDATA['INSTANCE']['instances_id']);
 

@@ -50,35 +50,100 @@
         });
         {% endif %}
         {% if 127|instancePermissions %}
-        $(".shareFile").click(function () {
-            var id = $(this).data("s3fileid");
-            /*
-            bootbox.confirm({
-                message: "Are you sure you wish to delete this file?",
+        function showShareKeyDialog(file,shareKey) {
+            bootbox.dialog({
+                title: 'Shared File',
+                message: "<p>This file has been shared, which makes it visible to everyone on the web - be careful when publishing private or sensitive information.</p>"
+                {% if USERDATA.instance['publicData']['customDomains'] %}
+                    {% for domain in USERDATA.instance['publicData']['customDomains'] %}
+                        {% if domain != "localhost" %}
+                             + '<div class="input-group"><input type="text" class="form-control" value="' + "https://{{ domain }}/file/?f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>'
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                + '<div class="input-group"><input type="text" class="form-control" value="' + "{{ CONFIG.ROOTURL }}/api/file/?r&f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>',
+                size: 'large',
                 buttons: {
-                    confirm: {
-                        label: 'Yes',
-                        className: 'btn-success'
+                    disableshare: {
+                        label: "Disable Sharing for this File",
+                        className: 'btn-danger',
+                        callback: function(){
+                            ajaxcall("file/removeShare.php", {
+                                "s3files_id": file
+                            }, function (data) {
+                                $(".shareFile[data-s3fileid=" + file + "]").data("s3filesharekey","");
+                                bootbox.alert("Sharing for this file is now disabled");
+                            });
+                        }
                     },
-                    cancel: {
-                        label: 'Cancel',
-                        className: 'btn-default'
-                    }
-                },
-                callback: function (result) {
-                    if (result) {
-                        ajaxcall("file/delete.php", {
-                            "s3files_id": id
-                        }, function (data) {
-                            //Hide the file in the display
-                            $(".fileBox[data-s3fileid=" + id + "]").hide();
-                        });
+                    regenerateshare: {
+                        label: "Generate replacement share link",
+                        className: 'btn-warning',
+                        callback: function(){
+                            ajaxcall("file/share.php", {
+                                "s3files_id": file
+                            }, function (data) {
+                                $(".shareFile[data-s3fileid=" + file + "]").data("s3filesharekey",data['response']['s3files_shareKey']);
+                                showShareKeyDialog(file,data['response']['s3files_shareKey']);
+                            });
+                        }
+                    },
+                    ok: {
+                        label: "Close",
+                        className: 'btn-default',
+                        callback: function(){
+                            return true;
+                        }
                     }
                 }
             });
-            */
+        }
+        $(".shareFile").click(function () {
+            var id = $(this).data("s3fileid");
+            var shareKey = $(this).data("s3filesharekey");
+            if (shareKey !== undefined && shareKey != "") {
+                showShareKeyDialog(id,shareKey);
+            } else {
+                bootbox.confirm({
+                    title: "Share File?",
+                    message: "Are you sure you wish to share this file - it will be accessible to anyone with the link",
+                    buttons: {
+                        confirm: {
+                            label: 'Share File',
+                            className: 'btn-warning'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("file/share.php", {
+                                "s3files_id": id
+                            }, function (data) {
+                                $(".shareFile[data-s3fileid=" + id + "]").data("s3filesharekey",data['response']['s3files_shareKey']);
+                                showShareKeyDialog(id,data['response']['s3files_shareKey']);
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        // When the copy button is clicked, select the value of the text box, attempt
+        // to execute the copy command, and trigger event to update tooltip message
+        // to indicate whether the text was successfully copied.
+        $(document).on("click", ".copybutton", function() {
+            var text = $(this).closest('.input-group').children('input').val();
+            var thisButton = $(this);
+            console.log(text);
+            $('.copybutton').html("Copy"); //Reset all the others
+            navigator.clipboard.writeText(text).then(function () {
+                thisButton.html("Copied");
+            }, function () {
+                thisButton.html("Copy with Ctrl+C");
+            });
         });
         {% endif %}
-
     });
 </script>

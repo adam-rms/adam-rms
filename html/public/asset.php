@@ -1,6 +1,6 @@
 <?php
 require_once 'common/head.php';
-if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableAssets']) die("");
+if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableAssets']) die($TWIG->render('404Public.twig', $PAGEDATA));
 
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
@@ -23,7 +23,7 @@ $DBLIB->orderBy("assets.asset_definableFields_1","ASC");$DBLIB->orderby("assets.
 $DBLIB->where("assets.assets_deleted", 0);
 $DBLIB->orderBy("assets.assets_tag","ASC");
 $assets = $DBLIB->get("assets");
-if (!$assets) die("404");
+if (!$assets) die($TWIG->render('404Public.twig', $PAGEDATA));
 $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
     $PAGEDATA['assets'][] = $asset;

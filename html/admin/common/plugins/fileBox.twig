@@ -34,10 +34,10 @@
                             <a href="#" class="btn btn-default btn-sm float-right renameFile" title="Rename" data-s3fileid="{{ file.s3files_id }}" data-s3filename="{{ file.s3files_name }}"><i class="far fa-edit"></i></a>
                         {% endif %}
                         {% if AUTH.login and 127|instancePermissions and galleryOnly != true and readOnly != true %}
-                            <a href="#" class="btn btn-default btn-sm float-right shareFile" title="Manage Sharing" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-share"></i></a>
+                            <a href="#" class="btn btn-default btn-sm float-right shareFile" title="Manage Sharing" data-s3fileid="{{ file.s3files_id }}" data-s3filesharekey="{{ file.s3files_shareKey }}"><i class="fas fa-share"></i></a>
                         {% endif %}
                         {% if AUTH.login and 57|instancePermissions and readOnly != true %}
-                            <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}"><i class="fas fa-trash-alt"></i></a>
+                            <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}" ><i class="fas fa-trash-alt"></i></a>
                         {% endif %}
 
                     </div>
