@@ -118,6 +118,7 @@ class bID
                                     $instance['permissions'][]= (int)$action;
                                 }
                             }
+                            $instance['publicData'] = json_decode($instance['instances_publicConfig'],true);
                             $this->data['instances'][] = $instance;
                             array_push($this->data['instance_ids'], $instance['instances_id']);
                         }
