@@ -1,10 +1,10 @@
 {% extends 'templatePublic.twig' %}
 {% block main %}
-    <div class="row ">
-        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-10">
+    <div class="row h-100">
+        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-10 h-100" style="height:inherit">
             <div id="pageContent" class="m-2"></div>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-2 sidebar-sticky bg-light p-3 border-left">
+        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-2 sidebar-sticky bg-light p-3 border-left h-100">
             {% embed 'assets/searchForm.twig' with {'instance': INSTANCE.instances_id, 'instancePublicData': INSTANCE.publicData, 'CONFIG':CONFIG, 'PUBLIC': true } %}
             {% endembed %}
         </div>

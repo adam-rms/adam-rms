@@ -229,7 +229,7 @@
                         </h6>
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link" href="https://dash.adam-rms.com" target="_blank">
+                                <a class="nav-link" href="{{ CONFIG.ROOTURL }}" target="_blank">
                                     AdamRMS Login
                                 </a>
                             </li>
@@ -237,6 +237,7 @@
                     {% endblock %}
                 {% endblock %}
             </div>
+            <hr class="d-sm-none d-md-none">
         </nav>
         <main role="main" class="col-sm-12 col-md-12 col-lg-10 col-xl-10 p-0">
             {% block header %}
@@ -244,7 +245,7 @@
                 <div class="headerImage"></div>
             {% endif %}
             {% endblock %}
-            <div class="px-3">
+            <div class="px-3 py-0 h-100" >
                 {% block main %}
                 {% endblock %}
             </div>
