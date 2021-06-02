@@ -191,21 +191,21 @@
                         </li>
                         {% if INSTANCE.publicData.enableAssets %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ INSTANCE.publicData.customDomains[0] }}/assets.php">
+                                <a class="nav-link" href="/assets.php">
                                     Assets
                                 </a>
                             </li>
                         {% endif %}
                         {% if INSTANCE.FILES %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ INSTANCE.publicData.customDomains[0] }}/files.php">
+                                <a class="nav-link" href="/files.php">
                                     Downloads
                                 </a>
                             </li>
                         {% endif %}
                         {% if INSTANCE.publicData.enableVacancies %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ INSTANCE.publicData.customDomains[0] }}/jobs.php">
+                                <a class="nav-link" href="/jobs.php">
                                    Internal Crew Vacancies
                                 </a>
                             </li>
@@ -213,7 +213,7 @@
 
                         {% for page in NAVIGATIONCMSPages %}
                             <li class="nav-item">
-                                <a class="nav-link" href="p.php?p={{ page.cmsPages_id }}">
+                                <a class="nav-link" href="/p.php?p={{ page.cmsPages_id }}">
                                     {{ page.cmsPages_name }}
                                 </a>
                             </li>
