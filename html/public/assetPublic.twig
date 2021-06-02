@@ -2,7 +2,7 @@
 {% block header %}{% endblock %}
 {% block main %}
     <div class="row h-100">
-        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-2 sidebar-sticky bg-light p-3 border-right h-100">
+        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-4 bg-light p-3 order-lg-12 order-xl-12 border flex-grow-1">
             {% if asset.thumbnail %}
                 <div class="text-center {{ asset.thumbnail|length > 1 ? 'slick' : '' }}">
                     {% for thumb in asset.thumbnail %}
@@ -86,7 +86,7 @@
                 {{asset.assetTypes_description|nl2br}}
             {% endif %}
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-10 h-100">
+        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8 order-lg-1 order-xl-1">
             <div class="row">
                 <div class="col-md-12">
                     {% if assets|length == 1 %}

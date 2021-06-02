@@ -12,10 +12,12 @@
         <label>Keywords (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="keyword[]"></select>
     </div>
+    {% if not PUBLIC %}
     <div class="form-group">
         <label>Tags (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="tags[]"></select>
     </div>
+    {% endif %}
     <div class="form-group">
         <label>Category</label>
         <select class="form-control select2bs4" multiple name="category[]"></select>
