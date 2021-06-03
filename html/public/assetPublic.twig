@@ -1,177 +1,178 @@
 {% extends "templatePublic.twig" %}
-{% block menu %}
-    {% if asset.thumbnail %}
-        <div class="text-center {{ asset.thumbnail|length > 1 ? 'slick' : '' }}">
-            {% for thumb in asset.thumbnail %}
-                <div>
-                    <img class="img-fluid" style="max-height: 340px;"
-                         src="{{ thumb.s3files_id|s3URL }}"
-                         alt="{{asset.assetTypes_name}}">
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    <h3 class="profile-username text-center">{{asset.assetTypes_name}}</h3>
-    {% if assets|length == 1 %}
-        <p class="text-muted text-center">{{ assets[0].assets_tag|aTag }}</p>
-    {% endif %}
-
-    <ul class="list-group list-group-unbordered mb-3">
-        {% if assets|length == 1 %}
-            {% set assetFieldsLength = 0 %}
-            {% for field in asset.fields %}
-                {% if field != "" %}
-                    {% set assetFieldsLength = assetFieldsLength +1 %}{# Build a count of the number of fields use to help editing an asset #}
-                    <li class="list-group-item">
-                        <b>{{field}}</b> <a class="float-right">{{ assets[0]['asset_definableFields_' ~ loop.index] }}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-        {% if asset.assetTypes_productLink != null %}
-            <li class="list-group-item">
-                <b>Product Web Link</b> <a class="float-right" href="{{ asset.assetTypes_productLink }}" target="_blank">{{ asset.assetTypes_productLink|length > 25 ? asset.assetTypes_productLink|slice(0, 25) ~ '...': asset.assetTypes_productLink  }}</a>
-            </li>
-        {% endif %}
-        <li class="list-group-item">
-            <b>Category</b> {{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}
-        </li>
-        <li class="list-group-item">
-            <b>Manufacturer</b> {{ asset.manufacturers_name }}
-        </li>
-        {% if assets|length == 1 %}
-            {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
-            <li class="list-group-item">
-                <b>Mass</b> <a class="float-right">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</a>
-            </li>
-            {% if INSTANCE['publicData']['enableAssetsValues'] %}
-                <li class="list-group-item">
-                    <b>Value</b> <a class="float-right">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money(INSTANCE['instances_config_currency']) }}</a>
-                </li>
-            {% endif %}
-            {% if INSTANCE['publicData']['enableAssetsValues'] %}
-                <li class="list-group-item">
-                    <b>Day Rate</b> <a class="float-right">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(INSTANCE['instances_config_currency']) }}</a>
-                </li>
-                <li class="list-group-item">
-                    <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(INSTANCE['instances_config_currency']) }}</a>
-                </li>
-            {% endif %}
-        {% else %}
-            <li class="list-group-item">
-                <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
-            </li>
-            {% if INSTANCE['publicData']['enableAssetsValues'] %}
-                <li class="list-group-item">
-                    <b>Value</b> <a class="float-right">{{ asset.assetTypes_value|money(INSTANCE['instances_config_currency']) }}</a>
-                </li>
-            {% endif %}
-            {% if INSTANCE['publicData']['enableAssetsPrices'] %}
-                <li class="list-group-item">
-                    <b>Day Rate</b> <a class="float-right">{{ asset.assetTypes_dayRate|money(INSTANCE['instances_config_currency']) }}</a>
-                </li>
-                <li class="list-group-item">
-                    <b>Week Rate</b> <a class="float-right">{{ asset.assetTypes_weekRate|money(INSTANCE['instances_config_currency']) }}</a>
-                </li>
-            {% endif %}
-        {% endif %}
-    </ul>
-    {% if asset.oneasset %}
-        <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
-    {% endif %}
-    {% if INSTANCE['publicData']['enableAssetDescriptions'] %}
-        {{asset.assetTypes_description|nl2br}}
-    {% endif %}
-{% endblock %}
 {% block header %}{% endblock %}
 {% block main %}
-    <div class="row">
-        <div class="col-md-12">
-            {% if assets|length == 1 %}
-                {% if assets[0]['assets_notes']|length > 0 and INSTANCE['publicData']['enableAssetNotes'] %}
-                <div class="callout callout-default">
-                    {{ assets[0]['assets_notes']|nl2br }}
-                </div>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% if assets|length > 1 %}
-        <div class="col-md-12">
-            <table class="table table-head-fixed">
-                <tr>
-                    <th style="width:70px;">ID</th>
-                    {% for field in asset.fields %}
-                        <th>{{ field }}</th>
+    <div class="row h-100">
+        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-4 bg-light p-3 order-lg-12 order-xl-12 border flex-grow-1">
+            {% if asset.thumbnail %}
+                <div class="text-center {{ asset.thumbnail|length > 1 ? 'slick' : '' }}">
+                    {% for thumb in asset.thumbnail %}
+                        <div>
+                            <img class="img-fluid" style="max-height: 340px;"
+                                 src="{{ thumb.s3files_id|s3URL }}"
+                                 alt="{{asset.assetTypes_name}}">
+                        </div>
                     {% endfor %}
-                    {% if INSTANCE['publicData']['enableAssetNotes'] %}
-                    <th>Notes</th>
+                </div>
+            {% endif %}
+            <h3 class="profile-username text-center">{{asset.assetTypes_name}}</h3>
+            {% if assets|length == 1 %}
+                <p class="text-muted text-center">{{ assets[0].assets_tag|aTag }}</p>
+            {% endif %}
+
+            <ul class="list-group list-group-unbordered mb-3">
+                {% if assets|length == 1 %}
+                    {% set assetFieldsLength = 0 %}
+                    {% for field in asset.fields %}
+                        {% if field != "" %}
+                            {% set assetFieldsLength = assetFieldsLength +1 %}{# Build a count of the number of fields use to help editing an asset #}
+                            <li class="list-group-item">
+                                <b>{{field}}</b> <a class="float-right">{{ assets[0]['asset_definableFields_' ~ loop.index] }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if asset.assetTypes_productLink != null %}
+                    <li class="list-group-item">
+                        <b>Product Web Link</b> <a class="float-right" href="{{ asset.assetTypes_productLink }}" target="_blank">{{ asset.assetTypes_productLink|length > 25 ? asset.assetTypes_productLink|slice(0, 25) ~ '...': asset.assetTypes_productLink  }}</a>
+                    </li>
+                {% endif %}
+                <li class="list-group-item">
+                    <b>Category</b> {{ asset.assetCategoriesGroups_name }} - {{ asset.assetCategories_name }}
+                </li>
+                <li class="list-group-item">
+                    <b>Manufacturer</b> {{ asset.manufacturers_name }}
+                </li>
+                {% if assets|length == 1 %}
+                    {# Because there's just one asset it might have a load of specific overrides so we had better show those #}
+                    <li class="list-group-item">
+                        <b>Mass</b> <a class="float-right">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</a>
+                    </li>
+                    {% if INSTANCE['publicData']['enableAssetsValues'] %}
+                        <li class="list-group-item">
+                            <b>Value</b> <a class="float-right">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money(INSTANCE['instances_config_currency']) }}</a>
+                        </li>
                     {% endif %}
                     {% if INSTANCE['publicData']['enableAssetsValues'] %}
-                    <th>Value</th>
+                        <li class="list-group-item">
+                            <b>Day Rate</b> <a class="float-right">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(INSTANCE['instances_config_currency']) }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(INSTANCE['instances_config_currency']) }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li class="list-group-item">
+                        <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
+                    </li>
+                    {% if INSTANCE['publicData']['enableAssetsValues'] %}
+                        <li class="list-group-item">
+                            <b>Value</b> <a class="float-right">{{ asset.assetTypes_value|money(INSTANCE['instances_config_currency']) }}</a>
+                        </li>
                     {% endif %}
                     {% if INSTANCE['publicData']['enableAssetsPrices'] %}
-                    <th>&pound;/day</th>
-                    <th>&pound;/week</th>
+                        <li class="list-group-item">
+                            <b>Day Rate</b> <a class="float-right">{{ asset.assetTypes_dayRate|money(INSTANCE['instances_config_currency']) }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Week Rate</b> <a class="float-right">{{ asset.assetTypes_weekRate|money(INSTANCE['instances_config_currency']) }}</a>
+                        </li>
                     {% endif %}
-                    <th></th>
-                </tr>
-                {% for thisasset in assets %}
-                    <tr>
-                        <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}">{{ thisasset.assets_tag|aTag }}</a></td>
-                        {% for field in asset.fields %}
-                            <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
-                        {% endfor %}
-                        {% if INSTANCE['publicData']['enableAssetNotes'] %}
-                        <td>{{ thisasset['assets_notes']|nl2br }}</td>
-                        {% endif %}
-                        {% if INSTANCE['publicData']['enableAssetsValues'] %}
-                        <td>
-                            {{ (thisasset.assets_value ?: asset.assetTypes_value)|money(INSTANCE['instances_config_currency']) }}
-                        </td>
-                        {% endif %}
-                        {% if INSTANCE['publicData']['enableAssetsPrices'] %}
-                        <td>
-                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(INSTANCE['instances_config_currency']) }}
-                        </td>
-                        <td>
-                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(INSTANCE['instances_config_currency']) }}
-                        </td>
-                        {% endif %}
-                        <td>
-                            <div class="btn-group">
-                                <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+                {% endif %}
+            </ul>
+            {% if asset.oneasset %}
+                <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
+            {% endif %}
+            {% if INSTANCE['publicData']['enableAssetDescriptions'] %}
+                {{asset.assetTypes_description|nl2br}}
+            {% endif %}
         </div>
-        {% endif %}
+        <div class="col-sm-12 col-md-12 col-lg-9 col-xl-8 order-lg-1 order-xl-1">
+            <div class="row">
+                <div class="col-md-12">
+                    {% if assets|length == 1 %}
+                        {% if assets[0]['assets_notes']|length > 0 and INSTANCE['publicData']['enableAssetNotes'] %}
+                            <div class="callout callout-default">
+                                {{ assets[0]['assets_notes']|nl2br }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% if assets|length > 1 %}
+                    <div class="col-md-12">
+                        <table class="table table-head-fixed">
+                            <tr>
+                                <th style="width:70px;">ID</th>
+                                {% for field in asset.fields %}
+                                    <th>{{ field }}</th>
+                                {% endfor %}
+                                {% if INSTANCE['publicData']['enableAssetNotes'] %}
+                                    <th>Notes</th>
+                                {% endif %}
+                                {% if INSTANCE['publicData']['enableAssetsValues'] %}
+                                    <th>Value</th>
+                                {% endif %}
+                                {% if INSTANCE['publicData']['enableAssetsPrices'] %}
+                                    <th>&pound;/day</th>
+                                    <th>&pound;/week</th>
+                                {% endif %}
+                                <th></th>
+                            </tr>
+                            {% for thisasset in assets %}
+                                <tr>
+                                    <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}">{{ thisasset.assets_tag|aTag }}</a></td>
+                                    {% for field in asset.fields %}
+                                        <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
+                                    {% endfor %}
+                                    {% if INSTANCE['publicData']['enableAssetNotes'] %}
+                                        <td>{{ thisasset['assets_notes']|nl2br }}</td>
+                                    {% endif %}
+                                    {% if INSTANCE['publicData']['enableAssetsValues'] %}
+                                        <td>
+                                            {{ (thisasset.assets_value ?: asset.assetTypes_value)|money(INSTANCE['instances_config_currency']) }}
+                                        </td>
+                                    {% endif %}
+                                    {% if INSTANCE['publicData']['enableAssetsPrices'] %}
+                                        <td>
+                                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(INSTANCE['instances_config_currency']) }}
+                                        </td>
+                                        <td>
+                                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(INSTANCE['instances_config_currency']) }}
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-
-
-
-        <script>
-            $(document).ready(function () {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-                $('.slick').slick({
-                    dots: true,
-                    arrows: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    infinite: true,
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    autoplay: true,
-                    autoplaySpeed: 5000,
-                    fade: true,
-                    cssEase: 'linear'
-                });
+    <script>
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
             });
-        </script>
+            $('.slick').slick({
+                dots: true,
+                arrows: false,
+                pauseOnHover: true,
+                draggable: false,
+                infinite: true,
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 5000,
+                fade: true,
+                cssEase: 'linear'
+            });
+        });
+    </script>
 {% endblock %}

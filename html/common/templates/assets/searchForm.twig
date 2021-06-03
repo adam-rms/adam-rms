@@ -7,18 +7,17 @@
     <div class="form-group">
         <button type="submit" class="btn btn-default btn-outline-success">Search</button>
         <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
-        {% if PUBLIC %}
-        <a href="/" class="btn btn-default btn-outline-info"><i class="fas fa-home"></i></a>
-        {% endif %}
     </div>
     <div class="form-group">
         <label>Keywords (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="keyword[]"></select>
     </div>
+    {% if not PUBLIC %}
     <div class="form-group">
         <label>Tags (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="tags[]"></select>
     </div>
+    {% endif %}
     <div class="form-group">
         <label>Category</label>
         <select class="form-control select2bs4" multiple name="category[]"></select>
