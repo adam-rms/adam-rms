@@ -57,12 +57,12 @@ $CONFIG = array(
         ],
         'SLACK' => [
             'keys' => [
-                'id' => getenv('bCMS__OAUTH__SLACKKEY'),
+                'id' => getenv('bCMS__OAUTH__SLACKID'),
                 'secret' => getenv('bCMS__OAUTH__SLACKSECRET')
             ],
         ]
     ],
-    'SLACK_KEY' => getenv('bCMS__OAUTH__SLACKBOT'),
+    'SLACK_BOT_OAUTH' => getenv('bCMS__OAUTH__SLACKBOT'),
     'NOTIFICATIONS' => [
         "METHODS" => [
             0 => "Post",

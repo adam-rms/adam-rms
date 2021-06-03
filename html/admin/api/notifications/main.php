@@ -28,8 +28,8 @@ function notify($typeID, $userid, $instanceID, $headline, $message = false, $ema
                     //Mobile Push
                     break;
                 case 4:
-                    sendSlackNotification($user, $headline);
                     //Slack
+                    sendSlackNotification($user, $headline);
                     break;
             }
         }
