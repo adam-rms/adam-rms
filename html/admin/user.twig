@@ -193,26 +193,6 @@
                                             <th>{{method}}</th>
                                         {% endfor %}
                                     </tr>
-                                    <tr>
-                                        <h4>Slack</h4>
-                                        {% if user.users_oauth_slackid %}
-                                            <button class="btn btn-danger" id="disconnectOAuthSlack"><i class="fab fa-slack"></i>Disconnect Slack Account</button>
-                                            <script>
-                                                $(document).ready(function() {
-                                                    $('#disconnectOAuthSlack').click(function() {
-                                                        ajaxcall("account/disconnectOAuth.php", {
-                                                            "users_userid": "{{ user.users_userid }}",
-                                                            'provider' : "slack",
-                                                        }, function (data) {
-                                                            location.reload();
-                                                        });
-                                                    });
-                                                });
-                                            </script>
-                                        {% else %}
-                                            <a href="{{ CONFIG.ROOTURL }}/api/account/linkOAuth.php?slack" class="btn btn-default"><i class="fab fa-slack"></i> Link to Slack</a>
-                                        {% endif %}
-                                    </tr>
                                     </thead>
                                     <tbody>
                                     {% set category = "" %}
@@ -334,6 +314,25 @@
                                 </script>
                             {% else %}
                                 <a href="{{ CONFIG.ROOTURL }}/api/account/linkOAuth.php?google" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                            {% endif %}
+
+                            <h4 class="pt-2">Slack</h4>
+                            {% if user.users_oauth_slackid %}
+                                <button class="btn btn-danger" id="disconnectOAuthSlack"><i class="fab fa-slack"></i> Disconnect Slack Account</button>
+                                <script>
+                                    $(document).ready(function() {
+                                        $('#disconnectOAuthSlack').click(function() {
+                                            ajaxcall("account/disconnectOAuth.php", {
+                                                "users_userid": "{{ user.users_userid }}",
+                                                'provider' : "slack",
+                                            }, function (data) {
+                                                location.reload();
+                                            });
+                                        });
+                                    });
+                                </script>
+                            {% else %}
+                                <a href="{{ CONFIG.ROOTURL }}/api/account/linkOAuth.php?slack" class="btn btn-default"><i class="fab fa-slack"></i> Link to Slack</a>
                             {% endif %}
                         </div>
                         {% endif %}
