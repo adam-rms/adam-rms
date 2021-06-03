@@ -3,5 +3,31 @@
 
 {% endblock %}
 {% block content %}
-    CMS Page view stats coming soon
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        This Week
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>Today: {{ stats.today }}</p>
+                    <p>This Week: {{ stats.week }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Somthing else
+                    </h3>
+                </div>
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
