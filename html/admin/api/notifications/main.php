@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHead.php'; //Can't be head secure as this is used by pages that aren't secure
 require_once __DIR__ . '/email/email.php';
+require_once __DIR__ . '/slack/slack.php';
 function notify($typeID, $userid, $instanceID, $headline, $message = false, $emailTemplate = false, $array = false) {
     global $CONFIG,$bCMS;
     foreach ($CONFIG['NOTIFICATIONS']['TYPES'] as $typeList) {
@@ -27,6 +28,7 @@ function notify($typeID, $userid, $instanceID, $headline, $message = false, $ema
                     //Mobile Push
                     break;
                 case 4:
+                    sendSlackNotification($user, $headline);
                     //Slack
                     break;
             }

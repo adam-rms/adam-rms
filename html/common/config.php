@@ -62,6 +62,7 @@ $CONFIG = array(
             ],
         ]
     ],
+    'SLACK_KEY' => getenv('bCMS__OAUTH__SLACKBOT'),
     'NOTIFICATIONS' => [
         "METHODS" => [
             0 => "Post",
