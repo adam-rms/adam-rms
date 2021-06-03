@@ -24,13 +24,13 @@ if (isset($_GET['google'])) {
     $adapter->disconnect(); //Disconnect this authentication from the session, so they can pick another account
     if (strlen($userProfile->identifier) < 1) {
         //ISSUE WITH PROFILE
-        header("Location: " . $CONFIG['ROOTURL']. "/account.php");
+        header("Location: " . $CONFIG['ROOTURL']. "/user.php");
         exit;
     }
 
     $DBLIB->where("users_oauth_googleid", $userProfile->identifier);
     $user = $DBLIB->getOne("users", ["users.users_userid"]);
-    if (strlen($userProfile->emailVerified) < 1) die('Please verify your email with Google before trying to link it to AdamRMS.' . '<a href="' . $CONFIG['ROOTURL'] . "/account.php" . '">Continue</a>');
+    if (strlen($userProfile->emailVerified) < 1) die('Please verify your email with Google before trying to link it to AdamRMS.' . '<a href="' . $CONFIG['ROOTURL'] . "/user.php" . '">Continue</a>');
 
     if ($user and $user['users_userid'] != $AUTH->data['users_userid']) {
         //If its linked to another account remove the link to link it to this one
@@ -40,6 +40,6 @@ if (isset($_GET['google'])) {
 
     $DBLIB->where("users_userid",$AUTH->data['users_userid']);
     $DBLIB->update("users",["users_oauth_googleid"=>$userProfile->identifier]);
-    header("Location: " . $CONFIG['ROOTURL'] . "/account.php");
+    header("Location: " . $CONFIG['ROOTURL'] . "/user.php");
     exit;
 }

@@ -60,6 +60,11 @@ The following assumes you already have a local development environment setup and
 
 Each time you pull new changes written by others you will likely need to update your local database by running the Phinx migrate command. Phinx migrations are automatically run on the production server in the dockerfile.
 
+### Tips & Tools
+
+- Database library used: [ThingEngineer/PHP-MySQLi-Database-Class](https://github.com/ThingEngineer/PHP-MySQLi-Database-Class)
+- Debugging the public sites feature locally: set `instances_publicConfig` in the `instances` table for your instance to something like `{"enabled":true,"enableAssets":true,"enableAssetAvailability":true,"enableAssetDescriptions":true,"enableAssetNotes":true,"enableVacancies":true,"footerText":"","headerImage":null,"homepageHTML":"","customDomains":["localhost"]}`. The main thing is to make sure localhost is in customDomains. 
+
 ### Glossary of Terms
 
  - Instance = Business 

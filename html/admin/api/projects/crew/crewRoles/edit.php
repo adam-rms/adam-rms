@@ -31,8 +31,16 @@ if ($array['projectsVacantRoles_id'] == "NEW") {
     finish(true);
 } else {
     unset($array['projects_id']); //Don't allow them to change project for a role
+
     $DBLIB->where("projectsVacantRoles_deleted", 0);
     $DBLIB->where("projectsVacantRoles_id",$array['projectsVacantRoles_id']);
+    $projectVacantRole = $DBLIB->getone("projectsVacantRoles", ["projectsVacantRoles_id","projectsVacantRoles_privateToPM"]);
+    if (!$projectVacantRole) finish(false);
+
+    if ($projectVacantRole['projectsVacantRoles_privateToPM'] == 1) $array['projectsVacantRoles_privateToPM'] = 1; //Prevent applications being made visible to others once locked to the PM
+
+    $DBLIB->where("projectsVacantRoles_deleted", 0);
+    $DBLIB->where("projectsVacantRoles_id",$projectVacantRole['projectsVacantRoles_id']);
     $update = $DBLIB->update("projectsVacantRoles", $array,1);
     if (!$update) finish(false);
 

@@ -46,7 +46,15 @@
                                     {{ role.projectsVacantRoles_name }}
                                 </td>
                                 <td>
-                                    {{ role.projectsVacantRoles_slotsFilled >= role.projectsVacantRoles_slots ? 'FULL' : role.projectsVacantRoles_open == 1 ? 'OPEN' : 'HIDDEN' }}
+                                    {% if role.projectsVacantRoles_slotsFilled >= role.projectsVacantRoles_slots %}
+                                        FULL
+                                    {% elseif role.projectsVacantRoles_deadline and date(role.projectsVacantRoles_deadline) < date() %}
+                                        DEADLINE PASSED
+                                    {% elseif role.projectsVacantRoles_open == 1 %}
+                                        OPEN
+                                    {% else %}
+                                         HIDDEN
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {{ role.projectsVacantRoles_deadline ? role.projectsVacantRoles_deadline|date("d M Y h:ia") : '' }}

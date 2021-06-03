@@ -1,6 +1,6 @@
 <?php
 require_once 'common/head.php';
-if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableVacancies']) die("");
+if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableVacancies']) die($TWIG->render('404Public.twig', $PAGEDATA));
 
 date_default_timezone_set('Europe/London'); //So deadlines show in right timezone
 $PAGEDATA['pageConfig'] = ["TITLE" => "Crew Role Vacancies", "BREADCRUMB" => false];

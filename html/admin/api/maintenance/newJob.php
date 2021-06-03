@@ -8,10 +8,13 @@ foreach ($_POST['formData'] as $item) {
     if (!isset($item['value'])) $item['value'] = null; //bug fix for nobody being tagged
     $array[$item['name']] = $item['value'];
 }
+foreach ($_POST as $name=>$item) {
+    $array[$name] = $item; //Use POST too (for the app)
+}
 $array['instances_id'] = $AUTH->data['instance']["instances_id"];
 $array['maintenanceJobs_timestamp_added'] = date('Y-m-d H:i:s');
-if (count($array['maintenanceJobs_assets']) < 1) finish(false, ["code" => "NO-ASSETS", "message"=> "No assets"]);
-$array['maintenanceJobs_assets'] = implode(",", $array['maintenanceJobs_assets']);
+
+if ($array['maintenanceJobs_assets'] == "") finish(false, ["code" => "NO-ASSETS", "message"=> "No assets"]);
 
 if ($array["maintenanceJobs_user_tagged"] == "" or !isset($array["maintenanceJobs_user_tagged"])) $array["maintenanceJobs_user_tagged"] = [];
 $array["maintenanceJobs_user_taggedFINAL"] = [];
@@ -20,9 +23,11 @@ foreach ($array["maintenanceJobs_user_tagged"] as $user) {
 }
 $array['maintenanceJobs_user_tagged'] = implode(",", $array['maintenanceJobs_user_taggedFINAL']);
 
+if (!$array['maintenanceJobs_user_creator']) $array['maintenanceJobs_user_creator'] =  $AUTH->data['users_userid'];
+
 //TODO verify these users are in the instance
 $result = $DBLIB->insert("maintenanceJobs", array_intersect_key( $array, array_flip( ['maintenanceJobs_assets','maintenanceJobs_title','maintenanceJobs_timestamp_added','maintenanceJobs_user_creator','maintenanceJobs_user_assignedTo','maintenanceJobs_faultDescription','maintenanceJobs_priority',"instances_id","maintenanceJobs_user_tagged"] ) ));
-if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert job"]);
+if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert job" . $DBLIB->getlasterror()]);
 else {
     $bCMS->auditLog("INSERT", "maintenanceJobs", null, $AUTH->data['users_userid'],null, null,$result);
     $bCMS->auditLog("CHANGE-TITLE", "maintenanceJobs", "Set the title to ". $array['maintenanceJobs_title'], $AUTH->data['users_userid'],null, null,$result);

@@ -10,6 +10,7 @@ if (isset($_POST['formData'])) {
         $_GET[$item['name']] = $item['value'];
     }
 }
+if (isset($_POST['id'])) $_GET['id'] = $_POST['id'];
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) finish(false);
 
 //The project itself
@@ -237,13 +238,19 @@ $PAGEDATA['project']['crewAssignments'] = $DBLIB->get("crewAssignments", null, [
 //Files
 $PAGEDATA['files'] = $bCMS->s3List(7, $PAGEDATA['project']['projects_id']);
 
-$PAGEDATA['pdfs'] = $bCMS->s3List(12, $PAGEDATA['project']['projects_id']);
+$PAGEDATA['pdfs'] = $bCMS->s3List(20, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
+
+$DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
+$DBLIB->where("assetsAssignmentsStatus.instances_id", $AUTH->data['instance']['instances_id']);
+$PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
 
 $DATA = [
     "project" => $PAGEDATA['project'],
+    "files" => $PAGEDATA['files'],
+    "assetsAssignmentsStatus" => $PAGEDATA['assetsAssignmentsStatus'],
     'FINANCIALS' => $PAGEDATA['FINANCIALS']
-]; //Data that's safe to return
+]; //Data that's safe to return to the app
 
 
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) finish(true, null, $DATA);

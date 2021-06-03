@@ -87,6 +87,11 @@
                     <b>{{ project.users_name1 ~ " " ~ project.users_name2  }}</b><br/>
                     {{ project.users_email }}
                 {% endif %}
+                {% if fileNumber %}
+                    <br/><br/>v{{ fileNumber }}
+                {% else %}
+                    <br/><br/><b>Draft Printout</b>
+                {% endif %}
             </td>
         </tr>
     </table>
@@ -230,7 +235,7 @@
     {% endif %}
 </div>
 {% if GET['assets'] and project.projectsTypes_config_assets == 1 %}
-    <pagebreak/><p style="page-break-before: always"></p>
+    <p style="page-break-before: always"></p>
 <h2>Equipment</h2>
 {% if FINANCIALS.assetsAssigned|length > 0 %}
     {% embed 'project/twigIncludes/assetList/tablePDF.twig' with {"instanceid": USERDATA.instance.instances_id} %}
@@ -357,7 +362,7 @@
 
 
 
-<pagebreak/><p style="page-break-before: always"></p>
+<p style="page-break-before: always"></p>
 {% if FINANCIALS.payments.subHire.ledger|length > 0 and project.projectsTypes_config_finance == 1 and GET['subHires']  %}
     <h2>Additional Hire Items</h2>
     <table border="0">

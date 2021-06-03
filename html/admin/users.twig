@@ -26,14 +26,6 @@
                             <input type="text" name="q" class="form-control pull-right" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                {% if 4|permissions %}
-                                    <button type="button" title="Add new User" id="addNewUserButton" class="btn btn-default"><i class="fa fa-plus"></i></button>
-                                    <script>
-                                        $("#addNewUserButton").click(function () {
-                                            window.location.href = "{{ CONFIG.ROOTURL }}/account.php?new";
-                                        });
-                                    </script>
-                                {% endif %}
                             </div>
 
                         </form>
@@ -100,6 +92,7 @@
 
                                     </td>
                                     <td>
+                                        <div class="btn-group">
                                         {% if 6|permissions %}
                                             <button type="button" title="View Mailings for user" class="btn btn-info"
                                                     data-toggle="modal"
@@ -109,7 +102,7 @@
                                         {% endif %}
                                         {% if user.users_userid != USERDATA.users_userid %}
                                             {% if 5|permissions %}
-                                                <a href="{{ CONFIG.ROOTURL }}/account.php?uid={{ user["users_userid"] }}"
+                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user["users_userid"] }}"
                                                    type="button" title="Edit user" class="btn btn-default"><i
                                                             class="fa fa-pencil-alt"></i></a>
                                             {% endif %}
@@ -139,7 +132,7 @@
                                                 </a>
                                             {% endif %}
                                         {% endif %}
-
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}

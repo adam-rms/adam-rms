@@ -1,0 +1,11 @@
+{% extends 'templatePublic.twig' %}
+{% block main %}
+   <h2>{{ INSTANCE.instances_name }} wants to share the file {{ file.s3files_name }} with you.</h2>
+   <ul>
+      <li>Uploaded: {{ file.s3files_meta_uploaded|date("d M Y G:i") }}</li>
+      <li>File type: {{ file.s3files_extension }}</li>
+      <li>Size: {{ file.s3files_meta_size|formatsize }}</li>
+   </ul>
+   <p>Please note that this file has not been scanned for viruses.</p>
+   <a href="{{ url }}" class="btn btn-secondary">Download</a>
+{% endblock %}

@@ -1,8 +1,5 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
-
-header('Content-type: application/json');
-
 if (!$AUTH->permissionCheck(13)) die("Sorry - you can't access this page");
 
 if (!isset($_POST['action']) or !isset($_POST['users_userid']) or !isset($_POST["userPositions_id"])) finish(false, ["code" => null, "message"=> "Attribute error"]);
@@ -27,7 +24,7 @@ if ($_POST['action'] == "DELETE") {
         if ($DBLIB->insert("userPositions",$data)) {
             $bCMS->auditLog("CREATE", "userPositions", json_encode($data), $AUTH->data['users_userid'],$bCMS->sanitizeString($_POST["users_userid"]));
             finish(true);
-        } else finish(false, ["code" => null, "message"=> "Insert error"]);
+        } else finish(false, ["code" => null, "message"=> "Insert error" . $DBLIB->getlastError()]);
     } else {
         $DBLIB->where("users_userid", $bCMS->sanitizeString($_POST["users_userid"]));
         $DBLIB->where("userPositions_id", $bCMS->sanitizeString($_POST["userPositions_id"]));

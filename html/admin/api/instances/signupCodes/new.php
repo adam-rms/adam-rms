@@ -9,6 +9,10 @@ foreach ($_POST['formData'] as $item) {
 }
 if (strlen($array['signupCodes_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
+
+$DBLIB->where("signupCodes_name", $array['signupCodes_name']);
+if ($DBLIB->getOne("signupCodes",["signupCodes_id"])) finish(false, ["message"=>"Sorry this code is in use"]);
+
 $insert = $DBLIB->insert("signupCodes", $array);
 if (!$insert) finish(false);
 
