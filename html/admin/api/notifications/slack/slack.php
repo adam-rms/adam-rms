@@ -10,7 +10,7 @@ function sendSlackNotification($user, $subject)
 
     if (!$user or $channel_id == '') return false; //If the user hasn't linked slack yet
 
-    $token = $CONFIG['SLACK_KEY'];
+    $token = $CONFIG['SLACK_BOT_OAUTH'];
 
     // TODO add more detailed templates for slack notifications, will involve looking at the notify function because atm it only deals with email templates
     if ($token != null) {
