@@ -16,28 +16,8 @@ function sendSlackNotification($user, $subject)
     if ($token != null) {
         $data = array(
             "channel" => $channel_id,
-            'blocks' =>
-                    array (
-                        0 =>
-                            array (
-                                'type' => 'header',
-                                'text' =>
-                                    array (
-                                        'type' => 'plain_text',
-                                        'text' => $subject,
-                                        'emoji' => true,
-                                    ),
-                            ),
-                        1 =>
-                            array (
-                                'type' => 'section',
-                                'text' =>
-                                    array (
-                                        'type' => 'mrkdwn',
-                                        'text' => '<dash.adam-rms.com|Login to AdamRMS>',
-                                    ),
-                            ),
-                    ),
+            'type' => 'plain_text',
+            'text' => $subject
         );
 
         $json_string = json_encode($data);
