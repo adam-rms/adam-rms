@@ -54,6 +54,12 @@ $CONFIG = array(
                 'secret' => getenv('bCMS__OAUTH__GOOGLESECRET')
             ],
             'scope' => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
+        ],
+        'SLACK' => [
+            'keys' => [
+                'id' => getenv('bCMS__OAUTH__SLACKKEY'),
+                'secret' => getenv('bCMS__OAUTH__SLACKSECRET')
+            ],
         ]
     ],
     'NOTIFICATIONS' => [
