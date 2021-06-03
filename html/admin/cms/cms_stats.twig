@@ -4,30 +4,81 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-3">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
-                        This Week
+                        Views over time
                     </h3>
+                    <div class="card-tools pull-right">
+                        <div class="input-group input-group-sm">
+                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTURL }}/cms/?p={{ cmsPages_id }}"><i class="far fa-eye"></i></a>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <p>Today: {{ stats.today }}</p>
-                    <p>This Week: {{ stats.week }}</p>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Today</th>
+                                <th>This Week</th>
+                                <th>All Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ stats.today }}</td>
+                                <td>{{ stats.week }}</td>
+                                <td>{{ stats.all }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Somthing else
-                    </h3>
-                </div>
-                <div class="card-body">
-
+        {% if 52|instancePermissions %}
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Views By User
+                        </h3>
+                        <div class="card-tools pull-right">
+                            <div class="input-group input-group-sm">
+                                {% if 128|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/log.php?p={{ cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Page View Log"><i class="fas fa-binoculars"></i></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Times Accessed</th>
+                                    <th>Last Accessed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in userViews %}
+                                    <tr>
+                                        <td>{% if entry.users_userid != null %}
+                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
+                                                    {{ entry.username.users_name1 }} {{ entry.username.users_name2 }}
+                                                </a>
+                                            {% else %}
+                                                Public access
+                                            {% endif %}</td>
+                                        <td>{{ entry.accessed }}</td>
+                                        <td>{{ entry.last }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
