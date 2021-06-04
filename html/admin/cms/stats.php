@@ -8,7 +8,8 @@ if (!isset($_GET['p']) or strlen($_GET['p']) < 1) die($TWIG->render('404.twig', 
 $PAGEDATA['cmsPages_id'] = $_GET['p'];
 //get all views for page
 $DBLIB->where("cmsPages_id",$_GET['p']);
-$views = $DBLIB->get("cmspagesviews");
+$DBLIB->orderBy("cmsPagesViews_timestamp","ASC");
+$views = $DBLIB->get("cmsPagesViews");
 
 /**
  * Hello future editor of this
@@ -41,7 +42,7 @@ foreach ($views as $key => $view){
     $PAGEDATA['stats']['all'] ++; //all records
 
     //This bit is for views by user
-    if (array_key_exists($view['users_userid'], $accessedUsers)){
+    if (isset($accessedUsers[$view['users_userid']])) {
         //user already exists so just increment
         $accessedUsers[$view['users_userid']]['accessed'] ++;
     } else {
@@ -51,7 +52,7 @@ foreach ($views as $key => $view){
         //get username
         $accessedUsers[$view['users_userid']]['users_userid'] = $view['users_userid'];
         $DBLIB->where("users_userid", $view['users_userid']);
-        $accessedUsers[$view['users_userid']]['username'] = $DBLIB->getOne("users", "users_name1, users_name2");
+        $accessedUsers[$view['users_userid']]['username'] = $DBLIB->getOne("users", ["users_name1", "users_name2"]);
     }
     //update timestamp as should be newer - should probs check this but oh well
     $accessedUsers[$view['users_userid']]['last'] = $view['cmsPagesViews_timestamp'];
