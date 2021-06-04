@@ -10,18 +10,18 @@
                     <h3 class="card-title">CMS Page Access</h3>
                     <div class="card-tools pull-right">
                         <div class="input-group input-group-sm">
-                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTURL }}/cms/?p={{ cmsPages_id }}"><i class="far fa-eye"></i></a>
+                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTURL }}/cms/?p={{ cmsPages_id }}">View Page</a>
                             <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body table-responsive p-0">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Time/Date</th>
+                                <th>Timestamp</th>
                                 {% if 52|instancePermissions %}
-                                <th>User Id</th>
+                                <th>User</th>
                                 {% endif %}
                             </tr>
                         </thead>
@@ -29,17 +29,19 @@
                             {% for entry in VIEWERS %}
                                 <tr>
                                     <td>{{ entry.cmsPagesViews_timestamp }}</td>
-                                    {% if 52|instancePermissions %}
                                     <td>
                                         {% if entry.users_userid != null %}
+                                            {% if 52|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
-                                                    {{ entry.user.users_name1 }} {{ entry.user.users_name2 }}
+                                                    {{ entry.users_name1 }} {{ entry.users_name2 }}
                                                 </a>
+                                            {% else %}
+                                                {{ entry.users_name1 }} {{ entry.users_name2 }}
+                                            {% endif %}
                                         {% else %}
                                             Public access
                                         {% endif %}
                                     </td>
-                                    {% endif %}
                                 </tr>
                             {% endfor %}
                         </tbody>

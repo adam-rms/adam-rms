@@ -6,14 +6,10 @@ if (!$AUTH->instancePermissionCheck(128)) die($TWIG->render('404.twig', $PAGEDAT
 if (!isset($_GET['p']) or strlen($_GET['p']) < 1) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['cmsPages_id'] = $_GET['p'];
+$DBLIB->orderBy("cmsPagesViews_timestamp","ASC");
+$DBLIB->join("users","cmsPagesViews.users_userid=users.users_userid","LEFT");
 $DBLIB->where("cmsPages_id",$_GET['p']);
-
-$PAGEDATA['VIEWERS'] = $DBLIB->get("cmspagesviews");
-
-foreach ($PAGEDATA['VIEWERS'] as $key => $view){
-    $DBLIB->where("users_userid", $view['users_userid']);
-    $PAGEDATA['VIEWERS'][$key]['user'] = $DBLIB->getOne("users", "users_name1, users_name2");
-}
+$PAGEDATA['VIEWERS'] = $DBLIB->get("cmsPagesViews",null,["cmsPagesViews.*","users.users_name1","users.users_name2","users.users_userid"]);
 
 echo $TWIG->render('cms/cms_log.twig', $PAGEDATA);
 ?>
