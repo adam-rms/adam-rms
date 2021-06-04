@@ -63,13 +63,19 @@
                             <tbody>
                                 {% for entry in userViews %}
                                     <tr>
-                                        <td>{% if entry.users_userid != null %}
-                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
-                                                    {{ entry.username.users_name1 }} {{ entry.username.users_name2 }}
-                                                </a>
+                                        <td>
+                                            {% if entry.users_userid != null %}
+                                                {% if 52|instancePermissions %}
+                                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
+                                                        {{ entry.user.users_name1 }} {{ entry.user.users_name2 }}
+                                                    </a>
+                                                {% else %}
+                                                    {{ entry.user.users_name1 }} {{ entry.user.users_name2 }}
+                                                {% endif %}
                                             {% else %}
                                                 Public access
-                                            {% endif %}</td>
+                                            {% endif %}
+                                        </td>
                                         <td>{{ entry.accessed }}</td>
                                         <td>{{ entry.last }}</td>
                                     </tr>
