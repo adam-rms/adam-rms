@@ -1,9 +1,36 @@
 {% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css" integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js" integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js" integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.css" />
+    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick-theme.css" />
+    <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.min.js"></script>
+{% endblock %}
 {% block content %}
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
-
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#list" data-toggle="tab">View All</a></li>
+                <li class="nav-item"><a class="nav-link" href="#calendarBoxProjects" data-toggle="tab" aria-label="calendar"><i class="far fa-calendar-alt"></i></a></li>
+            </ul>
             <div class="card-tools">
                 <form class="input-group input-group-sm"  method="GET">
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
@@ -15,109 +42,173 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-striped projects">
-                <thead>
-                <tr>
-                    <th style="width: 1%">
-                        #
-                    </th>
-                    <th>
-                        Title
-                    </th>
-                    {% if potentialProjectTypes|length > 1 %}
-                    <th style="width: 10%">
-                        Type
-                    </th>
-                    {% endif %}
-                    <th style="width: 24%">
-                        Client
-                    </th>
-                    <th style="width: 6rem;">
-                        Manager
-                    </th>
-                    <th style="width: 8rem;">
-                        Outstanding
-                    </th>
-                    <th style="width: 11rem;">
-                        Payments Received
-                    </th>
-                    <th style="width: 15%">
-                        Status
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {% set archive = false %}
-                {% for project in PROJECTSLIST %}
-                    {% if archive == false and project.projects_archived == 1 %}
-                        {% set archive = true %}
-                        <tr style="background-color: #ffffff;">
-                            <td colspan="{{ potentialProjectTypes|length > 1 ? 8 : 7 }}">
-                                <b>Archived Projects</b>
-                            </td>
+            <div class="tab-content">
+                <div class="active tab-pane" style="padding: 1.25rem" id="list">
+                    <table class="table table-striped projects">
+                        <thead>
+                        <tr>
+                            <th style="width: 1%">
+                                #
+                            </th>
+                            <th>
+                                Title
+                            </th>
+                            {% if potentialProjectTypes|length > 1 %}
+                            <th style="width: 10%">
+                                Type
+                            </th>
+                            {% endif %}
+                            <th style="width: 24%">
+                                Client
+                            </th>
+                            <th style="width: 6rem;">
+                                Manager
+                            </th>
+                            <th style="width: 8rem;">
+                                Outstanding
+                            </th>
+                            <th style="width: 11rem;">
+                                Payments Received
+                            </th>
+                            <th style="width: 15%">
+                                Status
+                            </th>
                         </tr>
-                    {% endif %}
-                    <tr>
-                        <td>
-                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">#{{ project.projects_id }}</a>
-                        </td>
-                        <td>
-                            <a>
-                                {{ project.projects_name }}
-                            </a>
-                            <br/>
-                            <small>
-                                {{project.projects_dates_use_start|date("d M Y h:ia")}} - {{project.projects_dates_use_end|date("d M Y h:ia")}}
-                            </small>
-                        </td>
-                        {% if potentialProjectTypes|length > 1 %}
-                            <td>
-                                {{ project.projectsTypes_name }}
-                            </td>
-                        {% endif %}
-                        <td>
-                            {% if project.projectsTypes_config_client == 1 %}
-                            <a href="?client={{ project.clients_id }}">
-                                {{ project.clients_name }}
-                            </a>
+                        </thead>
+                        <tbody>
+                        {% set archive = false %}
+                        {% for project in PROJECTSLIST %}
+                            {% if archive == false and project.projects_archived == 1 %}
+                                {% set archive = true %}
+                                <tr style="background-color: #ffffff;">
+                                    <td colspan="{{ potentialProjectTypes|length > 1 ? 8 : 7 }}">
+                                        <b>Archived Projects</b>
+                                    </td>
+                                </tr>
                             {% endif %}
-                        </td>
-                        <td>
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                        <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                            <tr>
+                                <td>
+                                    <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">#{{ project.projects_id }}</a>
+                                </td>
+                                <td>
+                                    <a>
+                                        {{ project.projects_name }}
                                     </a>
-                                </li>
-                            </ul>
-                        </td>
-                        <td>
-                            {% if project.projectsTypes_config_finance == 1 %}
-                            {{ (project.finance.projectsFinanceCache_grandTotal|moneyPositive ? project.finance.projectsFinanceCache_grandTotal|money : '') }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if project.projectsTypes_config_finance == 1 %}
-                            {{ project.finance.projectsFinanceCache_paymentsReceived|money }}
-                            {% endif %}
-                        </td>
-                        <td class="project_progress">
-                            {{ STATUSES[project.projects_status]['name'] }}<br/>
-                            {% if STATUSES[project.projects_status]['order'] < 7 %}
-                                <div class="progress progress-sm">
-                                    <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[project.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <small>
-                                {{ STATUSES[project.projects_status]['description'] }}
-                            </small>
-                        </td>
-                    </tr>
+                                    <br/>
+                                    <small>
+                                        {{project.projects_dates_use_start|date("d M Y h:ia")}} - {{project.projects_dates_use_end|date("d M Y h:ia")}}
+                                    </small>
+                                </td>
+                                {% if potentialProjectTypes|length > 1 %}
+                                    <td>
+                                        {{ project.projectsTypes_name }}
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    {% if project.projectsTypes_config_client == 1 %}
+                                    <a href="?client={{ project.clients_id }}">
+                                        {{ project.clients_name }}
+                                    </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
+                                                <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    {% if project.projectsTypes_config_finance == 1 %}
+                                    {{ (project.finance.projectsFinanceCache_grandTotal|moneyPositive ? project.finance.projectsFinanceCache_grandTotal|money : '') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if project.projectsTypes_config_finance == 1 %}
+                                    {{ project.finance.projectsFinanceCache_paymentsReceived|money }}
+                                    {% endif %}
+                                </td>
+                                <td class="project_progress">
+                                    {{ STATUSES[project.projects_status]['name'] }}<br/>
+                                    {% if STATUSES[project.projects_status]['order'] < 7 %}
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[project.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <small>
+                                        {{ STATUSES[project.projects_status]['description'] }}
+                                    </small>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" style="padding: 1.25rem" id="calendarBoxProjects">
+                    <div id="calendar"></div>
+                    <script>
+                        $(function () {
+                            /* initialize the calendar
+                             -----------------------------------------------------------------*/
+                            var Calendar = FullCalendar.Calendar;
+                            var Draggable = FullCalendarInteraction.Draggable;
+                            var calendarEl = document.getElementById('calendar');
+                            // initialize the external events
+                            // -----------------------------------------------------------------
+                            var calendar = new Calendar(calendarEl, {
+                                plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                                buttonText:  {
+                                    today:    'Today',
+                                    month:    'Month',
+                                    week:     'Week',
+                                    day:      'Day',
+                                    list:     'List'
+                                },
+                                header    : {
+                                    left  : 'prev,next today',
+                                    center: 'title',
+                                    right : 'dayGridMonth,timeGridWeek'
+                                },
+                                //Random default events
+                                events    : [
+                                    {% set earliestStart = false %}
+                                    {% set latestEnd = false %}
+                                    {% for project in PROJECTSLIST %}                                {
+                                        title          : '{{ thisasset.assets_tag|aTag }} [{{ STATUSES[project.projects_status]["name"] }}] {{ project.projects_name }}',
+                                        start          : Date.parse("{{ project.projects_dates_deliver_start|date("c") }}"),
+                                        end            : Date.parse("{{ project.projects_dates_deliver_end|date("c") }}"),
+                                        url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
+                                        backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
+                                        textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                                    },
+                                    {% if earliestStart > project.projects_dates_deliver_start|date("c") or earliestStart == false %}
+                                    {% set earliestStart = project.projects_dates_deliver_start|date("c") %}
+                                    {% endif %}
+                                    {% if latestEnd < project.projects_dates_deliver_end|date("c") or latestEnd == false %}
+                                    {% set latestEnd = project.projects_dates_deliver_end|date("c") %}
+                                    {% endif %}
+                                    {% endfor %}
+                                ],
+                                validRange: {
+                                    start: '{{ earliestStart|date("c") }}',
+                                    end: '{{ latestEnd|date("c") }}'
+                                },
+                                editable  : false,
+                                droppable : false, // this allows things to be dropped onto the calendar !!!
+                                drop      : function(info) {
 
-                {% endfor %}
-                </tbody>
-            </table>
+                                },
+                                height: 600,
+                                firstDay: 1,
+                            });
+                            calendar.render();
+                        })
+                    </script>
+                </div>
+            </div>
         </div>
         <div class="card-footer clearfix">
             {% if pagination.total > 1 %}
@@ -125,7 +216,6 @@
                     {% if pagination.page > 1 %}
                         <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
                     {% endif %}
-
                     {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
                         <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
                                 {% if pagination.page == i %}
@@ -135,7 +225,6 @@
                                 {% endif %}
                             </a></li>
                     {% endfor %}
-
                     {% if pagination.page < pagination.total %}
                         <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
                     {% endif %}
