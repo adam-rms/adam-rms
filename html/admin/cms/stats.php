@@ -57,9 +57,11 @@ foreach ($views as $key => $view){
         $accessedUsers[$view['users_userid']]['accessed'] = 1;
 
         //get username
-        $accessedUsers[$view['users_userid']]['users_userid'] = $view['users_userid'];
-        $DBLIB->where("users_userid", $view['users_userid']);
-        $accessedUsers[$view['users_userid']]['username'] = $DBLIB->getOne("users", ["users_name1", "users_name2"]);
+        if ($view['users_userid'] != null) { //Check if it was a public view
+            $accessedUsers[$view['users_userid']]['users_userid'] = $view['users_userid'];
+            $DBLIB->where("users_userid", $view['users_userid']);
+            $accessedUsers[$view['users_userid']]['user'] = $DBLIB->getOne("users", ["users_name1", "users_name2"]);
+        }
     }
     //update timestamp as should be newer - should probs check this but oh well
     $accessedUsers[$view['users_userid']]['last'] = $view['cmsPagesViews_timestamp'];
