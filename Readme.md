@@ -80,6 +80,21 @@ https://dash.adam-rms.com/login/index.php?google
 https://dash.adam-rms.com/api/account/linkOAuth.php?google
 ```
 
+### Slack
+
+#### Endpoints Required
+```
+https://dash.adam-rms.com/api/account/linkOAuth.php?slack
+```
+
+#### Scope
+To work out which user to message the slack app needs ```identiy``` as a User Token Scope, this is 
+automatically specified when using the Hybridauth library. 
+
+When setting up a new bot, in addition to ```identiy``` 
+as a User Token Scope the bot also needs ```im:write``` as a Bot Token 
+Scope inorder to message individuals.
+
 ## Licence
 
 AdamRMS is a web-based Rental Management System
