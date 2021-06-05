@@ -63,6 +63,11 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
+                            {% if assets[0]['projectStatus'] != -1 %}
+                                <li class="list-group-item">
+                                    <b>Asset Status</b> <a class="float-right">{{ (assets[0]['projectStatus'] ? assets[0]['projectStatus'] : "Requested") }}</a>
+                                </li>
+                            {% endif %}
                         </ul>
                         {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
                             {% if assets[0].assets_endDate != null and assets[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}

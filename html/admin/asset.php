@@ -67,7 +67,22 @@ foreach ($assets as $asset) {
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
     $DBLIB->where("projects.projects_deleted", 0);
-    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end"]);
+    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end", "assetsAssignmentsStatus_id"]);
+
+    //todo check
+    foreach ($asset['assignments'] as $item){
+        if ($item['projects_id'] == $PAGEDATA['USERDATA']['users_selectedProjectID']){
+            $asset['projectStatus'] = "Requested";
+            $DBLIB->where("assetsAssignmentsStatus_id", $item["assetsAssignmentsStatus_id"] );
+            $status = $DBLIB->getOne("assetsassignmentsstatus", ["assetsAssignmentsStatus_name"]);
+            if (isset($status)){
+                $asset['projectStatus'] = $status['assetsAssignmentsStatus_name'];
+            }
+            break;
+        } else {
+            $asset['projectStatus'] = -1;
+        }
+    }
 
     $asset['files'] = $bCMS->s3List(4, $asset['assets_id']);
 
@@ -131,6 +146,6 @@ if (count($PAGEDATA['assets']) == 1) {
     } else $PAGEDATA['assets'][0]['groups'] = [];
 }
 
-
+//die(var_dump($PAGEDATA['assets'][0]));
 echo $TWIG->render('asset.twig', $PAGEDATA);
 ?>
