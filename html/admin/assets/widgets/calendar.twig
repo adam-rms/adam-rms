@@ -53,7 +53,13 @@
                     center: 'title',
                     right : 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
                 },
-
+                titleFormat: function(date) {
+                    console.log();
+                    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"
+                    ]
+                    return "{{ LOCATION ? LOCATION.locations_name ~ ": " }}" + monthNames[date['date']['month']] + " " + date['date']['year'];
+                },
                 //Random default events
                 events    : [
                     {% set earliestStart = false %}
