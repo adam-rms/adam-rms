@@ -92,6 +92,15 @@
             <!-- /.card -->
         </div>
         <!-- /.col -->
+        <script>
+            $(document).ready(function() {
+                //Hacky little function to fudge tab selection from the crew roles/projects managed links
+                $('a[data-toggle="tab"]:not(.nav-link)').click(function() {
+                    $('.nav-link[data-toggle="tab"]:not([href="' + $(this).attr('href') + '"])').removeClass("active");
+                    $('.nav-link[data-toggle="tab"][href="' + $(this).attr('href') + '"]').addClass("active");
+                });
+            });
+        </script>
         <div class="col-md-9">
             <div class="card">
                 <div class="card-header p-2">
