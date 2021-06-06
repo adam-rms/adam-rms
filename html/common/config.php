@@ -73,6 +73,14 @@ $CONFIG = array(
         ],
         "TYPES" =>  [ //These need to be inorder and inorder of group
             [
+                "id" => 0,
+                "group" => "Account",
+                "name" => "Test Notifications",
+                "methods" => [1,2,3,4],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
                 "id" => 1,
                 "group" => "Account",
                 "name" => "Password Reset",

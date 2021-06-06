@@ -188,7 +188,12 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th><button type="button" id="save-notification-settings" class="btn btn-success btn-sm">Save</button></th>
+                                        <th>
+                                            <div class="btn-group">
+                                                <button type="button" id="save-notification-settings" class="btn btn-success btn-sm">Save</button>
+                                                <button type="button" id="test-notification-settings" class="btn btn-warning btn-sm">Test</button>
+                                            </div>
+                                        </th>
                                         {% for method in CONFIG.NOTIFICATIONS.METHODS %}
                                             <th>{{method}}</th>
                                         {% endfor %}
@@ -235,6 +240,13 @@
                                             ajaxcall("account/notifications.php", {
                                                 "users_userid": "{{ user.users_userid }}",
                                                 'settings' : config,
+                                            });
+                                        });
+                                        $('#test-notification-settings').click(function() {
+                                            ajaxcall("account/testNotifications.php", {
+                                                "users_userid": "{{ user.users_userid }}"
+                                            }, function(result) {
+                                                bootbox.alert("Notification Sent!");
                                             });
                                         });
                                     });
