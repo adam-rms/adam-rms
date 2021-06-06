@@ -42,16 +42,17 @@ if (isset($_GET['google'])) {
     $DBLIB->update("users",["users_oauth_googleid"=>$userProfile->identifier]);
     header("Location: " . $CONFIG['ROOTURL'] . "/user.php");
     exit;
-}
-
-if (isset($_GET['slack'])) {
+} elseif (isset($_GET['slack'])) {
     $CONFIG['AUTH-PROVIDERS']['SLACK']['callback'] = $CONFIG['ROOTURL'] . '/api/account/linkOAuth.php?slack';
 
     $adapter = new Hybridauth\Provider\Slack($CONFIG['AUTH-PROVIDERS']['SLACK']);
 
     $adapter->authenticate();
     $userProfile = $adapter->getUserProfile();
+    $token = $adapter->getAccessToken();
+    $token = $token["access_token"];
     $adapter->disconnect(); //Disconnect this authentication from the session, so they can pick another account
+
     if (strlen($userProfile->identifier) < 1) {
         //ISSUE WITH PROFILE
         header("Location: " . $CONFIG['ROOTURL']. "/user.php");
@@ -60,7 +61,6 @@ if (isset($_GET['slack'])) {
 
     $DBLIB->where("users_oauth_slackid", $userProfile->identifier);
     $user = $DBLIB->getOne("users", ["users.users_userid"]);
-
     if ($user and $user['users_userid'] != $AUTH->data['users_userid']) {
         //If its linked to another account remove the link to link it to this one
         $DBLIB->where("users_userid",$user['users_userid']);
@@ -68,7 +68,7 @@ if (isset($_GET['slack'])) {
     }
 
     $DBLIB->where("users_userid",$AUTH->data['users_userid']);
-    $DBLIB->update("users",["users_oauth_slackid"=>$userProfile->identifier]);
+    $DBLIB->update("users",["users_oauth_slackid"=>$userProfile->identifier,"users_oauth_slacktoken"=>$token]);
     header("Location: " . $CONFIG['ROOTURL'] . "/user.php#notifications");
     exit;
 }

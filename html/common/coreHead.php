@@ -296,7 +296,7 @@ class bCMS {
     function notificationSettings($userid) {
         global $DBLIB,$CONFIG;
         $DBLIB->where("users_userid", $userid);
-        $user = $DBLIB->getone("users",["users_email", "users_userid", "users_name1", "users_name2","users_notificationSettings"]);
+        $user = $DBLIB->getone("users",["users_email", "users_userid", "users_name1", "users_name2","users_notificationSettings","users_oauth_slackid","users_oauth_slacktoken"]);
         if (!$user) return false;
         $user["users_notificationSettings"] = json_decode($user["users_notificationSettings"],true);
         if (!$user["users_notificationSettings"]) $user["users_notificationSettings"] = [];

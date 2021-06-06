@@ -29,7 +29,8 @@ function notify($typeID, $userid, $instanceID, $headline, $message = false, $ema
                     break;
                 case 4:
                     //Slack
-                    sendSlackNotification($user, $headline);
+                    $text = \Soundasleep\Html2Text::convert($message, ['ignore_errors' => true]);
+                    sendSlackNotification($user, $headline,$text);
                     break;
             }
         }

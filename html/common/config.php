@@ -60,9 +60,9 @@ $CONFIG = array(
                 'id' => getenv('bCMS__OAUTH__SLACKID'),
                 'secret' => getenv('bCMS__OAUTH__SLACKSECRET')
             ],
+            'scope' => 'identity.basic identity.email identity.avatar'
         ]
     ],
-    'SLACK_BOT_OAUTH' => getenv('bCMS__OAUTH__SLACKBOT'),
     'NOTIFICATIONS' => [
         "METHODS" => [
             0 => "Post",
