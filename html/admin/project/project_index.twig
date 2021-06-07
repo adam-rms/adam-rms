@@ -257,155 +257,49 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Invoices</h3>
-                    <div class="card-tools">
-                        <a data-toggle="modal" data-target="#projectInvoicesModal" type="button" class="btn btn-tool">
-                            <i class="fas fa-external-link-alt"></i></a>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="todo-list">
-                        {% for file in pdfs %}
-                            <li>
-                                <span class="handle">
-                                    <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
-                                </span>
-                                <span class="text">
-                                   {{ file.s3files_name }} - {{ file.s3files_meta_uploaded|date("d M Y G:i") }}
-                                </span>
-                                <i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. File Size {{ file.s3files_meta_size|formatsize }}. File Type {{ file.s3files_extension }}"></i>
-                                <div class="tools">
-                                    <a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <div class="btn-group float-right">
-                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal">
-                            Create Invoice
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="modal fade" id="pdfGenerateModal">
-                <div class="modal-dialog">
-                    <form id="pdfGenerate" method="GET">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Create Invoice</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" name="pdf" value="true">
-                                <input type="hidden" name="id" value="{{ project.projects_id }}">
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="instancelogo" {% if USERDATA.instance.instances_logo %}checked{% else %}disabled{% endif %}>
-                                        <label class="form-check-label">Business Logo</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="addresses" checked>
-                                        <label class="form-check-label">Addresses</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="pmdetails" checked>
-                                        <label class="form-check-label">Project Manager</label>
-                                    </div>
-                                    {% if project.projectsTypes_config_assets == 1 %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="totalmass" checked>
-                                            <label class="form-check-label">Total Mass</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="totalvalue" checked>
-                                            <label class="form-check-label">Total Value</label>
-                                        </div>
-                                    {% endif %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="venue" checked>
-                                        <label class="form-check-label">Venue</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="invoiceNotes" checked>
-                                        <label class="form-check-label">Invoice Notes</label>
-                                    </div>
-                                    {% if project.projectsTypes_config_assets == 1 %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="assets" checked>
-                                            <label class="form-check-label">Equipment List</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="showAll">
-                                            <label class="form-check-label">Individual Items in Equipment List</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="flagsBlocks" checked>
-                                            <label class="form-check-label">Flags &amp; Blocks in Equipment List</label>
-                                        </div>
-
-
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="checkboxes">
-                                            <label class="form-check-label">Equipment Checkboxes</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="comments">
-                                            <label class="form-check-label">Equipment Comments</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="masses" checked>
-                                            <label class="form-check-label">Equipment Masses</label>
-                                        </div>
-                                    {% endif %}
-                                    {% if 33|instancePermissions and project.projectsTypes_config_finance == 1  %}
-                                        <hr/>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="finance" checked>
-                                            <label class="form-check-label">Financial Totals</label>
-                                        </div>
-                                        {% if project.projectsTypes_config_assets == 1 %}
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="prices" checked>
-                                                <label class="form-check-label">Prices</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="discounts" checked>
-                                                <label class="form-check-label">Equipment Discounts</label>
-                                            </div>
-                                        {% endif %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="subHires" checked>
-                                            <label class="form-check-label">Additional Hires</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="sales" checked>
-                                            <label class="form-check-label">Sales</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="staff" checked>
-                                            <label class="form-check-label">Staff</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="paymentTerms" checked>
-                                            <label class="form-check-label">Payment Terms</label>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="modal-footer justify-content-between">
-                                <button type="submit" class="btn btn-default">Draft Printout</button>
-                                <button type="button" id="generatePDFButton" class="btn btn-success">Generate PDF</button>
-                            </div>
+            {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Assets</h3>
+                        <div class="card-tools">
+                            <a href="?id={{ project.projects_id }}&list" type="button" class="btn btn-tool">
+                                <i class="fas fa-external-link-alt"></i></a>
                         </div>
-                    </form>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    Count
+                                </td>
+                                <td>
+                                    {{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Mass
+                                </td>
+                                <td>
+                                    {{ FINANCIALS.mass|mass }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Value
+                                </td>
+                                <td>
+                                    {{ FINANCIALS.value|money }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <a href="?id={{ project.projects_id }}&list" type="button" class="btn btn-secondary">
+                            Project Assets List</a>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
         <div class="col-12 col-md-12 col-lg-8">
             <div class="row">
@@ -426,303 +320,424 @@
                         </div>
                     {% endif %}
                 {% endif %}
-                {% if project.subProjects %}
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                {% embed 'assets/widgets/calendar.twig' with {"projects": project.subProjects } %}
-                                {% endembed %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-                {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                {# Nav Bar for page views #}
                 <div class="col-12">
                     <div class="card">
-                    <div class="card-header">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#payments-home" data-toggle="tab">Finance</a></li>
-                            {% if project.projects_invoiceNotes != null %}<li class="nav-item"><a class="nav-link" href="#payments-invoice" data-toggle="tab">Invoice Notes</a></li>{% endif %}
-                            {% if FINANCIALS.payments.received.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-received" data-toggle="tab">Payments Received</a></li>{% endif %}
-                            {% if FINANCIALS.payments.sales.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-sales" data-toggle="tab">Sales</a></li>{% endif %}
-                            {% if FINANCIALS.payments.subHire.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-subhire" data-toggle="tab">Additional Hires</a></li>{% endif %}
-                            {% if FINANCIALS.payments.staff.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-staff" data-toggle="tab">Staff</a></li>{% endif  %}
-                        </ul>
-                    </div><!-- /.card-header -->
-                    <div class="card-body" style="padding: 0;">
-                        <div class="tab-content">
-                            <div class="tab-pane active" style="padding: 0;" id="payments-home">
-                                <table class="table">
-                                    <tr>
-                                        <td style="width: 35%;">
-                                            Equipment SubTotal
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {{ FINANCIALS.prices.subTotal|money }}
-                                        </td>
-                                        <td style="width: 35%;">
-                                            Sales
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {{ FINANCIALS.payments.sales.total|money }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 35%;">
-                                            {% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {% if FINANCIALS.prices.discounts|moneyPositive %}&#8209;{{ FINANCIALS.prices.discounts|money }}{% else %}None{% endif %}
-                                        </td>
-                                        <td style="width: 35%;">
-                                            Staffing
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {{ FINANCIALS.payments.staff.total|money }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 35%;">
-                                            <b>Equipment Total</b>
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {{ FINANCIALS.prices.total|money }}
-                                        </td>
-                                        <td  style="width: 35%;">
-                                            Additional Hires
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {{ FINANCIALS.payments.subHire.total|money }}
-                                        </td>
-                                    </tr>
-                                    <tr style="background-color: rgba(0,0,0,.03);">
-                                        <td style="width: 35%;">
-                                            SubTotal
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {{ FINANCIALS.payments.subTotal|money }}
-                                        </td>
-                                        <td style="width: 35%;">
-                                            Payments Received to Date
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            &#8209;{{ FINANCIALS.payments.received.total|money }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 35%;">
-
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-
-                                        </td>
-                                        <td style="width: 35%;">
-                                            <b>Grand Total Outstanding</b>
-                                        </td>
-                                        <td style="width: 15%;text-align: right;">
-                                            {{ FINANCIALS.payments.total|money }}
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="tab-pane" id="payments-invoice" style="padding: 1.25rem;">
-                                {{ project.projects_invoiceNotes }}
-                            </div>
-                            <div class="tab-pane" style="padding: 0;" id="payments-received">
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>Reference</th>
-                                        <th>Date</th>
-                                        <th>Method</th>
-                                        <th>Comment</th>
-                                        <th>Amount</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for payment in FINANCIALS.payments.received.ledger %}
-                                        <tr>
-                                            <td>{{ payment.payments_reference }}</td>
-                                            <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
-                                            <td>{{ payment.payments_method }}</td>
-                                            <td>{{ payment.payments_comment|nl2br }}</td>
-                                            <td>{{ payment.payments_amount|money }}</td>
-                                            <td style="min-width:140px;">
-                                                {% if 121|instancePermissions %}
-                                                <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
-                                                {% endif %}
-                                                {% if 35|instancePermissions %}
-                                                <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="tab-pane" style="padding: 0;" id="payments-sales">
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>Quantity</th>
-                                        <th style="width: 100%;">Comment</th>
-                                        <th>Amount</th>
-                                        <th>Total</th>
-                                        <th style="min-width:140px;"></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% set currentSupplier = "" %}
-                                    {% for payment in FINANCIALS.payments.sales.ledger %}
-                                        {% if currentSupplier != payment.payments_supplier %}
-                                            {% set currentSupplier = payment.payments_supplier %}
-                                            {% if payment.payments_supplier != "" %}
-                                                <tr>
-                                                    <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
-                                                </tr>
-                                            {% endif %}
-                                        {% endif %}
-                                        <tr>
-                                            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                            <td>{{ payment.payments_comment|nl2br }}</td>
-                                            <td style="width:100px;">{{ payment.payments_amount|money }}</td>
-                                            <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
-                                            <td>
-                                                {% if 121|instancePermissions %}
-                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
-                                                {% endif %}
-                                                {% if 35|instancePermissions %}
-                                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="tab-pane" style="padding: 0;" id="payments-subhire">
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>Quantity</th>
-                                        <th style="width: 100%;">Comment</th>
-                                        <th>Amount</th>
-                                        <th>Total</th>
-                                        <th style="min-width:140px;"></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% set currentSupplier = "" %}
-                                    {% for payment in FINANCIALS.payments.subHire.ledger %}
-                                        {% if currentSupplier != payment.payments_supplier %}
-                                            {% set currentSupplier = payment.payments_supplier %}
-                                            {% if payment.payments_supplier != "" %}
-                                                <tr>
-                                                    <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
-                                                </tr>
-                                            {% endif %}
-                                        {% endif %}
-                                        <tr>
-                                            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                            <td>{{ payment.payments_comment|nl2br }}</td>
-                                            <td style="width:100px;">{{ payment.payments_amount|money }}</td>
-                                            <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
-                                            <td>
-                                                {% if 121|instancePermissions %}
-                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
-                                                {% endif %}
-                                                {% if 35|instancePermissions %}
-                                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="tab-pane" style="padding: 0;" id="payments-staff">
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>Quantity</th>
-                                        <th>Supplier</th>
-                                        <th style="width: 100%;">Comment</th>
-                                        <th>Amount</th>
-                                        <th>Total</th>
-                                        <th style="min-width:140px;"></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for payment in FINANCIALS.payments.staff.ledger %}
-                                        <tr>
-                                            <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
-                                            <td>{{ payment.payments_supplier|nbsp}}</td>
-                                            <td>{{ payment.payments_comment|nl2br }}</td>
-                                            <td style="width:100px;">{{ payment.payments_amount|money }}</td>
-                                            <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
-                                            <td>
-                                                {% if 121|instancePermissions %}
-                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
-                                                {% endif %}
-                                                {% if 35|instancePermissions %}
-                                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="card-header">
+                            <ul class="nav nav-pills">
+                                <li class="nav-item"><a class="nav-link active" href="#files-view" data-toggle="tab">Files</a></li>
+                                {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab">Finance</a></li>
+                                {% endif %}
+                                {% if project.subProjects %}
+                                    <li class="nav-item"><a class="nav-link" href="#calendar-view" data-toggle="tab">Sub Projects</a></li>
+                                {% endif %}
+                                {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab">Project Crew</a></li>
+                                {% endif %}
+                                <li class="nav-item"><a class="nav-link" href="#log-view" data-toggle="tab">Audit Log</a></li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <div class="btn-group float-right">
-                            {% if 34|instancePermissions %}
-                            <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
-                            <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                <span class="sr-only">Toggle Dropdown</span>
-                                <div class="dropdown-menu" role="menu">
-                                    <a class="dropdown-item newPayment" data-type="2" href="#">Add Sales Item</a>
-                                    <a class="dropdown-item newPayment" data-type="3" href="#">Add Additional Hire</a>
-                                    <a class="dropdown-item newPayment" data-type="4" href="#">Add Staff Cost</a>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="files-view">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Invoices</h3>
+                                            <div class="card-tools">
+                                                <a data-toggle="modal" data-target="#projectInvoicesModal" type="button" class="btn btn-tool">
+                                                    <i class="fas fa-external-link-alt"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <ul class="todo-list">
+                                                {% for file in pdfs %}
+                                                    <li>
+                                <span class="handle">
+                                    <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
+                                </span>
+                                                        <span class="text">
+                                   {{ file.s3files_name }} - {{ file.s3files_meta_uploaded|date("d M Y G:i") }}
+                                </span>
+                                                        <i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. File Size {{ file.s3files_meta_size|formatsize }}. File Type {{ file.s3files_extension }}"></i>
+                                                        <div class="tools">
+                                                            <a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
+                                                        </div>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="btn-group float-right">
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal">
+                                                    Create Invoice
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </button>
-                            {% endif %}
-                            {% if 46|instancePermissions %}
-                                <button type="button" class="btn btn-default editProjectInvoiceNotes" title="Edit">Edit Invoice Notes</button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                </div>
-                {% endif %}
-                    <div class="col-lg-7 col-md-12">
-                        {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Project Crew</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                        <i class="fas fa-minus"></i></button>
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    {% if project.projectsTypes_config_files == 1 %}
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Files</h3>
+                                                <div class="card-tools">
+                                                    <a data-toggle="modal" data-target="#projectFilesModal" type="button" class="btn btn-tool">
+                                                        <i class="fas fa-external-link-alt"></i></a>
+                                                </div>
+                                            </div>
+                                            {% if files %}
+                                                <div class="card-body p-0">
+                                                    <ul class="todo-list">
+                                                        {% for file in files %}
+                                                            <li>
+                                    <span class="handle">
+                                        <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
+                                    </span>
+                                                                <span class="text">
+                                       {{ file.s3files_name }}
+                                    </span>
+                                                                <i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. File Size {{ file.s3files_meta_size|formatsize }}. File Type {{ file.s3files_extension }}"></i>
+                                                                <div class="tools">
+                                                                    <a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
+                                                                </div>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                                {# <div class="card-body p-0">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        Total
+                                    </td>
+                                    <td>
+                                        {{ files|length }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Total Storage
+                                    </td>
+                                    <td>
+                                        {% set fileStorage = 0 %}
+                                        {% for file in files %}
+                                            {% set fileStorage = fileStorage+file["s3files_meta_size"] %}
+                                        {% endfor %}
+                                        {{ (fileStorage > 0  ? fileStorage|formatsize : '') }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>#}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                            <div class="card-body p-0">
-                                <ul id="crewList" class="todo-list">
-                                    {% for crew in project.crewAssignments %}
-                                        <li value="{{crew.crewAssignments_id}}"
-                                                {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
-                                            class="danger"
-                                        {% elseif crew.users_email|length < 1 %}
-                                            class="warning"
-                                                {% endif %}>
-                                            {% if 51|instancePermissions %}
-                                                <span class="handle">
+                        </div>
+                        <div class="tab-pane" id="payments-view">
+                            {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <ul class="nav nav-pills">
+                                                <li class="nav-item"><a class="nav-link active" href="#payments-home" data-toggle="tab">Finance</a></li>
+                                                {% if project.projects_invoiceNotes != null %}<li class="nav-item"><a class="nav-link" href="#payments-invoice" data-toggle="tab">Invoice Notes</a></li>{% endif %}
+                                                {% if FINANCIALS.payments.received.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-received" data-toggle="tab">Payments Received</a></li>{% endif %}
+                                                {% if FINANCIALS.payments.sales.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-sales" data-toggle="tab">Sales</a></li>{% endif %}
+                                                {% if FINANCIALS.payments.subHire.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-subhire" data-toggle="tab">Additional Hires</a></li>{% endif %}
+                                                {% if FINANCIALS.payments.staff.ledger %}<li class="nav-item"><a class="nav-link" href="#payments-staff" data-toggle="tab">Staff</a></li>{% endif  %}
+                                            </ul>
+                                        </div><!-- /.card-header -->
+                                        <div class="card-body" style="padding: 0;">
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" style="padding: 0;" id="payments-home">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td style="width: 35%;">
+                                                                Equipment SubTotal
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {{ FINANCIALS.prices.subTotal|money }}
+                                                            </td>
+                                                            <td style="width: 35%;">
+                                                                Sales
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {{ FINANCIALS.payments.sales.total|money }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 35%;">
+                                                                {% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {% if FINANCIALS.prices.discounts|moneyPositive %}&#8209;{{ FINANCIALS.prices.discounts|money }}{% else %}None{% endif %}
+                                                            </td>
+                                                            <td style="width: 35%;">
+                                                                Staffing
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {{ FINANCIALS.payments.staff.total|money }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 35%;">
+                                                                <b>Equipment Total</b>
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {{ FINANCIALS.prices.total|money }}
+                                                            </td>
+                                                            <td  style="width: 35%;">
+                                                                Additional Hires
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {{ FINANCIALS.payments.subHire.total|money }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="background-color: rgba(0,0,0,.03);">
+                                                            <td style="width: 35%;">
+                                                                SubTotal
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {{ FINANCIALS.payments.subTotal|money }}
+                                                            </td>
+                                                            <td style="width: 35%;">
+                                                                Payments Received to Date
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                &#8209;{{ FINANCIALS.payments.received.total|money }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 35%;">
+
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+
+                                                            </td>
+                                                            <td style="width: 35%;">
+                                                                <b>Grand Total Outstanding</b>
+                                                            </td>
+                                                            <td style="width: 15%;text-align: right;">
+                                                                {{ FINANCIALS.payments.total|money }}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div class="tab-pane" id="payments-invoice" style="padding: 1.25rem;">
+                                                    {{ project.projects_invoiceNotes }}
+                                                </div>
+                                                <div class="tab-pane" style="padding: 0;" id="payments-received">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Reference</th>
+                                                            <th>Date</th>
+                                                            <th>Method</th>
+                                                            <th>Comment</th>
+                                                            <th>Amount</th>
+                                                            <th></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for payment in FINANCIALS.payments.received.ledger %}
+                                                            <tr>
+                                                                <td>{{ payment.payments_reference }}</td>
+                                                                <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
+                                                                <td>{{ payment.payments_method }}</td>
+                                                                <td>{{ payment.payments_comment|nl2br }}</td>
+                                                                <td>{{ payment.payments_amount|money }}</td>
+                                                                <td style="min-width:140px;">
+                                                                    {% if 121|instancePermissions %}
+                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                    {% endif %}
+                                                                    {% if 35|instancePermissions %}
+                                                                        <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="tab-pane" style="padding: 0;" id="payments-sales">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Quantity</th>
+                                                            <th style="width: 100%;">Comment</th>
+                                                            <th>Amount</th>
+                                                            <th>Total</th>
+                                                            <th style="min-width:140px;"></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% set currentSupplier = "" %}
+                                                        {% for payment in FINANCIALS.payments.sales.ledger %}
+                                                            {% if currentSupplier != payment.payments_supplier %}
+                                                                {% set currentSupplier = payment.payments_supplier %}
+                                                                {% if payment.payments_supplier != "" %}
+                                                                    <tr>
+                                                                        <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            <tr>
+                                                                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                                                <td>{{ payment.payments_comment|nl2br }}</td>
+                                                                <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                                                <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                                                <td>
+                                                                    {% if 121|instancePermissions %}
+                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                    {% endif %}
+                                                                    {% if 35|instancePermissions %}
+                                                                        <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="tab-pane" style="padding: 0;" id="payments-subhire">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Quantity</th>
+                                                            <th style="width: 100%;">Comment</th>
+                                                            <th>Amount</th>
+                                                            <th>Total</th>
+                                                            <th style="min-width:140px;"></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% set currentSupplier = "" %}
+                                                        {% for payment in FINANCIALS.payments.subHire.ledger %}
+                                                            {% if currentSupplier != payment.payments_supplier %}
+                                                                {% set currentSupplier = payment.payments_supplier %}
+                                                                {% if payment.payments_supplier != "" %}
+                                                                    <tr>
+                                                                        <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            <tr>
+                                                                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                                                <td>{{ payment.payments_comment|nl2br }}</td>
+                                                                <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                                                <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                                                <td>
+                                                                    {% if 121|instancePermissions %}
+                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                    {% endif %}
+                                                                    {% if 35|instancePermissions %}
+                                                                        <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="tab-pane" style="padding: 0;" id="payments-staff">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Quantity</th>
+                                                            <th>Supplier</th>
+                                                            <th style="width: 100%;">Comment</th>
+                                                            <th>Amount</th>
+                                                            <th>Total</th>
+                                                            <th style="min-width:140px;"></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for payment in FINANCIALS.payments.staff.ledger %}
+                                                            <tr>
+                                                                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                                                <td>{{ payment.payments_supplier|nbsp}}</td>
+                                                                <td>{{ payment.payments_comment|nl2br }}</td>
+                                                                <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                                                <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                                                <td>
+                                                                    {% if 121|instancePermissions %}
+                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                    {% endif %}
+                                                                    {% if 35|instancePermissions %}
+                                                                        <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="btn-group float-right">
+                                                {% if 34|instancePermissions %}
+                                                    <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
+                                                    <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                                                        <span class="sr-only">Toggle Dropdown</span>
+                                                        <div class="dropdown-menu" role="menu">
+                                                            <a class="dropdown-item newPayment" data-type="2" href="#">Add Sales Item</a>
+                                                            <a class="dropdown-item newPayment" data-type="3" href="#">Add Additional Hire</a>
+                                                            <a class="dropdown-item newPayment" data-type="4" href="#">Add Staff Cost</a>
+                                                        </div>
+                                                    </button>
+                                                {% endif %}
+                                                {% if 46|instancePermissions %}
+                                                    <button type="button" class="btn btn-default editProjectInvoiceNotes" title="Edit">Edit Invoice Notes</button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="calendar-view">
+                            {% if project.subProjects %}
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            {% embed 'assets/widgets/calendar.twig' with {"projects": project.subProjects } %}
+                                            {% endembed %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="crew-view">
+                            {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Project Crew</h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                                <i class="fas fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <ul id="crewList" class="todo-list">
+                                            {% for crew in project.crewAssignments %}
+                                                <li value="{{crew.crewAssignments_id}}"
+                                                        {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
+                                                    class="danger"
+                                                {% elseif crew.users_email|length < 1 %}
+                                                    class="warning"
+                                                        {% endif %}>
+                                                    {% if 51|instancePermissions %}
+                                                        <span class="handle">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                     <i class="fas fa-ellipsis-v"></i>
                                                </span>
-                                            {% endif %}
-                                            <span class="text">
+                                                    {% endif %}
+                                                    <span class="text">
                                        {{crew.crewAssignments_role}} -
                                         {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
                                             <i>Vacant</i>
@@ -738,38 +753,40 @@
                                             {{ crew.crewAssignments_personName }}
                                         {% endif %}
                                    </span>
-                                            {% if crew.crewAssignments_comment|length > 0 %}
-                                                <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role}}" data-content="{{ crew.crewAssignments_comment|replace({'"':"'"}) }}"></i>
+                                                    {% if crew.crewAssignments_comment|length > 0 %}
+                                                        <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role}}" data-content="{{ crew.crewAssignments_comment|replace({'"':"'"}) }}"></i>
+                                                    {% endif %}
+                                                    <div class="tools">
+                                                        {% if 49|instancePermissions %}
+                                                            <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
+
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+
+                                    <div class="card-footer">
+                                        <div class="btn-group float-right">
+                                            {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
                                             {% endif %}
-                                            <div class="tools">
-                                                {% if 49|instancePermissions %}
-                                                    <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
-
-                                                {% endif %}
-                                            </div>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="btn-group float-right">
-                                    {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
-                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
-                                    {% endif %}
-                                    {% if 123|instancePermissions %}
-                                        <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary">Crew Recruitment</a>
-                                    {% endif %}
-                                    {% if 48|instancePermissions %}
-                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
-                                    {% endif %}
+                                            {% if 123|instancePermissions %}
+                                                <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary">Crew Recruitment</a>
+                                            {% endif %}
+                                            {% if 48|instancePermissions %}
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                        {% if project.auditLog|length > 0 %}
-                            <div class="card">
-                                 <div class="card-header">
+                        <div class="tab-pane" id="log-view">
+                            {% if project.auditLog|length > 0 %}
+                                <div class="card">
+                                    <div class="card-header">
                                         <h3 class="card-title">Comments & History</h3>
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -835,110 +852,10 @@
                                         </div>
                                     </div>
                                 </div>
-                        {% endif %}
-                    </div>
-
-                <div class="col-lg-5 col-md-12">
-                    {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Assets</h3>
-                            <div class="card-tools">
-                                <a href="?id={{ project.projects_id }}&list" type="button" class="btn btn-tool">
-                                    <i class="fas fa-external-link-alt"></i></a>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table">
-                                <tr>
-                                    <td>
-                                        Count
-                                    </td>
-                                    <td>
-                                        {{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Mass
-                                    </td>
-                                    <td>
-                                        {{ FINANCIALS.mass|mass }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Value
-                                    </td>
-                                    <td>
-                                        {{ FINANCIALS.value|money }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="card-footer">
-                            <a href="?id={{ project.projects_id }}&list" type="button" class="btn btn-secondary">
-                                Project Assets List</a>
+                            {% endif %}
                         </div>
                     </div>
-                    {% endif %}
-                    {% if project.projectsTypes_config_files == 1 %}
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Files</h3>
-                            <div class="card-tools">
-                                <a data-toggle="modal" data-target="#projectFilesModal" type="button" class="btn btn-tool">
-                                    <i class="fas fa-external-link-alt"></i></a>
-                            </div>
-                        </div>
-                        {% if files %}
-                        <div class="card-body p-0">
-                            <ul class="todo-list">
-                                {% for file in files %}
-                                    <li>
-                                    <span class="handle">
-                                        <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
-                                    </span>
-                                        <span class="text">
-                                       {{ file.s3files_name }}
-                                    </span>
-                                        <i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. File Size {{ file.s3files_meta_size|formatsize }}. File Type {{ file.s3files_extension }}"></i>
-                                        <div class="tools">
-                                            <a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {# <div class="card-body p-0">
-                            <table class="table">
-                                <tr>
-                                    <td>
-                                        Total
-                                    </td>
-                                    <td>
-                                        {{ files|length }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Total Storage
-                                    </td>
-                                    <td>
-                                        {% set fileStorage = 0 %}
-                                        {% for file in files %}
-                                            {% set fileStorage = fileStorage+file["s3files_meta_size"] %}
-                                        {% endfor %}
-                                        {{ (fileStorage > 0  ? fileStorage|formatsize : '') }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>#}
-                        {% endif %}
-                    </div>
-                    {% endif %}
                 </div>
-
             </div>
         </div>
     </div>
@@ -1164,6 +1081,121 @@
                     {% endembed %}
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="modal fade" id="pdfGenerateModal">
+        <div class="modal-dialog">
+            <form id="pdfGenerate" method="GET">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Invoice</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="pdf" value="true">
+                        <input type="hidden" name="id" value="{{ project.projects_id }}">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="instancelogo" {% if USERDATA.instance.instances_logo %}checked{% else %}disabled{% endif %}>
+                                <label class="form-check-label">Business Logo</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="addresses" checked>
+                                <label class="form-check-label">Addresses</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="pmdetails" checked>
+                                <label class="form-check-label">Project Manager</label>
+                            </div>
+                            {% if project.projectsTypes_config_assets == 1 %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="totalmass" checked>
+                                    <label class="form-check-label">Total Mass</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="totalvalue" checked>
+                                    <label class="form-check-label">Total Value</label>
+                                </div>
+                            {% endif %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="venue" checked>
+                                <label class="form-check-label">Venue</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="invoiceNotes" checked>
+                                <label class="form-check-label">Invoice Notes</label>
+                            </div>
+                            {% if project.projectsTypes_config_assets == 1 %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="assets" checked>
+                                    <label class="form-check-label">Equipment List</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="showAll">
+                                    <label class="form-check-label">Individual Items in Equipment List</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="flagsBlocks" checked>
+                                    <label class="form-check-label">Flags &amp; Blocks in Equipment List</label>
+                                </div>
+
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="checkboxes">
+                                    <label class="form-check-label">Equipment Checkboxes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="comments">
+                                    <label class="form-check-label">Equipment Comments</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="masses" checked>
+                                    <label class="form-check-label">Equipment Masses</label>
+                                </div>
+                            {% endif %}
+                            {% if 33|instancePermissions and project.projectsTypes_config_finance == 1  %}
+                                <hr/>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="finance" checked>
+                                    <label class="form-check-label">Financial Totals</label>
+                                </div>
+                                {% if project.projectsTypes_config_assets == 1 %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="prices" checked>
+                                        <label class="form-check-label">Prices</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="discounts" checked>
+                                        <label class="form-check-label">Equipment Discounts</label>
+                                    </div>
+                                {% endif %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="subHires" checked>
+                                    <label class="form-check-label">Additional Hires</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="sales" checked>
+                                    <label class="form-check-label">Sales</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="staff" checked>
+                                    <label class="form-check-label">Staff</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="paymentTerms" checked>
+                                    <label class="form-check-label">Payment Terms</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="submit" class="btn btn-default">Draft Printout</button>
+                        <button type="button" id="generatePDFButton" class="btn btn-success">Generate PDF</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
     <script>
