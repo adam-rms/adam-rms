@@ -228,12 +228,22 @@
                         <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
+                                {% if 21|instancePermissions and project.projects_parent_project_id == null %}
+                                    <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
+                                    <div class="dropdown-divider"></div>
+                                {% endif %}
                                 {% if 28|instancePermissions %}
                                     <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
                                 {% endif %}
-                                {% if 24|instancePermissions %}<a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>{% endif %}
-                                <div class="dropdown-divider"></div>
-                                {% if 104|instancePermissions and potentialProjectTypes|length > 1 %}<a class="dropdown-item" id="editProjectType" href="#">Change Project Type</a>{% endif %}
+                                {% if 24|instancePermissions %}
+                                    <a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>
+                                {% endif %}
+                                {% if 28|instancePermissions or 24|instancePermissions%}
+                                    <div class="dropdown-divider"></div>
+                                {% endif %}
+                                {% if 104|instancePermissions and potentialProjectTypes|length > 1 %}
+                                    <a class="dropdown-item" id="editProjectType" href="#">Change Project Type</a>
+                                {% endif %}
                                 {% if 25|instancePermissions %}
                                     {% if project.projects_archived == 1 %}
                                         <a class="dropdown-item" id="archiveProject" href="#">Remove from Archive</a>
@@ -1830,6 +1840,40 @@
                     }
                 });
             });
+            {% if 21|instancePermissions %}
+            $("#newSubProject").click(function () {
+                bootbox.prompt({
+                    title: "Select Sub-Project Type",
+                    inputType: 'select',
+                    inputOptions: [
+                        {% for type in potentialProjectTypes %}
+                        {
+                            text: '{{type.projectsTypes_name|escape('js')}}',
+                            value: '{{ type.projectsTypes_id }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result){
+                        if (result) {
+                            var projectType = result;
+                            bootbox.prompt("Enter Sub-Project Name", function (result) {
+                                if (result) {
+                                    ajaxcall("projects/new.php", {
+                                        "projects_name": result,
+                                        "projectsType_id": projectType,
+                                        "projects_manager": "{{ project.projects_manager }}",
+                                        "projects_parent_project_id": "{{ project.projects_id }}",
+                                    }, function (data) {
+                                        window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+                                    });
+                                }
+                            });
+                        }
+                    }
+                })
+            });
+            {% endif %}
+
         });
     </script>
     {% embed 'common/plugins/fileBoxJS.twig' %}
