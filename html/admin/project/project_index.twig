@@ -426,7 +426,16 @@
                         </div>
                     {% endif %}
                 {% endif %}
-
+                {% if project.subProjects %}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                {% embed 'assets/widgets/calendar.twig' with {"projects": project.subProjects } %}
+                                {% endembed %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
                 {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
                 <div class="col-12">
                     <div class="card">

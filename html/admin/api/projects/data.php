@@ -24,6 +24,11 @@ $DBLIB->join("locations","locations.locations_id=projects.locations_id","LEFT");
 $PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "projectsTypes.*", "clients.clients_id", "clients_name","clients_website","clients_email","clients_notes","clients_address","clients_phone","users.users_userid", "users.users_name1", "users.users_name2", "users.users_email","locations.locations_name","locations.locations_address"]);
 if (!$PAGEDATA['project']) die("404");
 
+//subprojects
+$DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("projects.projects_parent_project_id", $_GET['id']);
+$PAGEDATA['project']['subProjects'] = $DBLIB->get("projects", 25, ["projects.*"]);
 
 //Finances
 
