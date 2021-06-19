@@ -626,21 +626,16 @@
                                         {% endif %}
                                         text-{{ STATUSES[project.projects_status]['class'] }}
                                         " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
-                                    <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
+                                    <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                     <i class="fas fa-angle-left right"></i>
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
                                         <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
-                                            <i class="nav-icon
-                                        {% if project.projects_manager == USERDATA.users_userid %}
-                                        fas fa-star
-                                        {% else %}
-                                        far fa-circle
-                                        {% endif %}
+                                            <i class="nav-icon fas fa-crown
                                         text-{{ STATUSES[project.projects_status]['class'] }}
                                         " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
-                                            <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
+                                            <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                         </a>
                                     </li>
                                     {% for subProject in project.subProjects %}
@@ -654,7 +649,7 @@
                                         {% endif %}
                                         text-{{ STATUSES[subProject.projects_status]['class'] }}
                                         " title="{{ STATUSES[subProject.projects_status]['name'] }}"></i>
-                                                <p title="{{ subProject.projects_name }}">&#8627; {{ subProject.projects_name|u.truncate(18, '...') }}</p>
+                                                <p title="{{ subProject.projects_name }}">&#8627; {{ subProject.projects_name|u.truncate(19, '...') }}</p>
                                             </a>
                                         </li>
                                     {% endfor %}
@@ -664,13 +659,13 @@
                             <li class="nav-item">
                                 <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
                                     <i class="nav-icon
-                                        {% if project.projects_manager == USERDATA.users_userid %}
-                                        fas fa-star
-                                        {% else %}
-                                        far fa-circle
-                                        {% endif %}
-                                        text-{{ STATUSES[project.projects_status]['class'] }}
-                                        " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+{% if project.projects_manager == USERDATA.users_userid %}
+fas fa-star
+{% else %}
+far fa-circle
+{% endif %}
+text-{{ STATUSES[project.projects_status]['class'] }}
+" title="{{ STATUSES[project.projects_status]['name'] }}"></i>
                                     <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
                                 </a>
                             </li>
