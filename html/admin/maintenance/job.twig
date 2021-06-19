@@ -65,7 +65,13 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12">
+                        <style>
+                            #jobDetailBox p {
+                                margin-bottom: 6px;
+                                margin-top: 4px;
+                            }
+                        </style>
+                        <div class="col-12" id="jobDetailBox">
                             <h3 class="text-primary">
                                 {% if job.status %}
                                     <b>{{ job.status.maintenanceJobsStatuses_name }} - </b>
@@ -89,22 +95,30 @@
                                         {% endif %}
                                     </b>
                                 </p>
-                                {% if job.userAssignedUserName1 != null %}
-                                <p class="text-sm">Assigned to
-                                    <b class="d-block">
-                                        {% if 52|instancePermissions %}
-                                        <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}">
-                                            {% endif %}
-                                            {{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}
-                                            {% if 52|instancePermissions %}
-                                        </a>
-                                        {% endif %}
-                                    </b>
-                                </p>
-                                {% endif %}
                                 <p class="text-sm">Created
                                     <b class="d-block">{{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}</b>
                                 </p>
+                                {% if 68|instancePermissions %}
+                                    <p class="text-sm">Assigned to</p>
+                                    <select class="form-control select2bs4" multiple id="editJobAssigned">
+                                        <option value="0" {{ job.userAssignedUserName1 == null ? 'selected' }}>Unassigned</option>
+                                        {% for user in potentialManagers %}
+                                            <option value="{{ user.users_userid }}" {{ job.userAssignedUserID == user.users_userid ? 'selected' }}>{{ (user.users_name1 ~ " " ~ user.users_name2) }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <p class="text-sm">Assigned to
+                                        <b class="d-block">
+                                            {% if 52|instancePermissions %}
+                                            <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}">
+                                                {% endif %}
+                                                {{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}
+                                                {% if 52|instancePermissions %}
+                                            </a>
+                                            {% endif %}
+                                        </b>
+                                    </p>
+                                {% endif %}
                                 <p class="text-sm">Flag
                                     <b class="d-block">
                                         <select class="form-control" id="maintenanceJobsflagAssets" {% if 78|instancePermissions != true or job.maintenanceJobsStatuses_id == 2 %} disabled {% endif %}>
@@ -158,9 +172,6 @@
                 </div>
                 <div class="card-footer">
                     <div class="btn-group float-right">
-                        {% if 68|instancePermissions %}
-                            <button type="button" class="btn btn-default" id="editJobAssigned">Assign</button>
-                        {% endif %}
                         {% if 73|instancePermissions %}
                             <button type="button" class="btn btn-info" id="editJobStatus">Change Status</button>
                         {% endif %}
@@ -381,35 +392,20 @@
     <script>
         $(document).ready(function () {
             {% if 68|instancePermissions %}
-            $("#editJobAssigned").click(function () {
-                bootbox.prompt({
-                    title: "Assign user to job",
-                    inputType: 'select',
-                    {% if job.userAssignedUserID != null %}
-                        value: {{ job.userAssignedUserID }},
-                    {% endif %}
-                    inputOptions: [
-                        {
-                            text: 'Unassigned',
-                            value: '0',
-                        },
-                        {% for user in potentialManagers %}
-                        {
-                            text: '{{user.users_name1 ~ " " ~ user.users_name2}}',
-                            value: '{{ user.users_userid }}',
-                        },
-                        {% endfor %}
-                    ],
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("maintenance/job/changeJobAssigned.php", {
-                                "users_userid": result,
-                                "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
-                            }, function (data) {
-                                location.reload();
-                            });
-                        }
-                    }
+            $('#editJobAssigned').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1
+            });
+            $('#editJobAssigned').on("change", function (e) {
+                ajaxcall("maintenance/job//changeJobAssigned.php", {
+                    "users_userid": $(this).val(),
+                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                }, function (data) {
+                    location.reload();
                 });
             });
             {% endif %}
