@@ -101,9 +101,7 @@
                                 {% if 68|instancePermissions %}
                                     <p class="text-sm">Assigned to</p>
                                     <select class="form-control select2bs4" multiple id="editJobAssigned">
-                                        {% if job.userAssignedUserName1 == "" %}
-                                            <option value="" disabled selected>Not Assigned...</option>
-                                        {% endif %}
+                                        <option value="0" {{ job.userAssignedUserName1 == null ? 'selected' }}>Unassigned</option>
                                         {% for user in potentialManagers %}
                                             <option value="{{ user.users_userid }}" {{ job.userAssignedUserID == user.users_userid ? 'selected' }}>{{ (user.users_name1 ~ " " ~ user.users_name2) }}</option>
                                         {% endfor %}
