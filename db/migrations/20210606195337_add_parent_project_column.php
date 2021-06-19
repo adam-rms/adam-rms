@@ -23,7 +23,7 @@ final class AddParentProjectColumn extends AbstractMigration
                 'null' => true,
                 'default' => null,
             ])
-            ->addForeignKey('projects_parent_project_id', 'projects', 'projects_id', ['delete' => 'SET_NULL', 'update' => 'NO_ACTION'])
+            ->addForeignKey('projects_parent_project_id', 'projects', 'projects_id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->save();
     }
 }
