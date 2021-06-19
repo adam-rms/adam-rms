@@ -28,7 +28,7 @@ if (!$PAGEDATA['project']) die("404");
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_parent_project_id", $_GET['id']);
-$PAGEDATA['project']['subProjects'] = $DBLIB->get("projects", 25, ["projects.*"]);
+$PAGEDATA['project']['subProjects'] = $DBLIB->get("projects", null, ["projects.*"]);
 
 //Finances
 
