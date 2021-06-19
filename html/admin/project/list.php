@@ -31,6 +31,7 @@ else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 30);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("projects.projects_parent_project_id IS NULL");
 if (strlen($PAGEDATA['search']) > 0) {
     //Search
     $DBLIB->where("(
@@ -46,7 +47,6 @@ $DBLIB->orderBy("projects.projects_archived", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
 $DBLIB->orderBy("projects.projects_created", "ASC");
-$DBLIB->where("projects.projects_parent_project_id IS NULL");
 $projectlist = $DBLIB->arraybuilder()->paginate("projects", $page, ["projects_id", "projectsTypes.*","projects_archived", "projects_name", "clients_name", "projects.clients_id", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "users.users_name1", "users.users_name2", "users.users_email", "users.users_thumbnail"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 $PAGEDATA['PROJECTSLIST'] = [];
@@ -56,10 +56,11 @@ foreach ($projectlist as $project) {
     $project['finance'] = $DBLIB->getOne("projectsFinanceCache");
 
     $DBLIB->where("projects_parent_project_id", $project['projects_id']);
+    $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
     $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
     $DBLIB->join("projectsTypes", "projects.projectsTypes_id=projectsTypes.projectsTypes_id", "LEFT");
-    $DBLIB->orderBy("projects.projects_archived", "ASC");
     $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
     $DBLIB->orderBy("projects.projects_name", "ASC");
     $DBLIB->orderBy("projects.projects_created", "ASC");
