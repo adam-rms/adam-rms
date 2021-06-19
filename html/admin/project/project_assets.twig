@@ -1,5 +1,3 @@
-{% extends "assets/template.twig" %}
-{% block content %}
 {% if STATUSES[project.projects_status]["assetsAvailable"] %}
     <div class="alert alert-danger">
         <h5>Assets not locked</h5>
@@ -62,6 +60,10 @@
                 <p>{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})</p>
                 {% if project.projectsTypes_config_finance == 1 %}
                     <h5>Hire Charges</h5>
+                    <p>
+                        Days: {{ FINANCIALS['priceMaths']["days"] }}<br/>
+                        Weeks: {{ FINANCIALS['priceMaths']["weeks"] }}
+                    </p>
                     <p>{{ FINANCIALS['priceMaths']["string"]|nl2br }}</p>
                 {% endif %}
             </div>
@@ -262,4 +264,3 @@
         {% endif %}
     });
 </script>
-{% endblock %}
