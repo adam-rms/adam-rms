@@ -60,24 +60,10 @@
                 <p>{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})</p>
                 {% if project.projectsTypes_config_finance == 1 %}
                     <h5>Hire Charges</h5>
-                    <table class="table">
-                        <tr>
-                            <td>
-                                Days
-                            </td>
-                            <td>
-                                {{ FINANCIALS['priceMaths']["days"] }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Weeks
-                            </td>
-                            <td>
-                                {{ FINANCIALS['priceMaths']["weeks"] }}
-                            </td>
-                        </tr>
-                    </table>
+                    <p>
+                        Days: {{ FINANCIALS['priceMaths']["days"] }}<br/>
+                        Weeks: {{ FINANCIALS['priceMaths']["weeks"] }}
+                    </p>
                     <p>{{ FINANCIALS['priceMaths']["string"]|nl2br }}</p>
                 {% endif %}
             </div>
