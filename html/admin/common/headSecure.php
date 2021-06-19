@@ -67,7 +67,7 @@ if ($AUTH->data['instance']) {
     }
     foreach ($projects as $index=>$project) { //Loop back throuhg the projects once more and join the subprojects up with their parents, preserving sorting again
         if ($project['projects_parent_project_id'] != null and isset($tempProjectKeys[$project['projects_parent_project_id']])) {
-            $PAGEDATA['projects'][$tempProjectKeys[$project['projects_id']]]['subProjects'][] = $project;
+            $PAGEDATA['projects'][$tempProjectKeys[$project['projects_parent_project_id']]]['subProjects'][] = $project;
         }
     }
     unset($tempProjectKeys);
