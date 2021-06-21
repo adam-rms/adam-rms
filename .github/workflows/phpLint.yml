@@ -1,0 +1,10 @@
+name: phplint-reviewdog
+on: [pull_request]
+jobs:
+  phplint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: overtrue/phplint@7.4
+        with:
+          path: .html/
