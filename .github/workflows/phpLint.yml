@@ -1,0 +1,11 @@
+name: phplint-reviewdog
+on: [pull_request]
+jobs:
+  phplint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: overtrue/phplint@7.4
+        with:
+          path: .
