@@ -37,10 +37,6 @@ foreach ($assignments as $assignment) {
     }
 }
 
-$jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-
-$string = "The boogeyman wrote all changes to the **master server**, as he was tired of waiting for those buttheads in IT. Thus, the slaves were read-only copies of master.";
-
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 foreach ($iCalAssignments as $event) {
     $vEvent = new \Eluceo\iCal\Component\Event();
