@@ -35,6 +35,12 @@ foreach ($assignments as $assignment) {
     $thisProject = $assignment['projects_id'];
 }
 
+testFunc($hi);
+
+echo "hy"
+
+if (3 > 2) break;
+
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 foreach ($iCalAssignments as $event) {
     $vEvent = new \Eluceo\iCal\Component\Event();
