@@ -251,9 +251,16 @@
                                                 <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                                                     <span class="sr-only">Toggle Dropdown</span>
                                                     <div class="dropdown-menu" role="menu">
-                                                        {% if 21|instancePermissions and project.projects_parent_project_id == null %}
-                                                            <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
-                                                            <div class="dropdown-divider"></div>
+                                                        {% if 21|instancePermissions %}
+                                                            {% if project.projects_parent_project_id == null %}
+                                                                <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
+                                                            {% endif %}
+                                                            {% if project.subProjects == null %}
+                                                                <a class="dropdown-item" id="assignParentProject">Assign Parent Project</a>
+                                                            {% endif %}
+                                                            {% if project.projects_parent_project_id == null or project.subProjects == null %}
+                                                                <div class="dropdown-divider"></div>
+                                                            {% endif %}
                                                         {% endif %}
                                                         {% if 28|instancePermissions %}
                                                             <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
@@ -1933,6 +1940,37 @@
                                         window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
                                     });
                                 }
+                            });
+                        }
+                    }
+                })
+            });
+
+            $("#assignParentProject").click(function () {
+                bootbox.prompt({
+                    title: "Choose Parent Project",
+                    inputType: 'select',
+                    inputOptions: [
+                        {
+                            text: 'No Parent',
+                            value: -1,
+                        },
+                        {% for allProject in projects %}
+                            {% if allProject.projects_id != project.projects_id %}
+                                {
+                                    text: '{{ allProject.projects_name|escape("js") }}',
+                                    value: '{{ allProject.projects_id }}',
+                                },
+                            {% endif %}
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeSubProject.php", {
+                                "projects_id": "{{ project.projects_id }}",
+                                "projects_parent_project_id": result,
+                            }, function (data) {
+                                window.location.reload();
                             });
                         }
                     }
