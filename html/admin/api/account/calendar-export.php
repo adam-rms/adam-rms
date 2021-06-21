@@ -30,11 +30,9 @@ $assignments = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_
 $thisProject = null;
 $iCalAssignments = [];
 foreach ($assignments as $assignment) {
-    if ($thisProject != $assignment['projects_id']) {
-        $iCalAssignments[$assignment['projects_id']] = $assignment;
-    } else {
-        $iCalAssignments[$assignment['projects_id']]['crewAssignments_role'] .= " & " . $assignment['crewAssignments_role'];
-    }
+    if ($thisProject != $assignment['projects_id']) $iCalAssignments[$assignment['projects_id']] = $assignment;
+    else $iCalAssignments[$assignment['projects_id']]['crewAssignments_role'] .= " & " . $assignment['crewAssignments_role'];
+    $thisProject = $assignment['projects_id'];
 }
 
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
