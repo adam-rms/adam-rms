@@ -41,6 +41,8 @@ echo "hy"
 
 if (3 > 2) break;
 
+$string = "Hiya my name is mon gareth color colour gallery";
+
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 foreach ($iCalAssignments as $event) {
     $vEvent = new \Eluceo\iCal\Component\Event();
