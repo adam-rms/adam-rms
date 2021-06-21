@@ -1,0 +1,14 @@
+name: reviewdog
+on: [pull_request]
+jobs:
+  alex:
+    name: Spelling Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: reviewdog/action-misspell@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          locale: "UK"
+          level: warning
