@@ -10,7 +10,7 @@ if($_POST['projects_parent_project_id'] == -1) {
     $DBLIB->where("projects.projects_id", $_POST['projects_parent_project_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $parent = $DBLIB->getOne("projects", ["projects.projects_id"]);
-    if (!$parent) finish(false, ["code" => null, "message"=> $DBLIB->getLastError()]);
+    if (!$parent) finish(false, ["code" => null, "message"=> "Error changing parent project"]);
     else $parent_id = $parent['projects_id'];
 }
 

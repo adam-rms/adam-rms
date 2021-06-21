@@ -1961,7 +1961,7 @@
                         {% for allProject in projects %}
                             {% if allProject.projects_id != project.projects_id %}
                                 {
-                                    text: '{{ allProject.projects_name }}',
+                                    text: '{{ allProject.projects_name|escape("js") }}',
                                     value: '{{ allProject.projects_id }}',
                                 },
                             {% endif %}
