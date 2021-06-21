@@ -23,13 +23,20 @@ $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("locations","projects.locations_id=locations.locations_id","LEFT");
 $DBLIB->join("users AS pmusers", "projects.projects_manager=pmusers.users_userid", "LEFT");
 $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
-$DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
-$DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
-$DBLIB->orderBy("projects.projects_name", "ASC");
-$PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2","crewAssignments.crewAssignments_role", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "locations.locations_name","locations.locations_address"]);
+$DBLIB->orderBy("projects.projects_id", "ASC");
+$DBLIB->orderBy("crewAssignments.crewAssignments_rank", "ASC");
+$assignments = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2","projects.projects_id","crewAssignments.crewAssignments_role", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "locations.locations_name","locations.locations_address"]);
+
+$thisProject = null;
+$iCalAssignments = [];
+foreach ($assignments as $assignment) {
+    if ($thisProject != $assignment['projects_id']) $iCalAssignments[$assignment['projects_id']] = $assignment;
+    else $iCalAssignments[$assignment['projects_id']]['crewAssignments_role'] .= " & " . $assignment['crewAssignments_role'];
+    $thisProject = $assignment['projects_id'];
+}
 
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
-foreach ($PAGEDATA['user']['crewAssignments'] as $event) {
+foreach ($iCalAssignments as $event) {
     $vEvent = new \Eluceo\iCal\Component\Event();
     $vEvent->setUseTimezone(true);
     $vEvent
