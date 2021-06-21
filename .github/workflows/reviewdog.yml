@@ -31,11 +31,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           level: warning
-  phplint:
-    name: PHP Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: overtrue/phplint@7.4
-        with:
-          path: .
