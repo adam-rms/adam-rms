@@ -282,7 +282,8 @@ class bCMS {
                 'Bucket' => $file['s3files_bucket'],
                 'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
             ];
-            if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . 'AdamRMS ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
+            $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
+
             $cmd = $s3Client->getCommand('GetObject', $parameters);
             $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
             $presignedUrl = (string)$request->getUri();

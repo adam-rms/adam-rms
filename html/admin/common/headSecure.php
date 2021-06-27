@@ -41,6 +41,7 @@ if ($AUTH->data['instance']) {
     $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
     $PAGEDATA['potentialProjectManagers'] = $DBLIB->get('users', null, ["users.users_name1", "users.users_name2", "users.users_userid"]);
 
+    //get all projects
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->where("projects.projects_archived", 0);
@@ -49,27 +50,38 @@ if ($AUTH->data['instance']) {
     $DBLIB->orderBy("projects.projects_dates_deliver_start", "ASC");
     $DBLIB->orderBy("projects.projects_name", "ASC");
     $DBLIB->orderBy("projects.projects_created", "ASC");
-    $PAGEDATA['projects'] = $DBLIB->get("projects", null, ["projects_id", "projectsTypes.*","projects_archived", "projects_name", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager"]);
+    $projects = $DBLIB->get("projects", null, ["projects_id", "projectsTypes.*","projects_archived", "projects_name", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "projects_parent_project_id"]);
     $PAGEDATA['thisProject'] = false;
-    if ($AUTH->data['users_selectedProjectID'] != null) {
-        foreach ($PAGEDATA['projects'] as $project) {
-            if ($project['projects_id'] == $AUTH->data['users_selectedProjectID'] ) {
-                $PAGEDATA['thisProject'] = $project;
-                break;
-            }
+    $PAGEDATA['projects'] = [];
+    $tempProjectKeys = []; //Track the Project IDs of all projects and their place in the array (allows us to preserve sorting)
+    foreach ($projects as $index=>$project) {
+        if ($AUTH->data['users_selectedProjectID'] != null and $project['projects_id'] == $AUTH->data['users_selectedProjectID']) { //check if project is user's selected project
+            $PAGEDATA['thisProject'] = $project;
         }
-        if (!$PAGEDATA['thisProject']) {
-            //They're browsing with a project selected from another instance so we need to go grab it
-            $DBLIB->where("projects.projects_id", $AUTH->data['users_selectedProjectID']);
-            $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")"); //Duplicated elsewhere
-            $DBLIB->where("projects.projects_deleted", 0);
-            $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
-            $DBLIB->join("instances", "projects.instances_id=instances.instances_id", "LEFT");
-            $DBLIB->orderBy("projects.projects_dates_deliver_start", "ASC");
-            $DBLIB->orderBy("projects.projects_name", "ASC");
-            $DBLIB->orderBy("projects.projects_created", "ASC");
-            $PAGEDATA['thisProject'] = $DBLIB->getone("projects", null, ["projects_id", "projects_archived", "projects_name", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "instances.instances_name"]);
+
+        if ($project['projects_parent_project_id'] == null) {
+            $project['subProjects'] = [];
+            $tempProjectKeys[$project['projects_id']] = count($PAGEDATA['projects']);
+            $PAGEDATA['projects'][] = $project;
         }
+    }
+    foreach ($projects as $index=>$project) { //Loop back throuhg the projects once more and join the subprojects up with their parents, preserving sorting again
+        if ($project['projects_parent_project_id'] != null and isset($tempProjectKeys[$project['projects_parent_project_id']])) {
+            $PAGEDATA['projects'][$tempProjectKeys[$project['projects_parent_project_id']]]['subProjects'][] = $project;
+        }
+    }
+    unset($tempProjectKeys);
+
+    if ($AUTH->data['users_selectedProjectID'] != null and !$PAGEDATA['thisProject']) { //only option left is they're browsing with a project selected from another instance so we need to go grab it
+        $DBLIB->where("projects.projects_id", $AUTH->data['users_selectedProjectID']);
+        $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")"); //Duplicated elsewhere
+        $DBLIB->where("projects.projects_deleted", 0);
+        $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
+        $DBLIB->join("instances", "projects.instances_id=instances.instances_id", "LEFT");
+        $DBLIB->orderBy("projects.projects_dates_deliver_start", "ASC");
+        $DBLIB->orderBy("projects.projects_name", "ASC");
+        $DBLIB->orderBy("projects.projects_created", "ASC");
+        $PAGEDATA['thisProject'] = $DBLIB->getone("projects", null, ["projects_id", "projects_archived", "projects_name", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "instances.instances_name"]);
     }
 
     $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);

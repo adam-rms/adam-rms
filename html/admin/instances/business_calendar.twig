@@ -2,7 +2,7 @@
 {% block content %}
     <div class="row">
         <div class="col-lg-12">
-            {% embed 'assets/widgets/calendar.twig' %}
+            {% embed 'assets/widgets/calendar.twig' with {"projects": calendarProjects } %} {# Overwite the list of projects from the head funciton, to enable us to sort by location if needed #}
             {% endembed %}
         </div>
     </div>

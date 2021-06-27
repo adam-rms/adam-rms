@@ -3,5 +3,88 @@
 
 {% endblock %}
 {% block content %}
-    CMS Page view stats coming soon
+    <div class="row">
+        <div class="col-md-12 col-lg-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Views over time
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <div class="input-group input-group-sm">
+                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}">View Page</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0 table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Today</th>
+                                <th>This Week</th>
+                                <th>All Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ stats.today }}</td>
+                                <td>{{ stats.week }}</td>
+                                <td>{{ stats.all }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% if 52|instancePermissions %}
+            <div class="col-md-12 col-lg-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Views By User
+                        </h3>
+                        <div class="card-tools pull-right">
+                            <div class="input-group input-group-sm">
+                                {% if 128|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/log.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Page View Log"><i class="fas fa-binoculars"></i></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Times Accessed</th>
+                                    <th>Last Accessed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in userViews %}
+                                    <tr>
+                                        <td>
+                                            {% if entry.users_userid != null %}
+                                                {% if 52|instancePermissions %}
+                                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
+                                                        {{ entry.user.users_name1 }} {{ entry.user.users_name2 }}
+                                                    </a>
+                                                {% else %}
+                                                    {{ entry.user.users_name1 }} {{ entry.user.users_name2 }}
+                                                {% endif %}
+                                            {% else %}
+                                                Public access
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ entry.accessed }}</td>
+                                        <td>{{ entry.last }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
