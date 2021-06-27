@@ -63,7 +63,7 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
-                            {% if assets[0]['projectStatus'] != -1 %}
+                            {% if assets[0]['projectStatus'] != "Unassigned" %}
                                 <li class="list-group-item">
                                     <b>Asset Status</b> <a class="float-right">{{ (assets[0]['projectStatus'] ? assets[0]['projectStatus'] : "Requested") }}</a>
                                 </li>

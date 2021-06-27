@@ -69,7 +69,7 @@ foreach ($assets as $asset) {
     $DBLIB->where("projects.projects_deleted", 0);
     $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end", "assetsAssignmentsStatus_id"]);
 
-    //todo check
+    //asset Statuses
     foreach ($asset['assignments'] as $item){
         if ($item['projects_id'] == $PAGEDATA['USERDATA']['users_selectedProjectID']){
             $asset['projectStatus'] = "Requested";
@@ -80,7 +80,7 @@ foreach ($assets as $asset) {
             }
             break;
         } else {
-            $asset['projectStatus'] = -1;
+            $asset['projectStatus'] = "Unassigned";
         }
     }
 
