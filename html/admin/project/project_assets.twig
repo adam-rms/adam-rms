@@ -19,6 +19,9 @@
             <li class="nav-item">
                 <a class="nav-link active" id="asset-list-tabs-home-tab" data-toggle="pill" href="#asset-list-tabs-home" role="tab" aria-controls="asset-list-tabs-home" aria-selected="true"><b>Total</b></a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="asset-list-tabs-status-tab" data-toggle="pill" href="#asset-list-tabs-status" role="tab" aria-controls="asset-list-tabs-status" aria-selected="false">Asset Status</a>
+            </li>
             {% if FINANCIALS.assetsAssigned|length > 0 %}
             <li class="nav-item">
                 <a class="nav-link" id="asset-list-tab-thisinstance" data-toggle="pill" href="#asset-list-tabs-thisinstance" role="tab" aria-controls="asset-list-tabs-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
@@ -107,6 +110,10 @@
                     {% endembed %}
                 </div>
             {% endfor %}
+            <div class="tab-pane fade" id="asset-list-tabs-status" role="tabpanel" aria-labelledby="asset-list-tabs-status-tab">
+                {% embed 'project/project_asset_board.twig' %}
+                {% endembed %}
+            </div>
         </div>
     </div>
 </div>

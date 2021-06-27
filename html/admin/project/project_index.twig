@@ -85,7 +85,9 @@
                             <div class="card-header">
                                 <ul class="nav nav-pills">
                                     <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab">Assets</a></li>
+                                    {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
+                                        <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab">Assets</a></li>
+                                    {% endif %}
                                     <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab">Files & Invoices</a></li>
                                     {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
                                         <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab">Finance</a></li>
@@ -986,7 +988,7 @@
             </div>
         {% endfor %}
     {% endif %}
-   {% if 48|instancePermissions %}
+    {% if 48|instancePermissions %}
         <div class="modal fade" id="addCrewModal">
             <div class="modal-dialog">
                 <div class="modal-content">
