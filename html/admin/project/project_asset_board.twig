@@ -1,63 +1,83 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-<style>
-    .scrolling-head {
-        display: flex;
-        overflow-x: auto;
-    }
-
-    @media only screen and (max-width: 768px) {
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <style>
         .scrolling-head {
-            display: block;
+            display: flex;
+            overflow-x: auto;
         }
-        .scrolling-head > div {
-            width: 100%;
-            max-width: 100%;
+
+        @media only screen and (max-width: 768px) {
+            .scrolling-head {
+                display: block;
+            }
+            .scrolling-head > div {
+                width: 100%;
+                max-width: 100%;
+            }
         }
-    }
-</style>
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="p-2 scrolling-head h-100">
+<div class="p-2 scrolling-head h-100" >
     {% for status in assetsAssignmentsStatus %}
-        <div class="col-2">
+        <div class="col-2 pageAssetSortable">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">{{ status['assetsAssignmentsStatus_name'] }}</h3>
                 </div>
-
-                {% if status['assets']|length > 0 %}
-                    <div class="card-body">
-                        {% for asset in status['assets'] %}
-                            <div class="row align-middle p-2 border border-secondary border-2 rounded my-auto">
-                                {% if status['assetsAssignmentsStatus_order'] > 1 %}
-                                    <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] - 1 }})">«</button>
-                                {% endif %}
-                                <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
-                                {% if status['assetsAssignmentsStatus_order'] < assetsAssignmentsStatus|length %}
-                                    <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] +1 }})">»</button>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="card-body mx-auto">
-                        <h6 class="text-muted"><i>No Assets</i></h6>
-                    </div>
-                {% endif %}
+                <div class="card-body assetList" data-status="{{ status['assetsAssignmentsStatus_id'] - 1 }}">
+                    {% for asset in status['assets'] %}
+                        <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2" data-assignment="{{ asset['assetsAssignments_id'] }}" data-currentStatus="{{ status['assetsAssignmentsStatus_id'] - 1 }}">
+                            {% if status['assetsAssignmentsStatus_order'] > 1 %}
+                                <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] - 1 }})">«</button>
+                            {% endif %}
+                            <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
+                            {% if status['assetsAssignmentsStatus_order'] < assetsAssignmentsStatus|length %}
+                                <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] +1 }})">»</button>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     {% endfor %}
 </div>
 <script>
-function changeStatus(assetsAssignments_id, assetsAssignments_status){
-    ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status}, function (returned){
-        if (returned['result']){
-            window.location.reload();
-        }
-    });
+    function changeStatus(assetsAssignments_id, assetsAssignments_status){
+        ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status}, function (returned){
+            if (returned['result']){
+                window.location.reload();
+            }
+        });
 
-}
+    }
+
+    $(document).ready(function () {
+        $(".assetList").sortable({
+            connectWith: "div",
+            update: function( event, ui ){
+                /*
+                Update function is called twice, once for the old list and once for the new list.
+                The lists, this, has a data attribute, status, that can be compared with each asset, ui.item[0].
+                If the groupStatus is the same as the old status, this call can be ignored as this is the old list update call.
+                Function call will refresh the page and sort any graphical issues.
+                 */
+                let groupStatus = this.dataset.status;
+                let assetOldStatus = ui.item[0].dataset.currentstatus;
+                let assetAssignment = ui.item[0].dataset.assignment;
+
+                if (assetOldStatus !== groupStatus) {
+                    changeStatus(parseInt(assetAssignment), parseInt(groupStatus) + 1);
+                }
+            }
+        })
+    });
 </script>
 {% endblock %}
