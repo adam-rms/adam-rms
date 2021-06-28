@@ -695,21 +695,6 @@ usort($GLOBALS['STATUSES'], function($a, $b) {
     return $a['order'] - $b['order'];
 });
 
-$GLOBALS['ASSETASSIGNMENTSTATUSES'] = [
-    0 => ["name" => "None applicable"],
-    1 => ["name" => "Pending pick"],
-    2 => ["name" => "Picked"],
-    3 => ["name" => "Prepping"],
-    4 => ["name" => "Tested for prep"],
-    5 => ["name" => "Packed"],
-    6 => ["name" => "Dispatched"],
-    7 => ["name" => "Awaiting Check-in"],
-    8 => ["name" => "Case opened"],
-    9 => ["name" => "Unpacked"],
-    10 => ["name" => "Tested from return"],
-    11 => ["name" => "Stored"]
-];
-
 $GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
     1 => ["class" => "danger","id" => 1,"text" => "Emergency"],
     2 => ["class" => "danger", "id" => 2, "text" => "Business Critical"],
