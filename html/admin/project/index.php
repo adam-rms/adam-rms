@@ -56,8 +56,6 @@ if ($AUTH->instancePermissionCheck(30)) {
     }
 }
 
-//die(var_dump($PAGEDATA['assetsAssignmentsStatus']));
-
 if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assetsPage.twig', $PAGEDATA);
 elseif (isset($_GET['pdf'])) {
     $PAGEDATA['GET'] = $_GET;

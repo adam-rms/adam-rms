@@ -1,3 +1,5 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
 <style>
     .scrolling-head {
         display: flex;
@@ -14,22 +16,38 @@
         }
     }
 </style>
-<div class="p-2 scrolling-head">
+{% endblock %}
+
+{% block content %}
+<div class="p-2 scrolling-head h-100">
     {% for status in assetsAssignmentsStatus %}
         <div class="col-3">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">{{ status['assetsAssignmentsStatus_name'] }}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="asset">
-                        <button> « </button>
-                        <image></image>
-                        <h6>Asset Name</h6>
-                        <button> » </button>
+
+                {% if status['assets']|length > 0 %}
+                    <div class="card-body">
+                        {% for asset in status['assets'] %}
+                            <div class="row align-middle p-2 border border-secondary border-2 rounded my-auto">
+                                {% if status['assetsAssignmentsStatus_order'] > 1 %}
+                                    <button class="btn btn-outline-secondary col-1">«</button>
+                                {% endif %}
+                                <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag'] }}</a>)</i> {{ asset['assetTypes_name'] }}</h6>
+                                {% if status['assetsAssignmentsStatus_order'] < assetsAssignmentsStatus|length %}
+                                    <button class="btn btn-outline-secondary col-1">»</button>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
                     </div>
-                </div>
+                {% else %}
+                    <div class="card-body mx-auto">
+                        <h6 class="text-muted"><i>No Assets</i></h6>
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% endfor %}
 </div>
+{% endblock %}

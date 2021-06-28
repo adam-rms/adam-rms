@@ -146,6 +146,4 @@ if (count($PAGEDATA['assets']) == 1) {
     } else $PAGEDATA['assets'][0]['groups'] = [];
 }
 
-//die(var_dump($PAGEDATA['assets'][0]));
 echo $TWIG->render('asset.twig', $PAGEDATA);
-?>
