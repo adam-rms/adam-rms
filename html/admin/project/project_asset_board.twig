@@ -21,7 +21,7 @@
 {% block content %}
 <div class="p-2 scrolling-head h-100">
     {% for status in assetsAssignmentsStatus %}
-        <div class="col-3">
+        <div class="col-2">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">{{ status['assetsAssignmentsStatus_name'] }}</h3>
@@ -34,7 +34,7 @@
                                 {% if status['assetsAssignmentsStatus_order'] > 1 %}
                                     <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] - 1 }})">«</button>
                                 {% endif %}
-                                <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag'] }}</a>)</i> {{ asset['assetTypes_name'] }}</h6>
+                                <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
                                 {% if status['assetsAssignmentsStatus_order'] < assetsAssignmentsStatus|length %}
                                     <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] +1 }})">»</button>
                                 {% endif %}
