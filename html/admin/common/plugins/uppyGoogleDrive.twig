@@ -1,0 +1,292 @@
+{% block htmlIncludes %}
+    <style>
+        .picker-dialog-bg {
+            z-index: 20000 !important;
+        }
+        .picker-dialog {
+            z-index: 20001 !important;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/preact/8.2.9/preact.min.js"></script>
+    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+
+    <script>
+        //Load Google API's on page load
+
+
+        gapi.load('auth');
+        gapi.load('picker');
+        gapi.load('client', function () {
+            gapi.client.load('drive', 'v2');
+        });
+    </script>
+{% endblock %}
+<script>
+
+    /**
+     * An implementation of google drive with Uppy
+     *
+     * Options:
+     *      id:        A unique identifier for this plugin. It defaults to 'GoogleDrive'
+     *      title:     Configures the title / name shown in the UI, for instance, on Dashboard tabs. It defaults to 'Google Drive'.
+     *      target:    DOM element, CSS selector, or plugin to mount the Google Drive provider into. This should normally be the @uppy/dashboard plugin.
+     *      picker_id: The Dom id of the Google Picker instance. Defaults to 'google_picker_' with a random integer on the end.
+     *      google_client_id: The client id of the google application. Required.
+     *      google_scope: The scope of the google application in an array. Defaults to ['https://www.googleapis.com/auth/drive.file']
+     *      imagesOnly: Boolean, if the picker can only choose images.
+     */
+    class UppyGoogleDrive extends Uppy.Core.Plugin {
+
+        constructor(uppy, opts) {
+            super(uppy, opts);
+
+            this.id = opts.id || 'GoogleDrive'
+            this.title = opts.title || 'Google Drive'
+            this.type = "acquirer"
+            this.icon = () => this._generateIcon();
+
+            //The id of the google picker that is created
+            this.picker_id = opts.picker_id || "google_picker_"+Date.now() + Math.floor((Math.random() * 30000) + 1);
+
+            //Bind functions to the class
+            this.install = this.install.bind(this);
+            this.uninstall = this.uninstall.bind(this);
+            this.setPluginState = this.setPluginState.bind(this);
+            this.render = this.render.bind(this);
+            this._startPicker = this._startPicker.bind(this);
+            this._onAuthApiLoad = this._onAuthApiLoad.bind(this);
+            this._onPickerApiLoad = this._onPickerApiLoad.bind(this);
+            this._handleAuthResult = this._handleAuthResult.bind(this);
+            this._createPicker = this._createPicker.bind(this);
+            this._pickerCallback = this._pickerCallback.bind(this);
+            this._logout = this._logout.bind(this);
+
+            //Set the default state
+            this.setPluginState({
+                oauthToken:"",
+                pickerApiLoaded: false,
+                user: {}
+            });
+
+            return this;
+        }
+
+
+        install(){
+            //Get the target and mount it in the Dashboard
+            const target = this.opts.target
+            if (target) {
+                this.mount(target, this)
+            }
+
+
+        }
+
+        uninstall () {
+            //Unmount the plugin from the dashboard
+            this.unmount()
+        }
+
+        /**
+         * Generate the Google Drive Icon using Preact
+         *
+         * @returns {*}
+         */
+        _generateIcon(){
+            return preact.h("svg", {
+                    width: "32",
+                    height: "32",
+                    viewBox: "0 0 87.3 78"
+                },
+                preact.h("path", {
+                        d: "m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z",
+                        fill: "#0066da"
+                    }
+                ),
+                preact.h("path", {
+                        d: "m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z",
+                        fill: "#00ac47"
+                    }
+                ),
+                preact.h("path", {
+                        d: "m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z",
+                        fill: "#ea4335"
+                    }
+                ),
+                preact.h("path", {
+                        d: "m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z",
+                        fill: "#00832d"
+                    }
+                ),
+                preact.h("path", {
+                        d: "m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z",
+                        fill: "#2684fc"
+                    }
+                ),
+                preact.h("path", {
+                        d: "m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z",
+                        fill: "#ffba00"
+                    }
+                )
+            );
+        }
+
+        _startPicker(){
+            //Confirm that the API's are loaded and then use a callback to start the auth & picker
+            if(!this.getPluginState().oauthToken){
+                gapi.load('auth', {'callback': this._onAuthApiLoad});
+            }
+            gapi.load('picker', {'callback': this._onPickerApiLoad});
+        }
+
+        _onAuthApiLoad() {
+            //Allow the user to login to google and get the keys
+            gapi.auth.authorize(
+                {
+                    'client_id': this.opts.google_client_id,
+                    'scope': this.opts.google_scope|| ['https://www.googleapis.com/auth/drive.file'],
+                    'immediate': false
+                },
+                this._handleAuthResult);
+        }
+
+        _onPickerApiLoad(){
+            //Called when the api has loaded
+            this.setPluginState({
+                pickerApiLoaded: true,
+            });
+            this._createPicker();
+        }
+
+        async _handleAuthResult(authResult) {
+            if (authResult && !authResult.error) {
+                //Save the token
+                this.setPluginState({
+                    oauthToken: authResult.access_token,
+                });
+
+                //Get the users email and password once logged in
+                fetch("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + authResult.access_token)
+                    .then(response => response.json())
+                    .then(data => this.setPluginState({
+                        user: data,
+                    }));
+
+
+                this._createPicker();
+            } else {
+                bootbox.alert("Sorry - there was a problem logging in to Google! Please try again.");
+            }
+        }
+
+        // Create and render a Picker object for searching images.
+        _createPicker() {
+            var state = this.getPluginState();
+            if (state.pickerApiLoaded && state.oauthToken) {
+                //Create a view that only loads images if required
+                var view = new google.picker.View(this.opts.imagesOnly ? google.picker.ViewId.DOCS_IMAGES :
+                                                                         google.picker.ViewId.DOCS);
+                //Create the google Picker
+                var picker = new google.picker.PickerBuilder()
+                    .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                    .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                    .setOAuthToken(state.oauthToken)
+                    .addView(view)
+                    .addView(new google.picker.DocsUploadView())
+                    .setCallback(this._pickerCallback)
+                    //These do not seem to be needed, however are useful in developent
+                    // .setAppId("")
+                    // .setDeveloperKey("")
+                    .build();
+
+                //Open the picker
+                picker.setVisible(true);
+            }
+        }
+
+        // A simple callback implementation.
+        _pickerCallback(data) {
+            if (data.action == google.picker.Action.PICKED) {
+                var files = data.docs;
+
+                for (let i = 0; i < files.length; i++) {
+
+                    var request = gapi.client.drive.files.export({ 'fileId': files[i]["id"], 'mimeType': "text/plain" });
+
+                    var fulfilledCallback = (fulfilled) => console.log(this.uppy.addFile({
+                        // id: files[i]["id"],
+                        // size: 0,
+                        name: files[i]["name"]+".txt", // file name
+                        type: files[i]["mimeType"], // file type
+                        data: new Blob([fulfilled.body], {type: 'text/plain'}),
+                        // preview: files[i]["iconUrl"],
+                    }));
+
+                    var rejectedCallback = (rejected) => bootbox.alert("Sorry - there was a problem importing the file \""+files[i]["name"]+"\" from Google! Please try again.");
+
+
+                    // Make the request — For some reason using .execute instead of .then doesn't work; their API docs (https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiclientrequest) recommend using .then
+                    request.then(fulfilledCallback, rejectedCallback)
+
+                }
+            }
+        }
+
+        _logout(){
+            this.setPluginState({
+                oauthToken: null,
+                user: {}
+            });
+            gapi.auth.setToken(null);
+            gapi.auth.signOut();
+        }
+
+        render () {
+            var state = this.getPluginState();
+
+            //If logged in
+            if (state.oauthToken) {
+                return preact.h("div", {class: "uppy-Provider-auth"},
+                    state.user.picture && preact.h("div", {class: "uppy-Provider-authIcon"},
+                        preact.h("img", {src:state.user.picture, alt: state.user.name, style: {"borderRadius": "50%"}})
+                    ),
+
+                    state.user.email && preact.h("h1", {class: "uppy-Provider-authTitle", style: {marginBottom: "10px"}},
+                        "You are logged in as ",
+                        preact.h("i", {}, state.user.email)
+                    ),
+
+                    preact.h("button", {
+                        onClick: this._startPicker,
+                        class: "uppy-c-btn uppy-c-btn-primary"
+                    }, "Select Files"),
+
+
+                    preact.h("button", {
+                        onClick: this._logout,
+                        class: "uppy-c-btn uppy-c-btn-link",
+                        style: {"position":"absolute", "top":55, "right":5}
+                    }, "Logout")
+                );
+
+            }
+
+            //Default View
+            return preact.h("div", {class: "uppy-Provider-auth"},
+                preact.h("div", {class: "uppy-Provider-authIcon"}, this._generateIcon()),
+
+                preact.h("h1", {class: "uppy-Provider-authTitle", style: {marginBottom: "10px"}},
+                    "Please authenticate with Google Drive to select files.",
+                    preact.h("br"),
+                    preact.h("small", {}, "Don't forget if you update a Google Doc file, you need to re-upload it using this tool.")),
+
+                preact.h("button", {
+                    onClick: this._startPicker,
+                    class: "uppy-c-btn uppy-c-btn-primary"
+                }, "Login to Google")
+            )
+
+
+        }
+    }
+</script>

@@ -17,6 +17,9 @@ x-amz-meta-size
 #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uppy/1.24.0/uppy.min.css" integrity="sha512-AlgodRCmxN1sI0uUiPYxh6NeOiw5/V4hvGLuZQjZrWF0I+ek5CXi9JiyJy74YjIaXGQjKvRIRc9uXOWqCkUF5w==" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uppy/1.24.0/uppy.min.js" integrity="sha512-zq6u0SjqBwEZJP4C6JwFW9ecWKNLFY1kv+fHk4E26eHTlDh2oQlXjusT5iCGKq4jPC7zVFmA5B7s+K+QNcnxBg==" crossorigin="anonymous"></script>
+
+    {% embed 'common/plugins/uppyGoogleDrive.twig' %}{% endembed %}
+
     {% set thisElementID = ('uppy' ~ random()) %}
     <div id="{{ thisElementID }}"></div>
     <script>
@@ -85,11 +88,16 @@ x-amz-meta-size
                 { id: 'title', name: 'Title', placeholder: 'filetitle' },
                 { id: 'license', name: 'License', placeholder: 'specify license' },
                 { id: 'credit', name: 'Credit', placeholder: 'How should the image be credited? Don\'t include "Image:"' },
-                { id: 'ownwork', name: 'Photo from a member of the Nouse Team?', render: function({value, onChange}, h) {
+                { id: 'ownwork', name: 'Photo from a member of the TechSoc Team?', render: function({value, onChange}, h) {
                         return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'off' })
                     } }
                 {% endif %}
             ]
+        }).use(UppyGoogleDrive, {
+            target: Uppy.Dashboard,
+            google_client_id: "{{ CONFIG["AUTH-PROVIDERS"]["GOOGLE"]["keys"]['id'] }}",
+            imagesOnly: {% if imagesOnly is defined and imagesOnly %}true{% else %}false{% endif %}
+
         }).use(Uppy.AwsS3, {
             metaFields: ['name','typeid','subtype'],
             getUploadParameters (file) {
