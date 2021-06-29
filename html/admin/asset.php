@@ -67,22 +67,7 @@ foreach ($assets as $asset) {
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
     $DBLIB->where("projects.projects_deleted", 0);
-    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end", "assetsAssignmentsStatus_id"]);
-
-    //asset Statuses
-    foreach ($asset['assignments'] as $item){
-        if ($item['projects_id'] == $PAGEDATA['USERDATA']['users_selectedProjectID']){
-            $asset['projectStatus'] = "Requested";
-            $DBLIB->where("assetsAssignmentsStatus_id", $item["assetsAssignmentsStatus_id"] );
-            $status = $DBLIB->getOne("assetsassignmentsstatus", ["assetsAssignmentsStatus_name"]);
-            if (isset($status)){
-                $asset['projectStatus'] = $status['assetsAssignmentsStatus_name'];
-            }
-            break;
-        } else {
-            $asset['projectStatus'] = "Unassigned";
-        }
-    }
+    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end", "assetsAssignments.assetsAssignmentsStatus_id"]);
 
     $asset['files'] = $bCMS->s3List(4, $asset['assets_id']);
 
@@ -144,6 +129,17 @@ if (count($PAGEDATA['assets']) == 1) {
         $DBLIB->where("assetGroups_id IN (" . $PAGEDATA['assets'][0]['assets_assetGroups'] . ")");
         $PAGEDATA['assets'][0]['groups'] = $DBLIB->get("assetGroups",null,["assetGroups_id","assetGroups_name"]);
     } else $PAGEDATA['assets'][0]['groups'] = [];
+
+    //Assignment Id
+    $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_id']);
+    $DBLIB->where("projects_id", $PAGEDATA['thisProject']['projects_id']);
+    $DBLIB->join("assetsAssignmentsStatus", "assetsAssignmentsStatus.assetsAssignmentsStatus_id = assetsassignments.assetsAssignmentsStatus_id", "LEFT");
+    $PAGEDATA['assets'][0]['assetsAssignment'] = $DBLIB->getOne("assetsAssignments", ["assetsAssignments.assetsAssignments_id", "assetsAssignmentsStatus.assetsAssignmentsStatus_name"]);
 }
 
+$DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
+$DBLIB->where("assetsAssignmentsStatus.instances_id", $AUTH->data['instance']['instances_id']);
+$PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
+
+//die(var_dump($PAGEDATA['assets']));
 echo $TWIG->render('asset.twig', $PAGEDATA);
