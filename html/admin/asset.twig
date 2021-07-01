@@ -79,7 +79,7 @@
                                 {% endif %}
                                 <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
                             {% endif %}
-                            {% if assets[0]['projectStatus'] != "Unassigned" and 31|instancePermissions %}
+                            {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null and 31|instancePermissions %}
                                 <button title="Change Asset Status" class="btn btn-block btn-info changeAssetStatusButton">Change Asset Status</button>
                             {% endif %}
                         {% endif %}
@@ -1506,6 +1506,7 @@
                         }
                     });
                 });
+                {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null %}
                 $(".changeAssetStatusButton").click(function () {
                     bootbox.prompt({
                         title: "Select Status",
@@ -1529,6 +1530,7 @@
                         }
                     });
                 });
+                {% endif %}
                 {% endif %}
                 {% if 58|instancePermissions %}
                 $("#addNewType-value").change(function() {

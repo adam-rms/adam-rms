@@ -25,38 +25,63 @@
 {% endblock %}
 
 {% block content %}
-<div class="p-2 scrolling-head h-100" >
-    {% for status in assetsAssignmentsStatus %}
-        <div class="col-2 pageAssetSortable">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">{{ status['assetsAssignmentsStatus_name'] }}</h3>
-                </div>
-                <div class="card-body assetList" data-status="{{ status['assetsAssignmentsStatus_id'] - 1 }}">
-                    {% for asset in status['assets'] %}
-                        <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2" data-assignment="{{ asset['assetsAssignments_id'] }}" data-currentStatus="{{ status['assetsAssignmentsStatus_id'] - 1 }}">
-                            {% if status['assetsAssignmentsStatus_order'] > 1 %}
-                                <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] - 1 }})">«</button>
-                            {% endif %}
-                            <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
-                            {% if status['assetsAssignmentsStatus_order'] < assetsAssignmentsStatus|length %}
-                                <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_id'] +1 }})">»</button>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    {% endfor %}
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ CONFIG.ROOTURL }}/project?id={{ project['projects_id'] }}">Back to Project</a>
+            </li>
+            <li class="nav-item">
+                <h5 class="nav-link">{{ project['projects_name'] }} Assets</h5>
+            </li>
+        </ul>
+    </div>
 </div>
+<div class="card card-primary card-outline card-outline-tabs">
+    <div class="card-header p-0 border-bottom-0 card-tabs">
+        <ul class="nav nav-tabs" id="asset-list-tabs-tab" role="tablist">
+            {% if FINANCIALS.assetsAssigned|length > 0 %}
+                <li class="nav-item">
+                    <a class="nav-link active" id="asset-board-tab-thisinstance" data-toggle="pill" href="#asset-board-thisinstance" role="tab" aria-controls="asset-board-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
+                </li>
+            {% endif %}
+            {% for instance in FINANCIALS.assetsAssignedSUB %}
+                <li class="nav-item">
+                    <a class="nav-link" id="asset-board-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="card-body p-0">
+        <div class="tab-content" id="asset-board-tabs-tabContent">
+            <div class="tab-pane show active p-3" id="asset-board-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": assetsAssignmentsStatus}%}
+                {% endembed %}
+            </div>
+            {% for instance in FINANCIALS.assetsAssignedSUB %}
+            <div class="tab-pane" id="asset-board-instance{{ instance['instance']['instances_id'] }}">
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": instance['statuses']} %}
+                {% endembed %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 <script>
+    if (location.hash) {
+        $('a[href=\'' + location.hash + '\']').tab('show');
+    }
     function changeStatus(assetsAssignments_id, assetsAssignments_status){
         ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status}, function (returned){
             if (returned['result']){
+                location.hash = activeTab;
                 window.location.reload();
             }
         });
     }
+
+    var activeTab = location.hash;
 
     $(document).ready(function () {
         $(".assetList").sortable({
@@ -77,6 +102,12 @@
                 }
             }
         })
+
+        $('a[data-toggle="pill"]').on('click', function (e) {
+            activeTab = e.target.getAttribute('aria-controls');
+        })
     });
+
+
 </script>
 {% endblock %}
