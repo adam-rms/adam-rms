@@ -43,7 +43,7 @@
          * Convert a given Google Mime Type to the outputted type and extension. Generated from the list at
          * https://developers.google.com/drive/api/v3/mime-types
          */
-        static googleMimeTypeConverter = {
+        googleMimeTypeConverter = {
             "application/vnd.google-apps.audio" : {
                 mimeType: "audio/mpeg",
                 extension: "mp3"
@@ -299,10 +299,10 @@
         _downloadFileToUppy(file) {
             //If the mime type is from google (for example google docs) we need to use the export api call. If its not,
             //(for example a zip file) we use the get api call to download the file.
-            if (file["mimeType"] in googleMimeTypeConverter) {
+            if (file["mimeType"] in this.googleMimeTypeConverter) {
                 //We need to convert the file to something readable such as PDF
-                var exportMimeType = googleMimeTypeConverter[file["mimeType"]]['mimeType'];
-                var exportFileName = file["name"] + "." + googleMimeTypeConverter[file["mimeType"]]['extension'];
+                var exportMimeType = this.googleMimeTypeConverter[file["mimeType"]]['mimeType'];
+                var exportFileName = file["name"] + "." + this.googleMimeTypeConverter[file["mimeType"]]['extension'];
 
                 var request = gapi.client.drive.files.export({
                     'fileId': file["id"],
