@@ -214,12 +214,12 @@
                     var request = gapi.client.drive.files.export({ 'fileId': files[i]["id"], 'mimeType': "text/plain" });
 
                     var fulfilledCallback = (fulfilled) => console.log(this.uppy.addFile({
-                        // id: files[i]["id"],
-                        // size: 0,
                         name: files[i]["name"]+".txt", // file name
                         type: files[i]["mimeType"], // file type
-                        data: new Blob([fulfilled.body], {type: 'text/plain'}),
-                        // preview: files[i]["iconUrl"],
+                        data: new File([fulfilled.body], files[i]["name"], {
+                            type: 'text/plain'
+                        }),
+                        preview: files[i]["iconUrl"],
                     }));
 
                     var rejectedCallback = (rejected) => bootbox.alert("Sorry - there was a problem importing the file \""+files[i]["name"]+"\" from Google! Please try again.");
