@@ -17,7 +17,7 @@
         gapi.load('auth');
         gapi.load('picker');
         gapi.load('client', function () {
-            gapi.client.load('drive', 'v2');
+            gapi.client.load('drive', 'v3');
         });
     </script>
 {% endblock %}
@@ -32,10 +32,88 @@
      *      target:    DOM element, CSS selector, or plugin to mount the Google Drive provider into. This should normally be the @uppy/dashboard plugin.
      *      picker_id: The Dom id of the Google Picker instance. Defaults to 'google_picker_' with a random integer on the end.
      *      google_client_id: The client id of the google application. Required.
-     *      google_scope: The scope of the google application in an array. Defaults to ['https://www.googleapis.com/auth/drive.file']
+     *      google_scope: The scope of the google application in an array. Defaults to
+     *                          ['https://www.googleapis.com/auth/drive.file',
+     *                          'https://www.googleapis.com/auth/drive.metadata']
      *      imagesOnly: Boolean, if the picker can only choose images.
      */
     class UppyGoogleDrive extends Uppy.Core.Plugin {
+
+        /**
+         * Convert a given Google Mime Type to the outputted type and extension. Generated from the list at
+         * https://developers.google.com/drive/api/v3/mime-types
+         */
+        static googleMimeTypeConverter = {
+            "application/vnd.google-apps.audio" : {
+                mimeType: "audio/mpeg",
+                extension: "mp3"
+            },
+            "application/vnd.google-apps.document" : {
+                mimeType: "application/pdf",
+                extension: "pdf"
+            },
+            "application/vnd.google-apps.drive-sdk" : {
+                mimeType: "application/octet-stream",
+                extension: "octet-stream"
+            },
+            "application/vnd.google-apps.drawing" : {
+                mimeType: "image/png",
+                extension: "png"
+            },
+            "application/vnd.google-apps.file" : {
+                mimeType: "application/octet-stream",
+                extension: "octet-stream"
+            },
+            "application/vnd.google-apps.folder" : {
+                mimeType: "application/zip",
+                extension: "zip"
+            },
+            "application/vnd.google-apps.form" : {
+                mimeType: "application/pdf",
+                extension: "pdf"
+            },
+            "application/vnd.google-apps.fusiontable" : {
+                mimeType: "application/pdf",
+                extension: "pdf"
+            },
+            "application/vnd.google-apps.map" : {
+                mimeType: "application/pdf",
+                extension: "pdf"
+            },
+            "application/vnd.google-apps.photo" : {
+                mimeType: "image/png",
+                extension: "png"
+            },
+            "application/vnd.google-apps.presentation" : {
+                mimeType: "application/pdf",
+                extension: "pdf"
+            },
+            "application/vnd.google-apps.script" : {
+                mimeType: "text/plain",
+                extension: "txt"
+            },
+            "application/vnd.google-apps.shortcut" : {
+                mimeType: "application/octet-stream",
+                extension: "octet-stream"
+            },
+            "application/vnd.google-apps.site" : {
+                mimeType: "application/zip",
+                extension: "zip"
+            },
+            "application/vnd.google-apps.spreadsheet" : {
+                mimeType: "application/pdf",
+                extension: "pdf"
+            },
+            "application/vnd.google-apps.unknown" : {
+                mimeType: "application/octet-stream",
+                extension: "octet-stream"
+            },
+            "application/vnd.google-apps.video" : {
+                mimeType: "video/mp4",
+                extension: "mp4"
+            },
+        };
+
 
         constructor(uppy, opts) {
             super(uppy, opts);
@@ -59,6 +137,7 @@
             this._handleAuthResult = this._handleAuthResult.bind(this);
             this._createPicker = this._createPicker.bind(this);
             this._pickerCallback = this._pickerCallback.bind(this);
+            this._downloadFileToUppy = this._downloadFileToUppy.bind(this);
             this._logout = this._logout.bind(this);
 
             //Set the default state
@@ -144,7 +223,9 @@
             gapi.auth.authorize(
                 {
                     'client_id': this.opts.google_client_id,
-                    'scope': this.opts.google_scope|| ['https://www.googleapis.com/auth/drive.file'],
+                    'scope': this.opts.google_scope|| ['https://www.googleapis.com/auth/drive.file',
+                        'https://www.googleapis.com/auth/drive.readonly'
+                    ],
                     'immediate': false
                 },
                 this._handleAuthResult);
@@ -210,26 +291,58 @@
                 var files = data.docs;
 
                 for (let i = 0; i < files.length; i++) {
-
-                    var request = gapi.client.drive.files.export({ 'fileId': files[i]["id"], 'mimeType': "text/plain" });
-
-                    var fulfilledCallback = (fulfilled) => console.log(this.uppy.addFile({
-                        name: files[i]["name"]+".txt", // file name
-                        type: files[i]["mimeType"], // file type
-                        data: new File([fulfilled.body], files[i]["name"], {
-                            type: 'text/plain'
-                        }),
-                        preview: files[i]["iconUrl"],
-                    }));
-
-                    var rejectedCallback = (rejected) => bootbox.alert("Sorry - there was a problem importing the file \""+files[i]["name"]+"\" from Google! Please try again.");
-
-
-                    // Make the request — For some reason using .execute instead of .then doesn't work; their API docs (https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiclientrequest) recommend using .then
-                    request.then(fulfilledCallback, rejectedCallback)
-
+                    this._downloadFileToUppy(files[i])
                 }
             }
+        }
+
+        _downloadFileToUppy(file) {
+            //If the mime type is from google (for example google docs) we need to use the export api call. If its not,
+            //(for example a zip file) we use the get api call to download the file.
+            if (file["mimeType"] in googleMimeTypeConverter) {
+                //We need to convert the file to something readable such as PDF
+                var exportMimeType = googleMimeTypeConverter[file["mimeType"]]['mimeType'];
+                var exportFileName = file["name"] + "." + googleMimeTypeConverter[file["mimeType"]]['extension'];
+
+                var request = gapi.client.drive.files.export({
+                    'fileId': file["id"],
+                    'mimeType': exportMimeType
+                });
+
+            } else {
+                var exportMimeType = file["mimeType"];
+                var exportFileName = file["name"];
+
+                var request = gapi.client.drive.files.get({
+                    'fileId': file["id"],
+                    alt: 'media'
+                });
+            }
+
+            var fulfilledCallback = (fulfilled) => this.uppy.addFile({
+                name: exportFileName, // file name
+                type: exportMimeType, // file type
+                data: new File([this._binaryToBlob(fulfilled.body)], file["name"], {
+                    type: exportMimeType
+                }),
+                preview: file["iconUrl"],
+            });
+
+            var rejectedCallback = (rejected) => bootbox.alert("Sorry - there was a problem importing the file \""+files[i]["name"]+"\" from Google! Please try again.");
+
+            // Make the request — For some reason using .execute instead of .then doesn't work;
+            // their API docs (https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiclientrequest) recommend using .then
+            request.then(fulfilledCallback, rejectedCallback)
+        }
+
+        _binaryToBlob(binary) {
+            const data = binary;
+            const len = data.length;
+            const array = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                array[i] = data.charCodeAt(i);
+            }
+            return array;
         }
 
         _logout(){
