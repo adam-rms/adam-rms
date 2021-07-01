@@ -81,7 +81,7 @@ function projectFinancials($project) {
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
     $DBLIB->where("assets.assets_deleted", 0);
-    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignmentsStatus.assetsAssignmentsStatus_name","assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "assets.instances_id"]);
+    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank","assetsAssignmentsStatus.assetsAssignmentsStatus_id", "assetsAssignmentsStatus.assetsAssignmentsStatus_order", "assetsAssignmentsStatus.assetsAssignmentsStatus_name","assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "assets.instances_id"]);
 
     $return['assetsAssigned'] = [];
     $return['assetsAssignedSUB'] = [];
@@ -246,7 +246,8 @@ $PAGEDATA['files'] = $bCMS->s3List(7, $PAGEDATA['project']['projects_id']);
 $PAGEDATA['pdfs'] = $bCMS->s3List(20, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
-$DBLIB->where("assetsAssignmentsStatus.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
 

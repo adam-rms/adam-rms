@@ -138,8 +138,8 @@ if (count($PAGEDATA['assets']) == 1) {
 }
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
 $DBLIB->where("assetsAssignmentsStatus.instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
-//die(var_dump($PAGEDATA['assets']));
 echo $TWIG->render('asset.twig', $PAGEDATA);

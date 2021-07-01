@@ -6,6 +6,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js" integrity="sha512-1aNp9qKP+hKU/VJwCtYqJP9tdZWbMDN5pEEXXoXT0pTAxZq1HHZhNBR/dtTNSrHO4U1FsFGGILbqG1O9nl8Mdg==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css" integrity="sha512-KuSX+43gVS5MEIJD2ewtrFPOHqC1PJnL8o2f5ciggPC0JUZ8XV0QXlfArO1mSzKkVFdRjsBDfrTU96C5SuRfqQ==" crossorigin="anonymous" />
 
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+
     <script src="{{ CONFIG.ASSETCDNURL }}/js/invert.min.js"></script>
 {% endblock %}
 {% block content %}
@@ -168,6 +171,82 @@
                         ajaxcall("instances/editInstance.php", {formData});
                     });
                 });
+            </script>
+        </div>
+        <div class="card">
+            <form id="asstStatuses">
+                <div class="card-header">
+                    <h3 class="card-title">Asset Status</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless" id="statusTable">
+                        {% for status in USERDATA.instance['assetStatus'] %}
+                            <tbody value="{{ status.assetsAssignmentsStatus_id }}">
+                                <tr class="row border">
+                                    <td class="border-right">
+                                        <span class="handle">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </span>
+                                    </td>
+                                    <td class="w-75">
+                                        <input type="text" name="" class="form-control" value="{{ status.assetsAssignmentsStatus_name }}" />
+                                    </td>
+                                    <td class="text-right border-left">
+                                        <button type="button" class="btn btn-danger" onclick="removeStatus({{ status.assetsAssignmentsStatus_id }})"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="card-footer">
+                    {% if 83|instancePermissions %}
+                        <button type="button" class="btn btn-default" id="newStatus">Add Row</button>
+                    {% endif %}
+                </div>
+            </form>
+            <script>
+                $(document).ready(function () {
+                    $("#statusTable").sortable({
+                        handle: ".handle",
+                        connectWith: "tr",
+                        update: function( event, ui ){
+                            ajaxcall("instances/editStatusOrder.php", {
+                                "order": $("#statusTable").sortable('toArray', {attribute: 'value'})
+                            }, null, true);
+                        }
+                    });
+                    $("#newStatus").on("click", function () {
+                        bootbox.prompt({
+                            title: "Create New Asset Status",
+                            inputType: "text",
+                            callback: function (result) {
+                                ajaxcall(
+                                    "instances/newAssetStatus.php",
+                                    {"statusName": result, "statusOrder": {{ (USERDATA.instance['assetStatus']|last).assetsAssignmentsStatus_order + 1 }}},
+                                    function (returned) {
+                                        if (returned['result']) {
+                                            window.location.reload();
+                                        }
+                                    },
+                                    true
+                                );
+                            }
+                        })
+                    })
+                });
+                function removeStatus(statusID){
+                    ajaxcall("instances/removeAssetStatus.php",
+                        {"statusId": statusID},
+                        function (returned) {
+                            if (returned['result']) {
+                                window.location.reload();
+                            }
+                        },
+                        true
+                    );
+                }
             </script>
         </div>
         <div class="card">

@@ -1515,7 +1515,7 @@
                             {% for status in assetsAssignmentsStatus %}
                             {
                                 text: '{{ status.assetsAssignmentsStatus_order }}: {{ status.assetsAssignmentsStatus_name|escape('js')}}',
-                                value: '{{ status.assetsAssignmentsStatus_id }}',
+                                value: '{{ status.assetsAssignmentsStatus_order }}',
                             },
                             {% endfor %}
                         ],

@@ -8,20 +8,25 @@ require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data com
 if (count($PAGEDATA['FINANCIALS']['assetsAssigned']) == 0) {die($TWIG->render('404.twig', $PAGEDATA));}
 
 foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
+
     $assets=[];
     foreach ($PAGEDATA['FINANCIALS']['assetsAssigned'] as $asset){
         foreach ($asset['assets'] as $assetSUB){
-            if ($assetSUB['assetsAssignmentsStatus_name'] == $status['assetsAssignmentsStatus_name']){
+            //if asset status is null, add to the first column
+            if ($assetSUB['assetsAssignmentsStatus_order'] == null && $status['assetsAssignmentsStatus_order'] == 0){
+                array_push($assets, $assetSUB);
+            } elseif ($assetSUB['assetsAssignmentsStatus_order'] == $status['assetsAssignmentsStatus_order']){
                 array_push($assets, $assetSUB);
             }
         }
     }
-    $PAGEDATA['assetsAssignmentsStatus'][$status['assetsAssignmentsStatus_order'] - 1]['assets'] = $assets;
+    $PAGEDATA['assetsAssignmentsStatus'][$status['assetsAssignmentsStatus_order']]['assets'] = $assets;
 }
 
 foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance){
     $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
     $DBLIB->where("assetsAssignmentsStatus.instances_id", $instance['instance']['instances_id']);
+    $DBLIB->where("assetsAssignments.assetsAssignmentsStatus_deleted", 0);
     $PAGEDATA['FINANCIALS']['assetsAssignedSUB'][$instance['instance']['instances_id']]['statuses'] = $DBLIB->get("assetsAssignmentsStatus");
     foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'][$instance['instance']['instances_id']]['statuses'] as $status){
         $assets=[];
