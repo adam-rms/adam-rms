@@ -9,7 +9,7 @@
     <style>
         .scrolling-head {
             display: flex;
-            overflow-x: auto;
+            flex-wrap: wrap;
         }
 
         @media only screen and (max-width: 768px) {
@@ -73,7 +73,7 @@
         $('a[href=\'' + location.hash + '\']').tab('show');
     }
     function changeStatus(assetsAssignments_id, assetsAssignments_status){
-        ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status}, function (returned){
+        ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status, "status_is_order":true}, function (returned){
             if (returned['result']){
                 location.hash = activeTab;
                 window.location.reload();

@@ -1514,8 +1514,8 @@
                         inputOptions: [
                             {% for status in assetsAssignmentsStatus %}
                             {
-                                text: '{{ status.assetsAssignmentsStatus_order }}: {{ status.assetsAssignmentsStatus_name|escape('js')}}',
-                                value: '{{ status.assetsAssignmentsStatus_order }}',
+                                text: '{{ status.assetsAssignmentsStatus_name|escape('js')}}',
+                                value: '{{ status.assetsAssignmentsStatus_id }}',
                             },
                             {% endfor %}
                         ],

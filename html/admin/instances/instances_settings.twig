@@ -183,14 +183,16 @@
                         {% for status in USERDATA.instance['assetStatus'] %}
                             <tbody value="{{ status.assetsAssignmentsStatus_id }}">
                                 <tr class="row border">
+                                    {% if 83|instancePermissions %}
                                     <td class="border-right">
                                         <span class="handle">
                                             <i class="fas fa-ellipsis-v"></i>
                                             <i class="fas fa-ellipsis-v"></i>
                                         </span>
                                     </td>
+                                    {% endif %}
                                     <td class="w-75">
-                                        <input type="text" name="" class="form-control" value="{{ status.assetsAssignmentsStatus_name }}" />
+                                        <input type="text" class="assetStatusName form-control" name="{{ status.assetsAssignmentsStatus_id }}" value="{{ status.assetsAssignmentsStatus_name }}" />
                                     </td>
                                     <td class="text-right border-left">
                                         <button type="button" class="btn btn-danger" onclick="removeStatus({{ status.assetsAssignmentsStatus_id }})"><i class="fa fa-trash"></i></button>
@@ -206,6 +208,7 @@
                     {% endif %}
                 </div>
             </form>
+            {% if 83|instancePermissions %}
             <script>
                 $(document).ready(function () {
                     $("#statusTable").sortable({
@@ -233,8 +236,16 @@
                                     true
                                 );
                             }
-                        })
-                    })
+                        });
+                    });
+                    $(".assetStatusName").on("focusout", function () {
+                        ajaxcall(
+                            "instances/editAssetStatus.php",
+                            {"statusName": $(this)[0].value, "statusId": $(this)[0].name},
+                            null,
+                            true
+                        );
+                    });
                 });
                 function removeStatus(statusID){
                     ajaxcall("instances/removeAssetStatus.php",
@@ -248,6 +259,7 @@
                     );
                 }
             </script>
+            {% endif %}
         </div>
         <div class="card">
             <form id="advancedSettings">

@@ -12,7 +12,7 @@
                                 <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_order'] - 1 }})">«</button>
                             {% endif %}
                             <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
-                            {% if status['assetsAssignmentsStatus_order'] < assetsAssignmentsStatus|length %}
+                            {% if status['assetsAssignmentsStatus_order'] < assetsAssignmentsStatus|length - 1 %}
                                 <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_order'] +1 }})">»</button>
                             {% endif %}
                         </div>
