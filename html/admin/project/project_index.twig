@@ -83,7 +83,7 @@
                 <div class="col-12">
                     <div class="card">
                             <div class="card-header">
-                                <ul class="nav nav-pills">
+                                <ul class="nav nav-pills" id="nav-bar">
                                     <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab">Assets</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab">Files & Invoices</a></li>
@@ -1978,6 +1978,16 @@
             });
             {% endif %}
 
+            // Show initial Tab
+            var hash = location.hash.replace(/^#/, '');
+            if (hash) {
+                $('#nav-bar .nav-item a[href="#' + hash + '"]').tab('show');
+            }
+
+            // Change hashtag on tab change for page-reload
+            $('#nav-bar .nav-item a').on('shown.bs.tab', function (e) {
+                window.location.hash = e.target.hash;
+            })
         });
     </script>
     {% embed 'common/plugins/fileBoxJS.twig' %}
