@@ -6,6 +6,7 @@ if ($AUTH->login and isset($_POST['projectid']) and is_numeric($_POST['projectid
     $DBLIB->where("users_userid", $AUTH->data['users_userid']);
     $update = $DBLIB->update("users", ["users_selectedProjectID" => $_POST['projectid']], 1);
     if (!$update) finish(false,["message"=>"Selected project change error"]);
+    else $AUTH->data['users_selectedProjectID'] = $_POST['projectid'];
 }
 
 if (isset($_POST['public']) and $AUTH->login) {
