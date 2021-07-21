@@ -1,42 +1,24 @@
-{% extends "assets/template.twig" %}
-{% block htmlIncludes %}
-    <!--Sortable-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
-    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-    <script>
-        $.widget.bridge('uibutton', $.ui.button)
-    </script>
-    <style>
+<!--Sortable-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button)
+</script>
+<style>
+    .scrolling-head {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    @media only screen and (max-width: 768px) {
         .scrolling-head {
-            display: flex;
-            flex-wrap: wrap;
+            display: block;
         }
-
-        @media only screen and (max-width: 768px) {
-            .scrolling-head {
-                display: block;
-            }
-            .scrolling-head > div {
-                width: 100%;
-                max-width: 100%;
-            }
+        .scrolling-head > div {
+            width: 100%;
+            max-width: 100%;
         }
-    </style>
-{% endblock %}
-
-{% block content %}
-<div class="card">
-    <div class="card-header">
-        <ul class="nav nav-pills">
-            <li class="nav-item">
-                <a class="nav-link active" href="{{ CONFIG.ROOTURL }}/project?id={{ project['projects_id'] }}">Back to Project</a>
-            </li>
-            <li class="nav-item">
-                <h5 class="nav-link">{{ project['projects_name'] }} Assets</h5>
-            </li>
-        </ul>
-    </div>
-</div>
+    }
+</style>
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0 card-tabs">
         <ul class="nav nav-tabs" id="asset-list-tabs-tab" role="tablist">
@@ -54,20 +36,19 @@
     </div>
     <div class="card-body p-0">
         <div class="tab-content" id="asset-board-tabs-tabContent">
-            <div class="tab-pane show active p-3" id="asset-board-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
-                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": assetsAssignmentsStatus}%}
+            <div class="tab-pane show active p2" id="asset-board-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[USERDATA.instance["instances_id"]] } %}
                 {% endembed %}
             </div>
             {% for instance in FINANCIALS.assetsAssignedSUB %}
-            <div class="tab-pane" id="asset-board-instance{{ instance['instance']['instances_id'] }}">
-                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": instance['statuses']} %}
+            <div class="tab-pane p2" id="asset-board-instance{{ instance['instance']['instances_id'] }}">
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[instance['instance']['instances_id']] } %}
                 {% endembed %}
             </div>
             {% endfor %}
         </div>
     </div>
 </div>
-
 <script>
     if (location.hash) {
         $('a[href=\'' + location.hash + '\']').tab('show');
@@ -112,7 +93,4 @@
             activeTab = e.target.getAttribute('aria-controls');
         })
     });
-
-
 </script>
-{% endblock %}
