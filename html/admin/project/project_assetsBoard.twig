@@ -1,0 +1,90 @@
+<!--Sortable-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button)
+</script>
+<style>
+    .scrolling-head {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    @media only screen and (max-width: 768px) {
+        .scrolling-head {
+            display: block;
+        }
+        .scrolling-head > div {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+<div class="card card-primary card-outline card-outline-tabs">
+    <div class="card-header p-0 border-bottom-0 card-tabs">
+        <ul class="nav nav-tabs" id="asset-list-tabs-tab" role="tablist">
+            {% if FINANCIALS.assetsAssigned|length > 0 %}
+                <li class="nav-item">
+                    <a class="nav-link active assetsBoardToggle" id="asset-board-tab-thisinstance" data-toggle="pill" href="#asset-board-thisinstance" role="tab" aria-controls="asset-board-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
+                </li>
+            {% endif %}
+            {% for instance in FINANCIALS.assetsAssignedSUB %}
+                <li class="nav-item">
+                    <a class="nav-link assetsBoardToggle" id="asset-board-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="card-body p-0">
+        <div class="tab-content" id="asset-board-tabs-tabContent">
+            <div class="tab-pane show active p2" id="asset-board-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[USERDATA.instance["instances_id"]] } %}
+                {% endembed %}
+            </div>
+            {% for instance in FINANCIALS.assetsAssignedSUB %}
+            <div class="tab-pane p2" id="asset-board-instance{{ instance['instance']['instances_id'] }}">
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[instance['instance']['instances_id']] } %}
+                {% endembed %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+    if (localStorage.getItem("activeTab-board")) {
+        $('a.assetsBoardToggle[href=\'#' + localStorage.getItem("activeTab-board") + '\']').tab('show');
+    }
+    {% if 53|instancePermissions %}
+    function changeStatus(assetsAssignments_id, assetsAssignments_status){
+        ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status, "status_is_order":true}, function (returned){
+            window.location.reload();
+        });
+    }
+    {% endif %}
+    $(document).ready(function () {
+        {% if 53|instancePermissions %}
+        $(".assetList").sortable({
+            connectWith: "div",
+            update: function( event, ui ){
+                /*
+                Update function is called twice, once for the old list and once for the new list.
+                The lists, this, has a data attribute, status, that can be compared with each asset, ui.item[0].
+                If the groupStatus is the same as the old status, this call can be ignored as this is the old list update call.
+                Function call will refresh the page and sort any graphical issues.
+                 */
+                let groupStatus = this.dataset.status;
+                let assetOldStatus = ui.item[0].dataset.currentstatus;
+                let assetAssignment = ui.item[0].dataset.assignment;
+
+                if (assetOldStatus !== groupStatus) {
+                    changeStatus(parseInt(assetAssignment), parseInt(groupStatus));
+                }
+            }
+        })
+        {% endif %}
+
+
+        $('a.assetsBoardToggle[data-toggle="pill"]').on('click', function (e) {
+            localStorage.setItem("activeTab-board", e.target.getAttribute('aria-controls'));
+        })
+    });
+</script>
