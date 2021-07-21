@@ -72,6 +72,7 @@
     if (location.hash) {
         $('a[href=\'' + location.hash + '\']').tab('show');
     }
+    {% if 53|instancePermissions %}
     function changeStatus(assetsAssignments_id, assetsAssignments_status){
         ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status, "status_is_order":true}, function (returned){
             if (returned['result']){
@@ -80,10 +81,12 @@
             }
         });
     }
+    {% endif %}
 
     var activeTab = location.hash;
 
     $(document).ready(function () {
+        {% if 53|instancePermissions %}
         $(".assetList").sortable({
             connectWith: "div",
             update: function( event, ui ){
@@ -102,6 +105,8 @@
                 }
             }
         })
+        {% endif %}
+
 
         $('a[data-toggle="pill"]').on('click', function (e) {
             activeTab = e.target.getAttribute('aria-controls');
