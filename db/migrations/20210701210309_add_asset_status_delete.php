@@ -18,7 +18,7 @@ final class AddAssetStatusDelete extends AbstractMigration
      */
     public function change(): void
     {
-        $this->table('assetsassignmentsstatus')
+        $this->table('assetsAssignmentsStatus')
             ->addColumn('assetsAssignmentsStatus_deleted', 'integer',[
                 'null' => false,
                 'default' => 0,

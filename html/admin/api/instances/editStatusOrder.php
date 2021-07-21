@@ -8,7 +8,7 @@ foreach ($_POST['order'] as $count=>$item) {
     $DBLIB->where("assetsAssignmentsStatus_id", $item);
     $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-    if (!$DBLIB->update("assetsassignmentsstatus", ["assetsAssignmentsStatus_order" => $count], 1)) finish(false);
+    if (!$DBLIB->update("assetsAssignmentsStatus", ["assetsAssignmentsStatus_order" => $count], 1)) finish(false);
 }
 $bCMS->auditLog("RANK-ASSETSTATUS", "assetStatuses", "Set the order of statuses", $AUTH->data['users_userid']);
 finish(true);

@@ -9,7 +9,7 @@ if ($_POST['status_is_order']){
     $DBLIB->where("assetsAssignmentsStatus_order", $_POST['assetsAssignments_status']);
     $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-    $status_id = $DBLIB->getOne("assetsassignmentsstatus", "assetsAssignmentsStatus_id")['assetsAssignmentsStatus_id'];
+    $status_id = $DBLIB->getOne("assetsAssignmentsStatus", "assetsAssignmentsStatus_id")['assetsAssignmentsStatus_id'];
 }
 
 $DBLIB->where("assetsAssignments_id", $_POST['assetsAssignments_id']);

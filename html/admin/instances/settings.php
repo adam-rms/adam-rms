@@ -8,7 +8,7 @@ if (!$AUTH->instancePermissionCheck(81)) die($TWIG->render('404.twig', $PAGEDATA
 $DBLIB->orderBy("assetsAssignmentsStatus_order", "ASC");
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
-$PAGEDATA['USERDATA']['instance']['assetStatus'] = $DBLIB->get("assetsassignmentsstatus");
+$PAGEDATA['USERDATA']['instance']['assetStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
 
 echo $TWIG->render('instances/instances_settings.twig', $PAGEDATA);
