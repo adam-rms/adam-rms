@@ -51,7 +51,7 @@
 </div>
 <script>
     if (localStorage.getItem("activeTab-board")) {
-        $('a[href=\'' + localStorage.getItem("activeTab-board") + '\']').tab('show');
+        $('a.assetsBoardToggle[href=\'#' + localStorage.getItem("activeTab-board") + '\']').tab('show');
     }
     {% if 53|instancePermissions %}
     function changeStatus(assetsAssignments_id, assetsAssignments_status){
