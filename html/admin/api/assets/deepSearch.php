@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../apiHead.php';
 
-if ($AUTH->login and isset($_POST['projectid']) and is_int($_POST['projectid']) and $_POST['projectid'] != $AUTH->data["users_selectedProjectID"]) {
+
+if ($AUTH->login and isset($_POST['projectid']) and is_numeric($_POST['projectid']) and $_POST['projectid'] != $AUTH->data["users_selectedProjectID"]) {
     $DBLIB->where("users_userid", $AUTH->data['users_userid']);
     $update = $DBLIB->update("users", ["users_selectedProjectID" => $_POST['projectid']], 1);
     if (!$update) finish(false,["message"=>"Selected project change error"]);
