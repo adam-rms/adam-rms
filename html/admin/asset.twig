@@ -63,7 +63,7 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
-                            {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null and 31|instancePermissions %}
+                            {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null %}
                                 <li class="list-group-item">
                                     <b>Asset Status</b> <a class="float-right">{{ assets.0.assetsAssignment.assetsAssignmentsStatus_name }}</a>
                                 </li>
@@ -79,14 +79,12 @@
                                 {% endif %}
                                 <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
                             {% endif %}
-                            {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null and 31|instancePermissions %}
+                            {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null and 53|instancePermissions %}
                                 <button title="Change Asset Status" class="btn btn-block btn-info changeAssetStatusButton">Change Asset Status</button>
                             {% endif %}
                         {% endif %}
-                        {% if (97|instancePermissions or 19|instancePermissions) and (USERDATA.users_selectedProjectID != null and 31|instancePermissions) %}
-                            <hr>
-                        {% endif %}
                         {% if 97|instancePermissions %}
+                            <hr/>
                             <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
                         {% if 19|instancePermissions %}
@@ -1506,10 +1504,11 @@
                         }
                     });
                 });
-                {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null %}
+                {% endif %}
+                {% if USERDATA.users_selectedProjectID != null and 53|instancePermissions %}
                 $(".changeAssetStatusButton").click(function () {
                     bootbox.prompt({
-                        title: "Select Status",
+                        title: "Select Status of this Asset {{ (thisProject ? "on " ~ projects_name : "") }}",
                         inputType: 'select',
                         inputOptions: [
                             {% for status in assetsAssignmentsStatus %}
@@ -1521,16 +1520,13 @@
                         ],
                         callback: function (result) {
                             if (result){
-                                ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":{{ assets.0.assetsAssignment.assetsAssignments_id }}, "assetsAssignments_status":result}, function (returned){
-                                    if (returned['result']){
-                                        window.location.reload();
-                                    }
+                                ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":{{ assets[0].assetsAssignment.assetsAssignments_id }}, "assetsAssignments_status":result}, function (){
+                                    window.location.reload();
                                 });
                             }
                         }
                     });
                 });
-                {% endif %}
                 {% endif %}
                 {% if 58|instancePermissions %}
                 $("#addNewType-value").change(function() {
