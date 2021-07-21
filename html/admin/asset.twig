@@ -63,9 +63,9 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
-                            {% if assets[0].assetsAssignment.assetsAssignmentsStatus_name != null %}
+                            {% if thisProject and assets[0].assetsAssignment.assetsAssignmentsStatus_name != null %}
                                 <li class="list-group-item">
-                                    <b>Asset Status</b> <a href="{{ CONFIG.ROOTURL }}/project/?id={{ USERDATA.users_selectedProjectID }}" class="float-right">{{ assets.0.assetsAssignment.assetsAssignmentsStatus_name }}</a>
+                                    <b>Asset Status on {{ thisProject.projects_name }}</b> <a href="{{ CONFIG.ROOTURL }}/project/?id={{ USERDATA.users_selectedProjectID }}" class="float-right">{{ assets.0.assetsAssignment.assetsAssignmentsStatus_name }}</a>
                                 </li>
                             {% endif %}
                         </ul>
@@ -79,8 +79,8 @@
                                 {% endif %}
                                 <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
                             {% endif %}
-                            {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null and 53|instancePermissions %}
-                                <button title="Change Asset Status" class="btn btn-block btn-info changeAssetStatusButton">Change Asset Status</button>
+                            {% if thisProject and assets.0.assetsAssignment.assetsAssignmentsStatus_name != null and 53|instancePermissions %}
+                                <button title="Change Asset Status" class="btn btn-block btn-info" id="changeAssetStatusButton">Change Asset Status</button>
                             {% endif %}
                         {% endif %}
                         {% if 97|instancePermissions %}
@@ -1506,10 +1506,11 @@
                 });
                 {% endif %}
                 {% if USERDATA.users_selectedProjectID != null and 53|instancePermissions %}
-                $(".changeAssetStatusButton").click(function () {
+                $("#changeAssetStatusButton").click(function () {
                     bootbox.prompt({
-                        title: "Set status of this Asset for the selected project",
+                        title: "Set status of this Asset for {{ thisProject.projects_name }}",
                         inputType: 'select',
+                        value: "{{ assets[0].assetsAssignment.assetsAssignmentsStatus_id }}",
                         inputOptions: [
                             {% for status in assetsAssignmentsStatus %}
                             {
@@ -1519,7 +1520,7 @@
                             {% endfor %}
                         ],
                         callback: function (result) {
-                            if (result){
+                            if (result) {
                                 ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":{{ assets[0].assetsAssignment.assetsAssignments_id }}, "assetsAssignments_status":result}, function (){
                                     window.location.reload();
                                 });
