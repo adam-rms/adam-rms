@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../apiHeadSecure.php';
+require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(53) or !isset($_POST['statusName']) or !isset($_POST['statusOrder'])) finish(false);
+if (!$AUTH->instancePermissionCheck(83) or !isset($_POST['statusName']) or !isset($_POST['statusOrder'])) finish(false);
 
 $assignmentsStatus = $DBLIB->insert("assetsAssignmentsStatus", [
     "instances_id" => $AUTH->data['instance']['instances_id'],

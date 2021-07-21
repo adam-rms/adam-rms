@@ -215,7 +215,7 @@
                         handle: ".handle",
                         connectWith: "tr",
                         update: function( event, ui ){
-                            ajaxcall("instances/editStatusOrder.php", {
+                            ajaxcall("instances/assetAssignmentStatus/reorder.php", {
                                 "order": $("#statusTable").sortable('toArray', {attribute: 'value'})
                             }, null, true);
                         }
@@ -226,7 +226,7 @@
                             inputType: "text",
                             callback: function (result) {
                                 ajaxcall(
-                                    "instances/newAssetStatus.php",
+                                    "instances/assetAssignmentStatus/new.php",
                                     {"statusName": result, "statusOrder": {{ (USERDATA.instance['assetStatus']|last).assetsAssignmentsStatus_order + 1 }}},
                                     function (returned) {
                                         if (returned['result']) {
@@ -240,7 +240,7 @@
                     });
                     $(".assetStatusName").on("focusout", function () {
                         ajaxcall(
-                            "instances/editAssetStatus.php",
+                            "instances/assetAssignmentStatus/edit.php",
                             {"statusName": $(this)[0].value, "statusId": $(this)[0].name},
                             null,
                             true
@@ -248,7 +248,7 @@
                     });
                 });
                 function removeStatus(statusID){
-                    ajaxcall("instances/removeAssetStatus.php",
+                    ajaxcall("instances/assetAssignmentStatus/delete.php",
                         {"statusId": statusID},
                         function (returned) {
                             if (returned['result']) {

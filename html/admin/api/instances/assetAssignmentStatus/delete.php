@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../apiHeadSecure.php';
+require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(53) or !isset($_POST['statusId'])) finish(false,["message"=>"invalid status id or permission"]);
+if (!$AUTH->instancePermissionCheck(83) or !isset($_POST['statusId'])) finish(false,["message"=>"invalid status id or permission"]);
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("assetsAssignmentsStatus_deleted", 0);

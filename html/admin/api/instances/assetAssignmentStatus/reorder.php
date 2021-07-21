@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../apiHeadSecure.php';
+require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(83)) die("Sorry - you can't access this page");
 
