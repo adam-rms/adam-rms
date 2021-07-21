@@ -9,7 +9,7 @@ jobs:
       - uses: reviewdog/action-detect-secrets@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
+          reporter: github-pr-check
   spelling:
     name: Spelling Check
     runs-on: ubuntu-latest
@@ -18,7 +18,7 @@ jobs:
       - uses: reviewdog/action-misspell@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
+          reporter: github-pr-check
           locale: "UK"
           level: warning
   alex:
@@ -29,5 +29,5 @@ jobs:
       - uses: reviewdog/action-alex@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
+          reporter: github-pr-check
           level: warning
