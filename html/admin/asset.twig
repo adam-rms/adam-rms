@@ -63,9 +63,9 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
-                            {% if assets.0.assetsAssignment.assetsAssignmentsStatus_name != null %}
+                            {% if assets[0].assetsAssignment.assetsAssignmentsStatus_name != null %}
                                 <li class="list-group-item">
-                                    <b>Asset Status</b> <a class="float-right">{{ assets.0.assetsAssignment.assetsAssignmentsStatus_name }}</a>
+                                    <b>Asset Status</b> <a href="{{ CONFIG.ROOTURL }}/project/?id={{ USERDATA.users_selectedProjectID }}" class="float-right">{{ assets.0.assetsAssignment.assetsAssignmentsStatus_name }}</a>
                                 </li>
                             {% endif %}
                         </ul>
@@ -1508,13 +1508,13 @@
                 {% if USERDATA.users_selectedProjectID != null and 53|instancePermissions %}
                 $(".changeAssetStatusButton").click(function () {
                     bootbox.prompt({
-                        title: "Select Status of this Asset {{ (thisProject ? "on " ~ projects_name : "") }}",
+                        title: "Set status of this Asset for the selected project",
                         inputType: 'select',
                         inputOptions: [
                             {% for status in assetsAssignmentsStatus %}
                             {
                                 text: '{{ status.assetsAssignmentsStatus_name|escape('js')}}',
-                                value: '{{ status.assetsAssignmentsStatus_id }}',
+                                value: '{{ status.assetsAssignmentsStatus_id }}'
                             },
                             {% endfor %}
                         ],

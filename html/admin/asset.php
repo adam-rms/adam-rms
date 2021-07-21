@@ -133,8 +133,9 @@ if (count($PAGEDATA['assets']) == 1) {
     //Assignment Id
     $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_id']);
     $DBLIB->where("projects_id", $PAGEDATA['thisProject']['projects_id']);
-    $DBLIB->join("assetsAssignmentsStatus", "assetsAssignmentsStatus.assetsAssignmentsStatus_id = assetsassignments.assetsAssignmentsStatus_id", "LEFT");
-    $PAGEDATA['assets'][0]['assetsAssignment'] = $DBLIB->getOne("assetsAssignments", ["assetsAssignments.assetsAssignments_id", "assetsAssignmentsStatus.assetsAssignmentsStatus_name"]);
+    $DBLIB->where("assetsAssignments_deleted", 0);
+    $DBLIB->join("assetsAssignmentsStatus", "assetsAssignmentsStatus.assetsAssignmentsStatus_id = assetsAssignments.assetsAssignmentsStatus_id", "LEFT");
+    $PAGEDATA['assets'][0]['assetsAssignment'] = $DBLIB->getOne("assetsAssignments", ["assetsAssignments.assetsAssignments_id", "assetsAssignmentsStatus.assetsAssignmentsStatus_id","assetsAssignmentsStatus.assetsAssignmentsStatus_name"]);
 }
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");

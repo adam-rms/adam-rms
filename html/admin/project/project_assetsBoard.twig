@@ -24,12 +24,12 @@
         <ul class="nav nav-tabs" id="asset-list-tabs-tab" role="tablist">
             {% if FINANCIALS.assetsAssigned|length > 0 %}
                 <li class="nav-item">
-                    <a class="nav-link active" id="asset-board-tab-thisinstance" data-toggle="pill" href="#asset-board-thisinstance" role="tab" aria-controls="asset-board-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
+                    <a class="nav-link active assetsBoardToggle" id="asset-board-tab-thisinstance" data-toggle="pill" href="#asset-board-thisinstance" role="tab" aria-controls="asset-board-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
                 </li>
             {% endif %}
             {% for instance in FINANCIALS.assetsAssignedSUB %}
                 <li class="nav-item">
-                    <a class="nav-link" id="asset-board-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
+                    <a class="nav-link assetsBoardToggle" id="asset-board-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
                 </li>
             {% endfor %}
         </ul>
@@ -50,22 +50,16 @@
     </div>
 </div>
 <script>
-    if (location.hash) {
-        $('a[href=\'' + location.hash + '\']').tab('show');
+    if (localStorage.getItem("activeTab-board")) {
+        $('a[href=\'' + localStorage.getItem("activeTab-board") + '\']').tab('show');
     }
     {% if 53|instancePermissions %}
     function changeStatus(assetsAssignments_id, assetsAssignments_status){
         ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status, "status_is_order":true}, function (returned){
-            if (returned['result']){
-                location.hash = activeTab;
-                window.location.reload();
-            }
+            window.location.reload();
         });
     }
     {% endif %}
-
-    var activeTab = location.hash;
-
     $(document).ready(function () {
         {% if 53|instancePermissions %}
         $(".assetList").sortable({
@@ -89,8 +83,8 @@
         {% endif %}
 
 
-        $('a[data-toggle="pill"]').on('click', function (e) {
-            activeTab = e.target.getAttribute('aria-controls');
+        $('a.assetsBoardToggle[data-toggle="pill"]').on('click', function (e) {
+            localStorage.setItem("activeTab-board", e.target.getAttribute('aria-controls'));
         })
     });
 </script>
