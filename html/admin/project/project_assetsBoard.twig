@@ -65,6 +65,8 @@
         $(".assetList").sortable({
             connectWith: "div",
             update: function( event, ui ){
+                console.log(this);
+                console.log(ui);
                 /*
                 Update function is called twice, once for the old list and once for the new list.
                 The lists, this, has a data attribute, status, that can be compared with each asset, ui.item[0].
@@ -76,7 +78,9 @@
                 let assetAssignment = ui.item[0].dataset.assignment;
 
                 if (assetOldStatus !== groupStatus) {
-                    changeStatus(parseInt(assetAssignment), parseInt(groupStatus));
+                    ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":parseInt(assetAssignment), "assetsAssignments_status":parseInt(groupStatus)}, function (returned){
+                        window.location.reload();
+                    });
                 }
             }
         })
