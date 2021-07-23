@@ -13,7 +13,6 @@ It is available as a hosted solution (not currently open to new customers) or to
  - [Deployment Script Templates __adam-rms-deployment__](https://github.com/bstudios/adam-rms-deployment)
  - [Image Compressor Worker __adam-rms-imageCompressor__](https://github.com/bstudios/adam-rms-imageCompressor)
  - [File Deleter Worker __adam-rms-s3Deletor__](https://github.com/bstudios/adam-rms-s3Deletor)
- - [Public Marketing Site __adam-rms-website__](https://github.com/bstudios/adam-rms-website)
 
 ## Docker Images
 
