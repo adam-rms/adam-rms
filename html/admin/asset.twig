@@ -1505,7 +1505,7 @@
                     });
                 });
                 {% endif %}
-                {% if USERDATA.users_selectedProjectID != null and 53|instancePermissions %}
+                {% if USERDATA.users_selectedProjectID != null and 53|instancePermissions and assets[0].assetsAssignment != null%}
                 $("#changeAssetStatusButton").click(function () {
                     bootbox.prompt({
                         title: "Set status of this Asset for {{ thisProject.projects_name }}",
