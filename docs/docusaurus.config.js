@@ -4,7 +4,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   title: 'AdamRMS',
-  tagline: 'AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast',
+  tagline: 'AdamRMS is a free, open source advanced Rental Management System for Theatre, AV & Broadcast',
   url: 'https://adam-rms.com',
   baseUrl: '/',
   onBrokenLinks: 'warn',
