@@ -21,11 +21,11 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             href="https://play.google.com/store/apps/details?id=com.bstudios.adamrms&utm_source=webdashboard&utm_campaign=dashboardwidget&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1">
-            <Image img={GooglePlayBadge} style={{ width: 200 }} />
+            <Image img={GooglePlayBadge} style={{ width: 150 }} />
           </Link>
           <Link
             href="https://apps.apple.com/us/app/id1519443182?utm_source=webdashboard&utm_campaign=dashboardwidget">
-            <Image img={AppStoreBadge} style={{ width: 200 }}  />
+            <Image img={AppStoreBadge} style={{ width: 150 }}  />
           </Link>
         </div>
       </div>

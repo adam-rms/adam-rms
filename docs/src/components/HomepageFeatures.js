@@ -49,7 +49,7 @@ function Feature({image, title, description}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Image img={image} />
+        <Image style={{ "margin-bottom": 5 }} img={image} />
       </div>
       <div className="text--center padding-horiz--md">
         <h2>{title}</h2>
