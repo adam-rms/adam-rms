@@ -59,11 +59,11 @@ module.exports = {
           items: [
             {
               label: 'User Guide',
-              to: '/tutorial/intro',
+              to: '/docs/tutorial/intro',
             },
             {
               label: 'API Documentation',
-              to: '/api/intro',
+              to: '/docs/api/intro',
             },
             {
               label: 'Service Status',
