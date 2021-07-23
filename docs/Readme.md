@@ -50,7 +50,7 @@ This command starts a local development server and opens up a browser window. Mo
 npm build
 ```
 
-This command generates static content into the `build` directory and can be served using any static content hosting service/CDN.
+This command generates static content into the `build` directory and can be served using any static content hosting service/CDN. For a production-ready build it expects `PRODUCTION` as an environment variable to be set to true
 
 ## Deployment
 
