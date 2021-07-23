@@ -13,6 +13,7 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'bstudios',
   projectName: 'adam-rms',
+  plugins: ['@docusaurus/plugin-ideal-image'],
   themeConfig: {
     navbar: {
       title: 'AdamRMS',
@@ -135,13 +136,10 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            'https://github.com/bstudios/adam-rms/edit/master/docs/docs/',
+            'https://github.com/bstudios/adam-rms/edit/master/docs/',
         },
         blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/bstudios/adam-rms/edit/master/docs/blog/',
+          showReadingTime: true
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

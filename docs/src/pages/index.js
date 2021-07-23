@@ -5,6 +5,11 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './index.module.css';
 import HomepageFeatures from '../components/HomepageFeatures';
+import Image from '@theme/IdealImage';
+
+import GooglePlayBadge from './../../static/img/storeIcons/google-play-badge.png';
+import AppStoreBadge from './../../static/img/storeIcons/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png';
+
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -15,9 +20,12 @@ function HomepageHeader() {
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
+            href="https://play.google.com/store/apps/details?id=com.bstudios.adamrms&utm_source=webdashboard&utm_campaign=dashboardwidget&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1">
+            <Image img={GooglePlayBadge} style={{ width: 200 }} />
+          </Link>
+          <Link
+            href="https://apps.apple.com/us/app/id1519443182?utm_source=webdashboard&utm_campaign=dashboardwidget">
+            <Image img={AppStoreBadge} style={{ width: 200 }}  />
           </Link>
         </div>
       </div>
