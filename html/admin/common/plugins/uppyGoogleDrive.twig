@@ -137,6 +137,7 @@
             this._createPicker = this._createPicker.bind(this);
             this._pickerCallback = this._pickerCallback.bind(this);
             this.prepareUpload = this.prepareUpload.bind(this);
+            this._logout = this._logout.bind(this);
 
             //Set the default state
             this.setPluginState({
@@ -240,6 +241,7 @@
                     'scope': this.opts.google_scope || ['https://www.googleapis.com/auth/drive.file',
                         'https://www.googleapis.com/auth/drive.readonly'
                     ],
+                    'prompt':'select_account',
                     'immediate': false
                 },
                 this._handleAuthResult);
@@ -464,6 +466,18 @@
         }
 
         /**
+         * Log the user out
+         */
+        _logout(){
+            this.setPluginState({
+                oauthToken: null,
+                user: {}
+            });
+            gapi.auth.setToken(null);
+            gapi.auth.signOut();
+        }
+
+        /**
          * Render the UI
          * @returns {*}
          */
@@ -488,11 +502,11 @@
                     }, "Select Files"),
 
 
-                    // preact.h("button", {
-                    //     onClick: this._logout,
-                    //     class: "uppy-c-btn uppy-c-btn-link",
-                    //     style: {"position":"absolute", "top":55, "right":5}
-                    // }, "Logout")
+                    preact.h("button", {
+                        onClick: this._logout,
+                        class: "uppy-c-btn uppy-c-btn-link",
+                        style: {"position":"absolute", "top":55, "right":5}
+                    }, "Logout")
                 );
 
             }
