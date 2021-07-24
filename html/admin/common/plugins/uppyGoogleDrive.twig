@@ -12,8 +12,6 @@
 
     <script>
         //Load Google API's on page load
-
-
         gapi.load('auth');
         gapi.load('picker');
         gapi.load('client', function () {
@@ -21,8 +19,8 @@
         });
     </script>
 {% endblock %}
-<script>
 
+<script>
     /**
      * An implementation of google drive with Uppy
      *
@@ -44,71 +42,71 @@
          * https://developers.google.com/drive/api/v3/mime-types
          */
         googleMimeTypeConverter = {
-            "application/vnd.google-apps.audio" : {
+            "application/vnd.google-apps.audio": {
                 mimeType: "audio/mpeg",
                 extension: "mp3"
             },
-            "application/vnd.google-apps.document" : {
+            "application/vnd.google-apps.document": {
                 mimeType: "application/pdf",
                 extension: "pdf"
             },
-            "application/vnd.google-apps.drive-sdk" : {
+            "application/vnd.google-apps.drive-sdk": {
                 mimeType: "application/octet-stream",
                 extension: "octet-stream"
             },
-            "application/vnd.google-apps.drawing" : {
+            "application/vnd.google-apps.drawing": {
                 mimeType: "image/png",
                 extension: "png"
             },
-            "application/vnd.google-apps.file" : {
+            "application/vnd.google-apps.file": {
                 mimeType: "application/octet-stream",
                 extension: "octet-stream"
             },
-            "application/vnd.google-apps.folder" : {
+            "application/vnd.google-apps.folder": {
                 mimeType: "application/zip",
                 extension: "zip"
             },
-            "application/vnd.google-apps.form" : {
+            "application/vnd.google-apps.form": {
                 mimeType: "application/pdf",
                 extension: "pdf"
             },
-            "application/vnd.google-apps.fusiontable" : {
+            "application/vnd.google-apps.fusiontable": {
                 mimeType: "application/pdf",
                 extension: "pdf"
             },
-            "application/vnd.google-apps.map" : {
+            "application/vnd.google-apps.map": {
                 mimeType: "application/pdf",
                 extension: "pdf"
             },
-            "application/vnd.google-apps.photo" : {
+            "application/vnd.google-apps.photo": {
                 mimeType: "image/png",
                 extension: "png"
             },
-            "application/vnd.google-apps.presentation" : {
+            "application/vnd.google-apps.presentation": {
                 mimeType: "application/pdf",
                 extension: "pdf"
             },
-            "application/vnd.google-apps.script" : {
+            "application/vnd.google-apps.script": {
                 mimeType: "text/plain",
                 extension: "txt"
             },
-            "application/vnd.google-apps.shortcut" : {
+            "application/vnd.google-apps.shortcut": {
                 mimeType: "application/octet-stream",
                 extension: "octet-stream"
             },
-            "application/vnd.google-apps.site" : {
+            "application/vnd.google-apps.site": {
                 mimeType: "application/zip",
                 extension: "zip"
             },
-            "application/vnd.google-apps.spreadsheet" : {
+            "application/vnd.google-apps.spreadsheet": {
                 mimeType: "application/pdf",
                 extension: "pdf"
             },
-            "application/vnd.google-apps.unknown" : {
+            "application/vnd.google-apps.unknown": {
                 mimeType: "application/octet-stream",
                 extension: "octet-stream"
             },
-            "application/vnd.google-apps.video" : {
+            "application/vnd.google-apps.video": {
                 mimeType: "video/mp4",
                 extension: "mp4"
             },
@@ -124,25 +122,25 @@
             this.icon = () => this._generateIcon();
 
             //The id of the google picker that is created
-            this.picker_id = opts.picker_id || "google_picker_"+Date.now() + Math.floor((Math.random() * 30000) + 1);
+            this.picker_id = opts.picker_id || "google_picker_" + Date.now() + Math.floor((Math.random() * 30000) + 1);
 
             //Bind functions to the class
             this.install = this.install.bind(this);
             this.uninstall = this.uninstall.bind(this);
             this.setPluginState = this.setPluginState.bind(this);
             this.render = this.render.bind(this);
+            this._generateIcon = this._generateIcon.bind(this);
             this._startPicker = this._startPicker.bind(this);
             this._onAuthApiLoad = this._onAuthApiLoad.bind(this);
             this._onPickerApiLoad = this._onPickerApiLoad.bind(this);
             this._handleAuthResult = this._handleAuthResult.bind(this);
             this._createPicker = this._createPicker.bind(this);
             this._pickerCallback = this._pickerCallback.bind(this);
-            this._downloadFileToUppy = this._downloadFileToUppy.bind(this);
-            this._logout = this._logout.bind(this);
+            this.prepareUpload = this.prepareUpload.bind(this);
 
             //Set the default state
             this.setPluginState({
-                oauthToken:"",
+                oauthToken: "",
                 pickerApiLoaded: false,
                 user: {}
             });
@@ -150,18 +148,26 @@
             return this;
         }
 
-
-        install(){
+        /**
+         * Install the plugin
+         */
+        install() {
             //Get the target and mount it in the Dashboard
             const target = this.opts.target
             if (target) {
                 this.mount(target, this)
             }
-
-
+            //initialise the preprocessor
+            this.uppy.addPreProcessor(this.prepareUpload)
         }
 
-        uninstall () {
+        /**
+         * Uninstall the plugin
+         */
+        uninstall() {
+            //Remove the preprocessor
+            this.uppy.removePreProcessor(this.prepareUpload)
+
             //Unmount the plugin from the dashboard
             this.unmount()
         }
@@ -171,7 +177,7 @@
          *
          * @returns {*}
          */
-        _generateIcon(){
+        _generateIcon() {
             return preact.h("svg", {
                     width: "32",
                     height: "32",
@@ -210,20 +216,28 @@
             );
         }
 
-        _startPicker(){
+        /**
+         * Start the picker on the button press in the Ui
+         *
+         * @private
+         */
+        _startPicker() {
             //Confirm that the API's are loaded and then use a callback to start the auth & picker
-            if(!this.getPluginState().oauthToken){
+            if (!this.getPluginState().oauthToken) {
                 gapi.load('auth', {'callback': this._onAuthApiLoad});
             }
             gapi.load('picker', {'callback': this._onPickerApiLoad});
         }
 
+        /**
+         * Once the auth api has loaded, allow the user to login to google and get the keys
+         * @private
+         */
         _onAuthApiLoad() {
-            //Allow the user to login to google and get the keys
             gapi.auth.authorize(
                 {
                     'client_id': this.opts.google_client_id,
-                    'scope': this.opts.google_scope|| ['https://www.googleapis.com/auth/drive.file',
+                    'scope': this.opts.google_scope || ['https://www.googleapis.com/auth/drive.file',
                         'https://www.googleapis.com/auth/drive.readonly'
                     ],
                     'immediate': false
@@ -231,7 +245,13 @@
                 this._handleAuthResult);
         }
 
-        _onPickerApiLoad(){
+        /**
+         * Once the auth api has loaded (and the user is logged in) update the Ui from the login page
+         * and create the picker.
+         *
+         * @private
+         */
+        _onPickerApiLoad() {
             //Called when the api has loaded
             this.setPluginState({
                 pickerApiLoaded: true,
@@ -239,6 +259,13 @@
             this._createPicker();
         }
 
+        /**
+         * If the authentication was successful, save the token, get the users profile pic and then create the picker.
+         *
+         * @param authResult The result from the auth
+         * @returns {Promise<void>}
+         * @private
+         */
         async _handleAuthResult(authResult) {
             if (authResult && !authResult.error) {
                 //Save the token
@@ -253,20 +280,24 @@
                         user: data,
                     }));
 
-
                 this._createPicker();
             } else {
                 bootbox.alert("Sorry - there was a problem logging in to Google! Please try again.");
             }
         }
 
-        // Create and render a Picker object for searching images.
+        /**
+         * Create and render a Picker object
+         *
+         * @private
+         */
         _createPicker() {
             var state = this.getPluginState();
             if (state.pickerApiLoaded && state.oauthToken) {
                 //Create a view that only loads images if required
                 var view = new google.picker.View(this.opts.imagesOnly ? google.picker.ViewId.DOCS_IMAGES :
-                                                                         google.picker.ViewId.DOCS);
+                    google.picker.ViewId.DOCS);
+
                 //Create the google Picker
                 var picker = new google.picker.PickerBuilder()
                     .enableFeature(google.picker.Feature.NAV_HIDDEN)
@@ -275,7 +306,7 @@
                     .addView(view)
                     .addView(new google.picker.DocsUploadView())
                     .setCallback(this._pickerCallback)
-                    //These do not seem to be needed, however are useful in developent
+                    //These do not seem to be needed, however are useful in development
                     // .setAppId("")
                     // .setDeveloperKey("")
                     .build();
@@ -285,56 +316,143 @@
             }
         }
 
-        // A simple callback implementation.
+        /**
+         * Call back for the picker, and adds the selected files to Uppy
+         * @param data The callback data
+         * @private
+         */
         _pickerCallback(data) {
             if (data.action == google.picker.Action.PICKED) {
                 var files = data.docs;
+                console.log(files)
 
                 for (let i = 0; i < files.length; i++) {
-                    this._downloadFileToUppy(files[i])
+                    //If the mime type is from google (for example google docs) we need to use the export api call. If its not,
+                    //(for example a zip file) we use the get api call to download the file.
+                    if (files[i]["mimeType"] in this.googleMimeTypeConverter) {
+                        //We need to convert the file to something readable such as PDF
+                        var exportMimeType = this.googleMimeTypeConverter[files[i]["mimeType"]]['mimeType'];
+                        var exportFileName = files[i]["name"] + "." + this.googleMimeTypeConverter[files[i]["mimeType"]]['extension'];
+                        var methodExport = true;
+                    } else {
+                        var exportMimeType = files[i]["mimeType"];
+                        var exportFileName = files[i]["name"];
+                        var methodExport = false;
+                    }
+
+                    //Add the file to uppy
+                    this.uppy.addFile({
+                        name: exportFileName,
+                        type: exportMimeType,
+                        data: new File([""], exportFileName, {type: exportMimeType}),
+                        size: files[i]["sizeBytes"],
+                        preview: files[i]["iconUrl"],
+                        meta: {
+                            google : {
+                                originalMimeType: files[i]["mimeType"],
+                                googleID: files[i]["id"],
+                                exportMimeType: exportMimeType,
+                                exportFileName: exportFileName,
+                                size: files[i]["sizeBytes"],
+                                methodExport: methodExport
+                            }
+
+                        }
+                    });
                 }
             }
         }
 
-        _downloadFileToUppy(file) {
-            //If the mime type is from google (for example google docs) we need to use the export api call. If its not,
-            //(for example a zip file) we use the get api call to download the file.
-            if (file["mimeType"] in this.googleMimeTypeConverter) {
-                //We need to convert the file to something readable such as PDF
-                var exportMimeType = this.googleMimeTypeConverter[file["mimeType"]]['mimeType'];
-                var exportFileName = file["name"] + "." + this.googleMimeTypeConverter[file["mimeType"]]['extension'];
+        /**
+         * Called by the upload preprocessor. Imports the binary of each file into uppy.
+         * @param fileIDs A list of file Id's
+         * @returns {Promise<unknown[]>}
+         */
+        prepareUpload (fileIDs) {
+            const promises = fileIDs.map((fileID) => {
+                const file = this.uppy.getFile(fileID)
+                this.uppy.emit('preprocess-progress', file, {
+                    mode: 'indeterminate',
+                    message: "Importing from Google Drive..."
+                })
 
-                var request = gapi.client.drive.files.export({
-                    'fileId': file["id"],
-                    'mimeType': exportMimeType
+                //If the file is imported from another plugin (not google) we just return an empty promise.
+                if (!('google' in file['meta'])){
+                    return new Promise((resolve) => { resolve(); });
+                }
+
+                return this._downloadFile(file['meta']['google']).then((fulfilledFile) => {
+                    this.uppy.log(`[Google Drive] File ${file.id} Downloaded`);
+
+                    //Update the file data and size
+                    var fileBlob = new File([this._binaryToBlob(fulfilledFile.body)], file['meta']['google']['exportFileName'], {
+                        type: file['meta']['google']['exportMimeType']
+                    });
+                    this.uppy.setFileState(fileID, {
+                        data: fileBlob,
+                        size: fileBlob.size
+                    });
+                }).catch((err)=> {
+                    this.uppy.emit('upload-error', file, "Error importing from Google Drive!")
+                    this.uppy.log(`[Google Drive] Error downloading file ${file.id}`);
+                    this.uppy.log(err, 'warning')
                 });
-
-            } else {
-                var exportMimeType = file["mimeType"];
-                var exportFileName = file["name"];
-
-                var request = gapi.client.drive.files.get({
-                    'fileId': file["id"],
-                    alt: 'media'
-                });
-            }
-
-            var fulfilledCallback = (fulfilled) => this.uppy.addFile({
-                name: exportFileName, // file name
-                type: exportMimeType, // file type
-                data: new File([this._binaryToBlob(fulfilled.body)], file["name"], {
-                    type: exportMimeType
-                }),
-                preview: file["iconUrl"],
             });
 
-            var rejectedCallback = (rejected) => bootbox.alert("Sorry - there was a problem importing the file \""+files[i]["name"]+"\" from Google! Please try again.");
 
-            // Make the request — For some reason using .execute instead of .then doesn't work;
-            // their API docs (https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiclientrequest) recommend using .then
-            request.then(fulfilledCallback, rejectedCallback)
+            // Emit `preprocess-complete` for all files at once so that the StatusBar doesn't show a weird “upload 6 files”
+            // button, while waiting for all the files to complete pre-processing.
+            const emitPreprocessCompleteForAll = () => {
+                fileIDs.forEach((fileID) => {
+                    const file = this.uppy.getFile(fileID)
+                    this.uppy.emit('preprocess-complete', file)
+                })
+            }
+
+            return Promise.all(promises)
+                .then(emitPreprocessCompleteForAll);
         }
 
+        /**
+         * Download a file from google
+         *
+         * @param googleMeta The google  meta data set in the file in the function _pickerCallback
+         * @returns {Promise<unknown>}
+         * @private
+         */
+        _downloadFile(googleMeta){
+            return new Promise((resolve, reject) => {
+                //If the mime type is from google (for example google docs) we need to use the export api call. If its not,
+                //(for example a zip file) we use the get api call to download the file.
+                if (googleMeta['methodExport']) {
+
+                    //We need to convert the file to something readable such as PDF
+                    var request = gapi.client.drive.files.export({
+                        'fileId': googleMeta['googleID'],
+                        'mimeType': googleMeta['exportMimeType']
+                    });
+
+                } else {
+                    var request = gapi.client.drive.files.get({
+                        'fileId': googleMeta['googleID'],
+                        alt: 'media'
+                    });
+                }
+
+                // Make the request — For some reason using .execute instead of .then doesn't work;
+                // their API docs (https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiclientrequest) recommend using .then
+                // request.then(fulfilledCallback, rejectedCallback)
+                request.then(resolve, reject)
+            })
+        }
+
+        /**
+         * Convert a binary data to a blob
+         *
+         * @param binary The binary data to convert
+         * @returns {Uint8Array}
+         * @private
+         */
         _binaryToBlob(binary) {
             const data = binary;
             const len = data.length;
@@ -345,15 +463,10 @@
             return array;
         }
 
-        _logout(){
-            this.setPluginState({
-                oauthToken: null,
-                user: {}
-            });
-            gapi.auth.setToken(null);
-            gapi.auth.signOut();
-        }
-
+        /**
+         * Render the UI
+         * @returns {*}
+         */
         render () {
             var state = this.getPluginState();
 
@@ -361,12 +474,12 @@
             if (state.oauthToken) {
                 return preact.h("div", {class: "uppy-Provider-auth"},
                     state.user.picture && preact.h("div", {class: "uppy-Provider-authIcon"},
-                        preact.h("img", {src:state.user.picture, alt: state.user.name, style: {"borderRadius": "50%"}})
+                    preact.h("img", {src:state.user.picture, alt: state.user.name, style: {"borderRadius": "50%"}})
                     ),
 
                     state.user.email && preact.h("h1", {class: "uppy-Provider-authTitle", style: {marginBottom: "10px"}},
-                        "You are logged in as ",
-                        preact.h("i", {}, state.user.email)
+                    "You are logged in as ",
+                    preact.h("i", {}, state.user.email)
                     ),
 
                     preact.h("button", {
@@ -375,11 +488,11 @@
                     }, "Select Files"),
 
 
-                    preact.h("button", {
-                        onClick: this._logout,
-                        class: "uppy-c-btn uppy-c-btn-link",
-                        style: {"position":"absolute", "top":55, "right":5}
-                    }, "Logout")
+                    // preact.h("button", {
+                    //     onClick: this._logout,
+                    //     class: "uppy-c-btn uppy-c-btn-link",
+                    //     style: {"position":"absolute", "top":55, "right":5}
+                    // }, "Logout")
                 );
 
             }
@@ -401,5 +514,7 @@
 
 
         }
+
+
     }
 </script>
