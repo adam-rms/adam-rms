@@ -297,16 +297,22 @@
             var state = this.getPluginState();
             if (state.pickerApiLoaded && state.oauthToken) {
                 //Create a view that only loads images if required
-                var view = new google.picker.View(this.opts.imagesOnly ? google.picker.ViewId.DOCS_IMAGES :
-                    google.picker.ViewId.DOCS);
+                // var view = new google.picker.View();
+
+                var view = new google.picker.DocsView(this.opts.imagesOnly ? google.picker.ViewId.DOCS_IMAGES :
+                                                                             google.picker.ViewId.DOCS);
+                view.setParent('root')
+                    .setIncludeFolders(true)
+                    .setMode(google.picker.DocsViewMode.GRID)
+                    .setEnableDrives(true);
 
                 //Create the google Picker
                 var picker = new google.picker.PickerBuilder()
                     .enableFeature(google.picker.Feature.NAV_HIDDEN)
                     .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                    .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
                     .setOAuthToken(state.oauthToken)
                     .addView(view)
-                    .addView(new google.picker.DocsUploadView())
                     .setCallback(this._pickerCallback)
                     //These do not seem to be needed, however are useful in development
                     // .setAppId("")
