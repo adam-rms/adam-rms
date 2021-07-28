@@ -5,4 +5,6 @@ title: Getting Started
 
 # Getting Started!
 
-Coming soon
+Head over to dash.adam-rms.com to create an account
+
+More coming soon
