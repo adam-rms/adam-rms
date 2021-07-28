@@ -37,12 +37,12 @@ if (!$projectType) finish(false, ["code" => "ADD-PROJECT-TYPE-FAIL", "message"=>
 
 $count = 0;
 foreach (["Pending pick","Picked","Prepping","Tested","Packed","Dispatched","Awaiting Check-in","Case opened","Unpacked","Tested","Stored"] as $item) {
-    $count += 1;
     $assignmentsStatus = $DBLIB->insert("assetsAssignmentsStatus", [
         "instances_id" => $instance,
         "assetsAssignmentsStatus_name" => $item,
         "assetsAssignmentsStatus_order" => $count
     ]);
+    $count += 1;
     if (!$assignmentsStatus) finish(false, ["code" => "ADD-STATUS-FAIL", "message"=> "Could not create new assignment status"]);
 }
 

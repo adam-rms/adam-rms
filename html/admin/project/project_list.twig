@@ -46,7 +46,7 @@
                     </th>
                 </tr>
                 </thead>
-                <tbody>
+                <tr>
                 {% set archive = false %}
                 {% for project in PROJECTSLIST %}
                     {% if archive == false and project.projects_archived == 1 %}
@@ -114,7 +114,71 @@
                             </small>
                         </td>
                     </tr>
-
+                    {% if project.subProjects %}
+                        <tr>
+                        {% for subProject in project.subProjects  %}
+                            <tr>
+                                <td>
+                                    ↳<a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}">#{{ subProject.projects_id }}</a>
+                                </td>
+                                <td>
+                                    <a>
+                                        {{ subProject.projects_name }}
+                                    </a>
+                                    <br/>
+                                    <small>
+                                        {{subProject.projects_dates_use_start|date("d M Y h:ia")}} - {{subProject.projects_dates_use_end|date("d M Y h:ia")}}
+                                    </small>
+                                </td>
+                                {% if potentialProjectTypes|length > 1 %}
+                                    <td>
+                                        {{ subProject.projectsTypes_name }}
+                                        <br>
+                                        (Subproject)
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    {% if subProject.projectsTypes_config_client == 1 %}
+                                        <a href="?client={{ subProject.clients_id }}">
+                                            {{ subProject.clients_name }}
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
+                                                <img alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    {% if subProject.projectsTypes_config_finance == 1 %}
+                                        {{ (subProject.finance.projectsFinanceCache_grandTotal|moneyPositive ? subProject.finance.projectsFinanceCache_grandTotal|money : '') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if subProject.projectsTypes_config_finance == 1 %}
+                                        {{ subProject.finance.projectsFinanceCache_paymentsReceived|money }}
+                                    {% endif %}
+                                </td>
+                                <td class="project_progress">
+                                    {{ STATUSES[subProject.projects_status]['name'] }}<br/>
+                                    {% if STATUSES[subProject.projects_status]['order'] < 7 %}
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[subProject.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <small>
+                                        {{ STATUSES[subProject.projects_status]['description'] }}
+                                    </small>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>

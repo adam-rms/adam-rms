@@ -282,7 +282,8 @@ class bCMS {
                 'Bucket' => $file['s3files_bucket'],
                 'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
             ];
-            if ($forceDownload) $parameters['ResponseContentDisposition'] = 'attachment; filename="' . 'AdamRMS ' . $file['s3files_filename'] . '.' . $file['s3files_extension'] . '"';
+            $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
+
             $cmd = $s3Client->getCommand('GetObject', $parameters);
             $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
             $presignedUrl = (string)$request->getUri();
@@ -693,21 +694,6 @@ foreach ($GLOBALS['STATUSES'] as $key => $status) {
 usort($GLOBALS['STATUSES'], function($a, $b) {
     return $a['order'] - $b['order'];
 });
-
-$GLOBALS['ASSETASSIGNMENTSTATUSES'] = [
-    0 => ["name" => "None applicable"],
-    1 => ["name" => "Pending pick"],
-    2 => ["name" => "Picked"],
-    3 => ["name" => "Prepping"],
-    4 => ["name" => "Tested for prep"],
-    5 => ["name" => "Packed"],
-    6 => ["name" => "Dispatched"],
-    7 => ["name" => "Awaiting Check-in"],
-    8 => ["name" => "Case opened"],
-    9 => ["name" => "Unpacked"],
-    10 => ["name" => "Tested from return"],
-    11 => ["name" => "Stored"]
-];
 
 $GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
     1 => ["class" => "danger","id" => 1,"text" => "Emergency"],

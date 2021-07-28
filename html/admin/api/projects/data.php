@@ -24,6 +24,11 @@ $DBLIB->join("locations","locations.locations_id=projects.locations_id","LEFT");
 $PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*", "projectsTypes.*", "clients.clients_id", "clients_name","clients_website","clients_email","clients_notes","clients_address","clients_phone","users.users_userid", "users.users_name1", "users.users_name2", "users.users_email","locations.locations_name","locations.locations_address"]);
 if (!$PAGEDATA['project']) die("404");
 
+//subprojects
+$DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("projects.projects_parent_project_id", $_GET['id']);
+$PAGEDATA['project']['subProjects'] = $DBLIB->get("projects", null, ["projects.*"]);
 
 //Finances
 
@@ -76,7 +81,7 @@ function projectFinancials($project) {
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
     $DBLIB->where("assets.assets_deleted", 0);
-    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank", "assetsAssignmentsStatus.assetsAssignmentsStatus_name","assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "assets.instances_id"]);
+    $assets = $DBLIB->get("assetsAssignments", null, ["assetCategories.assetCategories_rank","assetsAssignmentsStatus.assetsAssignmentsStatus_id", "assetsAssignmentsStatus.assetsAssignmentsStatus_order", "assetsAssignmentsStatus.assetsAssignmentsStatus_name","assetsAssignments.*", "manufacturers.manufacturers_name", "assetTypes.*", "assets.*", "assetCategories.assetCategories_name", "assetCategories.assetCategories_fontAwesome", "assetCategoriesGroups.assetCategoriesGroups_name", "assets.instances_id"]);
 
     $return['assetsAssigned'] = [];
     $return['assetsAssignedSUB'] = [];
@@ -241,7 +246,8 @@ $PAGEDATA['files'] = $bCMS->s3List(7, $PAGEDATA['project']['projects_id']);
 $PAGEDATA['pdfs'] = $bCMS->s3List(20, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
-$DBLIB->where("assetsAssignmentsStatus.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
 

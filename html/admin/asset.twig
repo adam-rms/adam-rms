@@ -63,6 +63,11 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
+                            {% if thisProject and asset.assetsAssignment.assetsAssignmentsStatus_name != null %}
+                                <li class="list-group-item">
+                                    <b>Asset Status on {{ thisProject.projects_name }}</b> <a href="{{ CONFIG.ROOTURL }}/project/?id={{ USERDATA.users_selectedProjectID }}" class="float-right">{{ asset.assetsAssignment.assetsAssignmentsStatus_name }}</a>
+                                </li>
+                            {% endif %}
                         </ul>
                         {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
                             {% if assets[0].assets_endDate != null and assets[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}
@@ -74,8 +79,12 @@
                                 {% endif %}
                                 <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
                             {% endif %}
+                            {% if thisProject and 53|instancePermissions and asset.assetsAssignment != null%}
+                                <button title="Change Asset Status" class="btn btn-block btn-info" id="changeAssetStatusButton">Change Asset Status</button>
+                            {% endif %}
                         {% endif %}
                         {% if 97|instancePermissions %}
+                            <hr/>
                             <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
                         {% if 19|instancePermissions %}
@@ -1465,6 +1474,9 @@
                             type: 'success',
                             title: 'Added to {{ thisProject.projects_name }}'
                         });
+                        {% if asset.oneasset %}
+                        window.location.reload();
+                        {% endif %}
                     });
                 });
                 $(".removeFromBasketAssetButton").click(function () {
@@ -1490,6 +1502,33 @@
                                         type: 'success',
                                         title: 'Removed from {{ thisProject.projects_name }}'
                                     });
+                                    {% if asset.oneasset %}
+                                    window.location.reload();
+                                    {% endif %}
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if USERDATA.users_selectedProjectID != null and 53|instancePermissions and asset.assetsAssignment != null%}
+                $("#changeAssetStatusButton").click(function () {
+                    bootbox.prompt({
+                        title: "Set status of this Asset for {{ thisProject.projects_name }}",
+                        inputType: 'select',
+                        value: "{{ asset.assetsAssignment.assetsAssignmentsStatus_id }}",
+                        inputOptions: [
+                            {% for status in assetsAssignmentsStatus %}
+                            {
+                                text: '{{ status.assetsAssignmentsStatus_name|escape('js')}}',
+                                value: '{{ status.assetsAssignmentsStatus_id }}'
+                            },
+                            {% endfor %}
+                        ],
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":{{ asset.assetsAssignment.assetsAssignments_id }}, "assetsAssignments_status":result}, function (){
+                                    window.location.reload();
                                 });
                             }
                         }

@@ -57,10 +57,48 @@ if ($AUTH->instancePermissionCheck(30)) {
 }
 
 
-if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assets.twig', $PAGEDATA);
+/**
+ * Variables for the board view (asset dispatch)
+ */
+$PAGEDATA['BOARDASSETS'] = [];
+foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
+    $tempAssets = [];
+    foreach ($PAGEDATA['FINANCIALS']['assetsAssigned'] as $assetType){
+        foreach ($assetType['assets'] as $asset){
+            if ($asset['assetsAssignmentsStatus_order'] == null && $status['assetsAssignmentsStatus_order'] == 0) { //if asset status is null, add to the first column
+                $tempAssets[] = $asset;
+            } elseif ($asset['assetsAssignmentsStatus_order'] == $status['assetsAssignmentsStatus_order']) {
+                $tempAssets[] = $asset;
+            }
+        }
+    }
+    $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']] = $status;
+    $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']]["assets"] = $tempAssets;
+}
+foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go through the sub projects
+    $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
+    $DBLIB->where("assetsAssignmentsStatus.instances_id", $instance['instance']['instances_id']);
+    $DBLIB->where("assetsAssignmentsStatus.assetsAssignmentsStatus_deleted", 0);
+    $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']] = $DBLIB->get("assetsAssignmentsStatus");
+    foreach ($PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']] as $status) {
+        $tempAssets=[];
+        foreach ($instance["assets"] as $assetType){
+            foreach ($assetType['assets'] as $asset){
+                if ($asset['assetsAssignmentsStatus_order'] == null && $status['assetsAssignmentsStatus_order'] == 0) { //if asset status is null, add to the first column
+                    $tempAssets[] = $asset;
+                } elseif ($asset['assetsAssignmentsStatus_order'] == $status['assetsAssignmentsStatus_order']) {
+                    $tempAssets[] = $asset;
+                }
+            }
+        }
+        $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']][$status['assetsAssignmentsStatus_order']]["assets"] = $tempAssets;
+    }
+}
+
+
+if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assetsPage.twig', $PAGEDATA);
 elseif (isset($_GET['pdf'])) {
     $PAGEDATA['GET'] = $_GET;
     die($TWIG->render('project/pdf.twig', $PAGEDATA));
-}
-else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
+} else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>

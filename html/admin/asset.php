@@ -67,7 +67,7 @@ foreach ($assets as $asset) {
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
     $DBLIB->where("projects.projects_deleted", 0);
-    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end"]);
+    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end", "assetsAssignments.assetsAssignmentsStatus_id"]);
 
     $asset['files'] = $bCMS->s3List(4, $asset['assets_id']);
 
@@ -129,8 +129,21 @@ if (count($PAGEDATA['assets']) == 1) {
         $DBLIB->where("assetGroups_id IN (" . $PAGEDATA['assets'][0]['assets_assetGroups'] . ")");
         $PAGEDATA['assets'][0]['groups'] = $DBLIB->get("assetGroups",null,["assetGroups_id","assetGroups_name"]);
     } else $PAGEDATA['assets'][0]['groups'] = [];
+
+    //Assignment Id
+    $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_id']);
+    $DBLIB->where("projects_id", $PAGEDATA['thisProject']['projects_id']);
+    $DBLIB->where("assetsAssignments_deleted", 0);
+    $PAGEDATA['asset']['assetsAssignment'] = $DBLIB->getOne("assetsAssignments", ["assetsAssignments_id", "assetsAssignmentsStatus_id"]);
+    if (isset($PAGEDATA['asset']['assetsAssignment']['assetsAssignmentsStatus_id'])){
+        $DBLIB->where("assetsAssignmentsStatus_id", $PAGEDATA['asset']['assetsAssignment']['assetsAssignmentsStatus_id']);
+        $PAGEDATA['asset']['assetsAssignment']['assetsAssignmentsStatus_name'] = $DBLIB->getOne("assetsAssignmentsStatus", ["assetsAssignmentsStatus_name"])['assetsAssignmentsStatus_name'];
+    }
 }
 
+$DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+$DBLIB->where("assetsAssignmentsStatus.instances_id", $AUTH->data['instance']['instances_id']);
+$PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
 echo $TWIG->render('asset.twig', $PAGEDATA);
-?>
