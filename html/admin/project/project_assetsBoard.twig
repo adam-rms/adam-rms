@@ -76,7 +76,9 @@
                 let assetAssignment = ui.item[0].dataset.assignment;
 
                 if (assetOldStatus !== groupStatus) {
-                    changeStatus(parseInt(assetAssignment), parseInt(groupStatus));
+                    ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":parseInt(assetAssignment), "assetsAssignments_status":parseInt(groupStatus)}, function (returned){
+                        window.location.reload();
+                    });
                 }
             }
         })
