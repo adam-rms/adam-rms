@@ -6,6 +6,8 @@ It is available as a hosted solution (not currently open to new customers) or to
 
 ![Banner](.github/banner.jpg)
 
+![This website is hosted Green - checked by thegreenwebfoundation.org](https://api.thegreenwebfoundation.org/greencheckimage/adam-rms.com?nocache=true)
+
 ## Repositories
 
  - [*This repo* Project Source Code __adam-rms__](https://github.com/bstudios/adam-rms)
