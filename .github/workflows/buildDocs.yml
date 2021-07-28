@@ -2,9 +2,6 @@ name: Update Docusaurus Version
 on:
   release:
     types: [published]
-defaults:
-  run:
-    working-directory: docs
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,8 +11,10 @@ jobs:
         with:
           node-version: '16.5.0'
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
+        working-directory: ./docs
       - run: npm run docusaurus docs:version ${{ github.event.release.tag_name }}
+        working-directory: ./docs
       - uses: EndBug/add-and-commit@v7 # You can change this to use a specific version
         with:
           add: '.'
