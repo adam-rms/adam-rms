@@ -22,6 +22,21 @@ It is available as a hosted solution (not currently open to new customers) or to
  - GitHub Packages: [bstudios/adam-rms](https://github.com/orgs/bstudios/packages?repo_name=adam-rms)
 
 
+## Releases
+
+AdamRMS uses semantic versioning. v2.0.0 is currently being targeted, this will bring a new RESTful API. 
+
+To create a new release:
+
+1. Set line 1 of version.txt to your release version number, and line 2 to be your release notes. 
+1. Commit and push this file.
+1. A release will be created on GitHub, as a draft. If this looks correct, publish it.
+1. A new Docker image will be built and pushed to Docker Hub.
+1. A new Docker image will be built and pushed to GitHub Packages.
+1. Docusaurus will be versioned accordingly.
+1. Cloudflare pages will update the website.
+
+
 ## Contributing 
 
 Contributions are very welcome - please see [CONTRIBUTING.md](CONTRIBUTING.md) for a guide, or feel free to open a [Discussion](https://github.com/bstudios/adam-rms/discussions)

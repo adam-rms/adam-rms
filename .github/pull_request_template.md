@@ -6,4 +6,3 @@
 
 - [ ] Updates documentation
 - [ ] Tested locally
-- [ ] New docusaurus version created (this is done by reviewer before merge)

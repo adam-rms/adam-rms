@@ -1,0 +1,23 @@
+name: Update Docusaurus Version
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.5.0'
+      - run: npm ci
+        working-directory: ./docs
+      - run: npm run docusaurus docs:version ${{ github.event.release.tag_name }}
+        working-directory: ./docs
+      - uses: EndBug/add-and-commit@v7 # You can change this to use a specific version
+        with:
+          add: '.'
+          branch: master
+          default_author: github_actions
+          message: 'Update docs to ${{ github.event.release.tag_name }}'
+          push: true
