@@ -22,6 +22,11 @@ It is available as a hosted solution (not currently open to new customers) or to
  - GitHub Packages: [bstudios/adam-rms](https://github.com/orgs/bstudios/packages?repo_name=adam-rms)
 
 
+## Releases
+
+Releases are triggered by incrementing version.txt in the root of the repo. This triggers a build of the site, publishing the package, and also an update to the docs. 
+
+
 ## Contributing 
 
 Contributions are very welcome - please see [CONTRIBUTING.md](CONTRIBUTING.md) for a guide, or feel free to open a [Discussion](https://github.com/bstudios/adam-rms/discussions)

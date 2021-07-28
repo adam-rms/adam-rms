@@ -1,9 +1,7 @@
 name: Docker Build & Push
 on:
-  push:
-    tags:
-      - "v*.*.*"
-  workflow_dispatch:
+  release:
+    types: [published]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,18 +14,14 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/main
           tag-sha: false
-          tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
+          tag-semver: ${{ github.event.release.tag_name }}
       - name: Docker hub meta
         id: docker_dockerhub_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: bithellstudios/adam-rms
           tag-sha: false
-          tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
+          tag-semver: ${{ github.event.release.tag_name }}
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v1
       - name: Login to Docker Hub

@@ -1,0 +1,26 @@
+name: Trigger Release
+on:
+  push:
+    branches: [master,main]
+    paths:
+      - 'version.txt'
+
+jobs:
+  createRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get Version Number from version.txt
+        run: |
+          echo "TAG=$(head -1 version.txt)" >> $GITHUB_ENV
+      - name: Get release notes
+        run: |
+          echo "NOTES=$(cat version.txt | head -2 | tail -1)" >> $GITHUB_ENV
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          body: ${{ env.NOTES }}
+          draft: true
+          prerelease: false
