@@ -24,7 +24,17 @@ It is available as a hosted solution (not currently open to new customers) or to
 
 ## Releases
 
-Releases are triggered by incrementing version.txt in the root of the repo. This triggers a build of the site, publishing the package, and also an update to the docs. 
+AdamRMS uses semantic versioning. v2.0.0 is currently being targeted, this will bring a new RESTful API. 
+
+To create a new release:
+
+1. Set line 1 of version.txt to your release version number, and line 2 to be your release notes. 
+1. Commit and push this file.
+1. A release will be created on GitHub, as a draft. If this looks correct, publish it.
+1. A new Docker image will be built and pushed to Docker Hub.
+1. A new Docker image will be built and pushed to GitHub Packages.
+1. Docusaurus will be versioned accordingly.
+1. Cloudflare pages will update the website.
 
 
 ## Contributing 
