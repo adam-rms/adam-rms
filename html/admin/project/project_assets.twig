@@ -43,6 +43,10 @@
                         <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
                             <i class="fas fa-coins"></i></button>
                     {% endif %}
+                    {% if 53|instancePermissions %}
+                        <button type="button" class="btn btn-tool" title="Set status for all assets" id="setAllAssetStatus">
+                            <i class="fas fa-clipboard-check"></i></button>
+                    {% endif %}
                     {% if 31|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Remove assets" id="setAssetAssignmentDelete">
                             <i class="fas fa-trash"></i></button>
@@ -260,6 +264,29 @@
                     }
                 });
             }
+        });
+        {% endif %}
+        {% if 53|instancePermissions %}
+        $("#setAllAssetStatus").click(function () {
+            bootbox.prompt({
+                title: "Set status of all assets in {{ thisProject.projects_name }}",
+                inputType: 'select',
+                inputOptions: [
+                    {% for status in assetsAssignmentsStatus %}
+                    {
+                        text: '{{ status.assetsAssignmentsStatus_name|escape('js')}}',
+                        value: '{{ status.assetsAssignmentsStatus_id }}'
+                    },
+                    {% endfor %}
+                ],
+                callback: function (result) {
+                    if (result) {
+                        ajaxcall("projects/assets/setStatus.php", {"projects_id":{{ thisProject.projects_id }}, "assetsAssignments_status":result}, function (){
+                            window.location.reload();
+                        });
+                    }
+                }
+            });
         });
         {% endif %}
     });
