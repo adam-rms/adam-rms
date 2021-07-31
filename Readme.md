@@ -28,13 +28,12 @@ AdamRMS uses semantic versioning. v2.0.0 is currently being targeted, this will 
 
 To create a new release:
 
-1. Set line 1 of version.txt to your release version number, and line 2 to be your release notes. 
-1. Commit and push this file.
-1. A release will be created on GitHub, as a draft. If this looks correct, publish it.
+1. **Create a new release in Github, with a tag of the semantic version number.**
 1. A new Docker image will be built and pushed to Docker Hub.
 1. A new Docker image will be built and pushed to GitHub Packages.
 1. Docusaurus will be versioned accordingly.
-1. Cloudflare pages will update the website.
+1. Cloudflare pages will update the public marketing/docs website.
+1. The Bithell Studios' AdamRMS server will pull the latest update from Github Packages to update the dashboard.
 
 
 ## Contributing 
