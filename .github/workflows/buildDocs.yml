@@ -21,7 +21,8 @@ jobs:
         run: |
           git config --local user.email "bstudios-bot@users.noreply.github.com"
           git config --local user.name "BStudios Bot"
-          git commit -m "Update docs to ${{ github.event.release.tag_name }}" -a
+          git add -A
+          git commit -m "Update docs to ${{ github.event.release.tag_name }}"
       - uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.BOT_TOKEN }}
