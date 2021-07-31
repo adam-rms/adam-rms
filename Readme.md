@@ -4,9 +4,21 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, wri
 
 It is available as a hosted solution (not currently open to new customers) or to be self-hosted as a docker container. 
 
-![Banner](.github/banner.jpg)
 
-![This website is hosted Green - checked by thegreenwebfoundation.org](https://api.thegreenwebfoundation.org/greencheckimage/adam-rms.com?nocache=true)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/bstudios/adam-rms)
+![GitHub repo size](https://img.shields.io/github/repo-size/bstudios/adam-rms)
+![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/bithellstudios/adam-rms)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/bstudios/adam-rms)
+![GitHub issues](https://img.shields.io/github/issues/bstudios/adam-rms)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/bstudios/adam-rms)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/bstudios/adam-rms)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/bstudios/adam-rms)
+![GitHub](https://img.shields.io/github/license/bstudios/adam-rms)
+![GitHub stars](https://img.shields.io/github/stars/bstudios/adam-rms)
+![GitHub contributors](https://img.shields.io/github/contributors/bstudios/adam-rms)
+![GitHub](https://img.shields.io/github/release/bstudios/adam-rms/all)
+
+![Banner](.github/banner.jpg)
 
 ## Repositories
 
@@ -113,3 +125,5 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+![This website is hosted Green - checked by thegreenwebfoundation.org](https://api.thegreenwebfoundation.org/greencheckimage/adam-rms.com?nocache=true)
