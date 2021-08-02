@@ -44,6 +44,9 @@
                             <i class="fas fa-coins"></i></button>
                     {% endif %}
                     {% if 31|instancePermissions %}
+                        <button type="button" class="btn btn-tool" title="Swap Asset" id="swapAsset">
+                            <i class="fas fa-sync"></i>
+                        </button>
                         <button type="button" class="btn btn-tool" title="Remove assets" id="setAssetAssignmentDelete">
                             <i class="fas fa-trash"></i></button>
                     {% endif %}
@@ -113,6 +116,12 @@
 
 <script>
     $(document).ready(function () {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
         function getSelected() {
             var selected = [];
             $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
@@ -258,6 +267,55 @@
                             });
                         }
                     }
+                });
+            }
+        });
+        $("#swapAsset").click(function () {
+            let selected = getSelected();
+            if (selected.length > 1) {
+                Toast.fire({
+                    type: 'error',
+                    title: 'Please select just one asset!'
+                });
+            } else if (selected.length === 1){
+                let alternatives = [];
+                //get type of assigned asset
+                ajaxcall("assets/get.php",{
+                    "assetsAssignments_id": selected[0]
+                }, function (data) {
+                    //get other assets with that asset type
+                    ajaxcall("assets/get.php",{
+                        "assetTypes_id": data.response[0].assetTypes_id,
+                        "projects_id": {{ project.projects_id }}
+                    }, function (returned) {
+                        //create array of alternative assets
+                        returned.response.forEach(
+                            element => alternatives.push({"text": element.assets_tag + ((element.asset_definableFields_1 !== "") ? " (" + element.asset_definableFields_1 + ")" : "") ,"value":element.assets_id})
+                        )
+                        bootbox.prompt({
+                            title: "Swap Asset",
+                            inputType: 'select',
+                            inputOptions: alternatives,
+                            callback: function (result) {
+                                if (result){
+                                    //swap asset in asset assignment
+                                    ajaxcall("projects/assets/swap.php",
+                                        {
+                                            "assetsAssignments_id": selected[0],
+                                            "assets_id": result
+                                        }, function () {
+                                            window.location.reload()
+                                        }
+                                    );
+                                }
+                            }
+                        });
+                    });
+                });
+            } else {
+                Toast.fire({
+                    type: 'error',
+                    title: 'Please select an asset!'
                 });
             }
         });
