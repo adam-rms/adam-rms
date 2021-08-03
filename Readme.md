@@ -4,9 +4,21 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, wri
 
 It is available as a hosted solution (not currently open to new customers) or to be self-hosted as a docker container. 
 
-![Banner](.github/banner.jpg)
 
-![This website is hosted Green - checked by thegreenwebfoundation.org](https://api.thegreenwebfoundation.org/greencheckimage/adam-rms.com?nocache=true)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/bstudios/adam-rms)
+![GitHub repo size](https://img.shields.io/github/repo-size/bstudios/adam-rms)
+![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/bithellstudios/adam-rms)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/bstudios/adam-rms)
+![GitHub issues](https://img.shields.io/github/issues/bstudios/adam-rms)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/bstudios/adam-rms)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/bstudios/adam-rms)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/bstudios/adam-rms)
+![GitHub](https://img.shields.io/github/license/bstudios/adam-rms)
+![GitHub stars](https://img.shields.io/github/stars/bstudios/adam-rms)
+![GitHub contributors](https://img.shields.io/github/contributors/bstudios/adam-rms)
+![GitHub](https://img.shields.io/github/release/bstudios/adam-rms/all)
+
+![Banner](.github/banner.jpg)
 
 ## Repositories
 
@@ -28,13 +40,12 @@ AdamRMS uses semantic versioning. v2.0.0 is currently being targeted, this will 
 
 To create a new release:
 
-1. Set line 1 of version.txt to your release version number, and line 2 to be your release notes. 
-1. Commit and push this file.
-1. A release will be created on GitHub, as a draft. If this looks correct, publish it.
+1. **Create a new release in Github, with a tag of the semantic version number.**
 1. A new Docker image will be built and pushed to Docker Hub.
 1. A new Docker image will be built and pushed to GitHub Packages.
 1. Docusaurus will be versioned accordingly.
-1. Cloudflare pages will update the website.
+1. Cloudflare pages will update the public marketing/docs website.
+1. The Bithell Studios' AdamRMS server will pull the latest update from Github Packages to update the dashboard.
 
 
 ## Contributing 
@@ -114,3 +125,5 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+![This website is hosted Green - checked by thegreenwebfoundation.org](https://api.thegreenwebfoundation.org/greencheckimage/adam-rms.com?nocache=true)
