@@ -15,6 +15,9 @@
  *      "result": true,
  *      "response": [] - array of assets
  *   -or-
+ *      "result": true
+ *      "error": ["code" => "NO-ASSETS", "message"=>"No Assets Available"] - no assets error message
+ *  -or-
  *      "result": false
  *      "error": [] - error code
  */
@@ -56,10 +59,10 @@ if (isset($_POST['assetsAssignments_id'])) {
     $DBLIB->where('assets_deleted', 0);
     $DBLIB->where('assets_archived', null, "IS");
 }else {
-    finish(false, ["code" => "NO-ID", "message"=> "Provide an Asset ID or an Asset Assignment ID"]);
+    finish(false, ["code" => "NO-ID", "message"=> "Provide an Asset ID, Asset Type ID or an Asset Assignment ID"]); //No Id provided so is an error
 }
 
 $result = $DBLIB->get("assets");
 
 if ($result) finish(true, null, $result);
-finish(false, ["code" => "NO-ASSETS", "message"=>"No Assets Available"]);
+finish(true, ["code" => "NO-ASSETS", "message"=>"No Assets Available"]); //this is not an error, just information that there are no assets!

@@ -272,50 +272,64 @@
         });
         $("#swapAsset").click(function () {
             let selected = getSelected();
-            if (selected.length > 1) {
+            if (selected.length < 1) {
                 Toast.fire({
                     type: 'error',
-                    title: 'Please select just one asset!'
+                    title: 'Please select an asset.'
                 });
-            } else if (selected.length === 1){
+            } else if (selected.length > 1) {
+                Toast.fire({
+                    type: 'error',
+                    title: 'Please select just one asset.'
+                });
+            } else {
+                //we have some assets, lets swap them
                 let alternatives = [];
                 //get type of assigned asset
-                ajaxcall("assets/get.php",{
+                ajaxcall("assets/get.php", {
                     "assetsAssignments_id": selected[0]
                 }, function (data) {
                     //get other assets with that asset type
-                    ajaxcall("assets/get.php",{
+                    ajaxcall("assets/get.php", {
                         "assetTypes_id": data.response[0].assetTypes_id,
                         "projects_id": {{ project.projects_id }}
                     }, function (returned) {
-                        //create array of alternative assets
-                        returned.response.forEach(
-                            element => alternatives.push({"text": element.assets_tag + ((element.asset_definableFields_1 !== "") ? " (" + element.asset_definableFields_1 + ")" : "") ,"value":element.assets_id})
-                        )
-                        bootbox.prompt({
-                            title: "Swap Asset",
-                            inputType: 'select',
-                            inputOptions: alternatives,
-                            callback: function (result) {
-                                if (result){
-                                    //swap asset in asset assignment
-                                    ajaxcall("projects/assets/swap.php",
-                                        {
-                                            "assetsAssignments_id": selected[0],
-                                            "assets_id": result
-                                        }, function () {
-                                            window.location.reload()
-                                        }
-                                    );
+                        //if ther is a response, assets exist
+                        if (returned.response) {
+                            //create array of alternative assets
+                            returned.response.forEach(
+                                element => alternatives.push({
+                                    "text": element.assets_tag + ((element.asset_definableFields_1 !== "") ? " (" + element.asset_definableFields_1 + ")" : ""),
+                                    "value": element.assets_id
+                                })
+                            )
+                            bootbox.prompt({
+                                title: "Swap Asset",
+                                message: "Replace asset " + data.response[0].assets_tag + " with: ",
+                                inputType: 'select',
+                                inputOptions: alternatives,
+                                callback: function (result) {
+                                    if (result) {
+                                        //swap asset in asset assignment
+                                        ajaxcall("projects/assets/swap.php",
+                                            {
+                                                "assetsAssignments_id": selected[0],
+                                                "assets_id": result
+                                            }, function () {
+                                                window.location.reload()
+                                            }
+                                        );
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            //no assets exist, so let user know
+                            Toast.fire({
+                                type: 'info',
+                                title: ' No assets available to swap!'
+                            });
+                        }
                     });
-                });
-            } else {
-                Toast.fire({
-                    type: 'error',
-                    title: 'Please select an asset!'
                 });
             }
         });
