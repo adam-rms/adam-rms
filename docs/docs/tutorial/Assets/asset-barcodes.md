@@ -45,3 +45,6 @@ Asset Generation is customisable to add what you need to the stickers. Settings 
 - Use Cable Wrap or Standard format
 
 Barcode pages can then be generated on an Asset basis (list asset tags to print) or by an [Asset Group](./asset-groups). You can also generate blank barcodes to be associated with an asset at a later date.
+
+![Barcode Generation Page](../../../static/img/tutorial/assets/assets-barcodes.png "Create asset barcode sticker sheets")
+*Asset Barcode Generation*

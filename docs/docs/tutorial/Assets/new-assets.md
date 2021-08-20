@@ -24,6 +24,9 @@ You can also provide additional information now, or update it later, including:
 - Mass
 - Up to 10 definable fields
 
+![New Asset Type interface](../../../static/img/tutorial/assets/assets-new-type.png "Add new asset type to Demo Hire Services")
+*Add new asset type*
+
 ## Individual Assets
 ---
 After creating an asset type, you can create individual assets of that asset type.
@@ -36,3 +39,6 @@ Each asset can have additional information:
   - See [Asset Barcodes](./asset-barcodes) for more information.
 
 You can add multiple assets at once, and the tags will be added sequentially.
+
+![New Asset Interface](../../../static/img/tutorial/assets/assets-new-xlr.png "Add a new XLR asset to Demo Hire Services")
+*Add a new XLR Asset*

@@ -8,6 +8,9 @@ title: Asset Groups
 
 Asset groups allow you to group sets of assets with a name and a description. This can be used to track when assets were purchased or to assign assets regularly used together. Most asset groups will be visible to everyone, although you can create groups visible to just you if you want to keep track of a set of assets
 
+![Assets Group Page](../../../static/img/tutorial/assets/assets-groups.png "XLR asset group in Demo Hire Services")
+*Group Listing*
+
 :::note Asset Group permissions:  
 93 - Create new Group  
 94 - Edit an existing Group   

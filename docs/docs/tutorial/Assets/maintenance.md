@@ -17,6 +17,9 @@ All Jobs need:
 - Associated Asset(s)
 - Job Priority
 
+![New Maintenance Job](../../../static/img/tutorial/assets/maintenance-new.png "Reporting an asset as broken in Demo Hire Services")
+*Adding a new Maintenance Job*
+
 Once the job has been created, there is additional information that can be added:
 - Job Assignment - Give the job to a user to fix
 - Flag - Notify project managers that there is a fault with the assets in the job
@@ -31,6 +34,9 @@ Each of these fields has a dedicated permission.
 ---
 Progress on a job can be logged using the job thread. This can be in the form of a text entry or by uploading files to the job.
 It can also be tracked by updating the job status.
+
+![Maintenance Job details](../../../static/img/tutorial/assets/maintenance-details.png "Full details of maintenance job")
+*Job details page*
 
 :::note Job Permissions  
 63 - Access Maintenance & add new Job  
