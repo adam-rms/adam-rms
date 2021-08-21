@@ -4,6 +4,7 @@ title: Getting Started
 ---
 
 # Getting Started!
+---
 
 Welcome to AdamRMS!
 
