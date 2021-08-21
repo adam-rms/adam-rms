@@ -22,6 +22,9 @@ The Users page lists all users associated with a business.
 
 :::  
 
+![Users list](../../../static/img/tutorial/businesses/user-users.png)
+*List of users*
+
 To add a user to a business, you can either add them by email (once they have created an account) or use a [signup code](#signup-codes).  
 Each user has a role group within the business that is defined by what [permissions](#permissions) they have. They can also have a Role in the business, which is a text entry that can have any value.  
 
@@ -35,6 +38,9 @@ AdamRMS has a granular permission system which lets you define exactly what a us
 13 - Change a user's permissions  
 16 - Add new roles  
 :::
+
+![Permission List](../../../static/img/tutorial/businesses/user-permissions.png)
+*AdamRMS Permissions*
 
 Throughout this guide permissions have been included in each section, but they are all listed on the permissions page.
 
@@ -51,6 +57,9 @@ Signup codes are a way for individuals to automatically be added to your busines
 111 - Edit Signup Code  
 112 - Delete Signup Code  
 :::
+
+![Signup Codes](../../../static/img/tutorial/businesses/user-signup.png)
+*Business signup codes*
 
 The code is the item users enter to get access to your business.  
 AdamRMS tracks how many uses a code has had, and you can receive an email every time a signup code is used. 

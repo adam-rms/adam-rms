@@ -18,6 +18,9 @@ Modules can be entirely online, entirely in person, or a hybrid of both.
 120	- Revoke a user's training  
 :::
 
+![List of Training Modules](../../../static/img/tutorial/training/training-list.png)
+*List of training modules*
+
 ## Creating Modules
 ---
 
@@ -34,6 +37,9 @@ A module contains the following basic information:
     - Physical: Users cannot complete the module themselves - they are certified by an administrator
 - Module Thumbnail
 
+![New training module](../../../static/img/tutorial/training/training-new.png)
+*Create a new Training module*
+
 ## Module Steps
 ---
 Each Online or Hybrid module can have as many steps as required to cover relevant content.  
@@ -49,7 +55,13 @@ Each step contains the following information:
     - Youtube video - provide a link to a non-private youtube video
 - Step published status
 
+![Adding a step to a training module](../../../static/img/tutorial/training/training-steps-new.png)
+*Creating a new training step*
+
 Once a step is published users can view and mark training as complete. You can view user progress on a module on the module users page, including a timestamp for start and finish for the module.
+
+![List of users who have completed the training](../../../static/img/tutorial/training/training-certify-self.png)
+*Users who have completed the module*
 
 ## Module Certification
 ---
@@ -58,3 +70,5 @@ Physical modules work slightly differently, and require administrators to mark t
 
 To certify a user, head to the module’s user page, find the user and certify them. You must give a comment about certification, and then this is recorded with the certifying user and a timestamp of certification.
 
+![Physical training certification](../../../static/img/tutorial/training/training-certify.png)
+*Certifying a physical training module*
