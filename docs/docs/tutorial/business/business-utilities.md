@@ -14,7 +14,7 @@ The stats page allows users to add and remove widgets from their dashboard.
 80 - View business stats  
 :::
 
-![Business Stats](../../../static/img/tutorial/businesses/utilities-stats.png "Business Stats Widgets")
+![Business Stats](/img/tutorial/businesses/utilities-stats.png "Business Stats Widgets")
 *Business Stats Widgets*
 
 ## Calendar
@@ -22,7 +22,7 @@ The stats page allows users to add and remove widgets from their dashboard.
 The Business Calendar shows an overview of all projects that are currently not archived or deleted.  
 It is repeated on the main Dashboard page.
 
-![Business Calendar](../../../static/img/tutorial/businesses/utilities-calendar.png "Business Calendar")
+![Business Calendar](/img/tutorial/businesses/utilities-calendar.png "Business Calendar")
 *Business Calendar*
 
 ## Clients
@@ -36,7 +36,7 @@ There are a number of fields about each client, which includes the total amount 
 39 - Edit Client  
 :::
 
-![Client List](../../../static/img/tutorial/businesses/utilities-clients.png)
+![Client List](/img/tutorial/businesses/utilities-clients.png)
 *Client List*
 
 A new client just needs a Name, other entries can then be added by editing the client.
@@ -58,14 +58,14 @@ The Payment page is your business ledger, which tracks all payments added to the
 40 - View Ledger  
 :::
 
-![Business Ledger](../../../static/img/tutorial/businesses/utilities-ledger.png "Business Ledger")
+![Business Ledger](/img/tutorial/businesses/utilities-ledger.png "Business Ledger")
 *List of Payments*
 
 ## Locations
 ---
 [Projects](../Projects/projects) and [Assets](../Assets/assets) can be assigned a location to say where they are.
 
-![Location List](../../../static/img/tutorial/businesses/utilities-locations.png "Location List")
+![Location List](/img/tutorial/businesses/utilities-locations.png "Location List")
 *List of Locations*
 
 :::note Location Permissions  
@@ -82,7 +82,7 @@ Locations consist of:
 - Client - Link a location to a client
 - Sub Location Of - Add a hierarchical list of locations.
 
-![New Location](../../../static/img/tutorial/businesses/utilities-locations-new.png "New Location popup")
+![New Location](/img/tutorial/businesses/utilities-locations-new.png "New Location popup")
 *Adding a new location*
 
 Each location has an AdamRMS barcode that is used by the [AdamRMS App](../AdamRMS%20App/adam-rms-app). These can be printed to place in the location or accessed from the website to assign assets to a location.

@@ -15,7 +15,7 @@ AdamRMS has a content management system that can be used to store various inform
 
 CMS Pages are highly customisable, from the content to access to the page. Each page also has inbuilt analytics which show page views over time.
 
-![CMS Page List](../../../static/img/tutorial/cms/cms-settings.png)
+![CMS Page List](/img/tutorial/cms/cms-settings.png)
 *List of current page*
 
 ## Creating Pages
@@ -32,7 +32,7 @@ From the business settings section, pages can be created. A CMS page has the fol
   - Show on RMS sidebar
 - Make the page a subpage of another page
 
-![New CMS page](../../../static/img/tutorial/cms/cms-new.png)
+![New CMS page](/img/tutorial/cms/cms-new.png)
 *New CMS page*
 
 ## Editing Page Content
@@ -47,7 +47,7 @@ Each Card has the following properties:
 - Card Colour Position
 - Card size can be adjusted to fit the page and content.
 
-![Page edit with cards](../../../static/img/tutorial/cms/cms-edit.png)
+![Page edit with cards](/img/tutorial/cms/cms-edit.png)
 *Editing a CMS page*
 
 When saving the page, provide a revision comment to explain the page changes.  
