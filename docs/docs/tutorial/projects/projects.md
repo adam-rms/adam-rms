@@ -11,7 +11,7 @@ All projects are date and time based, so you can track where your teams and equi
 
 Projects are listed on the main menu and in the project list page.
 
-![Project List](../../../static/img/tutorial/projects/projects-list.png)
+![Project List](/img/tutorial/projects/projects-list.png)
 *List of Projects*
 
 :::note Base Project Permissions  

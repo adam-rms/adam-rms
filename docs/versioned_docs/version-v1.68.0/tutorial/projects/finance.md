@@ -17,7 +17,7 @@ Project finance allows you to track hire, crew and purchasing costs for each pro
 122 - Upload Payment File Attachments  
 :::
 
-![Finance Dashboard](../../../static/img/tutorial/projects/finance-dashboard.png)
+![Finance Dashboard](/img/tutorial/projects/finance-dashboard.png)
 *Finance Dashboard*
 
 ## Adding Costs
@@ -34,7 +34,7 @@ Each of these items requires the following information:
 - Description
 - Amount
 
-![Add staffing cost to a project](../../../static/img/tutorial/projects/finance-add.png)
+![Add staffing cost to a project](/img/tutorial/projects/finance-add.png)
 *Adding Staffing cost to the project*
 
 ## Receiving Payments
@@ -55,7 +55,7 @@ A payment consists of the following information:
 - Description
 - Amount received.
 
-![Recording Payment](../../../static/img/tutorial/projects/payment-recieved.png)
+![Recording Payment](/img/tutorial/projects/payment-recieved.png)
 *Adding a payment record*
 
 ## Invoices
@@ -64,11 +64,11 @@ Invoices are documents you can share with clients that sum up a project. You can
 They can also be used as printouts of project assets.
 
 
-![Creating an Invoice](../../../static/img/tutorial/projects/finance-invoice-new.png)
+![Creating an Invoice](/img/tutorial/projects/finance-invoice-new.png)
 *Create an Invoice*
 
 Invoices are stored in the Invoices and Files tab, and count towards your business file quota.
 Every generated invoice is stored, so you can track the history of the project through invoices.
 
-![A Sample Invoice](../../../static/img/tutorial/projects/finance-invoice.png)
+![A Sample Invoice](/img/tutorial/projects/finance-invoice.png)
 *An example invoice*

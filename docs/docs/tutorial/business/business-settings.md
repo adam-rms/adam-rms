@@ -14,7 +14,7 @@ Basic settings cover a number of useful settings about your business, including 
 83 - Edit business settings  
 :::
 
-![Basic Settings](../../../static/img/tutorial/businesses/settings-basic.png)
+![Basic Settings](/img/tutorial/businesses/settings-basic.png)
 *Business Settings*
 
 The Basic Settings page includes the following information:
@@ -41,7 +41,7 @@ For example, this can be used to show what assets are available for hire.
 83 - Edit business settings   
 :::
 
-![Public site settings](../../../static/img/tutorial/businesses/settings-publicSite.png)
+![Public site settings](/img/tutorial/businesses/settings-publicSite.png)
 *AdamRMS public site settings*
 
 The public site is an optional addon, but requires AdamRMS support to set up. Please get in touch if you would like to use this feature.
@@ -61,7 +61,7 @@ Project types are a way to change what elements of [Projects](../projects/projec
 108 - Delete Project Type  
 :::
 
-![Custom project types](../../../static/img/tutorial/businesses/settings-types.png)
+![Custom project types](/img/tutorial/businesses/settings-types.png)
 *Project types*
 
 Each Project is split into the following sections that can be enabled or disabled on a Project Type basis:
@@ -84,7 +84,7 @@ All Assets have an associated category that groups assets. AdamRMS comes with 29
 92 - Delete a custom category  
 :::
 
-![Custom asset categories](../../../static/img/tutorial/businesses/settings-category.png)
+![Custom asset categories](/img/tutorial/businesses/settings-category.png)
 *Asset Categories*
 
 All subcategories have:

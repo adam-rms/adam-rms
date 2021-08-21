@@ -8,7 +8,7 @@ title: Project Crew
 
 Project Crew can be used to track who's involved with a project and get business members to sign up.
 
-![Crew List](../../../static/img/tutorial/projects/crew-list.png)
+![Crew List](/img/tutorial/projects/crew-list.png)
 *Project crew list*
 
 :::note Crew Permissions  
@@ -29,7 +29,7 @@ Crew can be added manually to projects. When adding crew, the following informat
 - Role
 - Comment
 
-![Adding Crew](../../../static/img/tutorial/projects/crew-add.png)
+![Adding Crew](/img/tutorial/projects/crew-add.png)
 *Add Crew to a project*
 
 When a crew member is added to a project, they receive a notification.
@@ -42,7 +42,7 @@ Crew emails can be easily collated by clicking the **Email Crew** button.
 You can advertise roles available on a project by using crew recruitment.  
 This will advertise the position on the dashboard vacancies page and, optionally, the public site vacancies page.
 
-![Available positions on the vacancies dashboard](../../../static/img/tutorial/projects/crew-recruitment.png)
+![Available positions on the vacancies dashboard](/img/tutorial/projects/crew-recruitment.png)
 *Available positions on the vacancies dashboard*
 
 ### New Positions
@@ -67,19 +67,19 @@ Crew vacancies ask for the following information:
     - Internal note
     - Question type
 
-![New Question Form](../../../static/img/tutorial/projects/crew-recruitment-add.png)
+![New Question Form](/img/tutorial/projects/crew-recruitment-add.png)
 *Application creator*
 
 ### Apply for a role
 Users can apply for the role any time the position is open. If the role is First-Come-First-Served, #
 the first user to apply will get the position. Otherwise, the Project manager must accept or reject each application.
 
-![Role Application](../../../static/img/tutorial/projects/crew-application.png)
+![Role Application](/img/tutorial/projects/crew-application.png)
 *Applying for a role*
 
 The project manager receives a notification each time an application is made, and the candidate receives an email when 
 they are accepted/rejected.
 
-![An Application to a Project Manager](../../../static/img/tutorial/projects/crew-applied.png)
+![An Application to a Project Manager](/img/tutorial/projects/crew-applied.png)
 *An application*
 

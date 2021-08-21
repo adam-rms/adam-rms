@@ -24,7 +24,7 @@ All projects can consist of:
 - A Venue
 - Project Dates, including asset dispatch dates
 
-![Project Overview](../../../static/img/tutorial/projects/projects-overview.png)
+![Project Overview](/img/tutorial/projects/projects-overview.png)
 *Project Overview*
 
 Comments allow you to keep a log of updates about the project, such as venue and date  changes.
@@ -36,7 +36,7 @@ All Projects have a status, that is the overall status of the project. You can a
 
 AdamRMS has a full Audit Log, which keeps track of changes to various elements of the platform. This includes projects, and the edit history of the project can be found on the history page.
 
-![Project audit log](../../../static/img/tutorial/projects/projects-audit.png)
+![Project audit log](/img/tutorial/projects/projects-audit.png)
 *Project History*
 
 ## Files & Invoices
@@ -49,7 +49,7 @@ Projects can have files and notes associated with them, to keep track of various
 102 - Upload Project Files  
 :::
 
-![Project Files](../../../static/img/tutorial/projects/projects-files.png)
+![Project Files](/img/tutorial/projects/projects-files.png)
 *Notes and Projects for the project*
 
 Notes are intended to be used for meeting notes and event plans.
@@ -58,10 +58,10 @@ Notes are intended to be used for meeting notes and event plans.
 ---
 Projects can have associated sub-projects, which are linked to the main project. These sub-projects act as independent projects, but are linked for organisation.
 
-![Example sub-project](../../../static/img/tutorial/projects/projects-subproject.png)
+![Example sub-project](/img/tutorial/projects/projects-subproject.png)
 *An example subproject*
 
 It is recommended you set up a new Project Type for sub-projects that excludes Finance, so that financial elements are only included in the main project.
 
-![Project types](../../../static/img/tutorial/projects/projects-subprojects-type.png)
+![Project types](/img/tutorial/projects/projects-subprojects-type.png)
 *Suggested subproject type*

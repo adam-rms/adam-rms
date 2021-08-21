@@ -14,7 +14,7 @@ This short guide will help you set up an account on the platform and join a busi
 ---
 AdamRMS supports log in with an email address or with a Google account. 
 
-![Login Page](../../static/img/tutorial/base/gettingStarted-login.png "AdamRMS Login Page")
+![Login Page](/img/tutorial/base/gettingStarted-login.png "AdamRMS Login Page")
 *AdamRMS Login Page*
 
 You will need to provide the following information when creating an account:
@@ -37,7 +37,7 @@ Alternatively, ask your AdamRMS administrator to add you to the business.
 
 You can join other businesses using the business switcher on the dashboard.
 
-![Join Business Page](../../static/img/tutorial/base/gettingStarted-joinBusiness.png "Join Business with a signup code")
+![Join Business Page](/img/tutorial/base/gettingStarted-joinBusiness.png "Join Business with a signup code")
 *Join Business with a signup code.*
 
 ## Your Account
@@ -52,7 +52,7 @@ You can update:
 
 You can also add your AdamRMS calendar to a variety of services through the export calendar tab.
 
-![User Information Page](../../static/img/tutorial/base/gettingStarted-user.png "Account Settings")
+![User Information Page](/img/tutorial/base/gettingStarted-user.png "Account Settings")
 *Account Settings*
 
 ## What's Next?
