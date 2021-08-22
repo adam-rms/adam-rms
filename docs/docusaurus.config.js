@@ -134,7 +134,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/bstudios/adam-rms/edit/master/docs/',
+          editUrl: 'https://github.com/bstudios/adam-rms/edit/main/docs/',
           includeCurrentVersion: !process.env.PRODUCTION,
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
