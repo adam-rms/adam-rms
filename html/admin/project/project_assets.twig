@@ -333,6 +333,7 @@
         {% endif %}
         {% if 53|instancePermissions %}
         $("#setAllAssetStatus").click(function () {
+            let selected = getSelected();
             bootbox.prompt({
                 title: "Set status of all assets in {{ thisProject.projects_name }}",
                 inputType: 'select',
@@ -346,9 +347,16 @@
                 ],
                 callback: function (result) {
                     if (result) {
-                        ajaxcall("projects/assets/setStatus.php", {"projects_id":{{ thisProject.projects_id }}, "assetsAssignments_status":result}, function (){
-                            window.location.reload();
-                        });
+                        if (selected.length > 0) {
+                            ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":selected, "assetsAssignments_status":result}, function (){
+                                window.location.reload();
+                            });
+                        } else {
+                            ajaxcall("projects/assets/setStatus.php", {"projects_id":{{ thisProject.projects_id }}, "assetsAssignments_status":result}, function (result){
+                                console.log(result);
+                                window.location.reload();
+                            });
+                        }
                     }
                 }
             });

@@ -13,7 +13,7 @@ if ($_POST['status_is_order']){
 } else $status_id = false;
 
 if (isset($_POST['assetsAssignments_id'])){
-    $DBLIB->where("assetsAssignments_id", $_POST['assetsAssignments_id']);
+    $DBLIB->where("assetsAssignments_id", $_POST['assetsAssignments_id'], (is_array($_POST['assetsAssignments_id'])? 'IN' : '='));
 } elseif (isset($_POST['projects_id'])) {
     $DBLIB->where("assetsAssignments.projects_id", $_POST['projects_id']);
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
