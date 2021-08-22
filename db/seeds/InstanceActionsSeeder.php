@@ -804,7 +804,7 @@ class InstanceActionsSeeder extends AbstractSeed
                 "instanceActions_id"=> 112,
                 "instanceActions_name"=> "Delete Signup Code",
                 "instanceActionsCategories_id"=> 1,
-                "instanceActions_dependent"=> "109,112",
+                "instanceActions_dependent"=> "109",
                 "instanceActions_incompatible"=> null
             ],
             [
