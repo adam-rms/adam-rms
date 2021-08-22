@@ -334,8 +334,13 @@
         {% if 53|instancePermissions %}
         $("#setAllAssetStatus").click(function () {
             let selected = getSelected();
+            if (selected.length > 0) {
+                popupTitle = "Set status of selected assets in {{ project.projects_name }}"
+            } else {
+                popupTitle = "Set status of all assets in {{ project.projects_name }}"
+            }
             bootbox.prompt({
-                title: "Set status of all assets in {{ project.projects_name }}",
+                title: popupTitle,
                 inputType: 'select',
                 inputOptions: [
                     {% for status in assetsAssignmentsStatus %}
