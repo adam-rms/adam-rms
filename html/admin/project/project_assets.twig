@@ -358,7 +358,6 @@
                             });
                         } else {
                             ajaxcall("projects/assets/setStatus.php", {"projects_id":{{ project.projects_id }}, "assetsAssignments_status":result}, function (result){
-                                console.log(result);
                                 window.location.reload();
                             });
                         }
