@@ -99,6 +99,7 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
 if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assetsPage.twig', $PAGEDATA);
 elseif (isset($_GET['pdf'])) {
     $PAGEDATA['GET'] = $_GET;
+    $PAGEDATA['GET']['quote'] = $_GET['quote'] == "true";
     die($TWIG->render('project/pdf.twig', $PAGEDATA));
 } else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>

@@ -11,7 +11,11 @@ if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) finish(false);
 $PAGEDATA['GET'] = $_GET;
 $PAGEDATA['GET']['generate'] = true;
 
-$DBLIB->where("s3files_meta_type",20);
+$isQuote = $_GET['quote'] == "true";
+$PAGEDATA['GET']['quote'] = $isQuote;
+$typeId = $isQuote ? 21 : 20;
+
+$DBLIB->where("s3files_meta_type", $typeId);
 $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);
 $DBLIB->where("s3files_meta_subType",$_GET['id']);
 $count = $DBLIB->getValue ("s3files", "count(*)");
@@ -24,7 +28,8 @@ $mpdf->SetTitle($PAGEDATA['project']['projects_name'] . ($PAGEDATA['project']['c
 $mpdf->SetAuthor($PAGEDATA['USERDATA']['instance']['instances_name']);
 $mpdf->SetCreator("AdamRMS - the rental management system from Bithell Studios");
 $mpdf->SetSubject($PAGEDATA['project']['projects_name'] . ($PAGEDATA['project']['clients_name'] ? " - " . $PAGEDATA['project']['clients_name'] : '') . " | " . $PAGEDATA['USERDATA']['instance']['instances_name']);
-$mpdf->SetKeywords("quotation,invoice,AdamRMS");
+$mpdf->SetKeywords(sprintf("%s,AdamRMS", $isQuote ? "quotation" : "invoice"));
+$mpdf->showWatermarkText = true;
 $mpdf->SetHTMLFooter('
             <table width="100%">
                 <tr>
@@ -36,7 +41,7 @@ $mpdf->SetHTMLFooter('
          ');
 $mpdf->WriteHTML($TWIG->render('project/pdf.twig', $PAGEDATA));
 
-$filename = "invoice-" . time() . "-" . (floor(rand())) . "." . "pdf";
+$filename = sprintf("%s-", $isQuote ? "quote" : "invoice") . time() . "-" . (floor(rand())) . "." . "pdf";
 $fullFilename = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'mpdf' . DIRECTORY_SEPARATOR . $filename;
 $mpdf->Output($fullFilename, 'F');
 
@@ -50,9 +55,12 @@ $s3 = new Aws\S3\S3Client([
     )
 ]);
 $extension = "pdf";
+
+$s3Path = $isQuote ? "uploads/PROJECT_QUOTES" : "uploads/PROJECT_INVOICES";
+
 $result = $s3->putObject([
     'Bucket' => $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'],
-    'Key'    => "uploads/" . "PROJECT_INVOICES" . "/" . $filename,
+    'Key'    => $s3Path . "/" . $filename,
     'SourceFile' => $fullFilename
 ]);
 $code = $result['@metadata']['statusCode'];
@@ -60,15 +68,15 @@ $uri = $result['@metadata']['effectiveUri'];
 if ($code === 200) {
     $fileData = [
         "s3files_extension" => "pdf",
-        "s3files_path" => "uploads/" . "PROJECT_INVOICES",
+        "s3files_path" => $s3Path,
         "s3files_region" => $CONFIG['AWS']['DEFAULTUPLOADS']['REGION'],
         "s3files_endpoint" => $CONFIG['AWS']['DEFAULTUPLOADS']['ENDPOINT'],
         "s3files_bucket" => $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'],
         "s3files_meta_size" => filesize($fullFilename),
-        "s3files_meta_type" => 20,
+        "s3files_meta_type" => $typeId,
         "s3files_meta_subType" => $_GET['id'],
         "users_userid" => $AUTH->data['users_userid'],
-        "s3files_original_name" => "invoice.pdf",
+        "s3files_original_name" => $isQuote ? "quote.pdf" : "invoice.pdf",
         "s3files_filename" => pathinfo($filename, PATHINFO_FILENAME),
         "s3files_name" => "v" . $fileNumber,
         "s3files_cdn_endpoint" => $CONFIG['AWS']['DEFAULTUPLOADS']['CDNEndpoint'],

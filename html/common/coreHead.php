@@ -241,6 +241,9 @@ class bCMS {
             case 20:
                 //Project invoice
                 break;
+            case 21:
+                //Project quote
+                break;
             default:
                 //There are no specific requirements for this file so not to worry.
                 break;

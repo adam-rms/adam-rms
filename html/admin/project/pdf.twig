@@ -40,15 +40,17 @@
     <htmlpageheader name="firstpage" style="display:none">
     </htmlpageheader>
     <htmlpageheader name="otherpages" style="display:none">
-        <table width="100%">
+        <table style="width: 100%">
             <tr>
-                <td width="50%"><b>{{ USERDATA['instance']['instances_name'] }}</b></td>
-                <td width="50%" style="text-align: right;">{% if project.projectsTypes_config_client == 1 %}{{  project['clients_name'] }} - {% endif %}{{ project['projects_name'] }}</td>
+                <td style="width: {{ GET['quote'] ? "33.333%" : "50%" }}"><b>{{ USERDATA['instance']['instances_name'] }}</b></td>
+                {% if GET['quote'] %}<td width="33.333%" style="text-align: center;"><b>{{ "Quotation" }}</b></td>{% endif %}
+                <td style="text-align: right; width: {{ GET['quote'] ? "33.333%" : "50%" }}">{% if project.projectsTypes_config_client == 1 and project['clients_name'] %}{{  project['clients_name'] }} - {% endif %}{{ project['projects_name'] }}</td>
             </tr>
         </table>
     </htmlpageheader>
     <sethtmlpageheader name="firstpage" value="on" show-this-page="1" />
     <sethtmlpageheader name="otherpages" value="on" />
+    <watermarktext>TESTING</watermarktext>
 {% else %}
     <script>
         window.onload = function () {
@@ -96,6 +98,7 @@
         </tr>
     </table>
     <h1>{{ project.projects_name }}</h1>
+    {% if GET['quote'] %}<h2>Quotation</h2>{% endif %}
     <table style="background-color: #F5F5F5;">
         <tr>
             <td style="padding: 8px;">
@@ -199,6 +202,7 @@
     </table>
     <hr/>
     <table>
+        {% if not GET['quote'] %}
         <tr>
             <td style="width: 35%;">
                 SubTotal
@@ -206,6 +210,7 @@
             <td style="width: 15%;text-align: right;">
                 {{ FINANCIALS.payments.subTotal|money }}
             </td>
+            <td colspan="2" style="width: 75%"></td>
             <td style="width: 35%;">
                 Payments Received to Date
             </td>
@@ -213,6 +218,7 @@
                 &#8209;{{ FINANCIALS.payments.received.total|money }}
             </td>
         </tr>
+        {% endif %}
         <tr>
             <td style="width: 35%;">
 
@@ -221,7 +227,13 @@
 
             </td>
             <td style="width: 35%;">
-                <b>Grand Total Outstanding</b>
+                <b>
+                    {% if GET['quote'] %}
+                        Grand Total
+                    {% else %}
+                        Grand Total Outstanding
+                    {% endif %}
+                </b>
             </td>
             <td style="width: 15%;text-align: right;">
                 {{ FINANCIALS.payments.total|money }}
@@ -455,8 +467,8 @@
 {% if GET['paymentTerms'] %}
 <table style="background-color: #F5F5F5; margin-top: 10px; font-size: 16px;">
     <tr>
-        <td style="padding: 6px;">
-            {{ USERDATA.instance.instances_termsAndPayment|raw|nl2br }}
+        <td style="padding: 16px 8px;">
+            {{ GET['quote'] ? USERDATA.instance.instances_quoteTerms|raw|nl2br : USERDATA.instance.instances_termsAndPayment|raw|nl2br }}
         </td>
     </tr>
 </table>

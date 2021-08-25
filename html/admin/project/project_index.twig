@@ -351,7 +351,43 @@
                         </div>
                         <div class="tab-pane" id="files-view">
                             <div class="row">
-                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Quotes</h3>
+                                            <div class="card-tools">
+                                                <a data-toggle="modal" data-target="#projectQuotesModal" type="button" class="btn btn-tool">
+                                                    <i class="fas fa-external-link-alt"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <ul class="todo-list">
+                                                {% for file in quotes %}
+                                                    <li>
+                                <span class="handle">
+                                    <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
+                                </span>
+                                                        <span class="text">
+                                   {{ file.s3files_name }} - {{ file.s3files_meta_uploaded|date("d M Y G:i") }}
+                                </span>
+                                                        <i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. File Size {{ file.s3files_meta_size|formatsize }}. File Type {{ file.s3files_extension }}"></i>
+                                                        <div class="tools">
+                                                            <a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
+                                                        </div>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="btn-group float-right">
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal" data-quote="true">
+                                                    Create Quotes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-3">
                                     <div class="card">
                                         <div class="card-header">
                                             <h3 class="card-title">Invoices</h3>
@@ -362,7 +398,7 @@
                                         </div>
                                         <div class="card-body p-0">
                                             <ul class="todo-list">
-                                                {% for file in pdfs %}
+                                                {% for file in invoices %}
                                                     <li>
                                 <span class="handle">
                                     <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
@@ -387,7 +423,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
                                     {% if project.projectsTypes_config_files == 1 %}
                                         <div class="card">
                                             <div class="card-header">
@@ -421,7 +457,7 @@
                                     {% endif %}
                                 </div>
                                 {% if project.projectsTypes_config_notes == 1 %}
-                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
                                     <div class="card">
                                         <div class="card-header">
                                             <h3 class="card-title">Notes</h3>
@@ -1110,6 +1146,22 @@
         </div>
     </div>
     {% endif %}
+    <div class="modal fade" id="projectQuotesModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Project Quotes</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% embed 'common/plugins/fileBox.twig' with {'files': quotes } %}
+                    {% endembed %}
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="projectInvoicesModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -1120,7 +1172,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {% embed 'common/plugins/fileBox.twig' with {'files': pdfs } %}
+                    {% embed 'common/plugins/fileBox.twig' with {'files': invoices } %}
                     {% endembed %}
                 </div>
             </div>
@@ -1131,13 +1183,14 @@
             <form id="pdfGenerate" method="GET">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Create Invoice</h4>
+                        <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="pdf" value="true">
+                        <input type="hidden" name="quote" value="">
                         <input type="hidden" name="id" value="{{ project.projects_id }}">
                         <div class="form-group">
                             <div class="form-check">
@@ -1243,6 +1296,15 @@
     </div>
     <script>
         $(document).ready(function () {
+            $('#pdfGenerateModal').on('show.bs.modal', function (e) {
+                if ($(e.relatedTarget).data('quote')) {
+                    $("#pdfGenerateModal .modal-title").text("Create Quote");
+                    $('#pdfGenerateModal input[name="quote"]').val("true");
+                } else {
+                    $("#pdfGenerateModal .modal-title").text("Create Invoice");
+                    $('#pdfGenerateModal input[name="quote"]').val("false");
+                }
+            });
             $("#assetAssignmentCheckboxAll").click(function () {
                 $(".assetAssignmentCheckbox").prop('checked', $(this).prop('checked'));
             });
