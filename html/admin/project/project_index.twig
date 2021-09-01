@@ -92,7 +92,11 @@
                                         <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab">Assets</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab">Asset Dispatch</a></li>
                                     {% endif %}
-                                    <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab">Files & Invoices</a></li>
+A
+                                    {%  if project.projectsTypes_config_files == 1 or project.projectsTypes_config_notes == 1 %}
+                                        <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab">Files</a></li>
+                                    {% endif %}
+                                    <li class="nav-item"><a class="nav-link" href="#invoice-view" data-toggle="tab">Invoices & Quotes</a></li>
                                     {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
                                         <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab">Finance</a></li>
                                     {% endif %}
@@ -351,7 +355,80 @@
                         </div>
                         <div class="tab-pane" id="files-view">
                             <div class="row">
-                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                {% if project.projectsTypes_config_files == 1 %}
+                                    <div class="col-sm-12 col-md-12 {% if project.projectsTypes_config_notes == 1 %}col-lg-6{% else %}col-lg-12{% endif %}">
+
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">File Attachments</h3>
+                                                    <div class="card-tools">
+                                                        <a data-toggle="modal" data-target="#projectFilesModal" type="button" class="btn btn-tool">
+                                                            <i class="fas fa-external-link-alt"></i></a>
+                                                    </div>
+                                                </div>
+                                                {% if files %}
+                                                    <div class="card-body p-0">
+                                                        <ul class="todo-list">
+                                                            {% for file in files %}
+                                                                <li>
+                                        <span class="handle">
+                                            <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
+                                        </span>
+                                                                    <span class="text">
+                                           {{ file.s3files_name }}
+                                        </span>
+                                                                    <i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. File Size {{ file.s3files_meta_size|formatsize }}. File Type {{ file.s3files_extension }}"></i>
+                                                                    <div class="tools">
+                                                                        <a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
+                                                                    </div>
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+                                    </div>
+                                {% endif %}
+                                {% if project.projectsTypes_config_notes == 1 %}
+                                <div class="col-sm-12 col-md-12 {% if project.projectsTypes_config_files == 1 %}col-lg-6{% else %}col-lg-12{% endif %}">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Notes</h3>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <ul class="todo-list">
+                                                {% for note in project.notes %}
+                                                    <li>
+                                                        <span class="handle">
+                                                            <i class="fas fa-fw fa-file-contract"></i>
+                                                        </span>
+                                                        <span class="text">{{ note.projectsNotes_title }}</span>
+                                                        <div class="tools">
+                                                            <a href="{{ CONFIG.ROOTURL }}/project/notePDF.php?id={{ note.projectsNotes_id }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
+                                                            {% if 44|instancePermissions %}
+                                                            <a href="#" data-toggle="modal" data-target="#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="btn-group float-right">
+                                                {% if 45|instancePermissions and project.projectsTypes_config_notes == 1 %}
+                                                    <button type="button" class="btn btn-default" id="newProjectNote">Create Note</button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="invoice-view">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
                                     <div class="card">
                                         <div class="card-header">
                                             <h3 class="card-title">Quotes</h3>
@@ -387,7 +464,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
                                     <div class="card">
                                         <div class="card-header">
                                             <h3 class="card-title">Invoices</h3>
@@ -423,73 +500,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                    {% if project.projectsTypes_config_files == 1 %}
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">File Attachments</h3>
-                                                <div class="card-tools">
-                                                    <a data-toggle="modal" data-target="#projectFilesModal" type="button" class="btn btn-tool">
-                                                        <i class="fas fa-external-link-alt"></i></a>
-                                                </div>
-                                            </div>
-                                            {% if files %}
-                                                <div class="card-body p-0">
-                                                    <ul class="todo-list">
-                                                        {% for file in files %}
-                                                            <li>
-                                    <span class="handle">
-                                        <i class="fa {{ file.s3files_extension|fontAwesomeFile }}"></i>
-                                    </span>
-                                                                <span class="text">
-                                       {{ file.s3files_name }}
-                                    </span>
-                                                                <i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. File Size {{ file.s3files_meta_size|formatsize }}. File Type {{ file.s3files_extension }}"></i>
-                                                                <div class="tools">
-                                                                    <a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
-                                                                </div>
-                                                            </li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                {% if project.projectsTypes_config_notes == 1 %}
-                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h3 class="card-title">Notes</h3>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <ul class="todo-list">
-                                                {% for note in project.notes %}
-                                                    <li>
-                                                        <span class="handle">
-                                                            <i class="fas fa-fw fa-file-contract"></i>
-                                                        </span>
-                                                        <span class="text">{{ note.projectsNotes_title }}</span>
-                                                        <div class="tools">
-                                                            <a href="{{ CONFIG.ROOTURL }}/project/notePDF.php?id={{ note.projectsNotes_id }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
-                                                            {% if 44|instancePermissions %}
-                                                            <a href="#" data-toggle="modal" data-target="#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
-                                                            {% endif %}
-                                                        </div>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="btn-group float-right">
-                                                {% if 45|instancePermissions and project.projectsTypes_config_notes == 1 %}
-                                                    <button type="button" class="btn btn-default" id="newProjectNote">Create Note</button>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
                         <div class="tab-pane" id="payments-view">
