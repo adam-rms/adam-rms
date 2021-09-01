@@ -67,7 +67,7 @@ module.exports = {
             },
             {
               label: 'Service Status',
-              href: 'https://status.jbithell.com/',
+              href: 'https://status.adam-rms.com/',
             }
           ],
         },

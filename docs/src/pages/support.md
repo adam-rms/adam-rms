@@ -8,7 +8,7 @@ hide_table_of_contents: true
 
 Support is offered for issues with the hosted platform at hi@jbithell.com.
 
-If you're having issues logging in or accessing the site, please check the [status page](https://status.jbithell.com) first for any updates there.
+If you're having issues logging in or accessing the site, please check the [status page](https://status.adam-rms.com) first for any updates there.
 
 ## Community Support
 
