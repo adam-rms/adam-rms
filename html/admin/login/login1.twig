@@ -23,7 +23,7 @@
 		    //Find out if there are any status issues
 		    $("#status").html("");
             $.ajax({
-                url: "https://status.jbithell.com/static/content/api/v0/systems.en.json",
+                url: "https://status.adam-rms.com/static/content/api/v0/systems.en.json",
                 type: "GET",
                 dataType: 'json',
                 cache: false,
@@ -35,7 +35,7 @@
                                 foundthis = true;
                                 if (item.status !== "operational") {
                                     $.ajax({
-                                        url: "https://status.jbithell.com/static/content/api/v0/incidents.page-1.en.json",
+                                        url: "https://status.adam-rms.com/static/content/api/v0/incidents.page-1.en.json",
                                         type: "GET",
                                         dataType: 'json',
                                         cache: false,
@@ -63,7 +63,7 @@
                                                                     style="alert alert-info";
                                                                     break;
                                                             }
-                                                            $("#status").append('<div class="' + style + '" role="alert"><h4 class="alert-heading"><b>' + incident.severity + '</b><br/>' + incident.title + '</h4>' + incident.description + '<hr/>' +  '<a href="https://status.jbithell.com" target="_blank" class="alert-link">Learn more on the status page</a></div>');
+                                                            $("#status").append('<div class="' + style + '" role="alert"><h4 class="alert-heading"><b>' + incident.severity + '</b><br/>' + incident.title + '</h4>' + incident.description + '<hr/>' +  '<a href="https://status.adam-rms.com" target="_blank" class="alert-link">Learn more on the status page</a></div>');
                                                         }
                                                     }
                                                 });
