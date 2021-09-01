@@ -29,7 +29,6 @@ $mpdf->SetAuthor($PAGEDATA['USERDATA']['instance']['instances_name']);
 $mpdf->SetCreator("AdamRMS - the rental management system from Bithell Studios");
 $mpdf->SetSubject($PAGEDATA['project']['projects_name'] . ($PAGEDATA['project']['clients_name'] ? " - " . $PAGEDATA['project']['clients_name'] : '') . " | " . $PAGEDATA['USERDATA']['instance']['instances_name']);
 $mpdf->SetKeywords(sprintf("%s,AdamRMS", $isQuote ? "quotation" : "invoice"));
-$mpdf->showWatermarkText = true;
 $mpdf->SetHTMLFooter('
             <table width="100%">
                 <tr>
