@@ -129,7 +129,7 @@ contentType
 
 ## projectInvoice.php
 
-Generate an invoice and upload
+Generate an invoice or quote (if the quote flag is set) and upload
 ```
 s3files/projectInvoice.php.php
 ```

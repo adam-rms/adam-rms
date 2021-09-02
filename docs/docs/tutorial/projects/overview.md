@@ -39,7 +39,7 @@ AdamRMS has a full Audit Log, which keeps track of changes to various elements o
 ![Project audit log](/img/tutorial/projects/projects-audit.png)
 *Project History*
 
-## Files & Invoices
+## Files
 ---
 Projects can have files and notes associated with them, to keep track of various elements.
 
@@ -53,6 +53,16 @@ Projects can have files and notes associated with them, to keep track of various
 *Notes and Projects for the project*
 
 Notes are intended to be used for meeting notes and event plans.
+
+## Invoice & Quotes
+---
+Projects can have quoatations and invoices assoiated for them
+
+
+
+![Project Invoice & Quotes](/img/tutorial/projects/projects-invoice.png)
+*Invoices and Quotes for the project*
+
 
 ## Sub-projects
 ---
