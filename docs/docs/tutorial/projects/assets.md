@@ -41,7 +41,7 @@ The Asset list shows all assets associated with the project, organised by Catego
 
 There are a number of functions that can be used to alter project asset properties:  
 ![Project asset functions](/img/tutorial/projects/assets-functions.png)  
-*Assignment Comment | Discount | Custom Price | Swap Asset | Remove Asset | Expand List*
+*Assignment Comment | Discount | Custom Price | Set asset Statuses | Swap Asset | Remove Asset | Expand List*
 
 #### Comments
 Assignment comments can be used to highlight specific things about the asset assignment.  
@@ -54,6 +54,12 @@ You can override the hire price in two ways:
    - Set price based on a percentage of the asset's cost
 2. Custom Price
    - Set price using any value
+
+#### Set Status for assets
+This function allows you to set the asset status for selected assets or all assets (if no assets are selected) associated with the project. 
+
+![Setting status for selected assets](/img/tutorial/projects/assets-setStatus.png)  
+*Setting asset status*
 
 #### Swap Assets
 If you have multiple assets of the same type, you may want to swap assets to the ones picked rather than finding the exact asset listed by the Project Manager.  

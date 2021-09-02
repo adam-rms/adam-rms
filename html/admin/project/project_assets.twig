@@ -43,6 +43,10 @@
                         <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
                             <i class="fas fa-coins"></i></button>
                     {% endif %}
+                    {% if 53|instancePermissions %}
+                        <button type="button" class="btn btn-tool" title="Set status" id="setAllAssetStatus">
+                            <i class="fas fa-clipboard-check"></i></button>
+                    {% endif %}
                     {% if 31|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Swap Asset" id="swapAsset">
                             <i class="fas fa-sync"></i>
@@ -325,6 +329,41 @@
                     }
                 });
             }
+        });
+        {% endif %}
+        {% if 53|instancePermissions %}
+        $("#setAllAssetStatus").click(function () {
+            let selected = getSelected();
+            if (selected.length > 0) {
+                popupTitle = "Set status of selected assets in {{ project.projects_name }}"
+            } else {
+                popupTitle = "Set status of all assets in {{ project.projects_name }}"
+            }
+            bootbox.prompt({
+                title: popupTitle,
+                inputType: 'select',
+                inputOptions: [
+                    {% for status in assetsAssignmentsStatus %}
+                    {
+                        text: '{{ status.assetsAssignmentsStatus_name|escape('js')}}',
+                        value: '{{ status.assetsAssignmentsStatus_id }}'
+                    },
+                    {% endfor %}
+                ],
+                callback: function (result) {
+                    if (result) {
+                        if (selected.length > 0) {
+                            ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":selected, "assetsAssignments_status":result}, function (){
+                                window.location.reload();
+                            });
+                        } else {
+                            ajaxcall("projects/assets/setStatus.php", {"projects_id":{{ project.projects_id }}, "assetsAssignments_status":result}, function (result){
+                                window.location.reload();
+                            });
+                        }
+                    }
+                }
+            });
         });
         {% endif %}
     });
