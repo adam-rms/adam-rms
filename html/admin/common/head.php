@@ -21,7 +21,7 @@ header("Content-Security-Policy: default-src 'none';" .
     //          Show images on mobile devices like favicons
     "img-src 'self' data: blob: https://assets.adam-rms.com https://cdnjs.cloudflare.com https://*.adam-rms.com https://cloudflareinsights.com  https://*.ytimg.com https://*.backblazeb2.com;".
     //                                                    Uploads    Images from libs                 Images                CF Analytics                                            Training                Uploads
-    "connect-src 'self' https://*.adam-rms.com https://sentry.io https://cloudflareinsights.com  https://*.backblazeb2.com https://status.jbithell.com;".
+    "connect-src 'self' https://*.adam-rms.com https://sentry.io https://cloudflareinsights.com  https://*.backblazeb2.com https://status.adam-rms.com;".
     //                  File uploads                      Error reporting     CF Analytics             File Uploads
     "frame-src https://www.youtube.com;".
     "object-src 'self' blob:;".
