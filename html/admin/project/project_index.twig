@@ -431,10 +431,12 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <h3 class="card-title">Quotes</h3>
+                                            {% if quotes %}
                                             <div class="card-tools">
                                                 <a data-toggle="modal" data-target="#projectQuotesModal" type="button" class="btn btn-tool">
                                                     <i class="fas fa-external-link-alt"></i></a>
                                             </div>
+                                            {% endif %}
                                         </div>
                                         <div class="card-body p-0">
                                             <ul class="todo-list">
@@ -457,7 +459,7 @@
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
                                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal" data-quote="true">
-                                                    Create Quotes
+                                                    Create Quote
                                                 </button>
                                             </div>
                                         </div>
@@ -467,10 +469,12 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <h3 class="card-title">Invoices</h3>
+                                            {% if invoices %}
                                             <div class="card-tools">
                                                 <a data-toggle="modal" data-target="#projectInvoicesModal" type="button" class="btn btn-tool">
                                                     <i class="fas fa-external-link-alt"></i></a>
                                             </div>
+                                            {% endif %}
                                         </div>
                                         <div class="card-body p-0">
                                             <ul class="todo-list">
