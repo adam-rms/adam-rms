@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(53) or !isset($_POST['assetsAssignments_status']) or !(isset($_POST['assetsAssignments_id']) or isset($_POST['projects_id']))) finish(false);
+if (!$AUTH->instancePermissionCheck(53) || !isset($_POST['assetsAssignments_status']) || !(isset($_POST['assetsAssignments_id']) || isset($_POST['projects_id']))) finish(false);
 
 // $_POST['status_is_order'] is used when the given "assetsAssignments_status" is an order value rather than a status id.
 
