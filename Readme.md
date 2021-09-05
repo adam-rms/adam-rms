@@ -22,12 +22,12 @@ It is available as a hosted solution (not currently open to new customers) or to
 
 ## Repositories
 
- - [*This repo* Project Source Code & Public Site __adam-rms__](https://github.com/bstudios/adam-rms)
+ - [*This repo* Project Source Code __adam-rms__](https://github.com/bstudios/adam-rms)
  - [Mobile App __adam-rms-app__](https://github.com/bstudios/adam-rms-app)
  - [Deployment Script Templates __adam-rms-deployment__](https://github.com/bstudios/adam-rms-deployment)
  - [Image Compressor Worker __adam-rms-imageCompressor__](https://github.com/bstudios/adam-rms-imageCompressor)
  - [File Deleter Worker __adam-rms-s3Deletor__](https://github.com/bstudios/adam-rms-s3Deletor)
- - [Status Site __adam-rms-status__](https://github.com/bstudios/adam-rms-status)
+ - [Status Site](https://github.com/bstudios/adam-rms-status)
 
 ## Docker Images
 
