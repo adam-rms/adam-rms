@@ -43,6 +43,11 @@ const FeatureList = [
     image: require('./../../static/img/features/customCategories.png'),
     description: 'Create and filter custom categories and groups of assets, including smart email notifications for groups you\'re keeping an eye on',
   },
+  {
+    title: 'Training',
+    image: require('./../../static/img/features/training.jpg'),
+    description: 'Training and certification suite to track employee accreditations and courses, including platform for creating interactive online modules and in-person courses as well as combining the two in hybrid training.',
+  },
 ];
 
 function Feature({image, title, description}) {
