@@ -127,6 +127,13 @@ module.exports = {
       // using user system preferences, instead of the hardcoded defaultMode
       respectPrefersColorScheme: true,
     },
+    ...(process.env.AGOLIA_API_KEY && process.env.AGOLIA_INDEX) && { algolia: {
+      apiKey: process.env.AGOLIA_API_KEY,
+      indexName: process.env.AGOLIA_INDEX,
+      contextualSearch: true,
+      searchParameters: {},
+      disableUserPersonalization: true
+    } },
   },
   presets: [
     [
