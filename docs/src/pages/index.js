@@ -25,7 +25,7 @@ function HomepageHeader() {
           </Link>
           <Link
             href="https://apps.apple.com/us/app/id1519443182?utm_source=webdashboard&utm_campaign=dashboardwidget">
-            <Image img={AppStoreBadge} style={{ width: 150 }}  />
+            <Image img={AppStoreBadge} style={{ width: 135 }}  />
           </Link>
         </div>
       </div>
@@ -38,13 +38,13 @@ function Pricing() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">Pricing</h1>
-        <p className="hero__subtitle">AdamRMS is currently offered as a cost-price hosted solution, by Bithell Studios Ltd, and as a free self-hosted solution using the code published on Github. Please note that the hosted solution is not currently taking on new customers.</p>
+        <p className="hero__subtitle">AdamRMS is currently offered as a hosted solution, by Bithell Studios Ltd, and as a self-hosted solution using the docker images published on Github.<br/>We are keen to talk to new customers about hosting AdamRMS for you - get in touch to discuss your use case.</p>
         <div className={styles.buttons}>
-          <Link
+          <a
             className="button button--secondary button--lg"
-            href="https://github.com/">
-            GitHub Repo
-          </Link>
+            href="mailto:studios@jbithell.com">
+            Talk to sales
+          </a>
         </div>
       </div>
     </header>

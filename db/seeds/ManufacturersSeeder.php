@@ -2693,7 +2693,7 @@ class ManufacturersSeeder extends AbstractSeed
                 "manufacturers_name"=> "Bithell Studios",
                 "instances_id"=> null,
                 "manufacturers_internalAdamRMSNote"=> null,
-                "manufacturers_website"=> "https=>//studios.jbithell.com/",
+                "manufacturers_website"=> "https=>//bithell.studio/",
                 "manufacturers_notes"=> null
             ],
             [
