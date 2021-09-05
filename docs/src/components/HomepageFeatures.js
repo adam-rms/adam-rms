@@ -31,7 +31,7 @@ const FeatureList = [
   {
     title: 'Ledger',
     image: require('./../../static/img/features/ledger.png'),
-    description: 'Keep track of late-paying clients',
+    description: 'Keep track of late-paying clients and issue highly-customizable and configurable invoices, including support for part-payment.',
   },
   {
     title: 'Permissions',
@@ -42,6 +42,26 @@ const FeatureList = [
     title: 'Categories & Groups',
     image: require('./../../static/img/features/customCategories.png'),
     description: 'Create and filter custom categories and groups of assets, including smart email notifications for groups you\'re keeping an eye on',
+  },
+  {
+    title: 'Training',
+    image: require('./../../static/img/features/training.jpg'),
+    description: 'Training and certification suite to track employee accreditation and courses, including platform for creating interactive online modules and in-person courses as well as combining the two in hybrid training.',
+  },
+  {
+    title: 'CMS',
+    image: require('./../../static/img/features/cms-pages.jpg'),
+    description: 'Innovative Content Management System integrated with permissions and visibility controls, as well as sub-pages and a WYSIWYG page designer.',
+  },
+  {
+    title: 'Recruitment',
+    image: require('./../../static/img/features/crew-recruitment.jpg'),
+    description: 'Internal recruitment platform, allowing crew to self-assign to roles on a first-come-first-serve basis, or to answer questions to be considered for a role. Supports multiple people per role as well as CV file uploads and questionnaires.',
+  },
+  {
+    title: 'Public Sites',
+    image: require('./../../static/img/features/public-sites.jpg'),
+    description: 'Highly configurable public facing websites to showcase your equipment stock, reducing enquiries, including optionally displaying availability and pricing. Also includes CMS integration to add custom pages and customize the site extensively. Custom white-label subdomains are supported with SSL/HTTPs',
   },
 ];
 

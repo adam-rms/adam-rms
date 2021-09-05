@@ -25,7 +25,7 @@ function HomepageHeader() {
           </Link>
           <Link
             href="https://apps.apple.com/us/app/id1519443182?utm_source=webdashboard&utm_campaign=dashboardwidget">
-            <Image img={AppStoreBadge} style={{ width: 150 }}  />
+            <Image img={AppStoreBadge} style={{ width: 135 }}  />
           </Link>
         </div>
       </div>
