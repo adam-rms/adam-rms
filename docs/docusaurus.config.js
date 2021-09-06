@@ -101,7 +101,7 @@ module.exports = {
             },
             {
               label: 'Bithell Studios Ltd',
-              href: 'https://studios.bithell.com',
+              href: 'https://bithell.studio/',
             },
           ],
         },
