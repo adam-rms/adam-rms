@@ -84,7 +84,7 @@
                         {%  for subproject in project.subProjects %}
                             {% if subproject.projects_dates_use_start != null and subproject.projects_dates_use_end != null %}
                                 {
-                                    title          : "(Sub-Project) {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
+                                    title          : "↳ [{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
                                     start          : {{ subproject.projects_dates_use_start|date('U') }}*1000,
                                     end            : {{ subproject.projects_dates_use_end|date('U') }}*1000,
                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ subproject.projects_id }}',
