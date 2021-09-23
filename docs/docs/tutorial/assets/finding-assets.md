@@ -78,8 +78,11 @@ From the assets list, an individual asset can be viewed. The individual asset ho
 ![Editing an individual asset](/img/tutorial/assets/assets-xlr-listing-individual.png "Editing an individual XLR asset in Demo Hire services")
 *Editing an individual XLR asset*
 
+- You can assign assets to a [group](./asset-groups) from the group tab.  
+- Individual assets can have associated files, usually used for invoices.  
+- Assets can be assigned barcodes, which can be scanned in the AdamRMS App.  
+- [Asset Maintenance](./maintenance) can be managed in the individual asset page, although the maintenance pages are more comprehensive.
+
+#### Asset Linking
 Assets can be linked to other assets, so that those assets are assigned to a project when the main asset is assigned.  
-You can assign assets to a group from the group tab.  
-Individual assets can have associated files, usually used for invoices.  
-Assets can be assigned barcodes, which can be scanned in the AdamRMS App.  
-[Asset Maintenance](./maintenance) can be managed in the individual asset page.
+To link an asset, search for the parent asset in the asset link box of the child asset.
