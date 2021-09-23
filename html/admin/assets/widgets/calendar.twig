@@ -81,6 +81,24 @@
                                 {% set latestEnd = project.projects_dates_use_end|date("c") %}
                             {% endif %}
                         {% endif %}
+                        {%  for subproject in project.subProjects %}
+                            {% if subproject.projects_dates_use_start != null and subproject.projects_dates_use_end != null %}
+                                {
+                                    title          : "(Sub-Project) {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
+                                    start          : {{ subproject.projects_dates_use_start|date('U') }}*1000,
+                                    end            : {{ subproject.projects_dates_use_end|date('U') }}*1000,
+                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ subproject.projects_id }}',
+                                    backgroundColor: '{{ STATUSES[subproject.projects_status]["backgroundColour"] }}',
+                                    textColor    : '{{ STATUSES[subproject.projects_status]["foregroundColour"] }}'
+                                },
+                                {% if earliestStart > subproject.projects_dates_use_start|date("c") or earliestStart == false %}
+                                    {% set earliestStart = subproject.projects_dates_use_start|date("c") %}
+                                {% endif %}
+                                {% if latestEnd < subproject.projects_dates_use_end|date("c") or latestEnd == false %}
+                                    {% set latestEnd = subproject.projects_dates_use_end|date("c") %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
                     {% endfor %}
                 ],
                 validRange: {
