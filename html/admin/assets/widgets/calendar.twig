@@ -64,10 +64,10 @@
                 events    : [
                     {% set earliestStart = false %}
                     {% set latestEnd = false %}
-                    {% for project in projects %}
+                    {% for project in (project.subProjects is iterable ? projects|merge(project.subProjects) : projects) %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
-                            title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
+                            title          : "{{ project.projects_parent_project_id ? "&#8627; " }}[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
                             start          : {{ project.projects_dates_use_start|date('U') }}*1000,
                             end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                             url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
@@ -81,24 +81,6 @@
                                 {% set latestEnd = project.projects_dates_use_end|date("c") %}
                             {% endif %}
                         {% endif %}
-                        {%  for subproject in project.subProjects %}
-                            {% if subproject.projects_dates_use_start != null and subproject.projects_dates_use_end != null %}
-                                {
-                                    title          : "(Sub-Project) {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
-                                    start          : {{ subproject.projects_dates_use_start|date('U') }}*1000,
-                                    end            : {{ subproject.projects_dates_use_end|date('U') }}*1000,
-                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ subproject.projects_id }}',
-                                    backgroundColor: '{{ STATUSES[subproject.projects_status]["backgroundColour"] }}',
-                                    textColor    : '{{ STATUSES[subproject.projects_status]["foregroundColour"] }}'
-                                },
-                                {% if earliestStart > subproject.projects_dates_use_start|date("c") or earliestStart == false %}
-                                    {% set earliestStart = subproject.projects_dates_use_start|date("c") %}
-                                {% endif %}
-                                {% if latestEnd < subproject.projects_dates_use_end|date("c") or latestEnd == false %}
-                                    {% set latestEnd = subproject.projects_dates_use_end|date("c") %}
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
                     {% endfor %}
                 ],
                 validRange: {
