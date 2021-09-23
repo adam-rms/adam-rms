@@ -24,6 +24,8 @@ All projects can consist of:
 - A Venue
 - Project Dates, including asset dispatch dates
 
+If you want to assign assets to a project, all of this information must be set.
+
 ![Project Overview](/img/tutorial/projects/projects-overview.png)
 *Project Overview*
 
