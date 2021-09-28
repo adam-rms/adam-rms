@@ -4,30 +4,9 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, wri
 
 It is available as a hosted solution (not currently open to new customers) or to be self-hosted as a docker container. 
 
+This branch is about the v1 release of the system, a PHP web app using Twig. It is no longer in active development, where efforts have moved to the v2 branch.
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/bstudios/adam-rms)
-![GitHub repo size](https://img.shields.io/github/repo-size/bstudios/adam-rms)
-![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/bithellstudios/adam-rms)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/bstudios/adam-rms)
-![GitHub issues](https://img.shields.io/github/issues/bstudios/adam-rms)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/bstudios/adam-rms)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/bstudios/adam-rms)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/bstudios/adam-rms)
-![GitHub](https://img.shields.io/github/license/bstudios/adam-rms)
-![GitHub stars](https://img.shields.io/github/stars/bstudios/adam-rms)
-![GitHub contributors](https://img.shields.io/github/contributors/bstudios/adam-rms)
-![GitHub](https://img.shields.io/github/release/bstudios/adam-rms/all)
-
-![Banner](.github/banner.jpg)
-
-## Repositories
-
- - [*This repo* Project Source Code & Public Site __adam-rms__](https://github.com/bstudios/adam-rms)
- - [Mobile App __adam-rms-app__](https://github.com/bstudios/adam-rms-app)
- - [Deployment Script Templates __adam-rms-deployment__](https://github.com/bstudios/adam-rms-deployment)
- - [Image Compressor Worker __adam-rms-imageCompressor__](https://github.com/bstudios/adam-rms-imageCompressor)
- - [File Deleter Worker __adam-rms-s3Deletor__](https://github.com/bstudios/adam-rms-s3Deletor)
- - [Status Site __adam-rms-status__](https://github.com/bstudios/adam-rms-status)
+**You can no longer edit the docs with PRs targeting this branch. To update docs you must submit a separate PR to v2**
 
 ## Docker Images
 
@@ -37,7 +16,7 @@ It is available as a hosted solution (not currently open to new customers) or to
 
 ## Releases
 
-AdamRMS uses semantic versioning. v2.0.0 is currently being targeted, this will bring a new RESTful API. 
+AdamRMS uses semantic versioning.
 
 To create a new release:
 
@@ -109,6 +88,8 @@ https://dash.adam-rms.com/api/account/linkOAuth.php?google
 ```
 
 ## Licence
+
+**Please note this is the licence that applies to v1**
 
 AdamRMS is a web-based Rental Management System
 
