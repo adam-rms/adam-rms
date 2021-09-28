@@ -10,6 +10,16 @@ body:
       options:
         - label: I have searched the existing issues
           required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of AdamRMS are you running?
+      options:
+        - v1 (Default)
+        - v2
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Current Behavior
