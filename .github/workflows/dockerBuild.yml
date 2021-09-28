@@ -4,10 +4,13 @@ on:
     types: [published]
 jobs:
   build:
+    if: startsWith(github.ref, 'refs/tags/v1.')
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          ref: 'refs/heads/v1'
       - name: Docker github meta
         id: docker_github_meta
         uses: crazy-max/ghaction-docker-meta@v1

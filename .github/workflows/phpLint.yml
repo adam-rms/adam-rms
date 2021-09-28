@@ -1,11 +1,16 @@
 name: PHP Lint
-on: [pull_request]
+on: 
+  pull_request:
+    branches:
+      - v1
 jobs:
   phplint:
     name: PHP Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: 'refs/heads/v1'
       - uses: overtrue/phplint@7.4
         with:
           path: .
