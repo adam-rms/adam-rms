@@ -14,12 +14,15 @@ AdamRMS uses semantic versioning. v2.0.0 is currently being targeted, this will 
 
 To create a new release:
 
-1. **Create a new release in Github, with a tag of the semantic version number.**
-1. *(if tag starts with v1)* A new Docker image for v1 will be built and pushed to Docker Hub, based on the v1 branch.
-1. *(if tag starts with v1)* A new Docker image for v1 will be built and pushed to GitHub Packages, based on the v1 branch.
+1. Create a new release in Github, with a tag of the semantic version number. **Tips:**
+    - Make sure you are targeting the default branch, not a branch like `v1`
+    - Make sure you use a lowercase `v` in the tag name
+    - Make sure your release is in the format `vx.y.z` where `x`/`y`/`z` is a positive integer
+1. A new Docker image for v1 will be built and pushed to Docker Hub, based on the v1 branch. *(Only applies if tag starts with v1)* 
+1. A new Docker image for v1 will be built and pushed to GitHub Packages, based on the v1 branch. *(Only applies if tag starts with v1)* 
 1. Docusaurus will be versioned accordingly.
 1. Cloudflare pages will update the public marketing/docs website.
-1. *(if tag starts with v1)* The Bithell Studios' AdamRMS server will pull the latest update from Github Packages to update the dashboard.
+1. The Bithell Studios' AdamRMS server will pull the latest update from Github Packages to update the dashboard. *(Only applies if tag starts with v1)* 
 
 ## Code Standards
 
