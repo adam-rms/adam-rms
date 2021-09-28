@@ -34,7 +34,7 @@ It is available as a hosted solution or to be self-hosted.
 
 ## Repositories
 
-Repo|Repo Name|Notes|Link
+Repo|Repo Name||Link
 :-----|:-----|:-----|:-----
 Project Source Code & Public Site|adam-rms| :white_check_mark: |https://github.com/bstudios/adam-rms
 Status Site|adam-rms-status| :white_check_mark: |https://github.com/bstudios/adam-rms-status
