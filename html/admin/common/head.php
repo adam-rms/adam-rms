@@ -11,17 +11,17 @@ try {
 }
 
 header("Content-Security-Policy: default-src 'none';" .
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.adam-rms.com https://cdnjs.cloudflare.com https://static.cloudflareinsights.com    https://www.youtube.com https://*.ytimg.com https://*.statuspage.io;".
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.adam-rms.com https://cdnjs.cloudflare.com https://static.cloudflareinsights.com    https://www.youtube.com https://*.ytimg.com https://*.statuspage.io;".
     //          We have laods of inline JS                                  Libs                                             CF Analytics   Training
-    "style-src 'unsafe-inline' 'self' https://assets.adam-rms.com https://cdnjs.cloudflare.com https://fonts.googleapis.com;".
+    "style-src 'unsafe-inline' 'self' https://*.adam-rms.com https://cdnjs.cloudflare.com https://fonts.googleapis.com;".
     //          We have loads of inline CSS                 Libs                        GFonts
-    "font-src 'self' data: https://assets.adam-rms.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com;" .
+    "font-src 'self' data: https://*.adam-rms.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com;" .
     //                                               Loading in google fonts     more gfonts               Fonts from libs like fontawesome
     "manifest-src 'self' https://*.adam-rms.com;" .
     //          Show images on mobile devices like favicons
-    "img-src 'self' data: blob: https://assets.adam-rms.com https://cdnjs.cloudflare.com https://*.adam-rms.com https://cloudflareinsights.com  https://*.ytimg.com https://*.backblazeb2.com;".
-    //                                                    Uploads    Images from libs                 Images                CF Analytics                                            Training                Uploads
-    "connect-src 'self' https://*.adam-rms.com https://sentry.io https://cloudflareinsights.com  https://*.backblazeb2.com;".
+    "img-src 'self' data: blob: https://*.adam-rms.com https://cdnjs.cloudflare.com https://*.adam-rms.com https://cloudflareinsights.com  https://*.ytimg.com https://*.backblazeb2.com;".
+    //                                                    Uploads    Images from libs                 Images                CF Analytics   Training                Uploads
+    "connect-src 'self' https://*.adam-rms.com https://sentry.io https://cloudflareinsights.com  https://*.backblazeb2.com https://*.amazonaws.com;".
     //                  File uploads                      Error reporting     CF Analytics             File Uploads
     "frame-src https://www.youtube.com https://*.statuspage.io;".
     "object-src 'self' blob:;".
