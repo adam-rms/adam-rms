@@ -37,11 +37,11 @@ It is available as a hosted solution or to be self-hosted.
 Repo|Repo Name||Link
 :-----|:-----|:-----|:-----
 Project Source Code & Public Site|adam-rms| :white_check_mark: |https://github.com/bstudios/adam-rms
-Status Site|adam-rms-status| :white_check_mark: |https://github.com/bstudios/adam-rms-status
+v1 Deployment Script Templates|adam-rms-deployment|:white_check_mark:|https://github.com/bstudios/adam-rms-deployment
 v1 Mobile App|adam-rms-app|__DEPRECATED__|https://github.com/bstudios/adam-rms-app
-v1 Deployment Script Templates|adam-rms-deployment|__DEPRECATED__|https://github.com/bstudios/adam-rms-deployment
 v1 Image Compressor Worker|adam-rms-imageCompressor|__DEPRECATED__|https://github.com/bstudios/adam-rms-imageCompressor
 v1 File Deleter Worker|adam-rms-s3Deletor|__DEPRECATED__|https://github.com/bstudios/adam-rms-s3Deletor
+Old Status Site|adam-rms-status|__DEPRECATED__|https://github.com/bstudios/adam-rms-status
 
 ## Developing, Releases & Contributing 
 
