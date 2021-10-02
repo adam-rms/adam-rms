@@ -1,6 +1,6 @@
 {% extends "login/login_template.twig" %}
 {% block content %}
-    <div id="status">
+    <div id="browser">
 
     </div>
     <a href="?login"><img src="{{ CONFIG.ASSETCDNURL }}/img/loginButtons/adamrms.png" alt="Login with AdamRMS" /></a>
@@ -14,65 +14,9 @@
         }
         var initialData;
 		$( document ).ready(function() {
-		    //Find out if there are any status issues
-		    $("#status").html("");
-            if(/chrom(e|ium)/.test(navigator.userAgent.toLowerCase()) !== true){
-                $("#status").append('<div class="alert alert-warning" role="alert"><h4 class="alert-heading">Unsupported Browser</h4>Sorry - Google Chrome is the only supported browser for AdamRMS, you may experience issues using the site in this browser. </div>');
+		    if(/chrom(e|ium)/.test(navigator.userAgent.toLowerCase()) !== true){
+                $("#browser").html('<div class="alert alert-warning" role="alert"><h4 class="alert-heading">Unsupported Browser</h4>Sorry - Google Chrome is the only supported browser for AdamRMS, you may experience issues using the site in this browser. </div>');
             }
-            $.ajax({
-                url: "https://status.adam-rms.com/static/content/api/v0/systems.en.json",
-                type: "GET",
-                dataType: 'json',
-                cache: false,
-                success: function(result) {
-                    if (result) {
-                        var foundthis = false;
-                        $(result).each(function (key,item) {
-                            if (item.name && item.name == "adamrms-dashboard") {
-                                foundthis = true;
-                                if (item.status !== "operational") {
-                                    $.ajax({
-                                        url: "https://status.adam-rms.com/static/content/api/v0/incidents.page-1.en.json",
-                                        type: "GET",
-                                        dataType: 'json',
-                                        cache: false,
-                                        success: function (result) {
-                                            if (result && result.count > 0) {
-                                                $(result.incidents).each(function (key, incident) {
-                                                    if (incident.resolved !== true) {
-                                                        if (incident.affectedsystems.includes(item.name)) {
-                                                            var style="alert alert-warning";
-                                                            switch (incident.severity) {
-                                                                case "under-maintenance":
-                                                                    incident.severity = "Under Maintenance"
-                                                                    style="alert alert-warning";
-                                                                    break;
-                                                                case "major-outage":
-                                                                    incident.severity = "Major Outage"
-                                                                    style="alert alert-danger";
-                                                                    break;
-                                                                case "partial-outage":
-                                                                    incident.severity = "Partial Outage"
-                                                                    style="alert alert-warning";
-                                                                    break;
-                                                                case "degraded-performance":
-                                                                    incident.severity = "Degraded Performance"
-                                                                    style="alert alert-info";
-                                                                    break;
-                                                            }
-                                                            $("#status").append('<div class="' + style + '" role="alert"><h4 class="alert-heading"><b>' + incident.severity + '</b><br/>' + incident.title + '</h4>' + incident.description + '<hr/>' +  '<a href="https://status.adam-rms.com" target="_blank" class="alert-link">Learn more on the status page</a></div>');
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }
-            });
 		});
 	</script>
 {% endblock %}
