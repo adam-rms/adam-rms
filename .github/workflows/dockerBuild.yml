@@ -13,7 +13,7 @@ jobs:
           ref: 'refs/heads/v1'
       - name: Write Version Number
         run: |
-            echo $TAG > var/www/html/common/version/TAG.txt
+            echo $TAG >> var/www/html/common/version/TAG.txt
         shell: bash
         env:
           TAG : ${{ github.event.release.tag_name }}
