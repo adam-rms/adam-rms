@@ -1,6 +1,8 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
+const production = process.env.CONTEXT === 'production'; //Netlify/Cloudflare Pages set environment variable "CONTEXT" to "production"/"deploy-preview"
+
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   title: 'AdamRMS',
@@ -8,7 +10,7 @@ module.exports = {
   url: 'https://adam-rms.com',
   baseUrl: '/',
   onBrokenLinks: 'warn',
-  noIndex: !process.env.PRODUCTION,
+  noIndex: !production,
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'bstudios',
@@ -113,7 +115,7 @@ module.exports = {
       darkTheme: darkCodeTheme,
     },
     image: 'img/banner.jpg',
-    ...(!process.env.PRODUCTION) && { announcementBar: {
+    ...(!production) && { announcementBar: {
       id: 'dev_build', // Any value that will identify this message.
       content:
         'This is a draft version of our website, to view the current version please visit <a href="https://adam-rms.com/">adam-rms.com</a>',
@@ -142,7 +144,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/bstudios/adam-rms/edit/v1/docs/',
-          includeCurrentVersion: !process.env.PRODUCTION,
+          includeCurrentVersion: !production,
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
         },
