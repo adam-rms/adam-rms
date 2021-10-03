@@ -30,6 +30,8 @@ Directory|Description||
 `/docs`|Public Facing Marketing & Documentation Website|[Docs](/docs)
 `/assets`|*Logos/Marketing Assets*|
 
+[VSCode](https://github.com/microsoft/vscode) is recommended for development, and debug profiles are provided for all three applications. Be sure to run `npm install` in each directory first before attempting to use run them. 
+
 ## The Stack
 
 - [TypeScript](https://github.com/microsoft/TypeScript): Programming Language
