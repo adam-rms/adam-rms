@@ -3,6 +3,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/3.0.7/marked.min.js"></script>
     <style>
         .color-palette {
             height: 35px;
@@ -323,7 +324,10 @@
                                                                     <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
                                                                     <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a> commented
                                                                     </h3>
-                                                                    <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
+                                                                    <div class="timeline-body" id="event-{{ event.auditLog_id }}"></div>
+                                                                    <script>
+                                                                        $("#event-{{ event.auditLog_id }}").html(marked('{{event.auditLog_actionData|nl2br }}'));
+                                                                    </script>
                                                                 </div>
                                                             </div>
                                                         {% endif %}
@@ -927,7 +931,10 @@
                                                                 {% endif %}
                                                             </h3>
                                                             {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                                <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
+                                                                <div class="timeline-body" id="comment-{{ event.auditLog_id }}"></div>
+                                                                <script>
+                                                                    $("#comment-{{ event.auditLog_id }}").html(marked('{{event.auditLog_actionData|nl2br }}'));
+                                                                </script>
                                                             {% elseif event.auditLog_actionType in ['INSERT', 'ARCHIVE','UNARCHIVE','CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-CLIENT'] %}
                                                                 {# Blank #}
                                                             {% else %}
