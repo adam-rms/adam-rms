@@ -1331,7 +1331,9 @@
             $("#quickAddCommentButton").click(function () {
                 bootbox.prompt({
                     title: "Enter comment",
+                    size: "large",
                     inputType: 'textarea',
+                    message: '<i class="p-2">This supports Markdown</i>',
                     callback: function (result) {
                         if (result) {
                             ajaxcall("projects/newQuickComment.php", {
