@@ -309,6 +309,10 @@
                                         <div class="card">
                                             <div class="card-header">
                                                 <h3 class="card-title">Comments</h3>
+                                                <div class="card-tools">
+                                                    <button type="button" class="btn btn-tool quickAddCommentButton" title="New Project comment" >
+                                                        <i class="fas fa-plus"></i></button>
+                                                </div>
                                             </div>
                                             <div class="card-body">
                                                 <!-- The time line -->
@@ -1341,7 +1345,7 @@
                     message: '<div id="editor"></div>',
                     buttons: {
                         ok: {
-                            label: "Submit",
+                            label: "Save",
                             className: "btn btn-info",
                             callback: function () {
                                 let content = editor.getMarkdown();
@@ -1354,6 +1358,10 @@
                                     });
                                 }
                             }
+                        },
+                        cancel:{
+                            label: "Cancel",
+                            className: "btn btn-danger",
                         }
                     }
                 });
@@ -1374,7 +1382,7 @@
                         'divider',
                         //'hr',
                         //'quote',
-                        'divider',
+                        //'divider',
                         'ul',
                         'ol',
                         'task',
