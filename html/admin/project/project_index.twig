@@ -334,9 +334,9 @@
                                                                     <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
                                                                     <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a> commented
                                                                     </h3>
-                                                                    <div class="timeline-body" id="event-{{ event.auditLog_id }}"></div>
+                                                                    <div class="timeline-body" id="event-{{ event.auditLog_id }}"><i>Loading Comment</i></div>
                                                                     <script>
-                                                                        $("#event-{{ event.auditLog_id }}").html(marked('{{event.auditLog_actionData|nl2br }}'));
+                                                                        $("#event-{{ event.auditLog_id }}").html(marked('{{ event.auditLog_actionData|nl2br }}'));
                                                                     </script>
                                                                 </div>
                                                             </div>
