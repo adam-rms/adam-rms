@@ -3,6 +3,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/3.0.7/marked.min.js"></script>
+    <!--Tui Markdown Editor-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-editor/1.4.10/tui-editor.min.css" integrity="sha512-+nHZBZFGJmRq9QyYL/lROrtz2+FGBcZ7LqPFcY1YrjwbseBOFMeBRSBj62odrEb4PSusWeY98ZjFoMMdptTckQ==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-editor/1.4.10/tui-editor-contents.min.css" integrity="sha512-Kkjhkgw5Mb8Gy2adx3NQMYE76lFgoof9HZIR04/hFBnJwCrYEQ/FzDgmXfMaF42lND3X0tltPLumRV3slqn+9Q==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css" integrity="sha512-FwY1WVsm4UQgrOXt6kaQ53w83cOHa8fSvjFn/BvVOCYVPmkSR39k/xnU+8hht3zW6JL1TBd4C/aVQIAV58Cg6A==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tui-editor/1.4.10/tui-editor-Editor-full.min.js" integrity="sha512-8Orlh5xln1WzQ/AoRmsYlhsb5WORMTopCb4wyIhZRQVSCgB0gAPDkHKRNJdxLI5E5yt3nkLQX/TyUKz82FzOJw==" crossorigin="anonymous"></script>
     <style>
         .color-palette {
             height: 35px;
@@ -253,7 +260,7 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
-                                                <button type="button" class="btn btn-default" id="quickAddCommentButton">New Comment</button>
+                                                <button type="button" class="btn btn-default quickAddCommentButton">New Comment</button>
                                                 {% if 29|instancePermissions %}
                                                     <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
                                                 {% endif %}
@@ -302,6 +309,10 @@
                                         <div class="card">
                                             <div class="card-header">
                                                 <h3 class="card-title">Comments</h3>
+                                                <div class="card-tools">
+                                                    <button type="button" class="btn btn-tool quickAddCommentButton" title="New Project comment" >
+                                                        <i class="fas fa-plus"></i></button>
+                                                </div>
                                             </div>
                                             <div class="card-body">
                                                 <!-- The time line -->
@@ -323,7 +334,10 @@
                                                                     <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
                                                                     <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a> commented
                                                                     </h3>
-                                                                    <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
+                                                                    <div class="timeline-body" id="event-{{ event.auditLog_id }}"><i>Loading Comment</i></div>
+                                                                    <script>
+                                                                        $("#event-{{ event.auditLog_id }}").html(marked('{{ event.auditLog_actionData|nl2br }}'));
+                                                                    </script>
                                                                 </div>
                                                             </div>
                                                         {% endif %}
@@ -927,7 +941,10 @@
                                                                 {% endif %}
                                                             </h3>
                                                             {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                                <div class="timeline-body">{{event.auditLog_actionData|nl2br }}</div>
+                                                                <div class="timeline-body" id="comment-{{ event.auditLog_id }}"></div>
+                                                                <script>
+                                                                    $("#comment-{{ event.auditLog_id }}").html(marked('{{event.auditLog_actionData|nl2br }}'));
+                                                                </script>
                                                             {% elseif event.auditLog_actionType in ['INSERT', 'ARCHIVE','UNARCHIVE','CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-CLIENT'] %}
                                                                 {# Blank #}
                                                             {% else %}
@@ -1321,20 +1338,64 @@
             $("#assetAssignmentCheckboxAll").click(function () {
                 $(".assetAssignmentCheckbox").prop('checked', $(this).prop('checked'));
             });
-            $("#quickAddCommentButton").click(function () {
-                bootbox.prompt({
+            $(".quickAddCommentButton").click(function () {
+                bootbox.dialog({
                     title: "Enter comment",
-                    inputType: 'textarea',
-                    callback: function (result) {
-                        if (result) {
-                            ajaxcall("projects/newQuickComment.php", {
-                                "text": result,
-                                "projects_id": "{{ project.projects_id }}"
-                            }, function (data) {
-                                location.reload();
-                            });
+                    size: 'large',
+                    message: '<div id="editor"></div>',
+                    buttons: {
+                        ok: {
+                            label: "Save",
+                            className: "btn btn-info",
+                            callback: function () {
+                                let content = editor.getMarkdown();
+                                if (content){
+                                    ajaxcall("projects/newQuickComment.php", {
+                                        "text": content,
+                                        "projects_id": "{{ project.projects_id }}"
+                                    }, function (data) {
+                                        location.reload();
+                                    });
+                                }
+                            }
+                        },
+                        cancel:{
+                            label: "Cancel",
+                            className: "btn btn-danger",
                         }
                     }
+                });
+                let editor = new tui.Editor({
+                    el: document.querySelector('#editor'),
+                    height: 'auto',
+                    initialEditType: 'wysiwyg',
+                    usageStatistics: false,
+                    initialValue:'',
+                    language: "en_GB",
+                    placeholder: "Client has requested a Drum Revolve be installed in the venue before get in.",
+                    hideModeSwitch: false,
+                    toolbarItems: [
+                        'heading',
+                        'bold',
+                        'italic',
+                        'strike',
+                        'divider',
+                        //'hr',
+                        //'quote',
+                        //'divider',
+                        'ul',
+                        'ol',
+                        'task',
+                        'indent',
+                        'outdent',
+                        'divider',
+                        // 'table',
+                        // 'image',
+                        'link',
+                        'divider',
+                        //'code',
+                        //'codeblock'
+                    ],
                 });
             });
             {% if 22|instancePermissions %}
