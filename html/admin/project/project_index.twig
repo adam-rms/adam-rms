@@ -3,13 +3,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/3.0.7/marked.min.js"></script>
     <!--Tui Markdown Editor-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-editor/1.4.10/tui-editor.min.css" integrity="sha512-+nHZBZFGJmRq9QyYL/lROrtz2+FGBcZ7LqPFcY1YrjwbseBOFMeBRSBj62odrEb4PSusWeY98ZjFoMMdptTckQ==" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-editor/1.4.10/tui-editor-contents.min.css" integrity="sha512-Kkjhkgw5Mb8Gy2adx3NQMYE76lFgoof9HZIR04/hFBnJwCrYEQ/FzDgmXfMaF42lND3X0tltPLumRV3slqn+9Q==" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css" integrity="sha512-FwY1WVsm4UQgrOXt6kaQ53w83cOHa8fSvjFn/BvVOCYVPmkSR39k/xnU+8hht3zW6JL1TBd4C/aVQIAV58Cg6A==" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tui-editor/1.4.10/tui-editor-Editor-full.min.js" integrity="sha512-8Orlh5xln1WzQ/AoRmsYlhsb5WORMTopCb4wyIhZRQVSCgB0gAPDkHKRNJdxLI5E5yt3nkLQX/TyUKz82FzOJw==" crossorigin="anonymous"></script>
+
     <style>
         .color-palette {
             height: 35px;
@@ -336,7 +336,12 @@
                                                                     </h3>
                                                                     <div class="timeline-body" id="event-{{ event.auditLog_id }}"><i>Loading Comment</i></div>
                                                                     <script>
-                                                                        $("#event-{{ event.auditLog_id }}").html(marked('{{ event.auditLog_actionData|nl2br }}'));
+                                                                        new tui.Editor.factory({
+                                                                            el: document.querySelector('#event-{{ event.auditLog_id }}'),
+                                                                            viewer: true,
+                                                                            height: 'auto',
+                                                                            initialValue: "{{ event.auditLog_actionData|replace({"\n":'  \\n', "\r":''}) }}",
+                                                                        })
                                                                     </script>
                                                                 </div>
                                                             </div>
@@ -941,9 +946,14 @@
                                                                 {% endif %}
                                                             </h3>
                                                             {% if event.auditLog_actionType == "QUICKCOMMENT" %}
-                                                                <div class="timeline-body" id="comment-{{ event.auditLog_id }}"></div>
+                                                                <div class="timeline-body" id="comment-{{ event.auditLog_id }}"><i>Loading Comment</i></div>
                                                                 <script>
-                                                                    $("#comment-{{ event.auditLog_id }}").html(marked('{{event.auditLog_actionData|nl2br }}'));
+                                                                    new tui.Editor.factory({
+                                                                        el: document.querySelector('#comment-{{ event.auditLog_id }}'),
+                                                                        viewer: true,
+                                                                        height: 'auto',
+                                                                        initialValue: "{{ event.auditLog_actionData|replace({"\n":'  \\n', "\r":''}) }}",
+                                                                    })
                                                                 </script>
                                                             {% elseif event.auditLog_actionType in ['INSERT', 'ARCHIVE','UNARCHIVE','CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-CLIENT'] %}
                                                                 {# Blank #}
