@@ -77,6 +77,12 @@ v1 Image Compressor Worker|adam-rms-imageCompressor|__DEPRECATED__|https://githu
 v1 File Deleter Worker|adam-rms-s3Deletor|__DEPRECATED__|https://github.com/bstudios/adam-rms-s3Deletor
 Old Status Site|adam-rms-status|__DEPRECATED__|https://github.com/bstudios/adam-rms-status
 
+## Database Schema
+
+Currently (__subject to change__) the database schema is kept in sync with `v1` of AdamRMS. It is highly relational and takes advantage of a few MySQL specific features, such as JSON support.
+
+![Banner](assets/marketing/database.jpg)
+
 ## Licence
 
 AdamRMS is a web-based Rental Management System
