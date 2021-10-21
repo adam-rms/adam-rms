@@ -26,7 +26,7 @@ import { Emailsent } from "../email/email-sent.entity";
 import { Userpositions } from "../user-positions.entity";
 import { Authtokens } from "./auth-tokens.entity";
 import { Emailverificationcodes } from "./email-verification-codes.entity";
-import { Passwordresetcodes } from "./password-reset-codes";
+import { Passwordresetcodes } from "./password-reset-codes.entity";
 
 @Index("users_users_email_uindex", ["usersEmail"], { unique: true })
 @Index("users_users_username_uindex", ["usersUsername"], { unique: true })
