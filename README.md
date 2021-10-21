@@ -32,6 +32,8 @@ Directory|Description||
 
 [VSCode](https://github.com/microsoft/vscode) is recommended for development, and debug profiles are provided for all three applications. Be sure to run `npm install` first before attempting to use run them. 
 
+Please keep an eye on the [Google TypeScript style guide](https://google.github.io/styleguide/tsguide.html) for best practice
+
 ## The Stack
 
 - [TypeScript](https://github.com/microsoft/TypeScript): Programming Language
@@ -44,6 +46,8 @@ Directory|Description||
 - [Passport](https://github.com/jaredhanson/passport): Authentication
 - [Express](https://github.com/expressjs/express): Webserver
 - [Swagger](https://github.com/swagger-api/swagger-ui): API Docs
+- [Winston](https://github.com/winstonjs/winston): Logging
+- [gts](https://github.com/google/gts): Style Enforcement
 
 ### App
 

@@ -19,7 +19,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "clean": "gts clean",
+    "fix": "gts fix"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -28,14 +30,15 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.1.0",
     "@nestjs/typeorm": "^8.0.2",
-    "mysql2": "^2.3.0",
+    "mysql2": "^2.3.2",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.1.6",
-    "typeorm": "^0.2.38"
+    "typeorm": "^0.2.38",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -58,7 +61,8 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "gts": "^3.1.0"
   },
   "jest": {
     "moduleFileExtensions": [
