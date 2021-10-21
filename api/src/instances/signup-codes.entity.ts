@@ -7,8 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Instancepositions } from "./permissions/instance-positions.entity";
 import { Instances } from "./instances.entity";
+import { Instancepositions } from "./permissions/instance-positions.entity";
 import { Userinstances } from "./user-instances.entity";
 
 @Index("signupCodes_signupCodes_name_uindex", ["signupCodesName"], {

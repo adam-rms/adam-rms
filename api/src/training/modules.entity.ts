@@ -7,12 +7,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Instances } from "../instances/instances.entity";
-import { S3files } from "../files/s3-files.entity";
 import { Users } from "../auth/users/users.entity";
+import { S3files } from "../files/s3-files.entity";
+import { Instances } from "../instances/instances.entity";
+import { Usermodulescertifications } from "../training/user-modules-certifications.entity";
 import { Modulessteps } from "./modules-steps.entity";
 import { Usermodules } from "./user-modules.entity";
-import { Usermodulescertifications } from "../training/user-modules-certifications.entity";
 
 @Index("modules_instances_instances_id_fk", ["instancesId"], {})
 @Index("modules_users_users_userid_fk", ["usersUserid"], {})

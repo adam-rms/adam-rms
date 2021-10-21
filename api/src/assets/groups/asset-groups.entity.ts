@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Instances } from "./Instances";
-import { Users } from "./Users";
+import { Instances } from "../instances/instances.entity";
+import { Users } from "../auth/users/users.entity";
 
 @Index("assetGroups_instances_instances_id_fk", ["instancesId"], {})
 @Index("assetGroups_users_users_userid_fk", ["usersUserid"], {})

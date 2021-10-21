@@ -8,11 +8,11 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Assettypes } from "./asset-types.entity";
-import { Instances } from "./Instances";
-import { Locations } from "./Locations";
 import { Assetsassignments } from "./assignments/assets-assignments.entity";
-import { Assetsbarcodes } from "./barcodes/assets-barcodes.entity";
 import { Assetsbarcodesscans } from "./barcodes/assets-barcodes-scans.entity";
+import { Assetsbarcodes } from "./barcodes/assets-barcodes.entity";
+import { Instances } from "../instances/instances.entity";
+import { Locations } from "../locations/locations.entity";
 
 @Index("assets_assetTypes_assetTypes_id_fk", ["assetTypesId"], {})
 @Index("assets_assets_assets_id_fk", ["assetsLinkedTo"], {})

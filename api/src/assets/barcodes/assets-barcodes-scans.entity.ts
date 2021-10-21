@@ -6,10 +6,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Assetsbarcodes } from "./assets-barcodes.entity";
 import { Assets } from "../assets.entity";
+import { Assetsbarcodes } from "./assets-barcodes.entity";
 import { Locationsbarcodes } from "./Locationsbarcodes";
-import { Users } from "./Users";
+import { Users } from "../auth/users/users.entity";
 
 @Index(
   "assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk",

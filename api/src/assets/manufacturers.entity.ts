@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Assettypes } from "./Assettypes";
-import { Instances } from "./Instances";
+import { Instances } from "../instances/instances.entity";
 
 @Index("manufacturers_instances_instances_id_fk", ["instancesId"], {})
 @Entity("manufacturers", { schema: "adamrms" })

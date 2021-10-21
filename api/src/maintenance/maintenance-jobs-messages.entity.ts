@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Maintenancejobs } from "./maintenance-jobs.entity";
 import { S3files } from "../files/s3-files.entity";
+import { Maintenancejobs } from "./maintenance-jobs.entity";
 
 @Index("maintenanceJobsMessages___files", ["maintenanceJobsMessagesFile"], {})
 @Index(

@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Projectsvacantroles } from "./projects-vacant-roles.entity";
 import { Users } from "../../auth/users/users.entity";
+import { Projectsvacantroles } from "./projects-vacant-roles.entity";
 
 @Index(
   "projectsVacantRolesApplications_projectsVacantRolesid_fk",

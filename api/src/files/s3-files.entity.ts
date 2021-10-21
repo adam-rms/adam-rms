@@ -7,10 +7,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Users } from "../auth/users/users.entity";
+import { Instances } from "../instances/instances.entity";
 import { Maintenancejobsmessages } from "../maintenance/maintenance-jobs-messages.entity";
 import { Modules } from "../training/modules.entity";
-import { Instances } from "../instances/instances.entity";
-import { Users } from "../auth/users/users.entity";
 
 @Index("s3files_instances_instances_id_fk", ["instancesId"], {})
 @Index("s3files_users_users_userid_fk", ["usersUserid"], {})

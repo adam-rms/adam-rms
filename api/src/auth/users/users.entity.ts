@@ -5,28 +5,28 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Assetgroups } from "../../assets/groups/asset-groups.entity";
-import { Assetsbarcodes } from "../../assets/barcodes/assets-barcodes.entity";
 import { Assetsbarcodesscans } from "../../assets/barcodes/assets-barcodes-scans.entity";
-import { Auditlog } from "../audit-log.entity";
-import { Authtokens } from "./auth-tokens.entity";
+import { Assetsbarcodes } from "../../assets/barcodes/assets-barcodes.entity";
+import { Assetgroups } from "../../assets/groups/asset-groups.entity";
 import { Cmspagesdrafts } from "../../cms/cms-pages-drafts.entity";
 import { Cmspagesviews } from "../../cms/cms-pages-views.entity";
-import { Crewassignments } from "../../projects/crew/crew-assignments.entity";
-import { Emailsent } from "../email/email-sent.entity";
-import { Emailverificationcodes } from "./email-verification-codes.entity";
-import { Locationsbarcodes } from "../../locations/barcodes/locations-barcodes.entity";
-import { Maintenancejobs } from "../../maintenance/maintenance-jobs.entity";
-import { Modules } from "../../training/modules.entity";
-import { Passwordresetcodes } from "./password-reset-codes";
-import { Projects } from "../../projects/projects.entity";
-import { Projectsnotes } from "../../projects/projects-notes.entity";
-import { Projectsvacantrolesapplications } from "../../projects/crew/projects-vacant-roles-applications.entity";
 import { S3files } from "../../files/s3-files.entity";
 import { Userinstances } from "../../instances/user-instances.entity";
-import { Usermodules } from "../../training/user-modules.entity";
+import { Locationsbarcodes } from "../../locations/barcodes/locations-barcodes.entity";
+import { Maintenancejobs } from "../../maintenance/maintenance-jobs.entity";
+import { Crewassignments } from "../../projects/crew/crew-assignments.entity";
+import { Projectsvacantrolesapplications } from "../../projects/crew/projects-vacant-roles-applications.entity";
+import { Projectsnotes } from "../../projects/projects-notes.entity";
+import { Projects } from "../../projects/projects.entity";
+import { Modules } from "../../training/modules.entity";
 import { Usermodulescertifications } from "../../training/user-modules-certifications.entity";
+import { Usermodules } from "../../training/user-modules.entity";
+import { Auditlog } from "../audit-log.entity";
+import { Emailsent } from "../email/email-sent.entity";
 import { Userpositions } from "../user-positions.entity";
+import { Authtokens } from "./auth-tokens.entity";
+import { Emailverificationcodes } from "./email-verification-codes.entity";
+import { Passwordresetcodes } from "./password-reset-codes";
 
 @Index("users_users_email_uindex", ["usersEmail"], { unique: true })
 @Index("users_users_username_uindex", ["usersUsername"], { unique: true })

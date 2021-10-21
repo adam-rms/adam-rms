@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Cmspages } from "./cms-pages.entity";
 import { Users } from "../auth/users/users.entity";
+import { Cmspages } from "./cms-pages.entity";
 
 @Index("cmsPagesViews_cmsPages_cmsPages_id_fk", ["cmsPagesId"], {})
 @Index("cmsPagesViews_users_users_userid_fk", ["usersUserid"], {})

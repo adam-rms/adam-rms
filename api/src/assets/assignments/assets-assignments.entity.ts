@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Assets } from "../assets.entity";
-import { Projects } from "./Projects";
+import { Projects } from "../../projects/projects.entity";
 
 @Index("assetsAssignments_assets_assets_id_fk", ["assetsId"], {})
 @Index("assetsAssignments_projects_projects_id_fk", ["projectsId"], {})

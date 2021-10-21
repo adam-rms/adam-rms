@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Projects } from "../projects.entity";
 import { Users } from "../../auth/users/users.entity";
+import { Projects } from "../projects.entity";
 
 @Index("crewAssignments_projects_projects_id_fk", ["projectsId"], {})
 @Index("crewAssignments_users_users_userid_fk", ["usersUserid"], {})

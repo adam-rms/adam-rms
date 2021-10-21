@@ -6,9 +6,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Users } from "../auth/users/users.entity";
 import { Instancepositions } from "./permissions/instance-positions.entity";
 import { Signupcodes } from "./signup-codes.entity";
-import { Users } from "../auth/users/users.entity";
 
 @Index(
   "userInstances_instancePositions_instancePositions_id_fk",

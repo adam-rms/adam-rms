@@ -6,9 +6,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Users } from "../auth/users/users.entity";
 import { Modulessteps } from "./modules-steps.entity";
 import { Modules } from "./modules.entity";
-import { Users } from "../auth/users/users.entity";
 
 @Index("userModules_modules_modules_id_fk", ["modulesId"], {})
 @Index("userModules_users_users_userid_fk", ["usersUserid"], {})

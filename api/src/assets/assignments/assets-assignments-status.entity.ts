@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Instances } from "./Instances";
+import { Instances } from "../../instances/instances.entity";
 
 @Index("assetsAssignmentsStatus_instances_instances_id_fk", ["instancesId"], {})
 @Entity("assetsassignmentsstatus", { schema: "adamrms" })

@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Modules } from "./modules.entity";
 import { Users } from "../auth/users/users.entity";
+import { Modules } from "./modules.entity";
 
 @Index("userModulesCertifications_users_users_userid_fk", ["usersUserid"], {})
 @Index(

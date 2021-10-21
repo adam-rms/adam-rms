@@ -7,10 +7,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Assetcategories } from "../assets/categories/asset-categories.entity";
 import { Assets } from "./assets.entity";
-import { Assetcategories } from "./asset-categories.entity";
-import { Instances } from "./Instances";
-import { Manufacturers } from "./Manufacturers";
+import { Instances } from "../instances/instances.entity";
+import { Manufacturers } from "../assets/manufacturers.entity";
 
 @Index(
   "assetTypes_assetCategories_assetCategories_id_fk",

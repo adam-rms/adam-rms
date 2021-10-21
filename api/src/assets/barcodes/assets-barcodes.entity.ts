@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Assets } from "../assets.entity";
-import { Users } from "./Users";
 import { Assetsbarcodesscans } from "./assets-barcodes-scans.entity";
+import { Users } from "../../auth/users/users.entity";
 
 @Index("assetsBarcodes_assets_assets_id_fk", ["assetsId"], {})
 @Index("assetsBarcodes_users_users_userid_fk", ["usersUserid"], {})

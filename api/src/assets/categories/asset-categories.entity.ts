@@ -7,10 +7,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Instances } from "../../instances/instances.entity";
 import { Assetcategoriesgroups } from "./asset-categories-groups.entity";
-import { Instances } from "../instances/Instances";
-import { Assettypes } from "./Assettypes";
-
+import { Assettypes } from "../asset-types.entity";
 @Index("assetCategories_instances_instances_id_fk", ["instancesId"], {})
 @Index("assetCategories_Groups_id_fk", ["assetCategoriesGroupsId"], {})
 @Entity("assetcategories", { schema: "adamrms" })
