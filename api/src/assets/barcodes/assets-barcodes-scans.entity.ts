@@ -8,8 +8,8 @@ import {
 } from "typeorm";
 import { Assets } from "../assets.entity";
 import { Assetsbarcodes } from "./assets-barcodes.entity";
-import { Locationsbarcodes } from "./Locationsbarcodes";
-import { Users } from "../auth/users/users.entity";
+import { Locationsbarcodes } from "../../locations/barcodes/locations-barcodes.entity";
+import { Users } from "../../auth/users/users.entity";
 
 @Index(
   "assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk",
