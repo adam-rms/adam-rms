@@ -5,5 +5,14 @@
     "licence": "AGPL-3.0-only",
     "workspaces": [
         "./*"
-    ]
+    ],
+    "//": "Engines & Scripts are below for Heroku only, they serve no other purpose",
+    "engines": {
+        "node": "16.9.0",
+        "npm": "7.22.0"
+    },
+    "scripts": {
+        "postinstall": "npm install --prefix api && npm run build --prefix api",
+        "start": "npm run start:prod --prefix api"
+    }
 }
