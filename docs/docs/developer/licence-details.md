@@ -1,15 +1,9 @@
 ---
-sidebar_position: 1
-title: Introduction
+sidebar_position: 999
+title: Licence
 ---
 
-# Developer Guide
-
-Thank you for your interest in developing AdamRMS - we're excited to have you contribute to the project and we're looking forward to working with you. These pages will hopefully serve as a useful guide for how to get involved in the project, and how to develop it. 
-
-## Licence
-
-AdamRMS is lincenced under [GNU AGPLv3](https://en.wikipedia.org/wiki/GNU_Affero_General_Public_License).
+AdamRMS is licensed under [GNU AGPLv3](https://en.wikipedia.org/wiki/GNU_Affero_General_Public_License).
 
 ```
 AdamRMS is a web-based Rental Management System
