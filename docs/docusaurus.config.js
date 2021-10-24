@@ -33,9 +33,9 @@ module.exports = {
         },
         {
           type: 'doc',
-          docId: 'api/intro',
+          docId: 'developer/intro',
           position: 'left',
-          label: 'API Documentation',
+          label: 'Developer Guide',
         },
         { 
           to: '/blog',
@@ -144,9 +144,15 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/bstudios/adam-rms/edit/v1/docs/',
-          includeCurrentVersion: !production,
+          editCurrentVersion: true,
+          //includeCurrentVersion: !production,
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
+          versions: {
+            current: {
+              label: `v2 🚧`,
+            },
+          },
         },
         blog: {
           showReadingTime: true

@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 //import { UsersModule } from "./users/users.module";
 
@@ -24,6 +26,16 @@ import { AppService } from "./app.service";
       migrationsRun: true,
       autoLoadEntities: false,
       keepConnectionAlive: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "static"),
+      serveStaticOptions: {
+        dotfiles: "ignore",
+        index: ["index.html"],
+        fallthrough: false,
+        lastModified: false,
+        redirect: true,
+      },
     }),
     //UsersModule,
   ],
