@@ -23,16 +23,12 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, wri
 
 This repo is a [monorepo](https://www.atlassian.com/git/tutorials/monorepos), containing three distinct applications:
 
-Directory|Description||
-:-----|:-----|:----
-`/api`|NestJS API|[Docs](/api)
-`/app`|React App|[Docs](/app)
-`/docs`|Public Facing Marketing & Documentation Website|[Docs](/docs)
-`/assets`|*Logos/Marketing Assets*|
-
-[VSCode](https://github.com/microsoft/vscode) is recommended for development, and debug profiles are provided for all three applications. Be sure to run `npm install` first before attempting to use run them. 
-
-Please keep an eye on the [Google TypeScript style guide](https://google.github.io/styleguide/tsguide.html) for best practice
+Directory|Description
+:-----|:-----
+`/api`|NestJS API
+`/app`|React App
+`/docs`|Public Facing Marketing & Documentation Website
+`/assets`|*Logos/Marketing Assets*
 
 ## The Stack
 
@@ -60,7 +56,7 @@ Please keep an eye on the [Google TypeScript style guide](https://google.github.
 
 ## Developing, Releases & Contributing 
 
-Contributions are very welcome - please see [CONTRIBUTING.md](CONTRIBUTING.md) for a guide, or feel free to open a [Discussion](https://github.com/bstudios/adam-rms/discussions)
+Contributions are very welcome - please see [the website](https://adam-rms.com/docs/next/developer/contributing) for a guide, or feel free to open a [Discussion](https://github.com/bstudios/adam-rms/discussions)
 
 Contributions to versions 2.x are governed by an Individual Contributor License Agreement, and cannot be merged until this agreement has been signed.
 
@@ -77,11 +73,6 @@ v1 Image Compressor Worker|adam-rms-imageCompressor|__DEPRECATED__|https://githu
 v1 File Deleter Worker|adam-rms-s3Deletor|__DEPRECATED__|https://github.com/bstudios/adam-rms-s3Deletor
 Old Status Site|adam-rms-status|__DEPRECATED__|https://github.com/bstudios/adam-rms-status
 
-## Database Schema
-
-Currently (__subject to change__) the database schema is kept in sync with `v1` of AdamRMS. It is highly relational and takes advantage of a few MySQL specific features, such as JSON support.
-
-![Banner](assets/marketing/database.jpg)
 
 ## Licence
 

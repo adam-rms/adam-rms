@@ -22,7 +22,7 @@ An [Open API Spec](/docs-json) is available, which can be imported into Postman.
 
 [Github](https://github.com/bstudios/adam-rms)
 
-[Style Guide](https://adam-rms.com/docs/next/developer/styleguide)
+[Style Guide](https://adam-rms.com/docs/next/developer/style-guide)
 `;
 
 export const swaggerDocumentBuilder = new DocumentBuilder()

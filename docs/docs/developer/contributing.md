@@ -1,14 +1,15 @@
-# Contributing to AdamRMS
+---
+sidebar_position: 20
+title: Contributing
+---
 
 Thanks for you interest in contributing to the AdamRMS project!
 
+We use [Github](https://github.com/bstudios/adam-rms/) as our source control system.
+
 All contributions are covered by the existing project licence - please have a look at this to ensure you're familiar with it before contributing. When you contribute you'll be asked to accept the CLA (Contributor Licence Agreement).
 
-## Developing
-
-*coming soon*
-
-## Releases
+## Versioning
 
 AdamRMS uses semantic versioning. v2.0.0 is currently being targeted, this will bring a new RESTful API. 
 
@@ -20,13 +21,8 @@ To create a new release:
     - Make sure your release is in the format `vx.y.z` where `x`/`y`/`z` is a positive integer
 1. A new Docker image for v1 will be built and pushed to Docker Hub, based on the v1 branch. *(Only applies if tag starts with v1)* 
 1. A new Docker image for v1 will be built and pushed to GitHub Packages, based on the v1 branch. *(Only applies if tag starts with v1)* 
-1. Docusaurus will be versioned accordingly.
 1. Cloudflare pages will update the public marketing/docs website.
-1. The Bithell Studios' AdamRMS server will pull the latest update from Github Packages to update the dashboard. *(Only applies if tag starts with v1)* 
-
-## Code Standards
-
-*coming soon*
+1. The hosted-solution servers will pull the latest update from Github Packages to update the dashboard. *(Only applies if tag starts with v1)* 
 
 ## Using Github
 

@@ -13,7 +13,7 @@ module.exports = {
   devSidebar: [
     {
       type: 'link',
-      label: 'GitHub', // The link label
+      label: 'Github', // The link label
       href: 'https://github.com/bstudios/adam-rms', // The external URL
     },
     {
