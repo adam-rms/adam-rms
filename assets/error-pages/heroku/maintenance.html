@@ -5,7 +5,7 @@
     <meta charset=utf-8>
     <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"
           name=viewport>
-    <title>AdamRMS CDN</title>
+    <title>AdamRMS is down for Maintenance</title>
     <style>html, body {
         font-family: sans-serif;
         -ms-text-size-adjust: 100%;
@@ -112,15 +112,8 @@
 <body class=friendly>
 <div class=spacer></div>
 <div class=message>
-    <div class=message__title>AdamRMS</div>
-    <p id="load__time"></p>
-    <a href="https://adam-rms.com" class="btn">Website</a>
+    <div class=message__title>AdamRMS is Down for Maintenance</div>
+    <a href="https://bithellstudios.statuspage.io/" class="btn">Status Page</a>
 </div>
 </body>
 </html>
-<script>
-window.onload = function () {
-    var loadTime = window.performance.timing.responseEnd-window.performance.timing.requestStart; 
-    document.getElementById("load__time").textContent = "CDN responded in " + loadTime/1000 + " seconds";
-}
-</script>

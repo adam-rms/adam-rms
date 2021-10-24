@@ -91,8 +91,7 @@ export class Projects {
 
   @Column("double", {
     name: "projects_defaultDiscount",
-    precision: 22,
-    default: () => "'0'",
+    default: 0,
   })
   projectsDefaultDiscount: number;
 
