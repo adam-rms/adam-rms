@@ -22,20 +22,14 @@ if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes("postgres")) {
 
 export default {
   ...databaseConfig,
-  retryAttempts: 10,
-  retryDelay: 1000,
+  synchronize: false,
   name: "default",
   database: "adamrms",
   entities: ["dist/**/*.entity{ .ts,.js}"],
-  synchronize: false,
   migrations: ["dist/migrations/*{.ts,.js}"],
   cli: {
     entitiesDir: "src/",
     migrationsDir: "src/migrations",
     subscribersDir: "src/subscribers",
   },
-  migrationsTableName: "migrations_typeorm",
-  migrationsRun: true,
-  autoLoadEntities: false,
-  keepConnectionAlive: true,
 };

@@ -1,10 +1,20 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
-import typeOrmOptions from "./ormconfig";
+import typeOrmOptionsInput from "./ormconfig";
+const typeOrmOptions: TypeOrmModuleOptions = {
+  ...typeOrmOptionsInput,
+  migrationsTableName: "migrations_typeorm",
+  migrationsRun: true,
+  autoLoadEntities: false,
+  keepConnectionAlive: true,
+  retryAttempts: 10,
+  retryDelay: 1000,
+  synchronize: false,
+};
 
 //import { UsersModule } from "./users/users.module";
 
