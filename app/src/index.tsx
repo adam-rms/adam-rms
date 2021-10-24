@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
+import './assets/css/tailwind.output.css'
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import ThemedSuspense from './components/ThemedSuspense';
 import reportWebVitals from './reportWebVitals';
+import { Windmill } from '@windmill/react-ui';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Suspense fallback={<ThemedSuspense />}>
+    <Windmill usePreferences>
+        <App />
+      </Windmill>
+    </Suspense>
   </React.StrictMode>,
   document.getElementById('root')
 );
