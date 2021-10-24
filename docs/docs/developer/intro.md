@@ -1,0 +1,33 @@
+---
+sidebar_position: 1
+title: Introduction
+---
+
+# Developer Guide
+
+Thank you for your interest in developing AdamRMS - we're excited to have you contribute to the project and we're looking forward to working with you. These pages will hopefully serve as a useful guide for how to get involved in the project, and how to develop it. 
+
+## Licence
+
+AdamRMS is lincenced under [GNU AGPLv3](https://en.wikipedia.org/wiki/GNU_Affero_General_Public_License).
+
+```
+AdamRMS is a web-based Rental Management System
+
+Copyright (C) 2019-2021 Bithell Studios Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+```
+
+Contributions are governed by an Individual Contributor License Agreement, and cannot be merged until this agreement has been signed.
