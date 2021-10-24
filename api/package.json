@@ -22,9 +22,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "clean": "gts clean",
     "fix": "gts fix",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormconfig.ts",
-    "typeorm:migration:generate": "npm run typeorm -- migration:generate -n",
-    "typeorm:migration:run": "typeorm migration:run --config src/ormconfig.ts"
+    "typeorm:migration:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -- migration:generate --config src/ormconfig.ts -n",
+    "typeorm:migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run --config dist/ormconfig.js"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

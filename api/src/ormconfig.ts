@@ -25,7 +25,7 @@ export default {
   retryAttempts: 10,
   retryDelay: 1000,
   name: "default",
-  database: "adamrms2",
+  database: "adamrms",
   entities: ["dist/**/*.entity{ .ts,.js}"],
   synchronize: false,
   migrations: ["dist/migrations/*{.ts,.js}"],
