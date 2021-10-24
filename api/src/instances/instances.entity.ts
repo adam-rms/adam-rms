@@ -81,6 +81,7 @@ export class Instances {
     name: "instances_config_linkedDefaultDiscount",
     nullable: true,
     precision: 22,
+    scale: 2,
     default: () => "'100'",
   })
   instancesConfigLinkedDefaultDiscount: number | null;

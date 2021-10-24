@@ -91,6 +91,8 @@ export class Projects {
 
   @Column("double", {
     name: "projects_defaultDiscount",
+    precision: 22,
+    scale: 2,
     default: 0,
   })
   projectsDefaultDiscount: number;
