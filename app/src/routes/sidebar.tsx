@@ -6,6 +6,8 @@
  * `routes/index.js`
  */
 
+import { chevronDown, home } from "ionicons/icons";
+
 interface IRoute{
   path?: string
   icon?: string
@@ -16,12 +18,12 @@ interface IRoute{
 
 const routes: IRoute[] = [
   {
-    path: '/app/dashboard', // the url
-    icon: 'HomeIcon', // the component being exported from icons/index.js
+    path: '/dashboard', // the url
+    icon: home, // the component being exported from icons/index.js
     name: 'Dashboard', // name that appear in Sidebar
   },
   {
-    icon: 'PagesIcon',
+    icon: chevronDown,
     name: 'Pages',
     routes: [
       // submenu

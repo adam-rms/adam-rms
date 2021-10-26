@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { DropdownIcon } from '../../../icons';
-import * as Icons from '../../../icons';
 import { Transition } from '@windmill/react-ui';
 import { IRoute } from '../../../routes/sidebar';
-import { IIcon } from "../../../utils/demo";
-
-function Icon({ icon, ...props }: IIcon) {
-  // @ts-ignore
-  const Icon = Icons[icon];
-  return <Icon {...props} />
-}
+import { IonIcon } from "@ionic/react";
 
 interface ISidebarSubmenu{ route: IRoute };
 
@@ -29,10 +21,10 @@ function SidebarSubmenu({ route }: ISidebarSubmenu) {
         aria-haspopup="true"
       >
         <span className="inline-flex items-center">
-          <Icon className="w-5 h-5" aria-hidden="true" icon={route.icon || ""} />
+          <IonIcon className="w-5 h-5" aria-hidden="true" icon={route.icon || ""} />
           <span className="ml-4">{route.name}</span>
         </span>
-        <DropdownIcon className="w-4 h-4" aria-hidden="true" />
+        <IonIcon className="w-4 h-4" aria-hidden="true" icon="chevron-down"/>
       </button>
       <Transition
         show={isDropdownMenuOpen}

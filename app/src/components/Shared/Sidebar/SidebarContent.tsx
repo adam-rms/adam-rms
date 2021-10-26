@@ -1,24 +1,14 @@
-import React from 'react';
 import routes from '../../../routes/sidebar';
 import { NavLink, Route } from 'react-router-dom';
-import * as Icons from '../../../icons';
 import SidebarSubmenu from './SidebarSubmenu';
-import { Button } from '@windmill/react-ui';
-import { IIcon } from "../../../utils/demo";
-
-
-function Icon({ icon, ...props }: IIcon){
-  // @ts-ignore
-  const Icon= Icons[icon];
-  return <Icon {...props} />
-}
+import { IonIcon, IonItem, IonLabel } from "@ionic/react";
 
 function SidebarContent() {
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
-      <a href="/#">
+      <a href="/">
         <div className="flex items-center ml-3">
-          <img src="https://cdn.adam-rms.com/img/logoicon.png"/>
+          <img src="https://cdn.adam-rms.com/img/logoicon.png" alt="AdamRMS Logo"/>
           <p className="ml-3 text-lg font-bold text-gray-800 dark:text-white">AdamRMS</p>
         </div>
       </a>
@@ -34,14 +24,8 @@ function SidebarContent() {
                 className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                 activeClassName="text-gray-800 dark:text-gray-100"
               >
-                <Route path={route.path} exact={route.exact}>
-                  <span
-                    className="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
-                    aria-hidden="true"
-                  ></span>
-                </Route>
-                <Icon className="w-5 h-5" aria-hidden="true" icon={route.icon || ""} />
-                <span className="ml-4">{route.name}</span>
+                <IonIcon className="w-5 h-5 pr-5" aria-hidden="true" icon={route.icon || ""} />
+                <IonLabel>{route.name}</IonLabel>
               </NavLink>
             </li>
           )

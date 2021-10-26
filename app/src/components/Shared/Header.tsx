@@ -1,16 +1,8 @@
 import { useContext, useState } from 'react';
 import { SidebarContext } from '../../context/SidebarContext';
-import {
-  SearchIcon,
-  MoonIcon,
-  SunIcon,
-  BellIcon,
-  MenuIcon,
-  OutlinePersonIcon,
-  OutlineCogIcon,
-  OutlineLogoutIcon,
-} from '../../icons';
 import { Avatar, Badge, Input, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui';
+import { logOut, menu, moon, person, settings, sunny } from "ionicons/icons";
+import { IonIcon } from "@ionic/react";
 
 function Header() {
   const { mode, toggleMode } = useContext(WindmillContext);
@@ -36,13 +28,13 @@ function Header() {
           onClick={toggleSidebar}
           aria-label="Menu"
         >
-          <MenuIcon className="w-6 h-6" aria-hidden="true" />
+          <IonIcon icon={menu} />
         </button>
         {/* <!-- Search input --> */}
         <div className="flex justify-center flex-1 lg:mr-32">
           <div className="relative w-full max-w-xl mr-6 focus-within:text-purple-500">
             <div className="absolute inset-y-0 flex items-center pl-2">
-              <SearchIcon className="w-4 h-4" aria-hidden="true" />
+            <IonIcon name="search" />
             </div>
             <Input
               css=""
@@ -61,9 +53,9 @@ function Header() {
               aria-label="Toggle color mode"
             >
               {mode === 'dark' ? (
-                <SunIcon className="w-5 h-5" aria-hidden="true" />
+                <IonIcon icon={sunny} />
               ) : (
-                <MoonIcon className="w-5 h-5" aria-hidden="true" />
+                <IonIcon icon={moon} />
               )}
             </button>
           </li>
@@ -88,15 +80,15 @@ function Header() {
               onClose={() => setIsProfileMenuOpen(false)}
             >
               <DropdownItem tag="a" href="#">
-                <OutlinePersonIcon className="w-4 h-4 mr-3" aria-hidden="true" />
+                <IonIcon icon={person} className="pr-2" />
                 <span>Profile</span>
               </DropdownItem>
               <DropdownItem tag="a" href="#">
-                <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />
+                <IonIcon icon={settings} className="pr-2" />
                 <span>Settings</span>
               </DropdownItem>
               <DropdownItem onClick={() => alert('Log out!')}>
-                <OutlineLogoutIcon className="w-4 h-4 mr-3" aria-hidden="true" />
+                <IonIcon icon={logOut} className="pr-2" />
                 <span>Log out</span>
               </DropdownItem>
             </Dropdown>

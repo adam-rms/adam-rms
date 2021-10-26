@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 import ImageLight from '../assets/img/login-office.jpeg';
 import ImageDark from '../assets/img/login-office-dark.jpeg';
-import { GithubIcon, TwitterIcon } from '../icons';
 import { Label, Input, Button } from '@windmill/react-ui';
+import { IonIcon } from "@ionic/react";
 
 function Login() {
   return (
@@ -46,11 +46,11 @@ function Login() {
               <hr className="my-8" />
 
               <Button block layout="outline">
-                <GithubIcon className="w-4 h-4 mr-2" aria-hidden="true" />
+                <IonIcon name="logo-github" />
                 Github
               </Button>
               <Button className="mt-4" block layout="outline">
-                <TwitterIcon className="w-4 h-4 mr-2" aria-hidden="true" />
+                <IonIcon name="logo-twitter" />
                 Twitter
               </Button>
 
