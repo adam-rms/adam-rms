@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import './assets/css/tailwind.output.css'
+import './assets/css/tailwind.css'
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import ThemedSuspense from './components/ThemedSuspense';
