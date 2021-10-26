@@ -34,12 +34,12 @@ function Layout() {
                   <Route
                     key={i}
                     exact={true}
-                    path={`/app${route.path}`}
+                    path={`${route.path}`}
                     render={(props) => <route.component />}
                   />
                 ) : null
               })}
-              <Redirect exact from="/app" to="/app/dashboard" />
+              <Redirect exact from="/" to="/dashboard" />
               <Route component={Page404} />
             </Switch>
           </Suspense>
