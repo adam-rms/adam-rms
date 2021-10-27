@@ -31,6 +31,9 @@ $DBLIB->where("projectsVacantRolesApplications_withdrawn",0);
 if ($DBLIB->getOne("projectsVacantRolesApplications",["projectsVacantRolesApplications_id"])) finish(false, ['message' => "Sorry you can't apply twice"]);
 $array['users_userid'] = $AUTH->data['users_userid'];
 $array['projectsVacantRolesApplications_submitted'] = date("Y-m-d H:i:s");
+if ($role['projectsVacantRoles_firstComeFirstServed']) {
+    $array['projectsVacantRolesApplications_status'] = 1;
+}
 $insert = $DBLIB->insert("projectsVacantRolesApplications", $array);
 if (!$insert) finish(false);
 
