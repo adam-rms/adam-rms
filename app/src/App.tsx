@@ -29,11 +29,11 @@ const Login = lazy(() => import('./pages/Login'))
 const CreateAccount = lazy(() => import('./pages/CreateAccount'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 
-const App: React.FC = () => {
+function App() {
   return (
-    <IonApp>
+    <>
       <IonReactRouter>
-      <AccessibleNavigationAnnouncer />
+        <AccessibleNavigationAnnouncer />
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/create-account" component={CreateAccount} />
@@ -43,7 +43,7 @@ const App: React.FC = () => {
           <Route path="/" component={Layout} />
         </Switch>
       </IonReactRouter>
-    </IonApp>
+    </>
   );
 };
 

@@ -6,14 +6,20 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import ThemedSuspense from './components/ThemedSuspense';
 import reportWebVitals from './reportWebVitals';
 import { Windmill } from '@windmill/react-ui';
+import { SidebarProvider } from "./context/SidebarContext";
+import { IonApp } from "@ionic/react";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Suspense fallback={<ThemedSuspense />}>
-    <Windmill usePreferences>
-        <App />
-      </Windmill>
-    </Suspense>
+    <IonApp>
+    <SidebarProvider>
+      <Suspense fallback={<ThemedSuspense />}>
+        <Windmill usePreferences>
+          <App />
+        </Windmill>
+      </Suspense>
+    </SidebarProvider>
+    </IonApp>
   </React.StrictMode>,
   document.getElementById('root')
 );
