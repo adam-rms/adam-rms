@@ -126,7 +126,6 @@ function Dashboard() {
           </TableFooter>
         </TableContainer>
       </div>
-      <Footer></Footer>
     </>
   );
 };

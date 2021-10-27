@@ -7,6 +7,7 @@ import Header from '../components/Shared/Header';
 import Main from './Main';
 import ThemedSuspense from '../components/ThemedSuspense';
 import { SidebarContext } from '../context/SidebarContext';
+import Footer from "../components/Shared/Footer";
 
 const Page404 = lazy(() => import('../pages/404'));
 
@@ -44,6 +45,7 @@ function Layout() {
             </Switch>
           </Suspense>
         </Main>
+        <Footer />
       </div>
     </div>
   );
