@@ -20,7 +20,9 @@
                         {% if 126|instancePermissions %}
                             <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Edit Page"><i class="fas fa-edit"></i></a>
                         {% endif %}
-                        <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ PAGE.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
+                        {% if 125|instancePermissions %}
+                            <a href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Viewing Stats"><i class="far fa-chart-bar"></i></a>
+                        {% endif %}
                         {% if 128|instancePermissions %}
                             <a href="{{ CONFIG.ROOTURL }}/cms/log.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Page View Log"><i class="fas fa-binoculars"></i></a>
                         {% endif %}
