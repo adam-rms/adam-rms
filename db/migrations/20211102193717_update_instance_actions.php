@@ -12,8 +12,8 @@ final class UpdateInstanceActions extends AbstractMigration
      */
     public function up()
     {
-        $this->execute("UPDATE instanceactions t SET t.instanceActions_dependent = '36' WHERE t.instanceActions_id = 37;");
-        $this->execute("UPDATE instanceactions t SET t.instanceActions_dependent = '2' WHERE t.instanceActions_id = 3;");
+        $this->execute("UPDATE instanceActions t SET t.instanceActions_dependent = '36' WHERE t.instanceActions_id = 37;");
+        $this->execute("UPDATE instanceActions t SET t.instanceActions_dependent = '2' WHERE t.instanceActions_id = 3;");
     }
 
     /**
