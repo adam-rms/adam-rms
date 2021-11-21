@@ -60,7 +60,7 @@
                                   {{ code.signupCodes_role }}
                               </td>
                               <td>
-                                  <select class="form-control roleGroupSelect" data-codeid="{{ code.signupCodes_id }}">
+                                  <select class="form-control roleGroupSelect" data-codeid="{{ code.signupCodes_id }}" {% if 111|instancePermissions %}{% else %}disabled{% endif %}>
                                       {% if code.instancePositions_id == "" %}
                                           <option value="" selected></option>
                                       {% endif %}
