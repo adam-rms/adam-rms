@@ -37,9 +37,9 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
                 'emailSent_toName' => $user["userData"]["users_name1"] .  ' ' . $user["userData"]["users_name2"]
             );
             $emailid = $DBLIB->insert('emailSent', $sqldata);
-            if(!$emailid) die('Sorry - Could not send E-Mail');
+            if(!$emailid) return false;
             else return true;
-        } else die('Sorry - Could not send E-Mail');
+        } else return false;
     } else {
         trigger_error("Sendgrid API Key not set", E_USER_WARNING);
         return true;
