@@ -56,13 +56,13 @@
 									<td>
                                         {% for dependentactionid in action.actions_dependent|split(',') %}
                                             {% if dependentactionid != "" and dependentactionid not in position.positionsGroups_actions|split(',') %}
-												<small class="label label-warning" title="Requires other permission to be set first">{{ dependentactionid }}</small>
+												<span class="badge bg-warning" title="Requires other permission to be set first">{{ dependentactionid }}</span>
                                                 {% set positioncannotbecausedep = "true" %}
                                             {% endif %}
                                         {% endfor %}
                                         {% for independentactionid in action.actions_incompatible|split(',') %}
                                             {% if independentactionid != "" and independentactionid in position.positionsGroups_actions|split(',') %}
-												<small class="label label-danger" title="Requires other permission to be removed first">{{ independentactionid }}</small>
+												<span class="badge bg-warning" title="Requires other permission to be removed first">{{ independentactionid }}</span>
                                                 {% set positioncannotbecauseindep = "true" %}
                                             {% endif %}
                                         {% endfor %}
