@@ -30,7 +30,7 @@
                         {% if assets[0].assets_endDate is not null and assets[0].assets_endDate|date("U") <= "now"|date("U")  %}
                             <div class="alert alert-danger">
                                 <h5> <i class="fas fa-archive"></i> Asset Archived</h5>
-                                Asset has been {{ assets[0].assets_archived }}
+                                Asset was {{ assets[0].assets_archived }} on {{ assets[0].assets_endDate|date("d/M/Y") }}
                             </div>
                         {% endif %}
                         {% if assets[0]['link'] %}
@@ -83,7 +83,7 @@
                                 <button title="Change Asset Status" class="btn btn-block btn-info" id="changeAssetStatusButton">Change Asset Status</button>
                             {% endif %}
                         {% endif %}
-                        {% if 97|instancePermissions %}
+                        {% if 97|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  %}
                             <hr/>
                             <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
@@ -839,7 +839,7 @@
                                                         <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                     {% endif %}
                                                 {% endif %}
-                                                {% if 97|instancePermissions %}
+                                                {% if 97|instancePermissions and (thisasset.assets_endDate is null or thisasset.assets_endDate|date("U") > "now"|date("U"))%}
                                                     <button title="Archive" class="btn btn-sm btn-warning archiveAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fas fa-archive"></i></button>
                                                 {% endif %}
                                                 {% if 19|instancePermissions %}
