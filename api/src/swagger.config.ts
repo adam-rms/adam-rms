@@ -19,7 +19,7 @@ An [Open API Spec](/docs-json) is available, which can be imported into Postman.
 
 ### Useful Links
 
-[Github](https://github.com/bstudios/adam-rms)
+[GitHub](https://github.com/bstudios/adam-rms)
 
 [Style Guide](https://adam-rms.com/docs/next/developer/style-guide)
 `;
