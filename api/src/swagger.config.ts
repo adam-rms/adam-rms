@@ -28,7 +28,7 @@ export const swaggerDocumentBuilder = new DocumentBuilder()
   .setTitle("AdamRMS")
   .setDescription(description)
   .setVersion("v2")
-  .setContact("AdamRMS", "", "")
+  .setContact("AdamRMS", "https://adam-rms.com/", "contact@bstudios.com")
   .setLicense("AGPLv3", "https://www.gnu.org/licenses/agpl-3.0.html")
   .setExternalDoc(
     "Developer Guide",
