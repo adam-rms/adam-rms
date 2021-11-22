@@ -1,5 +1,4 @@
-import { SwaggerCustomOptions } from "@nestjs/swagger";
-import { DocumentBuilder } from "@nestjs/swagger";
+import { SwaggerCustomOptions, DocumentBuilder } from "@nestjs/swagger";
 export const swaggerCustomOptions: SwaggerCustomOptions = {
   swaggerOptions: {
     persistAuthorization: true,
@@ -20,7 +19,7 @@ An [Open API Spec](/docs-json) is available, which can be imported into Postman.
 
 ### Useful Links
 
-[Github](https://github.com/bstudios/adam-rms)
+[GitHub](https://github.com/bstudios/adam-rms)
 
 [Style Guide](https://adam-rms.com/docs/next/developer/style-guide)
 `;
@@ -29,7 +28,7 @@ export const swaggerDocumentBuilder = new DocumentBuilder()
   .setTitle("AdamRMS")
   .setDescription(description)
   .setVersion("v2")
-  .setContact("AdamRMS", "", "")
+  .setContact("AdamRMS", "https://adam-rms.com/", "studios@jbithell.com")
   .setLicense("AGPLv3", "https://www.gnu.org/licenses/agpl-3.0.html")
   .setExternalDoc(
     "Developer Guide",
