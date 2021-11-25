@@ -12,4 +12,9 @@ export class AppController {
   getHello(): string {
     return this.appService.getPong();
   }
+
+  @Get("/pingu")
+  getNootNoot(): string {
+    return this.appService.getPingu();
+  }
 }
