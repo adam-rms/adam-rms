@@ -5,4 +5,8 @@ export class AppService {
   getPong(): string {
     return "Pong";
   }
+
+  getPingu(): string {
+    return "NOOT NOOT!";
+  }
 }
