@@ -255,15 +255,19 @@ class bCMS {
 
         //Generate the url
 
-        if (false) {
+        if ($CONFIG['AWS']["CLOUDFRONT"]['ENABLED']) {
             // Create a CloudFront Client to sign the string
             $CloudFrontClient = new Aws\CloudFront\CloudFrontClient([
                 'profile' => 'default',
                 'version' => '2014-11-06',
                 'region' => 'us-east-2'
             ]);
+
+            $ResponseContentDisposition = "?response-content-disposition=" . rawurlencode(
+                ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension']));
+
             $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
-                'url' => $CONFIG['AWS']["CLOUDFRONT"]["URL"] . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
+                'url' => $file['s3files_cdn_endpoint'] . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
                 'expires' => strtotime($file['expiry']),
                 'private_key' => $CONFIG['AWS']["CLOUDFRONT"]["PRIVATEKEY"],
                 'key_pair_id' => $CONFIG['AWS']["CLOUDFRONT"]["KEYPAIRID"]

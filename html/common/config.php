@@ -43,6 +43,11 @@ $CONFIG = array(
             'ENDPOINT' => getenv('bCMS__AWS_S3_BUCKET_ENDPOINT'),
             'REGION' => getenv('bCMS__AWS_S3_BUCKET_REGION'),
             'CDNEndpoint' => getenv('bCMS__AWS_S3_CDN'),
+        ],
+        "CLOUDFRONT" => [
+            "ENABLED" => getenv('bCMS__AWS_ACCOUNT_CLOUDFRONT_ENABLED') == "TRUE",
+            "PRIVATEKEY" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY'),
+            "KEYPAIRID" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID')
         ]
     ],
     'DEV' => (getenv('bCMS__ERRORS') == "true" ? true : false),
