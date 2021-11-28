@@ -46,7 +46,7 @@ $CONFIG = array(
         ],
         "CLOUDFRONT" => [
             "ENABLED" => getenv('bCMS__AWS_ACCOUNT_CLOUDFRONT_ENABLED') == "TRUE",
-            "PRIVATEKEY" => str_replace('"', '', getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY')),
+            "PRIVATEKEY" => str_replace('\n',"\n", str_replace('"', '', getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY'))),
             "KEYPAIRID" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID')
         ]
     ],
