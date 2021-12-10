@@ -22,7 +22,8 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import Login from "./pages/Login";
+import AssetTypeList from "./components/assets/AssetTypes";
+
 
 const App: React.FC = () => {
   return (
@@ -31,14 +32,8 @@ const App: React.FC = () => {
         <IonSplitPane contentId="main">
           <Menu />
           <IonRouterOutlet id="main">
-            <Route path="/login" exact={true}>
-              <Login />
-            </Route>
-            <Route path="/" exact={true}>
-              <Redirect to="/page/Inbox" />
-            </Route>
-            <Route path="/page/:name" exact={true}>
-              <Page />
+            <Route path="/assets" exact={true}>
+              <Route path="/" component={AssetTypeList} />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>
