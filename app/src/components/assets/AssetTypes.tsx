@@ -26,7 +26,7 @@ const AssetTypeList = () => {
             <IonList>
                 {assetTypes.map((item :any) => {
                     return (
-                    <IonItem key={item.assetTypes_id}>
+                    <IonItem key={item.assetTypes_id} routerLink={"/assets/" + item.assetTypes_id}>
                         {item.thumbnails.length > 0 && <IonAvatar slot="start"><img src="{item.thumnails[0]}"></img></IonAvatar>}
                         {item.thumbnails.length < 1 && <IonIcon slot="start" size="large" ios={helpCircleOutline} md={helpCircleSharp}></IonIcon> }
                         <IonLabel>

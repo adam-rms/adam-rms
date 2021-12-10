@@ -22,7 +22,10 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+
+/* Components */
 import AssetTypeList from "./components/assets/AssetTypes";
+import AssetList from "./components/assets/AssetList";
 
 
 const App: React.FC = () => {
@@ -32,9 +35,8 @@ const App: React.FC = () => {
         <IonSplitPane contentId="main">
           <Menu />
           <IonRouterOutlet id="main">
-            <Route path="/assets" exact={true}>
-              <Route path="/" component={AssetTypeList} />
-            </Route>
+            <Route path="/assets/" component={AssetTypeList} exact/>
+            <Route path="/assets/:id" component={AssetList} />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
