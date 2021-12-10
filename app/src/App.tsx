@@ -22,6 +22,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import Login from "./pages/Login";
 
 const App: React.FC = () => {
   return (
@@ -30,6 +31,9 @@ const App: React.FC = () => {
         <IonSplitPane contentId="main">
           <Menu />
           <IonRouterOutlet id="main">
+            <Route path="/login" exact={true}>
+              <Login />
+            </Route>
             <Route path="/" exact={true}>
               <Redirect to="/page/Inbox" />
             </Route>
