@@ -1,6 +1,6 @@
 import { Storage } from "@capacitor/storage";
 import axios from 'axios';
-import { baseURL } from "../constants";
+import { baseURL } from "../Globals";
 
 const Api = async (endpoint: string, data: {}) => {
     return (

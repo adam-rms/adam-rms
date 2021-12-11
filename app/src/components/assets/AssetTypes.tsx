@@ -1,5 +1,6 @@
+import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IonAvatar, IonIcon, IonItem, IonLabel, IonList } from "@ionic/react";
-import {helpCircleOutline, helpCircleSharp} from 'ionicons/icons';
 import { useEffect, useState } from "react";
 import Api from "../../controllers/Api";
 import Page from "../../pages/Page";
@@ -28,7 +29,7 @@ const AssetTypeList = () => {
                     return (
                     <IonItem key={item.assetTypes_id} routerLink={"/assets/" + item.assetTypes_id}>
                         {item.thumbnails.length > 0 && <IonAvatar slot="start"><img src="{item.thumnails[0]}"></img></IonAvatar>}
-                        {item.thumbnails.length < 1 && <IonIcon slot="start" size="large" ios={helpCircleOutline} md={helpCircleSharp}></IonIcon> }
+                        {item.thumbnails.length < 1 && <FontAwesomeIcon icon={faQuestionCircle} size="2x"/> }
                         <IonLabel>
                             <h2>{item.assetTypes_name}</h2>
                             <p>{item.assetCategories_name}</p>
