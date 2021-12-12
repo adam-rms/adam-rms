@@ -1,6 +1,8 @@
 import { faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonItem, IonLabel, IonList, IonRow } from "@ionic/react";
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonItem, IonLabel, IonList, IonRow, useIonViewWillLeave } from "@ionic/react";
+import axios from "axios";
+import { error } from "console";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Api from "../../controllers/Api";
@@ -25,15 +27,23 @@ const Asset = () => {
     let { type, asset } = useParams<{type: string, asset: string}>();
     const [assetType, setAssetType] = useState<TypeData>({tags: [], thumnails: [], files: []});
     const [thisAsset, setThisAsset] = useState<AssetData>({flagsblocks: {BLOCK:[], FLAG:[], COUNT:{BLOCK: 0, FLAG: 0}}});
+    let cancelToken = axios.CancelToken.source();
 
     //get data
     useEffect(() => {
         async function getAssets() {
-            const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true});
-            console.log(fetchedAssets);
+            const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
             try {
-                setAssetType(fetchedAssets['assets'][0]);
-                setThisAsset(fetchedAssets['assets'][0]['tags'][parseInt(asset) - 1]);
+                setAssetType(fetchedAssets['assets'][0]);//Store asset type
+
+                //find individual asset in list
+                for (let index = 0; index < fetchedAssets['assets'][0]['tags'].length; index++) {
+                    const element = fetchedAssets['assets'][0]['tags'][index];
+                    if (element.assets_id == parseInt(asset)) {
+                        setThisAsset(element);
+                        break;
+                    }
+                }
             } catch (error) {
                 console.log("[AdamRMS] " + error );
             }
@@ -41,6 +51,10 @@ const Asset = () => {
         }
         getAssets();
     }, []);
+
+    useIonViewWillLeave(() => {
+        cancelToken.cancel();
+    });
 
     //return page layout
     return (
@@ -125,7 +139,7 @@ const Asset = () => {
                         <IonList>
                             {thisAsset.files.map(async (item :any) => {
                                 return (
-                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size)}>
+                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size, cancelToken.token)}>
                                         <IonItem key={item.s3files_id}>
                                             <IonLabel slot="start">
                                                 <FontAwesomeIcon icon={fileExtensionToIcon(item.s3files_extension)} />

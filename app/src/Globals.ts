@@ -1,4 +1,5 @@
 import { faFileImage, faFilePdf, faFileWord, faFilePowerpoint, faFileExcel, faFileCsv, faFileAudio, faFileVideo, faFileArchive, faFileCode, faFileAlt, faFile} from '@fortawesome/free-solid-svg-icons'
+import { CancelToken } from "axios";
 import Api from "./controllers/Api";
 
 //Global Vars
@@ -13,8 +14,8 @@ export const baseURL = "http://admin.test/"; //TODO make this part of login
  * @param size s3files_meta_size 
  * @returns string 
  */
-export async function s3url (fileid: string, size: number) {
-    const response = await Api("file/", {"f": fileid, "d": "force", "s": size});
+export async function s3url (fileid: string, size: number, cancelToken: CancelToken) {
+    const response = await Api("file/", {"f": fileid, "d": "force", "s": size}, cancelToken);
     return(response.url);
 }
 

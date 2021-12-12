@@ -1,6 +1,7 @@
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IonAvatar, IonCard, IonIcon, IonItem, IonLabel, IonList } from "@ionic/react";
+import { IonAvatar, IonCard, IonIcon, IonItem, IonLabel, IonList, useIonViewWillLeave } from "@ionic/react";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import Api from "../../controllers/Api";
 import Page from "../../pages/Page";
@@ -9,10 +10,11 @@ import "./Asset.css";
 
 const AssetTypeList = () => {
     const [assetTypes, setAssets] = useState([]);
+    let cancelToken = axios.CancelToken.source();
 
     useEffect(() => {
         async function getAssets() {
-            const fetchedAssets = await Api("assets/list.php", {"all": true});
+            const fetchedAssets = await Api("assets/list.php", {"all": true}, cancelToken.token);
             try {
                 setAssets(fetchedAssets['assets']);
             } catch (error) {
@@ -22,6 +24,10 @@ const AssetTypeList = () => {
         }
         getAssets();
     }, []);
+
+    useIonViewWillLeave(() => {
+        cancelToken.cancel();
+    });
 
     return (
         <Page title="Asset List">

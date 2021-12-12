@@ -1,11 +1,12 @@
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonImg, IonItem, IonLabel, IonList, IonRow, IonSlide, IonSlides } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonImg, IonItem, IonLabel, IonList, IonRow, IonSlide, IonSlides, useIonViewWillLeave } from "@ionic/react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Api from "../../controllers/Api";
 import { fileExtensionToIcon, formatSize, s3url } from "../../Globals";
 import Page from "../../pages/Page";
 import { faArrowRight, faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 //Tell typescript some of the format of returned data, so it doesn't get angry
 //TODO create interfaces for all api endpoints?
@@ -19,11 +20,12 @@ interface AssetData {
 const AssetType = () => {
     let { type } = useParams<{type: string}>();
     const [assetType, setAssetType] = useState<AssetData>({tags: [], thumnails: [], files: []});
+    let cancelToken = axios.CancelToken.source();
 
     //get data
     useEffect(() => {
         async function getAssets() {
-            const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true});
+            const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
             try {
                 setAssetType(fetchedAssets['assets'][0]); //as this is only listing one type, only return one object
             } catch (error) {
@@ -33,6 +35,11 @@ const AssetType = () => {
         }
         getAssets();
     }, []);
+
+    useIonViewWillLeave(() => {
+        cancelToken.cancel();
+    });
+    
 
     //generate image carousel
     let images;
@@ -59,7 +66,7 @@ const AssetType = () => {
                         <IonList>
                             {assetType.files.map(async (item :any) => {
                                 return (
-                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size)}>
+                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size, cancelToken.token)}>
                                         <IonItem key={item.s3files_id}>
                                             <IonLabel slot="start">
                                                 <FontAwesomeIcon icon={fileExtensionToIcon(item.s3files_extension)} />
