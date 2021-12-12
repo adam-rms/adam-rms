@@ -2,11 +2,11 @@ import { faFileImage, faFilePdf, faFileWord, faFilePowerpoint, faFileExcel, faFi
 import Api from "./controllers/Api";
 
 //Global Vars
-export const baseURL = "http://admin.test/";
+//Where is the API hosted?
+export const baseURL = "http://admin.test/"; //TODO make this part of login
 
 
 //Global Functions
-
 /**
 *  Get the URL for the resource in AdamRMS s3 Bucket
  * @param fileid s3files_id

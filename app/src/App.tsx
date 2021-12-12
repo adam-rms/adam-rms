@@ -24,8 +24,9 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 /* Components */
-import AssetTypeList from "./components/assets/AssetTypes";
-import AssetList from "./components/assets/AssetList";
+import AssetTypeList from "./components/assets/AssetTypeList";
+import AssetType from "./components/assets/AssetType";
+import Asset from "./components/assets/Asset";
 
 
 const App: React.FC = () => {
@@ -36,7 +37,8 @@ const App: React.FC = () => {
           <Menu />
           <IonRouterOutlet id="main">
             <Route path="/assets/" component={AssetTypeList} exact/>
-            <Route path="/assets/:id" component={AssetList} />
+            <Route path="/assets/:type" component={AssetType} exact/>
+            <Route path="/assets/:type/:asset" component={Asset} exact />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>

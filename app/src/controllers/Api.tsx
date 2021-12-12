@@ -1,6 +1,7 @@
-import { Storage } from "@capacitor/storage";
 import axios from 'axios';
 import { baseURL } from "../Globals";
+
+//TODO remove the memory leak from async function by using axios cancel functionality 
 
 const Api = async (endpoint: string, data: {}) => {
     return (
