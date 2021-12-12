@@ -1,5 +1,5 @@
 import axios, { CancelToken } from 'axios';
-import { baseURL } from "../Globals";
+import { baseURL } from "../globals/variables";
 
 //TODO remove the memory leak from async function by using axios cancel functionality 
 

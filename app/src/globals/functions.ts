@@ -1,13 +1,8 @@
 import { faFileImage, faFilePdf, faFileWord, faFilePowerpoint, faFileExcel, faFileCsv, faFileAudio, faFileVideo, faFileArchive, faFileCode, faFileAlt, faFile} from '@fortawesome/free-solid-svg-icons'
 import { CancelToken } from "axios";
-import Api from "./controllers/Api";
-
-//Global Vars
-//Where is the API hosted?
-export const baseURL = "http://admin.test/"; //TODO make this part of login
+import Api from "../controllers/Api";
 
 
-//Global Functions
 /**
 *  Get the URL for the resource in AdamRMS s3 Bucket
  * @param fileid s3files_id

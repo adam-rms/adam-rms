@@ -2,31 +2,16 @@ import { faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonItem, IonLabel, IonList, IonRow, useIonViewWillLeave } from "@ionic/react";
 import axios from "axios";
-import { error } from "console";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Api from "../../controllers/Api";
-import { s3url, fileExtensionToIcon, formatSize } from "../../Globals";
+import { s3url, fileExtensionToIcon, formatSize } from "../../globals/functions";
+import { AssetData, AssetTypeData } from "../../globals/interfaces";
 import Page from "../../pages/Page";
-
-//Tell typescript some of the format of returned data, so it doesn't get angry
-//TODO create interfaces for all api endpoints?
-interface TypeData {
-    [index: string]: any; //Index with a string, get something back
-    tags: []; //will contain array of tags
-    thumnails: []; //array of asset images 
-    files: []; //array of asset files
-    fields: [];
-}
-
-interface AssetData{
-    [index: string]: any; //Index with a string, get something back
-    flagsblocks: {BLOCK:[], FLAG:[], COUNT:{BLOCK: number, FLAG: number}}
-}
 
 const Asset = () => {
     let { type, asset } = useParams<{type: string, asset: string}>();
-    const [assetType, setAssetType] = useState<TypeData>({tags: [], thumnails: [], files: [], fields: []});
+    const [assetType, setAssetType] = useState<AssetTypeData>({tags: [], thumnails: [], files: [], fields: []});
     const [thisAsset, setThisAsset] = useState<AssetData>({flagsblocks: {BLOCK:[], FLAG:[], COUNT:{BLOCK: 0, FLAG: 0}}});
     let cancelToken = axios.CancelToken.source();
 

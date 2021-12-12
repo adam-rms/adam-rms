@@ -3,28 +3,21 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Api from "../../controllers/Api";
-import { fileExtensionToIcon, formatSize, s3url } from "../../Globals";
+import { fileExtensionToIcon, formatSize, s3url } from "../../globals/functions";
 import Page from "../../pages/Page";
 import { faArrowRight, faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-
-//Tell typescript some of the format of returned data, so it doesn't get angry
-//TODO create interfaces for all api endpoints?
-interface AssetData {
-    [index: string]: any; //Index with a string, get something back
-    tags: []; //will contain array of tags
-    thumnails: []; //array of asset images 
-    files: []; //array of asset files
-}
+import { AssetTypeData } from "../../globals/interfaces";
 
 const AssetType = () => {
     let { type } = useParams<{type: string}>();
-    const [assetType, setAssetType] = useState<AssetData>({tags: [], thumnails: [], files: []});
+    const [assetType, setAssetType] = useState<AssetTypeData>({tags: [], thumnails: [], files: [], fields: []});
     let cancelToken = axios.CancelToken.source();
 
     //get data
     useEffect(() => {
         async function getAssets() {
+            setAssetType({tags: [], thumnails: [], files: [], fields: []});
             const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
             try {
                 setAssetType(fetchedAssets['assets'][0]); //as this is only listing one type, only return one object
