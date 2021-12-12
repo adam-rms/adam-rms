@@ -32,6 +32,10 @@ const Asset = () => {
     //get data
     useEffect(() => {
         async function getAssets() {
+            //reset base values - needed so old data not shown
+            setAssetType({tags: [], thumnails: [], files: []});
+            setThisAsset({flagsblocks: {BLOCK:[], FLAG:[], COUNT:{BLOCK: 0, FLAG: 0}}});
+            //query api
             const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
             try {
                 setAssetType(fetchedAssets['assets'][0]);//Store asset type
