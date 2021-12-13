@@ -1,8 +1,14 @@
 import axios, { CancelToken } from 'axios';
 import { baseURL } from "../globals/variables";
 
-//TODO remove the memory leak from async function by using axios cancel functionality 
-
+/**
+ * Get data from AdamRMS API
+ * @param endpoint API endpoint
+ * @param data any parameter data for the endpoint
+ * @param cancelToken an Axios cancelToken 
+ * @returns response data as an Object
+ * @link https://adam-rms.com/docs/api/intro for V1 endpoints
+ */
 const Api = async (endpoint: string, data: {}, cancelToken: CancelToken) => {
 
     return (
