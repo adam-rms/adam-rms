@@ -1,23 +1,13 @@
-import {
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonImg,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonMenu,
-  IonMenuToggle,
-} from '@ionic/react';
+import { IonContent, IonImg, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { cubeOutline, cubeSharp } from 'ionicons/icons';
+import { faCube, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import './Menu.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface AppPage {
   url: string;
-  iosIcon: string;
-  mdIcon: string;
+  icon: IconDefinition;
   title: string;
 }
 
@@ -25,8 +15,7 @@ const appPages: AppPage[] = [
   {
     title: 'Assets',
     url: '/assets/',
-    iosIcon: cubeOutline,
-    mdIcon: cubeSharp
+    icon: faCube,
   }
 ];
 
@@ -45,7 +34,7 @@ const Menu: React.FC = () => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
                 <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
-                  <IonIcon slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
+                  <IonLabel slot="start"><FontAwesomeIcon icon={appPage.icon} size="2x" /></IonLabel>
                   <IonLabel>{appPage.title}</IonLabel>
                 </IonItem>
               </IonMenuToggle>
