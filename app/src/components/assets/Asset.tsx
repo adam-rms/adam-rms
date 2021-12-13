@@ -23,19 +23,15 @@ const Asset = () => {
             setThisAsset({flagsblocks: {BLOCK:[], FLAG:[], COUNT:{BLOCK: 0, FLAG: 0}}});
             //query api
             const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
-            try {
-                setAssetType(fetchedAssets['assets'][0]);//Store asset type
+            setAssetType(fetchedAssets['assets'][0]);//Store asset type
 
-                //find individual asset in list
-                for (let index = 0; index < fetchedAssets['assets'][0]['tags'].length; index++) {
-                    const element = fetchedAssets['assets'][0]['tags'][index];
-                    if (element.assets_id == parseInt(asset)) {
-                        setThisAsset(element);
-                        break;
-                    }
+            //find individual asset in list
+            for (let index = 0; index < fetchedAssets['assets'][0]['tags'].length; index++) {
+                const element = fetchedAssets['assets'][0]['tags'][index];
+                if (element.assets_id == parseInt(asset)) {
+                    setThisAsset(element);
+                    break;
                 }
-            } catch (error) {
-                console.log("[AdamRMS] " + error );
             }
             
         }

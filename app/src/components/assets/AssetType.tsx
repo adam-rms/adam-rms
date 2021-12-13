@@ -19,12 +19,7 @@ const AssetType = () => {
         async function getAssets() {
             setAssetType({tags: [], thumnails: [], files: [], fields: []});
             const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
-            try {
-                setAssetType(fetchedAssets['assets'][0]); //as this is only listing one type, only return one object
-            } catch (error) {
-                console.log("[AdamRMS] " + error );
-            }
-            
+            setAssetType(fetchedAssets['assets'][0]); //as this is only listing one type, only return one object
         }
         getAssets();
     }, []);

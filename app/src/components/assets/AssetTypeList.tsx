@@ -15,12 +15,7 @@ const AssetTypeList = () => {
     useEffect(() => {
         async function getAssets() {
             const fetchedAssets = await Api("assets/list.php", {"all": true}, cancelToken.token);
-            try {
-                setAssets(fetchedAssets['assets']);
-            } catch (error) {
-                console.log(error);
-                setAssets([]);
-            }
+            setAssets(fetchedAssets['assets']);
         }
         getAssets();
     }, []);
