@@ -26,14 +26,11 @@ const Asset = () => {
             setAssetType(fetchedAssets['assets'][0]);//Store asset type
 
             //find individual asset in list
-            for (let index = 0; index < fetchedAssets['assets'][0]['tags'].length; index++) {
-                const element = fetchedAssets['assets'][0]['tags'][index];
+            fetchedAssets['assets'][0]['tags'].map((element: any) => {
                 if (element.assets_id == parseInt(asset)) {
                     setThisAsset(element);
-                    break;
                 }
-            }
-            
+            });            
         }
         getAssets();
     }, []);
