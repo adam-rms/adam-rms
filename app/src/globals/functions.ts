@@ -1,7 +1,5 @@
 import { faFileImage, faFilePdf, faFileWord, faFilePowerpoint, faFileExcel, faFileCsv, faFileAudio, faFileVideo, faFileArchive, faFileCode, faFileAlt, faFile} from '@fortawesome/free-solid-svg-icons'
-import { CancelToken } from "axios";
 import Api from "../controllers/Api";
-
 
 /**
 *  Get the URL for the resource in AdamRMS s3 Bucket
@@ -9,8 +7,8 @@ import Api from "../controllers/Api";
  * @param size s3files_meta_size 
  * @returns string 
  */
-export async function s3url (fileid: string, size: number, cancelToken: CancelToken) {
-    const response = await Api("file/", {"f": fileid, "d": "force", "s": size}, cancelToken);
+export async function s3url (fileid: string, size: number) {
+    const response = await Api("file/", {"f": fileid, "d": "force", "s": size});
     return(response.url);
 }
 

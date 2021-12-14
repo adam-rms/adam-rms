@@ -21,18 +21,21 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import AssetTypeProvider from "./contexts/Asset/AssetTypeContext";
 
 const App: React.FC = () => {
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
-          <IonRouterOutlet id="main">
-            <Routes />
-          </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
+      <AssetTypeProvider>
+        <IonReactRouter>
+          <IonSplitPane contentId="main">
+            <Menu />
+            <IonRouterOutlet id="main">
+              <Routes />
+            </IonRouterOutlet>
+          </IonSplitPane>
+        </IonReactRouter>
+      </AssetTypeProvider>
     </IonApp>
   );
 };

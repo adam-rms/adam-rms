@@ -1,43 +1,21 @@
 import { faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonItem, IonLabel, IonList, IonRow, useIonViewWillLeave } from "@ionic/react";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonItem, IonLabel, IonList, IonRow } from "@ionic/react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import Api from "../../controllers/Api";
+import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
 import { s3url, fileExtensionToIcon, formatSize } from "../../globals/functions";
-import { AssetData, AssetTypeData } from "../../globals/interfaces";
 import Page from "../../pages/Page";
 
 const Asset = () => {
     let { type, asset } = useParams<{type: string, asset: string}>();
-    const [assetType, setAssetType] = useState<AssetTypeData>({tags: [], thumnails: [], files: [], fields: []});
-    const [thisAsset, setThisAsset] = useState<AssetData>({flagsblocks: {BLOCK:[], FLAG:[], COUNT:{BLOCK: 0, FLAG: 0}}});
-    let cancelToken = axios.CancelToken.source();
+    const { AssetTypes } = useContext(AssetTypeContext);
+    
+    //filter by requested asset type
+    const thisAssetType = AssetTypes.find((element: IAssetType) => element.assetTypes_id == parseInt(type));
 
-    //get data
-    useEffect(() => {
-        async function getAssets() {
-            //reset base values - needed so old data not shown
-            setAssetType({tags: [], thumnails: [], files: [], fields: []});
-            setThisAsset({flagsblocks: {BLOCK:[], FLAG:[], COUNT:{BLOCK: 0, FLAG: 0}}});
-            //query api
-            const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
-            setAssetType(fetchedAssets['assets'][0]);//Store asset type
-
-            //find individual asset in list
-            fetchedAssets['assets'][0]['tags'].map((element: any) => {
-                if (element.assets_id == parseInt(asset)) {
-                    setThisAsset(element);
-                }
-            });            
-        }
-        getAssets();
-    }, []);
-
-    useIonViewWillLeave(() => {
-        cancelToken.cancel();
-    });
+    //filter by requested asset
+    const thisAsset = thisAssetType.tags.find((element: IAsset) => element.assets_id == parseInt(asset));
 
     //return page layout
     return (
@@ -107,12 +85,12 @@ const Asset = () => {
                                 </IonItem>
                             </IonCol>
                             <IonCol>
-                                {assetType.fields.map((element: {}, index: number) => {
-                                    if (assetType.fields[index-1] !== "" && thisAsset["asset_definableFields_" + index] !== "") {
+                                {thisAssetType.fields.map((element: {}, index: number) => {
+                                    if (thisAssetType.fields[index-1] !== "" && thisAsset["asset_definableFields_" + index] !== "") {
                                         return (
                                             <IonItem key={index}>
                                                 <div className="container">
-                                                    <IonCardSubtitle>{assetType.fields[index-1]}</IonCardSubtitle>
+                                                    <IonCardSubtitle>{thisAssetType.fields[index-1]}</IonCardSubtitle>
                                                     <IonCardTitle>{thisAsset["asset_definableFields_" + index]}</IonCardTitle>
                                                 </div>
                                             </IonItem>
@@ -133,7 +111,7 @@ const Asset = () => {
                         <IonList>
                             {thisAsset.files.map(async (item :any) => {
                                 return (
-                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size, cancelToken.token)}>
+                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size)}>
                                         <IonItem key={item.s3files_id}>
                                             <IonLabel slot="start">
                                                 <FontAwesomeIcon icon={fileExtensionToIcon(item.s3files_extension)} />

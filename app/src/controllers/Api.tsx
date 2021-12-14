@@ -9,12 +9,11 @@ import { baseURL } from "../globals/variables";
  * @returns response data as an Object
  * @link https://adam-rms.com/docs/api/intro for V1 endpoints
  */
-const Api = async (endpoint: string, data: {}, cancelToken: CancelToken) => {
+const Api = async (endpoint: string, data: {}) => {
 
     return (
         axios
             .get(baseURL + 'api/' + endpoint, {
-                cancelToken: cancelToken,
                 params: data
             })
             .then(function (response) {
@@ -25,11 +24,7 @@ const Api = async (endpoint: string, data: {}, cancelToken: CancelToken) => {
                 }
             })
             .catch(function (error) {
-                if (axios.isCancel(error)) {
-                    console.log("axios request cancelled", error.message, endpoint);
-                } else {
-                    console.log(error.response);
-                }
+                console.log(error.response);
             })
     );
 }

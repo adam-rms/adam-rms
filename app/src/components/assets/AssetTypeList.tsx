@@ -1,38 +1,28 @@
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IonAvatar, IonCard, IonIcon, IonItem, IonLabel, IonList, useIonViewWillLeave } from "@ionic/react";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import Api from "../../controllers/Api";
+import { IonAvatar, IonCard, IonItem, IonLabel, IonList } from "@ionic/react";
+import { useContext, useEffect } from "react";
+import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
 import Page from "../../pages/Page";
 import "./Asset.css";
 
-
 const AssetTypeList = () => {
-    const [assetTypes, setAssets] = useState([]);
-    let cancelToken = axios.CancelToken.source();
+    const { AssetTypes, refreshAssetTypes } = useContext(AssetTypeContext);
 
-    useEffect(() => {
-        async function getAssets() {
-            const fetchedAssets = await Api("assets/list.php", {"all": true}, cancelToken.token);
-            setAssets(fetchedAssets['assets']);
-        }
-        getAssets();
-    }, []);
-
-    useIonViewWillLeave(() => {
-        cancelToken.cancel();
-    });
+    //Get data from API
+    useEffect( () => {
+        refreshAssetTypes();
+    }, [])
 
     return (
         <Page title="Asset List">
             <IonCard>
                 <IonList>
-                    {assetTypes.map((item :any) => {
+                    {AssetTypes.map((item : IAssetType) => {
                         return (
                         <IonItem key={item.assetTypes_id} routerLink={"/assets/" + item.assetTypes_id}>
-                            {item.thumbnails.length > 0 && <IonAvatar slot="start"><img src={item.thumnails[0]} alt={item.assetTypes_name} className="imgIcon"></img></IonAvatar>}
-                            {item.thumbnails.length < 1 && <FontAwesomeIcon icon={faQuestionCircle} size="2x" className="imgIcon"/> }
+                            {item.thumbnails.length > 0 && <IonAvatar slot="start"><img src={item.thumbnails[0]} alt={item.assetTypes_name} className="imgIcon"></img></IonAvatar>}
+                            {item.thumbnails.length == 0 && <FontAwesomeIcon icon={faQuestionCircle} size="2x" className="imgIcon"/> }
                             <IonLabel>
                                 <h2>{item.assetTypes_name}</h2>
                                 <p>{item.assetCategories_name}</p>

@@ -1,39 +1,25 @@
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonImg, IonItem, IonLabel, IonList, IonRow, IonSlide, IonSlides, useIonViewWillLeave } from "@ionic/react";
-import { useEffect, useRef, useState } from "react";
+import { useContext } from "react";
 import { useParams } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Api from "../../controllers/Api";
 import { fileExtensionToIcon, formatSize, s3url } from "../../globals/functions";
-import Page from "../../pages/Page";
 import { faArrowRight, faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
-import { AssetTypeData } from "../../globals/interfaces";
+import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
+import Page from "../../pages/Page";
 
 const AssetType = () => {
     let { type } = useParams<{type: string}>();
-    const [assetType, setAssetType] = useState<AssetTypeData>({tags: [], thumnails: [], files: [], fields: []});
-    let cancelToken = axios.CancelToken.source();
 
-    //get data
-    useEffect(() => {
-        async function getAssets() {
-            setAssetType({tags: [], thumnails: [], files: [], fields: []});
-            const fetchedAssets = await Api("assets/list.php", {"assetTypes_id": type,"all": true}, cancelToken.token);
-            setAssetType(fetchedAssets['assets'][0]); //as this is only listing one type, only return one object
-        }
-        getAssets();
-    }, []);
-
-    useIonViewWillLeave(() => {
-        cancelToken.cancel();
-    });
+    const { AssetTypes } = useContext(AssetTypeContext);
     
+    //filter by requested asset type
+    const thisAssetType = AssetTypes.find((element: IAssetType) => element.assetTypes_id == parseInt(type));
 
     //generate image carousel
     let images;
-    if (assetType.thumnails && assetType.thumnails.length > 0) {
+    if (thisAssetType.thumnails && thisAssetType.thumnails.length > 0) {
         images = <IonSlides>
-                    {assetType.thumbnails.map((image:any) => {
+                    {thisAssetType.thumbnails.map((image:any) => {
                         return (
                             <IonSlide>
                                 <IonImg src={image.url} alt={image.s3files_name} />
@@ -45,16 +31,16 @@ const AssetType = () => {
 
     //Generate file list
     let files;
-    if (assetType.files && assetType.files.length > 0){
+    if (thisAssetType.files && thisAssetType.files.length > 0){
         files = <IonCard>
                     <IonCardHeader>
                         <IonCardTitle>Asset Type Files</IonCardTitle>
                     </IonCardHeader>
                     <IonCardContent>
                         <IonList>
-                            {assetType.files.map(async (item :any) => {
+                            {thisAssetType.files.map(async (item :any) => {
                                 return (
-                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size, cancelToken.token)}>
+                                    <a href={ await s3url(item.s3files_id, item.s3files_meta_size)}>
                                         <IonItem key={item.s3files_id}>
                                             <IonLabel slot="start">
                                                 <FontAwesomeIcon icon={fileExtensionToIcon(item.s3files_extension)} />
@@ -76,7 +62,7 @@ const AssetType = () => {
 
     //return page layout
     return (
-        <Page title={assetType.assetTypes_name}>
+        <Page title={thisAssetType.assetTypes_name}>
             {images}
             <IonCard>
                 <IonCardContent>
@@ -84,33 +70,33 @@ const AssetType = () => {
                         <IonCol>
                             <div className="container">
                                 <IonCardSubtitle>Manufacturer</IonCardSubtitle>
-                                <IonCardTitle>{assetType.manufacturers_name}</IonCardTitle>
+                                <IonCardTitle>{thisAssetType.manufacturers_name}</IonCardTitle>
                             </div>
                             <div className="container">
                                 <IonCardSubtitle>Category</IonCardSubtitle>
-                                <IonCardTitle>{assetType.assetCategories_name}</IonCardTitle>
+                                <IonCardTitle>{thisAssetType.assetCategories_name}</IonCardTitle>
                             </div>
-                            {assetType.assetTypes_productLink && <div className="container">
+                            {thisAssetType.assetTypes_productLink && <div className="container">
                                 <IonCardSubtitle>Product Link</IonCardSubtitle>
-                                <IonCardTitle><a href={assetType.assetTypes_productLink} target="_system">{assetType.assetTypes_productLink}</a></IonCardTitle>
+                                <IonCardTitle><a href={thisAssetType.assetTypes_productLink} target="_system">{thisAssetType.assetTypes_productLink}</a></IonCardTitle>
                             </div>}
                         </IonCol>
                         <IonCol>
                             <div className="container">
                                 <IonCardSubtitle>Weight</IonCardSubtitle>
-                                <IonCardTitle>{assetType.assetTypes_mass_format}</IonCardTitle>
+                                <IonCardTitle>{thisAssetType.assetTypes_mass_format}</IonCardTitle>
                             </div>
                             <div className="container">
                                 <IonCardSubtitle>Value</IonCardSubtitle>
-                                <IonCardTitle>{assetType.assetTypes_value_format}</IonCardTitle>
+                                <IonCardTitle>{thisAssetType.assetTypes_value_format}</IonCardTitle>
                             </div>
                             <div className="container">
                                 <IonCardSubtitle>Day Rate</IonCardSubtitle>
-                                <IonCardTitle>{assetType.assetTypes_dayRate_format}</IonCardTitle>
+                                <IonCardTitle>{thisAssetType.assetTypes_dayRate_format}</IonCardTitle>
                             </div>
                             <div className="container">
                                 <IonCardSubtitle>Week Rate</IonCardSubtitle>
-                                <IonCardTitle>{assetType.assetTypes_weekRate_format}</IonCardTitle>
+                                <IonCardTitle>{thisAssetType.assetTypes_weekRate_format}</IonCardTitle>
                             </div>
                         </IonCol>
                     </IonRow>
@@ -122,9 +108,9 @@ const AssetType = () => {
                 </IonCardHeader>
                 <IonCardContent>
                     <IonList>
-                        {assetType.tags.map((item :any) => {
+                        {thisAssetType.tags.map((item :any) => {
                             return (
-                                <IonItem key={item.assets_id} routerLink={"/assets/" + assetType.assetTypes_id + "/" + item.assets_id}>
+                                <IonItem key={item.assets_id} routerLink={"/assets/" + thisAssetType.assetTypes_id + "/" + item.assets_id}>
                                     <IonLabel>
                                         <h2>{item.assets_tag}</h2>
                                     </IonLabel>
