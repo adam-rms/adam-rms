@@ -2,6 +2,14 @@
  * Asset Type object
  */
 interface IAssetType {
+    assets: [...IAssetTypeData],
+    "pagination": {
+        "page": number,
+        "total": number
+    }
+}
+
+interface IAssetTypeData {
     assetTypes_id: number,
     assetTypes_name: string,
     assetCategories_id: number,
@@ -37,8 +45,8 @@ interface IAssetType {
 }
 
 type AssetTypeContextType = {
-    AssetTypes: IAssetType[];
-    //appendAssetType: (assetTypes_id: number) => void;
+    AssetTypes: IAssetType;
+    getMoreAssets: () => void;
     refreshAssetTypes: () => void;
 }
 

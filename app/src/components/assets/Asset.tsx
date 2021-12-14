@@ -1,6 +1,6 @@
 import { faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonItem, IonLabel, IonList, IonRow } from "@ionic/react";
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonRow } from "@ionic/react";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
@@ -9,10 +9,15 @@ import Page from "../../pages/Page";
 
 const Asset = () => {
     let { type, asset } = useParams<{type: string, asset: string}>();
-    const { AssetTypes } = useContext(AssetTypeContext);
+    const { AssetTypes, refreshAssetTypes } = useContext(AssetTypeContext);
     
+    function doRefresh(event: CustomEvent){
+        refreshAssetTypes();
+        event.detail.complete();
+    }
+
     //filter by requested asset type
-    const thisAssetType = AssetTypes.find((element: IAssetType) => element.assetTypes_id == parseInt(type));
+    const thisAssetType = AssetTypes.assets.find((element: IAssetTypeData) => element.assetTypes_id == parseInt(type));
 
     //filter by requested asset
     const thisAsset = thisAssetType.tags.find((element: IAsset) => element.assets_id == parseInt(asset));
@@ -20,6 +25,9 @@ const Asset = () => {
     //return page layout
     return (
         <Page title={thisAsset.assets_tag_format}>
+            <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+                <IonRefresherContent/>
+            </IonRefresher>
             {/* Maintenance */}
             {thisAsset.flagsblocks.BLOCK.map((block: any) => {
                 return (

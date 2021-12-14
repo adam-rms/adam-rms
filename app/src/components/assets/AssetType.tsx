@@ -1,4 +1,4 @@
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonImg, IonItem, IonLabel, IonList, IonRow, IonSlide, IonSlides, useIonViewWillLeave } from "@ionic/react";
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonImg, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonRow, IonSlide, IonSlides, useIonViewWillLeave } from "@ionic/react";
 import { useContext } from "react";
 import { useParams } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,11 +9,15 @@ import Page from "../../pages/Page";
 
 const AssetType = () => {
     let { type } = useParams<{type: string}>();
+    const { AssetTypes, refreshAssetTypes } = useContext(AssetTypeContext);
 
-    const { AssetTypes } = useContext(AssetTypeContext);
+    function doRefresh(event: CustomEvent){
+        refreshAssetTypes();
+        event.detail.complete();
+    }
     
     //filter by requested asset type
-    const thisAssetType = AssetTypes.find((element: IAssetType) => element.assetTypes_id == parseInt(type));
+    const thisAssetType = AssetTypes.assets.find((element: IAssetTypeData) => element.assetTypes_id == parseInt(type));
 
     //generate image carousel
     let images;
@@ -63,6 +67,9 @@ const AssetType = () => {
     //return page layout
     return (
         <Page title={thisAssetType.assetTypes_name}>
+            <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+                <IonRefresherContent/>
+            </IonRefresher>
             {images}
             <IonCard>
                 <IonCardContent>
