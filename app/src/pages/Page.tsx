@@ -1,5 +1,4 @@
 import { IonBackButton, IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import './Page.css';
 
 function Page(props: any) {
 

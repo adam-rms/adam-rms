@@ -4,9 +4,13 @@ import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, 
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
-import { s3url, fileExtensionToIcon, formatSize } from "../../globals/functions";
+import { s3url, fileExtensionToIcon, formatSize } from "../../utilities/Files";
 import Page from "../../pages/Page";
 
+/**
+ * Asset Page
+ * Lists details for an individual asset
+ */
 const Asset = () => {
     let { type, asset } = useParams<{type: string, asset: string}>();
     const { AssetTypes, refreshAssetTypes } = useContext(AssetTypeContext);
@@ -28,6 +32,7 @@ const Asset = () => {
             <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                 <IonRefresherContent/>
             </IonRefresher>
+            
             {/* Maintenance */}
             {thisAsset.flagsblocks.BLOCK.map((block: any) => {
                 return (
@@ -58,6 +63,7 @@ const Asset = () => {
                     </IonCardTitle>
                 </IonCardContent>
             </IonCard>
+
             {/* Asset Data */}
             <IonCard>
                 <IonCardHeader>
@@ -110,8 +116,10 @@ const Asset = () => {
                     </IonList>
                 </IonCardContent>
             </IonCard>
+
             {/* Asset Files */}
-            { thisAsset.files && thisAsset.files.length > 0 && <IonCard>
+            { thisAsset.files && thisAsset.files.length > 0 && 
+                <IonCard>
                     <IonCardHeader>
                         <IonCardTitle>Asset Files</IonCardTitle>
                     </IonCardHeader>
@@ -136,7 +144,8 @@ const Asset = () => {
                             })}
                         </IonList>
                     </IonCardContent>
-                </IonCard>}
+                </IonCard>
+            }
         </Page>
     );
 }

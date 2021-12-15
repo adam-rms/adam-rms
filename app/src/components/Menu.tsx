@@ -11,6 +11,7 @@ interface AppPage {
   title: string;
 }
 
+//Add new pages to this array
 const appPages: AppPage[] = [
   {
     title: 'Assets',

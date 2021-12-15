@@ -2,11 +2,15 @@ import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, 
 import { useContext } from "react";
 import { useParams } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { fileExtensionToIcon, formatSize, s3url } from "../../globals/functions";
+import { fileExtensionToIcon, formatSize, s3url } from "../../utilities/Files";
 import { faArrowRight, faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
 import Page from "../../pages/Page";
 
+/**
+ * Asset Type Page
+ * Lists details for an individual asset type
+ */
 const AssetType = () => {
     let { type } = useParams<{type: string}>();
     const { AssetTypes, refreshAssetTypes } = useContext(AssetTypeContext);

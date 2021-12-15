@@ -1,5 +1,5 @@
-import axios, { CancelToken } from 'axios';
-import { baseURL } from "../globals/variables";
+import axios from 'axios';
+import { baseURL } from "../utilities/Auth";
 
 /**
  * Get data from AdamRMS API

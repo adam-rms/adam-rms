@@ -6,6 +6,10 @@ import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
 import Page from "../../pages/Page";
 import "./Asset.css";
 
+/**
+ * Asset Type List Page
+ * Lists all asset types for a business
+ */
 const AssetTypeList = () => {
     const { AssetTypes, refreshAssetTypes, getMoreAssets } = useContext(AssetTypeContext);
     

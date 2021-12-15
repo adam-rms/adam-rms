@@ -2,6 +2,7 @@ import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Menu from './components/Menu';
 import { Routes } from "./pages/Route";
+import Contexts from "./contexts/Context";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -21,12 +22,11 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import AssetTypeProvider from "./contexts/Asset/AssetTypeContext";
 
 const App: React.FC = () => {
   return (
     <IonApp>
-      <AssetTypeProvider>
+      <Contexts>
         <IonReactRouter>
           <IonSplitPane contentId="main">
             <Menu />
@@ -35,7 +35,7 @@ const App: React.FC = () => {
             </IonRouterOutlet>
           </IonSplitPane>
         </IonReactRouter>
-      </AssetTypeProvider>
+      </Contexts>
     </IonApp>
   );
 };
