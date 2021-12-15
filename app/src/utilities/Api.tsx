@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { baseURL } from "../utilities/Auth";
+
+
+/* Where is the API hosted?
+ * N.B This is a temporary variable to be replaced when auth is added to the app!
+ */
+const baseURL = "http://admin.test/";
+
+//TODO: @jbithell will come back and wrap this into a class, and probably remove axios
 
 /**
  * Get data from AdamRMS API
@@ -10,7 +17,6 @@ import { baseURL } from "../utilities/Auth";
  * @link https://adam-rms.com/docs/api/intro for V1 endpoints
  */
 const Api = async (endpoint: string, data: {}) => {
-
     return (
         axios
             .get(baseURL + 'api/' + endpoint, {

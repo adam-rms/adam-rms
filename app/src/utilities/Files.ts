@@ -1,5 +1,5 @@
 import { faFileImage, faFilePdf, faFileWord, faFilePowerpoint, faFileExcel, faFileCsv, faFileAudio, faFileVideo, faFileArchive, faFileCode, faFileAlt, faFile} from '@fortawesome/free-solid-svg-icons'
-import Api from "../controllers/Api";
+import Api from "./Api";
 
 /**
 *  Get the URL for the resource in AdamRMS s3 Bucket
