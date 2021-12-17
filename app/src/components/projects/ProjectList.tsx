@@ -6,10 +6,10 @@ import { ProjectContext } from "../../contexts/project/ProjectContext";
 import Page from "../../pages/Page";
 
 /**
- * Asset Type List Page
- * Lists all asset types for a business
+ * Project List Page
+ * Lists all projects for a business
  */
-const AssetTypeList = () => {
+const ProjectList = () => {
     const { projects, refreshProjects } = useContext(ProjectContext);
     
     const doRefresh = (event: CustomEvent) => {
@@ -23,12 +23,12 @@ const AssetTypeList = () => {
         refreshProjects();
     }, [])
 
-    //generate assetList if there are assets
-    let assets;
+    //generate project list if there are projects
+    let projectList;
     if (projects){
-        assets = projects.map((item: IProject) => {
+        projectList = projects.map((item: IProject) => {
             return (
-                <IonItem key={item.projects_id} routerLink={"/project/" + item.projects_id}>
+                <IonItem key={item.projects_id} routerLink={"/projects/" + item.projects_id}>
                     <div slot="start">
                         {item.thisProjectManager && <FontAwesomeIcon icon="star" size="lg"/>}
                         {!item.thisProjectManager && <FontAwesomeIcon icon={['far', 'circle']} size="lg" />}
@@ -44,7 +44,7 @@ const AssetTypeList = () => {
             )
         })
     } else {
-        assets = <IonItem><IonTitle>No Projects Found</IonTitle></IonItem>
+        projectList = <IonItem><IonTitle>No Projects Found</IonTitle></IonItem>
     }
 
     return (
@@ -54,11 +54,11 @@ const AssetTypeList = () => {
             </IonRefresher>
             <IonCard>
                 <IonList>
-                    {assets}
+                    {projectList}
                 </IonList>
             </IonCard>
         </Page>
     );
 };
 
-export default AssetTypeList;
+export default ProjectList;

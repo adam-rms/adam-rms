@@ -1,5 +1,6 @@
 import AssetTypeProvider from "./asset/AssetTypeContext";
 import ProjectProvider from "./project/ProjectContext";
+import ProjectDataProvider from "./project/ProjectDataContext";
 
 /**
  * This is used to wrap all contexts into one component.
@@ -11,7 +12,9 @@ export default function Contexts(props: any) {
         <>
             <AssetTypeProvider>
                 <ProjectProvider>
-                    {props.children}
+                    <ProjectDataProvider>
+                        {props.children}
+                    </ProjectDataProvider>         
                 </ProjectProvider>
             </AssetTypeProvider>
         </>

@@ -4,6 +4,7 @@ import { Route } from "react-router";
 import Asset from "../components/assets/Asset";
 import AssetType from "../components/assets/AssetType";
 import AssetTypeList from "../components/assets/AssetTypeList";
+import Project from "../components/projects/Project";
 import ProjectList from "../components/projects/ProjectList";
 
 /**
@@ -20,6 +21,7 @@ export function Routes() {
 
             {/* Projects */}
             <Route path="/projects/" component={ProjectList} exact />
+            <Route path="/projects/:projectId" component={Project} exact />
         </>
     )
 }

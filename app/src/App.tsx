@@ -1,7 +1,7 @@
 import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Menu from './components/Menu';
-import { Routes } from "./pages/Route";
+import { Routes } from "./utilities/Route";
 import Contexts from "./contexts/Context";
 
 /* Core CSS required for Ionic components to work properly */

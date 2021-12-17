@@ -95,3 +95,10 @@ interface IProject {
     projects_manager: number,
     thisProjectManager: boolean
 }
+
+interface IProjectData{
+    project: {},
+    files: [...any],
+    assetsAssignmentsStatus: [...any],
+    FINANCIALS: {}
+}

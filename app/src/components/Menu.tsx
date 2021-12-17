@@ -1,7 +1,7 @@
 import { IonContent, IonImg, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { faCube, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { faCube, faList, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import './Menu.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -17,6 +17,11 @@ const appPages: AppPage[] = [
     title: 'Assets',
     url: '/assets/',
     icon: faCube,
+  },
+  {
+    title: 'Projects',
+    url: '/projects/',
+    icon: faList,
   }
 ];
 
