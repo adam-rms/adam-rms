@@ -3,8 +3,7 @@ import { useContext } from "react";
 import { useParams } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { fileExtensionToIcon, formatSize, s3url } from "../../utilities/Files";
-import { faArrowRight, faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
-import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
+import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
 import Page from "../../pages/Page";
 
 /**
@@ -125,10 +124,10 @@ const AssetType = () => {
                                     <IonLabel>
                                         <h2>{item.assets_tag}</h2>
                                     </IonLabel>
-                                    <div className="container">{item.flagsblocks['COUNT']['BLOCK'] > 0 && <FontAwesomeIcon icon={faBan} color="#dc3545" />}</div>
-                                    <div className="container">{item.flagsblocks['COUNT']['FLAG'] > 0 && <FontAwesomeIcon icon={faFlag} color="#ffc107" />}</div>
+                                    <div className="container">{item.flagsblocks['COUNT']['BLOCK'] > 0 && <FontAwesomeIcon icon="ban" color="#dc3545" />}</div>
+                                    <div className="container">{item.flagsblocks['COUNT']['FLAG'] > 0 && <FontAwesomeIcon icon="flag" color="#ffc107" />}</div>
                                     <div slot="end">
-                                        <FontAwesomeIcon icon={faArrowRight} />
+                                        <FontAwesomeIcon icon="arrow-right" />
                                     </div>
                                 </IonItem>
                             )

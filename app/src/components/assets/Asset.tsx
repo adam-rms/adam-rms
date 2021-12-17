@@ -1,9 +1,8 @@
-import { faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonRow } from "@ionic/react";
-import { useContext, useEffect, useState } from "react";
+import { useContext} from "react";
 import { useParams } from "react-router";
-import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
+import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
 import { s3url, fileExtensionToIcon, formatSize } from "../../utilities/Files";
 import Page from "../../pages/Page";
 
@@ -38,7 +37,7 @@ const Asset = () => {
                 return (
                     <IonCard key={block.maintenanceJobs_id}>
                         <IonCardContent>
-                            <IonCardTitle><FontAwesomeIcon icon={faBan} color="#dc3545" /> {block.maintenanceJobs_title}</IonCardTitle>
+                            <IonCardTitle><FontAwesomeIcon icon="ban" color="#dc3545" /> {block.maintenanceJobs_title}</IonCardTitle>
                             <IonLabel className="container">{block.maintenanceJobs_faultDescription}</IonLabel>
                         </IonCardContent>
                     </IonCard>
@@ -48,7 +47,7 @@ const Asset = () => {
                 return (
                     <IonCard key={block.maintenanceJobs_id}>
                         <IonCardContent>
-                            <IonCardTitle><FontAwesomeIcon icon={faFlag} color="#ffc107" /> {block.maintenanceJobs_title}</IonCardTitle>
+                            <IonCardTitle><FontAwesomeIcon icon="flag" color="#ffc107" /> {block.maintenanceJobs_title}</IonCardTitle>
                             <IonLabel className="container">{block.maintenanceJobs_faultDescription}</IonLabel>
                         </IonCardContent>
                     </IonCard>

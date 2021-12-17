@@ -2,7 +2,7 @@ import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IonAvatar, IonCard, IonImg, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent } from "@ionic/react";
 import { useContext, useEffect } from "react";
-import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
+import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
 import Page from "../../pages/Page";
 import "./Asset.css";
 

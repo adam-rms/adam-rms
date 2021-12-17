@@ -23,6 +23,15 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+/*Font Awesome */
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+
+//setup Font Awesome icons
+library.add(fab, far, fas);
+
 const App: React.FC = () => {
   return (
     <IonApp>

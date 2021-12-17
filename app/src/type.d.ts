@@ -86,3 +86,12 @@ interface IAsset {
     },
     files: [...any]
 }
+
+/* Project Object */
+interface IProject {
+    projects_id: number,
+    projects_name: string,
+    clients_name: string,
+    projects_manager: number,
+    thisProjectManager: boolean
+}
