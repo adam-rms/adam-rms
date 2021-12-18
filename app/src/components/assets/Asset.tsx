@@ -14,7 +14,7 @@ import Page from "../../pages/Page";
 const Asset = () => {
     let { type, asset } = useParams<{type: string, asset: string}>();
     const { AssetTypes, refreshAssetTypes } = useContext(AssetTypeContext);
-    
+
     function doRefresh(event: CustomEvent){
         refreshAssetTypes();
         event.detail.complete();
@@ -22,18 +22,20 @@ const Asset = () => {
 
     //filter by requested asset type
     const thisAssetType = AssetTypes.assets.find((element: IAssetTypeData) => element.assetTypes_id == parseInt(type));
-    
+
     //if we've got the asset, show data
     if (thisAssetType) {
+
         //filter by requested asset
         const thisAsset = thisAssetType.tags.find((element: IAsset) => element.assets_id == parseInt(asset));
+
         //return page layout
         return (
             <Page title={thisAsset.assets_tag_format}>
                 <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                     <IonRefresherContent/>
                 </IonRefresher>
-                
+
                 {/* Maintenance */}
                 {thisAsset.flagsblocks.BLOCK.map((block: any) => {
                     return (
@@ -55,7 +57,7 @@ const Asset = () => {
                         </IonCard>
                     )
                 })}
-                
+
                 {/* Asset Notes */}
                 <IonCard>
                     <IonCardContent>
@@ -118,37 +120,37 @@ const Asset = () => {
                     </IonCardContent>
                 </IonCard>
 
-                {/* Asset Files */}
-                { thisAsset.files && thisAsset.files.length > 0 && 
-                    <IonCard>
-                        <IonCardHeader>
-                            <IonCardTitle>Asset Files</IonCardTitle>
-                        </IonCardHeader>
-                        <IonCardContent>
-                            <IonList>
-                                {thisAsset.files.map(async (item :any) => {
-                                    return (
-                                        <a href={ await s3url(item.s3files_id, item.s3files_meta_size)}>
-                                            <IonItem key={item.s3files_id}>
-                                                <IonLabel slot="start">
-                                                    <FontAwesomeIcon icon={fileExtensionToIcon(item.s3files_extension)} />
-                                                </IonLabel>
-                                                <IonLabel>
-                                                    <h2>{item.s3files_name}</h2>
-                                                </IonLabel>
-                                                <IonLabel slot="end">
-                                                    {formatSize(item.s3files_meta_size)}
-                                                </IonLabel>
-                                            </IonItem>
-                                        </a>
-                                    )
-                                })}
-                            </IonList>
-                        </IonCardContent>
-                    </IonCard>
-                }
-            </Page>
-        );
+                    {/* Asset Files */}
+                    { thisAsset.files && thisAsset.files.length > 0 && 
+                        <IonCard>
+                            <IonCardHeader>
+                                <IonCardTitle>Asset Files</IonCardTitle>
+                            </IonCardHeader>
+                            <IonCardContent>
+                                <IonList>
+                                    {thisAsset.files.map(async (item :any) => {
+                                        return (
+                                            <a href={ await s3url(item.s3files_id, item.s3files_meta_size)}>
+                                                <IonItem key={item.s3files_id}>
+                                                    <IonLabel slot="start">
+                                                        <FontAwesomeIcon icon={fileExtensionToIcon(item.s3files_extension)} />
+                                                    </IonLabel>
+                                                    <IonLabel>
+                                                        <h2>{item.s3files_name}</h2>
+                                                    </IonLabel>
+                                                    <IonLabel slot="end">
+                                                        {formatSize(item.s3files_meta_size)}
+                                                    </IonLabel>
+                                                </IonItem>
+                                            </a>
+                                        )
+                                    })}
+                                </IonList>
+                            </IonCardContent>
+                        </IonCard>
+                    }
+                </Page>
+            );
     } else {
         //If there isn't an asset, refresh context to see if that helps
         refreshAssetTypes();
@@ -162,5 +164,7 @@ const Asset = () => {
         )
     }
 }
+
+
 
 export default Asset;
