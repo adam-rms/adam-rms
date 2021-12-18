@@ -1,5 +1,5 @@
 import { IonBackButton, IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import PageTitle from "../PageTitle";
+import PageTitle from "../components/PageTitle";
 
 type Props = {
     title?: string;
