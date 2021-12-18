@@ -20,7 +20,15 @@
                         {% endfor %}
                     </select>
                     <div style="text-align: right">
-                        <p><a href="#" id="unknownManufacturerShortlink">Manufacturer unknown</a></p>
+                        
+                            <p></p>
+                        
+                        <p>
+                            {% if 38|instancePermissions %}
+                                <a href="/manufacturers.php">Add new manufacturer</a> |&nbsp;
+                            {% endif %}
+                            <a href="#" id="unknownManufacturerShortlink">Manufacturer unknown</a>
+                        </p>
                     </div>
                 </div>
                 <div class="form-group">
