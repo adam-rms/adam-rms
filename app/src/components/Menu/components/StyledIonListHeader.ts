@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {IonListHeader} from "@ionic/react";
+import { IonListHeader } from "@ionic/react";
 
 const StyledIonListHeader = styled(IonListHeader)`
   ion-menu.md ion-list#inbox-list & {
@@ -11,7 +11,6 @@ const StyledIonListHeader = styled(IonListHeader)`
       padding-left: 16px;
       padding-right: 16px;
     }
-
   }
 
   ion-menu.md ion-list#labels-list & {
@@ -25,4 +24,4 @@ const StyledIonListHeader = styled(IonListHeader)`
   }
 `;
 
-export default StyledIonListHeader
+export default StyledIonListHeader;

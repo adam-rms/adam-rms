@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {IonContent} from "@ionic/react";
+import { IonContent } from "@ionic/react";
 
 const StyledIonContent = styled(IonContent)`
   --background: var(--ion-item-background, var(--ion-background-color, #fff));
@@ -14,7 +14,6 @@ const StyledIonContent = styled(IonContent)`
   ion-menu.ios & {
     --padding-bottom: 20px;
   }
-
 `;
 
 export default StyledIonContent;

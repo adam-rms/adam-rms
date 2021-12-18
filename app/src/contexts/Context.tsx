@@ -8,15 +8,13 @@ import ProjectDataProvider from "./project/ProjectDataContext";
  * @returns <Context> </Context>
  */
 export default function Contexts(props: any) {
-    return (
-        <>
-            <AssetTypeProvider>
-                <ProjectProvider>
-                    <ProjectDataProvider>
-                        {props.children}
-                    </ProjectDataProvider>         
-                </ProjectProvider>
-            </AssetTypeProvider>
-        </>
-    )
+  return (
+    <>
+      <AssetTypeProvider>
+        <ProjectProvider>
+          <ProjectDataProvider>{props.children}</ProjectDataProvider>
+        </ProjectProvider>
+      </AssetTypeProvider>
+    </>
+  );
 }

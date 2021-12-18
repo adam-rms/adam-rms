@@ -12,16 +12,16 @@ import ProjectList from "../components/projects/ProjectList";
  * @returns <Routes />
  */
 export function Routes() {
-    return (
-        <>
-            {/* Assets */}
-            <Route path="/assets/" component={AssetTypeList} exact/>
-            <Route path="/assets/:type" component={AssetType} exact/>
-            <Route path="/assets/:type/:asset" component={Asset} exact />
+  return (
+    <>
+      {/* Assets */}
+      <Route path="/assets/" component={AssetTypeList} exact />
+      <Route path="/assets/:type" component={AssetType} exact />
+      <Route path="/assets/:type/:asset" component={Asset} exact />
 
-            {/* Projects */}
-            <Route path="/projects/" component={ProjectList} exact />
-            <Route path="/projects/:projectId" component={Project} exact />
-        </>
-    )
+      {/* Projects */}
+      <Route path="/projects/" component={ProjectList} exact />
+      <Route path="/projects/:projectId" component={Project} exact />
+    </>
+  );
 }

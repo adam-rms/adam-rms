@@ -5,4 +5,3 @@ const BrandContainer = styled.div`
 `;
 
 export default BrandContainer;
-
