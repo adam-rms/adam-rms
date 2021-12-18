@@ -12,6 +12,7 @@ import {
   IonRefresher,
   IonRefresherContent,
 } from "@ionic/react";
+import styled from "styled-components";
 import { useContext, useEffect } from "react";
 import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
 import Page from "../../pages/Page";
@@ -55,12 +56,12 @@ const AssetTypeList = () => {
                 key={item.assetTypes_id}
                 routerLink={"/assets/" + item.assetTypes_id}
               >
+              <ThumbnailContainer>
                 {item.thumbnails.length > 0 && (
                   <IonAvatar slot="start">
                     <IonImg
                       src={item.thumbnails[0].url}
                       alt={item.assetTypes_name}
-                      className="imgIcon"
                     ></IonImg>
                   </IonAvatar>
                 )}
@@ -68,9 +69,9 @@ const AssetTypeList = () => {
                   <FontAwesomeIcon
                     icon={faQuestionCircle}
                     size="2x"
-                    className="imgIcon"
                   />
                 )}
+                </ThumbnailContainer>
                 <IonLabel>
                   <h2>{item.assetTypes_name}</h2>
                   <p>{item.assetCategories_name}</p>
@@ -92,5 +93,9 @@ const AssetTypeList = () => {
     </Page>
   );
 };
+
+const ThumbnailContainer = styled.div`
+    margin: 10px;
+`;
 
 export default AssetTypeList;

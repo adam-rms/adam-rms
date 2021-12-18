@@ -27,7 +27,7 @@ const AssetType = () => {
     if (thisAssetType) {
         //generate image carousel
         let images;
-        if (thisAssetType.thumnails && thisAssetType.thumnails.length > 0) {
+        if (thisAssetType.thumbnails && thisAssetType.thumbnails.length > 0) {
             images = <IonSlides>
                         {thisAssetType.thumbnails.map((image:any) => {
                             return (
