@@ -6,7 +6,6 @@ import {
 
 import { useLocation } from 'react-router-dom';
 import { faCube, IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import '../Menu.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import StyledIonContent from './components/StyledIonContent';
 import StyledIonList from './components/StyledIonList';
