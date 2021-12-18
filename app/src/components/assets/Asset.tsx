@@ -14,7 +14,7 @@ import Page from "../../pages/Page";
 const Asset = () => {
     let { type, asset } = useParams<{type: string, asset: string}>();
     const { AssetTypes, refreshAssetTypes } = useContext(AssetTypeContext);
-    
+
     function doRefresh(event: CustomEvent){
         refreshAssetTypes();
         event.detail.complete();
@@ -32,7 +32,7 @@ const Asset = () => {
             <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                 <IonRefresherContent/>
             </IonRefresher>
-            
+
             {/* Maintenance */}
             {thisAsset.flagsblocks.BLOCK.map((block: any) => {
                 return (
@@ -54,7 +54,7 @@ const Asset = () => {
                     </IonCard>
                 )
             })}
-            
+
             {/* Asset Notes */}
             <IonCard>
                 <IonCardContent>
@@ -118,7 +118,7 @@ const Asset = () => {
             </IonCard>
 
             {/* Asset Files */}
-            { thisAsset.files && thisAsset.files.length > 0 && 
+            { thisAsset.files && thisAsset.files.length > 0 &&
                 <IonCard>
                     <IonCardHeader>
                         <IonCardTitle>Asset Files</IonCardTitle>
@@ -149,5 +149,7 @@ const Asset = () => {
         </Page>
     );
 }
+
+
 
 export default Asset;

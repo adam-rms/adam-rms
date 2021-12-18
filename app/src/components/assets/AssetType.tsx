@@ -19,13 +19,13 @@ const AssetType = () => {
         refreshAssetTypes();
         event.detail.complete();
     }
-    
+
     //filter by requested asset type
     const thisAssetType = AssetTypes.assets.find((element: IAssetTypeData) => element.assetTypes_id == parseInt(type));
 
     //generate image carousel
     let images;
-    if (thisAssetType.thumnails && thisAssetType.thumnails.length > 0) {
+    if (thisAssetType.thumbnails && thisAssetType.thumbnails.length > 0) {
         images = <IonSlides>
                     {thisAssetType.thumbnails.map((image:any) => {
                         return (
