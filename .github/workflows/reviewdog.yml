@@ -42,7 +42,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-check
           workdir: "./app"
-          eslint_flags: "\"{src,apps,libs,test}/**/*.ts\""
+          eslint_flags: "./src"
   lintApi:
     name: Lint Api
     runs-on: ubuntu-latest
@@ -53,4 +53,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-check
           workdir: "./api"
-          eslint_flags: "\"{src,apps,libs,test}/**/*.ts\""
+          eslint_flags: "./src"
