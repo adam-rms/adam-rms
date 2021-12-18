@@ -55,21 +55,18 @@ const AssetTypeList = () => {
                 key={item.assetTypes_id}
                 routerLink={"/assets/" + item.assetTypes_id}
               >
-              <ThumbnailContainer>
-                {item.thumbnails.length > 0 && (
-                  <IonAvatar slot="start">
-                    <IonImg
-                      src={item.thumbnails[0].url}
-                      alt={item.assetTypes_name}
-                    ></IonImg>
-                  </IonAvatar>
-                )}
-                {item.thumbnails.length == 0 && (
-                  <FontAwesomeIcon
-                    icon={faQuestionCircle}
-                    size="2x"
-                  />
-                )}
+                <ThumbnailContainer>
+                  {item.thumbnails.length > 0 && (
+                    <IonAvatar slot="start">
+                      <IonImg
+                        src={item.thumbnails[0].url}
+                        alt={item.assetTypes_name}
+                      ></IonImg>
+                    </IonAvatar>
+                  )}
+                  {item.thumbnails.length == 0 && (
+                    <FontAwesomeIcon icon={faQuestionCircle} size="2x" />
+                  )}
                 </ThumbnailContainer>
                 <IonLabel>
                   <h2>{item.assetTypes_name}</h2>
@@ -94,7 +91,7 @@ const AssetTypeList = () => {
 };
 
 const ThumbnailContainer = styled.div`
-    margin: 10px;
+  margin: 10px;
 `;
 
 export default AssetTypeList;

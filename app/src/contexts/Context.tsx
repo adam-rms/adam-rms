@@ -6,11 +6,9 @@ import AssetTypeProvider from "./Asset/AssetTypeContext";
  * @returns <Context> </Context>
  */
 export default function Contexts(props: any) {
-    return (
-        <>
-            <AssetTypeProvider>
-                {props.children}
-            </AssetTypeProvider>
-        </>
-    )
+  return (
+    <>
+      <AssetTypeProvider>{props.children}</AssetTypeProvider>
+    </>
+  );
 }

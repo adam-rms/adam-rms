@@ -7,4 +7,3 @@ const BrandText = styled.p`
 `;
 
 export default BrandText;
-
