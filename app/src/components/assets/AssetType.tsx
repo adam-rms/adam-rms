@@ -22,7 +22,7 @@ const AssetType = () => {
 
     //filter by requested asset type
     const thisAssetType = AssetTypes.assets.find((element: IAssetTypeData) => element.assetTypes_id == parseInt(type));
-    console.log(thisAssetType)
+
     //generate image carousel
     let images;
     if (thisAssetType.thumbnails && thisAssetType.thumbnails.length > 0) {
