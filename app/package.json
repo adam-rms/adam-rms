@@ -58,7 +58,14 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
   },
   "eslintConfig": {
     "extends": [
@@ -81,6 +88,9 @@
   "devDependencies": {
     "@capacitor/cli": "3.2.4",
     "@types/react-helmet": "^6.1.4",
-    "@types/styled-components": "^5.1.18"
+    "@types/styled-components": "^5.1.18",
+    "gts": "^3.1.0",
+    "typescript": "^4.0.3",
+    "@types/node": "^14.11.2"
   }
 }
