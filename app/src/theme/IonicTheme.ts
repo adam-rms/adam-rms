@@ -1,12 +1,13 @@
 import { createGlobalStyle } from 'styled-components'
 
 const IonicTheme = createGlobalStyle`
-  body {
+
+		
     /* Ionic Variables and Theming. For more info, please see: http://ionicframework.com/docs/theming/ */
     /** Ionic CSS Variables **/
     :root {
       /** primary **/
-      --ion-color-primary: #f77e9d;
+      --ion-color-primary: #FFFFFF;
       --ion-color-primary-rgb: 247, 126, 157;
       --ion-color-primary-contrast: #000000;
       --ion-color-primary-contrast-rgb: 0, 0, 0;
@@ -80,7 +81,7 @@ const IonicTheme = createGlobalStyle`
 
     @media (prefers-color-scheme: dark) {
       /*
-	   * Dark Colors
+	   * Dark Colours
 	   * -------------------------------------------
 	   */
 
@@ -236,8 +237,7 @@ const IonicTheme = createGlobalStyle`
         --ion-card-background: #1e1e1e;
       }
     }
-
-  }
+	
 `;
 
 export default IonicTheme;
