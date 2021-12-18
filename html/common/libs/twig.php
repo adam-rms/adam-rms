@@ -46,6 +46,10 @@ $TWIG->addFilter(new \Twig\TwigFilter('formatsize', function ($var) {
     global $bCMS;
     return $bCMS->formatSize($var);
 }));
+$TWIG->addFilter(new \Twig\TwigFilter('cleanString', function ($var) {
+    global $bCMS;
+    return $bCMS->cleanString($var);
+}));
 $TWIG->addFilter(new \Twig\TwigFilter('permissions', function ($permissionid) {
     global $AUTH;
     if (!$AUTH->login) return false;

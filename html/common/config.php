@@ -61,6 +61,10 @@ $CONFIG = array(
             'scope' => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
         ]
     ],
+    'FRESHDESK' => [
+        'URL' => "https://bstudios.freshdesk.com",
+        'APIKEY' => getenv('bCMS__FRESHDESK')
+    ],
     'NOTIFICATIONS' => [
         "METHODS" => [
             0 => "Post",
