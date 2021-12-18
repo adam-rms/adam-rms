@@ -1,28 +1,37 @@
 import { IonBackButton, IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import PageTitle from "../components/PageTitle";
 
-function Page(props: any) {
+type Props = {
+    title?: string;
+    children?: any;
+};
+
+function Page({title, children}: Props) {
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonMenuButton />
-            <IonBackButton />
-          </IonButtons>
-          <IonTitle>{props.title}</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <>
+        <PageTitle title={title} />
+        <IonPage>
+          <IonHeader>
+            <IonToolbar>
+              <IonButtons slot="start">
+                <IonMenuButton />
+                <IonBackButton />
+              </IonButtons>
+              <IonTitle>{title}</IonTitle>
+            </IonToolbar>
+          </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{props.title}</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        {props.children}
-      </IonContent>
-    </IonPage>
+          <IonContent fullscreen>
+            <IonHeader collapse="condense">
+              <IonToolbar>
+                <IonTitle size="large">{title}</IonTitle>
+              </IonToolbar>
+            </IonHeader>
+            {children}
+          </IonContent>
+        </IonPage>
+    </>
   );
 };
 
