@@ -12,7 +12,7 @@ import "./Asset.css";
  */
 const AssetTypeList = () => {
     const { AssetTypes, refreshAssetTypes, getMoreAssets } = useContext(AssetTypeContext);
-    
+
     function doRefresh(event: CustomEvent){
         refreshAssetTypes().then(() => {
             event.detail.complete();
@@ -40,7 +40,7 @@ const AssetTypeList = () => {
                     {AssetTypes.assets.map((item : IAssetTypeData) => {
                         return (
                         <IonItem key={item.assetTypes_id} routerLink={"/assets/" + item.assetTypes_id}>
-                            {item.thumbnails.length > 0 && <IonAvatar slot="start"><IonImg src={item.thumbnails[0]} alt={item.assetTypes_name} className="imgIcon"></IonImg></IonAvatar>}
+                            {item.thumbnails.length > 0 && <IonAvatar slot="start"><IonImg src={item.thumbnails[0].url} alt={item.assetTypes_name} className="imgIcon"></IonImg></IonAvatar>}
                             {item.thumbnails.length == 0 && <FontAwesomeIcon icon={faQuestionCircle} size="2x" className="imgIcon"/> }
                             <IonLabel>
                                 <h2>{item.assetTypes_name}</h2>
