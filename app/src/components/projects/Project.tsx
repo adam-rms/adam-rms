@@ -39,6 +39,8 @@ const Project = () => {
             <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                 <IonRefresherContent/>
             </IonRefresher>
+
+            {/* Project Data*/}
             <IonCard>
                 <IonCardHeader>
                     <IonCardTitle>{projectData.project.projects_description}</IonCardTitle>
@@ -69,13 +71,13 @@ const Project = () => {
                             <IonItem>
                                 <div className="container">
                                     <IonCardSubtitle>Event Dates</IonCardSubtitle>
-                                    {projectData.project.projects_manager ? <IonCardTitle>{projectData.project.projects_dates_use_start} - {projectData.project.projects_dates_use_end}</IonCardTitle> : <IonCardTitle>Unknown</IonCardTitle>}
+                                    {projectData.project.projects_dates_use_start ? <IonCardTitle>{projectData.project.projects_dates_use_start} - {projectData.project.projects_dates_use_end}</IonCardTitle> : <IonCardTitle>Unknown</IonCardTitle>}
                                 </div>
                             </IonItem>
                             <IonItem>
                                 <div className="container">
                                     <IonCardSubtitle>Dates assets in use</IonCardSubtitle>
-                                    {projectData.project.projects_manager ? <IonCardTitle>{projectData.project.projects_dates_deliver_start} - {projectData.project.projects_dates_deliver_end}</IonCardTitle> : <IonCardTitle>Unknown</IonCardTitle>}
+                                    {projectData.project.projects_dates_deliver_start ? <IonCardTitle>{projectData.project.projects_dates_deliver_start} - {projectData.project.projects_dates_deliver_end}</IonCardTitle> : <IonCardTitle>Unknown</IonCardTitle>}
                                 </div>
                             </IonItem>
                         </IonCol>
