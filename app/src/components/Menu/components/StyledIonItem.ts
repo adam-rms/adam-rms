@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {IonItem} from "@ionic/react";
+import { IonItem } from "@ionic/react";
 
 const StyledIonItem = styled(IonItem)`
   ion-menu.md & {

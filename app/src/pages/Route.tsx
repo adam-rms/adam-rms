@@ -8,12 +8,12 @@ import AssetTypeList from "../components/assets/AssetTypeList";
  * @returns <Routes />
  */
 export function Routes() {
-    return (
-        <>
-            {/* Assets */}
-            <Route path="/assets/" component={AssetTypeList} exact/>
-            <Route path="/assets/:type" component={AssetType} exact/>
-            <Route path="/assets/:type/:asset" component={Asset} exact />
-        </>
-    )
+  return (
+    <>
+      {/* Assets */}
+      <Route path="/assets/" component={AssetTypeList} exact />
+      <Route path="/assets/:type" component={AssetType} exact />
+      <Route path="/assets/:type/:asset" component={Asset} exact />
+    </>
+  );
 }
