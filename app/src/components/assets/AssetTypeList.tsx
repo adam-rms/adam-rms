@@ -16,7 +16,6 @@ import styled from "styled-components";
 import { useContext, useEffect } from "react";
 import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
 import Page from "../../pages/Page";
-import "./Asset.css";
 
 /**
  * Asset Type List Page
