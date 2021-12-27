@@ -8,7 +8,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import PageTitle from "../components/PageTitle";
+import PageTitle from "./PageTitle";
 
 type Props = {
   title?: string;

@@ -11,7 +11,7 @@ import {
 } from "@ionic/react";
 import { useContext, useEffect } from "react";
 import { ProjectContext } from "../../contexts/project/ProjectContext";
-import Page from "../../pages/Page";
+import Page from "../../components/Page";
 
 /**
  * Project List Page

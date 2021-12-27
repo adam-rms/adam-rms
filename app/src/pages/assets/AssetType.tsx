@@ -22,7 +22,7 @@ import { useParams } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fileExtensionToIcon, formatSize, s3url } from "../../utilities/Files";
 import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
-import Page from "../../pages/Page";
+import Page from "../../components/Page";
 
 /**
  * Asset Type Page

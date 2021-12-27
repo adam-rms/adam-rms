@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
 import { s3url, fileExtensionToIcon, formatSize } from "../../utilities/Files";
-import Page from "../../pages/Page";
+import Page from "../../components/Page";
 
 /**
  * Asset Page
@@ -127,7 +127,7 @@ const Asset = () => {
                 </IonItem>
               </IonCol>
               <IonCol>
-                {thisAssetType.fields.map((element: {}, index: number) => {
+                {thisAssetType.fields.map((element: any, index: number) => {
                   if (
                     thisAssetType.fields[index - 1] !== "" &&
                     thisAsset["asset_definableFields_" + index] !== ""

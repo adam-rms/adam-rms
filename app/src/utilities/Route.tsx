@@ -1,11 +1,11 @@
 import { Route } from "react-router";
 
 /* Components */
-import Asset from "../components/assets/Asset";
-import AssetType from "../components/assets/AssetType";
-import AssetTypeList from "../components/assets/AssetTypeList";
-import Project from "../components/projects/Project";
-import ProjectList from "../components/projects/ProjectList";
+import Asset from "../pages/assets/Asset";
+import AssetType from "../pages/assets/AssetType";
+import AssetTypeList from "../pages/assets/AssetTypeList";
+import Project from "../pages/projects/Project";
+import ProjectList from "../pages/projects/ProjectList";
 
 /**
  * Add all routes to this component

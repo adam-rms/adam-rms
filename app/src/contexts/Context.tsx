@@ -12,9 +12,7 @@ export default function Contexts(props: any) {
     <>
       <AssetTypeProvider>
         <ProjectProvider>
-          <ProjectDataProvider>
-            {props.children}
-          </ProjectDataProvider>
+          <ProjectDataProvider>{props.children}</ProjectDataProvider>
         </ProjectProvider>
       </AssetTypeProvider>
     </>

@@ -16,7 +16,7 @@ import {
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { ProjectDataContext } from "../../contexts/project/ProjectDataContext";
-import Page from "../../pages/Page";
+import Page from "../../components/Page";
 
 const Project = () => {
   const { projectId } = useParams<{ projectId: string }>();
