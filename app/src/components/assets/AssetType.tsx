@@ -14,6 +14,7 @@ import {
   IonRow,
   IonSlide,
   IonSlides,
+  useIonRouter,
   useIonViewWillLeave,
 } from "@ionic/react";
 import { useContext } from "react";

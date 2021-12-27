@@ -27,7 +27,7 @@ const Api = async (endpoint: string, data: {} = {}) => {
       }
     })
     .catch(function (error) {
-      console.log(error.response);
+      console.log(error);
     });
 };
 

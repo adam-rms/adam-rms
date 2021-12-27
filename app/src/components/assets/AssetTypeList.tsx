@@ -12,8 +12,8 @@ import {
   IonRefresher,
   IonRefresherContent,
 } from "@ionic/react";
-import { useContext, useEffect } from "react";
 import styled from "styled-components";
+import { useContext, useEffect } from "react";
 import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
 import Page from "../../pages/Page";
 
