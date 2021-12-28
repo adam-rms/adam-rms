@@ -19,8 +19,6 @@ const ProjectDataProvider: React.FC<React.ReactNode> = ({ children }) => {
    * Replace all projects in context
    */
   async function refreshProjectData(id: number) {
-    console.log(id);
-    console.log(await Api("projects/data.php", { id: id }));
     setProjectData(await Api("projects/data.php", { id: id }));
   }
 

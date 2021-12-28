@@ -5,6 +5,7 @@ import Asset from "../pages/assets/Asset";
 import AssetType from "../pages/assets/AssetType";
 import AssetTypeList from "../pages/assets/AssetTypeList";
 import Project from "../pages/projects/Project";
+import ProjectAssets from "../pages/projects/ProjectAssets";
 import ProjectList from "../pages/projects/ProjectList";
 
 /**
@@ -22,6 +23,11 @@ export function Routes() {
       {/* Projects */}
       <Route path="/projects/" component={ProjectList} exact />
       <Route path="/projects/:projectId" component={Project} exact />
+      <Route
+        path="/projects/:projectId/assets"
+        component={ProjectAssets}
+        exact
+      />
     </>
   );
 }

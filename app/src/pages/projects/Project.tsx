@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -6,12 +7,9 @@ import {
   IonCardTitle,
   IonCol,
   IonItem,
-  IonLabel,
-  IonList,
   IonRefresher,
   IonRefresherContent,
   IonRow,
-  IonTitle,
 } from "@ionic/react";
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
@@ -33,19 +31,14 @@ const Project = () => {
     refreshProjectData(parseInt(projectId));
   }, []);
 
-  //Generate Project Assets
-  let assets;
-  if (projectData.FINANCIALS && projectData.FINANCIALS.assetAssigned) {
-    assets = projectData.FINANCIALS.assetsAssigned.map((item: any) => {
-      //TODO finish this
-      return <IonItem></IonItem>;
-    });
-  } else {
-    assets = <IonTitle>No Assets Assigned to this Project</IonTitle>;
+  //Check project name
+  let project_name = "AdamRMS Project";
+  if (projectData.project && projectData.project.projects_name) {
+    project_name = projectData.project.projects_name;
   }
 
   return (
-    <Page title={projectData.project.projects_name}>
+    <Page title={project_name}>
       <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
         <IonRefresherContent />
       </IonRefresher>
@@ -139,7 +132,12 @@ const Project = () => {
           <IonCardTitle>Project Assets</IonCardTitle>
         </IonCardHeader>
         <IonCardContent>
-          <IonList>{assets}</IonList>
+          <IonButton
+            routerLink={"/projects/" + projectId + "/assets"}
+            expand="block"
+          >
+            View Project Assets
+          </IonButton>
         </IonCardContent>
       </IonCard>
 
