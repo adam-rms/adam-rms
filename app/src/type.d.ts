@@ -97,8 +97,8 @@ interface IProject {
 }
 
 interface IProjectData {
-  project: {};
+  project: any;
   files: [...any];
   assetsAssignmentsStatus: [...any];
-  FINANCIALS: {};
+  FINANCIALS: any;
 }
