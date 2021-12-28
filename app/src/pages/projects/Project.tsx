@@ -6,11 +6,9 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonCol,
-  IonContent,
   IonItem,
   IonLabel,
   IonList,
-  IonPopover,
   IonRefresher,
   IonRefresherContent,
   IonRow,
@@ -20,7 +18,6 @@ import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { ProjectDataContext } from "../../contexts/project/ProjectDataContext";
 import Page from "../../components/Page";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { baseURL } from "../../utilities/Api";
 
 /**

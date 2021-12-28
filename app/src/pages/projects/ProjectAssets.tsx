@@ -4,7 +4,6 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
-  IonCardSubtitle,
   IonCardTitle,
   IonCol,
   IonGrid,
@@ -14,7 +13,6 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonRow,
-  IonTitle,
 } from "@ionic/react";
 import { useContext } from "react";
 import { useParams } from "react-router";
