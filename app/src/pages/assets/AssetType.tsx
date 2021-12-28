@@ -14,16 +14,14 @@ import {
   IonRow,
   IonSlide,
   IonSlides,
-  useIonRouter,
-  useIonViewWillLeave,
 } from "@ionic/react";
 import { useContext } from "react";
 import { useParams } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fileExtensionToIcon, formatSize, s3url } from "../../utilities/Files";
-import { faArrowRight, faBan, faFlag } from "@fortawesome/free-solid-svg-icons";
-import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
-import Page from "../../pages/Page";
+import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
+import Page from "../../components/Page";
+import AssetItem from "../../components/assets/AssetItem";
 
 /**
  * Asset Type Page
@@ -172,32 +170,11 @@ const AssetType = () => {
             <IonList>
               {thisAssetType.tags.map((item: any) => {
                 return (
-                  <IonItem
+                  <AssetItem
                     key={item.assets_id}
-                    routerLink={
-                      "/assets/" +
-                      thisAssetType.assetTypes_id +
-                      "/" +
-                      item.assets_id
-                    }
-                  >
-                    <IonLabel>
-                      <h2>{item.assets_tag}</h2>
-                    </IonLabel>
-                    <div className="container">
-                      {item.flagsblocks["COUNT"]["BLOCK"] > 0 && (
-                        <FontAwesomeIcon icon={faBan} color="#dc3545" />
-                      )}
-                    </div>
-                    <div className="container">
-                      {item.flagsblocks["COUNT"]["FLAG"] > 0 && (
-                        <FontAwesomeIcon icon={faFlag} color="#ffc107" />
-                      )}
-                    </div>
-                    <div slot="end">
-                      <FontAwesomeIcon icon={faArrowRight} />
-                    </div>
-                  </IonItem>
+                    AssetTypeId={thisAssetType.assetTypes_id}
+                    item={item}
+                  />
                 );
               })}
             </IonList>

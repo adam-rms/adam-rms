@@ -1,7 +1,7 @@
 import { IonApp, IonRouterOutlet, IonSplitPane } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import Menu from "./components/Menu/Menu";
-import { Routes } from "./pages/Route";
+import Menu from "./components/menu/Menu";
+import { Routes } from "./utilities/Route";
 import Contexts from "./contexts/Context";
 import React from "react";
 
@@ -22,6 +22,15 @@ import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import GlobalStyle from "./theme/GlobalStyle";
 import IonicTheme from "./theme/IonicTheme";
+
+/*Font Awesome */
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+
+//setup Font Awesome icons
+library.add(fab, far, fas);
 
 const App: React.FC = () => {
   return (
