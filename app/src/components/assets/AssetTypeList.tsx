@@ -14,7 +14,7 @@ import {
 } from "@ionic/react";
 import styled from "styled-components";
 import { useContext, useEffect } from "react";
-import { AssetTypeContext } from "../../contexts/Asset/AssetTypeContext";
+import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
 import Page from "../../pages/Page";
 
 /**
