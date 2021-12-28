@@ -6,15 +6,22 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonCol,
+  IonContent,
   IonItem,
+  IonLabel,
+  IonList,
+  IonPopover,
   IonRefresher,
   IonRefresherContent,
   IonRow,
+  IonTitle,
 } from "@ionic/react";
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { ProjectDataContext } from "../../contexts/project/ProjectDataContext";
 import Page from "../../components/Page";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { baseURL } from "../../utilities/Api";
 
 const Project = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -141,7 +148,57 @@ const Project = () => {
         </IonCardContent>
       </IonCard>
 
-      <IonCard></IonCard>
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Project Crew</IonCardTitle>
+        </IonCardHeader>
+        <IonCardContent>
+          <IonList>
+            {projectData.project.crewAssignments &&
+            projectData.project.crewAssignments.length > 0 ? (
+              projectData.project.crewAssignments.map((item: any) => {
+                return (
+                  <IonItem key={item.crewAssignments_id}>
+                    <IonLabel>
+                      {item.users_name1} {item.users_name2}
+                      <p>{item.crewAssignments_role}</p>
+                    </IonLabel>
+                    {
+                      item.crewAssignments_comment /* && (
+                        TODO: uncomment this when updated to Ionic 6 
+                      <>
+                        <IonButton id={item.crewAssignments_id + "-comment"}>
+                          <FontAwesomeIcon icon="question-circle" size="2x" />
+                        </IonButton>
+
+                        <IonPopover
+                          trigger={item.crewAssignments_id + "-comment"}
+                        >
+                          <IonContent>
+                            {item.crewAssignments_comment}
+                          </IonContent>
+                        </IonPopover>
+                      </>
+                    )*/
+                    }
+                  </IonItem>
+                );
+              })
+            ) : (
+              <IonItem key="noCrew">
+                <IonTitle>No Crew Assigned</IonTitle>
+              </IonItem>
+            )}
+          </IonList>
+          <IonButton
+            href={baseURL + "project/crew/vacancies.php"}
+            target="_system"
+            expand="block"
+          >
+            Signup
+          </IonButton>
+        </IonCardContent>
+      </IonCard>
     </Page>
   );
 };
