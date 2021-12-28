@@ -29,7 +29,7 @@ const appPages: AppPage[] = [
   },
   {
     title: "Projects",
-    url: "/projects",
+    url: "/projects/",
     icon: faList,
   },
 ];
