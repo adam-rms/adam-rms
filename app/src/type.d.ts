@@ -96,6 +96,7 @@ interface IProject {
   thisProjectManager: boolean;
 }
 
+/* Individual Project Object */
 interface IProjectData {
   project: any;
   files: [...any];

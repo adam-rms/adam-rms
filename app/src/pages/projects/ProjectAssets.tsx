@@ -39,6 +39,10 @@ export interface IProjectAssets {
   };
 }
 
+/**
+ * Project Assets Page
+ * Lists assets for a project
+ */
 const ProjectAssets = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { projectData, refreshProjectData } = useContext(ProjectDataContext);

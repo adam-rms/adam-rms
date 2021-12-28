@@ -23,6 +23,10 @@ import Page from "../../components/Page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { baseURL } from "../../utilities/Api";
 
+/**
+ * Project Page
+ * Lists project details
+ */
 const Project = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { projectData, refreshProjectData } = useContext(ProjectDataContext);
