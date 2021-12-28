@@ -1,4 +1,9 @@
-import { IonApp, IonRouterOutlet, IonSplitPane } from "@ionic/react";
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonSplitPane,
+  setupIonicReact,
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import Menu from "./components/menu/Menu";
 import { Routes } from "./utilities/Route";
@@ -33,6 +38,9 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 library.add(fab, far, fas);
 
 const App: React.FC = () => {
+  // Set up Ionic Config
+  setupIonicReact();
+
   return (
     <>
       <GlobalStyle />

@@ -13,9 +13,12 @@ import {
   IonRefresherContent,
   IonRow,
   IonTitle,
+  IonPopover,
+  IonContent,
 } from "@ionic/react";
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ProjectDataContext } from "../../contexts/project/ProjectDataContext";
 import Page from "../../components/Page";
 import { baseURL } from "../../utilities/Api";
@@ -164,9 +167,7 @@ const Project = () => {
                       {item.users_name1} {item.users_name2}
                       <p>{item.crewAssignments_role}</p>
                     </IonLabel>
-                    {
-                      item.crewAssignments_comment /* && (
-                        TODO: uncomment this when updated to Ionic 6 
+                    {item.crewAssignments_comment && (
                       <>
                         <IonButton id={item.crewAssignments_id + "-comment"}>
                           <FontAwesomeIcon icon="question-circle" size="2x" />
@@ -180,8 +181,7 @@ const Project = () => {
                           </IonContent>
                         </IonPopover>
                       </>
-                    )*/
-                    }
+                    )}
                   </IonItem>
                 );
               })
