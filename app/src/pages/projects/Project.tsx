@@ -175,8 +175,11 @@ const Project = () => {
 
                         <IonPopover
                           trigger={item.crewAssignments_id + "-comment"}
+                          side="left"
+                          translucent={true}
                         >
-                          <IonContent>
+                          <IonContent className="ion-padding ion-text-center">
+                            <IonTitle>{item.crewAssignments_role}</IonTitle>
                             {item.crewAssignments_comment}
                           </IonContent>
                         </IonPopover>
