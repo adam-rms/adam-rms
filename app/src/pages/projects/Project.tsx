@@ -22,6 +22,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ProjectDataContext } from "../../contexts/project/ProjectDataContext";
 import Page from "../../components/Page";
 import { baseURL } from "../../utilities/Api";
+import ProjectFab from "../../components/projects/ProjectFAB";
 
 /**
  * Project Page
@@ -53,6 +54,7 @@ const Project = () => {
       <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
         <IonRefresherContent />
       </IonRefresher>
+      <ProjectFab />
 
       {/* Project Data*/}
       <IonCard>
