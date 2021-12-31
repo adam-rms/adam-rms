@@ -8,7 +8,7 @@ final class UpdateInstanceActions extends AbstractMigration
     /**
      * Migrate Up.
      * Fixes issues with instanceactions
-     * @link https://github.com/bstudios/adam-rms/issues/228
+     * @link https://github.com/adam-rms/adam-rms/issues/228
      */
     public function up()
     {

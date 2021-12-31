@@ -40,7 +40,7 @@ To create a new release:
 
 ## Contributing 
 
-Contributions are very welcome - please see [CONTRIBUTING.md](CONTRIBUTING.md) for a guide, or feel free to open a [Discussion](https://github.com/bstudios/adam-rms/discussions)
+Contributions are very welcome - please see [CONTRIBUTING.md](CONTRIBUTING.md) for a guide, or feel free to open a [Discussion](https://github.com/adam-rms/adam-rms/discussions)
 
 Database migrations, written in Phinx, are provided in `db/migrations`
 
