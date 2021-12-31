@@ -6,10 +6,7 @@ import DoScan from "./Scanner";
  * @returns {IAsset | false} an Asset or false if asset can't be found
  */
 const GetAssetFromBarcode = async () => {
-  const scanResult = await DoScan();
-
-  //This is a temporary replacement whilst the scanning library is updated
-  const barcodeType = "CODE_128";
+  const [scanResult, barcodeType] = await DoScan();
 
   if (scanResult) {
     const asset = await Api("assets/barcodes/search.php", {

@@ -6,6 +6,8 @@ import { isPlatform } from "@ionic/core";
  * This file handles the actual collection of barcode data,
  * and should be used in other files to handle the result
  */
+//Temporary constant for barcode type, waiting for library to update
+const barcodeType = "CODE_128";
 
 /**
  * Verifies whether BarcodeScanner plugin is allowed to scan barcodes
@@ -95,18 +97,26 @@ const WebPrompt = async () => {
 
 /**
  * Handles relevant scanning depending on platform
- * @returns {string} Scanned/Input barcode
- * @returns {false} false if no vaild barcode given
+ * Currently, barcodeType is always CODE_128
+ * @returns {[string, string]} [Scanned/Input barcode, barcodeType]
+ * @returns {[false, null]} if no vaild barcode given: [false, null]
  */
 const DoScan = async () => {
+  let content: string | boolean | undefined;
   if (isPlatform("ios") || isPlatform("android")) {
     //we can use the BarcodeScanner Plugin with these platforms
     if (await didUserGrantPermission()) {
-      return await OpenScanner(); //return these values
+      content = await OpenScanner(); //return these values
     }
   } else {
     //Plugin doesn't work so just prompt for input
-    return await WebPrompt();
+    content = await WebPrompt();
+  }
+
+  if (content) {
+    return [content, barcodeType];
+  } else {
+    return [false, null];
   }
 };
 

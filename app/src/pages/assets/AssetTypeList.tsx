@@ -17,6 +17,7 @@ import styled from "styled-components";
 import { useContext, useEffect } from "react";
 import { AssetTypeContext } from "../../contexts/asset/AssetTypeContext";
 import Page from "../../components/Page";
+import AssetsFab from "../../components/assets/AssetsFAB";
 
 /**
  * Asset Type List Page
@@ -49,6 +50,8 @@ const AssetTypeList = () => {
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent />
         </IonRefresher>
+        <AssetsFab />
+
         <IonCard>
           <IonList>
             {AssetTypes.assets.map((item: IAssetTypeData) => {
