@@ -1,18 +1,28 @@
 # AdamRMS
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/adam-rms/adam-rms)
+![GitHub repo size](https://img.shields.io/github/repo-size/adam-rms/adam-rms)
+![GitHub issues](https://img.shields.io/github/issues/adam-rms/adam-rms)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/adam-rms/adam-rms)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/adam-rms/adam-rms)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/adam-rms/adam-rms)
+![GitHub](https://img.shields.io/github/license/adam-rms/adam-rms)
+![GitHub stars](https://img.shields.io/github/stars/adam-rms/adam-rms)
+![GitHub contributors](https://img.shields.io/github/contributors/adam-rms/adam-rms)
+![GitHub](https://img.shields.io/github/release/adam-rms/adam-rms/all)
+
+
 AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, written in PHP with the Twig Templating engine, and deployed using a pre-built docker container.
 
-It is available as a hosted solution (not currently open to new customers) or to be self-hosted as a docker container. 
+It is available as a hosted solution or to be self-hosted as a docker container. 
 
-This branch is about the v1 release of the system, a PHP web app using Twig. It is no longer in active development, where efforts have moved to the v2 branch.
-
-**You can no longer edit the docs with PRs targeting this branch. To update docs you must submit a separate PR to v2**
+This repo is about the v1 release of the system, a PHP web app using Twig. It is still in active development, but most efforts have moved to the [v2 repo](https://github.com/adam-rms/adam-rms-v2).
 
 ## Docker Images
 
- - Docker Hub: [bithellstudios/adam-rms](https://hub.docker.com/r/bithellstudios/adam-rms)
- - GitHub Packages: [bstudios/adam-rms](https://github.com/orgs/bstudios/packages?repo_name=adam-rms)
+ - GitHub Packages: [adam-rms/adam-rms](https://github.com/orgs/adam-rms/packages?repo_name=adam-rms)
 
+> Docker Hub images are no longer maintained 
 
 ## Releases
 
@@ -107,5 +117,3 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-![This website is hosted Green - checked by thegreenwebfoundation.org](https://api.thegreenwebfoundation.org/greencheckimage/adam-rms.com?nocache=true)
