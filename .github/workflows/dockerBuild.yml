@@ -18,7 +18,7 @@ jobs:
         id: docker_github_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: ghcr.io/${{ github.repository }}/main
+          images: ghcr.io/${{ github.repository }}
           tag-sha: false
           tag-semver: ${{ github.event.release.tag_name }}
       - name: Set up Docker buildx
