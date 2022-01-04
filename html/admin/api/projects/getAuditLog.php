@@ -14,7 +14,7 @@ if (!$AUTH->instancePermissionCheck(20) or !isset($_POST['projects_id'])) finish
 
 $DBLIB->where("auditLog.auditLog_deleted", 0);
 $DBLIB->where("auditLog.projects_id", $_POST['projects_id']);
-$DBLIB->where("auditLog.auditLog_actionTable", "projects");
+$DBLIB->where("auditLog.auditLog_actionType", "QUICKCOMMENT");
 $DBLIB->join("users", "auditLog.users_userid=users.users_userid", "LEFT");
 $DBLIB->orderBy("auditLog.auditLog_timestamp", "DESC");
 $DBLIB->orderBy("auditLog.auditLog_id", "DESC");
