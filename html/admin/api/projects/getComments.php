@@ -1,8 +1,8 @@
 <?php
 /**
  * API
- * \projects\getAuditLog.php
- * get audit log data for given project
+ * \projects\getComments.php
+ * get comment data for given project
  *
  * Arguments:
  *  - projects_id: a project
