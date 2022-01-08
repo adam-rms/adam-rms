@@ -1,0 +1,1026 @@
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+DROP TABLE IF EXISTS `actions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `actions` (
+  `actions_id` int NOT NULL AUTO_INCREMENT,
+  `actions_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `actionsCategories_id` int NOT NULL,
+  `actions_dependent` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `actions_incompatible` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  PRIMARY KEY (`actions_id`),
+  KEY `actions_actionsCategories_actionsCategories_id_fk` (`actionsCategories_id`),
+  CONSTRAINT `actions_actionsCategories_actionsCategories_id_fk` FOREIGN KEY (`actionsCategories_id`) REFERENCES `actionscategories` (`actionsCategories_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `actionscategories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `actionscategories` (
+  `actionsCategories_id` int NOT NULL AUTO_INCREMENT,
+  `actionsCategories_name` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `actionsCategories_order` int DEFAULT '0',
+  PRIMARY KEY (`actionsCategories_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assetcategories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assetcategories` (
+  `assetCategories_id` int NOT NULL AUTO_INCREMENT,
+  `assetCategories_name` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `assetCategories_fontAwesome` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assetCategories_rank` int NOT NULL DEFAULT '999',
+  `assetCategoriesGroups_id` int NOT NULL,
+  `instances_id` int DEFAULT NULL,
+  `assetCategories_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`assetCategories_id`),
+  KEY `assetCategories_instances_instances_id_fk` (`instances_id`),
+  KEY `assetCategories_Groups_id_fk` (`assetCategoriesGroups_id`),
+  CONSTRAINT `assetCategories_Groups_id_fk` FOREIGN KEY (`assetCategoriesGroups_id`) REFERENCES `assetcategoriesgroups` (`assetCategoriesGroups_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetCategories_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assetcategoriesgroups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assetcategoriesgroups` (
+  `assetCategoriesGroups_id` int NOT NULL AUTO_INCREMENT,
+  `assetCategoriesGroups_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `assetCategoriesGroups_fontAwesome` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `assetCategoriesGroups_order` int NOT NULL DEFAULT '999',
+  PRIMARY KEY (`assetCategoriesGroups_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assetgroups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assetgroups` (
+  `assetGroups_id` int NOT NULL AUTO_INCREMENT,
+  `assetGroups_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `assetGroups_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `assetGroups_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `users_userid` int DEFAULT NULL,
+  `instances_id` int NOT NULL,
+  PRIMARY KEY (`assetGroups_id`),
+  KEY `assetGroups_instances_instances_id_fk` (`instances_id`),
+  KEY `assetGroups_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `assetGroups_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetGroups_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assets` (
+  `assets_id` int NOT NULL AUTO_INCREMENT,
+  `assets_tag` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'The ID/Tag that the asset carries marked onto it',
+  `assetTypes_id` int NOT NULL,
+  `assets_notes` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `instances_id` int NOT NULL,
+  `asset_definableFields_1` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_2` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_3` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_4` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_5` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_6` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_7` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_8` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_9` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asset_definableFields_10` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assets_inserted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `assets_dayRate` int DEFAULT NULL,
+  `assets_linkedTo` int DEFAULT NULL,
+  `assets_weekRate` int DEFAULT NULL,
+  `assets_value` int DEFAULT NULL,
+  `assets_mass` decimal(55,5) DEFAULT NULL,
+  `assets_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `assets_endDate` timestamp NULL DEFAULT NULL,
+  `assets_archived` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assets_assetGroups` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assets_storageLocation` int DEFAULT NULL,
+  `assets_showPublic` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`assets_id`),
+  KEY `assets_assetTypes_assetTypes_id_fk` (`assetTypes_id`),
+  KEY `assets_assets_assets_id_fk` (`assets_linkedTo`),
+  KEY `assets_instances_instances_id_fk` (`instances_id`),
+  KEY `assets_locations_locations_id_fk` (`assets_storageLocation`),
+  CONSTRAINT `assets_assets_assets_id_fk` FOREIGN KEY (`assets_linkedTo`) REFERENCES `assets` (`assets_id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `assets_assetTypes_assetTypes_id_fk` FOREIGN KEY (`assetTypes_id`) REFERENCES `assettypes` (`assetTypes_id`),
+  CONSTRAINT `assets_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assets_locations_locations_id_fk` FOREIGN KEY (`assets_storageLocation`) REFERENCES `locations` (`locations_id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assetsassignments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assetsassignments` (
+  `assetsAssignments_id` int NOT NULL AUTO_INCREMENT,
+  `assets_id` int NOT NULL,
+  `projects_id` int NOT NULL,
+  `assetsAssignments_comment` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assetsAssignments_customPrice` int NOT NULL DEFAULT '0',
+  `assetsAssignments_discount` float NOT NULL DEFAULT '0',
+  `assetsAssignments_timestamp` timestamp NULL DEFAULT NULL,
+  `assetsAssignments_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `assetsAssignmentsStatus_id` int DEFAULT NULL COMMENT '0 = None applicable\r\n10 = Pending pick\r\n20 = Picked\r\n30 = Prepping\r\n40 = Tested\r\n50 = Packed\r\n60 = Dispatched\r\n70 = Awaiting Check-in\r\n80 = Case opened\r\n90 = Unpacked\r\n100 = Tested\r\n110 = Stored',
+  `assetsAssignments_linkedTo` int DEFAULT NULL,
+  PRIMARY KEY (`assetsAssignments_id`),
+  KEY `assetsAssignments_assets_assets_id_fk` (`assets_id`),
+  KEY `assetsAssignments_projects_projects_id_fk` (`projects_id`),
+  KEY `assetsAssignments_assetsAssignments_assetsAssignments_id_fk` (`assetsAssignments_linkedTo`),
+  CONSTRAINT `assetsAssignments_assets_assets_id_fk` FOREIGN KEY (`assets_id`) REFERENCES `assets` (`assets_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetsAssignments_assetsAssignments_assetsAssignments_id_fk` FOREIGN KEY (`assetsAssignments_linkedTo`) REFERENCES `assetsassignments` (`assetsAssignments_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetsAssignments_projects_projects_id_fk` FOREIGN KEY (`projects_id`) REFERENCES `projects` (`projects_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assetsassignmentsstatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assetsassignmentsstatus` (
+  `assetsAssignmentsStatus_id` int NOT NULL AUTO_INCREMENT,
+  `instances_id` int NOT NULL,
+  `assetsAssignmentsStatus_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `assetsAssignmentsStatus_order` int DEFAULT '999',
+  `assetsAssignmentsStatus_deleted` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`assetsAssignmentsStatus_id`),
+  KEY `assetsAssignmentsStatus_instances_instances_id_fk` (`instances_id`),
+  CONSTRAINT `assetsAssignmentsStatus_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assetsbarcodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assetsbarcodes` (
+  `assetsBarcodes_id` int NOT NULL AUTO_INCREMENT,
+  `assets_id` int DEFAULT NULL,
+  `assetsBarcodes_value` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `assetsBarcodes_type` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `assetsBarcodes_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `assetsBarcodes_added` timestamp NOT NULL,
+  `users_userid` int DEFAULT NULL COMMENT 'Userid that added it',
+  `assetsBarcodes_deleted` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`assetsBarcodes_id`),
+  KEY `assetsBarcodes_assets_assets_id_fk` (`assets_id`),
+  KEY `assetsBarcodes_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `assetsBarcodes_assets_assets_id_fk` FOREIGN KEY (`assets_id`) REFERENCES `assets` (`assets_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetsBarcodes_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assetsbarcodesscans`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assetsbarcodesscans` (
+  `assetsBarcodesScans_id` int NOT NULL AUTO_INCREMENT,
+  `assetsBarcodes_id` int NOT NULL,
+  `assetsBarcodesScans_timestamp` timestamp NOT NULL,
+  `users_userid` int DEFAULT NULL,
+  `locationsBarcodes_id` int DEFAULT NULL,
+  `location_assets_id` int DEFAULT NULL,
+  `assetsBarcodes_customLocation` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`assetsBarcodesScans_id`),
+  KEY `assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk` (`assetsBarcodes_id`),
+  KEY `assetsBarcodesScans_users_users_userid_fk` (`users_userid`),
+  KEY `assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk` (`locationsBarcodes_id`),
+  KEY `assetsBarcodesScans_assets_assets_id_fk` (`location_assets_id`),
+  CONSTRAINT `assetsBarcodesScans_assets_assets_id_fk` FOREIGN KEY (`location_assets_id`) REFERENCES `assets` (`assets_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `assetsBarcodesScans_assetsBarcodes_assetsBarcodes_id_fk` FOREIGN KEY (`assetsBarcodes_id`) REFERENCES `assetsbarcodes` (`assetsBarcodes_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetsBarcodesScans_locationsBarcodes_locationsBarcodes_id_fk` FOREIGN KEY (`locationsBarcodes_id`) REFERENCES `locationsbarcodes` (`locationsBarcodes_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetsBarcodesScans_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `assettypes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assettypes` (
+  `assetTypes_id` int NOT NULL AUTO_INCREMENT,
+  `assetTypes_name` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `assetCategories_id` int NOT NULL,
+  `manufacturers_id` int NOT NULL,
+  `instances_id` int DEFAULT NULL,
+  `assetTypes_description` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assetTypes_productLink` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assetTypes_definableFields` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `assetTypes_mass` decimal(55,5) DEFAULT NULL,
+  `assetTypes_inserted` timestamp NULL DEFAULT NULL,
+  `assetTypes_dayRate` int NOT NULL,
+  `assetTypes_weekRate` int NOT NULL,
+  `assetTypes_value` int NOT NULL,
+  PRIMARY KEY (`assetTypes_id`),
+  KEY `assetTypes_assetCategories_assetCategories_id_fk` (`assetCategories_id`),
+  KEY `assetTypes_manufacturers_manufacturers_id_fk` (`manufacturers_id`),
+  KEY `assetTypes_instances_instances_id_fk` (`instances_id`),
+  CONSTRAINT `assetTypes_assetCategories_assetCategories_id_fk` FOREIGN KEY (`assetCategories_id`) REFERENCES `assetcategories` (`assetCategories_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetTypes_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assetTypes_manufacturers_manufacturers_id_fk` FOREIGN KEY (`manufacturers_id`) REFERENCES `manufacturers` (`manufacturers_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `auditlog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `auditlog` (
+  `auditLog_id` int NOT NULL AUTO_INCREMENT,
+  `auditLog_actionType` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `auditLog_actionTable` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `auditLog_actionData` longtext CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `auditLog_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `users_userid` int DEFAULT NULL,
+  `auditLog_actionUserid` int DEFAULT NULL,
+  `projects_id` int DEFAULT NULL,
+  `auditLog_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `auditLog_targetID` int DEFAULT NULL,
+  PRIMARY KEY (`auditLog_id`),
+  KEY `auditLog_users_users_userid_fk` (`users_userid`),
+  KEY `auditLog_users_users_userid_fk_2` (`auditLog_actionUserid`),
+  CONSTRAINT `auditLog_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `auditLog_users_users_userid_fk_2` FOREIGN KEY (`auditLog_actionUserid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `authtokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `authtokens` (
+  `authTokens_id` int NOT NULL AUTO_INCREMENT,
+  `authTokens_token` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `authTokens_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `authTokens_ipAddress` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_userid` int NOT NULL,
+  `authTokens_valid` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 for true. 0 for false',
+  `authTokens_adminId` int DEFAULT NULL,
+  `authTokens_deviceType` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  PRIMARY KEY (`authTokens_id`),
+  UNIQUE KEY `token` (`authTokens_token`),
+  KEY `authTokens_users_users_userid_fk` (`users_userid`),
+  KEY `authTokens_users_users_userid_fk_2` (`authTokens_adminId`),
+  CONSTRAINT `authTokens_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`),
+  CONSTRAINT `authTokens_users_users_userid_fk_2` FOREIGN KEY (`authTokens_adminId`) REFERENCES `users` (`users_userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `clients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `clients` (
+  `clients_id` int NOT NULL AUTO_INCREMENT,
+  `clients_name` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `instances_id` int NOT NULL,
+  `clients_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `clients_website` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `clients_email` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `clients_notes` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `clients_address` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `clients_phone` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  PRIMARY KEY (`clients_id`),
+  KEY `clients_instances_instances_id_fk` (`instances_id`),
+  CONSTRAINT `clients_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `cmspages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cmspages` (
+  `cmsPages_id` int NOT NULL AUTO_INCREMENT,
+  `instances_id` int NOT NULL,
+  `cmsPages_showNav` tinyint(1) NOT NULL DEFAULT '0',
+  `cmsPages_showPublic` tinyint(1) NOT NULL DEFAULT '0',
+  `cmsPages_showPublicNav` tinyint(1) NOT NULL DEFAULT '1',
+  `cmsPages_visibleToGroups` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cmsPages_navOrder` int NOT NULL DEFAULT '999',
+  `cmsPages_fontAwesome` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cmsPages_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cmsPages_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `cmsPages_archived` tinyint(1) NOT NULL DEFAULT '0',
+  `cmsPages_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `cmsPages_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cmsPages_subOf` int DEFAULT NULL,
+  PRIMARY KEY (`cmsPages_id`),
+  KEY `cmsPages_instances_instances_id_fk` (`instances_id`),
+  KEY `cmsPages_cmsPages_cmsPages_id_fk` (`cmsPages_subOf`),
+  CONSTRAINT `cmsPages_cmsPages_cmsPages_id_fk` FOREIGN KEY (`cmsPages_subOf`) REFERENCES `cmspages` (`cmsPages_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `cmsPages_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `cmspagesdrafts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cmspagesdrafts` (
+  `cmsPagesDrafts_id` int NOT NULL AUTO_INCREMENT,
+  `cmsPages_id` int NOT NULL,
+  `users_userid` int DEFAULT NULL,
+  `cmsPagesDrafts_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cmsPagesDrafts_data` json DEFAULT NULL,
+  `cmsPagesDrafts_changelog` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `cmsPagesDrafts_revisionID` int NOT NULL,
+  PRIMARY KEY (`cmsPagesDrafts_id`),
+  KEY `cmsPagesDrafts_cmsPages_cmsPages_id_fk` (`cmsPages_id`),
+  KEY `cmsPagesDrafts_users_users_userid_fk` (`users_userid`),
+  KEY `cmsPagesDrafts_cmsPagesDrafts_timestamp_index` (`cmsPagesDrafts_timestamp`),
+  CONSTRAINT `cmsPagesDrafts_cmsPages_cmsPages_id_fk` FOREIGN KEY (`cmsPages_id`) REFERENCES `cmspages` (`cmsPages_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `cmsPagesDrafts_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `cmspagesviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cmspagesviews` (
+  `cmsPagesViews_id` int NOT NULL AUTO_INCREMENT,
+  `cmsPages_id` int NOT NULL,
+  `cmsPagesViews_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `users_userid` int DEFAULT NULL,
+  `cmsPages_type` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`cmsPagesViews_id`),
+  KEY `cmsPagesViews_cmsPages_cmsPages_id_fk` (`cmsPages_id`),
+  KEY `cmsPagesViews_users_users_userid_fk` (`users_userid`),
+  KEY `cmsPagesViews_cmsPagesViews_timestamp_index` (`cmsPagesViews_timestamp`),
+  CONSTRAINT `cmsPagesViews_cmsPages_cmsPages_id_fk` FOREIGN KEY (`cmsPages_id`) REFERENCES `cmspages` (`cmsPages_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `cmsPagesViews_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `crewassignments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `crewassignments` (
+  `crewAssignments_id` int NOT NULL AUTO_INCREMENT,
+  `users_userid` int DEFAULT NULL,
+  `projects_id` int NOT NULL,
+  `crewAssignments_personName` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `crewAssignments_role` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `crewAssignments_comment` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `crewAssignments_deleted` tinyint(1) DEFAULT '0',
+  `crewAssignments_rank` int DEFAULT '99',
+  PRIMARY KEY (`crewAssignments_id`),
+  KEY `crewAssignments_projects_projects_id_fk` (`projects_id`),
+  KEY `crewAssignments_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `crewAssignments_projects_projects_id_fk` FOREIGN KEY (`projects_id`) REFERENCES `projects` (`projects_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `crewAssignments_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `emailsent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `emailsent` (
+  `emailSent_id` int NOT NULL AUTO_INCREMENT,
+  `users_userid` int NOT NULL,
+  `emailSent_html` longtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `emailSent_subject` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `emailSent_sent` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `emailSent_fromEmail` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `emailSent_fromName` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `emailSent_toName` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `emailSent_toEmail` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  PRIMARY KEY (`emailSent_id`),
+  KEY `emailSent_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `emailSent_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `emailverificationcodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `emailverificationcodes` (
+  `emailVerificationCodes_id` int NOT NULL AUTO_INCREMENT,
+  `emailVerificationCodes_code` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `emailVerificationCodes_used` tinyint(1) NOT NULL DEFAULT '0',
+  `emailVerificationCodes_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `emailVerificationCodes_valid` int NOT NULL DEFAULT '1',
+  `users_userid` int NOT NULL,
+  PRIMARY KEY (`emailVerificationCodes_id`),
+  KEY `emailVerificationCodes_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `emailVerificationCodes_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `instanceactions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `instanceactions` (
+  `instanceActions_id` int NOT NULL AUTO_INCREMENT,
+  `instanceActions_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `instanceActionsCategories_id` int NOT NULL,
+  `instanceActions_dependent` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `instanceActions_incompatible` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  PRIMARY KEY (`instanceActions_id`),
+  KEY `categories_fk` (`instanceActionsCategories_id`),
+  CONSTRAINT `categories_fk` FOREIGN KEY (`instanceActionsCategories_id`) REFERENCES `instanceactionscategories` (`instanceActionsCategories_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `instanceactionscategories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `instanceactionscategories` (
+  `instanceActionsCategories_id` int NOT NULL AUTO_INCREMENT,
+  `instanceActionsCategories_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `instanceActionsCategories_order` int NOT NULL DEFAULT '999',
+  PRIMARY KEY (`instanceActionsCategories_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `instancepositions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `instancepositions` (
+  `instancePositions_id` int NOT NULL AUTO_INCREMENT,
+  `instances_id` int NOT NULL,
+  `instancePositions_displayName` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `instancePositions_rank` int NOT NULL DEFAULT '999',
+  `instancePositions_actions` varchar(5000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `instancePositions_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`instancePositions_id`),
+  KEY `instancePositions_instances_instances_id_fk` (`instances_id`),
+  CONSTRAINT `instancePositions_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `instances`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `instances` (
+  `instances_id` int NOT NULL AUTO_INCREMENT,
+  `instances_name` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `instances_deleted` tinyint(1) DEFAULT '0',
+  `instances_plan` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `instances_address` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `instances_phone` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `instances_email` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `instances_website` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `instances_weekStartDates` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `instances_logo` int DEFAULT NULL,
+  `instances_emailHeader` int DEFAULT NULL COMMENT 'A 1200x600 image to be the header on their emails',
+  `instances_termsAndPayment` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `instances_quoteTerms` text,
+  `instances_storageLimit` bigint NOT NULL DEFAULT '524288000' COMMENT 'In bytes - 500mb is default',
+  `instances_config_linkedDefaultDiscount` double DEFAULT '100',
+  `instances_config_currency` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'GBP',
+  `instances_cableColours` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `instances_publicConfig` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  PRIMARY KEY (`instances_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `locations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `locations` (
+  `locations_id` int NOT NULL AUTO_INCREMENT,
+  `locations_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `clients_id` int DEFAULT NULL,
+  `instances_id` int NOT NULL,
+  `locations_address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `locations_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `locations_subOf` int DEFAULT NULL,
+  `locations_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`locations_id`),
+  KEY `locations_clients_clients_id_fk` (`clients_id`),
+  KEY `locations_instances_instances_id_fk` (`instances_id`),
+  KEY `locations_locations_locations_id_fk` (`locations_subOf`),
+  CONSTRAINT `locations_clients_clients_id_fk` FOREIGN KEY (`clients_id`) REFERENCES `clients` (`clients_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `locations_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `locations_locations_locations_id_fk` FOREIGN KEY (`locations_subOf`) REFERENCES `locations` (`locations_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `locationsbarcodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `locationsbarcodes` (
+  `locationsBarcodes_id` int NOT NULL AUTO_INCREMENT,
+  `locations_id` int NOT NULL,
+  `locationsBarcodes_value` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `locationsBarcodes_type` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `locationsBarcodes_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `locationsBarcodes_added` timestamp NOT NULL,
+  `users_userid` int DEFAULT NULL COMMENT 'Userid that added it',
+  `locationsBarcodes_deleted` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`locationsBarcodes_id`),
+  KEY `locationsBarcodes_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `locationsBarcodes_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `loginattempts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `loginattempts` (
+  `loginAttempts_id` int NOT NULL AUTO_INCREMENT,
+  `loginAttempts_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `loginAttempts_textEntered` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `loginAttempts_ip` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `loginAttempts_blocked` tinyint(1) NOT NULL,
+  `loginAttempts_successful` tinyint(1) NOT NULL,
+  PRIMARY KEY (`loginAttempts_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `maintenancejobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `maintenancejobs` (
+  `maintenanceJobs_id` int NOT NULL AUTO_INCREMENT,
+  `maintenanceJobs_assets` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `maintenanceJobs_timestamp_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `maintenanceJobs_timestamp_due` timestamp NULL DEFAULT NULL,
+  `maintenanceJobs_user_tagged` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `maintenanceJobs_user_creator` int NOT NULL,
+  `maintenanceJobs_user_assignedTo` int DEFAULT NULL,
+  `maintenanceJobs_title` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `maintenanceJobs_faultDescription` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `maintenanceJobs_priority` tinyint NOT NULL DEFAULT '5' COMMENT '1 to 10',
+  `instances_id` int NOT NULL,
+  `maintenanceJobs_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `maintenanceJobsStatuses_id` int DEFAULT NULL,
+  `maintenanceJobs_flagAssets` tinyint(1) NOT NULL DEFAULT '0',
+  `maintenanceJobs_blockAssets` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`maintenanceJobs_id`),
+  KEY `maintenanceJobs_users_users_userid_fk` (`maintenanceJobs_user_creator`),
+  CONSTRAINT `maintenanceJobs_users_users_userid_fk` FOREIGN KEY (`maintenanceJobs_user_creator`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `maintenancejobsmessages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `maintenancejobsmessages` (
+  `maintenanceJobsMessages_id` int NOT NULL AUTO_INCREMENT,
+  `maintenanceJobs_id` int DEFAULT NULL,
+  `maintenanceJobsMessages_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `users_userid` int NOT NULL,
+  `maintenanceJobsMessages_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `maintenanceJobsMessages_text` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `maintenanceJobsMessages_file` int DEFAULT NULL,
+  PRIMARY KEY (`maintenanceJobsMessages_id`),
+  KEY `maintenanceJobsMessages___files` (`maintenanceJobsMessages_file`),
+  KEY `maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk` (`maintenanceJobs_id`),
+  CONSTRAINT `maintenanceJobsMessages___files` FOREIGN KEY (`maintenanceJobsMessages_file`) REFERENCES `s3files` (`s3files_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `maintenanceJobsMessages_maintenanceJobs_maintenanceJobs_id_fk` FOREIGN KEY (`maintenanceJobs_id`) REFERENCES `maintenancejobs` (`maintenanceJobs_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `maintenancejobsstatuses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `maintenancejobsstatuses` (
+  `maintenanceJobsStatuses_id` int NOT NULL AUTO_INCREMENT,
+  `instances_id` int DEFAULT NULL,
+  `maintenanceJobsStatuses_name` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `maintenanceJobsStatuses_order` tinyint(1) NOT NULL DEFAULT '99',
+  `maintenanceJobsStatuses_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `maintenanceJobsStatuses_showJobInMainList` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`maintenanceJobsStatuses_id`),
+  KEY `maintenanceJobsStatuses_instances_instances_id_fk` (`instances_id`),
+  CONSTRAINT `maintenanceJobsStatuses_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `manufacturers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `manufacturers` (
+  `manufacturers_id` int NOT NULL AUTO_INCREMENT,
+  `manufacturers_name` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `instances_id` int DEFAULT NULL,
+  `manufacturers_internalAdamRMSNote` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `manufacturers_website` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `manufacturers_notes` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  PRIMARY KEY (`manufacturers_id`),
+  KEY `manufacturers_instances_instances_id_fk` (`instances_id`),
+  CONSTRAINT `manufacturers_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `migrations_typeorm`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `migrations_typeorm` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `timestamp` bigint NOT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `modules`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `modules` (
+  `modules_id` int NOT NULL AUTO_INCREMENT,
+  `instances_id` int NOT NULL,
+  `users_userid` int NOT NULL COMMENT '"Author"',
+  `modules_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `modules_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `modules_learningObjectives` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `modules_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `modules_show` tinyint(1) NOT NULL DEFAULT '0',
+  `modules_thumbnail` int DEFAULT NULL,
+  `modules_type` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`modules_id`),
+  KEY `modules_instances_instances_id_fk` (`instances_id`),
+  KEY `modules_users_users_userid_fk` (`users_userid`),
+  KEY `modules_s3files_s3files_id_fk` (`modules_thumbnail`),
+  CONSTRAINT `modules_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `modules_s3files_s3files_id_fk` FOREIGN KEY (`modules_thumbnail`) REFERENCES `s3files` (`s3files_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `modules_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `modulessteps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `modulessteps` (
+  `modulesSteps_id` int NOT NULL AUTO_INCREMENT,
+  `modules_id` int NOT NULL,
+  `modulesSteps_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `modulesSteps_show` tinyint(1) NOT NULL DEFAULT '1',
+  `modulesSteps_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `modulesSteps_type` tinyint(1) NOT NULL,
+  `modulesSteps_content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `modulesSteps_completionTime` int DEFAULT '0',
+  `modulesSteps_internalNotes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `modulesSteps_order` int NOT NULL DEFAULT '999',
+  `modulesSteps_locked` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'When set this is a like system level step that can''t be edited',
+  PRIMARY KEY (`modulesSteps_id`),
+  KEY `modulesSteps_modules_modules_id_fk` (`modules_id`),
+  CONSTRAINT `modulesSteps_modules_modules_id_fk` FOREIGN KEY (`modules_id`) REFERENCES `modules` (`modules_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `passwordresetcodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `passwordresetcodes` (
+  `passwordResetCodes_id` int NOT NULL AUTO_INCREMENT,
+  `passwordResetCodes_code` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `passwordResetCodes_used` tinyint(1) NOT NULL DEFAULT '0',
+  `passwordResetCodes_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `passwordResetCodes_valid` int NOT NULL DEFAULT '1',
+  `users_userid` int NOT NULL,
+  PRIMARY KEY (`passwordResetCodes_id`),
+  KEY `passwordResetCodes_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `passwordResetCodes_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payments` (
+  `payments_id` int NOT NULL AUTO_INCREMENT,
+  `payments_amount` int NOT NULL,
+  `payments_quantity` int NOT NULL DEFAULT '1',
+  `payments_type` tinyint(1) NOT NULL COMMENT '1 = Payment Recieved\r\n2 = Sales item\r\n3 = SubHire item\r\n4 = Staff cost',
+  `payments_reference` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `payments_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `payments_supplier` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `payments_method` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `payments_comment` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `projects_id` int NOT NULL,
+  `payments_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`payments_id`),
+  KEY `payments_projects_projects_id_fk` (`projects_id`),
+  CONSTRAINT `payments_projects_projects_id_fk` FOREIGN KEY (`projects_id`) REFERENCES `projects` (`projects_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `phinxlog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `phinxlog` (
+  `version` bigint NOT NULL,
+  `migration_name` varchar(100) DEFAULT NULL,
+  `start_time` timestamp NULL DEFAULT NULL,
+  `end_time` timestamp NULL DEFAULT NULL,
+  `breakpoint` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `positions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `positions` (
+  `positions_id` int NOT NULL AUTO_INCREMENT,
+  `positions_displayName` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `positions_positionsGroups` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `positions_rank` tinyint NOT NULL DEFAULT '4' COMMENT 'Rank of the position - so that the most senior position for a user is shown as their "main one". 0 is the most senior',
+  PRIMARY KEY (`positions_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `positionsgroups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `positionsgroups` (
+  `positionsGroups_id` int NOT NULL AUTO_INCREMENT,
+  `positionsGroups_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `positionsGroups_actions` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  PRIMARY KEY (`positionsGroups_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `projects`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projects` (
+  `projects_id` int NOT NULL AUTO_INCREMENT,
+  `projects_name` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `instances_id` int NOT NULL,
+  `projects_manager` int NOT NULL,
+  `projects_description` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `projects_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `clients_id` int DEFAULT NULL,
+  `projects_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `projects_archived` tinyint(1) NOT NULL DEFAULT '0',
+  `projects_dates_use_start` timestamp NULL DEFAULT NULL,
+  `projects_dates_use_end` timestamp NULL DEFAULT NULL,
+  `projects_dates_deliver_start` timestamp NULL DEFAULT NULL,
+  `projects_dates_deliver_end` timestamp NULL DEFAULT NULL,
+  `projects_status` tinyint NOT NULL DEFAULT '0' COMMENT 'Provisional',
+  `locations_id` int DEFAULT NULL,
+  `projects_invoiceNotes` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `projects_defaultDiscount` double NOT NULL DEFAULT '0',
+  `projectsTypes_id` int NOT NULL,
+  `projects_parent_project_id` int DEFAULT NULL,
+  PRIMARY KEY (`projects_id`),
+  KEY `projects_clients_clients_id_fk` (`clients_id`),
+  KEY `projects_instances_instances_id_fk` (`instances_id`),
+  KEY `projects_users_users_userid_fk` (`projects_manager`),
+  KEY `projects_locations_locations_id_fk` (`locations_id`),
+  KEY `projects_projectsTypes_projectsTypes_id_fk` (`projectsTypes_id`),
+  KEY `projects_parent_project_id` (`projects_parent_project_id`),
+  CONSTRAINT `projects_clients_clients_id_fk` FOREIGN KEY (`clients_id`) REFERENCES `clients` (`clients_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`projects_parent_project_id`) REFERENCES `projects` (`projects_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `projects_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `projects_locations_locations_id_fk` FOREIGN KEY (`locations_id`) REFERENCES `locations` (`locations_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `projects_users_users_userid_fk` FOREIGN KEY (`projects_manager`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `projectsfinancecache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projectsfinancecache` (
+  `projectsFinanceCache_id` int NOT NULL AUTO_INCREMENT,
+  `projects_id` int NOT NULL,
+  `projectsFinanceCache_timestamp` timestamp NOT NULL,
+  `projectsFinanceCache_timestampUpdated` timestamp NULL DEFAULT NULL,
+  `projectsFinanceCache_equipmentSubTotal` int DEFAULT NULL,
+  `projectsFinanceCache_equiptmentDiscounts` int DEFAULT NULL,
+  `projectsFinanceCache_equiptmentTotal` int DEFAULT NULL,
+  `projectsFinanceCache_salesTotal` int DEFAULT NULL,
+  `projectsFinanceCache_staffTotal` int DEFAULT NULL,
+  `projectsFinanceCache_externalHiresTotal` int DEFAULT NULL,
+  `projectsFinanceCache_paymentsReceived` int DEFAULT NULL,
+  `projectsFinanceCache_grandTotal` int DEFAULT NULL,
+  `projectsFinanceCache_value` int DEFAULT NULL,
+  `projectsFinanceCache_mass` decimal(55,5) DEFAULT NULL,
+  PRIMARY KEY (`projectsFinanceCache_id`),
+  KEY `projectsFinanceCache_projects_projects_id_fk` (`projects_id`),
+  KEY `projectFinnaceCacheTimestamp` (`projectsFinanceCache_timestamp`),
+  CONSTRAINT `projectsFinanceCache_projects_projects_id_fk` FOREIGN KEY (`projects_id`) REFERENCES `projects` (`projects_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `projectsnotes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projectsnotes` (
+  `projectsNotes_id` int NOT NULL AUTO_INCREMENT,
+  `projectsNotes_title` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `projectsNotes_text` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `projectsNotes_userid` int NOT NULL,
+  `projects_id` int NOT NULL,
+  `projectsNotes_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`projectsNotes_id`),
+  KEY `projectsNotes_projects_projects_id_fk` (`projects_id`),
+  KEY `projectsNotes_users_users_userid_fk` (`projectsNotes_userid`),
+  CONSTRAINT `projectsNotes_projects_projects_id_fk` FOREIGN KEY (`projects_id`) REFERENCES `projects` (`projects_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `projectsNotes_users_users_userid_fk` FOREIGN KEY (`projectsNotes_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `projectstypes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projectstypes` (
+  `projectsTypes_id` int NOT NULL AUTO_INCREMENT,
+  `projectsTypes_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `instances_id` int NOT NULL,
+  `projectsTypes_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsTypes_config_finance` tinyint(1) NOT NULL DEFAULT '1',
+  `projectsTypes_config_files` int NOT NULL DEFAULT '1',
+  `projectsTypes_config_assets` int NOT NULL DEFAULT '1',
+  `projectsTypes_config_client` int NOT NULL DEFAULT '1',
+  `projectsTypes_config_venue` int NOT NULL DEFAULT '1',
+  `projectsTypes_config_notes` int NOT NULL DEFAULT '1',
+  `projectsTypes_config_crew` int NOT NULL DEFAULT '1',
+  PRIMARY KEY (`projectsTypes_id`),
+  KEY `projectsTypes_instances_instances_id_fk` (`instances_id`),
+  CONSTRAINT `projectsTypes_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `projectsvacantroles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projectsvacantroles` (
+  `projectsVacantRoles_id` int NOT NULL AUTO_INCREMENT,
+  `projects_id` int NOT NULL,
+  `projectsVacantRoles_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `projectsVacantRoles_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `projectsVacantRoles_personSpecification` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `projectsVacantRoles_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsVacantRoles_open` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsVacantRoles_showPublic` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsVacantRoles_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `projectsVacantRoles_deadline` timestamp NULL DEFAULT NULL,
+  `projectsVacantRoles_firstComeFirstServed` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsVacantRoles_fileUploads` tinyint(1) NOT NULL DEFAULT '1',
+  `projectsVacantRoles_slots` int NOT NULL DEFAULT '1',
+  `projectsVacantRoles_slotsFilled` int NOT NULL DEFAULT '0',
+  `projectsVacantRoles_questions` json DEFAULT NULL,
+  `projectsVacantRoles_collectPhone` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsVacantRoles_privateToPM` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`projectsVacantRoles_id`),
+  KEY `projectsVacantRoles_projects_projects_id_fk` (`projects_id`),
+  CONSTRAINT `projectsVacantRoles_projects_projects_id_fk` FOREIGN KEY (`projects_id`) REFERENCES `projects` (`projects_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `projectsvacantrolesapplications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projectsvacantrolesapplications` (
+  `projectsVacantRolesApplications_id` int NOT NULL AUTO_INCREMENT,
+  `projectsVacantRoles_id` int NOT NULL,
+  `users_userid` int NOT NULL,
+  `projectsVacantRolesApplications_files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `projectsVacantRolesApplications_phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `projectsVacantRolesApplications_applicantComment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `projectsVacantRolesApplications_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsVacantRolesApplications_withdrawn` tinyint(1) NOT NULL DEFAULT '0',
+  `projectsVacantRolesApplications_submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `projectsVacantRolesApplications_questionAnswers` json DEFAULT NULL,
+  `projectsVacantRolesApplications_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 = Success\r\n2 = Rejected',
+  PRIMARY KEY (`projectsVacantRolesApplications_id`),
+  KEY `projectsVacantRolesApplications_projectsVacantRolesid_fk` (`projectsVacantRoles_id`),
+  KEY `projectsVacantRolesApplications_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `projectsVacantRolesApplications_projectsVacantRolesid_fk` FOREIGN KEY (`projectsVacantRoles_id`) REFERENCES `projectsvacantroles` (`projectsVacantRoles_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `projectsVacantRolesApplications_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `s3files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `s3files` (
+  `s3files_id` int NOT NULL AUTO_INCREMENT,
+  `instances_id` int NOT NULL,
+  `s3files_path` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'NO LEADING /',
+  `s3files_name` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `s3files_filename` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `s3files_extension` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `s3files_original_name` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'What was this file originally called when it was uploaded? For things like file attachments\r\n',
+  `s3files_region` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `s3files_endpoint` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `s3files_cdn_endpoint` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `s3files_bucket` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `s3files_meta_size` bigint NOT NULL COMMENT 'Size of the file in bytes',
+  `s3files_meta_public` tinyint(1) NOT NULL DEFAULT '0',
+  `s3files_shareKey` varchar(255) DEFAULT NULL,
+  `s3files_meta_type` tinyint NOT NULL DEFAULT '0' COMMENT '0 = undefined\r\nRest are set out in corehead\r\n',
+  `s3files_meta_subType` int DEFAULT NULL COMMENT 'Depends what it is - each module that uses the file handler will be setting this for themselves',
+  `s3files_meta_uploaded` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `users_userid` int DEFAULT NULL COMMENT 'Who uploaded it?',
+  `s3files_meta_deleteOn` timestamp NULL DEFAULT NULL COMMENT 'Delete this file on this set date (basically if you hit delete we will kill it after say 30 days)',
+  `s3files_meta_physicallyStored` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'If we have the file it''s 1 - if we deleted it it''s 0 but the "deleteOn" is set. If we lost it it''s 0 with a null "delete on"',
+  `s3files_compressed` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`s3files_id`),
+  KEY `s3files_instances_instances_id_fk` (`instances_id`),
+  KEY `s3files_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `s3files_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `s3files_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `signupcodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `signupcodes` (
+  `signupCodes_id` int NOT NULL AUTO_INCREMENT,
+  `signupCodes_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `instances_id` int NOT NULL,
+  `signupCodes_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `signupCodes_valid` tinyint(1) NOT NULL DEFAULT '1',
+  `signupCodes_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `signupCodes_role` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `instancePositions_id` int DEFAULT NULL,
+  PRIMARY KEY (`signupCodes_id`),
+  UNIQUE KEY `signupCodes_signupCodes_name_uindex` (`signupCodes_name`),
+  KEY `signupCodes_instances_instances_id_fk` (`instances_id`),
+  KEY `signupCodes_instancePositions_instancePositions_id_fk` (`instancePositions_id`),
+  CONSTRAINT `signupCodes_instancePositions_instancePositions_id_fk` FOREIGN KEY (`instancePositions_id`) REFERENCES `instancepositions` (`instancePositions_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `signupCodes_instances_instances_id_fk` FOREIGN KEY (`instances_id`) REFERENCES `instances` (`instances_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `userinstances`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `userinstances` (
+  `userInstances_id` int NOT NULL AUTO_INCREMENT,
+  `users_userid` int NOT NULL,
+  `instancePositions_id` int NOT NULL,
+  `userInstances_extraPermissions` varchar(5000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `userInstances_label` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `userInstances_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `signupCodes_id` int DEFAULT NULL,
+  `userInstances_archived` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`userInstances_id`),
+  KEY `userInstances_instancePositions_instancePositions_id_fk` (`instancePositions_id`),
+  KEY `userInstances_users_users_userid_fk` (`users_userid`),
+  KEY `userInstances_signupCodes_signupCodes_id_fk` (`signupCodes_id`),
+  CONSTRAINT `userInstances_instancePositions_instancePositions_id_fk` FOREIGN KEY (`instancePositions_id`) REFERENCES `instancepositions` (`instancePositions_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userInstances_signupCodes_signupCodes_id_fk` FOREIGN KEY (`signupCodes_id`) REFERENCES `signupcodes` (`signupCodes_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `userInstances_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `usermodules`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usermodules` (
+  `userModules_id` int NOT NULL AUTO_INCREMENT,
+  `modules_id` int NOT NULL,
+  `users_userid` int NOT NULL,
+  `userModules_stepsCompleted` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `userModules_currentStep` int DEFAULT NULL,
+  `userModules_started` timestamp NOT NULL,
+  `userModules_updated` timestamp NOT NULL,
+  PRIMARY KEY (`userModules_id`),
+  KEY `userModules_modules_modules_id_fk` (`modules_id`),
+  KEY `userModules_users_users_userid_fk` (`users_userid`),
+  KEY `userModules_modulesSteps_modulesSteps_id_fk` (`userModules_currentStep`),
+  CONSTRAINT `userModules_modules_modules_id_fk` FOREIGN KEY (`modules_id`) REFERENCES `modules` (`modules_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userModules_modulesSteps_modulesSteps_id_fk` FOREIGN KEY (`userModules_currentStep`) REFERENCES `modulessteps` (`modulesSteps_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `userModules_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `usermodulescertifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usermodulescertifications` (
+  `userModulesCertifications_id` int NOT NULL AUTO_INCREMENT,
+  `modules_id` int NOT NULL,
+  `users_userid` int NOT NULL,
+  `userModulesCertifications_revoked` tinyint(1) NOT NULL DEFAULT '0',
+  `userModulesCertifications_approvedBy` int NOT NULL,
+  `userModulesCertifications_approvedComment` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `userModulesCertifications_timestamp` timestamp NOT NULL,
+  PRIMARY KEY (`userModulesCertifications_id`),
+  KEY `userModulesCertifications_users_users_userid_fk` (`users_userid`),
+  KEY `userModulesCertifications_users_users_userid_fk_2` (`userModulesCertifications_approvedBy`),
+  KEY `userModulesCertifications_modules_modules_id_fk` (`modules_id`),
+  CONSTRAINT `userModulesCertifications_modules_modules_id_fk` FOREIGN KEY (`modules_id`) REFERENCES `modules` (`modules_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userModulesCertifications_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userModulesCertifications_users_users_userid_fk_2` FOREIGN KEY (`userModulesCertifications_approvedBy`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `userpositions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `userpositions` (
+  `userPositions_id` int NOT NULL AUTO_INCREMENT,
+  `users_userid` int DEFAULT NULL,
+  `userPositions_start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `userPositions_end` timestamp NULL DEFAULT NULL,
+  `positions_id` int DEFAULT NULL COMMENT 'Can be null if you like - as long as you set the relevant other fields',
+  `userPositions_displayName` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `userPositions_extraPermissions` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'Allow a few extra permissions to be added just for this user for that exact permissions term\r\n',
+  `userPositions_show` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`userPositions_id`),
+  KEY `userPositions_positions_positions_id_fk` (`positions_id`),
+  KEY `userPositions_users_users_userid_fk` (`users_userid`),
+  CONSTRAINT `userPositions_positions_positions_id_fk` FOREIGN KEY (`positions_id`) REFERENCES `positions` (`positions_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userPositions_users_users_userid_fk` FOREIGN KEY (`users_userid`) REFERENCES `users` (`users_userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `users_username` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_name1` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_name2` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_userid` int NOT NULL AUTO_INCREMENT,
+  `users_salty1` varchar(30) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_password` varchar(150) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_salty2` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_hash` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `users_email` varchar(257) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'When user signed up',
+  `users_notes` text CHARACTER SET latin1 COLLATE latin1_swedish_ci COMMENT 'Internal Notes - Not visible to user',
+  `users_thumbnail` int DEFAULT NULL,
+  `users_changepass` tinyint(1) NOT NULL DEFAULT '0',
+  `users_selectedProjectID` int DEFAULT NULL,
+  `users_selectedInstanceIDLast` int DEFAULT NULL COMMENT 'What is the instance ID they most recently selected? This will be the one we use next time they login',
+  `users_suspended` tinyint(1) NOT NULL DEFAULT '0',
+  `users_deleted` tinyint(1) DEFAULT '0',
+  `users_emailVerified` tinyint(1) NOT NULL DEFAULT '0',
+  `users_social_facebook` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_social_twitter` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_social_instagram` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_social_linkedin` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_social_snapchat` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_calendarHash` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_widgets` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_notificationSettings` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `users_assetGroupsWatching` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `users_oauth_googleid` varchar(255) DEFAULT NULL,
+  `users_dark_mode` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`users_userid`),
+  UNIQUE KEY `users_users_email_uindex` (`users_email`),
+  UNIQUE KEY `users_users_username_uindex` (`users_username`),
+  KEY `username_2` (`users_userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
