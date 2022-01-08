@@ -1,7 +1,9 @@
 <?php
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) require_once __DIR__ . '/../apiHeadSecure.php'; //Only if it wasn't included from somewhere else
+use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 use Money\Money;
+use Money\Formatter\IntlMoneyFormatter;
 
 $array = [];
 if (isset($_POST['formData'])) {
@@ -37,6 +39,10 @@ function projectFinancials($project) {
     global $DBLIB,$AUTH,$bCMS;
     $projectFinanceHelper = new projectFinance();
     $return = [];
+
+    //create a formatter for money
+    $numberFormatter = new \NumberFormatter('en_GB', \NumberFormatter::CURRENCY);
+    $moneyFormatter = new IntlMoneyFormatter($numberFormatter, new ISOCurrencies());
 
     $DBLIB->where("payments.payments_deleted", 0);
     $DBLIB->orderBy("payments.payments_date", "ASC");
@@ -110,6 +116,12 @@ function projectFinancials($project) {
         $return['prices']['discounts'] = $return['prices']['discounts']->add($asset['price']->subtract($asset['discountPrice']));
         $return['prices']['total'] = $return['prices']['total']->add($asset['discountPrice']);
 
+        //Formatted values for each asset
+        $asset['formattedValue'] = $moneyFormatter->format($asset['value']);
+        $asset['formattedPrice'] = $moneyFormatter->format($asset['price']);
+        $asset['formattedDiscountPrice'] = $moneyFormatter->format($asset['discountPrice']);
+        $asset['formattedMass'] = number_format(($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']), 2, '.', '') . "kg";
+
         $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
 
         $asset['assetTypes_definableFields_ARRAY'] = array_filter(explode(",", $asset['assetTypes_definableFields']));
@@ -134,6 +146,10 @@ function projectFinancials($project) {
             $return['assetsAssigned'][$key]['totals']['price'] = $return['assetsAssigned'][$key]['totals']['price']->add($asset['price']);
             $return['assetsAssigned'][$key]['totals']['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
         }
+        //formatted Totals
+        $return['assetsAssigned'][$key]['totals']['formattedDiscountPrice'] = $moneyFormatter->format($return['assetsAssigned'][$key]['totals']['discountPrice']);
+        $return['assetsAssigned'][$key]['totals']['formattedPrice'] = $moneyFormatter->format($return['assetsAssigned'][$key]['totals']['price']);
+        $return['assetsAssigned'][$key]['totals']['formattedMass'] = number_format($return['assetsAssigned'][$key]['totals']['mass'], 2, '.', '') . "kg";
     }
     foreach ($return['assetsAssignedSUB'] as $instanceid => $instance) {
         if (!isset($return['assetsAssignedSUB'][$instanceid]['instance'])) {
@@ -149,11 +165,31 @@ function projectFinancials($project) {
                 $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price'] = $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price']->add($asset['price']);
                 $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['mass'] += ($asset['assets_mass'] == null ? $asset['assetTypes_mass'] : $asset['assets_mass']);
             }
+            //Formatted totals
+            $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['formattedDiscountPrice'] = $moneyFormatter->format($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['discountPrice']);
+            $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['formattedPrice'] = $moneyFormatter->format($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['price']);
+            $return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['formattedMass'] = number_format($return['assetsAssignedSUB'][$instanceid]['assets'][$key]['totals']['mass'], 2, '.', '') . "kg";
         }
     }
 
     $return['payments']['subTotal'] = $return['prices']['total']->add($return['payments']['sales']['total'],$return['payments']['subHire']['total'],$return['payments']['staff']['total']);
     $return['payments']['total'] = $return['payments']['subTotal']->subtract($return['payments']['received']['total']);
+
+    //add formatted values to everything
+    $return['formattedValue'] = $moneyFormatter->format($return['value']);
+    $return['formattedPrices'] = ["subTotal" => $moneyFormatter->format($return['prices']['subTotal']), "discounts" => $moneyFormatter->format($return['prices']['discounts']), "total" => $moneyFormatter->format($return['prices']['total'])];
+    $return['formattedMass'] = number_format($return['mass'], 2, '.', '') . "kg";
+    //format payments
+    foreach ($return['payments'] as $key => $value) {
+        if ($key == "subTotal") {
+            $return['payments']['formattedSubTotal'] = $moneyFormatter->format($return['payments']["subTotal"]);
+        } elseif ($key == "total"){
+            $return['payments']['formattedTotal'] = $moneyFormatter->format($return['payments']["total"]);
+        } else {
+            $return['payments'][$key]['formattedTotal'] = $moneyFormatter->format($return['payments'][$key]['total']);
+        }
+    }
+    
     return $return;
 }
 $PAGEDATA['FINANCIALS'] = projectFinancials($PAGEDATA['project']);

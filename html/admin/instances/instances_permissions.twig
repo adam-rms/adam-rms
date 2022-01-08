@@ -83,16 +83,17 @@
 {% if 12|instancePermissions %}
 <script>
 $(document).ready(function() {
-	$("#loading").hide();
-	$(':checkbox').change(function() {
+
+	function updatePermission(checkbox){
+		let permissionid = $(checkbox).data("permissionid");
 		$("#loading").show();
-		if($(this).is(":checked")) {
-			var get = "addpermission=" + $(this).data("permissionid");
+		if($(checkbox).is(":checked")) {
+			var get = "addpermission=" + permissionid;
 		} else {
-			var get = "removepermission=" + $(this).data("permissionid");
+			var get = "removepermission=" + permissionid;
 		}
 		$.ajax({
-			url: "{{CONFIG.ROOTURL}}/api/permissions/instancePermissionsEditor.php?" + get + "&position=" + $(this).data("positionid"),
+			url: "{{CONFIG.ROOTURL}}/api/permissions/instancePermissionsEditor.php?" + get + "&position=" + $(checkbox).data("positionid"),
 			cache : false,
 			success: function(result){
 				if (result == '1') {
@@ -105,6 +106,36 @@ $(document).ready(function() {
 				}
 			}
 		});
+	}
+
+	$("#loading").hide();
+	$(':checkbox').change(function() {
+		let checkbox = $(this);
+		let permissionid = checkbox.data("permissionid")
+		//show a popup if this is a signup code permission
+		if (checkbox.is(":checked") && (permissionid == "110" || permissionid == "111")) {
+			bootbox.confirm({
+				title: "Warning - potential privilege escalation",
+				message: "Selecting this position allows a user to create a signup code that they can use to create an account in your business with any position group they choose. <br />This permission is normally only enabled for administrators in a business.<br /> Are you sure you want to enable it?",
+				buttons: {
+					confirm: {
+						label: 'Yes',
+					},
+					cancel: {
+						label: 'No',
+					},
+				},
+				callback: function (result) {
+					if (result){
+						updatePermission(checkbox);
+					} else {
+						location.reload();
+					}
+				}
+			})
+		} else {
+			updatePermission(checkbox);
+		}	
 	});
 });
 </script>
