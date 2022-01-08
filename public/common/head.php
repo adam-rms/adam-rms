@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../common/coreHead.php';
-require_once __DIR__ . '/../../common/libs/Auth/main.php';
+require_once __DIR__ . '/top-level-common/coreHead.php';
+require_once __DIR__ . '/top-level-common/libs/Auth/main.php';
 
 try {
     //session_set_cookie_params(0, '/', '.' . $_SERVER['SERVER_NAME']); //Fix for subdomain bug

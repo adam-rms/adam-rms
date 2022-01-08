@@ -1,55 +1,29 @@
 <?php
+require_once __DIR__ . '/common/headSecure.php';
 
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
+$PAGEDATA['pageConfig'] = ["TITLE" => "Dashboard", "BREADCRUMB" => false];
 
-define('LARAVEL_START', microtime(true));
-
-/*
-|--------------------------------------------------------------------------
-| Check If The Application Is Under Maintenance
-|--------------------------------------------------------------------------
-|
-| If the application is in maintenance / demo mode via the "down" command
-| we will load this file so that any pre-rendered content can be shown
-| instead of starting the framework, which could cause an exception.
-|
-*/
-
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
+if (isset($_GET['i'])) {
+    if ($AUTH->permissionCheck(21)) {
+        $_SESSION['instanceID'] = $_GET['i']; //It doesn't even bother to verify the instance ID as the user is trusted to be BStudios Staff
+        header("Location: " . $CONFIG['ROOTURL'] . "?");
+    } else {
+        $GLOBALS['AUTH']->setInstance($_GET['i']);
+        header("Location: " . $CONFIG['ROOTURL'] . "?");
+    }
+}
+if ($AUTH->permissionCheck(18) and isset($_GET['phpversion'])) {
+    phpinfo();
+    exit;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Register The Auto Loader
-|--------------------------------------------------------------------------
-|
-| Composer provides a convenient, automatically generated class loader for
-| this application. We just need to utilize it! We'll simply require it
-| into the script here so we don't need to manually load our classes.
-|
-*/
+$DBLIB->orderBy("authTokens_created","DESC");
+$DBLIB->where("users_userid",$AUTH->data['users_userid']);
+$DBLIB->where("(authTokens_deviceType != 'Web')");
+$PAGEDATA['APPLOGIN'] = $DBLIB->getone("authTokens",["authTokens_deviceType"]);
 
-require __DIR__.'/../vendor/autoload.php';
 
-/*
-|--------------------------------------------------------------------------
-| Run The Application
-|--------------------------------------------------------------------------
-|
-| Once we have the application, we can handle the incoming request using
-| the application's HTTP kernel. Then, we will send the response back
-| to this client's browser, allowing them to enjoy our application.
-|
-*/
+$PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),false);
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
-
-$kernel = $app->make(Kernel::class);
-
-$response = $kernel->handle(
-    $request = Request::capture()
-)->send();
-
-$kernel->terminate($request, $response);
+echo $TWIG->render('dashboard.twig', $PAGEDATA);
+?>
