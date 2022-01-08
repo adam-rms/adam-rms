@@ -1,19 +1,3 @@
-# Laravel Port
-
-Merge when 
-
-- [ ] Laravel coexists nicely with the existing project
-- [ ] Migrations in the docker image are working
-- [ ] Docker image is tested
-- [ ] PDF generation on the legacy app is working
-- [ ] Test environment works with postgres in Heroku
-- [ ] Test environment works in AWS on Lambda 
-- [ ] Production environment works in AWS on Lambda
-
-- [ ] Public sites are migrated
-- [ ] Public sites DNS plan in place
-- [ ] Public sites are tested
-
 # AdamRMS
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/adam-rms/adam-rms)
