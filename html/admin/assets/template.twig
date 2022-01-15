@@ -259,9 +259,9 @@
             {% endif %}
         </ul>
         {% if USERDATA.instances|length > 0 %}
-        <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/project/list.php" method="GET">
+        <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/search.php" method="GET">
             <div class="input-group input-group-sm">
-                <input class="form-control form-control-navbar" name="q" type="search" placeholder="Search Projects" aria-label="Search Projects">
+                <input class="form-control form-control-navbar" name="term" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-navbar" type="submit">
                         <i class="fas fa-search"></i>
