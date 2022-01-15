@@ -26,13 +26,13 @@ class SearchLocations extends BaseSearch
             // Return the data to the list
             return [
                 'type' => "location",
-                'searchable' => array_filter([
+                'searchable' => [
                     $location["locations_name"],
                     $location["locations_address"],
                     $location["locations_deleted"],
                     $location["locations_notes"],
                     $location["clients_name"],
-                ]),
+                ],
                 'title' => $location['locations_name'],
                 'data' => $location
             ];

@@ -25,14 +25,14 @@ class SearchClients extends BaseSearch
             // Return the data to the list
             return [
                 'type' => "client",
-                'searchable' => array_filter([
+                'searchable' => [
                     $client['clients_name'],
                     $client['clients_website'],
                     $client['clients_email'],
                     $client['clients_notes'],
                     $client['clients_address'],
                     $client['clients_phone'],
-                ]),
+                ],
                 'title' => $client['clients_name'],
                 'data' => $client
             ];

@@ -52,13 +52,13 @@ class SearchProjects extends BaseSearch
             // Return the data
             return [
                 'type' => "project",
-                'searchable' => array_filter(array_merge([
+                'searchable' => array_merge([
                     $project['projects_name'],
                     $project['projects_description'],
                     $project['projects_manager'],
                     $project['projects_status'],
                     $project['clients_name'],
-                ], $readable_dates)),
+                ], $readable_dates),
                 'title' => $project['projects_name'],
                 'except' => $except,
                 'data' => $project
