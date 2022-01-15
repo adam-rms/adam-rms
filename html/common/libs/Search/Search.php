@@ -3,6 +3,7 @@
 require_once __DIR__ . '/BaseSearch.php';
 require_once __DIR__ . '/SearchCMS.php';
 require_once __DIR__ . '/SearchProjects.php';
+require_once __DIR__ . '/SearchClients.php';
 
 class Search extends BaseSearch
 {
@@ -15,7 +16,8 @@ class Search extends BaseSearch
 
         $this->providers=[
             new SearchCMS($instance_id),
-            new SearchProjects($instance_id)
+            new SearchProjects($instance_id),
+            new SearchClients($instance_id)
         ];
     }
 

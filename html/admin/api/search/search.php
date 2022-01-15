@@ -21,5 +21,5 @@ catch (ValueError $e) {
     finish(false, ["message"=>"Business not found"]);
 }
 catch (Exception $e) {
-    finish(false, ["message"=>"There was an error"]);
+    throw $e;
 }
