@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(123) or !isset($_POST['projectsVacantRoles_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if (!$AUTH->instancePermissionCheck(123)) die(404);
+if (!isset($_POST['projectsVacantRoles_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
 $DBLIB->where("projectsVacantRoles.projectsVacantRoles_deleted",0);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
