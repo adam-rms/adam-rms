@@ -19,4 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Route::get('photos/popular', 'PhotoController@method');
-Route::resource('manufacturer', 'ManufacturerController');
+//Route::resource('manufacturer', 'App\Http\Controllers\ManufacturerController');
