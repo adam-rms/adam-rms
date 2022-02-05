@@ -14,7 +14,7 @@ class ManufacturerController extends Controller
 
     public function __construct(ManufacturerRepositoryInterface $manufacturerRepository) 
     {
-        $this->middleware('auth');
+        //$this->middleware('auth');
         $this->manufacturerRepository = $manufacturerRepository;
     }
 
