@@ -254,7 +254,7 @@
                                     <img src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
                                 {% endif %}
                                 {% if 14|permissions or user.users_userid == USERDATA.users_userid %}
-                                    {% embed 'common/plugins/uppy.twig' with {'publicBool': false, 'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
+                                    {% embed 'common/plugins/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
                                         {% block success %}
                                             ajaxcall("account/thumbnail.php", {
                                                 "users_userid": "{{ user.users_userid }}",
