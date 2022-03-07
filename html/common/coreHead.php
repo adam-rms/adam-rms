@@ -788,17 +788,25 @@ class projectFinance {
             $weeks = floor($remaining / 7); //Number of week periods
             if ($weeks > 0) {
                 $return['weeks'] += $weeks;
-                $return['string'] .= "\nAdd " . $weeks . " week period(s) to reflect a period of more than 7 days";
+                if ($weeks == 1) {
+                    $return['string'] .= "\nAdd 1 week period to reflect a period of more than 7 days";
+                } else {
+                    $return['string'] .= "\nAdd " . $weeks . " week periods to reflect a period of more than 7 days";
+                }
                 $remaining = $remaining - ($weeks * 7);
             }
             if ($remaining > 2) {
-                $return['string'] .= "\nAdd a week to discount a period of more than 3 days or more that's under 7";
+                $return['string'] .= "\nAdd a week to discount a period between 3 and 7 days";
                 $return['weeks'] += 1;
                 $remaining = $remaining - 7;
             }
             if ($remaining > 0) {
                 $return['days'] += ceil($remaining);
-                $return['string'] .= "\nAdd " . ceil($remaining) . " day period(s)";
+                if ($remaining == 1){
+                    $return['string'] .= "\nAdd 1 day period";
+                } else {
+                    $return['string'] .= "\nAdd " . ceil($remaining) . " day periods";
+                }
             }
         }
         return $return;
