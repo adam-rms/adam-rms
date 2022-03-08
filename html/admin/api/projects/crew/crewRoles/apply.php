@@ -12,6 +12,7 @@ foreach ($_POST['formData'] as $item) {
 if (strlen($array['projectsVacantRoles_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
 $DBLIB->where("projectsVacantRoles_deleted",0);
+if ($AUTH->data['instance']["instancePositions_id"]) $DBLIB->where("(projectsVacantRoles_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", projectsVacantRoles_visibleToGroups) > 0))"); //If the user doesn't have a position - they're bstudios staff
 $DBLIB->join("projects","projectsVacantRoles.projects_id=projects.projects_id","LEFT");
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
@@ -20,7 +21,7 @@ $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->where("projectsVacantRoles_open",1);
 $DBLIB->where("projectsVacantRoles_id",$array['projectsVacantRoles_id']);
 $role = $DBLIB->getOne("projectsVacantRoles",['projectsVacantRoles_id','projectsVacantRoles.projects_id','projects_manager','projects_name','projectsVacantRoles_name',"users.users_userid", "users.users_name1", "users.users_name2", "users.users_email","projectsVacantRoles_firstComeFirstServed","projectsVacantRoles_slots","projectsVacantRoles_slotsFilled","projects.projects_dates_use_end","projects.projects_dates_use_start"]);
-if (!$role) finish(false, ['message' => "Sorry this role is no longer open"]);
+if (!$role) finish(false, ['message' => "Sorry, this role is not available"]);
 
 if ($role['projectsVacantRoles_firstComeFirstServed'] == 1 and $role['projectsVacantRoles_slotsFilled'] >= $role['projectsVacantRoles_slots']) finish(false, ["message" => "Sorry this role is fully subscribed"]);
 
