@@ -20,6 +20,10 @@ foreach ($checkboxes as $checkbox) {
     if (isset($array[$checkbox]) and $array[$checkbox] == "on") $array[$checkbox] = 1;
     else $array[$checkbox] = 0;
 }
+
+//Check if role is only visible to groups, and disable public site if it is
+if($array['projectsVacantRoles_visibleToGroups'] != null) $array['projectsVacantRoles_showPublic'] = 0;
+
 if ($array['projectsVacantRoles_deadline']) $array['projectsVacantRoles_deadline'] = date("Y-m-d H:i:s",strtotime($array['projectsVacantRoles_deadline']));
 
 if (strlen($array['projectsVacantRoles_id']) <1 and $array['projectsVacantRoles_id'] != "NEW") finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
