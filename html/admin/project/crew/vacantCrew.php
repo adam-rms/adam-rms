@@ -24,5 +24,13 @@ foreach($roles as $role) {
     $role['projectsVacantRoles_questionsArray'] = json_decode($role['projectsVacantRoles_questions'],true);
     $PAGEDATA['roles'][] = $role;
 }
+
+$DBLIB->orderBy("instancePositions_rank", "ASC");
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("instancePositions_deleted",0);
+$PAGEDATA['positions'] = $DBLIB->get("instancePositions");
+
+$PAGEDATA['publicData'] = json_decode($AUTH->data['instance']['instances_publicConfig'],true);
+
 echo $TWIG->render('project/crew/vacantCrew.twig', $PAGEDATA);
 ?>

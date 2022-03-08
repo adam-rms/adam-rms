@@ -118,7 +118,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Person Specification</span>
                                 </div>
-                                <textarea type="text" class="form-control" placeholder="Must have experience using drum revolves. Ideal candidate would hold NRC Level 2, but this is not essential" name="projectsVacantRoles_personSpecification" rows="10">{{ role.projectsVacantRoles_personSpecification }}</textarea>
+                                <textarea type="text" class="form-control" placeholder="Must have experience using drum revolves. Ideal candidate would hold NRC Level 2, but this is not essential" name="projectsVacantRoles_personSpecification" rows="6">{{ role.projectsVacantRoles_personSpecification }}</textarea>
                             </div>
                             <hr/>
                             <div class="input-group" style="margin-bottom: 5px;">
@@ -129,20 +129,13 @@
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Visible on Crew Vacancies List</span>
+                                    <span class="input-group-text">Roles available</span>
                                 </div>
-                                <input type="checkbox" class="form-control" name="projectsVacantRoles_open" {{ role.projectsVacantRoles_open == 1 or role.NEW ? 'checked' : ''  }}  />
+                                <input type="number" class="form-control" required name="projectsVacantRoles_slots" min="1" value="{{ role.projectsVacantRoles_slots }}" />
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Visible on Public Site (if enabled)</span>
-                                </div>
-                                <input type="checkbox" class="form-control" name="projectsVacantRoles_showPublic" {{ role.projectsVacantRoles_showPublic == 1 or role.NEW ? 'checked' : ''  }}  />
-                            </div>
-
-                            <div class="input-group" style="margin-bottom: 5px;">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Applications visible to the Project Manager Only</span>
+                                    <span class="input-group-text">Applications visible to Project Manager Only</span>
                                 </div>
                                 <input type="checkbox" class="form-control" name="projectsVacantRoles_privateToPM" {{ role.projectsVacantRoles_privateToPM == 1 ? 'checked disabled' : (role.NEW ? 'checked')  }}  />
                                 {% if role.projectsVacantRoles_privateToPM == 1 %}
@@ -151,28 +144,50 @@
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
+                                    <span class="input-group-text" data-toggle="tooltip" data-placement="bottom" title="Allow people to assign themselves to this role, and automatically close the role once it has been filled">
+                                        First Come First Served
+                                    </span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_firstComeFirstServed" {{ role.projectsVacantRoles_firstComeFirstServed == 1 ? 'checked' : ''  }}  />
+                            </div>
+
+                            <hr/>
+                            <h3>Role Visibility</h3>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Visible on Crew Vacancies List</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_open" {{ role.projectsVacantRoles_open == 1 or role.NEW ? 'checked' : ''  }}  />
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Visible on Public Site</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_showPublic" {% if publicData.enabled != true %}disabled title="Public Site is Disabled" {% elseif page.projectsVacantRoles_showPublic == 1 or page.NEW %}checked{% endif %} />
+                            </div>
+                            <div class="form-group">
+                                <label>Limit visibility to:</label>
+                                <select multiple class="form-control select2 select2bs4" name="projectsVacantRoles_visibleToGroups">
+                                    {% for position in positions %}
+                                        <option value="{{ position.instancePositions_id }}" {% if position.instancePositions_id in role.projectsVacantRoles_visibleToGroups|split(',') %}selected{% endif %}>{{ position.instancePositions_displayName }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <hr/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
                                     <span class="input-group-text">Collect Phone Numbers</span>
                                 </div>
                                 <input type="checkbox" class="form-control" name="projectsVacantRoles_collectPhone" {{ role. projectsVacantRoles_collectPhone == 1 or role.NEW ? 'checked' : ''  }}  />
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Roles available</span>
-                                </div>
-                                <input type="number" class="form-control" required name="projectsVacantRoles_slots" min="1" value="{{ role.projectsVacantRoles_slots }}" />
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">First Come First Served</label>
-                                <input type="checkbox" class="form-control" name="projectsVacantRoles_firstComeFirstServed" {{ role.projectsVacantRoles_firstComeFirstServed == 1 ? 'checked' : ''  }}  />
-                                <p>Allow people to assign themselves to this role, and automatically close the role once it has been filled</p>
-                            </div>
-                            <hr/>
-                            <div class="input-group" style="margin-bottom: 5px;">
-                                <div class="input-group-prepend">
                                     <span class="input-group-text">Allow File Uploads in Applications</span>
                                 </div>
                                 <input type="checkbox" class="form-control" name="projectsVacantRoles_fileUploads" {{ role.projectsVacantRoles_fileUploads == 1 or role.NEW ? 'checked' : ''  }}  />
                             </div>
+                            <br/>
                             <div class="applicationQuestions" data-id="{{ role.projectsVacantRoles_id }}">
                                 <button type="button" class="btn btn-secondary applicationQuestionsAddButton mb-2">Add Application Question</button>
                                 {% for question in role.projectsVacantRoles_questionsArray %}
@@ -236,7 +251,12 @@
             $('input.deadlineDatePicker').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
             });
-
+            $('.editForm .select2').select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            $('[data-toggle="tooltip"]').tooltip()
+                
             $(".applicationQuestionsAddButton").click(function () {
                 $(this).parent().append(`<div class="applicationQuestions-group">
                                         <div class="input-group" style="margin-bottom: 5px;">

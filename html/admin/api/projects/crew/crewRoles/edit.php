@@ -4,10 +4,16 @@ require_once __DIR__ . '/../../../apiHeadSecure.php';
 if (!$AUTH->instancePermissionCheck(123)) die("404");
 
 $array = [];
+$array['projectsVacantRoles_visibleToGroups'] = [];
 foreach ($_POST['formData'] as $item) {
     if ($item['value'] == '') $item['value'] = null;
-    $array[$item['name']] = $item['value'];
+
+    if ($item['name'] == 'projectsVacantRoles_visibleToGroups') array_push($array['projectsVacantRoles_visibleToGroups'],$item['value']);
+    else $array[$item['name']] = $item['value'];
 }
+
+if ($array['projectsVacantRoles_visibleToGroups'] == []) $array['projectsVacantRoles_visibleToGroups'] = null;
+else $array['projectsVacantRoles_visibleToGroups'] = implode(",",$array['projectsVacantRoles_visibleToGroups']);
 
 $checkboxes = ['projectsVacantRoles_open','projectsVacantRoles_firstComeFirstServed','projectsVacantRoles_fileUploads','projectsVacantRoles_collectPhone','projectsVacantRoles_privateToPM','projectsVacantRoles_showPublic'];
 foreach ($checkboxes as $checkbox) {
