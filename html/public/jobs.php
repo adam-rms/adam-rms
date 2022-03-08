@@ -6,7 +6,7 @@ date_default_timezone_set('Europe/London'); //So deadlines show in right timezon
 $PAGEDATA['pageConfig'] = ["TITLE" => "Crew Role Vacancies", "BREADCRUMB" => false];
 $DBLIB->where("projectsVacantRoles.projectsVacantRoles_deleted",0);
 $DBLIB->where("projectsVacantRoles.projectsVacantRoles_open",1);
-$DBLIB->where("(projectsVacantRoles.projectsVacantRoles_visibleToGroups IS NULL"); //if only visible to certain groups, should not be public - this is just a check
+$DBLIB->where("projectsVacantRoles.projectsVacantRoles_visibleToGroups IS NULL"); //if only visible to certain groups, should not be public - this is just a check
 $DBLIB->where("(projectsVacantRoles.projectsVacantRoles_deadline IS NULL OR projectsVacantRoles.projectsVacantRoles_deadline >= '" . date("Y-m-d H:i:s") . "')");
 $DBLIB->where("(projectsVacantRoles.projectsVacantRoles_slots > projectsVacantRoles.projectsVacantRoles_slotsFilled)");
 $DBLIB->join("projects","projectsVacantRoles.projects_id=projects.projects_id","LEFT");
