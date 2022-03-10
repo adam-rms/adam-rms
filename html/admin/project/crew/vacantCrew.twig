@@ -163,7 +163,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Visible on Public Site</span>
                                 </div>
-                                <input type="checkbox" class="form-control" name="projectsVacantRoles_showPublic" {% if publicData.enabled != true %}disabled title="Public Site is Disabled"{% elseif role.projectsVacantRoles_visibleToGroups != null %}disabled title="Role is only available to specified groups"{% elseif page.projectsVacantRoles_showPublic == 1 or page.NEW %}checked{% endif %} />
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_showPublic" {% if publicData.enabled != true %}disabled title="Public Site is Disabled"{% elseif role.projectsVacantRoles_visibleToGroups != null %}disabled title="Role is only available to specified groups"{% elseif role.projectsVacantRoles_showPublic == 1 or role.NEW %}checked{% endif %} />
                             </div>
                             <div class="form-group">
                                 <label>Limit visibility to:</label>

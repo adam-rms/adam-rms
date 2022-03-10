@@ -12,17 +12,19 @@ foreach ($_POST['formData'] as $item) {
     else $array[$item['name']] = $item['value'];
 }
 
-if ($array['projectsVacantRoles_visibleToGroups'] == []) $array['projectsVacantRoles_visibleToGroups'] = null;
-else $array['projectsVacantRoles_visibleToGroups'] = implode(",",$array['projectsVacantRoles_visibleToGroups']);
-
 $checkboxes = ['projectsVacantRoles_open','projectsVacantRoles_firstComeFirstServed','projectsVacantRoles_fileUploads','projectsVacantRoles_collectPhone','projectsVacantRoles_privateToPM','projectsVacantRoles_showPublic'];
 foreach ($checkboxes as $checkbox) {
     if (isset($array[$checkbox]) and $array[$checkbox] == "on") $array[$checkbox] = 1;
     else $array[$checkbox] = 0;
 }
 
-//Check if role is only visible to groups, and disable public site if it is
-if($array['projectsVacantRoles_visibleToGroups'] != null) $array['projectsVacantRoles_showPublic'] = 0;
+if ($array['projectsVacantRoles_visibleToGroups'] == []){
+    $array['projectsVacantRoles_visibleToGroups'] = null;
+} else {
+    $array['projectsVacantRoles_visibleToGroups'] = implode(",",$array['projectsVacantRoles_visibleToGroups']);
+    //Visible to specified groups so can't be public
+    $array['projectsVacantRoles_showPublic'] = 0;
+} 
 
 if ($array['projectsVacantRoles_deadline']) $array['projectsVacantRoles_deadline'] = date("Y-m-d H:i:s",strtotime($array['projectsVacantRoles_deadline']));
 

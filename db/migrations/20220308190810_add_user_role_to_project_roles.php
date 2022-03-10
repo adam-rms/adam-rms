@@ -18,7 +18,7 @@ final class AddUserRoleToProjectRoles extends AbstractMigration
      */
     public function change(): void
     {
-        $this->table('projectsvacantroles')
+        $this->table('projectsVacantRoles')
             ->addColumn('projectsVacantRoles_visibleToGroups', 'string',[
                 'null' => true,
                 'default' => null,
