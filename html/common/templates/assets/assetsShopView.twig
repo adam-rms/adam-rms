@@ -38,7 +38,7 @@
                                 <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                     {% for thumb in asset.thumbnail %}
                                         <div>
-                                            <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}">
+                                            <a href="/asset.php?id={{ asset.assetTypes_id }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}">
                                             <img class="img-fluid" style="max-height: 200px;"
                                                  src="{{ thumb.s3files_id|s3URL("small") }}"
                                                  alt="{{asset.assetTypes_name}}"></a>
@@ -246,7 +246,7 @@
                                             <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                     {% endif %}
                                 {% endif %}
-                                    <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}" class="btn btn-sm btn-default" target="_blank">
+                                    <a href="/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}" class="btn btn-sm btn-default" target="_blank">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
                                 </div>
