@@ -1,0 +1,26 @@
+{
+  "name": "AdamRMS-3",
+  "website": "https://adam-rms.com/",
+  "repository": "https://github.com/adam-rms/adam-rms",
+  "logo": "https://raw.githubusercontent.com/adam-rms/resources/main/logo/logo%20small.png",
+  "stack": "heroku-20",
+  "success_url": "/",
+  "scripts": {
+    
+  },
+  "env": {
+    "APP_KEY": {
+      "description": "The secret key for Laravel",
+      "generator": "secret"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql",
+      "as": "postgresql",
+      "options": {
+        "version": "14"
+      }
+    }
+  ]
+}

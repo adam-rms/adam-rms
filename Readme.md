@@ -12,17 +12,33 @@
 ![GitHub](https://img.shields.io/github/release/adam-rms/adam-rms/all)
 
 
-AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, written in PHP with the Twig Templating engine, and deployed using a pre-built docker container.
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-It is available as a hosted solution or to be self-hosted as a docker container. 
+AdamRMS 3 is an advanced Rental Management System for Theatre, AV & Broadcast, written in [Laravel](https://github.com/laravel/laravel).
 
-This repo is about the v1 release of the system, a PHP web app using Twig. It is still in active development, but most efforts have moved to the [v2 repo](https://github.com/adam-rms/adam-rms-v2).
+AdamRMS 3 is a complete re-write of AdamRMS, with no common database/code sharing with the original PHP version (v1).
 
-## Docker Images
 
- - GitHub Packages: [adam-rms/adam-rms](https://github.com/orgs/adam-rms/packages?repo_name=adam-rms)
 
-> Docker Hub images are no longer maintained 
+### Development 
+
+ - [Laravel Sail](https://github.com/laravel/sail)
+
+Replace commands that involve `php artisan` with `./vendor/bin/sail artisan` in WSL.
+
+Make sure docker is running, then run `./vendor/bin/sail up` in WSL.
+
+## The Stack
+
+### Backend
+
+ - [Laravel](https://github.com/laravel/laravel)
+ - [Laravel Jestream](https://github.com/laravel/jetstream)
+
+### Frontend 
+
+- [React](https://github.com/facebook/react)
+- [Inertia JS](https://github.com/inertiajs/inertia)
 
 ## Contributing 
 
