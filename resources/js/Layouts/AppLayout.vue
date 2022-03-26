@@ -240,6 +240,9 @@
     import JetNavLink from '@/Jetstream/NavLink.vue'
     import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink.vue'
     import { Head, Link } from '@inertiajs/inertia-vue3';
+    import 'admin-lte/plugins/jquery/jquery.min.js';
+    import 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js';
+    import 'admin-lte/dist/js/adminlte.min.js';
 
     export default defineComponent({
         props: {
