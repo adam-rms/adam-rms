@@ -14,13 +14,15 @@
       "value":""
     }
   },
-  "image": "heroku/php",
   "formation": {
     "web": {
       "quantity": 1,
       "size": "free"
     }
   },
+  "buildpacks": [
+    "heroku/nodejs","heroku/php"
+  ],
   "addons": [
     {
       "plan": "heroku-postgresql",
