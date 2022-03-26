@@ -12,7 +12,7 @@
 ![GitHub](https://img.shields.io/github/release/adam-rms/adam-rms/all)
 
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/adam-rms/adam-rms/tree/laravel-postgres)
 
 AdamRMS 3 is an advanced Rental Management System for Theatre, AV & Broadcast, written in [Laravel](https://github.com/laravel/laravel).
 
