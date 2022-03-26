@@ -10,8 +10,15 @@
   },
   "env": {
     "APP_KEY": {
-      "description": "The secret key for Laravel",
-      "generator": "secret"
+      "description": "A secret key for verifying the integrity of signed cookies. (See either https://snipe-it.readme.io/docs/generate-your-app-key or generate at https://coderstoolbox.online/toolbox/generate-symfony-secret)",
+      "value":""
+    }
+  },
+  "image": "heroku/php",
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
     }
   },
   "addons": [
