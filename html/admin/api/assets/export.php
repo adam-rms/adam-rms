@@ -79,6 +79,7 @@ foreach ($PAGEDATA['assets'] as $assetType) {
             $moneyFormatter->format(new Money($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $assetType['assetTypes_dayRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
             $moneyFormatter->format(new Money($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $assetType['assetTypes_weekRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
             $moneyFormatter->format(new Money($asset['assets_value'] !== null ? $asset['assets_value'] : $assetType['assetTypes_value'], new Currency($AUTH->data['instance']['instances_config_currency']))),
+            $asset['assets_storageLocation'],
             $asset['assets_notes']
         ];
         for ($x = 1; $x <= 10; $x++) {
@@ -96,7 +97,7 @@ if (isset($_POST['csv'])) {
     $writer->save("php://output");
 } elseif (isset($_POST['xlsx'])) {
     //Header
-    $sheet->fromArray(["Asset Code", "Category", "Name", "Manufacturer", "Mass (kg)", "Day Rate", "Week Rate", "Value", "Notes", "Definable Fields"], NULL, 'A1');
+    $sheet->fromArray(["Asset Code", "Category", "Name", "Manufacturer", "Mass (kg)", "Day Rate", "Week Rate", "Value", "Location", "Notes", "Definable Fields"], NULL, 'A1');
     $sheet->mergeCells('J1:AC1');
     $sheet->getStyle("A1:AC1")->getFont()->setBold( true );
     $sheet->freezePane('B2');
