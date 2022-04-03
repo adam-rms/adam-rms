@@ -177,7 +177,7 @@ class bCMS {
                 // Instance thumbnail
                 break;
             case 6:
-                // Instance file - ie the files you get in the file browser in the root directory
+                // Instance file
                 break;
             case 7:
                 //Project file
