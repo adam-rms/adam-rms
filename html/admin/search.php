@@ -25,6 +25,8 @@ $function = new TwigFunction('generate_result_url', function ($result) {
             return "/clients.php?q=".$result['data']['clients_name'];
         case "page":
             return "/cms/?p=".$result['data']['cmsPages_id'];
+        case "user":
+            return "/user.php?id=".$result['data']['users_userid'];
         default:
             return null;
     }
@@ -44,6 +46,8 @@ $function = new TwigFunction('generate_result_tag', function ($result) {
             return ["lightblue", "Client"];
         case "page":
             return ["primary", "CMS Page"];
+        case "user":
+            return ["orange", "User"];
         default:
             return null;
     }
