@@ -34,6 +34,7 @@ class SearchClients extends BaseSearch
                     $client['clients_phone'],
                 ],
                 'title' => $client['clients_name'],
+                'except'=> mb_strimwidth($client['clients_notes'], 0, 200, "..."),
                 'data' => $client
             ];
         }, $clients);

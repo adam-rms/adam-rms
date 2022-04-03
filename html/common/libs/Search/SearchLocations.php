@@ -34,6 +34,7 @@ class SearchLocations extends BaseSearch
                     $location["clients_name"],
                 ],
                 'title' => $location['locations_name'],
+                'except'=> mb_strimwidth($location["locations_notes"], 0, 200, "..."),
                 'data' => $location
             ];
         }, $locations);
