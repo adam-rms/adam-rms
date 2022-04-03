@@ -6,7 +6,11 @@
         <div class="card ">
             <div class="card-header">
                 <h3 class="card-title">
-                    Locations
+                    {% if search|length > 0 %}
+                        Search results for locations matching <b>{{ search }}</b>
+                    {% else %}
+                        Locations
+                    {% endif %}
                 </h3>
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">
