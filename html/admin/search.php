@@ -9,7 +9,7 @@ require_once __DIR__ . '/../common/libs/Search/Search.php';
 $PAGEDATA['term'] = isset($_GET['term']) && is_string($_GET['term']) ? $_GET['term'] : "";
 $PAGEDATA['offset'] = isset($_GET['offset']) && is_numeric($_GET['offset']) ? intval($_GET['offset']) : 0;
 $PAGEDATA['limit'] = isset($_GET['limit']) && is_numeric($_GET['limit']) ? intval($_GET['limit']) : 25;
-$PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['term'] ? "Search result for: " . $PAGEDATA['term'] : "Search" , "BREADCRUMB" => true];
+$PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['term'] ? "Search result for: " . $PAGEDATA['term'] : "Search" , "BREADCRUMB" => false];
 
 
 /**

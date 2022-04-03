@@ -12,8 +12,18 @@
                         <input type="search" class="form-control form-control-lg" name="term" type="search" placeholder="Type your keywords here" value="{{ term }}">
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-lg btn-default">
-                                <i class="fa fa-search"></i>
+                                <i class="fa fa-search"></i> Search
                             </button>
+                            <button type="button" class="btn btn-lg btn-default" id="searchFormAssetButton" data-widget="control-sidebar" data-controlsidebar-slide="true">
+                                Search Assets
+                            </button>                            
+                            <script>
+                                $(document).ready(function() {
+                                    $("body").on("click", "#searchFormAssetButton", function(e) {
+                                        $("select[name='keyword[]']").val(null).append(new Option("{{term}}", 1, true, true)).trigger("change");
+                                    });
+                                })
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -61,24 +71,6 @@
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" style="background-color: whitesmoke;">
-                            <div class="col px-2">
-                                <div>
-                                    <h4>
-                                        <a href="#" id="searchFormAssetButton" class="stretched-link" data-widget="control-sidebar" data-controlsidebar-slide="true">Search {{ USERDATA.instance.instances_name }}'s assets for {{term}}</a>
-                                        <small class="float-right"><span class="badge bg-danger">Assets</span></small>
-                                        <script>
-                                        $(document).ready(function() {
-                                            $("body").on("click", "#searchFormAssetButton", function(e) {
-                                                $("select[name='keyword[]']").val(null).append(new Option("{{term}}", 1, true, true)).trigger("change");
-                                            });
-                                            
-                                        })
-                                        </script>
-                                    </h4>
-                                </div>
-                            </div>
-                        </li>
                         {% if term and results['total'] is defined and results['total'] > 0 %}
                             {% for result in results.results %}
                                 <li class="list-group-item">
