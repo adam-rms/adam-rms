@@ -20,9 +20,9 @@ $function = new TwigFunction('generate_result_url', function ($result) {
         case "project":
             return "/project?id=".$result['data']['projects_id'];
         case "location":
-            return "/location/";
+            return "/location/?q=".$result['data']['locations_name'];
         case "client":
-            return "/clients.php";
+            return "/clients.php?q=".$result['data']['clients_name'];
         case "page":
             return "/cms/?p=".$result['data']['cmsPages_id'];
         default:
