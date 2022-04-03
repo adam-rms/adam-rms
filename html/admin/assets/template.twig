@@ -272,7 +272,7 @@
         {% if thisProject %}
         <ul class="navbar-nav d-none d-md-block">
             <li class="nav-item text-nowrap">
-                <a href="{{ CONFIG.ROOTURL }}/project?id={{thisProject.projects_id}}" class="nav-link">
+                <a href="{{ CONFIG.ROOTURL }}/project/?id={{thisProject.projects_id}}" class="nav-link">
                     {% if thisProject.projects_parent_project_id %}&#8627; {% endif %}{{ thisProject.projects_name }}
                 </a>
             </li>
