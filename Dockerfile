@@ -1,4 +1,4 @@
-FROM php:7-fpm
+FROM php:8-fpm
 
 COPY ./php.ini /var/www/php.ini
 RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
