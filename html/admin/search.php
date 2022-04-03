@@ -47,7 +47,7 @@ $function = new TwigFunction('generate_result_tag', function ($result) {
         case "page":
             return ["primary", "CMS Page"];
         case "user":
-            return ["orange", "User"];
+            return ["secondary", "User"];
         default:
             return null;
     }
