@@ -36,7 +36,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title" style="margin-top: 0.4rem;">
-                            Showing {{ offset >0 ? 'results ' ~ offset ~ '-' ~ (offset + limit) : results['results']|length }} of {{ results['total'] }} result{{ results['total'] == 1 ? '' : 's' }} found in {{ results['speed'] }} second{{ results['speed']|round(1) != 1 ? 's':'' }}
+                            Showing {{ offset >0 ? 'results ' ~ offset ~ '-' ~ (offset + limit) : results['results']|length }} of {{ results['total'] }} result{{ results['total'] == 1 ? '' : 's' }} found in {{ results['speed']|round(3) }} second{{ results['speed']|round(3) != 1 ? 's':'' }}
                         </h3>
                         <div class="card-tools pull-right">
                             {% if results['results'] > limit %}
