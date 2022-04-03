@@ -1,7 +1,5 @@
 <?php
 
-use Html2Text\Html2Text;
-
 require_once __DIR__ . '/BaseSearch.php';
 
 class SearchCMS extends BaseSearch {
@@ -14,7 +12,11 @@ class SearchCMS extends BaseSearch {
         $this->TWIG = $TWIG;
     }
 
-
+    private function html2text($html) 
+    {
+        $text = trim(preg_replace('/\s\s+/', ' ', preg_replace( "/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags(str_replace(["<br/>","<br>"],"\n",$html)))))));
+        return $text;
+    }
     /**
      * Load the pages that are able to be searched from the database
      * @return array An array of objects in the correct format
@@ -57,8 +59,7 @@ class SearchCMS extends BaseSearch {
             ]]);
 
             // Convert the content text, and then remove any new lines
-            $page_text = new Html2Text($render);
-            $page_text = trim(preg_replace('/\s\s+/', ' ', $page_text->getText()));
+            $page_text = $this->html2text($render);
 
             // Create the data structure for the item
             $pageData = [
