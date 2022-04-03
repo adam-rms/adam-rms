@@ -2,6 +2,35 @@
     !!!! DON'T FORGET TO INCLUDE FILEBOX JS AS WELL! !!!!!
 #}
 <ul class="mailbox-attachments d-flex flex-wrap align-items-stretch clearfix">
+    {% if backButton %}
+        <li class="fileBox backButton" style="overflow-x: hidden;">
+             <a href="javascript:history.back()"><span class="mailbox-attachment-icon"><i class="fas fa-folder-open"></i></span></a>
+            <div class="mailbox-attachment-info">
+                <a href="javascript:history.back()" class="mailbox-attachment-name" style="white-space: nowrap; font-weight: italic;">
+                    Back
+                </a>
+            </div>
+        </li>
+        <script>
+        $(document).ready(function() {
+            var previousPage = document.referrer;
+            console.log(previousPage);
+            if (!previousPage.includes("/files/")) {
+                $(".fileBox.backButton").hide();
+            }
+        })
+        </script>
+    {% endif %}
+    {% for folder in folders %}
+        <li class="fileBox" style="overflow-x: hidden;">
+             <a href="{{folder.slug}}" title="{{ folder.name }}"><span class="mailbox-attachment-icon"><i class="{{ folder.icon ? folder.icon : "far fa-folder"}}"></i></span></a>
+            <div class="mailbox-attachment-info">
+                <a href="{{folder.slug}}" class="mailbox-attachment-name" style="white-space: nowrap;">
+                    {{ folder.name }}
+                </a>
+            </div>
+        </li>
+    {% endfor %}
     {% for file in files %}
         <li class="fileBox" data-s3fileid="{{ file.s3files_id }}" style="overflow-x: hidden;">
             {% if file.s3files_extension in ["gif", "jpeg", "jpg", "png"] %}
@@ -39,7 +68,6 @@
                         {% if AUTH.login and 57|instancePermissions and readOnly != true %}
                             <a href="#" class="btn btn-default btn-sm float-right deleteFile" title="Delete" data-s3fileid="{{ file.s3files_id }}" ><i class="fas fa-trash-alt"></i></a>
                         {% endif %}
-
                     </div>
                 </span>
             </div>

@@ -530,6 +530,14 @@
                             {% endif %}
                         </ul>
                     </li>
+                    {% if 129|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/files/" class="nav-link">
+                            <i class="nav-icon fas fa-folder"></i>
+                            <p>File Browser</p>
+                        </a>
+                    </li>
+                    {% endif %}
                     {% if 113|instancePermissions %}
                     <li class="nav-item">
                         <a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
