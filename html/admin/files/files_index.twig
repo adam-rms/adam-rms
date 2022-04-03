@@ -1,0 +1,21 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% embed 'common/plugins/fileBox.twig' with {'files': files, 'folders':folders, 'backButton':backButton } %}{% endembed %}
+                    {% embed 'common/plugins/fileBoxJS.twig' %}{% endembed %}
+                </div>
+            </div>
+            {% if currentLocation.canUpload %}
+                {% embed 'common/plugins/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
+                    {% block success %}
+                        console.log(responseJson.id);
+                    {% endblock %}
+                {% endembed %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
