@@ -48,8 +48,9 @@ class statsWidgets
         if (!$arguments['instanceid']) return [];
 
         $DBLIB->join("instancePositions","instancePositions.instancePositions_id=userInstances.instancePositions_id","LEFT");
-        $DBLIB->where("instances_id", $arguments['instanceid']);
-        $DBLIB->where("userInstances_archived IS NULL");
+        $DBLIB->where("instancePositions.instances_id", $arguments['instanceid']);
+        $DBLIB->where("userInstances.userInstances_deleted",  0);
+        $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
         return ["COUNT" => $DBLIB->getValue ("userInstances", "count(*)")];
     }
     private function inventoryValueGraph($arguments = []) {

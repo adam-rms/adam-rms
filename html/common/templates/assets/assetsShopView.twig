@@ -257,6 +257,30 @@
             {% endfor %}
         </div>
     </div>
+    <div class="card-footer">
+        <div class="card-tools float-right">
+        {% if PAGINATION['TOTAL-PAGES'] > 1 %}
+            <ul class="pagination pagination-sm m-0">
+                {% if PAGINATION.PAGE > 1 %}
+                    <li class="page-item"><a class="page-link" href="#" data-page="{{ (PAGINATION.PAGE -1) }}">&laquo;</a></li>
+                {% endif %}
+
+                {% for i in range((PAGINATION.PAGE > 3 ? PAGINATION.PAGE-2 : 1), (PAGINATION['TOTAL-PAGES'] > 5 and PAGINATION.PAGE+2 < PAGINATION['TOTAL-PAGES'] ? PAGINATION.PAGE+2 : PAGINATION['TOTAL-PAGES'])) %}
+                    <li class="page-item"><a class="page-link" href="#" data-page="{{ i }}">
+                            {% if PAGINATION.PAGE == i %}
+                                <b>{{ i }}</b>
+                            {% else %}
+                                {{ i }}
+                            {% endif %}
+                        </a></li>
+                {% endfor %}
+                {% if PAGINATION.PAGE < PAGINATION['TOTAL-PAGES'] %}
+                    <li class="page-item"><a class="page-link" href="#" data-page="{{PAGINATION.PAGE+1}}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+        </div>
+    </div>
 </div>
 <script>
     $(document).ready(function () {

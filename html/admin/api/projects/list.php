@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 $return = [];
 
+if (!$AUTH->instancePermissionCheck(20)) die("401");
+
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_archived", 0);
