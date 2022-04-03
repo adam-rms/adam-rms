@@ -5,6 +5,9 @@ if (!$AUTH->instancePermissionCheck(87)) die($TWIG->render('404.twig', $PAGEDATA
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Locations", "BREADCRUMB" => false];
 
+if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
+else $PAGEDATA['search'] = null;
+
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 60);
@@ -16,8 +19,15 @@ $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id'])
 if (isset($_GET['client'])) $DBLIB->where("locations.clients_id", $_GET['client']);
 $DBLIB->where("locations.locations_deleted", 0);
 $DBLIB->join("clients","locations.clients_id=clients.clients_id","LEFT");
-$DBLIB->where("(locations_subOf IS NULL)");
 $DBLIB->orderBy("locations.locations_name", "ASC");
+if (strlen($PAGEDATA['search']) > 0) {
+	//Search
+	$DBLIB->where("(
+		locations.locations_name LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
+		locations.locations_address LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
+        locations.locations_notes LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
+    )");
+} else $DBLIB->where("(locations_subOf IS NULL)");
 $locations = $DBLIB->arraybuilder()->paginate('locations', $page, ["locations.*", "clients.clients_name"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 function linkedLocations($locationId,$tier,$locationKey) {
@@ -42,7 +52,7 @@ foreach ($locations as $index=>$location) {
     $PAGEDATA['locations'][] = $location;
     $PAGEDATA['allLocations'][] = $location;
     $PAGEDATA['locations'][$index]['linkedToThis'] = [];
-    linkedLocations($location['locations_id'],0,$index);
+    if (strlen($PAGEDATA['search']) == null) linkedLocations($location['locations_id'],0,$index); //Don't show linked locations when searching
 }
 
 
