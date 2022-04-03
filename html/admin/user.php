@@ -7,11 +7,13 @@ $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);
 $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
-$DBLIB->where("instancePositions.instances_id",  $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
 $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
-if ($AUTH->instancePermissionCheck(52) or $AUTH->permissionCheck(5)) $DBLIB->where("users.users_userid", $_GET['id']);
-else $DBLIB->where("users.users_userid", $AUTH->data['users_userid']);
+if ($AUTH->instancePermissionCheck(52) or $AUTH->permissionCheck(5)) {
+   $DBLIB->where("users.users_userid", $_GET['id']);
+   if (!$AUTH->permissionCheck(5)) $DBLIB->where("instancePositions.instances_id",  $AUTH->data['instance']['instances_id']);
+}
+else $DBLIB->where("users.users_userid", $AUTH->data['users_userid']); //Only allow them to select themselves
 $PAGEDATA['user'] = $DBLIB->getone("users", ["users.*"]);
 if (!$PAGEDATA['user']) die($TWIG->render('404.twig', $PAGEDATA));
 
