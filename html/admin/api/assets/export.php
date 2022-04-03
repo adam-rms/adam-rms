@@ -69,7 +69,10 @@ foreach ($PAGEDATA['assets'] as $assetType) {
     $assetType['definableFields'] = explode(",", $assetType['assetTypes_definableFields']);
     if (count($assetType['definableFields']) != 10) $assetType['definableFields'] = ["","","","","","","","","","",""];
     foreach ($assetType['assets'] as $asset) {
-        $assetLocation = assetLatestScan($asset['assets_id']);
+        $latestScan = assetLatestScan($asset['assets_id']);
+        if ($latestScan['locations_name']) $assetLocation = $latestScan['locations_name'];
+        else if ($latestScan['assetTypes_name']) $assetLocation = $latestScan['assetTypes_name'];
+        else if ($latestScan['assetsBarcodes_customLocation']) $assetLocation = $latestScan['assetsBarcodes_customLocation'];
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         $array = [
             $asset['assets_tag'],
@@ -80,7 +83,7 @@ foreach ($PAGEDATA['assets'] as $assetType) {
             $moneyFormatter->format(new Money($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $assetType['assetTypes_dayRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
             $moneyFormatter->format(new Money($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $assetType['assetTypes_weekRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
             $moneyFormatter->format(new Money($asset['assets_value'] !== null ? $asset['assets_value'] : $assetType['assetTypes_value'], new Currency($AUTH->data['instance']['instances_config_currency']))),
-            $assetLocation['locations_name'],
+            $assetLocation,
             $asset['assets_notes']
         ];
         for ($x = 1; $x <= 10; $x++) {
