@@ -40,7 +40,7 @@ class SearchProjects extends BaseSearch
             }
 
             // Generate the except for the project
-            $except = "The project is called '" . $project['projects_name'] . "', and is being project maneged by " . $project['projects_manager'] . ".";
+            $except = "The project is called '" . $project['projects_name'] . "', and is being project managed by " . $project['projects_manager'] . ".";
             if ($project['projects_dates_deliver_start'] and $project['projects_dates_deliver_end']) {
                 $except .= " The project runs from " . date("Y-m-d H:i:s", strtotime($project['projects_dates_deliver_start'])) . " to " . date("Y-m-d H:i:s", strtotime($project['projects_dates_deliver_end'])) . ".";
             }
