@@ -18,7 +18,6 @@ class SearchProjects extends BaseSearch
         // Get the projects
         $this->DBLIB->where("projects.instances_id", $this->AUTH->data['instance']['instances_id']);
         $this->DBLIB->where("projects.projects_deleted", 0);
-        $this->DBLIB->where("projects.projects_archived", 0);
         $this->DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
         $this->DBLIB->join("users", "projects.projects_manager=users.users_userid",);
         $projects = $this->DBLIB->get("projects", null, ["projects_id", "projects_archived", "projects_name", "projects_description", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end", "projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager as projects_manager_id", "concat(users_name1, ' ', users_name2) AS projects_manager"]);
