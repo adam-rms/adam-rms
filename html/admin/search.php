@@ -18,7 +18,7 @@ $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['term'] ? "Search result for: " 
 $function = new TwigFunction('generate_result_url', function ($result) {
     switch ($result['type']){
         case "project":
-            return "/project?id=".$result['data']['projects_id'];
+            return "/project/?id=".$result['data']['projects_id'];
         case "location":
             return "/location/?q=".$result['data']['locations_name'];
         case "client":
