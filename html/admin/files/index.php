@@ -79,14 +79,18 @@ switch ($_GET['t']) { // t = type
           else die($TWIG->render('404.twig', $PAGEDATA));
         } else {
           $PAGEDATA['files'] = $bCMS->s3List(7, $_GET['id']);
-          $PAGEDATA['folders'][] = [
-            "name" => "Invoices",
-            "slug" => "?t=projects&id=".$_GET['id']."&cat=invoices"
-          ];
-          $PAGEDATA['folders'][] = [
-            "name" => "Quotes",
-            "slug" => "?t=projects&id=".$_GET['id']."&cat=quotes"
-          ];
+          if (count($bCMS->s3List(20, $_GET['id'])) > 0) {
+            $PAGEDATA['folders'][] = [
+              "name" => "Invoices",
+              "slug" => "?t=projects&id=".$_GET['id']."&cat=invoices"
+            ];
+          }
+          if (count($bCMS->s3List(21, $_GET['id'])) > 0) {
+            $PAGEDATA['folders'][] = [
+              "name" => "Quotes",
+              "slug" => "?t=projects&id=".$_GET['id']."&cat=quotes"
+            ];
+          }          
         }
 
 
