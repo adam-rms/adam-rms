@@ -323,7 +323,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#">
+                <a class="nav-link" onclick="showSearch()" href="#">
                     <i class="fas fa-warehouse"></i>
                 </a>
             </li>
@@ -587,7 +587,7 @@
                     {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
-                        <a data-widget="control-sidebar" data-slide="true" href="#" class="nav-link">
+                        <a onclick="showSearch()" href="#" class="nav-link">
                             <i class="nav-icon fas fa-warehouse"></i>
                             <p>Search Assets</p>
                         </a>
@@ -867,7 +867,7 @@
             {% embed 'assets/searchForm.twig' with {'instance': USERDATA.instance.instances_id } %}
                 {% block formExtras %}
                     {% if projects and 31|instancePermissions %}
-                    <div class="form-group">
+                    <div class="form-group" id="group-project">
                         <label>Or, shop for project</label>
                         <select class="form-control select2 select2bs4" name="projectid">
                             {% for project in projects %}
@@ -892,6 +892,18 @@
     </aside>
 </div>
 <script>
+    function showSearch(projectId = null) {
+        if (projectId) { //we know the project id so hide some options
+            $("#deepSearchAssetForm").find("#group-availability").hide();
+            $("#deepSearchAssetForm").find("#group-project").find("option").removeAttr('selected').filter('[value=' + projectId + ']').prop('selected', true); //select given id as project id
+            $("#deepSearchAssetForm").find("#group-project").hide();
+        } else {
+            $("#deepSearchAssetForm").find("#group-availability").show();
+            $("#deepSearchAssetForm").find("#group-project").show();
+        }
+        $(this).ControlSidebar('toggle');
+    }
+
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover({
             html: true,
@@ -952,7 +964,6 @@
             //Change Theme
             changeTheme(theme == "dark");
         });
-
 
         {% if 21|instancePermissions %}
         $(".newProjectButton").click(function () {

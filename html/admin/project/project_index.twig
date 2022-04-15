@@ -91,32 +91,35 @@
                 {# Nav Bar for page views #}
                 <div class="col-12">
                     <div class="card">
-                            <div class="card-header">
-                                <ul class="nav nav-pills" id="nav-bar">
-                                    <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
-                                    {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
-                                        <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab">Assets</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab">Asset Dispatch</a></li>
+                        <div class="card-header">
+                            <ul class="nav nav-pills" id="nav-bar">
+                                <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
+                                {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab">Assets List</a></li>
+                                    {% if 31|instancePermissions %}
+                                        <li class="nav-item"><a class="nav-link" href="#add-assets" data-toggle="tab">Add Assets</a></li>
                                     {% endif %}
-                                    {%  if project.projectsTypes_config_files == 1 or project.projectsTypes_config_notes == 1 %}
-                                        <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab">Files</a></li>
-                                    {% endif %}
-                                    <li class="nav-item"><a class="nav-link" href="#invoice-view" data-toggle="tab">Invoices & Quotes</a></li>
-                                    {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
-                                        <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab">Finance</a></li>
-                                    {% endif %}
-                                    {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
-                                        <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab">Crew</a></li>
-                                    {% endif %}
-                                    {% if project.subProjects %}
-                                        <li class="nav-item"><a class="nav-link" href="#calendar-view" data-toggle="tab">Sub Projects</a></li>
-                                    {% endif %}
-                                    {% if project.auditLog|length > 0 %}
-                                    <li class="nav-item"><a class="nav-link" href="#log-view" data-toggle="tab">Comments & History</a></li>
-                                    {% endif %}
-                                </ul>
-                            </div>
+                                    <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab">Asset Dispatch</a></li>
+                                {% endif %}
+                                {%  if project.projectsTypes_config_files == 1 or project.projectsTypes_config_notes == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab">Files</a></li>
+                                {% endif %}
+                                <li class="nav-item"><a class="nav-link" href="#invoice-view" data-toggle="tab">Invoices & Quotes</a></li>
+                                {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab">Finance</a></li>
+                                {% endif %}
+                                {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab">Crew</a></li>
+                                {% endif %}
+                                {% if project.subProjects %}
+                                    <li class="nav-item"><a class="nav-link" href="#calendar-view" data-toggle="tab">Sub Projects</a></li>
+                                {% endif %}
+                                {% if project.auditLog|length > 0 %}
+                                <li class="nav-item"><a class="nav-link" href="#log-view" data-toggle="tab">Comments & History</a></li>
+                                {% endif %}
+                            </ul>
                         </div>
+                    </div>
                     <div class="tab-content">
                         <div class="tab-pane active" id="details-view">
                             <div class="row">
@@ -364,6 +367,9 @@
                             {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
                                 {% embed 'project/project_assets.twig' %}{% endembed %}
                             {% endif %}
+                        </div>
+                        <div class="tab-pane" id="add-assets">
+                            {% embed 'project/project_assetsNew.twig' with {'instance': USERDATA.instance.instances_id, 'project': project.projects_id} %}{% endembed %}
                         </div>
                         <div class="tab-pane" id="assets-board">
                             {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}

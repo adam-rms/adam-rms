@@ -4,43 +4,43 @@
     {% if PUBLIC %}
         <input type="hidden" name="public" value="true" />{# Nothing too exciting, just makes sure  #}
     {% endif %}
-    <div class="form-group">
+    <div class="form-group" id="group-actions">
         <button type="submit" class="btn btn-default btn-outline-success">Search</button>
         <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="group-keywords">
         <label>Keywords (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="keyword[]"></select>
     </div>
     {% if not PUBLIC %}
-    <div class="form-group">
+    <div class="form-group" id="group-tags">
         <label>Tags (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="tags[]"></select>
     </div>
     {% endif %}
-    <div class="form-group">
+    <div class="form-group" id="group-category">
         <label>Category</label>
         <select class="form-control select2bs4" multiple name="category[]"></select>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="group-manufacturers">
         <label>Manufacturer</label>
         <select class="form-control select2bs4" multiple name="manufacturer[]"></select>
     </div>
     {% if AUTH.login %}
-    <div class="form-group">
+    <div class="form-group" id="group-groups">
         <label>Group</label>
         <select class="form-control select2bs4" name="group[]" multiple></select>
     </div>
     {% endif %}
     {% if AUTH.login or instancePublicData.enableAssetAvailability %}
-    <div class="form-group">
+    <div class="form-group" id="group-availability">
         <label>Show availability between</label>
         <input type="text" class="form-control" name="dates" />
     </div>
     {% endif %}
     {% block formExtras %}
     {% endblock %}
-    <div class="form-group">
+    <div class="form-group" id="group-limit">
         <label>Page Limit</label>
         <select class="form-control select2 select2bs4" name="page_limit">
             <option>10</option>
@@ -49,7 +49,7 @@
             <option>100</option>
         </select>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="group-sort">
         <label>Sort by</label>
         <select class="form-control select2 select2bs4" name="sort">
             {% if AUTH.login or instancePublicData.enableAssetsPrices %}
