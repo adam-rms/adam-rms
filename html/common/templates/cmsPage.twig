@@ -8,9 +8,7 @@
                             {{ card.title }}
                         </h3>
                     </div>
-                    <div class="card-body" style="overflow-x:hidden;">
-                        {% embed 'cmsPageContent.twig' with {'card': card } %}{% endembed %}
-                    </div>
+                    {% embed 'cmsPageContent.twig' with {'card': card } %}{% endembed %}
                 </div>
             </div>
         {% endfor %}
