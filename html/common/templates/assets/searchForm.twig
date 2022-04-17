@@ -82,6 +82,10 @@
     {% endif %}
 </form>
 <script>
+    function changeSelectedProjectInNav(selectedProject) {
+        $('#currentlySelectedProjectInNavbar').attr("href","{{ CONFIG.ROOTURL }}/project/?id=" + selectedProject[0].id);
+        $('#currentlySelectedProjectInNavbar').html(selectedProject[0].text);
+    }
     function triggerDeepSearch(data) {
         $.ajax({
             url: '{{CONFIG.ROOTURL}}/api/assets/deepSearch.php',
@@ -90,6 +94,9 @@
             method: 'post',
             data: data,
             success: function (result) {
+                if ($("#projectIdSelectorForAssetSearch").length) {
+                    changeSelectedProjectInNav($("#projectIdSelectorForAssetSearch").select2('data'));
+                }
                 if (result.result) {
                     $("#pageContent").html(result['response']['html']);
                 }
