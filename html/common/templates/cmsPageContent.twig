@@ -1,0 +1,17 @@
+{% if USERDATA and card["type"] in ["calendar","inventoryTotal","storageUsage","userCount","maintenanceOutstanding","myMaintenance"] %}
+  <div class="card-body p-0" style="overflow-x:hidden;">
+  {% embed 'assets/widgets/' ~ card["type"] ~ '.twig' %}{% endembed %}
+    <style>
+      .card.statsWidget > .card-header {
+        display: none;
+      }
+      .card.statsWidget {
+        box-shadow: none;
+      }
+    </style>
+  </div>
+{% elseif card["type"] == "custom" or card["type"] == null  %}
+  <div class="card-body" style="overflow-x:hidden;">
+      {{ card.content|raw }}
+  </div>
+{% endif %}
