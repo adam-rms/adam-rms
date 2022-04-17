@@ -7,6 +7,9 @@
     <div class="form-group">
         <button type="submit" class="btn btn-default btn-outline-success">Search</button>
         <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
+        {% if PUBLIC != true %}
+            <a href="{{ CONFIG.USERGUIDEURL }}assets/finding-assets/" target="_blank" type="button" class="btn btn-default btn-outline-info">Help</a>
+        {% endif %}
     </div>
     <div class="form-group">
         <label>Keywords (comma separated)</label>
