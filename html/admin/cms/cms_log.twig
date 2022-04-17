@@ -36,6 +36,9 @@
                                             {% else %}
                                                 {{ entry.users_name1 }} {{ entry.users_name2 }}
                                             {% endif %}
+                                            {% if entry.cmsPages_type and entry.cmsPages_type == 2 %}
+                                                <span class="badge badge-info">Mobile App</span>
+                                            {% endif %}
                                         {% else %}
                                             Public access
                                         {% endif %}
