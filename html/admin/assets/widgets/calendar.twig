@@ -13,8 +13,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.js" integrity="sha256-q57s73NpMCTQ4ZXqb1X5bIywrICySeB6WvYxFGfz/PA=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
 <div class="card card-primary">
+    {% set calendarId = random() %}
     <div class="card-body p-0">
-        <div id="calendar"></div>
+        <div id="calendar{{ calendarId }}"></div>
     </div>
     <script>
         $(function () {
@@ -22,12 +23,11 @@
              -----------------------------------------------------------------*/
             var Calendar = FullCalendar.Calendar;
             var Draggable = FullCalendarInteraction.Draggable;
-            var calendarEl = document.getElementById('calendar');
 
             // initialize the external events
             // -----------------------------------------------------------------
 
-            var calendar = new Calendar(calendarEl, {
+            var calendar{{ calendarId }} = new Calendar(document.getElementById('calendar{{ calendarId }}'), {
                 timeZone: 'UTC',
                 plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid','list' ],
                 nextDayThreshold: '05:00:00',
@@ -136,7 +136,7 @@
                 {% endif %}
             });
 
-            calendar.render();
+            calendar{{ calendarId }}.render();
         })
     </script>
 </div>
