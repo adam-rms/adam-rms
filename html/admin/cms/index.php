@@ -26,5 +26,7 @@ $DBLIB->insert("cmsPagesViews",[
     "cmsPages_type" => 1
 ]);
 
+if ($AUTH->instancePermissionCheck(80)) $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),true);
+
 echo $TWIG->render('cms/cms_index.twig', $PAGEDATA);
 ?>

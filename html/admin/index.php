@@ -41,6 +41,7 @@ if ($AUTH->data['instance']["instancePositions_id"] && $AUTH->data['instance']["
             "users_userid" => $AUTH->data['users_userid'],
             "cmsPages_type" => 3
         ]);
+        if ($AUTH->instancePermissionCheck(80)) $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),true);
         die($TWIG->render('dashboard-cmsPage.twig', $PAGEDATA));
     }
 }
