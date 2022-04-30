@@ -22,11 +22,11 @@ if (getenv('bCMS__ERRORS') == "true") {
 }
 
 $CONFIG = array(
-    'DB_HOSTNAME' => getenv('MYSQLHOST'),
-    'DB_DATABASE' => getenv('MYSQLDATABASE'),
-    'DB_USERNAME' => getenv('MYSQLUSER'), //CREATE INSERT SELECT UPDATE DELETE
-    'DB_PASSWORD' => getenv('MYSQLPASSWORD'),
-    'DB_PORT' => getenv('MYSQLPORT'),
+    'DB_HOSTNAME' => getenv('bCMS__DB_HOSTNAME'),
+    'DB_DATABASE' => getenv('bCMS__DB_DATABASE'),
+    'DB_USERNAME' => getenv('bCMS__DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
+    'DB_PASSWORD' => getenv('bCMS__DB_PASSWORD'),
+    'DB_PORT' => getenv('bCMS__DB_PORT') ?: 3306,
     'PROJECT_NAME' => "AdamRMS",
     'ASSETCDNURL' => getenv('bCMS__ASSETS_URL'),
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
@@ -35,7 +35,7 @@ $CONFIG = array(
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
     "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
-    "ROOTURL" => "https://" . getenv('RAILWAY_STATIC_URL') . "/",
+    "ROOTURL" => getenv('bCMS__ROOTURL'),
     "PROJECT_SUPPORT_EMAIL" => "studios@jbithell.com",
     'AWS' => [
         'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
