@@ -26,7 +26,13 @@ RUN docker-php-ext-install -j "$(nproc)" opcache
 RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 
 COPY . /var/www/
-ENV APACHE_DOCUMENT_ROOT /var/www/html/admin
+
+# Activate a2enmod
+RUN a2enmod rewrite
+
+ADD ./001-docker.conf /etc/apache2/sites-available/
+RUN ln -s /etc/apache2/sites-available/001-apache-docker.conf /etc/apache2/sites-enabled/
+
 ENV APACHE_DOCUMENTROOT /var/www/html/admin
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
