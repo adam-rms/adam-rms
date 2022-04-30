@@ -1,4 +1,4 @@
-FROM php:8-fpm
+FROM php:8-apache
 
 COPY ./php.ini /var/www/php.ini
 RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
@@ -25,16 +25,30 @@ RUN docker-php-ext-install gd
 RUN docker-php-ext-install -j "$(nproc)" opcache
 RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 
+# Activate a2enmod
+RUN a2enmod rewrite
+
+ADD ./001-railway.conf /etc/apache2/sites-available/
+RUN ln -s /etc/apache2/sites-available/001-railway.conf /etc/apache2/sites-enabled/
+
+ENV APACHE_DOCUMENTROOT /var/www/html/admin
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_PID_FILE /var/run/apache2.pid
+ENV APACHE_RUN_DIR /var/run/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_LOG_DIR /var/log/apache2
+
 COPY . /var/www/
 
-RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/html/common/version/COMMIT.txt
-RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/html/common/version/COMMITFULL.txt
+#RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/html/common/version/COMMIT.txt
+#RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/html/common/version/COMMITFULL.txt
 #RUN git describe --tags --abbrev=0 > /var/www/html/common/version/TAG.txt
 
-RUN chmod +x /var/www/migrate.sh
+RUN chmod +x /var/www/railwayStart.sh
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www
 RUN composer install --optimize-autoloader --no-dev
 
-ENTRYPOINT ["/var/www/migrate.sh"]
+ENTRYPOINT ["/var/www/railwayStart.sh"]
