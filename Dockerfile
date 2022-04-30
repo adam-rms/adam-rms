@@ -26,6 +26,8 @@ RUN docker-php-ext-install -j "$(nproc)" opcache
 RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 
 COPY . /var/www/
+ENV APACHE_DOCUMENT_ROOT /var/www/html/admin
+
 
 #RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/html/common/version/COMMIT.txt
 #RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/html/common/version/COMMITFULL.txt
