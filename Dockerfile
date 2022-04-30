@@ -25,12 +25,10 @@ RUN docker-php-ext-install gd
 RUN docker-php-ext-install -j "$(nproc)" opcache
 RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 
-COPY . /var/www/
-
 # Activate a2enmod
 RUN a2enmod rewrite
 
-ADD ./001-docker.conf /etc/apache2/sites-available/
+ADD ./001-apache-docker.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/001-apache-docker.conf /etc/apache2/sites-enabled/
 
 ENV APACHE_DOCUMENTROOT /var/www/html/admin
@@ -44,6 +42,7 @@ ENV APACHE_SERVERADMIN admin@localhost
 ENV APACHE_SERVERNAME localhost
 ENV APACHE_SERVERALIAS docker.localhost
 
+COPY . /var/www/
 
 #RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/html/common/version/COMMIT.txt
 #RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/html/common/version/COMMITFULL.txt
