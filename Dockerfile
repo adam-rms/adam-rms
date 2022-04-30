@@ -26,7 +26,7 @@ RUN docker-php-ext-install -j "$(nproc)" opcache
 RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 
 COPY . /var/www/
-ENV APACHE_DOCUMENT_ROOT /var/www/html/admin
+ENV APACHE_DOCUMENTROOT /var/www/html/admin
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 ENV APACHE_LOG_DIR /var/log/apache2
