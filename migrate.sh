@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Starting Container"
-echo "$PORT"
+echo "$RAILWAY_ENVIRONMENT"
 
 echo "Running Migrations"
 cd /var/www/
