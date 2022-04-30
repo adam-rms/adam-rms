@@ -22,7 +22,7 @@ return
             'name' => getenv('bCMS__DB_DATABASE'),
             'user' => getenv('bCMS__DB_USERNAME'),
             'pass' => getenv('bCMS__DB_PASSWORD'),
-            'port' => '3306',
+            'port' => getenv('bCMS__DB_PORT') ?: 3306,
             'charset' => 'utf8',
         ],
         'development' => [
@@ -31,7 +31,7 @@ return
             'name' => getenv('bCMS__DB_DATABASE'),
             'user' => getenv('bCMS__DB_USERNAME'),
             'pass' => getenv('bCMS__DB_PASSWORD'),
-            'port' => '3306',
+            'port' => getenv('bCMS__DB_PORT') ?: 3306,
             'charset' => 'utf8',
         ]
     ],
