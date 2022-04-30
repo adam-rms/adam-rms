@@ -26,6 +26,7 @@ $CONFIG = array(
     'DB_DATABASE' => getenv('MYSQLDATABASE'),
     'DB_USERNAME' => getenv('MYSQLUSER'), //CREATE INSERT SELECT UPDATE DELETE
     'DB_PASSWORD' => getenv('MYSQLPASSWORD'),
+    'DB_PORT' => getenv('MYSQLPORT'),
     'PROJECT_NAME' => "AdamRMS",
     'ASSETCDNURL' => getenv('bCMS__ASSETS_URL'),
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],

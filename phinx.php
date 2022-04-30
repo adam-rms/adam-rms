@@ -22,7 +22,7 @@ return
             'name' => getenv('MYSQLDATABASE'),
             'user' => getenv('MYSQLUSER'),
             'pass' => getenv('MYSQLPASSWORD'),
-            'port' => '3306',
+            'port' => getenv('MYSQLPORT'),
             'charset' => 'utf8',
         ],
         'development' => [
@@ -31,7 +31,7 @@ return
             'name' => getenv('MYSQLDATABASE'),
             'user' => getenv('MYSQLUSER'),
             'pass' => getenv('MYSQLPASSWORD'),
-            'port' => '3306',
+            'port' => getenv('MYSQLPORT'),
             'charset' => 'utf8',
         ]
     ],
