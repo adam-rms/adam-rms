@@ -28,19 +28,15 @@ RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 # Activate a2enmod
 RUN a2enmod rewrite
 
-ADD ./001-apache-docker.conf /etc/apache2/sites-available/
-RUN ln -s /etc/apache2/sites-available/001-apache-docker.conf /etc/apache2/sites-enabled/
+ADD ./001-docker.conf /etc/apache2/sites-available/
+RUN ln -s /etc/apache2/sites-available/001-docker.conf /etc/apache2/sites-enabled/
 
 ENV APACHE_DOCUMENTROOT /var/www/html/admin
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR /var/log/apache2
 ENV APACHE_PID_FILE /var/run/apache2.pid
 ENV APACHE_RUN_DIR /var/run/apache2
 ENV APACHE_LOCK_DIR /var/lock/apache2
-ENV APACHE_SERVERADMIN admin@localhost
-ENV APACHE_SERVERNAME localhost
-ENV APACHE_SERVERALIAS docker.localhost
 
 COPY . /var/www/
 
