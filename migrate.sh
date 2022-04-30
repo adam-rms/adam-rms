@@ -2,4 +2,3 @@
 
 cd /var/www/
 php vendor/bin/phinx migrate -e production
-php-fpm
