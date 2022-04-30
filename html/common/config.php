@@ -22,10 +22,10 @@ if (getenv('bCMS__ERRORS') == "true") {
 }
 
 $CONFIG = array(
-    'DB_HOSTNAME' => getenv('bCMS__DB_HOSTNAME'),
-    'DB_DATABASE' => getenv('bCMS__DB_DATABASE'),
-    'DB_USERNAME' => getenv('bCMS__DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
-    'DB_PASSWORD' => getenv('bCMS__DB_PASSWORD'),
+    'DB_HOSTNAME' => getenv('MYSQLHOST'),
+    'DB_DATABASE' => getenv('MYSQLDATABASE'),
+    'DB_USERNAME' => getenv('MYSQLUSER'), //CREATE INSERT SELECT UPDATE DELETE
+    'DB_PASSWORD' => getenv('MYSQLPASSWORD'),
     'PROJECT_NAME' => "AdamRMS",
     'ASSETCDNURL' => getenv('bCMS__ASSETS_URL'),
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
