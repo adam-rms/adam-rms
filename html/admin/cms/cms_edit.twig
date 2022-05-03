@@ -455,6 +455,10 @@
                     });
                     //card-secondary
                     var type = $.trim($(item).find(".card[data-type]").data("type"))
+                    //Old cards will not have a type so need to be added
+                    if (type == ""){
+                        type = "custom";
+                    }
                     var thisBox = {
                         "width":width,
                         "content":(type == "custom" ? $.trim($(item).find(".card-body").html()) : ""),
