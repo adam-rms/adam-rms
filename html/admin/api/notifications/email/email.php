@@ -15,12 +15,12 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
         $instance = $DBLIB->getone("userInstances", ["instances.instances_name", "instances.instances_address", "instances.instances_emailHeader"]);
     } else $instance = false;
 
-    $outputHTML = $TWIG->render('api/notifications/email/email_template.twig', ["SUBJECT" => $subject, "HTML"=> $html, "CONFIG" => $CONFIG, "DATA" => $emailData, "TEMPLATE" => $template, "INSTANCE" => $instance]);
+    $outputHTML = $TWIG->render('api/notifications/email/email_template.twig', ["SUBJECT" => $subject, "HTML"=> $bCMS->cleanString($html), "CONFIG" => $CONFIG, "DATA" => $emailData, "TEMPLATE" => $template, "INSTANCE" => $instance]); // Subject is escaped by twig, but the HTML is not.
 
     if ($CONFIG['SENDGRID']['APIKEY'] != null) {
         $email = new \SendGrid\Mail\Mail();
         $email->setFrom($CONFIG['PROJECT_FROM_EMAIL'], $CONFIG['PROJECT_NAME']);
-        $email->setSubject($subject);
+        $email->setSubject($bCMS->cleanString($subject));  //Subject should be escaped
         $email->addTo($user["userData"]["users_email"], $user["userData"]["users_name1"] .  ' ' . $user["userData"]["users_name2"]);
         //$email->addContent("text/plain", "and easy to do anywhere, even with PHP");
         $email->addContent("text/html", $outputHTML);
@@ -29,7 +29,7 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
         if ($response->statusCode() == 202) {
             $sqldata = Array ("users_userid" => $user['userData']['users_userid'],
                 "emailSent_html" => $outputHTML,
-                "emailSent_subject" => $subject,
+                "emailSent_subject" => $bCMS->cleanString($subject),
                 "emailSent_sent" => date('Y-m-d G:i:s'),
                 "emailSent_fromEmail" => $CONFIG['PROJECT_FROM_EMAIL'],
                 "emailSent_fromName" => $CONFIG['PROJECT_NAME'],
