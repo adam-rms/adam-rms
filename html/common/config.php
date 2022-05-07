@@ -14,7 +14,7 @@ if(file_exists(__DIR__ . '/../../.env')) {
 if (getenv('bCMS__ERRORS') == "true") {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+    error_reporting(E_ERROR | E_PARSE);
 } else {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
