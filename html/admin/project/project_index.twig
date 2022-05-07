@@ -866,10 +866,11 @@
                                         {% endif %}
                                    </span>
                                                     {% if crew.crewAssignments_comment|length > 0 %}
-                                                        <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role}}" data-content="{{ crew.crewAssignments_comment|replace({'"':"'"}) }}"></i>
+                                                        <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role|escape('html_attr')}}" data-content="{{ crew.crewAssignments_comment|escape('html_attr') }}"></i>
                                                     {% endif %}
                                                     <div class="tools">
                                                         {% if 49|instancePermissions %}
+                                                            <i class="far fa-edit editCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" data-role="{{crew.crewAssignments_role|escape('html_attr')}}" data-comment="{{crew.crewAssignments_comment|escape('html_attr')}}" title="Edit"></i>
                                                             <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
 
                                                         {% endif %}
@@ -1927,6 +1928,30 @@
             });
             {% endif %}
             {% if 49|instancePermissions %}
+            $(".editCrewAssignment").click(function () {
+                var id = $(this).data("assignment");
+                var role = $(this).data("role");
+                var comment = $(this).data("comment");
+                bootbox.prompt({
+                    title: "Edit Role Name", 
+                    value: role,
+                    callback: function (roleResult) {
+                        if (roleResult && roleResult != null) {
+                            bootbox.prompt({
+                                title: "Edit Role Comment", 
+                                value: comment,
+                                callback: function (result) {
+                                    if (result && role != null) {
+                                        ajaxcall("projects/crew/edit.php", {"crewAssignments_id": id, "crewAssignments_role": roleResult, "crewAssignments_comment": result}, function (data) {
+                                            location.reload();
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            });
             $(".deleteCrewAssignment").click(function () {
                 var id = $(this).data("assignment");
                 bootbox.confirm({
