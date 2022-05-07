@@ -1,5 +1,5 @@
 <div class="col-xs-12 col-sm-12 col-md-{{ card.width }} col-lg-{{ card.width }} cell">
-    <div class="card {% if card.outline == "true" %}card-outline{% endif %} {% if card.color %}card-{{ card.color}}{% endif %}" data-type="{{card.type}}">
+    <div class="card {% if card.outline == "true" %}card-outline{% endif %} {% if card.color %}card-{{ card.color}}{% endif %}" data-type="{{ card.type ?: "custom" }}">
         <div class="card-header">
             <h3 class="card-title">
                 {{ card.title }}
