@@ -117,6 +117,14 @@ $CONFIG = array(
                 "canDisable" => true
             ],
             [
+                "id" => 20,
+                "group" => "Crewing",
+                "name" => "Crew Role Name Changed",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
                 "id" => 12,
                 "group" => "Maintenance",
                 "name" => "Tagged in new Maintenance Job",
@@ -136,14 +144,6 @@ $CONFIG = array(
                 "id" => 14,
                 "group" => "Maintenance",
                 "name" => "Maintenance Job changed Status",
-                "methods" => [1,3,4],
-                "default" => true,
-                "canDisable" => true
-            ],
-            [
-                "id" => 15,
-                "group" => "Maintenance",
-                "name" => "Assigned Maintenance Job",
                 "methods" => [1,3,4],
                 "default" => true,
                 "canDisable" => true
