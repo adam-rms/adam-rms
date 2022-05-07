@@ -34,7 +34,7 @@
     </div>
     {% for card in [ {'type': 'custom' }, {'type': 'calendar' }, {'type': 'inventoryTotal' }, {'type': 'storageUsage' }, {'type': 'userCount' }, {'type': 'maintenanceOutstanding' }, {'type': 'myMaintenance' } ] %}
         {% set card = card|merge({"width": 4 , "title": "Untitled Card"}) %}
-        <div style="display:none;" class="templateCard" data-type="{{card.type}}">
+        <div style="display:none;" class="templateCard" data-type="{{ card.type ?: "custom" }}">
             {% embed 'cms/cms_edit_card.twig' with {'card': card } %}{% endembed %}
         </div>
     {% endfor %}
