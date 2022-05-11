@@ -259,9 +259,9 @@
             {% endif %}
         </ul>
         {% if USERDATA.instances|length > 0 %}
-        <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/project/list.php" method="GET">
+        <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/search.php" method="GET">
             <div class="input-group input-group-sm">
-                <input class="form-control form-control-navbar" name="q" type="search" placeholder="Search Projects" aria-label="Search Projects">
+                <input class="form-control form-control-navbar" name="term" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-navbar" type="submit">
                         <i class="fas fa-search"></i>
@@ -272,7 +272,7 @@
         {% if thisProject %}
         <ul class="navbar-nav d-none d-md-block">
             <li class="nav-item text-nowrap">
-                <a href="{{ CONFIG.ROOTURL }}/project?id={{thisProject.projects_id}}" class="nav-link">
+                <a href="{{ CONFIG.ROOTURL }}/project/?id={{thisProject.projects_id}}" class="nav-link" id="currentlySelectedProjectInNavbar">
                     {% if thisProject.projects_parent_project_id %}&#8627; {% endif %}{{ thisProject.projects_name }}
                 </a>
             </li>
@@ -869,7 +869,7 @@
                     {% if projects and 31|instancePermissions %}
                     <div class="form-group">
                         <label>Or, shop for project</label>
-                        <select class="form-control select2 select2bs4" name="projectid">
+                        <select class="form-control select2 select2bs4" name="projectid" id="projectIdSelectorForAssetSearch">
                             {% for project in projects %}
                                 {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
                                     <option {% if USERDATA.users_selectedProjectID == project.projects_id %}selected{% endif %} value="{{ project.projects_id }}">{{ project.projects_name }}</option>

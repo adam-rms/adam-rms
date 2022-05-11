@@ -7,6 +7,9 @@
     <div class="form-group">
         <button type="submit" class="btn btn-default btn-outline-success">Search</button>
         <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
+        {% if PUBLIC != true %}
+            <a href="{{ CONFIG.USERGUIDEURL }}assets/finding-assets/" target="_blank" type="button" class="btn btn-default btn-outline-info">Help</a>
+        {% endif %}
     </div>
     <div class="form-group">
         <label>Keywords (comma separated)</label>
@@ -82,6 +85,10 @@
     {% endif %}
 </form>
 <script>
+    function changeSelectedProjectInNav(selectedProject) {
+        $('#currentlySelectedProjectInNavbar').attr("href","{{ CONFIG.ROOTURL }}/project/?id=" + selectedProject[0].id);
+        $('#currentlySelectedProjectInNavbar').html(selectedProject[0].text);
+    }
     function triggerDeepSearch(data) {
         $.ajax({
             url: '{{CONFIG.ROOTURL}}/api/assets/deepSearch.php',
@@ -90,6 +97,9 @@
             method: 'post',
             data: data,
             success: function (result) {
+                if ($("#projectIdSelectorForAssetSearch").length) {
+                    changeSelectedProjectInNav($("#projectIdSelectorForAssetSearch").select2('data'));
+                }
                 if (result.result) {
                     $("#pageContent").html(result['response']['html']);
                 }

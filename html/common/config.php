@@ -14,7 +14,7 @@ if(file_exists(__DIR__ . '/../../.env')) {
 if (getenv('bCMS__ERRORS') == "true") {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+    error_reporting(E_ERROR | E_PARSE);
 } else {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
@@ -26,6 +26,7 @@ $CONFIG = array(
     'DB_DATABASE' => getenv('bCMS__DB_DATABASE'),
     'DB_USERNAME' => getenv('bCMS__DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
     'DB_PASSWORD' => getenv('bCMS__DB_PASSWORD'),
+    'DB_PORT' => getenv('bCMS__DB_PORT') ?: 3306,
     'PROJECT_NAME' => "AdamRMS",
     'ASSETCDNURL' => getenv('bCMS__ASSETS_URL'),
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
@@ -33,6 +34,7 @@ $CONFIG = array(
     'VERSION' => ['COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')],
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
+    "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
     "ROOTURL" => getenv('bCMS__ROOTURL'),
     "PROJECT_SUPPORT_EMAIL" => "studios@jbithell.com",
     'AWS' => [
@@ -115,6 +117,14 @@ $CONFIG = array(
                 "canDisable" => true
             ],
             [
+                "id" => 20,
+                "group" => "Crewing",
+                "name" => "Crew Role Name Changed",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
                 "id" => 12,
                 "group" => "Maintenance",
                 "name" => "Tagged in new Maintenance Job",
@@ -134,14 +144,6 @@ $CONFIG = array(
                 "id" => 14,
                 "group" => "Maintenance",
                 "name" => "Maintenance Job changed Status",
-                "methods" => [1,3,4],
-                "default" => true,
-                "canDisable" => true
-            ],
-            [
-                "id" => 15,
-                "group" => "Maintenance",
-                "name" => "Assigned Maintenance Job",
                 "methods" => [1,3,4],
                 "default" => true,
                 "canDisable" => true

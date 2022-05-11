@@ -71,8 +71,9 @@ foreach ($PAGEDATA['assets'] as $assetType) {
     foreach ($assetType['assets'] as $asset) {
         $latestScan = assetLatestScan($asset['assets_id']);
         if ($latestScan['locations_name']) $assetLocation = $latestScan['locations_name'];
-        else if ($latestScan['assetTypes_name']) $assetLocation = $latestScan['assetTypes_name'];
+        else if ($latestScan['assetTypes_name']) $assetLocation = "Inside asset " . $latestScan['assetTypes_name']; //TODO improve this to mean something a bit more
         else if ($latestScan['assetsBarcodes_customLocation']) $assetLocation = $latestScan['assetsBarcodes_customLocation'];
+
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         $array = [
             $asset['assets_tag'],
@@ -118,7 +119,7 @@ if (isset($_POST['csv'])) {
     $sheet->getStyle('H2:H' . ($count+1))
         ->getNumberFormat()
         ->setFormatCode( '_-£* #,##0.00_-;-£* #,##0.00_-;_-£* "-"??_-;_-@_-');
-    $sheet->getStyle('I2:I' . ($count+1))
+    $sheet->getStyle('J2:J' . ($count+1))
         ->getAlignment()
         ->setWrapText(true);
     //Column Widths

@@ -17,6 +17,39 @@ if ($AUTH->permissionCheck(18) and isset($_GET['phpversion'])) {
     exit;
 }
 
+
+if ($AUTH->data['instance']["instancePositions_id"] && $AUTH->data['instance']["cmsPages_id"] != null) {
+    $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);
+    $DBLIB->where("cmsPages_deleted",0);
+    $DBLIB->where("cmsPages_archived",0);
+    $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))");
+    $DBLIB->where("cmsPages_id",$AUTH->data['instance']["cmsPages_id"]);
+    $PAGEDATA['PAGE'] = $DBLIB->getOne("cmsPages");
+    if ($PAGEDATA['PAGE']) {
+        $DBLIB->where("cmsPages_id",$PAGEDATA['PAGE']['cmsPages_id']);
+        $DBLIB->orderBy("cmsPagesDrafts_timestamp","DESC");
+        if (isset($_GET['r']) and $AUTH->instancePermissionCheck(126)) {
+            $DBLIB->where("cmsPagesDrafts_id",$_GET['r']);
+            $PAGEDATA['specificRevision'] = true;
+        }
+        $PAGEDATA['PAGE']['DRAFTS'] = $DBLIB->getOne("cmsPagesDrafts",["cmsPagesDrafts_id","cmsPagesDrafts_data","cmsPagesDrafts_revisionID"]);
+        if ($PAGEDATA['PAGE']['DRAFTS']) $PAGEDATA['PAGE']['DRAFTS']['cmsPagesDrafts_dataARRAY'] = json_decode($PAGEDATA['PAGE']['DRAFTS']['cmsPagesDrafts_data'],true);
+
+        $DBLIB->insert("cmsPagesViews",[
+            "cmsPages_id" => $PAGEDATA['PAGE']['cmsPages_id'],
+            "cmsPagesViews_timestamp" => date("Y-m-d H:i:s"),
+            "users_userid" => $AUTH->data['users_userid'],
+            "cmsPages_type" => 3
+        ]);
+        if ($AUTH->instancePermissionCheck(80)) $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),true);
+        die($TWIG->render('dashboard-cmsPage.twig', $PAGEDATA));
+    }
+}
+
+/**
+ * Default dashboard, this is not executed if a CMS_PAGE is found above
+ */
+
 $DBLIB->orderBy("authTokens_created","DESC");
 $DBLIB->where("users_userid",$AUTH->data['users_userid']);
 $DBLIB->where("(authTokens_deviceType != 'Web')");

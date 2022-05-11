@@ -21,7 +21,7 @@ $DBLIB = new MysqliDb ([
                 'username' => $CONFIG['DB_USERNAME'],
                 'password' => $CONFIG['DB_PASSWORD'],
                 'db'=> $CONFIG['DB_DATABASE'],
-                'port' => 3306,
+                'port' => $CONFIG['DB_PORT'],
                 //'prefix' => 'adamrms_',
                 'charset' => 'utf8'
         ]);
