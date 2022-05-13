@@ -61,8 +61,8 @@
                 </ul> 
                 <div class="btn-group my-2 d-none" role="group" id="export-buttons">
                     <div class="input-group-text">Export as</div>
-                    <button class="btn btn-primary">.CSV</button>
-                    <button class="btn btn-success">.XLSX</button>
+                    <button class="btn btn-primary export-button" data-filetype="csv">.CSV</button>
+                    <button class="btn btn-success export-button" data-filetype="xlsx">.XLSX</button>
                 </div>
             </div>
         </div>
@@ -91,11 +91,43 @@ $( document ).ready( function () {
         });
         $("#export-column-container, #export-sorting-container, #export-buttons").removeClass("d-none");        
     });
+
+    $('.export-button').on('click', function () {
+        let filetype = $(this).data("filetype");
+        let table = $('#export-table').val();
+        let checkboxes = []
+        $("#export-column-checkboxes input").each(function() {
+            if (this.checked) checkboxes.push(this.value);
+        });
+        let sort = $('input[name="column-order"]:checked').val();
+        let sortDirection = $('input[name="column-order-direction"]:checked').val();
+
+        $.ajax({
+            type:'POST',
+            url:'{{ CONFIG.ROOTURL }}/api/instances/export/export.php',
+            data: {
+                "filetype": filetype,
+                "table": table,
+                "columns": checkboxes,
+                "sort": sort,
+                "direction": sortDirection,
+            },
+            dataType:'json'
+        }).done(function(response){
+            var $a = $("<a>");
+            $a.attr("href",response.response.data);
+            $("body").append($a);
+            $a.attr("download",table + "." + filetype);
+            $a[0].click();
+            $a.remove();
+        });
+    });
+
 });
 
 function updateColumnOverview(){
     $('#columns-display').html("");
-    checkboxes = []
+    let checkboxes = []
     $("#export-column-checkboxes input").each(function() {
         if (this.checked) checkboxes.push(this.value);
     });

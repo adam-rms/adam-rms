@@ -12,20 +12,10 @@ if (!$AUTH->instancePermissionCheck(133)) die($TWIG->render('404.twig', $PAGEDAT
  * information that either is AdamRMS specific, or should not be exportable from a system.
  */
 
-//What table is being exported, and can the current user access it?
-//tables: Permission => [Public Name, Table Name]
-$tables = [
-    59 => ["Assets", "assets"],
-    20 => ["Projects", "projects"]
+$PAGEDATA['tables'] = [
+    ["Assets", "assets"],
+    ["Projects", "projects"]
 ];
-
-$PAGEDATA['tables'] = [];
-
-foreach ($tables as $permssion => $names) {
-    if($AUTH->instancePermissionCheck($permssion)) {
-        array_push($PAGEDATA['tables'], $names);
-    }
-}
 
 echo $TWIG->render('instances/export.twig', $PAGEDATA);
 ?>

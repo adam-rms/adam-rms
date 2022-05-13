@@ -448,6 +448,16 @@
                                     </p>
                                 </a>
                             </li>
+                            {% if 133|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/export.php" class="nav-link">
+                                        <i class="fas fa-cloud-download-alt nav-icon"></i>
+                                        <p>
+                                            Export
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
                             <li class="nav-header">USER MANAGEMENT</li>
                             {% if 2|instancePermissions %}
                                 <li class="nav-item">
