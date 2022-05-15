@@ -3,6 +3,10 @@
 {% block htmlIncludes %}
     <!--Sortable-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -102,7 +106,9 @@ $( document ).ready( function () {
     //Update every time table is updated
     $('#export-table').on('change', function () {
         //Clear existing content
-        $('#summary-list, #export-sort-radios').html("");
+        $('#summary-list, #export-sort-radios, #export-column-table').html("");
+        //remove any remaining popovers
+        $('.popover').remove();
 
         //Summary info
         $('#summary-list').append('<li class="list-group-item"><b>Table:</b> '+ this.value +'</li><li class="list-group-item"><b>Columns:</b> <span id="columns-display"><i>None</i></span</li><li class="list-group-item"><b>Sorting:</b> <span id="order-display"><i>None</i></span</li>');
@@ -112,10 +118,11 @@ $( document ).ready( function () {
             'table_name': this.value
         }, function (data) {
             for (item of data.response){
-                $("#export-column-table").append('<tr class="row border" value="' + item + '"><td class="border-right"><span class="handle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></span></td><td><div class="form-check"><input onchange="updateOverview()" selected class="form-check-input" type="checkbox" value="'+ item +'" id="column-'+ item +'"><label class="form-check-label" for="column-'+ item +'">'+item+'</label></div></td></tr>');
-                $("#export-sort-radios").append('<div class="form-check"><input onchange=updateOverview() class="form-check-input" type="radio" value="'+ item +'" name="column-order" id="order-'+ item +'"><label class="form-check-label" for="order-'+ item +'">'+item+'</label></div>');
+                $("#export-column-table").append('<tr class="row border" value="' + item.value + '"><td class="border-right"><span class="handle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></span></td><td><div class="form-check"><input onchange="updateOverview()" selected class="form-check-input" type="checkbox" value="'+ item.value +'" id="column-'+ item.value +'"><label class="form-check-label" for="column-'+ item.value +'">'+ item.name +'</label>'+ (item.description ?' <i class="fas fa-info-circle" data-toggle="popover" title="'+ item.name +'" data-content="' + item.description + '"></i>' : '') +'</div></td></tr>');
+                $("#export-sort-radios").append('<div class="form-check"><input onchange=updateOverview() class="form-check-input" type="radio" value="'+ item.value +'" name="column-order" id="order-'+ item.value +'"><label class="form-check-label" for="order-'+ item.value +'">'+item.name+'</label></div>');
             }
-        });
+            $('[data-toggle="popover"]').popover();
+        });        
         $("#export-column-container, #export-sorting-container").removeClass("d-none");  
     });
 
