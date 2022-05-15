@@ -1,5 +1,9 @@
 {% extends "assets/template.twig" %}
 
+{% block htmlIncludes %}
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-12 col-md-8">
@@ -17,32 +21,49 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="mb-3 d-none" id="export-column-container">
-                    <label for="export-columns">Which Columns?</label>
-                    <div id="export-column-checkboxes">
+            </div>
+        </div>
+        <div class="row" id="this-table-container">
+            <div class="col d-none" id="export-column-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Which Columns?</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="export-column-checkboxes" class="mx-2">
+                            <table class="table table-borderless" id="export-column-table"></table>
+                        </div>
                     </div>
                 </div>
-                <div class="mb-3 d-none" id="export-sorting-container">
-                    <label for="export-sorting">Sort By?</label>
-                    <div class="row">
-                        <div class="col">
-                            <div id="export-sort-radios">
-
-                            </div>
+            </div>
+            <div class="col d-none" id="export-sorting-container">
+                <div class="card">
+                    <div class="mb-3">
+                        <div class="card-header">
+                            <h4 class="card-title">Sort By?</h4>
                         </div>
-                        <div class="col">
-                            <div id="export-order-radios">
-                                <div class="form-check">
-                                    <input onchange="updateOrderOverview()" class="form-check-input" type="radio" name="column-order-direction" id="order-ascending" value="ASC" checked>
-                                    <label class="form-check-label" for="order-ascending">
-                                        Ascending
-                                    </label>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div id="export-sort-radios">
+
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input onchange="updateOrderOverview()" class="form-check-input" type="radio" name="column-order-direction" id="order-descending" value="DESC">
-                                    <label class="form-check-label" for="order-descending">
-                                        Descending
-                                    </label>
+                                <div class="col">
+                                    <div id="export-order-radios">
+                                        <div class="form-check">
+                                            <input onchange="updateOrderOverview()" class="form-check-input" type="radio" name="column-order-direction" id="order-ascending" value="ASC" checked>
+                                            <label class="form-check-label" for="order-ascending">
+                                                Ascending
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input onchange="updateOrderOverview()" class="form-check-input" type="radio" name="column-order-direction" id="order-descending" value="DESC">
+                                            <label class="form-check-label" for="order-descending">
+                                                Descending
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -51,8 +72,8 @@
             </div>
         </div>
     </div>
-    <div class="col-12 col-md-4">
-        <div class="card">
+    <div class="col-12 col-md-4 ">
+        <div class="card sticky-top" style="top: 70px;">
             <div class="card-header">
                 <h3 class="card-title">Export Overview</h3>
             </div>
@@ -71,11 +92,17 @@
 
 <script>
 $( document ).ready( function () {
+
+    $("#export-column-table").sortable({
+        handle: ".handle",
+        connectWith: "tr",
+        update: updateOverview
+    });
     
     //Update every time table is updated
     $('#export-table').on('change', function () {
         //Clear existing content
-        $('#summary-list, #export-column-checkboxes, #export-sort-radios').html("");
+        $('#summary-list, #export-sort-radios').html("");
 
         //Summary info
         $('#summary-list').append('<li class="list-group-item"><b>Table:</b> '+ this.value +'</li><li class="list-group-item"><b>Columns:</b> <span id="columns-display"><i>None</i></span</li><li class="list-group-item"><b>Sorting:</b> <span id="order-display"><i>None</i></span</li>');
@@ -85,11 +112,11 @@ $( document ).ready( function () {
             'table_name': this.value
         }, function (data) {
             for (item of data.response){
-                $("#export-column-checkboxes").append('<div class="form-check"><input onchange=updateColumnOverview() selected class="form-check-input" type="checkbox" value="'+ item +'" id="column-'+ item +'"><label class="form-check-label" for="column-'+ item +'">'+item+'</label></div>');
-                $("#export-sort-radios").append('<div class="form-check"><input onchange=updateOrderOverview() class="form-check-input" type="radio" value="'+ item +'" name="column-order" id="order-'+ item +'"><label class="form-check-label" for="order-'+ item +'">'+item+'</label></div>');
+                $("#export-column-table").append('<tr class="row border" value="' + item + '"><td class="border-right"><span class="handle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></span></td><td><div class="form-check"><input onchange="updateOverview()" selected class="form-check-input" type="checkbox" value="'+ item +'" id="column-'+ item +'"><label class="form-check-label" for="column-'+ item +'">'+item+'</label></div></td></tr>');
+                $("#export-sort-radios").append('<div class="form-check"><input onchange=updateOverview() class="form-check-input" type="radio" value="'+ item +'" name="column-order" id="order-'+ item +'"><label class="form-check-label" for="order-'+ item +'">'+item+'</label></div>');
             }
         });
-        $("#export-column-container, #export-sorting-container, #export-buttons").removeClass("d-none");        
+        $("#export-column-container, #export-sorting-container").removeClass("d-none");  
     });
 
     $('.export-button').on('click', function () {
@@ -125,21 +152,28 @@ $( document ).ready( function () {
 
 });
 
-function updateColumnOverview(){
+function updateOverview(){
+    let showButtons = false;
     $('#columns-display').html("");
-    let checkboxes = []
-    $("#export-column-checkboxes input").each(function() {
-        if (this.checked) checkboxes.push(this.value);
-    });
+    let checkboxes = $("#export-column-checkboxes input:checked").map(function(){return $(this).val();}).get();
     if (checkboxes.length > 0) {
         $('#columns-display').html(checkboxes.join(", "));
+        showButtons = true;
     } else {
         $('#columns-display').html("<i>None</i>");
     }
-}
+    if ($('input[name="column-order"]:checked').length > 0){
+        $('#order-display').html($('input[name="column-order"]:checked').val() + ", " + $('input[name="column-order-direction"]:checked').val());
+    } else {
+        showButtons = false;
+    }
 
-function updateOrderOverview(){
-    $('#order-display').html($('input[name="column-order"]:checked').val() + ", " + $('input[name="column-order-direction"]:checked').val());
+    if (showButtons) {
+        $("#export-buttons").removeClass("d-none");  
+    } else {
+        $("#export-buttons").addClass("d-none");  
+    }
+    
 }
 </script>
 {% endblock %}
