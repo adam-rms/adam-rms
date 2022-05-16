@@ -157,6 +157,8 @@
                 $a.attr("download",table + "." + filetype);
                 $a[0].click();
                 $a.remove();
+            }).fail(function () {
+                bootbox.alert("There was an error with the selected query");
             });
         });
     });
@@ -221,7 +223,7 @@
             }, function (data) {
                 for (item of data.response){
                     $(columns).append(`
-                        <tr class="row border" value="' + item.value + '">
+                        <tr class="row border">
                             <td class="border-right"><span class="handle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></span></td>
                             <td><div class="form-check">
                                 <input onchange="updateOverview()" selected class="form-check-input" type="checkbox" value="`+ item.value +`" id="column-`+ item.value +`">
