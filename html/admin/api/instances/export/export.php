@@ -3,6 +3,24 @@ require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(133)) die("404");
 
+//Joins strings
+//"main table" => ["tablename" => ["join"=> join string, "direction" => join direction]]
+//this might help: "" => ["join" => "", "direction" => ""],
+$joins = [
+    "assettypes" => [
+        "manufacturers" => ["join" => "assettypes.manufacturers_id=manufacturers.manufacturers_id", "direction" => "LEFT"],
+        "assetcategories" =>["join" => "assettypes.assetCategories_id=assetcategories.assetCategories_id", "direction" => "LEFT"],
+    ],
+    "assets" => [
+        "assettypes" => ["join" => "assets.assetTypes_id=assettypes.assetTypes_id", "direction" => "LEFT"],
+    ],
+    "projects" => [
+        "locations" => ["join" => "projects.locations_id=locations.locations_id", "direction" => "LEFT"],
+        "clients" => ["join" => "projects.clients_id=clients.clients_id", "direction" => "LEFT"],
+        "users" => ["join" => "projects.projects_manager=users.users_userid", "direction" => "LEFT"],
+    ]
+];
+
 /**
  * Request Data
  * filetype => $_POST['filetype'];
@@ -10,6 +28,7 @@ if (!$AUTH->instancePermissionCheck(133)) die("404");
  * columns => $_POST['columns'];
  * sort => $_POST['sort'];
  * sortDirection => $_POST['direction'];
+ * join => $_POST['joins'];
  */
 if ($_POST['filetype'] == "csv") {
     header("Content-type: text/csv");
@@ -22,16 +41,22 @@ elseif ($_POST['filetype'] == "xlsx") {
 
 header("Pragma: no-cache");
 header("Expires: 0");
-error_reporting(0); //Errors if shown mean it won't download right
-ini_set('display_errors', 0);
+//error_reporting(0); //Errors if shown mean it won't download right
+//ini_set('display_errors', 0);
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 
 //TODO check values before putting them in here
+//TODO check instance ID
 
-$DBLIB->orderBy( $_POST['table'] . "." . $_POST['sort'], $_POST['direction'] );
+$DBLIB->orderBy($_POST['sort'], $_POST['direction'] );
+if (isset($_POST['joins'])){
+    foreach ($_POST['joins'] as $jointable){
+        $DBLIB->join($jointable, $joins[$_POST['table']][$jointable]['join'], $joins[$_POST['table']][$jointable]['direction']);
+    }
+}
 $results = $DBLIB->get($_POST['table'], null, $_POST['columns']);
 $spreadsheet = new Spreadsheet();
 $spreadsheet->getProperties()
