@@ -34,23 +34,36 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 if (
     in_array($_POST['table'], array_keys($columns)) && //check if table allowed
     in_array($_POST['direction'], ['ASC', 'DESC']) && //sort direction is fixed
-    in_array($_POST['sort'], array_column($columns[$_POST['table']], "value")) && //sort should be a single allowed column
-    !array_diff($_POST['columns'], array_column($columns[$_POST['table']], "value")) //columns should exist in the given table 
+    in_array($_POST['sort'], array_column($columns[$_POST['table']], "value"))  //sort should be a single allowed column
 ){
     $DBLIB->where($_POST['table'] . ".instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->orderBy($_POST['sort'], $_POST['direction'] );
+    $possibleColumns = array_column($columns[$_POST['table']], "value");
     if (isset($_POST['joins'])){
-        //joining tables should be possible for this $_POST['table'])
-        if (!array_diff($_POST['joins'], array_column($joins[$_POST['table']], "value"))) {
-            foreach ($_POST['joins'] as $jointable){
-                $DBLIB->join($jointable, $joinQueries[$_POST['table']][$jointable]['join'], $joinQueries[$_POST['table']][$jointable]['direction']);
+        foreach ($_POST['joins'] as $jointable){
+            //$jointable = ["parent table", "child table"];
+            //check that joining tables are valid
+            $possibleColumns = array_merge($possibleColumns, array_column($columns[$jointable[1]], "value"));
+            //!array_diff($_POST['columns'], array_column($columns[$_POST['table']], "value")) //columns should exist in the given table
+            if (
+                in_array($jointable[0], array_keys($joins)) && //parent table
+                in_array($jointable[1], array_column($joins[$jointable[0]], "value")) //child table
+            ) {
+                $DBLIB->join($jointable[1], $joinQueries[$jointable[0]][$jointable[1]]['join'], $joinQueries[$jointable[0]][$jointable[1]]['direction']);
+            } else {
+                // invalid data so no
+                header("HTTP/1.1 400 Bad Request");
+                die();
             }
-        } else {
-            header("HTTP/1.1 400 Bad Request"); // invalid data so no
-            die();
-        }
-        
+        }       
     }
+    //we need to check columns of the tables
+    if(array_diff($_POST['columns'], $possibleColumns)){
+        // invalid data so no
+        header("HTTP/1.1 400 Bad Request");
+        die();
+    }
+
     $results = $DBLIB->get($_POST['table'], null, $_POST['columns']);
     $spreadsheet = new Spreadsheet();
     $spreadsheet->getProperties()
@@ -101,6 +114,6 @@ if (
 
         $file = array('data' => "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,".base64_encode($xlsData));
         finish(true, null, $file);
-    } else header("HTTP/1.1 400 Bad Request"); // invalid data so no
+    } else header("HTTP/1.1 500 Internal Server Error"); //something hasn't worked
 
 } else header("HTTP/1.1 400 Bad Request"); // invalid data so no

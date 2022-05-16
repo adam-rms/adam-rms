@@ -13,7 +13,7 @@
     <div class="col-12 col-md-8">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Instance Export</h3>
+                <h3 class="card-title py-2">Instance Export</h3>
                 <button onclick="addJoin($('#export-table').val())" class="btn btn-primary float-right d-none" id="add-join-button"><i class="fas fa-plus"></i> Add Table Join</button>
             </div>
             <div class="card-body">
@@ -124,19 +124,12 @@
         $('.export-button').on('click', function () {
             let filetype = $(this).data("filetype");
             let table = $('#export-table').val();
-            let joins = $(".joinContainer").map(function(){return $(this).data("table");}).get();
-            let checkboxes = []
-            $("#export-column-checkboxes input").each(function() {
-                if (this.checked) checkboxes.push(this.value);
-            });
+            let joins = $(".joinContainer").map(function(){return [[$(this).data("parenttable"),$(this).data("childtable")]]}).get();
+            let checkboxes = $("#export-column-checkboxes input:checked").map(function(){return $(this).val();}).get();
             //add joined table columns
-            joins.forEach(function (join) {
-                let query = "#join-column-container-"+table+"-"+join+" input:checked";
-                checkboxes.push($(query).map(function(){return $(this).val();}).get());
-            });
+            checkboxes.push($(".joinContainer input:checked").map(function(){return $(this).val();}).get());
             let sort = $('input[name="column-order"]:checked').val();
             let sortDirection = $('input[name="column-order-direction"]:checked').val();
-            
 
             $.ajax({
                 type:'POST',
@@ -147,7 +140,7 @@
                     "columns": checkboxes.flat(),
                     "sort": sort,
                     "direction": sortDirection,
-                    "joins": joins.flat(),
+                    "joins": joins,
                 },
                 dataType:'json'
             }).done(function(response){
@@ -169,7 +162,7 @@
         let table = $('#export-table').val();
 
         //Look for joins
-        let joins = $(".joinContainer").map(function(){return $(this).data("table");}).get();
+        let joins = $(".joinContainer").map(function(){return $(this).data("parenttable") + " -> " + $(this).data("childtable")}).get();
         if (joins.length > 0){
             $("#joins-display").html(joins.join(", "));
         } else {
@@ -180,10 +173,10 @@
         $('#columns-display').html("");
         let checkboxes = $("#export-column-checkboxes input:checked").map(function(){return $(this).val();}).get();
         //add joined table columns
-        joins.forEach(function (join) {
-            let query = "#join-column-container-"+table+"-"+join+" input:checked";
-            checkboxes.push($(query).map(function(){return $(this).val();}).get());
-        });
+        let joinCols = $(".joinContainer input:checked").map(function(){return $(this).val();}).get()
+        if (joinCols.length > 0) {
+            checkboxes.push(joinCols);
+        }
         if (checkboxes.length > 0) {
             $('#columns-display').html(checkboxes.join(", "));
             showButtons = true;
@@ -205,10 +198,16 @@
         }
     }
 
-    function removeMe(element) {
+    function removeMe(element, table) {
+        console.log(table);
         $(element).parents("div.joinContainer").remove();
         //Show join adder button
-        $("#add-join-button").removeClass("d-none");
+        if (table != $('#export-table').val()){
+            $("#add-join-"+ table +"-button").removeClass("d-none");
+        } else {
+            $("#add-join-button").removeClass("d-none");
+        }
+        updateOverview();
     }
 
     /*
@@ -219,29 +218,29 @@
      */
     function getColumns(table, columns, sort) {
         ajaxcall("instances/export/getColumns.php", {
-                'table_name': table
-            }, function (data) {
-                for (item of data.response){
-                    $(columns).append(`
-                        <tr class="row border">
-                            <td class="border-right"><span class="handle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></span></td>
-                            <td><div class="form-check">
-                                <input onchange="updateOverview()" selected class="form-check-input" type="checkbox" value="`+ item.value +`" id="column-`+ item.value +`">
-                                <label class="form-check-label" for="column-`+ item.value +`">`+ item.name +`</label>`+ (item.description ?' <i class="fas fa-info-circle" data-toggle="popover" title="'+ item.name +'" data-content="' + item.description + '"></i>' : '') +`
-                            </div></td>
-                        </tr>`);
-                    $(sort).append(`
-                        <div class="form-check">
-                            <input onchange=updateOverview() class="form-check-input" type="radio" value="`+ item.value +`" name="column-order" id="order-`+ item.value +`">
-                            <label class="form-check-label" for="order-`+ item.value +`">`+item.name+`</label>
-                        </div>`);
-                }
-                $('[data-toggle="popover"]').popover();
-            });
+            'table_name': table
+        }, function (data) {
+            for (item of data.response){
+                $(columns).append(`
+                    <tr class="row border">
+                        <td class="border-right"><span class="handle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></span></td>
+                        <td><div class="form-check">
+                            <input onchange="updateOverview()" selected class="form-check-input" type="checkbox" value="`+ item.value +`" id="column-`+ item.value +`">
+                            <label class="form-check-label" for="column-`+ item.value +`">`+ item.name +`</label>`+ (item.description ?' <i class="fas fa-info-circle" data-toggle="popover" title="'+ item.name +'" data-content="' + item.description + '"></i>' : '') +`
+                        </div></td>
+                    </tr>`);
+                $(sort).append(`
+                    <div class="form-check">
+                        <input onchange=updateOverview() class="form-check-input" type="radio" value="`+ item.value +`" name="column-order" id="order-`+ item.value +`">
+                        <label class="form-check-label" for="order-`+ item.value +`">`+item.name+`</label>
+                    </div>`);
+            }
+            $('[data-toggle="popover"]').popover();
+        });
     }
 
     function addJoin(table){
-        let joins = $(".joinContainer").map(function(){return $(this).data("table");}).get();
+        let joins = $(".joinContainer").map(function(){return $(this).data("childtable");}).get();
         ajaxcall(
             "instances/export/getJoins.php",
             {'table_name': table},
@@ -254,49 +253,63 @@
                 }
                 //hide join button if possible tables displayed
                 if (options.length < 2) {
-                    $("#add-join-button").addClass("d-none");
+                    if(table == $('#export-table').val()){
+                        $("#add-join-button").addClass("d-none");
+                    } else {
+                        $("#add-join-"+ table +"-button").addClass("d-none");
+                    }
                 }
                 bootbox.prompt({
-                    title: "Create New Asset Status",
+                    title: "Add data from another table (table join)",
                     inputType: "select",
                     multiple: false,
                     inputOptions: options,
                     callback: function (newTable) {
-                        if (newTable){
-                            let columnsid = "join-column-container-"+ table +"-"+ newTable;
-                            let sortid = "join-sort-container-"+ table +"-"+ newTable;
-                            //Add elements
-                            $('#join-container-container').append(`
-                            <div class="joinContainer container" data-table="`+newTable+`" id="join-container-`+table+`-`+newTable+`">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Join `+ newTable +`</h3>
-                                        <button onclick="removeMe(this)" class="btn btn-danger float-right"><i class="fas fa-trash"></i> Remove Table Join</button>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row justify-content-center" id="join-container-`+table+`-`+newTable+`">
-                                            <div class="col-12 col-md-6">
-                                                <div class="card">
-                                                    <div class="card-header"><h4 class="card-title">Which Columns?</h4></div>
-                                                    <div class="card-body"><div class="mx-2"><table class="table table-borderless" id="`+ columnsid +`"></table></div></div>
+                        ajaxcall(
+                        "instances/export/getJoins.php",
+                        {'table_name': newTable},
+                        function (data) {
+                            if (newTable){
+                                let columnsid = "join-column-container-"+ table +"-"+ newTable;
+                                let sortid = "join-sort-container-"+ table +"-"+ newTable;
+                                //Add elements
+                                $('#join-container-container').append(`
+                                <div class="joinContainer container" data-parenttable="`+table+`" data-childtable="`+newTable+`" id="join-container-`+table+`-`+newTable+`">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title py-2">Join `+ newTable +`</h3>
+                                            <button onclick="removeMe(this` +(table == $('#export-table').val() ? `, '`+table+`'` : `` ) +`)" class="btn btn-danger mx-1 float-right"><i class="fas fa-trash"></i> Remove Table Join</button>
+                                            ` +(data.response ? `<button onclick="addJoin('`+ newTable +`')" id="add-join-`+newTable+`-button" class="btn btn-primary mx-1 float-right"><i class="fas fa-plus"></i> Add Table Join</button>` : ``) + `
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row justify-content-center" id="join-container-`+table+`-`+newTable+`">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-header"><h4 class="card-title">Which Columns?</h4></div>
+                                                        <div class="card-body"><div class="mx-2"><table class="table table-borderless" id="`+ columnsid +`"></table></div></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>`);
-                            //Get column data
-                            getColumns(newTable, '#'+columnsid, null );
-                            $("#"+columnsid).sortable({
-                                handle: ".handle",
-                                connectWith: "tr",
-                                update: updateOverview
-                            });
-                            updateOverview();
-                        } else {
-                            //prompt was cancelled so make sure add button is visible still
-                            $("#add-join-button").removeClass("d-none");
-                        }
+                                </div>`);
+                                //Get column data
+                                getColumns(newTable, '#'+columnsid, null );
+                                $("#"+columnsid).sortable({
+                                    handle: ".handle",
+                                    connectWith: "tr",
+                                    update: updateOverview
+                                });
+                                updateOverview();
+                            } else {
+                                //prompt was cancelled so make sure add button is visible again
+                                if(table == $('#export-table').val()){
+                                    $("#add-join-button").removeClass("d-none");
+                                } else {
+                                    $("#add-join-"+ table +"-button").removeClass("d-none");
+                                }
+                            }
+                        });
                     }
                 });
             },
