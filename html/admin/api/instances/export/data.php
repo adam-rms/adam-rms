@@ -84,23 +84,45 @@ $columns = [
         ["name" => "Name", "value" => "assetcategories.assetCategories_name", "description" => ""],
         ["name" => "Icon", "value" => "assetcategories.assetCategories_fontAwesome", "description" => "A FontAwesome Icon to represent the asset category group"],
         ["name" => "Order", "value" => "assetcategories.assetCategories_rank", "description" => "Ordering of the group"],
-    ]
+    ],
+    "locations" => [
+        ["name" => "Name", "value" => "locations_name", "description" => ""],
+        ["name" => "Address", "value" => "locations_address", "description" => "Physical address of location"],
+        ["name" => "Notes", "value" => "locations_notes", "description" => "Internal location comments"],
+    ],
+    "clients" => [
+        ["name" => "Name", "value" => "clients_name", "description" => ""],
+        ["name" => "Address", "value" => "clients_address", "description" => ""],
+        ["name" => "Phone Number", "value" => "clients_phone", "description" => ""],
+        ["name" => "Website", "value" => "clients_website", "description" => ""],
+        ["name" => "Email Address", "value" => "clients_email", "description" => ""],
+        ["name" => "Notes", "value" => "clients_notes", "description" => "Internal client comments"],
+    ],
+    "users" => [
+        ["name" => "Username", "value" => "users_username", "description" => ""],
+        ["name" => "Name 1", "value" => "users_name1", "description" => "First Name"],
+        ["name" => "Name 2", "value" => "users_name2", "description" => "Last Name"],
+        ["name" => "Email Address", "value" => "users_email", "description" => ""],
+    ],
 ];
 
 //Tables that can be joined with the given table
 //"main table" => ["name" => Screen name, "value" => table name]
 $joins = [
     "assets" => [
-        ["name" => "Asset Types", "value" => "assettypes"],
+        ["name" => "Asset Type", "value" => "assettypes"],
     ],
     "assettypes" => [
-        ["name" => "Manufacturers", "value" => "manufacturers"],
-        ["name" => "Asset Categories", "value" => "assetcategories"]
+        ["name" => "Manufacturer", "value" => "manufacturers"],
+        ["name" => "Asset Category", "value" => "assetcategories"]
     ],
     "projects" => [
-        ["name" => "Locations", "value" => "locations"],
-        ["name" => "Clients", "value" => "clients"],
-        ["name" => "Users", "value" => "users"],
+        ["name" => "Location", "value" => "locations"],
+        ["name" => "Client", "value" => "clients"],
+        ["name" => "Project Manager", "value" => "users"],
+    ],
+    "locations" => [
+        ["name" => "Owner (Client)", "value" => "clients"],
     ]
 ];
 
@@ -120,5 +142,8 @@ $joinQueries = [
         "locations" => ["join" => "projects.locations_id=locations.locations_id", "direction" => "LEFT"],
         "clients" => ["join" => "projects.clients_id=clients.clients_id", "direction" => "LEFT"],
         "users" => ["join" => "projects.projects_manager=users.users_userid", "direction" => "LEFT"],
+    ],
+    "locations" => [
+        "clients" => ["join" => "locations.clients_id=clients.clients_id", "direction" => "LEFT"],
     ]
 ];

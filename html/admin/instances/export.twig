@@ -18,6 +18,7 @@
             </div>
             <div class="card-body">
                 <div class="mb-3" id="export-table-container">
+                    <label for"export-table">Base Table</label>
                     <select name="export-table" id="export-table" class="form-control">
                         <option selected disabled>Select a table...</option>
                         {% for table in tables %}
@@ -113,7 +114,7 @@
             $('.popover').remove();
 
             //Summary info
-            $('#summary-list').append('<li class="list-group-item"><b>Table:</b> '+ this.value +'</li><li class="list-group-item"><b>Columns:</b> <span id="columns-display"><i>None</i></span</li><li class="list-group-item"><b>Sorting:</b> <span id="order-display"><i>None</i></span</li><li class="list-group-item"><b>Joined Tables:</b> <span id="joins-display"><i>None</i></span></li>');
+            $('#summary-list').append('<li class="list-group-item"><b>Base table:</b> '+ this.value +'</li><li class="list-group-item"><b>Columns:</b> <span id="columns-display"><i>None</i></span</li><li class="list-group-item"><b>Sorting:</b> <span id="order-display"><i>None</i></span</li><li class="list-group-item"><b>Joined Tables:</b> <span id="joins-display"><i>None</i></span></li>');
 
             //get stuff
             getColumns(this.value, "#export-column-table", "#export-sort-radios");
