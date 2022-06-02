@@ -1,5 +1,5 @@
 <?php
-ini_set('memory_limit','2048M');
+ini_set('memory_limit','256M');
 require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
 
