@@ -170,7 +170,7 @@
                                                 <button title="Asset to be archived" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                             {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
                                                 {% if asset.tags[0].assignment %}
-                                                    <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? asset.tags[0].assignment[0]['projects_name'] : 'an event'}}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                    <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? asset.tags[0].assignment[0]['projects_name'] : 'a project'}}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                 {% else %}
                                                     <button title="Available" class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                 {% endif %}
@@ -227,7 +227,7 @@
                                                                                     <button title="Asset to be removed" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                 {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
                                                                                     {%  if thisasset.assignment %}
-                                                                                        <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? thisasset.assignment[0]['projects_name'] : ' an event' }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                                                        <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? thisasset.assignment[0]['projects_name'] : ' a project' }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                     {% else %}
                                                                                     <button title="Available" {% set someassignable = true %} class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                                                     {% endif %}

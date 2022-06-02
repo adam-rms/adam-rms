@@ -676,7 +676,7 @@ $GLOBALS['STATUSES'] = [
     ],
     8 => [
         "name" => "Cancelled",
-        "description" => "Event Cancelled",
+        "description" => "Project Cancelled",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 8,
@@ -686,7 +686,7 @@ $GLOBALS['STATUSES'] = [
     ],
     9 => [
         "name" => "Lead Lost",
-        "description" => "Event Cancelled",
+        "description" => "Project Cancelled",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 9,
