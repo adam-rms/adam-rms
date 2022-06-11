@@ -776,10 +776,8 @@
                         {% endif %}
 
 
-                        {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) %}
+                        {% if 58|instancePermissions %}
                             <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Edit Type</a></li>
-                        {% elseif 58|instancePermissions %}
-                            <li class="nav-item"><a class="nav-link" href="#" title="Locked as this asset type was built by AdamRMS">Edit Type</a></li>
                         {% endif %}
                         {% if 54|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
                     </ul>
@@ -926,6 +924,7 @@
                         </div>
                         {% endif %}
                         {% if 58|instancePermissions %}
+                        {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) %}
                         <div class="tab-pane" style="padding:0"  id="settings">
                             <div class="card" style="margin-bottom:0;">
                                 <div class="card-header p-2">
@@ -1047,6 +1046,12 @@
                                     </div>
                                     <!-- /.tab-content -->
                                 </div><!-- /.card-body -->
+                            </div>
+                        </div>
+                        {% elseif 58|instancePermissions %}
+                        <div class="tab-pane" style="padding: 1.25rem" id="settings">
+                            <div class="alert alert-info" role="alert">
+                                <h4 class="alert-heading">Asset type maintained by the AdamRMS</h4>Sorry - this asset type is shared between a number of different businesses as a pre-defined template, to edit it please <a href="{{ CONFIG.ROOTURL }}/support.php">get in touch with support</a>
                             </div>
                         </div>
                         {% endif %}
