@@ -14,6 +14,11 @@ if ($AUTH->instancePermissionCheck(114) and isset($_GET['drafts'])) {
     $DBLIB->where("modules.modules_show", 0);
 }
 else $DBLIB->where("modules.modules_show", 1);
+if ($AUTH->data['instance']["instancePositions_id"] && (!$AUTH->instancePermissionCheck(116))) {
+    //If the user doesn't have a position - they're bstudios staff
+    //If user has permission to edit modules, let them see all of them, otherwise they'll be impossible to edit
+    $DBLIB->where("(modules.modules_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", modules.modules_visibleToGroups) > 0))"); 
+}
 $DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->orderBy("modules.modules_name","ASC");
 $modules = $DBLIB->arraybuilder()->paginate('modules', $page, ["modules.*"]);
@@ -69,6 +74,11 @@ foreach ($modules as $module) {
 
     $PAGEDATA['modules'][] = $module;
 }
+
+$DBLIB->orderBy("instancePositions_rank", "ASC");
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("instancePositions_deleted",0);
+$PAGEDATA['positions'] = $DBLIB->get("instancePositions");
 
 
 echo $TWIG->render('training/training_modules.twig', $PAGEDATA);
