@@ -116,20 +116,22 @@
                 weekNumbersWithinDays:true,
                 {% if USERDATA.instance.weekStartDates %}
                 weekNumberCalculation: function(date) {
-                    var dates = [{{ USERDATA.instance.weekStartDates|join(",") }}];
+                    var weekStartDates = [{{ USERDATA.instance.weekStartDates|join(",") }}];
+                    weekStartDates.push(32472144000000); // add a date to the end of the list as otherwise the last one is ignored
                     var today = new Date();
-                    var thisDate = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', { month: 'long' })) + ' ' + date.getFullYear() + ' 00:00:00');
+                    var dateBeingTested = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', { month: 'long' })) + ' ' + date.getFullYear() + ' 00:00:00');
                     var idOfThis;
-                    for (var i = 0; i < dates.length; i++) {
-                        if (thisDate <= (dates[i])-(7 * 24 * 60 * 60 * 1000)) {
+                    for (var i = 0; i < weekStartDates.length; i++) {
+                        if (dateBeingTested <= (weekStartDates[i])-(7 * 24 * 60 * 60 * 1000)) { // If this date is before the week start date, then it is in the previous week.
                             if (i == 0) {
-                                return "";
+                                return null;
                             }
                             idOfThis = i-1;
                             break;
                         }
                     }
-                    return (Math.round((thisDate-dates[idOfThis]) / (7 * 24 * 60 * 60 * 1000))+1);
+                    if (typeof idOfThis === 'undefined') return null;
+                    return (Math.round((dateBeingTested-weekStartDates[idOfThis]) / (7 * 24 * 60 * 60 * 1000))+1);
                 },
                 {% else %}
                 weekNumberCalculation: "ISO",
