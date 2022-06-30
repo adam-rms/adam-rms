@@ -78,7 +78,7 @@
                                 {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
                                 {% endif %}
-                                {% if 100|instancePermissions %}
+                                {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ location.locations_id }}"><i class="fas fa-trash"></i></button>
                                 {% endif %}
                             </div>
@@ -122,7 +122,7 @@
                                         {% if 103|instancePermissions %}
                                             <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                         {% endif %}
-                                        {% if 100|instancePermissions %}
+                                        {% if 99|instancePermissions %}
                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}
                                     </div>
