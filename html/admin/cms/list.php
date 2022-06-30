@@ -7,7 +7,7 @@ $PAGEDATA['includeArchived'] = (isset($_GET['archive']) and $_GET['archive'] == 
 
 $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);
 $DBLIB->where("cmsPages_deleted",0);
-$DBLIB->where("cmsPages_archived",0);
+$DBLIB->where("cmsPages_archived",(isset($_GET['archive']) and $_GET['archive'] == 1 ?: 0));
 $DBLIB->where("cmsPages_subOf",NULL,"IS");
 $DBLIB->orderBy("cmsPages_navOrder","ASC");
 $DBLIB->orderBy("cmsPages_id","ASC");
