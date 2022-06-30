@@ -5,9 +5,11 @@ if (!$AUTH->instancePermissionCheck(125)) die($TWIG->render('404.twig', $PAGEDAT
 
 $PAGEDATA['includeArchived'] = (isset($_GET['archive']) and $_GET['archive'] == 1 ? true : false);
 
+$PAGEDATA['pageConfig'] = ["TITLE" => ($PAGEDATA['includeArchived']? "Archived ": "") . "CMS Pages", "BREADCRUMB" => false];
+
 $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);
 $DBLIB->where("cmsPages_deleted",0);
-$DBLIB->where("cmsPages_archived",(isset($_GET['archive']) and $_GET['archive'] == 1 ?: 0));
+$DBLIB->where("cmsPages_archived",($PAGEDATA['includeArchived'] ? 1: 0));
 $DBLIB->where("cmsPages_subOf",NULL,"IS");
 $DBLIB->orderBy("cmsPages_navOrder","ASC");
 $DBLIB->orderBy("cmsPages_id","ASC");
