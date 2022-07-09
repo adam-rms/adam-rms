@@ -87,7 +87,7 @@
                             <div class="btn-group">
                                 {% if 116|instancePermissions %}
                                     <button data-toggle="modal" data-target="#editModuleModal{{ module.modules_id }}" class="btn btn-sm btn-default" title="Edit"><i class="fas fa-edit"></i></button>
-                                    {% if module.modules_tye != 3 %}
+                                    {% if module.modules_type != 3 %}
                                     <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&steps" class="btn btn-sm btn-default" title="Edit Module Steps">
                                         <i class="fas fa-chalkboard-teacher"></i>
                                     </a>
@@ -98,7 +98,7 @@
                                         <i class="fas fa-user-graduate"></i>
                                     </a>
                                 {% endif %}
-                                {% if module.modules_type != 3 %}
+                                {% if module.modules_type != 3 and module.canComplete %}
                                 <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}" class="btn btn-sm btn-default" title="Work on Module">
                                     {% if module.completed %}
                                         <i class="fas fa-list-ol"></i>

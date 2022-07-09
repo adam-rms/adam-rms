@@ -14,9 +14,9 @@ if ($AUTH->instancePermissionCheck(114) and isset($_GET['drafts'])) {
     $DBLIB->where("modules.modules_show", 0);
 }
 else $DBLIB->where("modules.modules_show", 1);
-if ($AUTH->data['instance']["instancePositions_id"] && (!$AUTH->instancePermissionCheck(116))) {
+if ($AUTH->data['instance']["instancePositions_id"] && !$AUTH->instancePermissionCheck(116) && !$AUTH->instancePermissionCheck(117)) {
     //If the user doesn't have a position - they're bstudios staff
-    //If user has permission to edit modules, let them see all of them, otherwise they'll be impossible to edit
+    //If user has permission to edit modules or view users , let them see all of them, otherwise they'll be impossible to edit
     $DBLIB->where("(modules.modules_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", modules.modules_visibleToGroups) > 0))"); 
 }
 $DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']);
@@ -71,6 +71,11 @@ foreach ($modules as $module) {
         $module['totalTime'] += $step["modulesSteps_completionTime"];
     }
 
+    $module['canComplete'] = true;
+    //for users with edit permission, check if they're actually allowed to complete this module, or just edit it
+    if ($AUTH->instancePermissionCheck(116) && (!in_array($AUTH->data['instance']["instancePositions_id"], explode(',',$module['modules_visibleToGroups'])))){
+        $module['canComplete'] = false;
+    }
 
     $PAGEDATA['modules'][] = $module;
 }
