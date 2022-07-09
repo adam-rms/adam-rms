@@ -16,7 +16,7 @@ jobs:
           TAG : ${{ github.event.release.tag_name }}
       - name: Docker github meta
         id: docker_github_meta
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: crazy-max/ghaction-docker-meta@v4
         with:
           images: ghcr.io/${{ github.repository }}
           tag-sha: false
