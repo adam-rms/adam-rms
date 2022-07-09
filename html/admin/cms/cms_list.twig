@@ -16,7 +16,7 @@
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">
-                        CMS Pages
+                        {{ (includeArchived ? "Archived")}} CMS Pages
                     </h3>
                     <div class="card-tools pull-right">
                         <form class="input-group input-group-sm" method="GET">
@@ -25,9 +25,9 @@
                                 <a href="customDashboards.php" type="button" class="btn btn-secondary btn-sm">Custom Dashboards</a>
                             {% endif %}
                             {% if includeArchived %}
-                                <a href="?" type="button" class="btn btn-default btn-sm">Hide Archived Pages</a>
+                                <a href="?" type="button" class="btn btn-default btn-sm">View Published Pages</a>
                             {% else %}
-                                <a href="?archive=1" type="button" class="btn btn-default  btn-sm">Show Archived Pages</a>
+                                <a href="?archive=1" type="button" class="btn btn-default  btn-sm">View Archived Pages</a>
                             {% endif %}
                             <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">

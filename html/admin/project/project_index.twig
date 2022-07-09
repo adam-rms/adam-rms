@@ -81,10 +81,12 @@
                         {% endfor %}
                     {% endfor %}
                     {% if STATUSES[project.projects_status]["assetsAvailable"] %}
+                    <div class="col-12">
                         <div class="alert alert-danger">
-                            <h5>Assets not locked</h5>
-                            Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
+                            <h5><i class="fas fa-exclamation-triangle"></i> Assets not locked</h5>
+                            Assets assigned to this project can be assigned to other projects that clash with this one, as the project is no longer active.
                         </div>
+                    </div>
                     {% endif %}
                 {% endif %}
                 {# Nav Bar for page views #}

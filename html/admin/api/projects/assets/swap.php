@@ -36,14 +36,16 @@ $DBLIB->where('assets.assets_deleted', 0);
 $assetToSwap = $DBLIB->getone("assets", "assets_id");
 if (!$assetToSwap) finish(false);
 
-$DBLIB->where("assetsAssignments.assets_id", $assetToSwap);
+$DBLIB->where("assetsAssignments.assets_id", $assetToSwap['assets_id']);
 $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
 $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
 $DBLIB->where("((projects_dates_deliver_start >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_start"] . "'))");
 $assignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id"]);
+
 $flagsBlocks = assetFlagsAndBlocks($_POST['assets_id']);
+
 if (count($assignments) < 1 and $flagsBlocks['COUNT']['BLOCK'] < 1) {
     $DBLIB->where('assetsAssignments_id', $currentAsset['assetsAssignments_id']);
     $assignment = $DBLIB->update("assetsAssignments", ["assets_id" => $_POST['assets_id']],1);
