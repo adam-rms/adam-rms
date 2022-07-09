@@ -5,6 +5,7 @@ if (!$AUTH->instancePermissionCheck(113)) die($TWIG->render('404.twig', $PAGEDAT
 
 $DBLIB->where("modules.modules_deleted", 0);
 if (!$AUTH->instancePermissionCheck(114)) $DBLIB->where("modules.modules_show", 1);
+if ($AUTH->data['instance']["instancePositions_id"]) $DBLIB->where("(modules.modules_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", modules.modules_visibleToGroups) > 0))");
 $DBLIB->where("modules.modules_id", $_GET['id']);
 $DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['module'] = $DBLIB->getOne('modules', ["modules.*"]);
