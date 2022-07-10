@@ -11,9 +11,6 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 $oldData = json_decode($AUTH->data['instance']['instances_publicConfig'],true);
-$array['customDomains'] = $oldData['customDomains'];
-
-$array['homepageHTML'] = $bCMS->cleanString($array['homepageHTML']);
 
 $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
 $result = $DBLIB->update("instances", ["instances_publicConfig" => json_encode($array)]);
