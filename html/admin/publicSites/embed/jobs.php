@@ -1,6 +1,6 @@
 <?php
-require_once 'common/head.php';
-if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableVacancies']) die($TWIG->render('404Public.twig', $PAGEDATA));
+require_once 'head.php';
+if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableVacancies']) die("Disabled by your AdamRMS administrator");
 
 date_default_timezone_set('Europe/London'); //So deadlines show in right timezone
 $PAGEDATA['pageConfig'] = ["TITLE" => "Crew Role Vacancies", "BREADCRUMB" => false];
@@ -25,5 +25,5 @@ foreach($roles as $role) {
     $role['projectsVacantRoles_questions'] = json_decode($role['projectsVacantRoles_questions'],true);
     $PAGEDATA['roles'][] = $role;
 }
-echo $TWIG->render('jobsPublic.twig', $PAGEDATA);
+echo $TWIG->render('publicSites/embed/jobsPublic.twig', $PAGEDATA);
 ?>

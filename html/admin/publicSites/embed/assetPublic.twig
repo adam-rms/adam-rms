@@ -1,5 +1,4 @@
-{% extends "templatePublic.twig" %}
-{% block header %}{% endblock %}
+{% extends 'publicSites/embed/templatePublic.twig' %}
 {% block main %}
     <div class="row h-100">
         <div class="col-sm-12 col-md-12 col-lg-3 col-xl-4 bg-light p-3 order-lg-12 order-xl-12 border flex-grow-1">
@@ -80,7 +79,7 @@
                 {% endif %}
             </ul>
             {% if asset.oneasset %}
-                <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
+                <a href="?id={{asset.assetTypes_id}}&i={{INSTANCE['instances_id']}}" class="btn btn-info btn-block"><b>View All</b></a>
             {% endif %}
             {% if INSTANCE['publicData']['enableAssetDescriptions'] %}
                 {{asset.assetTypes_description|nl2br}}
@@ -119,7 +118,7 @@
                             </tr>
                             {% for thisasset in assets %}
                                 <tr>
-                                    <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}">{{ thisasset.assets_tag|aTag }}</a></td>
+                                    <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}&i={{INSTANCE['instances_id']}}">{{ thisasset.assets_tag|aTag }}</a></td>
                                     {% for field in asset.fields %}
                                         <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
                                     {% endfor %}
@@ -141,7 +140,7 @@
                                     {% endif %}
                                     <td>
                                         <div class="btn-group">
-                                            <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
+                                            <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}&i={{INSTANCE['instances_id']}}"><i class="far fa-arrow-alt-circle-right"></i></a>
                                         </div>
                                     </td>
                                 </tr>
