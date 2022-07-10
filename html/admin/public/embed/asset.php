@@ -29,5 +29,5 @@ foreach ($assets as $asset) {
     $PAGEDATA['assets'][] = $asset;
 }
 
- echo $TWIG->render('publicSites/embed/assetPublic.twig', $PAGEDATA);
+ echo $TWIG->render('public/embed/assetPublic.twig', $PAGEDATA);
 ?>

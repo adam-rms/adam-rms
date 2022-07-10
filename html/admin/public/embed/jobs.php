@@ -25,5 +25,5 @@ foreach($roles as $role) {
     $role['projectsVacantRoles_questions'] = json_decode($role['projectsVacantRoles_questions'],true);
     $PAGEDATA['roles'][] = $role;
 }
-echo $TWIG->render('publicSites/embed/jobsPublic.twig', $PAGEDATA);
+echo $TWIG->render('public/embed/jobsPublic.twig', $PAGEDATA);
 ?>
