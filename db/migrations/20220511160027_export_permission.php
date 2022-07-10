@@ -20,7 +20,7 @@ final class ExportPermission extends AbstractMigration
     {
         $table = $this->table('instanceActions');
         $row = [
-            'instanceActions_id'    => 133,
+            'instanceActions_id'    => 134,
             'instanceActions_name'  => 'Export instance data',
             'instanceActionsCategories_id' => 9,
             'instanceActions_dependent' => null,
