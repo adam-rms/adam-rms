@@ -1,21 +1,20 @@
-{% extends 'templatePublic.twig' %}
+{% extends 'public/embed/templatePublic.twig' %}
 {% block main %}
-<h2 class="mb-4">Internal Crew Vacancies</h2>
 <div class="card">
     <div class="card-body table-responsive p-0">
         <table class="table table-striped">
             <thead>
             <tr>
-                <th style="width: 15%; min-width:300px;">
+                <th style="width: 15%;">
                     Project
                 </th>
-                <th style="width: 15%; min-width:300px;">
+                <th style="width: 15%;">
                     Project Dates
                 </th>
-                <th style="min-width:150px;">
+                <th>
                     Role Name
                 </th>
-                <th style="width: 10%; min-width:250px;">
+                <th style="width: 10%;">
                     Deadline
                 </th>
                 <th style="width: 300px">
@@ -48,7 +47,7 @@
                     <td class="project-actions text-right">
                         <div class="btn-group">
                             <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#infoModal{{ role.projectsVacantRoles_id }}">More Info</button>
-                            <a type="button" class="btn btn-success btn-sm" target="_blank" href="https://dash.adam-rms.com/project/crew/vacancies.php">Login to Apply</a>
+                            <a type="button" class="btn btn-success btn-sm" target="_blank" href="{{CONFIG.ROOTURL}}/project/crew/vacancies.php">Login to Apply</a>
                         </div>
                     </td>
                 </tr>

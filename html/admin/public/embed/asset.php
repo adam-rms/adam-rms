@@ -1,5 +1,5 @@
 <?php
-require_once 'common/head.php';
+require_once 'head.php';
 if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableAssets']) die($TWIG->render('404Public.twig', $PAGEDATA));
 
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
@@ -29,5 +29,5 @@ foreach ($assets as $asset) {
     $PAGEDATA['assets'][] = $asset;
 }
 
- echo $TWIG->render('assetPublic.twig', $PAGEDATA);
+ echo $TWIG->render('public/embed/assetPublic.twig', $PAGEDATA);
 ?>
