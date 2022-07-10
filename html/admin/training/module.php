@@ -8,7 +8,7 @@ $DBLIB->where("modules.modules_deleted", 0);
 if (!$AUTH->instancePermissionCheck(114)) $DBLIB->where("modules.modules_show", 1);
 // Check if module has group visibility permissions
 // if the user can edit modules and is trying to edit this module (ie. viewing steps or users), ignore group visibility permissions
-if ($AUTH->data['instance']["instancePositions_id"] && !(($AUTH->instancePermissionCheck(116) && isset($_GET['steps'])) || ($AUTH->instancePermissionCheck(117) &&isset($_GET['users'])) )) {
+if ($AUTH->data['instance']["instancePositions_id"] && !(($AUTH->instancePermissionCheck(116) && isset($_GET['steps'])) || ($AUTH->instancePermissionCheck(117) && isset($_GET['users'])) )) {
     $DBLIB->where("(modules.modules_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", modules.modules_visibleToGroups) > 0))");
 } 
 // Check if module has steps to complete - ie. not a physical only module (type 3)

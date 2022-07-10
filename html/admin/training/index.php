@@ -5,6 +5,12 @@ if (!$AUTH->instancePermissionCheck(113)) die($TWIG->render('404.twig', $PAGEDAT
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Training", "BREADCRUMB" => false];
 
+// List of positions to restrict modules to
+$DBLIB->orderBy("instancePositions_rank", "ASC");
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("instancePositions_deleted",0);
+$PAGEDATA['positions'] = $DBLIB->get("instancePositions", null, ["instancePositions_id", "instancePositions_displayName"]);
+
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 20);
@@ -73,18 +79,27 @@ foreach ($modules as $module) {
 
     $module['canComplete'] = true;
     //for users with edit permission, check if they're actually allowed to complete this module, or just edit it
-    if ($AUTH->instancePermissionCheck(116) && (!in_array($AUTH->data['instance']["instancePositions_id"], explode(',',$module['modules_visibleToGroups'])))){
+    if ($AUTH->instancePermissionCheck(116) && $module['modules_visibleToGroups'] != null && (!in_array($AUTH->data['instance']["instancePositions_id"], explode(',',$module['modules_visibleToGroups'])))){
         $module['canComplete'] = false;
     }
 
+    $module['visibleToGroups'] = [];
+    $module['visibleToGroupsString'] = null;
+    if ($module['modules_visibleToGroups'] != null) $module['visibleToGroups'] = explode(',',$module['modules_visibleToGroups']);
+    foreach($module['visibleToGroups'] as $index=>$group) {
+        $groupName = "";
+        foreach ($PAGEDATA['positions'] as $position) {
+            if ($position['instancePositions_id'] == $group) $groupName = $position['instancePositions_displayName'];
+        }
+        if (count($module['visibleToGroups']) === 1) $module['visibleToGroupsString'] = $groupName;
+        else {
+            if (($index+1) === count($module['visibleToGroups'])) $module['visibleToGroupsString'] .= " & " . $groupName;
+            elseif ($index > 0) $module['visibleToGroupsString'] .= ", " . $groupName;
+            else $module['visibleToGroupsString'] = $groupName;
+        }
+    }
     $PAGEDATA['modules'][] = $module;
 }
-
-$DBLIB->orderBy("instancePositions_rank", "ASC");
-$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->where("instancePositions_deleted",0);
-$PAGEDATA['positions'] = $DBLIB->get("instancePositions");
-
 
 echo $TWIG->render('training/training_modules.twig', $PAGEDATA);
 ?>
