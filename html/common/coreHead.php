@@ -226,17 +226,8 @@ class bCMS {
                 break;
             case 19:
                 //CMS image
-                $DBLIB->where("cmsPages_deleted",0);
-                $DBLIB->where("cmsPages_id",$file['s3files_meta_subType']);
-                $page = $DBLIB->getone("cmsPages",["cmsPages_showPublic"]);
-                if ($page and $page['cmsPages_showPublic'] == 1) {
-                    //Images on that page should be public on the web
-                    $secure = false;
-                    $instanceIgnore = true;
-                } else {
-                    $secure = true;
-                    $instanceIgnore = false;
-                }
+                $secure = true;
+                $instanceIgnore = false;
                 break;
             case 20:
                 //Project invoice

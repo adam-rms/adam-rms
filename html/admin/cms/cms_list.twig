@@ -46,7 +46,7 @@
                                 <th>Icon</th>
                                 <th>Name</th>
                                 <th>Security</th>
-                                <th>Page URLs</th>
+                                <th>Page URL</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -71,9 +71,7 @@
                                     {{ page.cmsPages_name }}
                                 </td>
                                 <td>
-                                    {% if page.cmsPages_showPublic == 1 and publicData.enabled %}
-                                        Public on the Internet
-                                    {% elseif page.cmsPages_visibleToGroups %}
+                                    {% if page.cmsPages_visibleToGroups %}
                                         Only AdamRMS users with role
                                         {% set first = true %}
                                         {% for position in positions %}
@@ -91,14 +89,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}</a><br/>
-                                    {% if page.cmsPages_showPublic == 1 and publicData.enabled and publicData.customDomains %}
-                                        {% for domain in publicData.customDomains %}
-                                            {% if domain != "localhost" %}
-                                            <a href="https://{{ domain }}/p.php?p={{ page.cmsPages_id }}">https://{{ domain }}/?p={{ page.cmsPages_id }}</a><br/>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">/cms/?p={{ page.cmsPages_id }}</a><br/>
                                 </td>
                                 <td style="width:70px;">
                                     <div class="btn-group">
@@ -130,9 +121,7 @@
                                         {{ page.cmsPages_name }}
                                     </td>
                                     <td>
-                                        {% if page.cmsPages_showPublic == 1 and publicData.enabled %}
-                                            Public on the Internet
-                                        {% elseif page.cmsPages_visibleToGroups %}
+                                        {% if page.cmsPages_visibleToGroups %}
                                             Only AdamRMS users with role
                                             {% set first = true %}
                                             {% for position in positions %}
@@ -150,14 +139,7 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}</a><br/>
-                                        {% if page.cmsPages_showPublic == 1 and publicData.enabled and publicData.customDomains %}
-                                            {% for domain in publicData.customDomains %}
-                                                {% if domain != "localhost" %}
-                                                <a href="https://{{ domain }}/?p={{ page.cmsPages_id }}">https://{{ domain }}/?p={{ page.cmsPages_id }}</a><br/>
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
+                                        <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">/cms/?p={{ page.cmsPages_id }}</a><br/>
                                     </td>
                                     <td style="width:70px;">
                                         <div class="btn-group">
@@ -225,20 +207,6 @@
                                             </button>
                                             <div class="dropdown-menu"></div>
                                         </div>
-                                    </div>
-                                    <hr/>
-                                    <h3>Public Site</h3>
-                                    <div class="input-group" style="margin-bottom: 5px;">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Accessible on Public Site</span>
-                                        </div>
-                                        <input type="checkbox" class="form-control" name="cmsPages_showPublic" {% if publicData.enabled != true %}disabled title="Public Site is Disabled" {% elseif page.cmsPages_showPublic == 1 or page.NEW %}checked{% endif %}  />
-                                    </div>
-                                    <div class="input-group" style="margin-bottom: 5px;">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Show in Public Navigation Menu</span>
-                                        </div>
-                                        <input type="checkbox" class="form-control" name="cmsPages_showPublicNav" {% if publicData.enabled != true %}disabled title="Public Site is Disabled" {% elseif page.cmsPages_showPublicNav == 1 or page.NEW %}checked{% endif %}  />
                                     </div>
                                     <hr/>
                                     <h3>AdamRMS Dashboard</h3>
