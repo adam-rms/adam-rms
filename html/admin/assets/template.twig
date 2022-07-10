@@ -306,6 +306,13 @@
                                 <div class="dropdown-divider"></div>
                             {% endfor %}
                         {% endif  %}
+                        {% for instance in instancesAvailableToJoinAsTrustedDomains %}
+                            <a href="{{ CONFIG.ROOTURL }}/instances/join.php" class="dropdown-item">
+                                {{instance.instances_name}}
+                                <p class="text-sm text-muted">Available to join</p>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                        {% endfor %}
                         <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
                         {% if 8|permissions %}
                             <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
@@ -475,6 +482,16 @@
                                         <i class="fas fa-key nav-icon"></i>
                                         <p>
                                             Signup Codes
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if 133|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/trustedDomains.php" class="nav-link">
+                                        <i class="far fa-building nav-icon"></i>
+                                        <p>
+                                            Trusted Domains
                                         </p>
                                     </a>
                                 </li>

@@ -23,6 +23,23 @@ $PAGEDATA['AUTH'] = $AUTH;
 $PAGEDATA['USERDATA'] = $AUTH->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
+
+// Create a set of instances that can be joined via the trusted domains route
+if ($AUTH->data['users_emailVerified'] == 1) {
+    $DBLIB->where("instances_deleted",0);
+    $DBLIB->where("instances_trustedDomains IS NOT NULL");
+    if (count($AUTH->data['instance_ids']) > 0) $DBLIB->where("instances_id NOT IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+    $instancesForTrustedDomains = $DBLIB->get("instances",null,["instances_id","instances_name", "instances_trustedDomains"]);
+    $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'] = [];
+    $userEmailDomain = array_pop(explode('@', $AUTH->data['users_email']));
+    foreach ($instancesForTrustedDomains as $instance) {
+        $instance['trustedDomains'] = json_decode($instance['instances_trustedDomains'],true);
+        if (!$instance['trustedDomains']['domains'] or count($instance['trustedDomains']['domains']) < 1 or !$instance['trustedDomains']['instancePositions_id']) continue;
+        elseif (!in_array($userEmailDomain,$instance['trustedDomains']['domains'])) continue; // Not eligible to join
+        else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'][] = $instance;
+    }
+} else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'] = [];
+
 if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
     $PAGEDATA['pageConfig'] = ["TITLE" => "Change Password", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_forceChangePassword.twig', $PAGEDATA));
