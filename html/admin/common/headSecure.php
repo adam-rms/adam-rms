@@ -23,7 +23,10 @@ $PAGEDATA['AUTH'] = $AUTH;
 $PAGEDATA['USERDATA'] = $AUTH->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
-if ($AUTH->data['instance']) {
+if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
+    $PAGEDATA['pageConfig'] = ["TITLE" => "Change Password", "BREADCRUMB" => false, "NOMENU" => true];
+    die($TWIG->render('index_forceChangePassword.twig', $PAGEDATA));
+} elseif ($AUTH->data['instance']) {
     //Potential project types
     $DBLIB->where("projectsTypes_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
@@ -117,7 +120,7 @@ if ($AUTH->data['instance']) {
         $PAGEDATA['USERDATA']['instance']['weekStartDates'] = $AUTH->data['instance']['weekStartDates']; //Copy the variable
     } else $AUTH->data['instance']['weekStartDates'] = $PAGEDATA['USERDATA']['instance']['weekStartDates'] = false;
 } else {
-    $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false];
+    $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_noInstances.twig', $PAGEDATA));
 }
 ?>

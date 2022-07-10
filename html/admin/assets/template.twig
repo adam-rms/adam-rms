@@ -239,15 +239,15 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ASSETCDNURL }}/img/icons/favicon-16x16.png">
 
 </head>
-{% if BODY %}
-<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}">
-
+<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}{% if pageConfig.NOMENU %} sidebar-collapse{% endif %}">
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand {% if USERDATA.users_dark_mode %}navbar-dark{% else %}navbar-white navbar-light{% endif %}">
         <ul class="navbar-nav">
+            {% if pageConfig.NOMENU != true %}
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
+            {% endif %}
             {% if USERDATA.viewSiteAs != false %}
                 <li class="nav-item">
                     <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php" class="nav-link">Back to Admin</a>
@@ -765,7 +765,6 @@
     <!-- Content Wrapper. Contains page content -->
     <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp hidden-lg hidden-md hidden-sm"></div>-->
     <div class="content-wrapper" id="content-wrapper">
-        {% endif %}
         <div class="content-header">
             <div class="container-fluid">
                 {%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
@@ -795,55 +794,10 @@
         </div>
         <div class="content">
             <div class="container-fluid">
-            {% if USERDATA.users_changepass == '1' %}
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
-                        <div class="card card-default">
-                            <div class="card-body" style="text-align: center;">
-                               <h2>Change your Password</h2>
-                                    <p>Please enter a new password:</p>
-                                    <input type="password" id="forcechangepass1" class="form-control input-lg"
-                                           placeholder="New Password" style="margin-bottom: 5px;" />
-                                    <input type="password" id="forcechangepass2" class="form-control input-lg"
-                                           placeholder="Confirm New Password"  style="margin-bottom: 5px;" />
-                                    <p>Choose a strong password longer than 8 characters that is a random alphanumeric string</p>
-                                    <button id="forcechangepassbutton" class="btn btn-default">Save</button>
-
-                            </div>
-                            <div class="card-footer">
-                                <a href="mailto:{{ CONFIG.PROJECT_SUPPORT_EMAIL }}">Contact Support</a>
-                            </div>
-                            <script>
-                                $(document).ready(function () {
-                                    $('#forcechangepassbutton').click(function () {
-                                        if ($("#forcechangepass1").val() != $("#forcechangepass2").val()) bootbox.alert("Sorry - Your passwords do not match!");
-                                        else if ($("#forcechangepass1").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
-                                        else {
-                                            $.ajax({
-                                                url: '{{ CONFIG.ROOTURL }}/api/account/forcePasswordChange.php?pass=' + $("#forcechangepass1").val(),
-                                                success: function (result) {
-                                                    if (result == '1') {
-                                                        location.reload();
-                                                    } else {
-                                                        bootbox.alert('Error - Could not send E-Mail again - Please refresh the page and try again!');
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                });
-                            </script>
-                        </div>
-                    </div>
-                        </div>
-            {% else %}
                 <div id="pageContent">
                     {% block content %}
                     {% endblock %}
                 </div>
-            {% endif %}
-
-            {% if BODY %}
             </div><!-- /.container-fluid -->
         </div><!-- /.content -->
     </div><!-- /.content-wrapper -->
@@ -1010,5 +964,4 @@
 </script>
 {% include 'analytics.twig' %}
 </body>
-{% endif %}
 </html>
