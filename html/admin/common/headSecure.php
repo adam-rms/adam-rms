@@ -124,18 +124,6 @@ if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
         $page['SUBPAGES'] = $DBLIB->get("cmsPages");
         $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
     }
-
-
-    if ($AUTH->data['instance']['instances_weekStartDates'] != null) {
-        $dates = explode("\n", $AUTH->data['instance']['instances_weekStartDates']);
-        $AUTH->data['instance']['weekStartDates'] = [];
-        foreach ($dates as $date) {
-            array_push($AUTH->data['instance']['weekStartDates'], strtotime($date)*1000);
-        }
-        unset($dates);
-        sort($AUTH->data['instance']['weekStartDates']);
-        $PAGEDATA['USERDATA']['instance']['weekStartDates'] = $AUTH->data['instance']['weekStartDates']; //Copy the variable
-    } else $AUTH->data['instance']['weekStartDates'] = $PAGEDATA['USERDATA']['instance']['weekStartDates'] = false;
 } else {
     $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_noInstances.twig', $PAGEDATA));

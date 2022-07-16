@@ -67,25 +67,18 @@
                     {% endfor %}
                 ],
                 weekNumbers: true,
-                weekText: '',
-                {% if USERDATA.instance.weekStartDates %}
-                weekNumberCalculation: function(date) {
-                    var weekStartDates = [{{ USERDATA.instance.weekStartDates|join(",") }}];
-                    weekStartDates.push(32472144000000); // add a date to the end of the list as otherwise the last one is ignored
-                    var today = new Date();
-                    var dateBeingTested = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', { month: 'long' })) + ' ' + date.getFullYear() + ' 00:00:00');
-                    var idOfThis;
-                    for (var i = 0; i < weekStartDates.length; i++) {
-                        if (dateBeingTested <= (weekStartDates[i])-(7 * 24 * 60 * 60 * 1000)) { // If this date is before the week start date, then it is in the previous week.
-                            if (i == 0) {
-                                return null;
-                            }
-                            idOfThis = i-1;
-                            break;
+                {% if USERDATA.instance['instances_weekStartDates'] %}
+                weekNumberContent : function(week) {
+                    var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
+                    for (const [date, label] of Object.entries(weekStartDates)) {
+                        if (moment(week.date).isSame(date, 'isoWeek')) {
+                            //This date is in this week so return the label
+                            return (label);
                         }
                     }
-                    if (typeof idOfThis === 'undefined') return null;
-                    return (Math.round((dateBeingTested-weekStartDates[idOfThis]) / (7 * 24 * 60 * 60 * 1000))+1);
+                    //default to week number if it doesn't have a label
+                    return week.num;
+                    
                 },
                 {% else %}
                 weekNumberCalculation: "ISO",
