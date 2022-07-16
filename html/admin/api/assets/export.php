@@ -69,6 +69,11 @@ foreach ($PAGEDATA['assets'] as $assetType) {
     $assetType['definableFields'] = explode(",", $assetType['assetTypes_definableFields']);
     if (count($assetType['definableFields']) != 10) $assetType['definableFields'] = ["","","","","","","","","","",""];
     foreach ($assetType['assets'] as $asset) {
+        $latestScan = assetLatestScan($asset['assets_id']);
+        if ($latestScan['locations_name']) $assetLocation = $latestScan['locations_name'];
+        else if ($latestScan['assetTypes_name']) $assetLocation = "Inside asset " . $latestScan['assetTypes_name']; //TODO improve this to mean something a bit more
+        else if ($latestScan['assetsBarcodes_customLocation']) $assetLocation = $latestScan['assetsBarcodes_customLocation'];
+
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         $array = [
             $asset['assets_tag'],
@@ -79,6 +84,7 @@ foreach ($PAGEDATA['assets'] as $assetType) {
             $moneyFormatter->format(new Money($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $assetType['assetTypes_dayRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
             $moneyFormatter->format(new Money($asset['assets_weekRate'] !== null ? $asset['assets_weekRate'] : $assetType['assetTypes_weekRate'], new Currency($AUTH->data['instance']['instances_config_currency']))),
             $moneyFormatter->format(new Money($asset['assets_value'] !== null ? $asset['assets_value'] : $assetType['assetTypes_value'], new Currency($AUTH->data['instance']['instances_config_currency']))),
+            $assetLocation,
             $asset['assets_notes']
         ];
         for ($x = 1; $x <= 10; $x++) {
@@ -96,7 +102,7 @@ if (isset($_POST['csv'])) {
     $writer->save("php://output");
 } elseif (isset($_POST['xlsx'])) {
     //Header
-    $sheet->fromArray(["Asset Code", "Category", "Name", "Manufacturer", "Mass (kg)", "Day Rate", "Week Rate", "Value", "Notes", "Definable Fields"], NULL, 'A1');
+    $sheet->fromArray(["Asset Code", "Category", "Name", "Manufacturer", "Mass (kg)", "Day Rate", "Week Rate", "Value", "Location", "Notes", "Definable Fields"], NULL, 'A1');
     $sheet->mergeCells('J1:AC1');
     $sheet->getStyle("A1:AC1")->getFont()->setBold( true );
     $sheet->freezePane('B2');
@@ -113,7 +119,7 @@ if (isset($_POST['csv'])) {
     $sheet->getStyle('H2:H' . ($count+1))
         ->getNumberFormat()
         ->setFormatCode( '_-£* #,##0.00_-;-£* #,##0.00_-;_-£* "-"??_-;_-@_-');
-    $sheet->getStyle('I2:I' . ($count+1))
+    $sheet->getStyle('J2:J' . ($count+1))
         ->getAlignment()
         ->setWrapText(true);
     //Column Widths

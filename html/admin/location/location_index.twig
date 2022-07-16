@@ -6,7 +6,11 @@
         <div class="card ">
             <div class="card-header">
                 <h3 class="card-title">
-                    Locations
+                    {% if search|length > 0 %}
+                        Search results for locations matching <b>{{ search }}</b>
+                    {% else %}
+                        Locations
+                    {% endif %}
                 </h3>
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">
@@ -74,7 +78,7 @@
                                 {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
                                 {% endif %}
-                                {% if 100|instancePermissions %}
+                                {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ location.locations_id }}"><i class="fas fa-trash"></i></button>
                                 {% endif %}
                             </div>
@@ -118,7 +122,7 @@
                                         {% if 103|instancePermissions %}
                                             <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                         {% endif %}
-                                        {% if 100|instancePermissions %}
+                                        {% if 99|instancePermissions %}
                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}
                                     </div>

@@ -21,7 +21,7 @@ $DBLIB = new MysqliDb ([
                 'username' => $CONFIG['DB_USERNAME'],
                 'password' => $CONFIG['DB_PASSWORD'],
                 'db'=> $CONFIG['DB_DATABASE'],
-                'port' => 3306,
+                'port' => $CONFIG['DB_PORT'],
                 //'prefix' => 'adamrms_',
                 'charset' => 'utf8'
         ]);
@@ -226,17 +226,8 @@ class bCMS {
                 break;
             case 19:
                 //CMS image
-                $DBLIB->where("cmsPages_deleted",0);
-                $DBLIB->where("cmsPages_id",$file['s3files_meta_subType']);
-                $page = $DBLIB->getone("cmsPages",["cmsPages_showPublic"]);
-                if ($page and $page['cmsPages_showPublic'] == 1) {
-                    //Images on that page should be public on the web
-                    $secure = false;
-                    $instanceIgnore = true;
-                } else {
-                    $secure = true;
-                    $instanceIgnore = false;
-                }
+                $secure = true;
+                $instanceIgnore = false;
                 break;
             case 20:
                 //Project invoice
@@ -676,7 +667,7 @@ $GLOBALS['STATUSES'] = [
     ],
     8 => [
         "name" => "Cancelled",
-        "description" => "Event Cancelled",
+        "description" => "Project Cancelled",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 8,
@@ -686,7 +677,7 @@ $GLOBALS['STATUSES'] = [
     ],
     9 => [
         "name" => "Lead Lost",
-        "description" => "Event Cancelled",
+        "description" => "Project Cancelled",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 9,
@@ -888,7 +879,7 @@ class projectFinanceCacher {
 }
 
 
-$PAGEDATA = array('CONFIG' => $CONFIG, 'BODY' => true);
+$PAGEDATA = array('CONFIG' => $CONFIG);
 $PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
 $PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
 $PAGEDATA['MAINTENANCEJOBPRIORITIES'] = $GLOBALS['MAINTENANCEJOBPRIORITIES'];

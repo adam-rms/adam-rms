@@ -9,6 +9,6 @@ $DBLIB->where("projects.projects_id", $_POST['projects_id']);
 $project = $DBLIB->getone("projects", ["projects.projects_id"]);
 if (!$project) die("404");
 
-$bCMS->auditLog("QUICKCOMMENT", "projects", $_POST['text'], $AUTH->data['users_userid'],null, $_POST['projects_id']);
+$bCMS->auditLog("QUICKCOMMENT", "projects", $bCMS->cleanString($_POST['text']), $AUTH->data['users_userid'],null, $_POST['projects_id']);
 
 finish(true, null, ["projects_id" => $project]);

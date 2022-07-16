@@ -59,7 +59,7 @@ foreach ($_POST['users'] as $user) {
                     "clashes" => $existingAssignments,
                     "assignment" => $data
                 ];
-            notify(11, $usersql['users_userid'], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you as " . $bCMS->sanitizeString($array["crewAssignments_role"]) . " for the event " . $project['projects_name'],false, "api/projects/crew/assign-EmailTemplate.twig", $data);
+            notify(11, $usersql['users_userid'], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you as " . $bCMS->sanitizeString($array["crewAssignments_role"]) . " for the project " . $project['projects_name'],false, "api/projects/crew/assign-EmailTemplate.twig", $data);
         }
     }
 }

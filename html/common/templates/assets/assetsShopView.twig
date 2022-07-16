@@ -38,7 +38,7 @@
                                 <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                     {% for thumb in asset.thumbnail %}
                                         <div>
-                                            <a href="/asset.php?id={{ asset.assetTypes_id }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}">
+                                            <a href="{{ PUBLIC ? 'asset.php?i=' ~ SEARCH.INSTANCE['instances_id'] ~ '&' : '/asset.php?'}}id={{ asset.assetTypes_id }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}" target="_blank">
                                             <img class="img-fluid" style="max-height: 200px;"
                                                  src="{{ thumb.s3files_id|s3URL("small") }}"
                                                  alt="{{asset.assetTypes_name}}"></a>
@@ -170,7 +170,7 @@
                                                 <button title="Asset to be archived" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                             {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
                                                 {% if asset.tags[0].assignment %}
-                                                    <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? asset.tags[0].assignment[0]['projects_name'] : 'an event'}}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                    <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? asset.tags[0].assignment[0]['projects_name'] : 'a project'}}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                 {% else %}
                                                     <button title="Available" class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                 {% endif %}
@@ -227,7 +227,7 @@
                                                                                     <button title="Asset to be removed" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                 {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
                                                                                     {%  if thisasset.assignment %}
-                                                                                        <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? thisasset.assignment[0]['projects_name'] : ' an event' }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                                                        <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? thisasset.assignment[0]['projects_name'] : ' a project' }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                     {% else %}
                                                                                     <button title="Available" {% set someassignable = true %} class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                                                     {% endif %}
@@ -246,7 +246,7 @@
                                             <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                     {% endif %}
                                 {% endif %}
-                                    <a href="/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}" class="btn btn-sm btn-default" target="_blank">
+                                    <a href="{{ PUBLIC ? 'asset.php?i=' ~  SEARCH.INSTANCE['instances_id'] ~ '&' : '/asset.php?'}}id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}" class="btn btn-sm btn-default" target="_blank">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
                                 </div>
@@ -255,6 +255,30 @@
                     </div>
                 </div>
             {% endfor %}
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="card-tools float-right">
+        {% if PAGINATION['TOTAL-PAGES'] > 1 %}
+            <ul class="pagination pagination-sm m-0">
+                {% if PAGINATION.PAGE > 1 %}
+                    <li class="page-item"><a class="page-link" href="#" data-page="{{ (PAGINATION.PAGE -1) }}">&laquo;</a></li>
+                {% endif %}
+
+                {% for i in range((PAGINATION.PAGE > 3 ? PAGINATION.PAGE-2 : 1), (PAGINATION['TOTAL-PAGES'] > 5 and PAGINATION.PAGE+2 < PAGINATION['TOTAL-PAGES'] ? PAGINATION.PAGE+2 : PAGINATION['TOTAL-PAGES'])) %}
+                    <li class="page-item"><a class="page-link" href="#" data-page="{{ i }}">
+                            {% if PAGINATION.PAGE == i %}
+                                <b>{{ i }}</b>
+                            {% else %}
+                                {{ i }}
+                            {% endif %}
+                        </a></li>
+                {% endfor %}
+                {% if PAGINATION.PAGE < PAGINATION['TOTAL-PAGES'] %}
+                    <li class="page-item"><a class="page-link" href="#" data-page="{{PAGINATION.PAGE+1}}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
         </div>
     </div>
 </div>

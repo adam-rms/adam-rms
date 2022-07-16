@@ -48,7 +48,7 @@ if ($role['projectsVacantRoles_firstComeFirstServed']) {
         "users_userid" => $AUTH->data['users_userid'],
         "crewAssignments_role" => $role['projectsVacantRoles_name']
     ]);
-    if (!$insert) finish(false, ["message"=>"Application received, but there was a problem assigning you to the event - please contact the project manager"]);
+    if (!$insert) finish(false, ["message"=>"Application received, but there was a problem assigning you to the project - please contact the project manager"]);
 
     $DBLIB->where("projectsVacantRoles_id",$role['projectsVacantRoles_id']);
     $DBLIB->update("projectsVacantRoles",["projectsVacantRoles_slotsFilled"=>$role['projectsVacantRoles_slotsFilled']+1],1);

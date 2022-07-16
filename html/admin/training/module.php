@@ -4,7 +4,15 @@ require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck(113)) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->where("modules.modules_deleted", 0);
+// If user does not have draft edit permissions, only show live modules
 if (!$AUTH->instancePermissionCheck(114)) $DBLIB->where("modules.modules_show", 1);
+// Check if module has group visibility permissions
+// if the user can edit modules and is trying to edit this module (ie. viewing steps or users), ignore group visibility permissions
+if ($AUTH->data['instance']["instancePositions_id"] && !(($AUTH->instancePermissionCheck(116) && isset($_GET['steps'])) || ($AUTH->instancePermissionCheck(117) && isset($_GET['users'])) )) {
+    $DBLIB->where("(modules.modules_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", modules.modules_visibleToGroups) > 0))");
+} 
+// Check if module has steps to complete - ie. not a physical only module (type 3)
+$DBLIB->where("modules.modules_type != 3");
 $DBLIB->where("modules.modules_id", $_GET['id']);
 $DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['module'] = $DBLIB->getOne('modules', ["modules.*"]);

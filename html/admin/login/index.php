@@ -70,6 +70,11 @@ elseif (isset($_GET['google'])) {
 			echo $TWIG->render('login/error.twig', $PAGEDATA);
 			exit;
 		} else {
+			if ($user['users_emailVerified'] != 1 and strlen($userProfile->emailVerified)>0) {
+				// Update their email verification status
+				$DBLIB->where("users_userid",$user['users_userid']);
+				$DBLIB->update("users",["users_emailVerified" => 1]);
+			}
 			//Log them in successfully - duplicated below for signup
 			if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
 				$token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, null, true, "App OAuth - Google");
@@ -108,6 +113,7 @@ elseif (isset($_GET['google'])) {
 	}
 	$data = Array (
 		'users_email' => strtolower($userProfile->emailVerified),
+		'users_emailVerified' => 1,
 		'users_oauth_googleid'=>$userProfile->identifier,
 		'users_username' => $username,
 		'users_name1' => $userProfile->firstName,
