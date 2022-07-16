@@ -1,0 +1,25 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-3 order-lg-last">
+        <div class="card sticky-top">
+            <div class="card-header">
+               <h5>Search assets</h5>
+            </div>
+            <div class="card-body">
+                {% embed 'assets/searchForm.twig' with {'instance': USERDATA.instance.instances_id } %}
+                {% endembed %}
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-9" id="pageContent">
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        // Load assets on page load
+        triggerDeepSearch($("#deepSearchAssetForm").serializeArray());
+    });
+</script>
+{% endblock %}

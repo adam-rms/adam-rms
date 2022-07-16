@@ -96,27 +96,27 @@
                             <ul class="nav nav-pills" id="nav-bar">
                                 <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
                                 {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
-                                    <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab">Assets List</a></li>
                                     {% if 31|instancePermissions %}
-                                        <li class="nav-item"><a class="nav-link" href="#add-assets" data-toggle="tab">Add Assets</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#add-assets" data-toggle="tab"><i class="fas fa-plus"></i> Add Assets</a></li>
                                     {% endif %}
-                                    <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab">Asset Dispatch</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab"><i class="fas fa-list"></i> Assets List</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab"><i class="fas fa-shipping-fast"></i> Asset Dispatch</a></li>
                                 {% endif %}
                                 {%  if project.projectsTypes_config_files == 1 or project.projectsTypes_config_notes == 1 %}
-                                    <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab">Files</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#files-view" data-toggle="tab"><i class="fas fa-file-alt"></i> Files</a></li>
                                 {% endif %}
-                                <li class="nav-item"><a class="nav-link" href="#invoice-view" data-toggle="tab">Invoices & Quotes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#invoice-view" data-toggle="tab"><i class="fas fa-receipt"></i> Invoices & Quotes</a></li>
                                 {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
-                                    <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab">Finance</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab"><i class="fas fa-pound-sign"></i> Finance</a></li>
                                 {% endif %}
                                 {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
-                                    <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab">Crew</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab"><i class="fas fa-users"></i> Crew</a></li>
                                 {% endif %}
                                 {% if project.subProjects %}
-                                    <li class="nav-item"><a class="nav-link" href="#calendar-view" data-toggle="tab">Sub Projects</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#calendar-view" data-toggle="tab"><i class="fas fa-calendar-alt"></i> Sub Projects</a></li>
                                 {% endif %}
                                 {% if project.auditLog|length > 0 %}
-                                <li class="nav-item"><a class="nav-link" href="#log-view" data-toggle="tab">Comments & History</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#log-view" data-toggle="tab"><i class="fas fa-comments"></i> Comments & History</a></li>
                                 {% endif %}
                             </ul>
                         </div>
@@ -378,7 +378,7 @@
                                                 <div class="card-header">
                                                     <h3 class="card-title">File Attachments</h3>
                                                     <div class="card-tools">
-                                                        <a data-toggle="modal" data-target="#projectFilesModal" type="button" class="btn btn-tool">
+                                                        <a data-toggle="modal#projectFilesModal" type="button" class="btn btn-tool">
                                                             <i class="fas fa-external-link-alt"></i></a>
                                                     </div>
                                                 </div>
@@ -423,7 +423,7 @@
                                                         <div class="tools">
                                                             <a href="{{ CONFIG.ROOTURL }}/project/notePDF.php?id={{ note.projectsNotes_id }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
                                                             {% if 44|instancePermissions %}
-                                                            <a href="#" data-toggle="modal" data-target="#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
+                                                            <a href="#" data-toggle="modal#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
                                                             {% endif %}
                                                         </div>
                                                     </li>
@@ -450,7 +450,7 @@
                                             <h3 class="card-title">Quotes</h3>
                                             {% if quotes %}
                                             <div class="card-tools">
-                                                <a data-toggle="modal" data-target="#projectQuotesModal" type="button" class="btn btn-tool">
+                                                <a data-toggle="modal#projectQuotesModal" type="button" class="btn btn-tool">
                                                     <i class="fas fa-external-link-alt"></i></a>
                                             </div>
                                             {% endif %}
@@ -475,7 +475,7 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
-                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal" data-quote="true">
+                                                <button type="button" class="btn btn-default" data-toggle="modal#pdfGenerateModal" data-quote="true">
                                                     Create Quote
                                                 </button>
                                             </div>
@@ -488,7 +488,7 @@
                                             <h3 class="card-title">Invoices</h3>
                                             {% if invoices %}
                                             <div class="card-tools">
-                                                <a data-toggle="modal" data-target="#projectInvoicesModal" type="button" class="btn btn-tool">
+                                                <a data-toggle="modal#projectInvoicesModal" type="button" class="btn btn-tool">
                                                     <i class="fas fa-external-link-alt"></i></a>
                                             </div>
                                             {% endif %}
@@ -513,7 +513,7 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
-                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal">
+                                                <button type="button" class="btn btn-default" data-toggle="modal#pdfGenerateModal">
                                                     Create Invoice
                                                 </button>
                                             </div>
@@ -671,7 +671,7 @@
                                                             <td>{{ payment.payments_amount|money }}</td>
                                                             <td style="min-width:140px;">
                                                                 {% if 121|instancePermissions %}
-                                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                    <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                 {% endif %}
                                                                 {% if 35|instancePermissions %}
                                                                     <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -720,7 +720,7 @@
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
                                                                     {% if 121|instancePermissions %}
-                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                        <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
                                                                     {% if 35|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -769,7 +769,7 @@
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
                                                                     {% if 121|instancePermissions %}
-                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                        <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
                                                                     {% if 35|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -811,7 +811,7 @@
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
                                                                     {% if 121|instancePermissions %}
-                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                        <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
                                                                     {% if 35|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -891,13 +891,13 @@
                                         <div class="btn-group float-right">
                                             <a href="{{ CONFIG.USERGUIDEURL }}projects/crew/" target="_blank" type="button" class="btn btn-info">Help</a>
                                             {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
-                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
+                                                <button type="button" class="btn btn-default" data-toggle="modal#emailCrewModal">Email Crew</button>
                                             {% endif %}
                                             {% if 123|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary">Crew Recruitment</a>
                                             {% endif %}
                                             {% if 48|instancePermissions %}
-                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
+                                                <button type="button" class="btn btn-default" data-toggle="modal#addCrewModal">Add Crew</button>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -2153,6 +2153,8 @@
             // Change hashtag on tab change for page-reload
             $('#nav-bar .nav-item a').on('shown.bs.tab', function (e) {
                 window.location.hash = e.target.hash;
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
             })
         });
     </script>

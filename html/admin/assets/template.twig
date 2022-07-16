@@ -328,12 +328,6 @@
                     <i class="fas {% if USERDATA.users_dark_mode %}fa-sun{%else%}fa-moon{% endif %}" id="theme-icon"></i>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a class="nav-link" onclick="showSearch()" href="#">
-                    <i class="fas fa-warehouse"></i>
-                </a>
-            </li>
         </ul>
         {% endif %}
     </nav>
@@ -604,7 +598,7 @@
                     {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
-                        <a onclick="showSearch()" href="#" class="nav-link">
+                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
                             <i class="nav-icon fas fa-warehouse"></i>
                             <p>Search Assets</p>
                         </a>
@@ -811,10 +805,8 @@
         </div>
         <div class="content">
             <div class="container-fluid">
-                <div id="pageContent">
-                    {% block content %}
-                    {% endblock %}
-                </div>
+                {% block content %}
+                {% endblock %}
             </div><!-- /.container-fluid -->
         </div><!-- /.content -->
     </div><!-- /.content-wrapper -->
@@ -829,38 +821,6 @@
         <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://bithell.studio">Bithell Studios Ltd</a>.</strong> All rights
         reserved.
     </footer>
-
-
-    <aside class="control-sidebar {% if USERDATA.users_dark_mode %}control-sidebar-dark{% else %}control-sidebar-light{% endif %}" id="assetSearchSidebar">
-        <!-- Control sidebar content goes here -->
-        <div class="p-3 control-sidebar-content">
-            <h5>Search assets</h5>
-            {% embed 'assets/searchForm.twig' with {'instance': USERDATA.instance.instances_id } %}
-                {% block formExtras %}
-                    {% if projects and 31|instancePermissions %}
-                    <div class="form-group" id="group-project">
-                        <label>Or, shop for project</label>
-                        <select class="form-control select2 select2bs4" name="projectid" id="projectIdSelectorForAssetSearch">
-                            {% for project in projects %}
-                                {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
-                                    <option {% if USERDATA.users_selectedProjectID == project.projects_id %}selected{% endif %} value="{{ project.projects_id }}">{{ project.projects_name }}</option>
-                                {% endif %}
-                            {% endfor %}
-                            {% if thisProject %}
-                                 <option selected value="{{ thisProject.projects_id }}">{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</option>
-                            {% endif %}
-                        </select>
-                    </div>
-                    {% elseif thisProject %}
-                        <div class="form-group">
-                            <label>Show availability for project</label>
-                            <p>{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</p>
-                        </div>
-                    {% endif %}
-                {% endblock %}
-            {% endembed %}
-        </div>
-    </aside>
 </div>
 <script>
     function showSearch(projectId = null) {
