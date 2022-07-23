@@ -137,17 +137,16 @@
                     </div>
                     {% endif %}
                     {% if role.projectsVacantRoles_questions %}
+                    <hr />
                     <h4>Application Questions</h4>
                         <div class="applicationQuestions" data-id="{{ role.projectsVacantRoles_id }}">
                         {% for question in role.projectsVacantRoles_questions %}
-                            <div class="input-group" style="margin-bottom: 5px;">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">{{ question.name }}</span>
-                                </div>
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="text-wrap p-2 border rounded w-100 bg-light mb-1" for="{{ question.name|escape("html_attr")}}">{{ question.name }}</label>
                                 {% if question.type == "textarea" %}
-                                    <textarea class="form-control applicationQuestion" data-question="{{ question.name|escape("html_attr") }}" placeholder="{{ question.placeholder|escape("html_attr")}}" rows="10"></textarea>
+                                    <textarea id="{{ question.name|escape("html_attr")}}" class="form-control applicationQuestion" data-question="{{ question.name|escape("html_attr") }}" placeholder="{{ question.placeholder|escape("html_attr")}}" rows="10"></textarea>
                                 {% else %}
-                                    <input type="{{ question.type }}" class="form-control applicationQuestion" data-question="{{ question.name|escape("html_attr") }}" placeholder="{{ question.placeholder|escape("html_attr")}}" />
+                                    <input type="{{ question.type }}" id="{{ question.name|escape("html_attr")}}"  class="form-control applicationQuestion" data-question="{{ question.name|escape("html_attr") }}" placeholder="{{ question.placeholder|escape("html_attr")}}" />
                                 {% endif %}
                             </div>
                             <p>{{ question.notes|nl2br }}</p>
