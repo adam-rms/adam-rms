@@ -77,6 +77,7 @@
                         </td>
                         <td class="project-actions text-right">
                             <div class="btn-group">
+                                {% if not(page_archive) %}
                                 {% if 100|instancePermissions %}
                                     <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (location.files|length > 0 ? location.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
                                 {% endif %}
@@ -84,6 +85,7 @@
                                     <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ location.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                 {% endif %}
                                 <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ location.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
+                                {% endif %}
                                 {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
                                     {% if not(page_archive) %}
