@@ -13,7 +13,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(39)) die("404");
 
-if (!isset($_POST['client_id']) || !isset($_POST['archive'])) die("404");
+if (!isset($_POST['client_id'])) die("404");
 
 $DBLIB->where("clients.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("clients.clients_deleted", 0);
