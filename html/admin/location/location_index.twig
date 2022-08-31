@@ -129,14 +129,12 @@
                                 </td>
                                 <td class="project-actions text-right">
                                     <div class="btn-group">
-                                        {% if 99|instancePermissions %}
-                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ subLocation.locations_id }}"><i class="fas fa-edit"></i></button>
-                                        {% endif %}
-                                        <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
                                         {% if 103|instancePermissions %}
                                             <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                         {% endif %}
+                                        <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
                                         {% if 99|instancePermissions %}
+                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ subLocation.locations_id }}"><i class="fas fa-edit"></i></button>
                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}
                                     </div>
