@@ -20,7 +20,7 @@ $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA["project"]['projects_name'], "BR
 //Edit Options - Client List
 if ($AUTH->instancePermissionCheck(22)) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-    $PAGEDATA['clients'] = $DBLIB->get("clients", null, ["clients_id", "clients_name"]);
+    $PAGEDATA['clients'] = $DBLIB->get("clients", null, ["clients_id", "clients_name", "clients_archived"]);
 }
 
 //Edit Options - Locations list
@@ -29,7 +29,6 @@ if ($AUTH->instancePermissionCheck(30)) {
     $PAGEDATA['locations'] = [];
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("locations.locations_deleted", 0);
-    $DBLIB->where("locations.locations_archived", 0);
     $DBLIB->where("(locations_subOf IS NULL)");
     $DBLIB->orderBy("locations.locations_name", "ASC");
     $locations = $DBLIB->get('locations',null,["locations.*"]);

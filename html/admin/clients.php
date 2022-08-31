@@ -13,6 +13,14 @@ else $PAGEDATA['search'] = null;
 if (!isset($_GET['cancelled'])) $PAGEDATA['includeCancelled'] = false;
 else $PAGEDATA['includeCancelled'] = true;
 
+if (isset($_GET['archive'])) {
+	$DBLIB->where("clients.clients_archived", 1);
+	$PAGEDATA['page_archive'] = true;
+} else {
+	$DBLIB->where("clients.clients_archived", 0);
+	$PAGEDATA['page_archive'] = false;
+}
+
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = 20; //Users per page
@@ -65,4 +73,3 @@ foreach ($clients as $client) {
 
 
 echo $TWIG->render('clients.twig', $PAGEDATA);
-?>

@@ -167,7 +167,9 @@
                                                                     <option value="" disabled selected>No Client Selected....</option>
                                                                 {% endif %}
                                                                 {% for client in clients %}
-                                                                    <option value="{{ client.clients_id }}" {{ project.clients_id == client.clients_id ? 'selected' }}>{{ client.clients_name }}</option>
+                                                                    {% if client.clients_archived == 0 or ((client.clients_archived == 1) and (project.clients_id == client.clients_id) ) %}
+                                                                        <option value="{{ client.clients_id }}" {{ project.clients_id == client.clients_id ? 'selected' }} {{ client.clients_archived == 1 ? 'disabled' }}>{{ client.clients_archived == 1 ? '[Archived] ' }}{{ client.clients_name }}</option>
+                                                                    {% endif %}
                                                                 {% endfor %}
                                                             </select>
                                                         {% elseif project.projectsTypes_config_client == 1  %}
@@ -205,13 +207,14 @@
                                                                     <option value="" disabled selected>No Location Selected....</option>
                                                                 {% endif %}
                                                                 {% for location in locations %}
-                                                                    <option value="{{ location.locations_id }}" {{ project.locations_id == location.locations_id ? 'selected' }}>{{ location.locations_name }}</option>
-                                                                    {% for subLocation in location.linkedToThis %}
-
-                                                                        <option value="{{ subLocation.locations_id }}" {{ project.locations_id == subLocation.locations_id ? 'selected' }} title="{% for i in range(1, subLocation['tier']) %}{% if loop.last %}&#8627;{% else %}&nbsp;&nbsp;{% endif %}{% endfor %}">
-                                                                            {{ subLocation.locations_name }}
-                                                                        </option>
-                                                                    {% endfor %}
+                                                                    {% if location.locations_archived == 0 or ((location.locations_archived == 1) and (project.locations_id == location.locations_id) ) %}
+                                                                        <option value="{{ location.locations_id }}" {{ project.locations_id == location.locations_id ? 'selected' }} {{ location.locations_archived == 1 ? 'disabled' }}>{{ location.locations_archived == 1 ? '[Archived] ' }}{{ location.locations_name }}</option>
+                                                                        {% for subLocation in location.linkedToThis %}
+                                                                            <option value="{{ subLocation.locations_id }}" {{ project.locations_id == subLocation.locations_id ? 'selected' }} title="{% for i in range(1, subLocation['tier']) %}{% if loop.last %}&#8627;{% else %}&nbsp;&nbsp;{% endif %}{% endfor %}">
+                                                                                {{ subLocation.locations_name }}
+                                                                            </option>
+                                                                        {% endfor %}
+                                                                    {% endif %}
                                                                 {% endfor %}
                                                             </select>
                                                         {% elseif project.projectsTypes_config_venue == 1 %}
