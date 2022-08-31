@@ -29,6 +29,7 @@ if ($AUTH->instancePermissionCheck(30)) {
     $PAGEDATA['locations'] = [];
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("locations.locations_deleted", 0);
+    $DBLIB->where("locations.locations_archived", 0);
     $DBLIB->where("(locations_subOf IS NULL)");
     $DBLIB->orderBy("locations.locations_name", "ASC");
     $locations = $DBLIB->get('locations',null,["locations.*"]);
@@ -102,4 +103,3 @@ elseif (isset($_GET['pdf'])) {
     $PAGEDATA['GET']['quote'] = $_GET['quote'] == "true";
     die($TWIG->render('project/pdf.twig', $PAGEDATA));
 } else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
-?>

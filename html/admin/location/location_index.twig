@@ -8,12 +8,21 @@
                 <h3 class="card-title">
                     {% if search|length > 0 %}
                         Search results for locations matching <b>{{ search }}</b>
+                    {% elseif page_archive %}
+                        Archived Locations
                     {% else %}
                         Locations
                     {% endif %}
                 </h3>
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">
+                        <div class="input-group-prepend">
+                            {% if page_archive %}
+                                <a href="?" type="button" class="btn btn-default">Show active loactions</a>
+                            {% else %}
+                                <a href="?archive" type="button" class="btn btn-default">Show archived locations</a>
+                            {% endif %}
+                        </div>
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -77,8 +86,11 @@
                                 <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ location.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
                                 {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
-                                {% endif %}
-                                {% if 99|instancePermissions %}
+                                    {% if not(page_archive) %}
+                                    <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ location.locations_id }}"><i class="fas fa-archive"></i></button>
+                                    {% else %}
+                                    <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ location.locations_id }}"><i class="fas fa-archive"></i></button>
+                                    {% endif %}
                                     <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ location.locations_id }}"><i class="fas fa-trash"></i></button>
                                 {% endif %}
                             </div>
@@ -281,6 +293,52 @@
                 event.preventDefault();
                 ajaxcall("locations/edit.php", {formData}, function (data) {
                     location.reload();
+                });
+            });
+            $(".archiveButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to archive this location?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("locations/archive.php", {"locations_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            $(".unarchiveButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to restore this location?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("locations/unarchive.php", {"locations_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
                 });
             });
             {% endif %}
