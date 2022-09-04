@@ -7,7 +7,7 @@
             <div class="card-header">
                 <h3 class="card-title">
                     {% if search|length > 0 %}
-                        Search results for locations matching <b>{{ search }}</b>
+                        Search results for active locations matching <b>{{ search }}</b>
                     {% elseif page_archive %}
                         Archived Locations
                     {% else %}
@@ -77,7 +77,7 @@
                         </td>
                         <td class="project-actions text-right">
                             <div class="btn-group">
-                                {% if not(page_archive) %}
+                                {% if not(location.locations_archived) %}
                                 {% if 100|instancePermissions %}
                                     <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (location.files|length > 0 ? location.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
                                 {% endif %}
@@ -88,10 +88,10 @@
                                 {% endif %}
                                 {% if 99|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
-                                    {% if not(page_archive) %}
-                                    <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ location.locations_id }}"><i class="fas fa-archive"></i></button>
-                                    {% else %}
+                                    {% if location.locations_archived %}
                                     <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ location.locations_id }}"><i class="fas fa-archive"></i></button>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ location.locations_id }}"><i class="fas fa-archive"></i></button>
                                     {% endif %}
                                     <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ location.locations_id }}"><i class="fas fa-trash"></i></button>
                                 {% endif %}
@@ -135,6 +135,11 @@
                                         <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
                                         {% if 99|instancePermissions %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ subLocation.locations_id }}"><i class="fas fa-edit"></i></button>
+                                            {% if subLocation.locations_archived %}
+                                            <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
+                                            {% else %}
+                                            <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
+                                            {% endif %}
                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}
                                     </div>

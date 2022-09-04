@@ -12,14 +12,6 @@ if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = (isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 60);
 
-if (isset($_GET['archive'])) {
-    $DBLIB->where("locations.locations_archived", 1);
-    $PAGEDATA['page_archive'] = true;
-} else {
-    $DBLIB->where("locations.locations_archived", 0);
-    $PAGEDATA['page_archive'] = false;
-}
-
 $PAGEDATA['allLocations'] = [];
 $PAGEDATA['locations'] = [];
 
@@ -35,7 +27,16 @@ if (strlen($PAGEDATA['search']) > 0) {
 		locations.locations_address LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%' OR
         locations.locations_notes LIKE '%" . $bCMS->sanitizeString($PAGEDATA['search']) . "%'
     )");
-} else $DBLIB->where("(locations_subOf IS NULL)");
+} elseif (isset($_GET['archive'])) {
+    //We need all locations if it's archived
+    $DBLIB->where("locations.locations_archived", 1);
+    $PAGEDATA['page_archive'] = true;
+} else {
+    $DBLIB->where("(locations_subOf IS NULL)");
+    $DBLIB->where("locations.locations_archived", 0);
+    $PAGEDATA['page_archive'] = false;
+    
+}
 $locations = $DBLIB->arraybuilder()->paginate('locations', $page, ["locations.*", "clients.clients_name"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 function linkedLocations($locationId, $tier, $locationKey)
@@ -45,6 +46,7 @@ function linkedLocations($locationId, $tier, $locationKey)
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->orderBy("locations.locations_name", "ASC");
     $DBLIB->where("locations.locations_deleted", 0);
+    $DBLIB->where("locations.locations_archived", 0);
     $DBLIB->join("clients", "locations.clients_id=clients.clients_id", "LEFT");
     $locations = $DBLIB->get("locations", null, ["locations.*", "clients.clients_name"]);
     $tier += 1;
@@ -61,7 +63,7 @@ foreach ($locations as $index => $location) {
     $PAGEDATA['locations'][] = $location;
     $PAGEDATA['allLocations'][] = $location;
     $PAGEDATA['locations'][$index]['linkedToThis'] = [];
-    if (strlen($PAGEDATA['search']) == null) linkedLocations($location['locations_id'], 0, $index); //Don't show linked locations when searching
+    if (strlen($PAGEDATA['search']) == null and !isset($_GET['archive'])) linkedLocations($location['locations_id'], 0, $index); //Don't show linked locations when searching
 }
 
 
