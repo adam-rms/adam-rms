@@ -90,7 +90,7 @@ elseif (isset($_GET['google'])) {
 					"exp" => time() + 21 * 24 * 60 * 60, //21 days token expiry
 					"iat" => time()
 				), $CONFIG['JWTKey']);
-				header("Location: " . $_SESSION['app-oauth'] . "://oauth_callback?token=" . $jwt);
+				header("Location: " . $_SESSION['app-oauth'] . "oauth_callback?token=" . $jwt);
 				exit;
 			} else {
 				$GLOBALS['AUTH']->generateToken($user['users_userid'], false, null, true, "Web - Google");
@@ -144,7 +144,7 @@ elseif (isset($_GET['google'])) {
 			"exp" => time() + 21 * 24 * 60 * 60, //21 days token expiry
 			"iat" => time()
 		), $CONFIG['JWTKey']);
-		header("Location: " . $_SESSION['app-oauth'] . "://oauth_callback?token=" . $jwt);
+		header("Location: " . $_SESSION['app-oauth'] . "oauth_callback?token=" . $jwt);
 		exit;
 	} else {
 		$GLOBALS['AUTH']->generateToken($newUser, false, null, true, "Web - Google");
