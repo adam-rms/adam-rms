@@ -1,9 +1,5 @@
 <?php
-
 require_once __DIR__ . '/../apiHeadSecure.php';
-ini_set('max_execution_time', 300); //seconds
-ini_set('memory_limit','256M');
-
 require_once __DIR__ . '/../projects/data.php'; //Where most of the data comes from
 
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) finish(false);

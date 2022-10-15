@@ -6,7 +6,6 @@ header("Pragma: no-cache");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-ini_set('max_execution_time', 300); //seconds
 //Copy the payload over to get&post to maintain compatibility between the app and the frontend
 $dataPayload = json_decode(file_get_contents('php://input'));
 $dataPayload = (array) $dataPayload;
