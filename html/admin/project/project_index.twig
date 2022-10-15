@@ -416,7 +416,7 @@
                                                         </span>
                                                         <span class="text">{{ note.projectsNotes_title }}</span>
                                                         <div class="tools">
-                                                            <a href="{{ CONFIG.ROOTURL }}/project/notePDF.php?id={{ note.projectsNotes_id }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
+                                                            <a href="{{ CONFIG.ROOTURL }}/project/noteExport.php?id={{ note.projectsNotes_id }}" style="color: #495057; padding-right: 10px;" target="_blank" title="Print Note"><i class="fas fa-print"></i></a>
                                                             {% if 44|instancePermissions %}
                                                             <a href="#" data-toggle="modal" data-target="#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
                                                             {% endif %}
@@ -1049,12 +1049,12 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body p-0">
                             <div class="summernote" data-noteid="{{ note.projectsNotes_id }}">{{ note.projectsNotes_text|raw }}</div>
                         </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="pdf"><i class="far fa-file-pdf"></i></button>
-                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="none"><i class="far fa-save"></i></button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="print"><i class="fas fa-print"></i> Save & Print</button>
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="none"><i class="far fa-save"></i> Save</button>
                         </div>
                     </div>
                 </div>
@@ -1903,8 +1903,8 @@
                 var callback = $(this).data("callback");
                 var noteid = $(this).data("noteid")
                 ajaxcall("projects/editNote.php", {"projects_id": "{{ project.projects_id }}", "projectsNotes_id": noteid, "projectsNotes_text":$('.summernote[data-noteid=' + noteid + ']').summernote('code')}, function (data) {
-                    if (callback == "pdf") {
-                        window.location.href = "{{ CONFIG.ROOTURL }}/project/notePDF.php?id=" + noteid;
+                    if (callback == "print") {
+                        window.location.href = "{{ CONFIG.ROOTURL }}/project/noteExport.php?id=" + noteid;
                     } else {
                         location.reload();
                     }
