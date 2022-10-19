@@ -69,15 +69,11 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="instances_quoteTerms">Quotation Footer</label>
-                        <textarea class="textarea" id="instances_quoteTerms" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                            {{ USERDATA.instance.instances_quoteTerms }}
-                        </textarea>
+                        <textarea class="textarea" id="instances_quoteTerms" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ USERDATA.instance.instances_quoteTerms }}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="instances_termsAndPayment">Invoice Footer</label>
-                        <textarea class="textarea" id="instances_termsAndPayment" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                            {{ USERDATA.instance.instances_termsAndPayment }}
-                        </textarea>
+                        <textarea class="textarea" id="instances_termsAndPayment" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ USERDATA.instance.instances_termsAndPayment }}</textarea>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -87,21 +83,12 @@
                 </div>
             <script>
                 $(document).ready(function() {
-                    $('#instances_termsAndPayment, #instances_quoteTerms').summernote({
-                        toolbar: [
-                            ['style', ['style']],
-                            ['font', ['bold', 'italic', 'underline', 'clear']],
-                            ['para', ['ul', 'ol', 'paragraph']],
-                            ['insert', ['link', 'hr']],
-                            ['view', ['codeview']]
-                        ]
-                    });
                     {% if 83|instancePermissions %}
                     $('#saveTermsAndPayment').on('click', function() {
                         ajaxcall("instances/editInstance.php", {
                             'formData': [
-                                { 'name': 'instances_termsAndPayment','value':$('#instances_termsAndPayment').summernote('code') },
-                                { 'name': 'instances_quoteTerms','value':$('#instances_quoteTerms').summernote('code') }
+                                { 'name': 'instances_termsAndPayment','value':$('#instances_termsAndPayment').val() },
+                                { 'name': 'instances_quoteTerms','value':$('#instances_quoteTerms').val() }
                             ]
                         }, function (data) {
                             location.reload();
