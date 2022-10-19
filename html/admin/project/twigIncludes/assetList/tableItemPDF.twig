@@ -1,70 +1,61 @@
 {% if type['assets']|length > 1 %}{# If there's just one item then just display it on its own below, otherwise display just a header #}
-<tr>
-    {% if GET['checkboxes'] %}<td>&#9744;</td>{% endif %}
-    <td colspan="{{ GET['comments'] ? 3 : 2 }}">
-        {{ type['assets']|length }}x <b>{{ type['assets'][0].manufacturers_id != 1 ? type['assets'][0].manufacturers_name ~ " - " : "" }}{{ type['assets'][0].assetTypes_name }}</b>
-    </td>
-    {% if GET['masses'] %}<td>
-        {{ (type['totals']['mass'] > 0 ? type['totals']['mass'] ~ 'kg' : '') }}
-    </td>{% endif %}
-    {% if project.projectsTypes_config_finance == 1 %}
-    {% if GET['prices'] %}<td>
-        {{ type['totals']['price']|money }}
-    </td>{% endif %}
-    {% if GET['discounts'] %}<td>
-        {{ type['totals']['discountPrice']|money }}
-    </td>{% endif %}
+[
+    {% if GET['checkboxes'] %}'☐',{% endif %}
+    { 
+        text: "{{ type['assets']|length }}x {{ type['assets'][0].manufacturers_id != 1 ? type['assets'][0].manufacturers_name|escape("js") ~ " - " : "" }}{{ type['assets'][0].assetTypes_name|escape("js") }}", 
+        style: { bold: true },
+        colSpan: {{ GET['comments'] ? 3 : 2 }}
+    },
+    {% for i in range(2, GET['comments'] ? 3 : 2) %}{},{% endfor %}{# Quirk of pdfmake is that you have to follow any colspans that are followed by content with empty {} #}
+    {% if GET['masses'] %}
+        '{{ (type['totals']['mass'] > 0 ? type['totals']['mass']|escape("js") ~ 'kg' : '') }}',
     {% endif %}
-</tr>
+    {% if project.projectsTypes_config_finance == 1 %}
+        {% if GET['prices'] %}
+            '{{ type['totals']['price']|money|escape("js") }}',
+        {% endif %}
+        {% if GET['discounts'] %}
+            '{{ type['totals']['discountPrice']|money|escape("js") }}',
+        {% endif %}
+    {% endif %}
+],
 {% endif %}
 {% for assetAssignment in type['assets'] %}
     {% if type['assets']|length == 1 or GET['showAll'] %}
-    <tr>
-        {% if GET['checkboxes'] %}<td>&#9744;</td>{% endif %}
-        <td colspan="{{ (assetAssignment.assetsAssignments_comment and GET['comments'] ? 1 : assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? (GET['comments'] ? 2 : 1) : (GET['comments'] ? 3 : 2)) }}">
-            {% if type['assets']|length == 1 %}
-                <b>{{ assetAssignment.manufacturers_id != 1 ? assetAssignment.manufacturers_name ~ " - " : "" }}{{ assetAssignment.assetTypes_name }}</b>
-            {% else %}
-                &#8627;&nbsp;
-            {% endif %}
-            {% if GET['showAll'] %}
-                {{ assetAssignment.assets_tag|aTag }}
-            {% endif %}
-            {% if GET['flagsBlocks'] %}
-                {% for flag in assetAssignment.flagsblocks.FLAG %}
-                    &#128681;
-                {% endfor %}
-                {% for flag in assetAssignment.flagsblocks.BLOCK %}
-                    &#128683;
-                {% endfor %}
-            {% endif %}
-                {% if assetAssignment.assetsAssignments_linkedTo %}
-                    &#128279;
-                {% endif %}
-        </td>
+    [
+        {% if GET['checkboxes'] %}'☐',{% endif %}
+        { 
+            text: "{% if type['assets']|length == 1 %}{{ assetAssignment.manufacturers_id != 1 ? assetAssignment.manufacturers_name|escape("js") ~ " - " : "" }}{{ assetAssignment.assetTypes_name|escape("js") }}{% else %}↳ {% endif %}{% if GET['showAll'] %}{{ assetAssignment.assets_tag|aTag|escape("js") }}{% endif %}{% if GET['flagsBlocks'] %}{% for flag in assetAssignment.flagsblocks.FLAG %}🚩{% endfor %}{% for flag in assetAssignment.flagsblocks.BLOCK %}🚫{% endfor %}{% endif %}{% if assetAssignment.assetsAssignments_linkedTo %}🔗{% endif %}",
+            colSpan: {{ (assetAssignment.assetsAssignments_comment and GET['comments'] ? 1 : assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? (GET['comments'] ? 2 : 1) : (GET['comments'] ? 3 : 2)) }}
+        },
+        {% for i in range(2, (assetAssignment.assetsAssignments_comment and GET['comments'] ? 1 : assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? (GET['comments'] ? 2 : 1) : (GET['comments'] ? 3 : 2))) %}{},{% endfor %}
         {% if assetAssignment.assetsAssignments_comment and GET['comments'] %}
-        <td colspan="{{ assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2' }}">
-            {{ assetAssignment.assetsAssignments_comment }}
-        </td>
+        {
+            text: "{{ assetAssignment.assetsAssignments_comment|escape("js") }}",
+            colSpan: {{ assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2' }}
+        },
+        {% for i in range(2, (assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2')) %}{},{% endfor %}
         {% endif %}
         {% if assetAssignment.assetTypes_definableFields_ARRAY|length > 0 %}
-        <td>
-          {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
-            {% if field != "" %}
-                <b>{{ field }}: </b>{{ assetAssignment['asset_definableFields_' ~ loop.index] }}<br/>
-            {% endif %}
-          {% endfor %}
-        </td>
+        {
+          stack: [
+            {% for field in assetAssignment.assetTypes_definableFields|split(",") %}
+                {% if field != "" %}
+                    '{{ field|escape("js") }}: {{ assetAssignment['asset_definableFields_' ~ loop.index]|escape("js") }}',
+                {% endif %}
+            {% endfor %}
+          ],
+        },
         {% elseif assetAssignment.assetsAssignments_comment and GET['comments'] %}
-            <td></td>
+        ' ',
         {% endif %}
         {% if GET['masses'] %}
-        <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>
+            '{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}',
         {% endif %}
         {% if project.projectsTypes_config_finance == 1 %}
-            {% if GET['prices'] %}<td>{{ assetAssignment.price|money }}</td>{% endif %}
-            {% if GET['discounts'] %}<td>{{ assetAssignment.discountPrice|money }}{# {{  assetAssignment.assetsAssignments_discount > 0 ? " ("~assetAssignment.assetsAssignments_discount ~ "%)" : "" }} #}</td>{% endif %}
+            {% if GET['prices'] %}'{{ assetAssignment.price|money|escape("js") }}',{% endif %}
+            {% if GET['discounts'] %}'{{ assetAssignment.discountPrice|money|escape("js") }}',{% endif %}
         {% endif %}
-    </tr>
+    ],
     {% endif %}
 {% endfor %}
