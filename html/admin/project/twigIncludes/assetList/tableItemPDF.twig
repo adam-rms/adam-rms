@@ -1,6 +1,6 @@
 {% if type['assets']|length > 1 %}{# If there's just one item then just display it on its own below, otherwise display just a header #}
 [
-    {% if GET['checkboxes'] %}'☐',{% endif %}
+    {% if GET['checkboxes'] %}'[  ]',{% endif %}
     { 
         text: "{{ type['assets']|length }}x {{ type['assets'][0].manufacturers_id != 1 ? type['assets'][0].manufacturers_name|escape("js") ~ " - " : "" }}{{ type['assets'][0].assetTypes_name|escape("js") }}", 
         style: { bold: true },
@@ -23,18 +23,18 @@
 {% for assetAssignment in type['assets'] %}
     {% if type['assets']|length == 1 or GET['showAll'] %}
     [
-        {% if GET['checkboxes'] %}'☐',{% endif %}
+        {% if GET['checkboxes'] %}'[  ]',{% endif %}
         { 
-            text: "{% if type['assets']|length == 1 %}{{ assetAssignment.manufacturers_id != 1 ? assetAssignment.manufacturers_name|escape("js") ~ " - " : "" }}{{ assetAssignment.assetTypes_name|escape("js") }}{% else %}↳ {% endif %}{% if GET['showAll'] %}{{ assetAssignment.assets_tag|aTag|escape("js") }}{% endif %}{% if GET['flagsBlocks'] %}{% for flag in assetAssignment.flagsblocks.FLAG %}🚩{% endfor %}{% for flag in assetAssignment.flagsblocks.BLOCK %}🚫{% endfor %}{% endif %}{% if assetAssignment.assetsAssignments_linkedTo %}🔗{% endif %}",
+            text: "{% if type['assets']|length == 1 %}{{ assetAssignment.manufacturers_id != 1 ? assetAssignment.manufacturers_name|escape("js") ~ " - " : "" }}{{ assetAssignment.assetTypes_name|escape("js") }}{% else %}{% endif %}{% if GET['showAll'] %}{{ assetAssignment.assets_tag|aTag|escape("js") }}{% endif %} {% if GET['flagsBlocks'] %}{% for flag in assetAssignment.flagsblocks.FLAG %}[F]{% endfor %}{% for flag in assetAssignment.flagsblocks.BLOCK %}[B]{% endfor %}{% endif %}{% if assetAssignment.assetsAssignments_linkedTo %}[L]{% endif %}",
             colSpan: {{ (assetAssignment.assetsAssignments_comment and GET['comments'] ? 1 : assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? (GET['comments'] ? 2 : 1) : (GET['comments'] ? 3 : 2)) }}
         },
-        {% for i in range(2, (assetAssignment.assetsAssignments_comment and GET['comments'] ? 1 : assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? (GET['comments'] ? 2 : 1) : (GET['comments'] ? 3 : 2))) %}{},{% endfor %}
+        {{ (assetAssignment.assetsAssignments_comment and GET['comments'] ? '' : assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? (GET['comments'] ? '{},' : '') : (GET['comments'] ? '{},{},' : '{},')) }}
         {% if assetAssignment.assetsAssignments_comment and GET['comments'] %}
         {
             text: "{{ assetAssignment.assetsAssignments_comment|escape("js") }}",
             colSpan: {{ assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2' }}
         },
-        {% for i in range(2, (assetAssignment.assetTypes_definableFields_ARRAY|length > 0 ? '1' : '2')) %}{},{% endfor %}
+        {% if assetAssignment.assetTypes_definableFields_ARRAY|length < 1 %}{},{% endif %}
         {% endif %}
         {% if assetAssignment.assetTypes_definableFields_ARRAY|length > 0 %}
         {

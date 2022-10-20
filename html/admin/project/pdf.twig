@@ -9,16 +9,16 @@
 
         var docDefinition = {
             images: {
-                {% if false and USERDATA.instance.instances_logo and GET['instancelogo'] %}
+                {% if USERDATA.instance.instances_logo and GET['instancelogo'] %}
                     logo: "{{ USERDATA.instance.instances_logo|s3URL("medium")|escape("js") }}",
                 {% endif %}
             },
             content: [
-                {% if false and USERDATA.instance.instances_logo and GET['instancelogo'] %}
+                {% if USERDATA.instance.instances_logo and GET['instancelogo'] %}
                 {
                     image: 'logo',
                     width: 200,
-                    margin: [197, 0, 0, 20]
+                    margin: [157, 0, 0, 20]
                 },
                 {% endif %}
                 {
@@ -202,8 +202,8 @@
                                         '{# Definable Fields #} ',
                                         {% if GET['masses'] %}'Mass',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
-                                            {% if GET['prices'] %}'Price',{% endif %}
-                                            {% if GET['discounts'] %}'Disc Price',{% endif %}
+                                            {% if GET['prices'] %}'Price £',{% endif %}
+                                            {% if GET['discounts'] %}'Disc £',{% endif %}
                                         {% endif %}
                                     ],
                                 {% set currentCategory = "" %}
@@ -218,7 +218,7 @@
                                             colSpan: {{ columnCount }},
                                             margin: 3
                                         },
-                                        {% for i in range(2, (GET['prices'] ? 4 : 2)) %}{},{% endfor %}
+                                        {% for i in range(2, columnCount) %}{},{% endfor %}
                                     ],
                                     {% endif %}
                                     {% embed 'project/twigIncludes/assetList/tableItemPDF.twig' with {"type": type,"all": FINANCIALS.assetsAssigned, "categoryid":currentCategoryID,"instanceid": USERDATA.instance.instances_id} %}{% endembed %}
@@ -253,8 +253,8 @@
                                         '{# Definable Fields #} ',
                                         {% if GET['masses'] %}'Mass',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
-                                            {% if GET['prices'] %}'Price',{% endif %}
-                                            {% if GET['discounts'] %}'Disc Price',{% endif %}
+                                            {% if GET['prices'] %}'Price £',{% endif %}
+                                            {% if GET['discounts'] %}'Disc £',{% endif %}
                                         {% endif %}
                                     ],
                                 {% set currentCategory = "" %}
@@ -269,7 +269,7 @@
                                             colSpan: {{ columnCount }},
                                             margin: 3
                                         },
-                                        {% for i in range(2, (GET['prices'] ? 4 : 2)) %}{},{% endfor %}
+                                        {% for i in range(2, columnCount) %}{},{% endfor %}
                                     ],
                                     {% endif %}
                                     {% embed 'project/twigIncludes/assetList/tableItemPDF.twig' with {"type": type,"all": instance, "categoryid":currentCategoryID,"instanceid": instance['instance'].instances_id} %}{% endembed %}
@@ -280,6 +280,8 @@
                             margin: [ 0, 10, 0, 10 ]
                         },
                     {% endfor %}{% endif %}
+                    {% if GET['flagsBlocks'] %}{ text: "[F] indicates asset flagged, [B] indicates asset blocked" },{% endif %}
+                    { text: "[L] indicates asset linked to another" },
                     { text: "{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Total Item{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }}", style: { fontSize: 16, bold: true, alignment: 'right' } },
                 {% endif %}
                 {% if FINANCIALS.payments.subHire.ledger|length > 0 and project.projectsTypes_config_finance == 1 and GET['subHires']  %}
@@ -483,9 +485,9 @@
                 if (currentPage === 1) return null;
                 return {
                     columns: [
-                        {text: "Generated {{ "now"|date("j M Y h:i:sa")|escape("js") }}", width: "40%"},
+                        {text: "{{ "now"|date("j M Y h:i:sa")|escape("js") }}", width: "40%"},
                         {text: currentPage.toString() + '/' + pageCount, alignment: 'center', width: "20%"},
-                        {text: "AdamRMS | ©{{ "now"|date("Y")|escape("js") }} Bithell Studios Ltd.", alignment: 'right', width: "40%" }]
+                        {text: "Generated by AdamRMS", alignment: 'right', width: "40%" }]
                     , margin: [40, 20, 40, 20]
                 }; 
             },
