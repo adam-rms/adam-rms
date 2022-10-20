@@ -5,8 +5,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/pdfmake.min.js" integrity="sha512-7BzHjLXs8xehClrkJEtJtAwXxcbLast87k+XekuItHxrMr/v6POWkoKS2/8CU6DHdIjY+A4NwvsBQ8PxoRH7xQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/vfs_fonts.min.js" integrity="sha512-P0bOMePRS378NwmPDVPU455C/TuxDS+8QwJozdc7PGgN8kLqR4ems0U/3DeJkmiE31749vYWHvBOtR+37qDCZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        // TODO Font Helvetica
-
         var docDefinition = {
             images: {
                 {% if USERDATA.instance.instances_logo and GET['instancelogo'] %}
@@ -491,7 +489,7 @@
                     , margin: [40, 20, 40, 20]
                 }; 
             },
-            watermark: { text: 'DRAFT', opacity: 0.2, bold: true, italics: false },
+            {% if GET['draft'] %}watermark: { text: 'DRAFT', opacity: 0.2, bold: true, italics: false },{% endif %}
             pageSize: 'A4',
             pageOrientation: 'portrait',
             pageMargins: [ 40, 40, 40, 40 ],
@@ -503,15 +501,46 @@
             },
             compress: true,
         };
-
-        var now = new Date();
-        var pdf = pdfMake.createPdf(docDefinition);
+        try {
+            var pdf = pdfMake.createPdf(docDefinition);
+        }
+        catch(err) {
+            alert(err.message);
+        }
+        {% if GET['draft'] %}
+        pdf.open();
+        {% else %}
         pdf.getBlob((blob) => {
-            console.log(blob)
+            var formData = new FormData();
+            formData.append("file", blob, {type: "application/pdf"});
+            formData.append("quote","{{ GET['quote'] ? "true" : "false" }}");
+            formData.append("fileNumber", "{{ fileNumber|escape("js") }}");
+            formData.append("id", "{{ project['projects_id'] }}");
+            var oReq = new XMLHttpRequest();
+            oReq.open("POST", "{{CONFIG.ROOTURL}}/api/s3files/uploadProjectInvoice.php", true);
+            oReq.onload = function (oEvent) {
+                var response = JSON.parse(oReq.responseText);
+                console.log(response)
+                if (response.error && response.error.code && response.error.code == "AUTH") {
+                    //They need to login again - token probably expired
+                    location.reload();
+                } else if (response.error && response.error.code) {
+                    alert(response.error.message);
+                } else if (response.result && response.response && response.response.url) {
+                    window.location = response.response.url;
+                } else {
+                    alert("Error loading PDF");
+                }
+            };
+            oReq.onerror = function(error) {
+                alert("Error creating invoice");
+            }
+            oReq.send(formData);
         });
-        pdf.open()
+        {% endif %}
     </script>
 </head>
 <body>
+    Generating PDF....
 </body>
 </html>
