@@ -540,13 +540,24 @@
                 oReq.send(formData);
             });
             {% endif %}
-        }
-        catch(err) {
+        } catch(err) {
             alert(err.message);
         }
     </script>
 </head>
 <body>
-    Generating PDF....
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/css/pace.css">
+    <!--Pace Loader-->
+    <script>
+        window.paceOptions = {
+            startOnPageLoad: false,
+            document: false,
+            eventLag: false,
+            ajax: false,
+        };
+        Pace.start();
+    </script>
+    Generating PDF, please wait...
 </body>
 </html>
