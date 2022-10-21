@@ -503,41 +503,47 @@
         };
         try {
             var pdf = pdfMake.createPdf(docDefinition);
+            {% if GET['draft'] %}
+            pdf.download("{{ project['projects_name']|escape("js") }} - Draft {{ GET['quote'] ? "Quote" : "Invoice" }}.pdf", function() {
+                window.close();
+            });
+            {% else %}
+            pdf.getBlob((blob) => {
+                var formData = new FormData();
+                formData.append("file", blob, {type: "application/pdf"});
+                formData.append("quote","{{ GET['quote'] ? "true" : "false" }}");
+                formData.append("fileNumber", "{{ fileNumber|escape("js") }}");
+                formData.append("id", "{{ project['projects_id'] }}");
+                var oReq = new XMLHttpRequest();
+                oReq.open("POST", "{{CONFIG.ROOTURL}}/api/s3files/uploadProjectInvoice.php", true);
+                oReq.onload = function (oEvent) {
+                    var response = JSON.parse(oReq.responseText);
+                    console.log(response)
+                    if (response.error && response.error.code && response.error.code == "AUTH") {
+                        //They need to login again - token probably expired
+                        location.reload();
+                    } else if (response.error && response.error.code) {
+                        alert(response.error.message);
+                    } else if (response.result && response.response && response.response.url) {
+                        //window.location = response.response.url;
+                        //pdf.open({}, window);
+                        pdf.download("{{ project['projects_name']|escape("js") }} - {{ GET['quote'] ? "Quote" : "Invoice" }} v{{ fileNumber|escape("js") }}.pdf", function() {
+                            window.close();
+                        });
+                    } else {
+                        alert("Error loading PDF");
+                    }
+                };
+                oReq.onerror = function(error) {
+                    alert("Error creating invoice");
+                }
+                oReq.send(formData);
+            });
+            {% endif %}
         }
         catch(err) {
             alert(err.message);
         }
-        {% if GET['draft'] %}
-        pdf.open();
-        {% else %}
-        pdf.getBlob((blob) => {
-            var formData = new FormData();
-            formData.append("file", blob, {type: "application/pdf"});
-            formData.append("quote","{{ GET['quote'] ? "true" : "false" }}");
-            formData.append("fileNumber", "{{ fileNumber|escape("js") }}");
-            formData.append("id", "{{ project['projects_id'] }}");
-            var oReq = new XMLHttpRequest();
-            oReq.open("POST", "{{CONFIG.ROOTURL}}/api/s3files/uploadProjectInvoice.php", true);
-            oReq.onload = function (oEvent) {
-                var response = JSON.parse(oReq.responseText);
-                console.log(response)
-                if (response.error && response.error.code && response.error.code == "AUTH") {
-                    //They need to login again - token probably expired
-                    location.reload();
-                } else if (response.error && response.error.code) {
-                    alert(response.error.message);
-                } else if (response.result && response.response && response.response.url) {
-                    window.location = response.response.url;
-                } else {
-                    alert("Error loading PDF");
-                }
-            };
-            oReq.onerror = function(error) {
-                alert("Error creating invoice");
-            }
-            oReq.send(formData);
-        });
-        {% endif %}
     </script>
 </head>
 <body>
