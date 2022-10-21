@@ -416,7 +416,7 @@
                                                         </span>
                                                         <span class="text">{{ note.projectsNotes_title }}</span>
                                                         <div class="tools">
-                                                            <a href="{{ CONFIG.ROOTURL }}/project/notePDF.php?id={{ note.projectsNotes_id }}" style="color: #495057;" target="_blank" title="Download File"><i class="fas fa-cloud-download-alt"></i></a>
+                                                            <a href="{{ CONFIG.ROOTURL }}/project/noteExport.php?id={{ note.projectsNotes_id }}" style="color: #495057; padding-right: 10px;" target="_blank" title="Print Note"><i class="fas fa-print"></i></a>
                                                             {% if 44|instancePermissions %}
                                                             <a href="#" data-toggle="modal" data-target="#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
                                                             {% endif %}
@@ -1049,12 +1049,12 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body p-0">
                             <div class="summernote" data-noteid="{{ note.projectsNotes_id }}">{{ note.projectsNotes_text|raw }}</div>
                         </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="pdf"><i class="far fa-file-pdf"></i></button>
-                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="none"><i class="far fa-save"></i></button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="print"><i class="fas fa-print"></i> Save & Print</button>
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="none"><i class="far fa-save"></i> Save</button>
                         </div>
                     </div>
                 </div>
@@ -1208,7 +1208,7 @@
     </div>
     <div class="modal fade" id="pdfGenerateModal">
         <div class="modal-dialog">
-            <form id="pdfGenerate" method="GET">
+            <form id="pdfGenerate" method="GET" action="{{CONFIG.ROOTURL}}/project/projectInvoice.php" target="_blank">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
@@ -1315,8 +1315,8 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="submit" class="btn btn-default">Draft Printout</button>
-                        <button type="button" id="generatePDFButton" class="btn btn-success">Generate PDF</button>
+                        <button type="submit" name="draft" value="true" class="btn btn-default">Draft Printout</button>
+                        <button type="submit" name="upload" value="true" class="btn btn-success">Generate PDF</button>
                     </div>
                 </div>
             </form>
@@ -1903,8 +1903,8 @@
                 var callback = $(this).data("callback");
                 var noteid = $(this).data("noteid")
                 ajaxcall("projects/editNote.php", {"projects_id": "{{ project.projects_id }}", "projectsNotes_id": noteid, "projectsNotes_text":$('.summernote[data-noteid=' + noteid + ']').summernote('code')}, function (data) {
-                    if (callback == "pdf") {
-                        window.location.href = "{{ CONFIG.ROOTURL }}/project/notePDF.php?id=" + noteid;
+                    if (callback == "print") {
+                        window.location.href = "{{ CONFIG.ROOTURL }}/project/noteExport.php?id=" + noteid;
                     } else {
                         location.reload();
                     }
@@ -2060,20 +2060,6 @@
                 }
             });
             {% endif %}
-            $("#generatePDFButton").click(function () {
-                var formData = $("#pdfGenerate").serializeArray();
-                ajaxcall("s3files/projectInvoice.php", {formData}, function (data) {
-                    window.location.href = data['response']['url'];
-                });
-                $("#pdfGenerateModal").modal('hide');
-                bootbox.dialog({
-                    closeButton: false,
-                    title: "Generating PDF",
-                    message: "The PDF is now generating, this might take up to 5 minutes",
-                    buttons: {
-                    }
-                });
-            });
             {% if 21|instancePermissions %}
             $("#newSubProject").click(function () {
                 bootbox.prompt({

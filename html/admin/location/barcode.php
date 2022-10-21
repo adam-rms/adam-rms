@@ -26,30 +26,5 @@ if (!$PAGEDATA['barcode']) {
     $PAGEDATA['barcode'] = $locationBarcodeData;
 }
 
-
-$mpdf = new \Mpdf\Mpdf([
-    'tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf',
-    'mode' => 'utf-8',
-    'format' => 'A5',
-    'setAutoTopMargin' => 'pad',
-    "orientation" => "P",
-    'margin_footer' => 0,
-    'margin_header' => 0
-]);
-$mpdf->SetTitle("Location Barcode - " . $PAGEDATA['location']['locations_name']);
-$mpdf->shrink_tables_to_fit = 1;
-$mpdf->SetAuthor($PAGEDATA['USERDATA']['instance']['instances_name']);
-$mpdf->SetCreator("AdamRMS - the rental management system from Bithell Studios");
-$mpdf->SetSubject("Barcode for " . $PAGEDATA['location']['locations_name']);
-$mpdf->SetKeywords("AdamRMS");
-$mpdf->SetHTMLFooter('
-            <table width="100%" style="font-size: 7pt">
-                <tr>
-                    <td width="50%">Generated {DATE j M Y h:i:sa}</td>
-                    <td width="50%" style="text-align: right;">AdamRMS | &copy;{DATE Y} Bithell Studios Ltd.</td>
-                </tr>
-            </table>
-         ');
-$mpdf->WriteHTML($TWIG->render('location/location_barcode.twig', $PAGEDATA));
-$mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ("Barcode for " . $PAGEDATA['location']['locations_name'])). '.pdf', (isset($_GET['download']) ? 'D' : 'I'));
+echo $TWIG->render('location/location_barcode.twig', $PAGEDATA);
 ?>
