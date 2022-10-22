@@ -75,7 +75,7 @@
                             <div class="form-group">
                                 <label>Project to assign assets to</label>
                                 <select class="form-control select2 select2bs4" name="project">
-                                    <option></option>
+                                    <option value="">No project selected</option>
                                     {% for project in searchOptions.projects %}
                                         <option {{ searchResults.SEARCH.PROJECT_ID == project.projects_id ? 'selected' : '' }}  value="{{ project.projects_id }}">{{ project.projects_name }}{{ project.clients_name ? " | " ~ project.clients_name : "" }}</option>
                                     {% endfor %}
