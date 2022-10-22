@@ -252,6 +252,9 @@
                                                         {% endif %}
                                                     </div>
                                                     <br/>
+                                                    {% if project.projects_parent_project_id and project.projects_status_follow_parent %}
+                                                    <div class="alert alert-info mb-1"><p>This sub-project is following the status of its parent project</p></div> 
+                                                    {% endif %}
                                                     <div class="alert" style="background-color: {{STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
                                                         <h5><b>Status: </b>{{ STATUSES[project.projects_status]['name'] }}</h5>
                                                         {{ STATUSES[project.projects_status]['description'] }}
@@ -262,18 +265,24 @@
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
                                                 <button type="button" class="btn btn-default quickAddCommentButton">New Comment</button>
-                                                {% if 29|instancePermissions %}
+                                                {% if 29|instancePermissions and not( project.projects_parent_project_id and project.projects_status_follow_parent) %}
                                                     <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
                                                 {% endif %}
                                                 <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                                                     <span class="sr-only">Toggle Dropdown</span>
                                                     <div class="dropdown-menu" role="menu">
                                                         {% if 21|instancePermissions %}
-                                                            {% if project.projects_parent_project_id == null %}
-                                                                <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
-                                                            {% endif %}
                                                             {% if project.subProjects == null %}
                                                                 <a class="dropdown-item" id="assignParentProject">Assign Parent Project</a>
+                                                            {% endif %}
+                                                            {% if project.projects_parent_project_id == null %}
+                                                                <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
+                                                            {% else %}
+                                                                {% if project.projects_status_follow_parent %}
+                                                                    <a class="dropdown-item" id="stopFollowParent">Stop Following Parent Status</a>
+                                                                {% else %}
+                                                                    <a class="dropdown-item" id="followParent">Follow Parent Status</a>
+                                                                {% endif %}
                                                             {% endif %}
                                                             {% if project.projects_parent_project_id == null or project.subProjects == null %}
                                                                 <div class="dropdown-divider"></div>
@@ -2097,6 +2106,7 @@
                 bootbox.prompt({
                     title: "Choose Parent Project",
                     inputType: 'select',
+                    value: "{{ (project.projects_parent_project_id ?: '-1') }}",
                     inputOptions: [
                         {
                             text: 'No Parent',
@@ -2122,6 +2132,23 @@
                         }
                     }
                 })
+            });
+
+            $("#followParent").click(function () {
+                ajaxcall("projects/followParentStatus.php", {
+                    "projects_id": "{{ project.projects_id }}",
+                    "follow": "true",
+                }, function (data) {
+                    window.location.reload();
+                });
+            });
+            $("#stopFollowParent").click(function () {
+                ajaxcall("projects/followParentStatus.php", {
+                    "projects_id": "{{ project.projects_id }}",
+                    "follow": "false",
+                }, function (data) {
+                    window.location.reload();
+                });
             });
             {% endif %}
 
