@@ -827,7 +827,7 @@
                             {% if project.subProjects %}
                                     <div class="card">
                                         <div class="card-body p-0">
-                                            {% embed 'assets/widgets/calendar.twig' with {"projects": project.subProjects } %}
+                                            {% embed 'assets/widgets/calendar.twig' with {"projects": project.subProjects, "useStartDate": true } %}
                                             {% endembed %}
                                         </div>
                                     </div>
