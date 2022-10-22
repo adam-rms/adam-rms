@@ -387,7 +387,7 @@
                                                 <div class="card-header">
                                                     <h3 class="card-title">File Attachments</h3>
                                                     <div class="card-tools">
-                                                        <a data-toggle="modal#projectFilesModal" type="button" class="btn btn-tool">
+                                                        <a data-toggle="modal" data-target="#projectFilesModal" type="button" class="btn btn-tool">
                                                             <i class="fas fa-external-link-alt"></i></a>
                                                     </div>
                                                 </div>
@@ -432,7 +432,7 @@
                                                         <div class="tools">
                                                             <a href="{{ CONFIG.ROOTURL }}/project/noteExport.php?id={{ note.projectsNotes_id }}" style="color: #495057; padding-right: 10px;" target="_blank" title="Print Note"><i class="fas fa-print"></i></a>
                                                             {% if 44|instancePermissions %}
-                                                            <a href="#" data-toggle="modal#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
+                                                            <a href="#" data-toggle="modal" data-target="#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
                                                             {% endif %}
                                                         </div>
                                                     </li>
@@ -459,7 +459,7 @@
                                             <h3 class="card-title">Quotes</h3>
                                             {% if quotes %}
                                             <div class="card-tools">
-                                                <a data-toggle="modal#projectQuotesModal" type="button" class="btn btn-tool">
+                                                <a data-toggle="modal" data-target="#projectQuotesModal" type="button" class="btn btn-tool">
                                                     <i class="fas fa-external-link-alt"></i></a>
                                             </div>
                                             {% endif %}
@@ -484,7 +484,7 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
-                                                <button type="button" class="btn btn-default" data-toggle="modal#pdfGenerateModal" data-quote="true">
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal" data-quote="true">
                                                     Create Quote
                                                 </button>
                                             </div>
@@ -497,7 +497,7 @@
                                             <h3 class="card-title">Invoices</h3>
                                             {% if invoices %}
                                             <div class="card-tools">
-                                                <a data-toggle="modal#projectInvoicesModal" type="button" class="btn btn-tool">
+                                                <a data-toggle="modal" data-target="#projectInvoicesModal" type="button" class="btn btn-tool">
                                                     <i class="fas fa-external-link-alt"></i></a>
                                             </div>
                                             {% endif %}
@@ -522,7 +522,7 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
-                                                <button type="button" class="btn btn-default" data-toggle="modal#pdfGenerateModal">
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pdfGenerateModal">
                                                     Create Invoice
                                                 </button>
                                             </div>
@@ -680,7 +680,7 @@
                                                             <td>{{ payment.payments_amount|money }}</td>
                                                             <td style="min-width:140px;">
                                                                 {% if 121|instancePermissions %}
-                                                                    <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                 {% endif %}
                                                                 {% if 35|instancePermissions %}
                                                                     <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -729,7 +729,7 @@
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
                                                                     {% if 121|instancePermissions %}
-                                                                        <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
                                                                     {% if 35|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -778,7 +778,7 @@
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
                                                                     {% if 121|instancePermissions %}
-                                                                        <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
                                                                     {% if 35|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -820,7 +820,7 @@
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
                                                                     {% if 121|instancePermissions %}
-                                                                        <button data-toggle="modal#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
                                                                     {% if 35|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
@@ -900,13 +900,13 @@
                                         <div class="btn-group float-right">
                                             <a href="{{ CONFIG.USERGUIDEURL }}projects/crew/" target="_blank" type="button" class="btn btn-info">Help</a>
                                             {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
-                                                <button type="button" class="btn btn-default" data-toggle="modal#emailCrewModal">Email Crew</button>
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
                                             {% endif %}
                                             {% if 123|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary">Crew Recruitment</a>
                                             {% endif %}
                                             {% if 48|instancePermissions %}
-                                                <button type="button" class="btn btn-default" data-toggle="modal#addCrewModal">Add Crew</button>
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
                                             {% endif %}
                                         </div>
                                     </div>
