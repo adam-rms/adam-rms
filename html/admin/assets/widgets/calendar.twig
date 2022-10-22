@@ -73,7 +73,8 @@
                     for (const [date, label] of Object.entries(weekStartDates)) {
                         if (moment(week.date).isSame(date, 'isoWeek')) {
                             //This date is in this week so return the label
-                            return (label);
+                            if (label === " ") return null;
+                            else return label;
                         }
                     }
                     //default to week number if it doesn't have a label

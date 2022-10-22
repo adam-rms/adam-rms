@@ -292,10 +292,10 @@
                             {% for weekdate, weekLabel in USERDATA.instance['instances_weekStartDates']|jsonDecode %}
                                 <tr class="border-bottom">
                                     <td>
-                                        <input type="date" class="form-control" name="weekStartDate" data-type="date" value="{{ weekdate }}" />
+                                        <input type="date" class="form-control" name="weekStartDate" value="{{ weekdate }}" />
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="weekLabel" data-type="label" value="{{ weekLabel }}" />
+                                        <input type="text" class="form-control" name="weekLabel" value="{{ weekLabel }}" />
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -303,8 +303,9 @@
                     </table>                    
                 </div>
                 <div class="card-footer">
-                    <p style="font-style: italic;">Add week dates to change week labelling on calendars across AdamRMS. This is normally used by schools and universities, and so in that instance they would put the week start dates as the day term starts for each term.</p>
+                    <p style="font-style: italic;">Add week dates to change week labelling on calendars across AdamRMS. This is normally used by schools and universities, and so in that instance they would put the week start dates as the day term starts for each term. Leave a space in the box to leave it blank.</p>
                     {% if 83|instancePermissions %}
+                    <button type="button" class="btn btn-default" id="populate3months">Add next 3 months</button>
                     <button type="button" class="btn btn-default" id="addNewWeekValueRow">Add Row</button>
                     <button type="submit" class="btn btn-default">Save</button>
                     {% endif %}
@@ -312,12 +313,14 @@
             </form>
             <script>
                 $(document).ready(function() {
+                    {% if 83|instancePermissions %}
                     $("#weekLabels").on("submit", function(e){
                         e.preventDefault();
                         var lastDate;
                         var formData = {};
-                        $('#weekLabels *').filter(':input').each(function(){
-                            if ($(this).data("type") == "label") {
+                        // Link the date and the string
+                        $('#weekLabels *').filter(':input[type=text],:input[type=date]').each(function(){
+                            if ($(this).is(':input[type=text]')) {
                                 if (lastDate != "" && $(this).val()) {
                                     formData[lastDate] = $(this).val();
                                 }
@@ -332,13 +335,31 @@
                     $("#addNewWeekValueRow").on("click", function(){
                         $("#weekLabels > div > table").append(`<tr class="border-bottom">
                             <td>
-                                <input type="date" class="form-control" data-type="date" name="weekStartDate"/>
+                                <input type="date" class="form-control" name="weekStartDate" value="{{ "now"|date("Y-m-d") }}" />
                             </td>
                             <td>
-                                <input type="text" class="form-control" data-type="label" name="weekLabel" />
+                                <input type="text" class="form-control" name="weekLabel" value=" " />
                             </td>
                         </tr>`);
                     });
+                    $("#populate3months").on("click", function() {
+                        var date = $('#weekLabels *').filter(':input[type=date]').last().val();
+                        if (date) {
+                            var jsDate = new Date(Date.parse(date));
+                            for (let i = 1; i <= 13; i++) {
+                                jsDate.setDate(jsDate.getDate() + 7);
+                                $("#weekLabels > div > table").append(`<tr class="border-bottom">
+                                    <td>
+                                        <input type="date" class="form-control" name="weekStartDate" value="` + jsDate.toISOString().split('T')[0] + `" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="weekLabel" value="` + "Week " + i + `" />
+                                    </td>
+                                </tr>`);
+                            }
+                        }
+                    });
+                    {% endif %}
                 });
             </script>
         </div>
