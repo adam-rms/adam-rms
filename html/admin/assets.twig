@@ -113,11 +113,15 @@
                             </div>
                             <div class="mb-1">
                                 <input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}>
-                                <span>Show Assets linked to others</span>
+                                <span>Show assets linked to others</span>
                             </div>
                             <div class="mb-1">
                                 <input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}>
-                                <span>Show Archived Assets</span>
+                                <span>Show archived assets</span>
+                            </div>
+                            <div class="mb-1">
+                                <input type="checkbox" name="hideimages" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.HIDEIMAGES ? "checked" : "" }}>
+                                <span>Hide asset images</span>
                             </div>
                         </div>
                     </div>
@@ -165,11 +169,11 @@
                             <div class="card bg-light">
                                 <div class="card-body" style="max-width: 250px;">
                                     <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
-                                    {% if asset.thumbnail|length > 0 %}
+                                    {% if asset.thumbnail|length > 0 and searchResults.SEARCH.SETTINGS.HIDEIMAGES != true %}
                                         <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                             {% for thumb in asset.thumbnail %}
                                                 <div>
-                                                    <a href="{{ PUBLIC ? 'asset.php?i=' ~ SEARCH.INSTANCE['instances_id'] ~ '&' : '/asset.php?'}}id={{ asset.assetTypes_id }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}" target="_blank">
+                                                    <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" target="_blank">
                                                     <img class="img-fluid" loading="lazy" style="max-height: 200px;"
                                                         src="{{ thumb.s3files_id|s3URL("small") }}"
                                                         alt="{{asset.assetTypes_name}}"></a>
@@ -189,12 +193,8 @@
                                             </li>
                                                 {% endif %}
                                             <li class="small">
-                                                {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsValues'] or AUTH.login %}
-                                                    <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
-                                                {% endif %}
-                                                {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsPrices'] or AUTH.login %}
-                                                    {{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/week
-                                                {% endif %}
+                                                <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
+                                                {{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/week
                                             </li>
                                         {% else %}
                                             {% if asset.assetTypes_mass != "" and asset.assetTypes_mass != 0  %}
@@ -203,14 +203,17 @@
                                                 </li>
                                             {% endif %}
                                             <li class="small">
-                                                {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsValues'] or AUTH.login %}
-                                                    <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ asset.assetTypes_value|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
-                                                {% endif %}
-                                                {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsPrices'] or AUTH.login %}
-                                                    {{ asset.assetTypes_dayRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ asset.assetTypes_weekRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/week
-                                                {% endif %}
+                                                <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ asset.assetTypes_value|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
+                                                {{ asset.assetTypes_dayRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ asset.assetTypes_weekRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/week
                                             </li>
                                             <li class="small" title="Number owned"><span class="fa-li"><i class="fas fa-boxes"></i></span> {{asset.count}}</li>
+                                        {% endif %}
+                                        {% if searchResults.SEARCH.INSTANCE_ID != USERDATA.instance.instances_id %}
+                                            {% for instance in USERDATA.instances %}
+                                                {% if searchResults.SEARCH.INSTANCE_ID == instance.instances_id %}
+                                                    <li class="small"><span class="fa-li"><i class="fas fa-exclamation-triangle"></i></span> Business: {{instance.instances_name}}</li>
+                                                {% endif %}
+                                            {% endfor %}
                                         {% endif %}
 
                                     </ul>
@@ -218,13 +221,13 @@
                                 <div class="card-footer">
                                     <div class="text-right">
                                         <div class="btn-group">
-                                            {% if PROJECT.ID and AUTH.login and 31|instancePermissions %}
+                                            {% if searchResults.PROJECT.ID and 31|instancePermissions %}
                                                 {% if asset.count == 1 %}
-                                                    {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < PROJECT['DATEEND'] %}
+                                                    {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < searchResults.PROJECT['DATEEND'] %}
                                                         <button title="Asset to be archived" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                     {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
-                                                        <button title="Remove from project" {% if (not asset.tags[0].assignment) or PROJECT.ID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                    {% if asset.tags[0].assignment and PROJECT.ID != asset.tags[0].assignment[0].projects_id %}
+                                                        <button title="Remove from project" {% if (not asset.tags[0].assignment) or searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                    {% if asset.tags[0].assignment and searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}
                                                             <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                         {% endif %}
                                                         <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
@@ -273,11 +276,11 @@
                                                                                 </td>
                                                                                 <td>
                                                                                     <div class="btn-group">
-                                                                                        {% if thisasset.assets_endDate != null and thisasset.assets_endDate < PROJECT['DATEEND'] %}
+                                                                                        {% if thisasset.assets_endDate != null and thisasset.assets_endDate < searchResults.PROJECT['DATEEND'] %}
                                                                                             <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                                                         {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
-                                                                                            <button title="Remove from project" {% if (not thisasset.assignment) or PROJECT.ID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                                                            {%  if thisasset.assignment and PROJECT.ID != thisasset.assignment[0].projects_id %}
+                                                                                            <button title="Remove from project" {% if (not thisasset.assignment) or searchResults.PROJECT.ID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                            {%  if thisasset.assignment and searchResults.PROJECT.ID != thisasset.assignment[0].projects_id %}
                                                                                                 <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                                                             {% endif %}
                                                                                             <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% else %}{% set someassignable = true %}{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
@@ -295,13 +298,13 @@
                                                     </div>
                                                     <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                                 {% endif %}
-                                            {% elseif PROJECT.DATESTART and PROJECT.DATEEND %}
+                                            {% elseif searchResults.PROJECT.DATESTART and searchResults.PROJECT.DATEEND %}
                                                 {% if asset.count == 1 %}
-                                                    {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < PROJECT['DATEEND'] %}
+                                                    {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < searchResults.PROJECT['DATEEND'] %}
                                                         <button title="Asset to be archived" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                     {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
                                                         {% if asset.tags[0].assignment %}
-                                                            <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? asset.tags[0].assignment[0]['projects_name'] : 'a project'}}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                            <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                         {% else %}
                                                             <button title="Available" class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                         {% endif %}
@@ -327,10 +330,8 @@
                                                                                 <th>{{ field }}</th>
                                                                             {% endfor %}
                                                                             <th>Notes</th>
-                                                                            {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsPrices'] or AUTH.login %}
                                                                             <th>&pound;/day</th>
                                                                             <th>&pound;/week</th>
-                                                                            {% endif %}
                                                                             <th style="width:1%"><i class="fas fa-flag"></i></th>
                                                                             <th style="width:30px;"></th>
                                                                         </tr>
@@ -341,24 +342,22 @@
                                                                                     <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
                                                                                 {% endfor %}
                                                                                 <td>{{ thisasset['assets_notes']|nl2br }}</td>
-                                                                                {% if SEARCH.INSTANCE['instances_publicConfig']['enableAssetsPrices'] or AUTH.login %}
                                                                                 <td>
                                                                                     {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
                                                                                     {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
-                                                                                {% endif %}
                                                                                 <td>
                                                                                     {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
                                                                                 </td>
                                                                                 <td>
                                                                                     <div class="btn-group">
-                                                                                        {% if thisasset.assets_endDate != null and thisasset.assets_endDate < PROJECT['DATEEND'] %}
+                                                                                        {% if thisasset.assets_endDate != null and thisasset.assets_endDate < searchResults.PROJECT['DATEEND'] %}
                                                                                             <button title="Asset to be removed" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                         {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
                                                                                             {%  if thisasset.assignment %}
-                                                                                                <button title="Assigned to {{ SEARCH.INSTANCE['instances_publicConfig']['enableAssetsAssignmentNames'] or AUTH.login ? thisasset.assignment[0]['projects_name'] : ' a project' }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
+                                                                                                <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                             {% else %}
                                                                                             <button title="Available" {% set someassignable = true %} class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                                                             {% endif %}
@@ -377,7 +376,7 @@
                                                     <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                             {% endif %}
                                         {% endif %}
-                                            <a href="{{ PUBLIC ? 'asset.php?i=' ~  SEARCH.INSTANCE['instances_id'] ~ '&' : '/asset.php?'}}id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}" class="btn btn-sm btn-default" target="_blank">
+                                            <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default" target="_blank">
                                                 <i class="fas fa-info-circle"></i>
                                             </a>
                                         </div>
@@ -598,15 +597,15 @@ $(document).ready(function () {
         autoplay: true,
         autoplaySpeed: 2000,
     });
-    {% if PROJECT.ID != null and AUTH.login and 31|instancePermissions %}
+    {% if searchResults.PROJECT.ID != null and 31|instancePermissions %}
     $(".addToBasketAssetButton").click(function () {
         var assetId=$(this).data("assetid");
-        ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid")}, function (data) {
+        ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid"),"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
             $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
             $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
             Toast.fire({
                 type: 'success',
-                title: 'Added to project'
+                title: 'Added to {{ searchResults.PROJECT.NAME }}'
             });
         });
     });
@@ -626,12 +625,12 @@ $(document).ready(function () {
             },
             callback: function (result) {
                 if (result) {
-                    $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
-                    $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
-                    ajaxcall("projects/assets/unassign.php", {"assets_id":assetId}, function (data) {
+                    ajaxcall("projects/assets/unassign.php", {"assets_id":assetId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
+                        $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
+                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
                         Toast.fire({
                             type: 'success',
-                            title: 'Removed from project'
+                            title: 'Removed from {{ searchResults.PROJECT.NAME }}'
                         });
                     });
                 }

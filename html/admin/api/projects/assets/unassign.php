@@ -2,13 +2,23 @@
 require_once __DIR__ . '/../../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
-if (!$AUTH->instancePermissionCheck(31) or !isset($_POST['assetsAssignments'])) die("404");
+if (!$AUTH->instancePermissionCheck(31) or (!isset($_POST['assetsAssignments']) and !isset($_POST['assets_id']))) die("404");
+
+if (isset($_POST['assets_id']) and isset($_POST['projects_id']) and !isset($_POST['assetsAssignments'])) {
+    //Convert for where only the asset id and project is known
+    $DBLIB->where("assets_id", $_POST['assets_id']);
+    $DBLIB->where("projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments_deleted", 0);
+    $assignment = $DBLIB->getone("assetsAssignments", ["assetsAssignments_id"]);
+    if ($assignment) $_POST['assetsAssignments'] = [$assignment['assetsAssignments_id']];
+    else finish(false,["message"=>"Could not find assignment"]);
+}
 
 $assignmentsRemove = new assetAssignmentSelector($_POST['assetsAssignments']);
 $assignmentsRemove = $assignmentsRemove->getData();
 if (!$assignmentsRemove['projectid']) finish(false,["message"=>"Cannot find projectid"]);
 $DBLIB->where("projects.projects_id", $assignmentsRemove["projectid"]);
-$DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+$DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("projects.projects_deleted", 0);
 $project = $DBLIB->getone("projects",["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_name"]);
 if (!$project) finish(false,["message"=>"Cannot find project"]);

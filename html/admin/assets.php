@@ -20,7 +20,8 @@ $SEARCH = [
     "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 20,
     "SETTINGS" => [
         "SHOWLINKED" => ($_GET['showlinked'] == 1 ? true : false),
-        "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false)
+        "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false),
+        "HIDEIMAGES" => ($_GET['hideimages'] == 1 ? true : false),
     ],
     "TERMS" => [
         "CATEGORY" => is_array($_GET['category']) ? $_GET['category'] : [],
@@ -219,7 +220,7 @@ foreach ($assets as $asset) {
             $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
             $DBLIB->where("projects.projects_deleted", 0);
             $DBLIB->where("((projects_dates_deliver_start >= '" . date ("Y-m-d H:i:s",$dateStart)  . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateStart) . "' AND projects_dates_deliver_end <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateEnd) . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateStart) . "'))");
-            $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name"]);
+            $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assetsAssignments.projects_id", "projects.projects_name"]);
         }
         $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
         $asset['tags'][] = $tag;

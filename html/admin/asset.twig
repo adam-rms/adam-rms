@@ -27,7 +27,7 @@
                         {% endif %}
                         {% if assets[0]['link'] %}
                             <div class="callout callout-success">
-                                Asset is linked to asset <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
+                                Asset is linked to asset <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
                             </div>
                         {% endif %}
                         {% if assets[0]['assets_notes']|length > 0 %}
@@ -56,11 +56,11 @@
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
                         </ul>
-                        {% if 97|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  %}
+                        {% if 97|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <hr/>
                             <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
-                        {% if 19|instancePermissions %}
+                        {% if 19|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                         {% endif %}
                     </div>
@@ -110,7 +110,7 @@
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
                     {% endif %}
                     {% if assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") >= "now"|date("U")  %}
-                        {% if 84|instancePermissions %}
+                        {% if 84|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                             <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
                         {% endif %}
                     {% endif %}
@@ -121,6 +121,11 @@
 
 
         <div class="col-md-9">
+            {% if ASSET_INSTANCE.instances_id != USERDATA.instance.instances_id %}
+                <div class="alert alert-info">
+                    <h5>Showing assets from business {{ ASSET_INSTANCE.instances_name }}</h5>
+                </div>
+            {% endif %}
             {% if assets|length == 1 %}
                 {% for flag in assets[0].flagsblocks.BLOCK %}
                     <div class="alert alert-danger">
@@ -152,7 +157,7 @@
                                 <tbody>
                                 {% for asset in assets[0]['linkedToThis'] %}
                                 <tr>
-                                    <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag']|aTag }}</a></td>
+                                    <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag']|aTag }}</a></td>
                                     <td>
                                         {% for i in range(1, asset['tier']) %}
                                             {% if i == 1 %}
@@ -172,7 +177,7 @@
                     </div>
                 {% endif %}
             {% endif %}
-            {% if assets|length == 1 %}
+            {% if assets|length == 1 and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
             <div class="card card-secondary card-outline">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
@@ -397,7 +402,7 @@
                                 {% endembed %}
                             </div>
                         {% endif %}
-                        {% if 84|instancePermissions %}
+                        {% if 84|instancePermissions  %}
                             <div class="tab-pane" style="padding: 0" id="barcodes">
                                 <table class="table table-striped projects">
                                     <thead>
@@ -738,20 +743,20 @@
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
                         {% if asset.oneasset %}
-                            <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}">View All</a></li>
+                            <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}&instance={{ASSET_INSTANCE.instances_id}}">View All</a></li>
                         {% elseif assets|length > 1 %}
                             <li class="nav-item"><a class="nav-link" href="#assets" data-toggle="tab">Assets</a></li>
                         {% endif %}
 
-                        {% if assets|length > 1 %}
+                        {% if assets|length > 1 and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                         <li class="nav-item"><a class="nav-link active" href="#calendarBox" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
                         {% endif %}
 
 
-                        {% if 58|instancePermissions %}
+                        {% if 58|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Edit Type</a></li>
                         {% endif %}
-                        {% if 54|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
+                        {% if 54|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -774,7 +779,7 @@
                                 </tr>
                                 {% for thisasset in assets %}
                                     <tr>
-                                        <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}">{{ thisasset.assets_tag|aTag }}</a></td>
+                                        <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}&instance={{ASSET_INSTANCE.instances_id}}">{{ thisasset.assets_tag|aTag }}</a></td>
                                         {% for field in asset.fields %}
                                             <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
                                         {% endfor %}
@@ -798,15 +803,15 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                {% if 97|instancePermissions and (thisasset.assets_endDate is null or thisasset.assets_endDate|date("U") > "now"|date("U"))%}
+                                                {% if 97|instancePermissions and (thisasset.assets_endDate is null or thisasset.assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                                                     <button title="Archive" class="btn btn-sm btn-warning archiveAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fas fa-archive"></i></button>
                                                 {% endif %}
-                                                {% if 19|instancePermissions %}
+                                                {% if 19|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
                                                 {% endif %}
 
 
-                                                <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
+                                                <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}&instance={{ASSET_INSTANCE.instances_id}}"><i class="far fa-arrow-alt-circle-right"></i></a>
                                                 </div>
                                         </td>
                                     </tr>
@@ -883,7 +888,7 @@
                             </script>
                         </div>
                         {% endif %}
-                        {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) %}
+                        {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                         <div class="tab-pane" style="padding:0"  id="settings">
                             <div class="card" style="margin-bottom:0;">
                                 <div class="card-header p-2">
@@ -1015,7 +1020,7 @@
                         </div>
                         {% endif %}
 
-                        {% if 54|instancePermissions %}
+                        {% if 54|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                         <div class="tab-pane" style="padding: 1.25rem"  id="typeFiles">
                             {% if 55|instancePermissions %}
                             <div class="callout callout-default">
@@ -1032,7 +1037,7 @@
                             {% endembed %}
                         </div>
                         {% endif %}
-                        {% if 63|instancePermissions %}
+                        {% if 63|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
                                 <div class="card" style="margin-bottom:0;">
                                     <div class="card-header p-2">
@@ -1520,7 +1525,7 @@
                             },
                         ];
                         ajaxcall("assets/editAsset.php", {formData}, function (data) {
-                            window.location.href = "{{ CONFIG.ROOTURL }}/asset.php?id=" + $("#assetTypeChange").val();
+                            window.location.href = "{{ CONFIG.ROOTURL }}/asset.php?instance={{ASSET_INSTANCE.instances_id}}&id=" + $("#assetTypeChange").val();
                         }, false);
                     }
                 });

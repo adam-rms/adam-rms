@@ -1,11 +1,17 @@
 <?php
 require_once __DIR__ . '/common/headSecure.php';
 
+// Assets can be from another instance
+if (isset($_GET['instance']) and in_array($_GET['instance'], $AUTH->data['instance_ids']) and $_GET['instance'] != $AUTH->data['instance']['instances_id']) {
+    $DBLIB->where("instances_id", $_GET['instance']);
+    $DBLIB->where("instances_deleted", 0);
+    $PAGEDATA['ASSET_INSTANCE'] = $DBLIB->getone("instances", ["instances_id", "instances_name"]);
+} else $PAGEDATA['ASSET_INSTANCE'] = $AUTH->data['instance'];
+
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
 $DBLIB->where("assetTypes.assetTypes_id", $_GET['id']);
-//$DBLIB->where("((SELECT COUNT(*) FROM assets WHERE assetTypes.assetTypes_id=assets.assetTypes_id AND assets.instances_id = '" . $AUTH->data['instance']['instances_id'] . "' AND assets_deleted = 0) > 0)");
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $PAGEDATA['asset'] = $DBLIB->getone('assetTypes', ["*", "assetTypes.instances_id as assetInstances_id"]); //have to double download it as otherwise manufacturer instance id is returned instead
@@ -14,7 +20,7 @@ $PAGEDATA['asset']['thumbnail'] = $bCMS->s3List(2, $PAGEDATA['asset']['assetType
 $PAGEDATA['asset']['files'] = $bCMS->s3List(3, $PAGEDATA['asset']['assetTypes_id']);
 $PAGEDATA['asset']['fields'] = explode(",", $PAGEDATA['asset']['assetTypes_definableFields']);
 
-$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("assets.instances_id", $PAGEDATA['ASSET_INSTANCE']['instances_id']);
 $DBLIB->where("assets.assetTypes_id", $PAGEDATA['asset']['assetTypes_id']);
 if (isset($_GET['asset'])) {
     $PAGEDATA['asset']['oneasset'] = true;
@@ -65,12 +71,12 @@ foreach ($assets as $asset) {
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['asset']['assetTypes_name'], "BREADCRUMB" => false];
 
 // For asset type editing
-$DBLIB->where("(manufacturers.instances_id IS NULL OR manufacturers.instances_id = '" . $AUTH->data['instance']['instances_id'] . "')");
+$DBLIB->where("(manufacturers.instances_id IS NULL OR manufacturers.instances_id = '" . $PAGEDATA['ASSET_INSTANCE']['instances_id'] . "')");
 $DBLIB->orderBy("manufacturers_name", "ASC");
 $PAGEDATA['manufacturers'] = $DBLIB->get('manufacturers', null, ["manufacturers.manufacturers_id", "manufacturers.manufacturers_name"]);
 
 $DBLIB->orderBy("assetCategories_rank", "ASC");
-$DBLIB->where("(instances_id IS NULL OR instances_id = '" . $AUTH->data['instance']["instances_id"] . "')");
+$DBLIB->where("(instances_id IS NULL OR instances_id = '" . $PAGEDATA['ASSET_INSTANCE']["instances_id"] . "')");
 $DBLIB->where("assetCategories_deleted",0);
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $PAGEDATA['categories'] = $DBLIB->get('assetCategories');
@@ -113,7 +119,7 @@ if (count($PAGEDATA['assets']) == 1) {
     //Groups
     if ($PAGEDATA['assets'][0]['assets_assetGroups']) {
         $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");
-        $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
+        $DBLIB->where("instances_id",$PAGEDATA['ASSET_INSTANCE']["instances_id"]);
         $DBLIB->where("assetGroups_deleted",0);
         $DBLIB->where("assetGroups_id IN (" . $PAGEDATA['assets'][0]['assets_assetGroups'] . ")");
         $PAGEDATA['assets'][0]['groups'] = $DBLIB->get("assetGroups",null,["assetGroups_id","assetGroups_name"]);
@@ -122,7 +128,7 @@ if (count($PAGEDATA['assets']) == 1) {
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
 $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
-$DBLIB->where("assetsAssignmentsStatus.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("assetsAssignmentsStatus.instances_id", $PAGEDATA['ASSET_INSTANCE']['instances_id']);
 $PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
 echo $TWIG->render('asset.twig', $PAGEDATA);
