@@ -18,19 +18,24 @@ $SEARCH = [
     "PROJECT_ID" => $_GET['project'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
     "PAGE_LIMIT" => $_GET['page_limit'] ? intval($_GET['page_limit']) : 20,
-    "TERMS" => [
-        "CATEGORY" => $_GET['category'],
-        "KEYWORDS" => is_array($_GET['keyword']) ? $_GET['keyword'] : [],
-        "MANUFACTURER" => $_GET['manufacturer'],
-        "GROUPS" => $_GET['group'] ?: false,
-        "DATE-START" => $dateStart,
-        "DATE-END" => $dateEnd,
-        "SORT" => $_GET['sort'] ?: "alphabet-a",
-        "TAGS" => (is_array($_GET['tags'])) ? $tags : [],
-    ],
     "SETTINGS" => [
         "SHOWLINKED" => ($_GET['showlinked'] == 1 ? true : false),
         "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false)
+    ],
+    "TERMS" => [
+        "CATEGORY" => is_array($_GET['category']) ? $_GET['category'] : [],
+        "KEYWORDS" => is_array($_GET['keyword']) ? $_GET['keyword'] : [],
+        "MANUFACTURER" => is_array($_GET['manufacturer']) ? $_GET['manufacturer'] : [],
+        "GROUPS" => is_array($_GET['group']) ? $_GET['group'] : [],
+        "DATE-START" => $dateStart,
+        "DATE-END" => $dateEnd,
+        "SORT" => $_GET['sort'] ?: "alphabet-a",
+        "TAGS" => (is_array($_GET['tags'])) ? $_GET['tags'] : [],
+    ],
+    "SELECTED_TERMS" => [
+      "MANUFACTURER" => [],
+      "CATEGORY" => [],
+      "GROUPS" => [],
     ]
 ];
 $RETURN = [
@@ -50,14 +55,7 @@ $SEARCH['INSTANCE'] = $DBLIB->getone("instances",['instances_id','instances_conf
 if (!$SEARCH['INSTANCE']) die($TWIG->render('404.twig', $PAGEDATA));
 
 //Evaluate dates or project
-if ($dateStart and $dateEnd) {
-    $dateStart = strtotime($dateStart);
-    $dateEnd = strtotime($dateEnd);
-    if ($dateEnd <= $dateStart) {
-        $dateStart = false;
-        $dateEnd = false;
-    }
-} elseif ($SEARCH['PROJECT_ID'] and $AUTH->instancePermissionCheck(31)) {
+if ($SEARCH['PROJECT_ID'] and $AUTH->instancePermissionCheck(31)) {
     $DBLIB->where("projects_id", $SEARCH['PROJECT_ID']);
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
@@ -73,6 +71,13 @@ if ($dateStart and $dateEnd) {
         $RETURN['PROJECT']['ID'] = $SEARCH['PROJECT_ID'];
         $RETURN['PROJECT']['NAME'] = $thisProject['projects_name'];
     }
+} elseif ($dateStart and $dateEnd) {
+  $dateStart = strtotime($dateStart);
+  $dateEnd = strtotime($dateEnd);
+  if ($dateEnd <= $dateStart) {
+      $dateStart = false;
+      $dateEnd = false;
+  }
 } else {
     $dateStart = false;
     $dateEnd = false;
@@ -221,10 +226,8 @@ foreach ($assets as $asset) {
     }
     $RETURN['ASSETS'][] = $asset;
 }
-$RETURN['SEARCH'] = $SEARCH;
 $RETURN['SPEED'] = microtime (true)-$scriptStartTime;
 
-$PAGEDATA['searchResults'] = $RETURN;
 
 $PAGEDATA['searchOptions'] = [];
 
@@ -240,5 +243,32 @@ $DBLIB->orderBy("projects.projects_name", "ASC");
 $DBLIB->orderBy("projects.projects_created", "ASC");
 $PAGEDATA['searchOptions']['projects'] = $DBLIB->get("projects", null, ["projects_id", "projects_name", "clients_name"]);
 
+// Manufacturers / Groups / Categories dynamically populated with AJAX need to have their names looked up before a search
+if (count($SEARCH['TERMS']['GROUPS']) > 0) {
+  $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");
+  $DBLIB->where("assetGroups_id", $SEARCH['TERMS']['GROUPS'], "IN");
+  $DBLIB->where("instances_id", $SEARCH['INSTANCE_ID']);
+  $DBLIB->where("assetGroups_deleted",0);
+  $SEARCH['SELECTED_TERMS']['GROUPS'] = $DBLIB->get('assetGroups',null,["assetGroups_name","assetGroups_id"]);
+} else $SEARCH['SELECTED_TERMS']['GROUPS'] = [];
+
+if (count($SEARCH['TERMS']['MANUFACTURER']) > 0) {
+  $DBLIB->where("manufacturers_id", $SEARCH['TERMS']['MANUFACTURER'], "IN");
+  $DBLIB->where("(manufacturers.instances_id IS NULL OR manufacturers.instances_id = '" . intval($SEARCH['INSTANCE_ID']) . "')");
+  $SEARCH['SELECTED_TERMS']['MANUFACTURER'] = $DBLIB->get('manufacturers', null, ["manufacturers.manufacturers_id", "manufacturers.manufacturers_name"]);
+} else $SEARCH['SELECTED_TERMS']['MANUFACTURER'] = [];
+
+if (count($SEARCH['TERMS']['CATEGORY']) > 0) {
+  $DBLIB->where("assetCategories_id", $SEARCH['TERMS']['CATEGORY'], "IN");
+  $DBLIB->where("assetCategories_deleted",0);
+  $DBLIB->where("(instances_id IS NULL OR instances_id = '" . intval($SEARCH['INSTANCE_ID']) . "')");
+  $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
+  $SEARCH['SELECTED_TERMS']['CATEGORY'] = $DBLIB->get('assetCategories', null, ["assetCategories_id", "assetCategories_name", "assetCategoriesGroups_name"]);
+} else $SEARCH['SELECTED_TERMS']['CATEGORY'] = [];
+
+// Pass vars to twig
+
+$RETURN['SEARCH'] = $SEARCH;
+$PAGEDATA['searchResults'] = $RETURN;
 
 echo $TWIG->render('assets.twig', $PAGEDATA);

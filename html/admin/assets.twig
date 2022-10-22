@@ -18,26 +18,48 @@
                     <div class="row">
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
-                                <label>Keywords (comma separated)</label>
-                                <select class="form-control select2bs4" multiple="multiple" name="keyword[]" value="{{ searchResults.SEARCH.TERMS.KEYWORDS|join(",") }}"></select>
+                                <label>Keyword</label>
+                                <select class="form-control select2bs4" multiple="multiple" name="keyword[]">
+                                    {% for term in searchResults.SEARCH.TERMS.KEYWORDS %}
+                                        <option value="{{ term }}" selected>{{ term }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="form-text text-muted">Seperate multiple keywords with a comma</small>
                             </div>
                             <div class="form-group">
-                                <label>Tags (comma separated)</label>
-                                <select class="form-control select2bs4" multiple="multiple" name="tags[]"></select>
+                                <label>Tag</label>
+                                <select class="form-control select2bs4" multiple="multiple" name="tags[]">
+                                    {% for tag in searchResults.SEARCH.TERMS.TAGS %}
+                                        <option value="{{ tag }}" selected>{{ tag }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label>Manufacturer</label>
-                                <select class="form-control select2bs4" multiple name="manufacturer[]"></select>
+                                <select class="form-control select2bs4" multiple name="manufacturer[]">
+                                    {% for manufacturer in searchResults.SEARCH['SELECTED_TERMS']['MANUFACTURER'] %}
+                                        <option value="{{ manufacturer.manufacturers_id }}" selected>{{ manufacturer.manufacturers_name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
-                            <div class="form-group">
-                                <label>Category</label>
-                                <select class="form-control select2bs4" multiple name="category[]"></select>
-                            </div>
+                            
                         </div>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                                 <label>Group</label>
-                                <select class="form-control select2bs4" name="group[]" multiple></select>
+                                <select class="form-control select2bs4" name="group[]" multiple>
+                                    {% for group in searchResults.SEARCH['SELECTED_TERMS']['GROUPS'] %}
+                                        <option value="{{ group.assetGroups_id }}" selected>{{ group.assetGroups_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select class="form-control select2bs4" multiple name="category[]">
+                                    {% for category in searchResults.SEARCH['SELECTED_TERMS']['CATEGORY'] %}
+                                        <option value="{{ category.assetCategories_id }}" selected>{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label>Business</label>
@@ -47,6 +69,9 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            {% if 31|instancePermissions %}
                             <div class="form-group">
                                 <label>Project to assign assets to</label>
                                 <select class="form-control select2 select2bs4" name="project">
@@ -56,12 +81,12 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4">
+                            {% else %}
                             <div class="form-group">
                                 <label>Show availability between</label>
-                                <input type="text" class="form-control" name="dates" />
+                                <input type="text" class="form-control" name="dates" value="{{ searchResults.SEARCH.TERMS['DATE-START'] ? searchResults.SEARCH.TERMS['DATE-START'] ~ " - " ~ searchResults.SEARCH.TERMS['DATE-END'] }}" />
                             </div>
+                            {% endif %}
                             <div class="form-group">
                                 <label>Page Limit</label>
                                 <select class="form-control select2 select2bs4" name="page_limit">
@@ -413,12 +438,11 @@ $(document).ready(function () {
         locale: {
             format: 'DD MMM YYYY hh:mm A'
         },
-        autoUpdateInput: false
+        autoUpdateInput: false,
     });
     $('#assetSearchForm input[name ="dates"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD MMM YYYY hh:mm A') + ' - ' + picker.endDate.format('DD MMM YYYY hh:mm A'));
     });
-
     $('#assetSearchForm input[name ="dates"]').on('cancel.daterangepicker', function(ev, picker) {
         $(this).val('');
     });
@@ -437,7 +461,7 @@ $(document).ready(function () {
     });
     $('#assetSearchForm select[name ="tags[]"]').select2({
         tags: true,
-        tokenSeparators: [',', ';'],
+        tokenSeparators: [' ', ',',';'],
         multiple: true,
         theme: "bootstrap4",
         minimumInputLength: 1,
@@ -453,13 +477,14 @@ $(document).ready(function () {
         minimumResultsForSearch: 1,
         placeholder: "Enter some manufacturer names to search",
         ajax: {
+            delay: 250,
             url: "{{ CONFIG.ROOTURL }}/api/manufacturer/search.php",
             dataType: "json",
             type: "POST",
             data: function (params) {
                 var queryParameters = {
                     term: params.term,
-                    instance_id: "{{ instance }}"
+                    instance_id: $("#assetSearchForm select[name='instance_id']").val()
                 }
                 return queryParameters;
             },
@@ -488,13 +513,14 @@ $(document).ready(function () {
         minimumResultsForSearch: 1,
         placeholder: "Enter some category names to search",
         ajax: {
+            delay: 250,
             url: "{{ CONFIG.ROOTURL }}/api/categories/search.php",
             dataType: "json",
             type: "POST",
             data: function (params) {
                 var queryParameters = {
                     term: params.term,
-                    instance_id: "{{ instance }}"
+                    instance_id: $("#assetSearchForm select[name='instance_id']").val()
                 }
                 return queryParameters;
             },
@@ -523,6 +549,7 @@ $(document).ready(function () {
         minimumResultsForSearch: 1,
         placeholder: "Enter some group names to search",
         ajax: {
+            delay: 250,
             url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
             dataType: "json",
             type: "POST",
