@@ -30,17 +30,6 @@ $assets = $DBLIB->get("assets");
 if (!$assets) die($TWIG->render('404.twig', $PAGEDATA));
 $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
-    if ($AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {
-        //Check availability
-        $DBLIB->where("assets_id", $asset['assets_id']);
-        $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-        $DBLIB->where("(projects.projects_id = '" . $PAGEDATA['thisProject']['projects_id'] . "' OR projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
-        $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
-        $DBLIB->where("projects.projects_deleted", 0);
-        $DBLIB->where("((projects_dates_deliver_start >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"]  . "' AND projects_dates_deliver_start <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $PAGEDATA['thisProject']["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $PAGEDATA['thisProject']["projects_dates_deliver_start"] . "'))");
-        $asset['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name"]);
-    }
-
     //Flags&Blocks
     $asset['flagsblocks'] = assetFlagsAndBlocks($asset['assets_id']);
 
@@ -129,18 +118,6 @@ if (count($PAGEDATA['assets']) == 1) {
         $DBLIB->where("assetGroups_id IN (" . $PAGEDATA['assets'][0]['assets_assetGroups'] . ")");
         $PAGEDATA['assets'][0]['groups'] = $DBLIB->get("assetGroups",null,["assetGroups_id","assetGroups_name"]);
     } else $PAGEDATA['assets'][0]['groups'] = [];
-
-    //Status of the current asset assignment
-    if ($PAGEDATA['thisProject']) {
-        $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_id']);
-        $DBLIB->where("projects_id", $PAGEDATA['thisProject']['projects_id']);
-        $DBLIB->where("assetsAssignments_deleted", 0);
-        $PAGEDATA['asset']['assetsAssignment'] = $DBLIB->getOne("assetsAssignments", ["assetsAssignments_id", "assetsAssignmentsStatus_id"]);
-        if (isset($PAGEDATA['asset']['assetsAssignment']['assetsAssignmentsStatus_id'])){
-            $DBLIB->where("assetsAssignmentsStatus_id", $PAGEDATA['asset']['assetsAssignment']['assetsAssignmentsStatus_id']);
-            $PAGEDATA['asset']['assetsAssignment']['assetsAssignmentsStatus_name'] = $DBLIB->getOne("assetsAssignmentsStatus", ["assetsAssignmentsStatus_name"])['assetsAssignmentsStatus_name'];
-        }
-    } else $PAGEDATA['asset']['assetsAssignment'] = null;
 }
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");

@@ -2,19 +2,7 @@
 require_once __DIR__ . '/../../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
-if (!$AUTH->instancePermissionCheck(31) or (!isset($_POST['assetsAssignments']) and !isset($_POST['assets_id']))) die("404");
-
-if (isset($_POST['assets_id']) and !isset($_POST['assetsAssignments'])) {
-    //Convert for where only the asset id and project is known
-    $DBLIB->where("assets_id", $_POST['assets_id']);
-    $DBLIB->where("projects_id", $AUTH->data['users_selectedProjectID']);
-    $DBLIB->where("assetsAssignments_deleted", 0);
-    $assignment = $DBLIB->getone("assetsAssignments", ["assetsAssignments_id"]);
-    if ($assignment) $_POST['assetsAssignments'] = [$assignment['assetsAssignments_id']];
-    else finish(false,["message"=>"Could not find assignment"]);
-}
-
-
+if (!$AUTH->instancePermissionCheck(31) or !isset($_POST['assetsAssignments'])) die("404");
 
 $assignmentsRemove = new assetAssignmentSelector($_POST['assetsAssignments']);
 $assignmentsRemove = $assignmentsRemove->getData();

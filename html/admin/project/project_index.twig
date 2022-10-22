@@ -95,10 +95,10 @@
                         <div class="card-header">
                             <ul class="nav nav-pills" id="nav-bar">
                                 <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
+                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and 31|instancePermissions %}
+                                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/assets.php?project={{project.projects_id}}"><i class="fas fa-plus"></i> Add Assets</a></li>
+                                {% endif %}
                                 {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
-                                    {% if 31|instancePermissions %}
-                                        <li class="nav-item"><a class="nav-link" href="#add-assets" data-toggle="tab"><i class="fas fa-plus"></i> Add Assets</a></li>
-                                    {% endif %}
                                     <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab"><i class="fas fa-list"></i> Assets List</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab"><i class="fas fa-shipping-fast"></i> Asset Dispatch</a></li>
                                 {% endif %}
@@ -126,15 +126,8 @@
                                         <div class="card-header">
                                             <h3 class="card-title">{{ project.projectsTypes_name }}</h3>
                                             <div class="card-tools">
-                                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
-                                                    {% if 32|instancePermissions %}
-                                                        <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject">
-                                                            <i class="fas fa-dolly"></i></button>
-                                                    {% endif %}
-                                                    {% if 31|instancePermissions %}
-                                                        <button type="button" class="btn btn-tool  changeProjectBasket" data-projectid="{{ project.projects_id }}">
-                                                            <i class="fas fa-shopping-basket"></i></button>
-                                                    {% endif %}
+                                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and 32|instancePermissions %}
+                                                    <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject"><i class="fas fa-dolly"></i></button>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -366,9 +359,6 @@
                             {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
                                 {% embed 'project/project_assets.twig' %}{% endembed %}
                             {% endif %}
-                        </div>
-                        <div class="tab-pane" id="add-assets">
-                            {% embed 'project/project_assetsAddNew.twig' with {'instance': USERDATA.instance.instances_id, 'project': project.projects_id} %}{% endembed %}
                         </div>
                         <div class="tab-pane" id="assets-board">
                             {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}

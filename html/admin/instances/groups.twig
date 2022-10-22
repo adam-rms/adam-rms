@@ -51,9 +51,6 @@
                         </td>
                         <td style="width:70px;">
                             <div class="btn-group">
-                                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-                                    <button title="Add Items to Project" class="btn btn-sm btn-success addToBasketGroupButton" data-id="{{ group.assetGroups_id }}"><i class="fa fa-shopping-basket"></i></button>
-                                {% endif %}
                                 <button type="button" title="Watch this group" class="btn btn-primary btn-sm watchButton" data-id="{{ group.assetGroups_id }}">
                                     {% if group.assetGroups_id in watching %}
                                         <i class="fas fa-eye-slash"></i>
@@ -174,24 +171,6 @@
                 var formData = $("#newForm").serializeArray();
                 ajaxcall("groups/new.php", {formData}, function (data) {
                     location.reload();
-                });
-            });
-            {% endif %}
-            {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-            $(".addToBasketGroupButton").click(function () {
-                ajaxcall("projects/assets/assign.php", {"assetGroups_id":$(this).data("id")}, function (data) {
-                    console.log(data.response.failed)
-                    if (data.response.failed.length < 1) {
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Added to {{ thisProject.projects_name }}'
-                        });
-                    } else {
-                        Toast.fire({
-                            type: 'warning',
-                            title: 'Was only able to add some assets to {{ thisProject.projects_name }} from this group'
-                        });
-                    }
                 });
             });
             {% endif %}

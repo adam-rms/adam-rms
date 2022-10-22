@@ -269,15 +269,6 @@
                 </div>
             </div>
         </form>
-        {% if thisProject %}
-        <ul class="navbar-nav d-none d-md-block">
-            <li class="nav-item text-nowrap">
-                <a href="{{ CONFIG.ROOTURL }}/project/?id={{thisProject.projects_id}}" class="nav-link" id="currentlySelectedProjectInNavbar">
-                    {% if thisProject.projects_parent_project_id %}&#8627; {% endif %}{{ thisProject.projects_name }}
-                </a>
-            </li>
-        </ul>
-        {% endif %}
         <ul class="navbar-nav ml-auto">
             {% if USERDATA.instances|length > 0 %}
                 <li class="nav-item text-nowrap dropdown">
@@ -600,7 +591,7 @@
                     <li class="nav-item">
                         <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
                             <i class="nav-icon fas fa-warehouse"></i>
-                            <p>Search Assets</p>
+                            <p>Assets</p>
                         </a>
                     </li>
                     {% if 17|instancePermissions %}
@@ -826,14 +817,6 @@
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover({
             html: true,
-        });
-        $(document).on("click",".changeProjectBasket[data-projectid]", function () {
-            var project = $(this).data("projectid");
-            ajaxcall("projects/changeSelectedProject.php", {
-                "projectid": project
-            }, function (data) {
-                location.reload();
-            });
         });
 
         function changeTheme(isDark){
