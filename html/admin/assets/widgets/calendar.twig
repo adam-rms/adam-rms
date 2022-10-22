@@ -73,7 +73,7 @@
                         {% endfor %}
                     {% endfor %}
                 ],
-                {% if useStartDate %}
+                {% if useStartDate and startDate %}
                 initialDate: '{{ startDate|date("c") }}',
                 {% endif %}
                 weekNumbers: true,
