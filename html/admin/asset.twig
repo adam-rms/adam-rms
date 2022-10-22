@@ -4,16 +4,8 @@
     <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
     <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css" integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js" integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js" integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" integrity="sha256-5veQuRbWaECuYxwap/IOE/DAwNxgm4ikX7nrgsqYp88=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" integrity="sha256-7PzqE1MyWa/IV5vZumk1CVO6OQbaJE4ns7vmxuUP/7g=" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.css" />
     <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick-theme.css" />
@@ -219,7 +211,6 @@
                                     /* initialize the calendar
                                      -----------------------------------------------------------------*/
                                     var Calendar = FullCalendar.Calendar;
-                                    var Draggable = FullCalendarInteraction.Draggable;
 
                                     var calendarEl = document.getElementById('calendar');
 
@@ -227,7 +218,7 @@
                                     // -----------------------------------------------------------------
 
                                     var calendar = new Calendar(calendarEl, {
-                                        plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                                        themeSystem: 'bootstrap',
                                         buttonText:  {
                                             today:    'Today',
                                             month:    'Month',
@@ -235,7 +226,7 @@
                                             day:      'Day',
                                             list:     'List'
                                         },
-                                        header    : {
+                                        headerToolbar : {
                                             left  : 'prev,next today',
                                             center: 'title',
                                             right : 'dayGridMonth,timeGridWeek'
@@ -861,7 +852,6 @@
                                     /* initialize the calendar
                                      -----------------------------------------------------------------*/
                                     var Calendar = FullCalendar.Calendar;
-                                    var Draggable = FullCalendarInteraction.Draggable;
 
                                     var calendarEl = document.getElementById('calendar');
 
@@ -869,7 +859,7 @@
                                     // -----------------------------------------------------------------
 
                                     var calendar = new Calendar(calendarEl, {
-                                        plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                                        themeSystem: 'bootstrap',
                                         buttonText:  {
                                             today:    'Today',
                                             month:    'Month',
@@ -877,7 +867,7 @@
                                             day:      'Day',
                                             list:     'List'
                                         },
-                                        header    : {
+                                        headerToolbar : {
                                             left  : 'prev,next today',
                                             center: 'title',
                                             right : 'dayGridMonth'
