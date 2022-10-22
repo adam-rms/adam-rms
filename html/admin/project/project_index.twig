@@ -2120,7 +2120,7 @@
                 bootbox.prompt({
                     title: "Choose Parent Project",
                     inputType: 'select',
-                    value: "{{ project.projects_parent_project_id }}",
+                    value: "{{ (project.projects_parent_project_id ?: '-1') }}",
                     inputOptions: [
                         {
                             text: 'No Parent',
