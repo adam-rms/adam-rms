@@ -64,20 +64,16 @@
         </div>
         <div class="card ">
                 <div class="card-header">
-                    <h3 class="card-title">Project PDF Footer</h3>
+                    <h3 class="card-title">Project Export Footer</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label for="instances_quoteTerms">Quotation Footer</label>
-                        <textarea class="textarea" id="instances_quoteTerms" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                            {{ USERDATA.instance.instances_quoteTerms }}
-                        </textarea>
+                        <textarea class="textarea" id="instances_quoteTerms" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ USERDATA.instance.instances_quoteTerms }}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="instances_termsAndPayment">Invoice Footer</label>
-                        <textarea class="textarea" id="instances_termsAndPayment" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                            {{ USERDATA.instance.instances_termsAndPayment }}
-                        </textarea>
+                        <textarea class="textarea" id="instances_termsAndPayment" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ USERDATA.instance.instances_termsAndPayment }}</textarea>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -87,21 +83,12 @@
                 </div>
             <script>
                 $(document).ready(function() {
-                    $('#instances_termsAndPayment, #instances_quoteTerms').summernote({
-                        toolbar: [
-                            ['style', ['style']],
-                            ['font', ['bold', 'italic', 'underline', 'clear']],
-                            ['para', ['ul', 'ol', 'paragraph']],
-                            ['insert', ['link', 'hr']],
-                            ['view', ['codeview']]
-                        ]
-                    });
                     {% if 83|instancePermissions %}
                     $('#saveTermsAndPayment').on('click', function() {
                         ajaxcall("instances/editInstance.php", {
                             'formData': [
-                                { 'name': 'instances_termsAndPayment','value':$('#instances_termsAndPayment').summernote('code') },
-                                { 'name': 'instances_quoteTerms','value':$('#instances_quoteTerms').summernote('code') }
+                                { 'name': 'instances_termsAndPayment','value':$('#instances_termsAndPayment').val() },
+                                { 'name': 'instances_quoteTerms','value':$('#instances_quoteTerms').val() }
                             ]
                         }, function (data) {
                             location.reload();
@@ -126,7 +113,7 @@
                                 Colour
                             </th>
                         </tr>
-                        {% for length,colour in USERDATA.instance['instances_cableColours']|cableColourConfig %}
+                        {% for length,colour in USERDATA.instance['instances_cableColours']|jsonDecode %}
                         <tr>
                             <td>
                                 <input type="number" class="form-control" data-type="length" value="{{ length }}">
@@ -276,29 +263,90 @@
             {% endif %}
         </div>
         <div class="card">
-            <form id="advancedSettings">
+            <form id="weekLabels">
                 <div class="card-header">
-                    <h3 class="card-title">Week Start Dates</h3>
+                    <h3 class="card-title">Week Labels</h3>
                 </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <textarea required class="form-control" rows="6" name="instances_weekStartDates">{{ USERDATA.instance.instances_weekStartDates }}</textarea>
-                        <i>Enter one date on each line in the format "30 August 2019" for this to re-set the week counter on the calendar. This is normally used by schools and universities, and so in that instance they would put the week start dates as the day term starts for each term.</i>
-                    </div>
+                <div class="card-body p-0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Week Start Date</th>
+                                <th>Week Label</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for weekdate, weekLabel in USERDATA.instance['instances_weekStartDates']|jsonDecode %}
+                                <tr class="border-bottom">
+                                    <td>
+                                        <input type="date" class="form-control" name="weekStartDate" value="{{ weekdate }}" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="weekLabel" value="{{ weekLabel }}" />
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>                    
                 </div>
                 <div class="card-footer">
+                    <p style="font-style: italic;">Add week dates to change week labelling on calendars across AdamRMS. This is normally used by schools and universities, and so in that instance they would put the week start dates as the day term starts for each term. Leave a space in the box to leave it blank.</p>
                     {% if 83|instancePermissions %}
+                    <button type="button" class="btn btn-default" id="populate3months">Add next 3 months</button>
+                    <button type="button" class="btn btn-default" id="addNewWeekValueRow">Add Row</button>
                     <button type="submit" class="btn btn-default">Save</button>
                     {% endif %}
                 </div>
             </form>
             <script>
                 $(document).ready(function() {
-                    $("#advancedSettings").on("submit", function(e){
+                    {% if 83|instancePermissions %}
+                    $("#weekLabels").on("submit", function(e){
                         e.preventDefault();
-                        var formData = $("#advancedSettings").serializeArray();
+                        var lastDate;
+                        var formData = {};
+                        // Link the date and the string
+                        $('#weekLabels *').filter(':input[type=text],:input[type=date]').each(function(){
+                            if ($(this).is(':input[type=text]')) {
+                                if (lastDate != "" && $(this).val()) {
+                                    formData[lastDate] = $(this).val();
+                                }
+                            } else {
+                                lastDate = $(this).val();
+                            }
+                        });
+                        var formData = [{"name": "instances_weekStartDates", "value":JSON.stringify(formData) }];
                         ajaxcall("instances/editInstance.php", {formData});
                     });
+                
+                    $("#addNewWeekValueRow").on("click", function(){
+                        $("#weekLabels > div > table").append(`<tr class="border-bottom">
+                            <td>
+                                <input type="date" class="form-control" name="weekStartDate" value="{{ "now"|date("Y-m-d") }}" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="weekLabel" value=" " />
+                            </td>
+                        </tr>`);
+                    });
+                    $("#populate3months").on("click", function() {
+                        var date = $('#weekLabels *').filter(':input[type=date]').last().val();
+                        if (date) {
+                            var jsDate = new Date(Date.parse(date));
+                            for (let i = 1; i <= 13; i++) {
+                                jsDate.setDate(jsDate.getDate() + 7);
+                                $("#weekLabels > div > table").append(`<tr class="border-bottom">
+                                    <td>
+                                        <input type="date" class="form-control" name="weekStartDate" value="` + jsDate.toISOString().split('T')[0] + `" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="weekLabel" value="` + "Week " + i + `" />
+                                    </td>
+                                </tr>`);
+                            }
+                        }
+                    });
+                    {% endif %}
                 });
             </script>
         </div>

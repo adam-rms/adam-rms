@@ -53,15 +53,7 @@
         function showShareKeyDialog(file,shareKey) {
             bootbox.dialog({
                 title: 'Shared File',
-                message: "<p>This file has been shared, which makes it visible to everyone on the web - be careful when publishing private or sensitive information.</p>"
-                {% if USERDATA.instance['publicData']['customDomains'] %}
-                    {% for domain in USERDATA.instance['publicData']['customDomains'] %}
-                        {% if domain != "localhost" %}
-                             + '<div class="input-group"><input type="text" class="form-control" value="' + "https://{{ domain }}/file/?f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>'
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                + '<div class="input-group"><input type="text" class="form-control" value="' + "{{ CONFIG.ROOTURL }}/api/file/?r&f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>',
+                message: '<p>This file has been shared, which makes it visible to everyone on the web - be careful when publishing private or sensitive information.</p><div class="input-group"><input type="text" class="form-control" value="' + "{{ CONFIG.ROOTURL }}/api/file/?r&f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>',
                 size: 'large',
                 buttons: {
                     disableshare: {

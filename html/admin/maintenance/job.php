@@ -1,5 +1,4 @@
 <?php
-if (isset($_GET['pdf'])) ini_set('max_execution_time', 300); //seconds
 require_once __DIR__ . '/../common/headSecure.php';
 
 if (!$AUTH->instancePermissionCheck(63)) die($TWIG->render('404.twig', $PAGEDATA));
@@ -100,6 +99,5 @@ $PAGEDATA['job']['messages'] = $DBLIB->get("maintenanceJobsMessages",null, ["s3f
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['job']['maintenanceJobs_title'], "BREADCRUMB" => false];
 
-if (isset($_GET['pdf'])) {
-} else echo $TWIG->render('maintenance/job.twig', $PAGEDATA);
+echo $TWIG->render('maintenance/job.twig', $PAGEDATA);
 ?>

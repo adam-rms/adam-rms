@@ -72,7 +72,7 @@ $TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false)
     global $CONFIG;
     return $CONFIG['ROOTURL'] . "/api/file/index.php?r&f=" . $fileid . "&s=" . $size;
 }));
-$TWIG->addFilter(new \Twig\TwigFilter('cableColourConfig', function ($raw) {
+$TWIG->addFilter(new \Twig\TwigFilter('jsonDecode', function ($raw) {
     if ($raw == null) return [];
     $data = json_decode($raw,true);
     return $data;
