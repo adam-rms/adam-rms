@@ -4,7 +4,8 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck(29) or !isset($_POST['projects_id'])) die("404");
 
-function changeStatus($DBLIB, $AUTH, $bCMS, $projectID) {
+function changeStatus($projectID, $status) {
+    global $DBLIB, $AUTH, $bCMS;
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->where("projects.projects_id", $projectID);
@@ -12,7 +13,7 @@ function changeStatus($DBLIB, $AUTH, $bCMS, $projectID) {
     if (!$project) finish(false);
 
     $thisStatus = $GLOBALS['STATUSES'][$project['projects_status']];
-    $newStatus = $GLOBALS['STATUSES'][$_POST['projects_status']];
+    $newStatus = $GLOBALS['STATUSES'][$status];
     if (!$newStatus) finish(false);
 
     if ($thisStatus["assetsAvailable"] && $newStatus["assetsAvailable"] != true) {
@@ -45,13 +46,13 @@ function changeStatus($DBLIB, $AUTH, $bCMS, $projectID) {
     }
 
     $DBLIB->where("projects.projects_id", $project['projects_id']);
-    $projectupdate =  $DBLIB->update("projects", ["projects.projects_status" => $_POST['projects_status']]);
+    $projectupdate =  $DBLIB->update("projects", ["projects.projects_status" => $status]);
     if (!$projectupdate) finish(false);
-    $bCMS->auditLog("UPDATE-STATUS", "projects", "Set the status to ". $GLOBALS['STATUSES'][$_POST['projects_status']]['name'], $AUTH->data['users_userid'],null, $projectID);
+    $bCMS->auditLog("UPDATE-STATUS", "projects", "Set the status to ". $GLOBALS['STATUSES'][$status]['name'], $AUTH->data['users_userid'],null, $projectID);
 }
 
 //update this project
-changeStatus($DBLIB, $AUTH, $bCMS, $_POST['projects_id']);
+changeStatus($_POST['projects_id'],$_POST['projects_status']);
 
 //Update any sub-projects that follow their parent project's status
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
@@ -61,7 +62,7 @@ $DBLIB->where("projects.projects_status_follow_parent", 1);
 $subProjects = $DBLIB->get("projects", null, ["projects_id"]);
 
 foreach ($subProjects as $key => $value) {
-    changeStatus($DBLIB, $AUTH, $bCMS, $value['projects_id']);
+    changeStatus($value['projects_id'],$_POST['projects_status']);
 }
 
 finish(true, null, ["changed" => true]);
