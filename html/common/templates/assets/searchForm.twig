@@ -4,46 +4,46 @@
     {% if PUBLIC %}
         <input type="hidden" name="public" value="true" />{# Nothing too exciting, just makes sure  #}
     {% endif %}
-    <div class="form-group" id="group-actions">
+    <div class="form-group">
         <button type="submit" class="btn btn-default btn-outline-success">Search</button>
         <button type="reset" class="btn btn-default btn-outline-danger">Clear</button>
         {% if PUBLIC != true %}
             <a href="{{ CONFIG.USERGUIDEURL }}assets/finding-assets/" target="_blank" type="button" class="btn btn-default btn-outline-info">Help</a>
         {% endif %}
     </div>
-    <div class="form-group" id="group-keywords">
+    <div class="form-group">
         <label>Keywords (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="keyword[]"></select>
     </div>
     {% if not PUBLIC %}
-    <div class="form-group" id="group-tags">
+    <div class="form-group">
         <label>Tags (comma separated)</label>
         <select class="form-control select2bs4" multiple="multiple" name="tags[]"></select>
     </div>
     {% endif %}
-    <div class="form-group" id="group-category">
+    <div class="form-group">
         <label>Category</label>
         <select class="form-control select2bs4" multiple name="category[]"></select>
     </div>
-    <div class="form-group" id="group-manufacturers">
+    <div class="form-group">
         <label>Manufacturer</label>
         <select class="form-control select2bs4" multiple name="manufacturer[]"></select>
     </div>
     {% if AUTH.login %}
-    <div class="form-group" id="group-groups">
+    <div class="form-group">
         <label>Group</label>
         <select class="form-control select2bs4" name="group[]" multiple></select>
     </div>
     {% endif %}
     {% if AUTH.login or instancePublicData.enableAssetAvailability %}
-    <div class="form-group" id="group-availability">
+    <div class="form-group">
         <label>Show availability between</label>
         <input type="text" class="form-control" name="dates" />
     </div>
     {% endif %}
     {% block formExtras %}
     {% endblock %}
-    <div class="form-group" id="group-limit">
+    <div class="form-group">
         <label>Page Limit</label>
         <select class="form-control select2 select2bs4" name="page_limit">
             <option>10</option>
@@ -52,7 +52,7 @@
             <option>100</option>
         </select>
     </div>
-    <div class="form-group" id="group-sort">
+    <div class="form-group">
         <label>Sort by</label>
         <select class="form-control select2 select2bs4" name="sort">
             {% if AUTH.login or instancePublicData.enableAssetsPrices %}
