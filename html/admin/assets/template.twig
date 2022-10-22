@@ -823,18 +823,6 @@
     </footer>
 </div>
 <script>
-    function showSearch(projectId = null) {
-        if (projectId) { //we know the project id so hide some options
-            $("#deepSearchAssetForm").find("#group-availability").hide();
-            $("#deepSearchAssetForm").find("#group-project").find("option").removeAttr('selected').filter('[value=' + projectId + ']').prop('selected', true); //select given id as project id
-            $("#deepSearchAssetForm").find("#group-project").hide();
-        } else {
-            $("#deepSearchAssetForm").find("#group-availability").show();
-            $("#deepSearchAssetForm").find("#group-project").show();
-        }
-        $(this).ControlSidebar('toggle');
-    }
-
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover({
             html: true,
@@ -854,7 +842,6 @@
                 //Trigger the theme change in js so that other plugins can change their theme
                 $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
                 $(document).trigger("themeChange", 'dark');
-                $('#assetSearchSidebar').removeClass("control-sidebar-light").addClass("control-sidebar-dark");
                 $('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
                 $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon-white.png");
                 $('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
@@ -864,7 +851,6 @@
                 //Trigger the theme change in js so that other plugins can change their theme
                 $(document).trigger("themeChange", 'light');
                 $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
-                $('#assetSearchSidebar').removeClass("control-sidebar-dark").addClass("control-sidebar-light");
                 $('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
                 $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon.png");
                 $('.brand-link').removeClass("navbar-dark").addClass("navbar-white");

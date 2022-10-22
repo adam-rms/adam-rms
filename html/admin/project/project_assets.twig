@@ -59,9 +59,6 @@
                     <a type="button" class="btn btn-tool" href="{{ CONFIG.USERGUIDEURL }}projects/assets" target="_blank">Help</a>
                 </div>
             </li>
-            {% if project.projectsTypes_config_assets == 1 and 31|instancePermissions %}
-                <li class="nav-item ml-auto"><a class="nav-link" onclick="showSearch({{project.projects_id}})" href="#"><i class="fas fa-plus"></i><span class="d-none d-lg-inline"> Add Assets</span></a></li>
-            {% endif %}
         </ul>
     </div>
     <div class="card-body p-0">
