@@ -414,7 +414,9 @@
                                         fillColor: '#F5F5F5',
                                         colSpan: {{ GET['prices'] ? 4 : 2 }},
                                         margin: 3
-                                    }],
+                                    },
+                                    {% for i in range(2, (GET['prices'] ? 4 : 2)) %}{},{% endfor %}
+                                    ],
                                 {% endif %}
                                 [
                                     "{{ payment.payments_quantity > 1 ? payment.payments_quantity ~ "x" : "" }}",
