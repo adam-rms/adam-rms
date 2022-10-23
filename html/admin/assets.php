@@ -16,6 +16,7 @@ $DBLIB->setTrace(true, $_SERVER['SERVER_ROOT']);
 $SEARCH = [
     "INSTANCE_ID" => in_array($_GET['instance_id'],$AUTH->data['instance_ids']) ? $_GET['instance_id'] : $AUTH->data['instance']['instances_id'],
     "PROJECT_ID" => $_GET['project'] ?: false,
+    "PROJECT_REFERER" => $_GET['project_referer'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
     "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 20,
     "SETTINGS" => [

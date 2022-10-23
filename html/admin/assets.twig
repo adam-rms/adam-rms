@@ -3,6 +3,19 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
+        {% if searchResults.SEARCH.PROJECT_ID and searchResults.SEARCH.PROJECT_REFERER and searchResults.SEARCH.PROJECT_ID == searchResults.SEARCH.PROJECT_REFERER %}
+            {% for project in searchOptions.projects %}
+                {% if searchResults.SEARCH.PROJECT_ID == project.projects_id %}
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-pills">
+                                <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/project/?id={{project.projects_id}}#details-view"><i class="fas fa-arrow-left"></i> Back to <span style="font-weight:bold;">{{project.projects_name}}</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
         <form method="get" action="{{CONFIG.ROOTURL}}/assets.php" id="assetSearchForm">
             <div class="card">
                 <div class="card-header">
@@ -72,15 +85,18 @@
                         </div>
                         <div class="col-12 col-md-6 col-lg-4">
                             {% if 31|instancePermissions %}
-                            <div class="form-group">
-                                <label>Project to assign assets to</label>
-                                <select class="form-control select2 select2bs4" name="project">
-                                    <option value="">No project selected</option>
-                                    {% for project in searchOptions.projects %}
-                                        <option {{ searchResults.SEARCH.PROJECT_ID == project.projects_id ? 'selected' : '' }}  value="{{ project.projects_id }}">{{ project.projects_name }}{{ project.clients_name ? " | " ~ project.clients_name : "" }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                                <div class="form-group">
+                                    <label>Project to assign assets to</label>
+                                    <select class="form-control select2 select2bs4" name="project">
+                                        <option value="">No project selected</option>
+                                        {% for project in searchOptions.projects %}
+                                            <option {{ searchResults.SEARCH.PROJECT_ID == project.projects_id ? 'selected' : '' }}  value="{{ project.projects_id }}">{{ project.projects_name }}{{ project.clients_name ? " | " ~ project.clients_name : "" }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% if searchResults.SEARCH.PROJECT_ID == searchResults.SEARCH.PROJECT_REFERER %}
+                                    <input type="hidden" name="project_referer" value="{{ searchResults.SEARCH.PROJECT_REFERER }}">
+                                {% endif %}
                             {% else %}
                             <div class="form-group">
                                 <label>Show availability between</label>
