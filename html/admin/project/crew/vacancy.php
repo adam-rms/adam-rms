@@ -27,6 +27,18 @@ $role['application'] = $DBLIB->getOne("projectsVacantRolesApplications",["projec
 $role['projectsVacantRoles_questions'] = json_decode($role['projectsVacantRoles_questions'],true);
 $PAGEDATA['role'] = $role;
 
+// Users for security settings
+if ($PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'] != null) {
+  $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
+  $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
+  $DBLIB->where("instancePositions.instances_id",  $AUTH->data['instance']['instances_id']);
+  $DBLIB->where("userInstances.userInstances_deleted",  0);
+  $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
+  $DBLIB->where("users.users_userid", explode(",", $PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers']),"IN");
+  $PAGEDATA['role']['canViewApplications'] = $DBLIB->get("users", null, ["users.users_userid", "users.users_name1", "users.users_name2"]);
+} else $PAGEDATA['role']['canViewApplications'] = [];
+
+
 $PAGEDATA['pageConfig'] = ["TITLE" => 'Crew Vacancy: ' . $role['projects_name'] . ' - ' . $role['projectsVacantRoles_name'], "BREADCRUMB" => true];
 
 echo $TWIG->render('project/crew/vacancy.twig', $PAGEDATA);

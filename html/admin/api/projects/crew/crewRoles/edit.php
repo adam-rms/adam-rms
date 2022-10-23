@@ -37,7 +37,8 @@ if (strlen($array['projectsVacantRoles_id']) <1 and $array['projectsVacantRoles_
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects_id", $array['projects_id']);
-if (!$DBLIB->getone("projects",["projects_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No project for action"]);
+$project = $DBLIB->getone("projects",["projects_id","projects_manager"]);
+if (!$project) finish(false, ["code" => "PARAM-ERROR", "message"=> "No project for action"]);
 
 if ($array['projectsVacantRoles_id'] == "NEW") {
     $array['projectsVacantRoles_id'] = null;
@@ -48,16 +49,14 @@ if ($array['projectsVacantRoles_id'] == "NEW") {
     finish(true);
 } else {
     unset($array['projects_id']); //Don't allow them to change project for a role
-
+    if ($project['projects_manager'] != $AUTH->data["users_userid"]) {
+        // Only the PM can edit these settings
+        unset($array['projectsVacantRoles_visibleToGroups']);
+        unset($array['projectsVacantRoles_privateToPM']);
+    }
+ 
     $DBLIB->where("projectsVacantRoles_deleted", 0);
     $DBLIB->where("projectsVacantRoles_id",$array['projectsVacantRoles_id']);
-    $projectVacantRole = $DBLIB->getone("projectsVacantRoles", ["projectsVacantRoles_id","projectsVacantRoles_privateToPM"]);
-    if (!$projectVacantRole) finish(false);
-
-    if ($projectVacantRole['projectsVacantRoles_privateToPM'] == 1) $array['projectsVacantRoles_privateToPM'] = 1; //Prevent applications being made visible to others once locked to the PM
-
-    $DBLIB->where("projectsVacantRoles_deleted", 0);
-    $DBLIB->where("projectsVacantRoles_id",$projectVacantRole['projectsVacantRoles_id']);
     $update = $DBLIB->update("projectsVacantRoles", $array,1);
     if (!$update) finish(false);
 

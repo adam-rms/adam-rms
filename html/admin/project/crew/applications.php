@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../common/headSecure.php';
 
 if (!$AUTH->instancePermissionCheck(123)) die($TWIG->render('404.twig', $PAGEDATA));
 
-
 $DBLIB->where("projectsVacantRoles_deleted",0);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
@@ -12,8 +11,12 @@ $DBLIB->where("projectsVacantRoles_id",$_GET['id']);
 $PAGEDATA['role'] = $DBLIB->getOne("projectsVacantRoles");
 if (!$PAGEDATA['role']) die($TWIG->render('404.twig', $PAGEDATA));
 
-if ($PAGEDATA['role']['projectsVacantRoles_privateToPM'] == 1 and $PAGEDATA['role']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
-elseif ($PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'] != null and !in_array($AUTH->data["users_userid"], explode(",",$PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'])))  die($TWIG->render('404.twig', $PAGEDATA));
+if ($role['projectsVacantRoles_privateToPM'] == 1) {
+    if ($PAGEDATA['project']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
+} elseif ($role['projectsVacantRoles_applicationVisibleToUsers'] != null) {
+    if (!in_array($AUTH->data["users_userid"], explode(",",$role['projectsVacantRoles_applicationVisibleToUsers'])) and $PAGEDATA['project']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
+}
+
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['role']['projectsVacantRoles_name'] . " - Applications | " . $PAGEDATA['role']['projects_name'], "BREADCRUMB" => false];
 

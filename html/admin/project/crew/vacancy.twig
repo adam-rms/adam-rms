@@ -173,7 +173,16 @@
                     <hr/>
                     <p>Please check your application carefully before submitting, you cannot modify it after submission</p>
                     {% if role.projectsVacantRoles_privateToPM == 1 %}
-                    <p>This application will only be shared with the Project Manager of the Project. Currently this is {{ role.users_name1 ~ " " ~ role.users_name2 }}, but if this is changed your application will be shared with the new Project Manager as well</p>
+                    <p>This application will only be shared with the Project Manager of the Project who can choose who to share your application with later. Currently the project manager, {{ role.users_name1 ~ " " ~ role.users_name2 }}, has not chosen to share it with anyone, but they could change this or the project manager could change. Please contact them if you have any questions.</p>
+                    {% elseif role.canViewApplications %}
+                    <p>This application will be shared the current project manager and whoever they chose to share it with - please contact them if you have any questions. <br/>Currently they are sharing it with:
+                    <ul>
+                        <li>Project Manager: {{ role.users_name1 ~ " " ~ role.users_name2 }}</li>
+                        {% for user in role.canViewApplications %}
+                            <li>{{ user.users_name1 ~ " " ~ user.users_name2 }}</li>
+                        {% endfor %}
+                    </ul>
+                    </p>
                     {% else %}
                     <p>This application will be shared with those who have permission to "Manage Crew Recruitment for a Project" in your Business</p>
                     {% endif %}
