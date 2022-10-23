@@ -269,15 +269,6 @@
                 </div>
             </div>
         </form>
-        {% if thisProject %}
-        <ul class="navbar-nav d-none d-md-block">
-            <li class="nav-item text-nowrap">
-                <a href="{{ CONFIG.ROOTURL }}/project/?id={{thisProject.projects_id}}" class="nav-link" id="currentlySelectedProjectInNavbar">
-                    {% if thisProject.projects_parent_project_id %}&#8627; {% endif %}{{ thisProject.projects_name }}
-                </a>
-            </li>
-        </ul>
-        {% endif %}
         <ul class="navbar-nav ml-auto">
             {% if USERDATA.instances|length > 0 %}
                 <li class="nav-item text-nowrap dropdown">
@@ -326,12 +317,6 @@
             <li class="nav-item">
                 <a href="#" class="nav-link" id="toggle-theme" title="Toggle Theme Color">
                     <i class="fas {% if USERDATA.users_dark_mode %}fa-sun{%else%}fa-moon{% endif %}" id="theme-icon"></i>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#">
-                    <i class="fas fa-warehouse"></i>
                 </a>
             </li>
         </ul>
@@ -604,9 +589,9 @@
                     {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
-                        <a data-widget="control-sidebar" data-slide="true" href="#" class="nav-link">
+                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
                             <i class="nav-icon fas fa-warehouse"></i>
-                            <p>Search Assets</p>
+                            <p>Assets</p>
                         </a>
                     </li>
                     {% if 17|instancePermissions %}
@@ -811,10 +796,8 @@
         </div>
         <div class="content">
             <div class="container-fluid">
-                <div id="pageContent">
-                    {% block content %}
-                    {% endblock %}
-                </div>
+                {% block content %}
+                {% endblock %}
             </div><!-- /.container-fluid -->
         </div><!-- /.content -->
     </div><!-- /.content-wrapper -->
@@ -829,51 +812,11 @@
         <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://bithell.studio">Bithell Studios Ltd</a>.</strong> All rights
         reserved.
     </footer>
-
-
-    <aside class="control-sidebar {% if USERDATA.users_dark_mode %}control-sidebar-dark{% else %}control-sidebar-light{% endif %}" id="assetSearchSidebar">
-        <!-- Control sidebar content goes here -->
-        <div class="p-3 control-sidebar-content">
-            <h5>Search assets</h5>
-            {% embed 'assets/searchForm.twig' with {'instance': USERDATA.instance.instances_id } %}
-                {% block formExtras %}
-                    {% if projects and 31|instancePermissions %}
-                    <div class="form-group">
-                        <label>Or, shop for project</label>
-                        <select class="form-control select2 select2bs4" name="projectid" id="projectIdSelectorForAssetSearch">
-                            {% for project in projects %}
-                                {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
-                                    <option {% if USERDATA.users_selectedProjectID == project.projects_id %}selected{% endif %} value="{{ project.projects_id }}">{{ project.projects_name }}</option>
-                                {% endif %}
-                            {% endfor %}
-                            {% if thisProject %}
-                                 <option selected value="{{ thisProject.projects_id }}">{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</option>
-                            {% endif %}
-                        </select>
-                    </div>
-                    {% elseif thisProject %}
-                        <div class="form-group">
-                            <label>Show availability for project</label>
-                            <p>{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</p>
-                        </div>
-                    {% endif %}
-                {% endblock %}
-            {% endembed %}
-        </div>
-    </aside>
 </div>
 <script>
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover({
             html: true,
-        });
-        $(document).on("click",".changeProjectBasket[data-projectid]", function () {
-            var project = $(this).data("projectid");
-            ajaxcall("projects/changeSelectedProject.php", {
-                "projectid": project
-            }, function (data) {
-                location.reload();
-            });
         });
 
         function changeTheme(isDark){
@@ -882,7 +825,6 @@
                 //Trigger the theme change in js so that other plugins can change their theme
                 $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
                 $(document).trigger("themeChange", 'dark');
-                $('#assetSearchSidebar').removeClass("control-sidebar-light").addClass("control-sidebar-dark");
                 $('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
                 $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon-white.png");
                 $('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
@@ -892,7 +834,6 @@
                 //Trigger the theme change in js so that other plugins can change their theme
                 $(document).trigger("themeChange", 'light');
                 $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
-                $('#assetSearchSidebar').removeClass("control-sidebar-dark").addClass("control-sidebar-light");
                 $('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
                 $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon.png");
                 $('.brand-link').removeClass("navbar-dark").addClass("navbar-white");
@@ -923,7 +864,6 @@
             //Change Theme
             changeTheme(theme == "dark");
         });
-
 
         {% if 21|instancePermissions %}
         $(".newProjectButton").click(function () {

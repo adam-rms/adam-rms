@@ -32,7 +32,7 @@
                             <tbody>
                             {% for manufacturer in manufacturers %}
                                 <tr>
-                                    <td>{{ manufacturer.manufacturers_name }}</td>
+                                    <td><a href="{{CONFIG.ROOTURL}}/assets.php?manufacturer%5B%5D={{ manufacturer.manufacturers_id }}&showlinked=1&showarchived=1">{{ manufacturer.manufacturers_name }}</a></td>
                                     <td><a href="{{ manufacturer.manufacturers_website }}" target="_blank">{{ manufacturer.manufacturers_website }}</a></td>
                                     <td>{{  manufacturer.manufacturers_notes|nl2br }}</td>
                                 </tr>

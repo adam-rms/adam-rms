@@ -67,7 +67,7 @@ class assetAssignmentSelector
         if ($assignmentid) $DBLIB->where("assetsAssignments_id", $assignmentid);
         elseif ($linkedassigmentid) $DBLIB->where("assetsAssignments_linkedTo", $linkedassigmentid);
         else return false;
-        $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+        $DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
         $DBLIB->where("projects.projects_deleted", 0);
         $DBLIB->where("assets_deleted", 0);
         $DBLIB->where("assetsAssignments_deleted", 0);

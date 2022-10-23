@@ -14,16 +14,9 @@
                             <button type="submit" class="btn btn-lg btn-default">
                                 <i class="fa fa-search"></i> Search
                             </button>
-                            <button type="button" class="btn btn-lg btn-default" id="searchFormAssetButton" data-widget="control-sidebar" data-controlsidebar-slide="true">
+                            <a href="{{ CONFIG.ROOTURL }}/assets.php" type="button" class="btn btn-lg btn-default">
                                 Search Assets
-                            </button>                            
-                            <script>
-                                $(document).ready(function() {
-                                    $("body").on("click", "#searchFormAssetButton", function(e) {
-                                        $("select[name='keyword[]']").val(null).append(new Option("{{term}}", 1, true, true)).trigger("change");
-                                    });
-                                })
-                            </script>
+                            </a>
                         </div>
                     </div>
                 </div>
