@@ -5,10 +5,12 @@ if (!$AUTH->instancePermissionCheck(123)) die("404");
 
 $array = [];
 $array['projectsVacantRoles_visibleToGroups'] = [];
+$array['projectsVacantRoles_applicationVisibleToUsers'] = [];
 foreach ($_POST['formData'] as $item) {
     if ($item['value'] == '') $item['value'] = null;
 
     if ($item['name'] == 'projectsVacantRoles_visibleToGroups') array_push($array['projectsVacantRoles_visibleToGroups'],$item['value']);
+    if ($item['name'] == 'projectsVacantRoles_applicationVisibleToUsers') array_push($array['projectsVacantRoles_applicationVisibleToUsers'],$item['value']);
     else $array[$item['name']] = $item['value'];
 }
 
@@ -25,6 +27,9 @@ if ($array['projectsVacantRoles_visibleToGroups'] == []){
     //Visible to specified groups so can't be public
     $array['projectsVacantRoles_showPublic'] = 0;
 } 
+
+if ($array['projectsVacantRoles_applicationVisibleToUsers'] == []) $array['projectsVacantRoles_applicationVisibleToUsers'] = null;
+else $array['projectsVacantRoles_applicationVisibleToUsers'] = implode(",",$array['projectsVacantRoles_applicationVisibleToUsers']);
 
 if ($array['projectsVacantRoles_deadline']) $array['projectsVacantRoles_deadline'] = date("Y-m-d H:i:s",strtotime($array['projectsVacantRoles_deadline']));
 

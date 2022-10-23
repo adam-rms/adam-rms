@@ -22,6 +22,11 @@ foreach($roles as $role) {
     $DBLIB->where("projectsVacantRolesApplications_withdrawn",0);
     $role['applications'] = $DBLIB->getvalue("projectsVacantRolesApplications","count(*)");
     $role['projectsVacantRoles_questionsArray'] = json_decode($role['projectsVacantRoles_questions'],true);
+
+    if ($role['projectsVacantRoles_privateToPM'] == 1 and $PAGEDATA['project']['projects_manager'] != $AUTH->data["users_userid"]) $role['canViewApplications'] = false;
+    elseif ($role['projectsVacantRoles_applicationVisibleToUsers'] != null and !in_array($AUTH->data["users_userid"], explode(",",$role['projectsVacantRoles_applicationVisibleToUsers']))) $role['canViewApplications'] = false;
+    else $role['canViewApplications'] = true;
+
     $PAGEDATA['roles'][] = $role;
 }
 

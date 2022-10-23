@@ -11,7 +11,9 @@ $DBLIB->join("projects","projectsVacantRoles.projects_id=projects.projects_id","
 $DBLIB->where("projectsVacantRoles_id",$_GET['id']);
 $PAGEDATA['role'] = $DBLIB->getOne("projectsVacantRoles");
 if (!$PAGEDATA['role']) die($TWIG->render('404.twig', $PAGEDATA));
-elseif ($PAGEDATA['role']['projects_manager'] != $AUTH->data["users_userid"] and $PAGEDATA['role']['projectsVacantRoles_privateToPM'] == 1) die($TWIG->render('404.twig', $PAGEDATA));
+
+if ($PAGEDATA['role']['projectsVacantRoles_privateToPM'] == 1 and $PAGEDATA['role']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
+elseif ($PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'] != null and !in_array($AUTH->data["users_userid"], explode(",",$PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'])))  die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['role']['projectsVacantRoles_name'] . " - Applications | " . $PAGEDATA['role']['projects_name'], "BREADCRUMB" => false];
 
