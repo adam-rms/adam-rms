@@ -53,18 +53,18 @@
                         {{ role.projectsVacantRoles_deadline ? role.projectsVacantRoles_deadline|date("d M Y h:ia") : '' }}
                     </td>
                     <td>
-                        {{ role.projectsVacantRoles_slots-role.projectsVacantRoles_slotsFilled }}
+                        {{ role.projectsVacantRoles_slots - role.projectsVacantRoles_slotsFilled }}
                     </td>
                     <td class="project-actions text-right">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#infoModal{{ role.projectsVacantRoles_id }}">More Info</button>
+                            <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">More Info</a>
                             {% if role.users_userid == USERDATA.users_userid %}
-                            <a href="vacantCrew.php?id={{ role.projects_id }}" class="btn btn-secondary btn-sm">Manage</a>
+                                <a href="vacantCrew.php?id={{ role.projects_id }}" class="btn btn-secondary btn-sm">Manage</a>
                             {% endif %}
                             {% if role.application %}
                                 <button type="button" class="btn btn-default btn-sm" disabled>Applied</button>
                             {% else %}
-                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#applyModal{{ role.projectsVacantRoles_id }}">Apply</button>
+                                <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">Apply</a>
                             {% endif %}
                         </div>
                     </td>
@@ -74,147 +74,4 @@
         </table>
     </div>
 </div>
-{% for role in roles %}
-<div class="modal fade" id="infoModal{{ role.projectsVacantRoles_id }}">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">{{ role.projects_name}} - {{ role.projectsVacantRoles_name }}</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h4>Project Manager</h4>
-                <p>{% if 52|instancePermissions %}
-                <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ role.projects_manager }}">
-                    {% endif %}
-                    {{role.users_name1 ~ " " ~ role.users_name2 ~ " (" ~ role.users_email ~ ")" }}
-                    {% if 52|instancePermissions %}
-                </a>
-                {% endif %}</p>
-                <h4>Description</h4>
-               <p>{{ role.projectsVacantRoles_description|nl2br }}</p>
-                <h4>Person Specification</h4>
-                <p>{{ role.projectsVacantRoles_personSpecification|nl2br }}</p>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="applyModal{{ role.projectsVacantRoles_id }}">
-    <div class="modal-dialog  modal-lg">
-        <form class="applyForm" data-id="{{ role.projectsVacantRoles_id }}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{ role.projects_name}} - {{ role.projectsVacantRoles_name }}</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="projectsVacantRoles_id" value="{{ role.projectsVacantRoles_id }}"/>
-                    <div class="input-group" style="margin-bottom: 5px;">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Name</span>
-                        </div>
-                        <input type="text" disabled class="form-control" value="{{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 5px;">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Email</span>
-                        </div>
-                        <input type="email" disabled class="form-control" value="{{ USERDATA.users_email }}">
-                    </div>
-                    {% if role.projectsVacantRoles_collectPhone == 1 %}
-                    <div class="input-group" style="margin-bottom: 5px;">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Phone</span>
-                        </div>
-                        <input type="tel" class="form-control" name="projectsVacantRolesApplications_phone" value="">
-                    </div>
-                    {% endif %}
-                    {% if role.projectsVacantRoles_questions %}
-                    <hr />
-                    <h4>Application Questions</h4>
-                        <div class="applicationQuestions" data-id="{{ role.projectsVacantRoles_id }}">
-                        {% for question in role.projectsVacantRoles_questions %}
-                            <div class="form-group" style="margin-bottom: 5px;">
-                                <label class="text-wrap p-2 border rounded w-100 bg-light mb-1" for="{{ question.name|escape("html_attr")}}">{{ question.name }}</label>
-                                {% if question.type == "textarea" %}
-                                    <textarea id="{{ question.name|escape("html_attr")}}" class="form-control applicationQuestion" data-question="{{ question.name|escape("html_attr") }}" placeholder="{{ question.placeholder|escape("html_attr")}}" rows="10"></textarea>
-                                {% else %}
-                                    <input type="{{ question.type }}" id="{{ question.name|escape("html_attr")}}"  class="form-control applicationQuestion" data-question="{{ question.name|escape("html_attr") }}" placeholder="{{ question.placeholder|escape("html_attr")}}" />
-                                {% endif %}
-                            </div>
-                            <p>{{ question.notes|nl2br }}</p>
-                            <hr/>
-                        {% endfor %}
-                        </div>
-                    {% endif %}
-                    {% if role.projectsVacantRoles_fileUploads == 1 %}
-                        <h4>Application File Attachments</h4>
-                        <input type="hidden" name="projectsVacantRolesApplications_files" data-id="{{ role.projectsVacantRoles_id }}" value="" />
-                        {% embed 'common/plugins/uppy.twig' with {'type': 'VACANTROLEAPPLICATION-FILE', 'paste': true, 'typeId': 18, 'subTypeId':role.projectsVacantRoles_id, 'imagesOnly': false } %}
-                            {% block success %}
-                                var filesArray = $('input[name="projectsVacantRolesApplications_files"][data-id="{{ role.projectsVacantRoles_id }}"]').val();
-                                if (filesArray) {
-                                    filesArray = filesArray.split(",");
-                                } else {
-                                    filesArray = [];
-                                }
-                                filesArray.push(responseJson.id);
-                                filesArray = filesArray.join(",");
-                                console.log(filesArray);
-                                $('input[name="projectsVacantRolesApplications_files"][data-id="{{ role.projectsVacantRoles_id }}"]').val(filesArray);
-                            {% endblock %}
-                        {% endembed %}
-                    {% endif %}
-                    <hr/>
-                    <h4>Comments</h4>
-                    <div class="form-group">
-                        <textarea type="text" class="form-control" placeholder="Anything you'd like to add?" name="projectsVacantRolesApplications_applicantComment" rows="3"></textarea>
-                    </div>
-                    <hr/>
-                    <p>Please check your application carefully before submitting, you cannot modify it after submission</p>
-                    {% if role.projectsVacantRoles_privateToPM == 1 %}
-                    <p>This application will only be shared with the Project Manager of the Project. Currently this is {{ role.users_name1 ~ " " ~ role.users_name2 }}, but if this is changed your application will be shared with the new Project Manager as well</p>
-                    {% else %}
-                    <p>This application will be shared with those who have permission to "Manage Crew Recruitment for a Project" in your Business</p>
-                    {% endif %}
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Apply</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-{% endfor %}
-<script>
-    $(document).ready(function () {
-        $(".applyForm").submit(function (event) {
-            var formData = $(".applyForm[data-id=" + $(this).data("id") + "]").serializeArray();
-            event.preventDefault();
-
-            var questions = [];
-            $( '.applicationQuestions[data-id="'  + $(this).data("id") +  '"] input, .applicationQuestions[data-id="'  + $(this).data("id") +  '"] textarea').each(function( index ) {
-                questions.push({
-                    "name": $(this).data("question"),
-                    "value": $(this).val(),
-                });
-            });
-            formData.push({"name": "projectsVacantRolesApplications_questionAnswers", "value":JSON.stringify(questions)});
-
-            ajaxcall("projects/crew/crewRoles/apply.php", {formData}, function (data) {
-                bootbox.alert("Application Successfully Submitted", function(){
-                    location.reload();
-                });
-            });
-        });
-    });
-</script>
 {% endblock %}
