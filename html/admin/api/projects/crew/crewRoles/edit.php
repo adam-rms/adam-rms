@@ -10,7 +10,7 @@ foreach ($_POST['formData'] as $item) {
     if ($item['value'] == '') $item['value'] = null;
 
     if ($item['name'] == 'projectsVacantRoles_visibleToGroups') array_push($array['projectsVacantRoles_visibleToGroups'],$item['value']);
-    if ($item['name'] == 'projectsVacantRoles_applicationVisibleToUsers') array_push($array['projectsVacantRoles_applicationVisibleToUsers'],$item['value']);
+    else if ($item['name'] == 'projectsVacantRoles_applicationVisibleToUsers') array_push($array['projectsVacantRoles_applicationVisibleToUsers'],$item['value']);
     else $array[$item['name']] = $item['value'];
 }
 
