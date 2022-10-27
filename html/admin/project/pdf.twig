@@ -6,15 +6,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.6/vfs_fonts.min.js" integrity="sha512-P0bOMePRS378NwmPDVPU455C/TuxDS+8QwJozdc7PGgN8kLqR4ems0U/3DeJkmiE31749vYWHvBOtR+37qDCZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         var docDefinition = {
-            images: {
-                {% if USERDATA.instance.instances_logo and GET['instancelogo'] %}
-                    logo: "{{ USERDATA.instance.instances_logo|s3URL("medium")|escape("js") }}",
-                {% endif %}
-            },
             content: [
-                {% if USERDATA.instance.instances_logo and GET['instancelogo'] %}
+                {% if INSTANCELOGO %}
                 {
-                    image: 'logo',
+                    image: "{{ INSTANCELOGO|escape("js") }}",
                     width: 200,
                     margin: [157, 0, 0, 20]
                 },
