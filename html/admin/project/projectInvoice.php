@@ -20,4 +20,8 @@ if ($count) $fileNumber = ($count+1);
 else $fileNumber = 1;
 $PAGEDATA['fileNumber'] = $fileNumber;
 
+if ($PAGEDATA['USERDATA']['instance']['instances_logo'] and $PAGEDATA['GET']['instancelogo']) {
+    $PAGEDATA['INSTANCELOGO'] = $bCMS->s3DataUri($PAGEDATA['USERDATA']['instance']['instances_logo'], "medium");
+} else $PAGEDATA['INSTANCELOGO'] = false;
+
 echo $TWIG->render('project/pdf.twig', $PAGEDATA);

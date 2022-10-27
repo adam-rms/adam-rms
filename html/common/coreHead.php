@@ -108,13 +108,53 @@ class bCMS {
         $DBLIB->orderBy($sort, $sortOrder);
         return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded","s3files_shareKey"]);
     }
+    function s3DataUri($fileid, $size = "comp") {
+        /**
+         * Returns a data URI for the file, upto a limit of 10MB. 
+         * The PDF library used to generate PDFs from HTML requires a data URI for images, so this is used to generate them. It can accept file URLs but misses the cors preflight when sending the request so fails CORS in the browser.
+         */
+        $file = $this->s3Passthrough($fileid, $size);
+        if (!$file) return false;
+
+        if ($file["type"] == "png") $type = "image/png";
+        elseif ($file["type"] == "jpg") $type = "image/jpeg";
+        elseif ($file["type"] == "jpeg") $type = "image/jpeg";
+        elseif ($file["type"] == "jfif") $type = "image/jpeg";
+        elseif ($file["type"] == "gif") $type = "image/gif";
+        elseif ($file["type"] == "heic") $type = "image/heic";
+        elseif ($file["type"] == "heif") $type = "image/heif";
+        else return false; // Only supports images
+
+        return 'data: '.$type.';base64,'.base64_encode($file['data']);
+    }
+    function s3Passthrough($fileid, $size = "comp") {
+        global $DBLIB;
+        $DBLIB->where("s3files_id", intval($fileid));
+        $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
+        $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
+        $DBLIB->where("s3files_meta_size", 10485760, "<="); //Limit files to 10mb for this function
+        $file = $DBLIB->getone("s3files", ["s3files_extension", "s3files_id"]);
+        if (!$file) return false;
+        
+        $url = $this->s3URL($file["s3files_id"], $size, false);
+        if (!$url) return false;
+        
+        $data = file_get_contents($url);
+        if (!$data) return false;
+
+        return [
+            "data" => $data,
+            "type" => $file["s3files_extension"],
+            "url" => $url
+        ];
+    }
     function s3URL($fileid, $size = "comp", $forceDownload = false, $expire = '+10 minutes', $shareKey = false) {
         global $DBLIB, $CONFIG,$AUTH;
         /*
          * File interface for Amazon AWS S3.
          *  Parameters
          *      f (required) - the file id as specified in the database
-         *      s (filesize) - false to get the original - available is "tiny" (100px) "small" (500px) "medium" (800px) "large" (1500px)
+         *      s (filesize) - false to get the original - available is "tiny" (100px) "small" (500px) "medium" (800px) "large" (1500px) "comp" (original size, compressed) "full" (original)
          *      d (optional, default false) - should a download be forced or should it be displayed in the browser? (if set it will download)
          *      e (optional, default 1 minute) - when should the link expire? Must be a string describing how long in words basically. If this file type has security features then it will default to 1 minute.
          */
