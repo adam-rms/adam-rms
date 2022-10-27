@@ -109,6 +109,10 @@ class bCMS {
         return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded","s3files_shareKey"]);
     }
     function s3DataUri($fileid, $size = "comp") {
+        /**
+         * Returns a data URI for the file, upto a limit of 10MB. 
+         * The PDF library used to generate PDFs from HTML requires a data URI for images, so this is used to generate them. It can accept file URLs but misses the cors preflight when sending the request so fails CORS in the browser.
+         */
         $file = $this->s3Passthrough($fileid, $size);
         if (!$file) return false;
 
