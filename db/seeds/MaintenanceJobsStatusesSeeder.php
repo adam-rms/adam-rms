@@ -34,6 +34,7 @@ class MaintenanceJobsStatusesSeeder extends AbstractSeed
             ]
         ];
         $table = $this->table('maintenanceJobsStatuses');
+        $table->truncate();
         $table->insert($data)
             ->saveData();
     }

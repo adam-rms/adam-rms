@@ -44,9 +44,11 @@ class PositionsSeeder extends AbstractSeed
         ];
 
         $table = $this->table('positionsGroups');
+        $table->truncate();
         $table->insert($positionGroups)
             ->saveData();
         $table = $this->table('positions');
+        $table->truncate();
         $table->insert($positions)
             ->saveData();
     }

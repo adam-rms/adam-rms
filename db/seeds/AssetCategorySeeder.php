@@ -342,9 +342,11 @@ class AssetCategorySeeder extends AbstractSeed
         ];
 
         $table = $this->table('assetCategoriesGroups');
+        $table->truncate();
         $table->insert($categoryGroupData)
             ->saveData();
         $table = $this->table('assetCategories');
+        $table->truncate();
         $table->insert($categoryData)
             ->saveData();
     }

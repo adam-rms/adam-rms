@@ -3634,6 +3634,7 @@ class ManufacturersSeeder extends AbstractSeed
             ]
         ];
         $table = $this->table('manufacturers');
+        $table->truncate();
         $table->insert($data)
             ->saveData();
     }
