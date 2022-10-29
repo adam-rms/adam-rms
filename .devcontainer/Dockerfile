@@ -4,11 +4,11 @@ FROM mcr.microsoft.com/vscode/devcontainers/php:0-${VARIANT}
 
 # Install MariaDB client
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y mariadb-client libicu-dev \ 
+    && apt-get install -y mariadb-client libicu-dev libzip-dev libpng-dev \ 
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install php-mysql driver
-RUN docker-php-ext-install mysqli pdo pdo_mysql intl
+RUN docker-php-ext-install mysqli pdo pdo_mysql intl zip gd
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
