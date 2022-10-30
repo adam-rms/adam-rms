@@ -40,9 +40,11 @@ $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT
 $assetIDs = $DBLIB->get("assets", null, $assetRequiredFields);
 
 function linkedAssets($assetId,$linkCount) {
-    global $DBLIB,$assetsToProcess,$assetRequiredFields,$project;
-    $DBLIB->where("assets_linkedTo", $assetId);
-    $DBLIB->where("assets_deleted", 0);
+    global $DBLIB,$assetsToProcess,$assetRequiredFields,$project,$assetsLinked;
+    array_push($assetsLinked,$assetId);
+    $DBLIB->where("assets.assets_linkedTo", $assetId);
+    $DBLIB->where("assets.assets_id", $assetsLinked, "NOT IN"); // Make sure an asset is not double counted
+    $DBLIB->where("assets.assets_deleted", 0);
     $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . $project["projects_dates_deliver_end"] . "')");
     $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
     $assets = $DBLIB->get("assets",null,$assetRequiredFields);
@@ -53,6 +55,7 @@ function linkedAssets($assetId,$linkCount) {
     }
 }
 $assetsToProcess = [];
+$assetsLinked = [];
 foreach ($assetIDs as $asset) {
     $asset['linkedto'] = false;
     $assetsToProcess[] = $asset;
