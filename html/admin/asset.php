@@ -102,9 +102,12 @@ if (count($PAGEDATA['assets']) == 1) {
     } else $PAGEDATA['assets'][0]['link'] = false;
 
     $PAGEDATA['assets'][0]['linkedToThis'] = [];
+    $assetsLinked = [];
     function linkedAssets($assetId,$tier) {
-        global $DBLIB,$PAGEDATA;
-        $DBLIB->where("assets_linkedTo", $assetId);
+        global $DBLIB,$PAGEDATA, $assetsLinked;
+        array_push($assetsLinked,$assetId);
+        $DBLIB->where("assets.assets_linkedTo", $assetId);
+        $DBLIB->where("assets.assets_id", $assetsLinked, "NOT IN"); // Make sure an asset is not double counted causing an infinite loop
         $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
         $assets = $DBLIB->get("assets",null,["assets_tag","assets_id","assetTypes_name","assets.assetTypes_id"]);
         $tier+=1;
@@ -115,6 +118,7 @@ if (count($PAGEDATA['assets']) == 1) {
         }
     }
     linkedAssets($PAGEDATA['assets'][0]['assets_id'],0);
+    unset($assetsLinked);
 
     //Groups
     if ($PAGEDATA['assets'][0]['assets_assetGroups']) {
