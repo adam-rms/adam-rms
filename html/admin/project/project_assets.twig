@@ -207,7 +207,7 @@
                     message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
                     inputType: 'number',
                     min: 0,
-                    step: 1,
+                    step: 0.01,
                     callback: function (result) {
                         if (result) {
                             ajaxcall("projects/assets/setPrice.php", {
