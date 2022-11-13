@@ -457,7 +457,7 @@ $GLOBALS['STATUSES'] = [
     ],
     6 => [
         "name" => "Returned",
-        "description" => "Waiting to be checked in ",
+        "description" => "Waiting to be checked in",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#ffdd99",
         "order" => 6,
@@ -466,8 +466,8 @@ $GLOBALS['STATUSES'] = [
         "class" => "primary"
     ],
     7 => [
-        "name" => "Closed",
-        "description" => "Pending move to Archive",
+        "name" => "Payment Pending",
+        "description" => "Invoice sent, awaiting payment",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
         "order" => 7,
@@ -476,21 +476,31 @@ $GLOBALS['STATUSES'] = [
         "class" => "secondary"
     ],
     8 => [
+        "name" => "Closed",
+        "description" => "Pending move to Archive",
+        "foregroundColour" => "#000000",
+        "backgroundColour" => "#F5F5F5",
+        "order" => 8,
+        "assetsAvailable" => false,
+        "isCancelled" => false,
+        "class" => "secondary"
+    ],
+    9 => [
         "name" => "Cancelled",
         "description" => "Project Cancelled",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
-        "order" => 8,
+        "order" => 9,
         "assetsAvailable" => true,
         "isCancelled" => true,
         "class" => "danger"
     ],
-    9 => [
+    10 => [
         "name" => "Lead Lost",
         "description" => "Project Cancelled",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#F5F5F5",
-        "order" => 9,
+        "order" => 10,
         "assetsAvailable" => true,
         "isCancelled" => true,
         "class" => "danger"
