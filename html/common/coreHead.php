@@ -457,7 +457,7 @@ $GLOBALS['STATUSES'] = [
     ],
     6 => [
         "name" => "Returned",
-        "description" => "Waiting to be checked in ",
+        "description" => "Waiting to be checked in",
         "foregroundColour" => "#000000",
         "backgroundColour" => "#ffdd99",
         "order" => 6,
