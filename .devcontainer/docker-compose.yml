@@ -27,7 +27,7 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
     environment: 
       - bCMS__DB_HOSTNAME=127.0.0.1
-      - bCMS__DB_DATABASE=database
+      - bCMS__DB_DATABASE=db
       - bCMS__DB_USERNAME=user
       - bCMS__DB_PASSWORD=pass
       - bCMS__ROOTURL=
@@ -45,8 +45,9 @@ services:
       - ./docker/mysql:/etc/mysql/conf.d
     restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=database
+      - MYSQL_DATABASE=db
       - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=pass
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
 volumes:
