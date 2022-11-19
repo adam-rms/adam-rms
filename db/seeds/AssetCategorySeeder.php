@@ -340,13 +340,13 @@ class AssetCategorySeeder extends AbstractSeed
                 "assetCategories_deleted"=> 0
             ]
         ];
+        
+        $this->execute("DELETE FROM assetCategoriesGroups");
 
         $table = $this->table('assetCategoriesGroups');
-        $table->truncate();
         $table->insert($categoryGroupData)
             ->saveData();
         $table = $this->table('assetCategories');
-        $table->truncate();
         $table->insert($categoryData)
             ->saveData();
     }

@@ -3633,8 +3633,10 @@ class ManufacturersSeeder extends AbstractSeed
                 "manufacturers_notes"=> null
             ]
         ];
+
+        $this->execute("DELETE FROM manufacturers");
+
         $table = $this->table('manufacturers');
-        $table->truncate();
         $table->insert($data)
             ->saveData();
     }

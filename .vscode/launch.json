@@ -1,33 +1,24 @@
 {
   "version": "0.2.0",
   "configurations": [
-      {
-          "name": "Seed Databse & Launch application",
-          "type": "php",
-          "request": "launch",
-          "presentation": {
-            "hidden": false,
-            "group": "Run AdamRMS",
-            "order": 1
-          },
-          "preLaunchTask": "Seed Database",
-          "program": "${workspaceFolder}/index.php",
-          "cwd": "${workspaceFolder}",
-          "port": 9000
-      },
-      {
-          "name": "Listen for XDebug",
-          "type": "php",
-          "request": "launch",
-          "port": 9000
-      },
-      {
-          "name": "Launch currently open script",
-          "type": "php",
-          "request": "launch",
-          "program": "${file}",
-          "cwd": "${fileDirname}",
-          "port": 9000
+    {
+      "name": "Launch AdamRMS with Debugger",
+      "type": "php",
+      "request": "launch",
+      "runtimeArgs": [
+        "-dxdebug.mode=debug",
+        "-dxdebug.start_with_request=yes",
+        "-S",
+        "localhost:8080"
+      ],
+      "program": "",
+      "cwd": "${workspaceRoot}/html/admin/",
+      "port": 9000,
+      "serverReadyAction": {
+        "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+        "uriFormat": "http://localhost:%s",
+        "action": "openExternally"
       }
+    },
   ]
 }

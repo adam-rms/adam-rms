@@ -43,13 +43,16 @@ class PositionsSeeder extends AbstractSeed
             ]
         ];
 
-        $table = $this->table('positionsGroups');
-        $table->truncate();
-        $table->insert($positionGroups)
+        $this->execute("DELETE FROM instances");
+        $this->execute("DELETE FROM positions");
+        $this->execute("DELETE FROM positionsGroups");
+
+        $positionsTable = $this->table('positions');
+        $positionsGroupsTable = $this->table('positionsGroups');
+
+        $positionsGroupsTable->insert($positionGroups)
             ->saveData();
-        $table = $this->table('positions');
-        $table->truncate();
-        $table->insert($positions)
+        $positionsTable->insert($positions)
             ->saveData();
     }
 }

@@ -27,14 +27,10 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
     environment: 
       - bCMS__DB_HOSTNAME=127.0.0.1
-      - bCMS__DB_DATABASE=mysql
-      - bCMS__DB_USERNAME=mysql
-      - bCMS__DB_PASSWORD=mysql
-<<<<<<< Updated upstream
-      - bCMS__ROOTURL=http://127.0.0.1:8080
-=======
+      - bCMS__DB_DATABASE=database
+      - bCMS__DB_USERNAME=user
+      - bCMS__DB_PASSWORD=pass
       - bCMS__ROOTURL=
->>>>>>> Stashed changes
       - bCMS__ASSETS_URL=https://cdn.adam-rms.com
       - bCMS__ERRORS=true
       - bCMS__DB_PORT=3306
@@ -49,9 +45,9 @@ services:
       - ./docker/mysql:/etc/mysql/conf.d
     restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=mysql
+      - MYSQL_DATABASE=database
       - MYSQL_ROOT_HOST=%
-      - MYSQL_USER=mysql
-      - MYSQL_PASSWORD=mysql
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
 volumes:
   db_data: null

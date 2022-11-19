@@ -23,13 +23,9 @@
 
 	"forwardPorts": [8080, "db:3306"],
 
-<<<<<<< Updated upstream
-	"postCreateCommand": "composer install && php vendor/bin/phinx migrate && php vendor/bin/phinx seed:run",
-=======
-	"postCreateCommand": "composer install && php vendor/bin/phinx migrate",
->>>>>>> Stashed changes
+	"postCreateCommand": "composer install",
 
-	"postStartCommand": "php -S localhost:8080 -t html/admin/",
+	"postStartCommand": "php vendor/bin/phinx migrate",
 
 	"remoteUser": "vscode"
 }

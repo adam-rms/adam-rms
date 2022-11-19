@@ -33,8 +33,10 @@ class MaintenanceJobsStatusesSeeder extends AbstractSeed
                 "maintenanceJobsStatuses_showJobInMainList"=> 0
             ]
         ];
+
+        $this->execute("DELETE FROM maintenanceJobsStatuses");
+
         $table = $this->table('maintenanceJobsStatuses');
-        $table->truncate();
         $table->insert($data)
             ->saveData();
     }
