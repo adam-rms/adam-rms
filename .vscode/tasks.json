@@ -2,6 +2,19 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Migrate Database",
+      "type": "shell",
+      "command": "php vendor/bin/phinx migrate",
+      "windows": {
+        "command": "vendor\\bin\\phinx migrate"
+      },
+      "presentation": {
+        "reveal": "always",
+        "close": false
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Seed Database",
       "type": "shell",
       "command": "php vendor/bin/phinx seed:run",
@@ -10,7 +23,7 @@
       },
       "presentation": {
         "reveal": "always",
-        "close": true
+        "close": false
       },
       "problemMatcher": []
     }
