@@ -23,7 +23,9 @@
 
 	"forwardPorts": [8080, "db:3306"],
 
-	"postCreateCommand": "composer install && php vendor/bin/phinx migrate",
+	"postCreateCommand": "composer install",
+	
+	"postStartCommand": "php vendor/bin/phinx migrate",
 
 	"remoteUser": "vscode"
 }
