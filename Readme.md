@@ -12,11 +12,21 @@
 ![GitHub](https://img.shields.io/github/release/adam-rms/adam-rms/all)
 
 
+
+
 AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast, written in PHP with the Twig Templating engine, and deployed using a pre-built docker container.
 
 It is available as a hosted solution or to be self-hosted as a docker container. 
 
 This repo is about the v1 release of the system, a PHP web app using Twig. It is still in active development, but most efforts have moved to the [v2 repo](https://github.com/adam-rms/adam-rms-v2).
+
+## Getting Started with this Repo
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?ref=main&repo=217888995)
+
+This repo has a configured devcontainer for use with GitHub Codespaces or VSCode. If you have a GitHub Codespaces subscription (paid), you can use this to get started with the project in the web, or if you have access to VSCode on your computer (free) you can get started by cloning the repo and opening it in VSCode, then [opening the project in a devcontainer](https://code.visualstudio.com/docs/devcontainers/tutorial).
+
+Full instructions for getting started with the project are available [on the website](https://adam-rms.com/docs/v1/contributor/repo/intro)
 
 ## Docker Images
 

@@ -52,6 +52,10 @@ class TestUserSeeder extends AbstractSeed
                 "userPositions_show"=> 1
             ]
         ];
+
+        $this->execute("DELETE FROM users");
+
+
         $user = $this->table('users');
         $user->insert($data)
             ->saveData();
