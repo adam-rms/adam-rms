@@ -57,9 +57,9 @@ class TestUserSeeder extends AbstractSeed
 
 
         $user = $this->table('users');
-        $assignTable = $this->table('userPositions');
         $user->insert($data)
             ->saveData();
+        $assignTable = $this->table('userPositions');
         $assignTable->insert($assign)
             ->saveData();
     }
