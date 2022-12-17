@@ -70,6 +70,7 @@ foreach ($locations as $index => $location) {
 
 
 $DBLIB->where("clients.clients_deleted", 0);
+$DBLIB->where("clients.clients_archived", 0);
 $DBLIB->where("clients.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->orderBy("clients.clients_name", "ASC");
 $PAGEDATA['clients'] = $DBLIB->get('clients');
