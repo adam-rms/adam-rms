@@ -2,11 +2,12 @@
 {% block content %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
+            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ CLIENT['clients_name'] and LOCATION['locations_name'] ? ' & ' : '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
             {% if CLIENT['clients_archived'] %}
-            <span class="badge badge-warning ml-2">Archived Client</span>
-            {% elseif LOCATION['locations_archived'] %}
-            <span class="badge badge-warning ml-2">Archived Location</span>
+            <span class="badge badge-warning ml-2">Client Archived</span>
+            {% endif %}
+            {% if LOCATION['locations_archived'] %}
+            <span class="badge badge-warning ml-2">Location Archived</span>
             {% endif %}
             <div class="card-tools">
                 <form class="input-group input-group-sm"  method="GET">
