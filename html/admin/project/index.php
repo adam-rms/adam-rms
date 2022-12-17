@@ -17,39 +17,50 @@ $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA["project"]['projects_name'], "BR
 //Edit Options - Client List
 if ($AUTH->instancePermissionCheck(22)) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-    $PAGEDATA['clients'] = $DBLIB->get("clients", null, ["clients_id", "clients_name"]);
+    $PAGEDATA['clients'] = $DBLIB->get("clients", null, ["clients_id", "clients_name", "clients_archived"]);
 }
 
 //Edit Options - Locations list
 if ($AUTH->instancePermissionCheck(30)) {
-    $PAGEDATA['allLocations'] = [];
+    $thisProjectLocationFound = false;
     $PAGEDATA['locations'] = [];
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("locations.locations_deleted", 0);
+    $DBLIB->where("locations.locations_archived", 0);
     $DBLIB->where("(locations_subOf IS NULL)");
     $DBLIB->orderBy("locations.locations_name", "ASC");
     $locations = $DBLIB->get('locations',null,["locations.*"]);
     function linkedLocations($locationId, $tier, $locationKey)
     {
-        global $DBLIB, $PAGEDATA, $AUTH, $bCMS;
+        global $DBLIB, $PAGEDATA, $AUTH, $bCMS, $thisProjectLocationFound;
         $DBLIB->where("locations_subOf", $locationId);
         $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
         $DBLIB->orderBy("locations.locations_name", "ASC");
+        $DBLIB->where("locations.locations_archived", 0);
         $DBLIB->where("locations.locations_deleted", 0);
         $locations = $DBLIB->get("locations", null, ["locations.*"]);
         $tier += 1;
         foreach ($locations as $location) {
             $location['tier'] = $tier;
-            $PAGEDATA['allLocations'][] = $location;
+            if ($location['locations_id'] == $PAGEDATA['project']['locations_id']) $thisProjectLocationFound = true;
             $PAGEDATA['locations'][$locationKey]['linkedToThis'][] = $location;
             linkedLocations($location['locations_id'], $tier, $locationKey);
         }
     }
     foreach ($locations as $index => $location) {
+        if ($location['locations_id'] == $PAGEDATA['project']['locations_id']) $thisProjectLocationFound = true;
         $PAGEDATA['locations'][] = $location;
-        $PAGEDATA['allLocations'][] = $location;
         $PAGEDATA['locations'][$index]['linkedToThis'] = [];
         linkedLocations($location['locations_id'], 0, $index);
+    }
+
+    if (!$thisProjectLocationFound) {
+        // The current location is presumably archived as we can't find it
+        $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
+        $DBLIB->where("locations.locations_id", $PAGEDATA['project']['locations_id']);
+        $DBLIB->where("locations.locations_deleted", 0);
+        $thisProjectLocation = $DBLIB->getOne('locations');
+        if ($thisProjectLocation) $PAGEDATA['locations'][] = $thisProjectLocation;
     }
 }
 

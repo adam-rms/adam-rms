@@ -12,7 +12,7 @@ if (isset($_GET['client'])) {
     $DBLIB->where("clients.clients_deleted", 0);
     $DBLIB->where("clients.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("clients.clients_id", $_GET['client']);
-    $PAGEDATA['CLIENT'] = $DBLIB->getone("clients", ["clients_id", "clients_name"]);
+    $PAGEDATA['CLIENT'] = $DBLIB->getone("clients", ["clients_id", "clients_name", "clients_archived"]);
     if ($PAGEDATA['CLIENT']) $PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['CLIENT']['clients_name'] . " Projects";
 } else $PAGEDATA['CLIENT'] = false;
 
@@ -21,7 +21,7 @@ if (isset($_GET['location'])) {
     $DBLIB->where("locations_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("locations_id", $_GET['location']);
-    $PAGEDATA['LOCATION'] = $DBLIB->getone("locations", ["locations_id", "locations_name"]);
+    $PAGEDATA['LOCATION'] = $DBLIB->getone("locations", ["locations_id", "locations_name", "locations_archived"]);
     if ($PAGEDATA['LOCATION']) $PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['LOCATION']['locations_name'] . " Projects";
 } else $PAGEDATA['LOCATION'] = false;
 
@@ -75,4 +75,3 @@ foreach ($projectlist as $project) {
     $PAGEDATA['PROJECTSLIST'][] = $project;
 }
 echo $TWIG->render('project/project_list.twig', $PAGEDATA);
-?>
