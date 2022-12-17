@@ -1,16 +1,21 @@
 {% extends "assets/template.twig" %}
 
 {% block content %}
-
-    <div class="row">
-        <div class="col-lg-12">
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the AdamRMS Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
             {% if 3|permissions %}
                 <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 15px;">
                     <h4><i class="fa fa-exclamation"></i> You have permission to view E-Mail addresses in this list</h4>
                     Please use caution and do not divulge these email addresses as per appropriate privacy policies
                 </div>
             {% endif %}
-        </div>
+		</div>
+	</div>
+    <div class="row">
         <div class="col-lg-12">
             <div class="card ">
                 <div class="card-header">
