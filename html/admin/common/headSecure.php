@@ -92,7 +92,7 @@ if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
     $DBLIB->where("cmsPages_archived",0);
     $DBLIB->where("cmsPages_showNav",1);
     $DBLIB->where("cmsPages_subOf",NULL,"IS");
-    if (isset($AUTH->data['instance']["instancePositions_id"])) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're bstudios staff
+    if (isset($AUTH->data['instance']["instancePositions_id"])) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're server admins
     $DBLIB->orderBy("cmsPages_navOrder","ASC");
     $DBLIB->orderBy("cmsPages_id","ASC");
     $PAGEDATA['NAVIGATIONCMSPages'] = [];
@@ -102,10 +102,22 @@ if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
         $DBLIB->where("cmsPages_archived",0);
         $DBLIB->where("cmsPages_showNav",1);
         $DBLIB->where("cmsPages_subOf",$page['cmsPages_id']);
-        if (isset($AUTH->data['instance']["instancePositions_id"])) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're bstudios staff
+        if (isset($AUTH->data['instance']["instancePositions_id"])) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're server admins
         $DBLIB->orderBy("cmsPages_name","ASC");
         $page['SUBPAGES'] = $DBLIB->get("cmsPages");
         $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
+    }
+} elseif ($AUTH->permissionCheck(20) && $AUTH->permissionCheck(21)) {
+    // User is a server admin who has no instance - this is often caused by them deleting one. Select an instance for them to use at random.
+    $DBLIB->where("instances_deleted",0);
+    $instance = $DBLIB->getOne("instances",["instances_id"]);
+    if ($instance) {
+        $_SESSION['instanceID'] = $instance["instances_id"];
+        header("Location: " . $CONFIG['ROOTURL'] . "/instances.php");
+        exit;
+    } else {
+        $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false, "NOMENU" => true];
+        die($TWIG->render('index_noInstances.twig', $PAGEDATA));
     }
 } else {
     $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false, "NOMENU" => true];

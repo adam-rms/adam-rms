@@ -45,7 +45,7 @@ class SearchCMS extends BaseSearch {
         $this->DBLIB->where("cmsPages_deleted",0);
         $this->DBLIB->where("cmsPages_archived",0);
         $this->DBLIB->join($subQuery, "page.cmsPages_id = content.cmsPages_id");
-        if ($this->AUTH->data['instance']["instancePositions_id"]) $this->DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(  ? , cmsPages_visibleToGroups) > 0))", Array($this->AUTH->data['instance']["instancePositions_id"])); //If the user doesn't have a position - they're bstudios staff
+        if ($this->AUTH->data['instance']["instancePositions_id"]) $this->DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(  ? , cmsPages_visibleToGroups) > 0))", Array($this->AUTH->data['instance']["instancePositions_id"])); //If the user doesn't have a position - they're server admins
 
         $output = [];
 

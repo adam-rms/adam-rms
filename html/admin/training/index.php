@@ -21,7 +21,7 @@ if ($AUTH->instancePermissionCheck(114) and isset($_GET['drafts'])) {
 }
 else $DBLIB->where("modules.modules_show", 1);
 if ($AUTH->data['instance']["instancePositions_id"] && !$AUTH->instancePermissionCheck(116) && !$AUTH->instancePermissionCheck(117)) {
-    //If the user doesn't have a position - they're bstudios staff
+    //If the user doesn't have a position - they're server admins
     //If user has permission to edit modules or view users , let them see all of them, otherwise they'll be impossible to edit
     $DBLIB->where("(modules.modules_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", modules.modules_visibleToGroups) > 0))"); 
 }
