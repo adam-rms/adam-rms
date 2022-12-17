@@ -3,6 +3,7 @@
 {% block content %}
 
     <div class="row">
+        {% if TICKETS|length > 0 %}
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
@@ -10,7 +11,6 @@
                         My Support Tickets
                     </h3>
                 </div>
-                {% if TICKETS|length > 0 %}
                 <div class="card-body table-responsive p-0">
                     <table class="table table-head-fixed table-striped" border="0" style="overflow-x: scroll;">
                         <thead>
@@ -100,11 +100,6 @@
                         </tbody>
                     </table>
                 </div>
-                {% else %}
-                <div class="card-body">
-                    <p>You have no support tickets, but why not open one? The support team can assist with all sorts of enquiries, such as restoring things that have been deleted or making manual changes that the interface doesn't allow you to do.</p>
-                </div>
-                {% endif %}
                 <div class="card-footer">
                     <button data-toggle="modal" data-target="#newTicketModal" type="button" class="btn btn-default">Create New Ticket</button>
                     <div class="modal fade" id="newTicketModal">
@@ -142,6 +137,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        {% endif %}
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -150,13 +148,7 @@
                 </div>
                 <div class="card-body">
                     <p>
-                        AdamRMS is a platform provided to {{ USERDATA.instance.instances_name }} by Bithell Studios Ltd. It is a web based application that allows {{ USERDATA.instance.instances_name }} to manage their inventory of assets.
-                    </p>
-                    <p>
-                        The version of AdamRMS you are using is hosted by Bithell Studios on servers within either the European Union or the United Kingdom of Great Britain and Northern Ireland. Bithell Studios takes its commitment to the environment seriously, and all carbon emmisions are offset.
-                    </p>
-                    <p>
-                        You are running version {{ CONFIG.VERSION.TAG }} of AdamRMS.
+                        You are running version {{ CONFIG.VERSION.TAG }} of AdamRMS. <a href="https://adam-rms.com">Check out the user guide</a> for help getting started.
                     </p>
                 </div>
                 <div class="card-footer">
