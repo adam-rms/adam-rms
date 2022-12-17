@@ -41,6 +41,7 @@
                     return "{{ LOCATION ? LOCATION.locations_name ~ ": " }}" + monthNames[date['date']['month']] + " " + date['date']['year'];
                 },
                 events : [
+                    {% set startDate = false %}
                     {% for project in projects %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
@@ -51,6 +52,9 @@
                             backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
                             textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
                         },
+                            {% if startDate > project.projects_dates_use_start|date("c") or startDate == false %}
+                                {% set startDate = project.projects_dates_use_start|date("c") %}
+                            {% endif %}
                         {% endif %}
                         {%  for subproject in project.subProjects %}
                             {% if subproject.projects_dates_use_start != null and subproject.projects_dates_use_end != null %}
@@ -62,10 +66,16 @@
                                     backgroundColor: '{{ STATUSES[subproject.projects_status]["backgroundColour"] }}',
                                     textColor    : '{{ STATUSES[subproject.projects_status]["foregroundColour"] }}'
                                 },
+                                {% if startDate > subproject.projects_dates_use_start|date("c") or startDate == false %}
+                                    {% set startDate = subproject.projects_dates_use_start|date("c") %}
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                     {% endfor %}
                 ],
+                {% if useStartDate and startDate %}
+                initialDate: '{{ startDate|date("c") }}',
+                {% endif %}
                 weekNumbers: true,
                 {% if USERDATA.instance['instances_weekStartDates'] %}
                 weekNumberContent : function(week) {
