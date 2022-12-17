@@ -7,8 +7,8 @@
             <div class="card-header">
                 <h3 class="card-title">
                     {% if search|length > 0 %}
-                        Search results for active locations matching <b>{{ search }}</b>
-                    {% elseif page_archive %}
+                        Search results for locations matching <b>{{ search }}</b>. Archived locations not shown. 
+                    {% elseif showArchived %}
                         Archived Locations
                     {% else %}
                         Locations
@@ -17,10 +17,10 @@
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">
                         <div class="input-group-prepend">
-                            {% if page_archive %}
-                                <a href="?" type="button" class="btn btn-default">Show active Locations</a>
+                            {% if showArchived %}
+                                <a href="?" type="button" class="btn btn-default">Show Locations</a>
                             {% else %}
-                                <a href="?archive" type="button" class="btn btn-default">Show archived Locations</a>
+                                <a href="?archive" type="button" class="btn btn-default">Show Archived Locations</a>
                             {% endif %}
                         </div>
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />

@@ -26,7 +26,7 @@
                                 {% else %}
                                     <a href="?cancelled" type="button" class="btn btn-default">Include cancelled projects</a>
                                 {% endif %}
-                                {% if page_archive %}
+                                {% if showArchived %}
                                     <a href="?" type="button" class="btn btn-default">Show active Clients</a>
                                 {% else %}
                                     <a href="?archive" type="button" class="btn btn-default">Show archived Clients</a>
@@ -85,7 +85,7 @@
                                     <td>
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#clientModal{{ client.clients_id }}"><i class="fas fa-edit"></i></button>
-                                            {% if not(page_archive) %}
+                                            {% if not(showArchived) %}
                                                 <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ client.clients_id }}"><i class="fas fa-archive"></i></button>
                                             {% else %}
                                                 <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ client.clients_id }}"><i class="fas fa-archive"></i></button>
@@ -207,7 +207,7 @@
                 var id = $(this).data("id");
                 bootbox.confirm({
                     title: "Are you sure you want to archive this client?",
-                    message: "This will not remove the client or projects from the system, but will prevent them from being used in new projects.",
+                    message: "This will not delete the client, but will prevent it from being used in new projects.",
                     buttons: {
                         confirm: {
                             label: 'Yes',

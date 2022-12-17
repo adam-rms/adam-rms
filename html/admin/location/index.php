@@ -30,11 +30,11 @@ if (strlen($PAGEDATA['search']) > 0) {
 } elseif (isset($_GET['archive'])) {
     //We need all locations if it's archived
     $DBLIB->where("locations.locations_archived", 1);
-    $PAGEDATA['page_archive'] = true;
+    $PAGEDATA['showArchived'] = true;
 } else {
     $DBLIB->where("(locations_subOf IS NULL)");
     $DBLIB->where("locations.locations_archived", 0);
-    $PAGEDATA['page_archive'] = false;
+    $PAGEDATA['showArchived'] = false;
     
 }
 $locations = $DBLIB->arraybuilder()->paginate('locations', $page, ["locations.*", "clients.clients_name"]);
@@ -63,7 +63,7 @@ foreach ($locations as $index => $location) {
     $PAGEDATA['locations'][] = $location;
     $PAGEDATA['allLocations'][] = $location;
     $PAGEDATA['locations'][$index]['linkedToThis'] = [];
-    if (strlen($PAGEDATA['search']) == null and !isset($_GET['archive'])) linkedLocations($location['locations_id'], 0, $index); //Don't show linked locations when searching
+    if (strlen($PAGEDATA['search']) == null and !$PAGEDATA['showArchived']) linkedLocations($location['locations_id'], 0, $index); //Don't show linked locations when searching or if listing archived locations
 }
 
 

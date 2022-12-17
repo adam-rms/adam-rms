@@ -15,10 +15,10 @@ else $PAGEDATA['includeCancelled'] = true;
 
 if (isset($_GET['archive'])) {
 	$DBLIB->where("clients.clients_archived", 1);
-	$PAGEDATA['page_archive'] = true;
+	$PAGEDATA['showArchived'] = true;
 } else {
 	$DBLIB->where("clients.clients_archived", 0);
-	$PAGEDATA['page_archive'] = false;
+	$PAGEDATA['showArchived'] = false;
 }
 
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
