@@ -3,7 +3,7 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Export", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(133)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck(134)) die($TWIG->render('404.twig', $PAGEDATA));
 
 
 //["name" => Screen name, "value" => table name]
