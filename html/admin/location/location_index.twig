@@ -135,10 +135,12 @@
                                         <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
                                         {% if 99|instancePermissions %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ subLocation.locations_id }}"><i class="fas fa-edit"></i></button>
-                                            {% if subLocation.locations_archived %}
-                                            <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
-                                            {% else %}
-                                            <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
+                                            {% if showArchived != true %}
+                                                {% if subLocation.locations_archived %}
+                                                <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
+                                                {% endif %}
                                             {% endif %}
                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}

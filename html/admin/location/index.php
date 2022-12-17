@@ -19,6 +19,7 @@ $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id'])
 if (isset($_GET['client'])) $DBLIB->where("locations.clients_id", $_GET['client']);
 $DBLIB->where("locations.locations_deleted", 0);
 $DBLIB->join("clients", "locations.clients_id=clients.clients_id", "LEFT");
+$DBLIB->orderBy("locations_subOf", "ASC");
 $DBLIB->orderBy("locations.locations_name", "ASC");
 if (strlen($PAGEDATA['search']) > 0) {
     //Search
@@ -63,7 +64,7 @@ foreach ($locations as $index => $location) {
     $PAGEDATA['locations'][] = $location;
     $PAGEDATA['allLocations'][] = $location;
     $PAGEDATA['locations'][$index]['linkedToThis'] = [];
-    if (strlen($PAGEDATA['search']) == null and !$PAGEDATA['showArchived']) linkedLocations($location['locations_id'], 0, $index); //Don't show linked locations when searching or if listing archived locations
+    if (strlen($PAGEDATA['search']) == null) linkedLocations($location['locations_id'], 0, $index); //Don't show linked locations when searching or if listing archived locations
 }
 
 

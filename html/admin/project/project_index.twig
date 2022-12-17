@@ -199,14 +199,12 @@
                                                                     <option value="" disabled selected>No Location Selected....</option>
                                                                 {% endif %}
                                                                 {% for location in locations %}
-                                                                    {% if location.locations_archived == 0 or ((location.locations_archived == 1) and (project.locations_id == location.locations_id) ) %}
-                                                                        <option value="{{ location.locations_id }}" {{ project.locations_id == location.locations_id ? 'selected' }} {{ location.locations_archived == 1 ? 'disabled' }}>{{ location.locations_archived == 1 ? '[Archived] ' }}{{ location.locations_name }}</option>
-                                                                        {% for subLocation in location.linkedToThis %}
-                                                                            <option value="{{ subLocation.locations_id }}" {{ project.locations_id == subLocation.locations_id ? 'selected' }} title="{% for i in range(1, subLocation['tier']) %}{% if loop.last %}&#8627;{% else %}&nbsp;&nbsp;{% endif %}{% endfor %}">
-                                                                                {{ subLocation.locations_name }}
-                                                                            </option>
-                                                                        {% endfor %}
-                                                                    {% endif %}
+                                                                    <option value="{{ location.locations_id }}" {{ project.locations_id == location.locations_id ? 'selected' }} {{ location.locations_archived == 1 ? 'disabled' }}>{{ location.locations_archived == 1 ? '[Archived] ' }}{{ location.locations_name }}</option>
+                                                                    {% for subLocation in location.linkedToThis %}
+                                                                        <option value="{{ subLocation.locations_id }}" {{ project.locations_id == subLocation.locations_id ? 'selected' }}  {{ subLocation.locations_archived == 1 ? 'disabled' }} title="{% for i in range(1, subLocation['tier']) %}{% if loop.last %}&#8627;{% else %}&nbsp;&nbsp;{% endif %}{% endfor %}">
+                                                                            {{ subLocation.locations_archived == 1 ? '[Archived] ' }}{{ subLocation.locations_name }}
+                                                                        </option>
+                                                                    {% endfor %}
                                                                 {% endfor %}
                                                             </select>
                                                         {% elseif project.projectsTypes_config_venue == 1 %}
