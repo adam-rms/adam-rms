@@ -2,8 +2,13 @@
 {% block content %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
-
+            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ CLIENT['clients_name'] and LOCATION['locations_name'] ? ' & ' : '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
+            {% if CLIENT['clients_archived'] %}
+            <span class="badge badge-warning ml-2">Client Archived</span>
+            {% endif %}
+            {% if LOCATION['locations_archived'] %}
+            <span class="badge badge-warning ml-2">Location Archived</span>
+            {% endif %}
             <div class="card-tools">
                 <form class="input-group input-group-sm"  method="GET">
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
@@ -147,7 +152,7 @@
                                 <td>
                                     <ul class="list-inline">
                                         <li class="list-inline-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ subProject.users_email ~ ")" }}">
                                                 <img alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
                                             </a>
                                         </li>

@@ -28,7 +28,7 @@
         {% if type['assets']|length == 1 %}
             <b>{{ assetAssignment.manufacturers_id != 1 ? assetAssignment.manufacturers_name ~ " - " : "" }}{{ assetAssignment.assetTypes_name }}</b>
         {% endif %}
-        <a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}">{{ assetAssignment.assets_tag|aTag }}</a>
+        <a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{assetAssignment.assetTypes_id}}&asset={{assetAssignment.assets_id}}&instance={{ instanceid }}">{{ assetAssignment.assets_tag|aTag }}</a>
         {% for flag in assetAssignment.flagsblocks.FLAG %}
             <a  target="_blank" href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" class="btn btn-sm btn-warning"><i class="far fa-flag" title="{{ flag.maintenanceJobs_title }}"></i></a>
         {% endfor %}

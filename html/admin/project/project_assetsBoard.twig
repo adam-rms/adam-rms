@@ -37,12 +37,12 @@
     <div class="card-body p-0">
         <div class="tab-content" id="asset-board-tabs-tabContent">
             <div class="tab-pane show active p2" id="asset-board-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
-                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[USERDATA.instance["instances_id"]] } %}
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[USERDATA.instance["instances_id"]], "instanceid":USERDATA.instance["instances_id"] } %}
                 {% endembed %}
             </div>
             {% for instance in FINANCIALS.assetsAssignedSUB %}
             <div class="tab-pane p2" id="asset-board-instance{{ instance['instance']['instances_id'] }}">
-                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[instance['instance']['instances_id']] } %}
+                {% embed 'project/twigIncludes/assetBoard/board.twig' with {"instanceAssets": BOARDASSETS[instance['instance']['instances_id']], "instanceid":instance['instance']['instances_id'] } %}
                 {% endembed %}
             </div>
             {% endfor %}

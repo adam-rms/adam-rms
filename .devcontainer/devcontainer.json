@@ -1,0 +1,31 @@
+{
+	"name": "AdamRMS",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {		
+			"settings": { 
+				"php.validate.executablePath": "/usr/local/bin/php"
+			},
+			"extensions": [
+				"xdebug.php-debug",
+				"bmewburn.vscode-intelephense-client",
+				"mrmlnc.vscode-apache"
+			]
+		}
+	},
+
+	"shutdownAction": "stopCompose",
+
+	"forwardPorts": [8080, "db:3306"],
+
+	"postCreateCommand": "composer install",
+	
+	"postStartCommand": "php vendor/bin/phinx migrate",
+
+	"remoteUser": "vscode"
+}

@@ -7,6 +7,11 @@
         margin-top:2px;
     }
 </style>
+<script>
+    window.onload = function () {
+        window.print();
+    }
+</script>
 <body>
     {% if USERDATA.instance.instances_logo %}
     <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 40%;margin-bottom: 4px;">

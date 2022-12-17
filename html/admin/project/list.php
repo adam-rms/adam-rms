@@ -12,7 +12,7 @@ if (isset($_GET['client'])) {
     $DBLIB->where("clients.clients_deleted", 0);
     $DBLIB->where("clients.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("clients.clients_id", $_GET['client']);
-    $PAGEDATA['CLIENT'] = $DBLIB->getone("clients", ["clients_id", "clients_name"]);
+    $PAGEDATA['CLIENT'] = $DBLIB->getone("clients", ["clients_id", "clients_name", "clients_archived"]);
     if ($PAGEDATA['CLIENT']) $PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['CLIENT']['clients_name'] . " Projects";
 } else $PAGEDATA['CLIENT'] = false;
 
@@ -21,7 +21,7 @@ if (isset($_GET['location'])) {
     $DBLIB->where("locations_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("locations_id", $_GET['location']);
-    $PAGEDATA['LOCATION'] = $DBLIB->getone("locations", ["locations_id", "locations_name"]);
+    $PAGEDATA['LOCATION'] = $DBLIB->getone("locations", ["locations_id", "locations_name", "locations_archived"]);
     if ($PAGEDATA['LOCATION']) $PAGEDATA['pageConfig']['TITLE'] = $PAGEDATA['LOCATION']['locations_name'] . " Projects";
 } else $PAGEDATA['LOCATION'] = false;
 
@@ -64,9 +64,14 @@ foreach ($projectlist as $project) {
     $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
     $DBLIB->orderBy("projects.projects_name", "ASC");
     $DBLIB->orderBy("projects.projects_created", "ASC");
-    $project['subProjects'] = $DBLIB->get("projects", null, ["projects_id", "projectsTypes.*","projects_archived", "projects_name", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "projects_parent_project_id"]);
-
+    $subProjects = $DBLIB->get("projects", null, ["projects_id", "projectsTypes.*","projects_archived", "projects_name", "clients_name", "projects.clients_id", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "users.users_name1", "users.users_name2", "users.users_email", "users.users_thumbnail"]);
+    $project['subProjects'] = [];
+    foreach ($subProjects as $subProject) {
+        $DBLIB->where("projects_id", $project['projects_id']);
+        $DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
+        $subProject['finance'] = $DBLIB->getOne("projectsFinanceCache");
+        $project['subProjects'][] = $subProject; 
+    }
     $PAGEDATA['PROJECTSLIST'][] = $project;
 }
 echo $TWIG->render('project/project_list.twig', $PAGEDATA);
-?>

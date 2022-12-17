@@ -9,10 +9,5 @@ $DBLIB->where("(projects.projects_id = ? OR projects.projects_parent_project_id 
 $project = $DBLIB->update("projects", ["projects.projects_deleted" => 1],1);
 if (!$project) finish(false);
 
-if ($AUTH->data['users_selectedProjectID'] == $_POST['projects_id']) {
-    $DBLIB->where("users_userid", $AUTH->data['users_userid']);
-    $DBLIB->update("users", ["users_selectedProjectID" => ""]);
-}
-
 $bCMS->auditLog("DELETE", "projects", "Deleted the project and its subprojects", $AUTH->data['users_userid'],null, $_POST['projects_id']);
 finish(true);

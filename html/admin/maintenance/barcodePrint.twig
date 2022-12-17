@@ -1,0 +1,60 @@
+<style>
+    body {
+        font-size: {{ GET.numStickers == "8cable" ? '9' : '18' }}px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        padding:0;
+        margin:0;
+    }
+
+    table {
+        width: 100%;
+        height: 100%;
+    }
+    td {
+        overflow-y:hidden;
+        overflow-x:hidden;
+        overflow: hidden;
+    }
+</style>
+<script>
+    window.onload = function () {
+        window.print();
+    }
+</script>
+<body>
+<table autosize="1" style="page-break-inside:avoid">
+    {% if GET.numStickers == "8" %}
+        {% for i in range(0,((assets|length)/4)|round(0, 'ceil')) %}
+        <tr width="100%" height="255.9px">
+            <td width="374.5px" height="255px" style="padding-right: 5px;" >
+                {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)],GET:GET} %}<br/>
+                {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)+1],GET:GET} %}
+            </td>
+            <td width="374.5px" height="255px" style="padding-left: 5px;">
+                {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)+2],GET:GET} %}<br/>
+                {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)+3],GET:GET} %}
+            </td>
+        </tr>
+        {% endfor %}
+    {% elseif GET.numStickers == "8cable" %}
+        {% for i in range(0,((assets|length)/4)|round(0, 'ceil')) %}
+            <tr width="100%">
+                <td width="187.25px" height="255px" style="padding: 5px;" >
+                    {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)],GET:GET} %}
+                </td>
+                <td width="187.25px" height="255px" style="padding: 5px;">
+                    {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)+1],GET:GET} %}
+                </td>
+                <td width="187.25px" height="255px" style="padding: 5px;" >
+                    {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)+2],GET:GET} %}<br/>
+                </td>
+                <td width="187.25px" height="255px" style="padding: 5px;">
+                    {% include 'maintenance/individualBarcode.twig' with {asset: assets[(i*4)+3],GET:GET} %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        Unknown format size
+    {% endif %}
+</table>
+</body>

@@ -1,0 +1,51 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-4 offset-lg-4 col-md-6 col-sm-12">
+        <div class="card ">
+            <form id="settings">
+                <div class="card-header">
+                    <h3 class="card-title">Trusted Domains</h3>
+                </div>
+                <div class="card-body">
+                    <p>Trusted Domains allows users on AdamRMS with verified email addresses to join your businesses if their email matches a domain you enter below.
+                    <br/><br/>They are similar to Signup Codes, in that they allow others to join your business, but they are automatic and are offered to any user in any domain you list.</p>
+                    <hr/>
+                    <div class="form-group">
+                        <label>Trusted Domains (separate with a comma)</label>
+                        <input type="text" class="form-control" name="domains" value="{{instanceTrustedDomains.domains|join(',')}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Role Group</label>
+                        <select class="form-control" name="instancePositions_id">
+                            {% for position in positions %}
+                                <option {{ instanceTrustedDomains.instancePositions_id == position.instancePositions_id ? 'selected' : '' }} value="{{ position.instancePositions_id }}">{{ position.instancePositions_displayName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" class="form-control" name="userInstances_label" value="{{ instanceTrustedDomains.userInstances_label }}">
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-default save">Save</button>
+                </div>
+            </form>
+        </div>
+   </div>
+    <script>
+        $(document).ready(function() {
+            $("#settings").on("submit", function(e){
+                e.preventDefault();
+            });
+            $('.save').on('click', function() {
+                var formData = $("#settings").serializeArray();
+                ajaxcall("instances/editInstanceTrustedDomains.php", {formData});
+            });
+        });
+    </script>
+</div>
+
+{% endblock %}

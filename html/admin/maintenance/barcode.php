@@ -67,6 +67,5 @@ if (isset($_GET['all'])) {
     }
 }
 
-if (isset($_GET['pdf'])) {
-} else echo $TWIG->render('maintenance/barcode.twig', $PAGEDATA);
+echo $TWIG->render('maintenance/barcode.twig', $PAGEDATA);
 ?>

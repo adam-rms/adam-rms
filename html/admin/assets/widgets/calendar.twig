@@ -1,17 +1,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css" integrity="sha256-saO3mkZVAcyqsfgsGMrmE7Cs/TLN1RgVykZ5dnnJKug=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css" integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" integrity="sha256-5veQuRbWaECuYxwap/IOE/DAwNxgm4ikX7nrgsqYp88=" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js" integrity="sha256-7PzqE1MyWa/IV5vZumk1CVO6OQbaJE4ns7vmxuUP/7g=" crossorigin="anonymous"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js" integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js" integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.js" integrity="sha256-q57s73NpMCTQ4ZXqb1X5bIywrICySeB6WvYxFGfz/PA=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
 <div class="card card-primary">
     {% set calendarId = random() %}
     <div class="card-body p-0">
@@ -21,26 +12,16 @@
         $(function () {
             /* initialize the calendar
              -----------------------------------------------------------------*/
-            var Calendar = FullCalendar.Calendar;
-            var Draggable = FullCalendarInteraction.Draggable;
-
-            // initialize the external events
-            // -----------------------------------------------------------------
-
-            var calendar{{ calendarId }} = new Calendar(document.getElementById('calendar{{ calendarId }}'), {
+            const Calendar = FullCalendar.Calendar;
+            
+            const calendar{{ calendarId }} = new Calendar(document.getElementById('calendar{{ calendarId }}'), {
                 timeZone: 'UTC',
-                plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid','list' ],
+                editable  : false,
+                droppable : false,
+                themeSystem: 'bootstrap',
                 nextDayThreshold: '05:00:00',
-                customButtons: {
-                    {% if 21|instancePermissions and false %}
-                    addProjectButton: {
-                        text: 'Add Project',
-                        click: function() {
-                            $("#newProjectButton").click();
-                        }
-                    }
-                    {% endif %}
-                },
+                height: 800,
+                firstDay: 1,
                 buttonText:  {
                     today:    'Today',
                     month:    'Month',
@@ -48,22 +29,19 @@
                     day:      'Day',
                     list:     'List'
                 },
-                header    : {
-                    left  : 'prev,next today{% if 21|instancePermissions %} addProjectButton{% endif %}',
+                headerToolbar: {
+                    left  : 'prev,next today',
                     center: 'title',
                     right : 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
                 },
                 titleFormat: function(date) {
-                    console.log();
                     const monthNames = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"
                     ]
                     return "{{ LOCATION ? LOCATION.locations_name ~ ": " }}" + monthNames[date['date']['month']] + " " + date['date']['year'];
                 },
-                //Random default events
-                events    : [
-                    {% set earliestStart = false %}
-                    {% set latestEnd = false %}
+                events : [
+                    {% set startDate = false %}
                     {% for project in projects %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
@@ -74,11 +52,8 @@
                             backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
                             textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
                         },
-                            {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
-                                {% set earliestStart = project.projects_dates_use_start|date("c") %}
-                            {% endif %}
-                            {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
-                                {% set latestEnd = project.projects_dates_use_end|date("c") %}
+                            {% if startDate > project.projects_dates_use_start|date("c") or startDate == false %}
+                                {% set startDate = project.projects_dates_use_start|date("c") %}
                             {% endif %}
                         {% endif %}
                         {%  for subproject in project.subProjects %}
@@ -91,45 +66,30 @@
                                     backgroundColor: '{{ STATUSES[subproject.projects_status]["backgroundColour"] }}',
                                     textColor    : '{{ STATUSES[subproject.projects_status]["foregroundColour"] }}'
                                 },
-                                {% if earliestStart > subproject.projects_dates_use_start|date("c") or earliestStart == false %}
-                                    {% set earliestStart = subproject.projects_dates_use_start|date("c") %}
-                                {% endif %}
-                                {% if latestEnd < subproject.projects_dates_use_end|date("c") or latestEnd == false %}
-                                    {% set latestEnd = subproject.projects_dates_use_end|date("c") %}
+                                {% if startDate > subproject.projects_dates_use_start|date("c") or startDate == false %}
+                                    {% set startDate = subproject.projects_dates_use_start|date("c") %}
                                 {% endif %}
                             {% endif %}
                         {% endfor %}
                     {% endfor %}
                 ],
-                validRange: {
-                    start: '{{ earliestStart|date("c") }}',
-                    end: '{{ latestEnd|date("c") }}'
-                },
-                editable  : false,
-                droppable : false, // this allows things to be dropped onto the calendar !!!
-                drop      : function(info) {
-
-                },
-                height: 800,
-                firstDay: 1,
+                {% if useStartDate and startDate %}
+                initialDate: '{{ startDate|date("c") }}',
+                {% endif %}
                 weekNumbers: true,
-                weekNumbersWithinDays:true,
-                {% if USERDATA.instance.weekStartDates %}
-                weekNumberCalculation: function(date) {
-                    var dates = [{{ USERDATA.instance.weekStartDates|join(",") }}];
-                    var today = new Date();
-                    var thisDate = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', { month: 'long' })) + ' ' + date.getFullYear() + ' 00:00:00');
-                    var idOfThis;
-                    for (var i = 0; i < dates.length; i++) {
-                        if (thisDate <= (dates[i])-(7 * 24 * 60 * 60 * 1000)) {
-                            if (i == 0) {
-                                return "";
-                            }
-                            idOfThis = i-1;
-                            break;
+                {% if USERDATA.instance['instances_weekStartDates'] %}
+                weekNumberContent : function(week) {
+                    var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
+                    for (const [date, label] of Object.entries(weekStartDates)) {
+                        if (moment(week.date).isSame(date, 'isoWeek')) {
+                            //This date is in this week so return the label
+                            if (label === " ") return null;
+                            else return label;
                         }
                     }
-                    return (Math.round((thisDate-dates[idOfThis]) / (7 * 24 * 60 * 60 * 1000))+1);
+                    //default to week number if it doesn't have a label
+                    return week.num;
+                    
                 },
                 {% else %}
                 weekNumberCalculation: "ISO",

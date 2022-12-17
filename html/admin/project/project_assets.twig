@@ -207,7 +207,7 @@
                     message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
                     inputType: 'number',
                     min: 0,
-                    step: 1,
+                    step: 0.01,
                     callback: function (result) {
                         if (result) {
                             ajaxcall("projects/assets/setPrice.php", {
@@ -228,7 +228,7 @@
             if (selected.length > 0) {
                 bootbox.prompt({
                     title: "Set Discount",
-                    message: "Example: a discount of 20% would multiply the hire cost by 0.8<br/><br/>This will override any existing discounts set in this project for the assets selected",
+                    message: "Discounts the selected assets by a percentage.<br /><br />E.g. Inputting 20 would multiply the price by 0.8<br />This will override any existing discounts set in this project for the assets selected.",
                     inputType: 'number',
                     min: 0,
                     max: 100,

@@ -44,6 +44,11 @@
                                 <span class="badge badge-danger">NOT STARTED</span>
                             {% endif %}
                         {% endif %}
+                        {% if module.visibleToGroupsString %}
+                            <span class="badge badge-info" style="text-transform: uppercase;">
+                                Visible only to {{ module.visibleToGroupsString }}
+                            </span>
+                        {% endif %}
                         <br/>
                         {% if module.modules_type != 3 %}
                             <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{{ module.modules_name }}</a>
@@ -67,6 +72,8 @@
                             <br/>
                         {% endif %}
                         <p class="text-muted">{{ module.modules_description|nl2br }}</p>
+                        <p class="text-muted">{{ module.modules_learningObjectives|nl2br  }}</p>
+                        <hr />
                         <ul class="ml-4 mb-0 fa-ul text-muted">
                             {% if module.totalTime > 0 %}<li><i class="far fa-clock" title="Estimated completion time"></i> ~{{ module.totalTime }}m</li>{% endif %}
                             {% if module.modules_type != 1 %}
@@ -79,15 +86,23 @@
                             {% if module.modules_type != 3 and module.dates.start %}
                             <li><i class="far fa-calendar-alt"></i> {{ module.dates.start|date("d M Y") }}{{ (module.dates.start|date("d M Y") != module.dates.updated|date("d M Y") ? " - " ~ module.dates.updated|date("d M Y") : "") }}</li>
                             {% endif %}
+                            <li>
+                                {% if module.modules_type == 1 %}
+                                    You can complete this module online
+                                {% elseif module.modules_type == 2 %}
+                                    You can complete this module online, and then need to be certified by an administrator
+                                {% elseif module.modules_type == 3 %}
+                                    You can't complete this module online
+                                {% endif %}
+                            </li>
                         </ul>
-                        <p class="text-muted"><br/>{{ module.modules_learningObjectives|nl2br  }}</p>
                     </div>
                     <div class="card-footer">
                         <div class="text-right">
                             <div class="btn-group">
                                 {% if 116|instancePermissions %}
                                     <button data-toggle="modal" data-target="#editModuleModal{{ module.modules_id }}" class="btn btn-sm btn-default" title="Edit"><i class="fas fa-edit"></i></button>
-                                    {% if module.modules_tye != 3 %}
+                                    {% if module.modules_type != 3 %}
                                     <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&steps" class="btn btn-sm btn-default" title="Edit Module Steps">
                                         <i class="fas fa-chalkboard-teacher"></i>
                                     </a>
@@ -98,7 +113,7 @@
                                         <i class="fas fa-user-graduate"></i>
                                     </a>
                                 {% endif %}
-                                {% if module.modules_type != 3 %}
+                                {% if module.modules_type != 3 and module.canComplete %}
                                 <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}" class="btn btn-sm btn-default" title="Work on Module">
                                     {% if module.completed %}
                                         <i class="fas fa-list-ol"></i>
@@ -156,12 +171,6 @@
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Publish in the module catalogue to be completed by users</span>
-                                </div>
-                                <input required type="checkbox" class="form-control" name="modules_show" {{ module.modules_show == 1 ? 'checked' : ''}}>
-                            </div>
-                            <div class="input-group" style="margin-bottom: 5px;">
-                                <div class="input-group-prepend">
                                     <span class="input-group-text">Type</span>
                                 </div>
                                 <select name="modules_type" class="form-control" value="{{ module.modules_type }}">
@@ -170,6 +179,22 @@
                                     <option value="3" {{ module.modules_type == 3 ? 'selected' }}>Physical: Users cannot complete the module themselves - they are certified by an administrator</option>
                                 </select>
                             </div>
+                            <hr/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Publish in the module catalogue to be completed by users</span>
+                                </div>
+                                <input required type="checkbox" class="form-control" name="modules_show" {{ module.modules_show == 1 ? 'checked' : ''}}>
+                            </div>
+                            <div class="form-group">
+                                <label>Limit visibility to:</label>
+                                <select multiple class="form-control select2 select2bs4" name="modules_visibleToGroups">
+                                    {% for position in positions %}
+                                        <option value="{{ position.instancePositions_id }}" {% if position.instancePositions_id in module.modules_visibleToGroups|split(',') %}selected{% endif %}>{{ position.instancePositions_displayName }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <hr/>
 
                             <h4>Thumbnail</h4>
                             <input type="hidden" name="modules_thumbnail" value="{{ module.modules_thumbnail }}" id="moduleThumbnail{{ module.modules_id }}" />
@@ -191,6 +216,10 @@
     {% endif %}
     <script>
         $(document).ready(function () {
+            $('.select2').select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
             {% if 116|instancePermissions %}
             $(".saveEditForm").click(function () {
                 if ($(this).data("id")) {

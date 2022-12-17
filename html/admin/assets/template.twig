@@ -239,15 +239,15 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ASSETCDNURL }}/img/icons/favicon-16x16.png">
 
 </head>
-{% if BODY %}
-<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}">
-
+<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}{% if pageConfig.NOMENU %} sidebar-collapse{% endif %}">
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand {% if USERDATA.users_dark_mode %}navbar-dark{% else %}navbar-white navbar-light{% endif %}">
         <ul class="navbar-nav">
+            {% if pageConfig.NOMENU != true %}
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
+            {% endif %}
             {% if USERDATA.viewSiteAs != false %}
                 <li class="nav-item">
                     <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php" class="nav-link">Back to Admin</a>
@@ -269,15 +269,6 @@
                 </div>
             </div>
         </form>
-        {% if thisProject %}
-        <ul class="navbar-nav d-none d-md-block">
-            <li class="nav-item text-nowrap">
-                <a href="{{ CONFIG.ROOTURL }}/project/?id={{thisProject.projects_id}}" class="nav-link" id="currentlySelectedProjectInNavbar">
-                    {% if thisProject.projects_parent_project_id %}&#8627; {% endif %}{{ thisProject.projects_name }}
-                </a>
-            </li>
-        </ul>
-        {% endif %}
         <ul class="navbar-nav ml-auto">
             {% if USERDATA.instances|length > 0 %}
                 <li class="nav-item text-nowrap dropdown">
@@ -306,6 +297,13 @@
                                 <div class="dropdown-divider"></div>
                             {% endfor %}
                         {% endif  %}
+                        {% for instance in instancesAvailableToJoinAsTrustedDomains %}
+                            <a href="{{ CONFIG.ROOTURL }}/instances/join.php" class="dropdown-item">
+                                {{instance.instances_name}}
+                                <p class="text-sm text-muted">Available to join</p>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                        {% endfor %}
                         <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
                         {% if 8|permissions %}
                             <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
@@ -319,12 +317,6 @@
             <li class="nav-item">
                 <a href="#" class="nav-link" id="toggle-theme" title="Toggle Theme Color">
                     <i class="fas {% if USERDATA.users_dark_mode %}fa-sun{%else%}fa-moon{% endif %}" id="theme-icon"></i>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#">
-                    <i class="fas fa-warehouse"></i>
                 </a>
             </li>
         </ul>
@@ -489,6 +481,16 @@
                                     </a>
                                 </li>
                             {% endif %}
+                            {% if 133|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/instances/trustedDomains.php" class="nav-link">
+                                        <i class="far fa-building nav-icon"></i>
+                                        <p>
+                                            Trusted Domains
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
                             <li class="nav-header">SETTINGS</li>
                             {% if 81|instancePermissions %}
                                 <li class="nav-item">
@@ -597,9 +599,9 @@
                     {% endif %}
                     <li class="nav-header">ASSETS</li>
                     <li class="nav-item">
-                        <a data-widget="control-sidebar" data-slide="true" href="#" class="nav-link">
+                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
                             <i class="nav-icon fas fa-warehouse"></i>
-                            <p>Search Assets</p>
+                            <p>Assets</p>
                         </a>
                     </li>
                     {% if 17|instancePermissions %}
@@ -717,7 +719,7 @@
                     {% endif %}
                 {% endif %}
                 {% if 2|permissions or 11|permissions or 7|permissions %}
-                <li class="nav-header">BITHELL STUDIOS STAFF</li>
+                <li class="nav-header">SERVER ADMIN</li>
                 {% endif %}
             {% if 2|permissions %}
                 <li class="nav-item">
@@ -725,7 +727,7 @@
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Users
-                            <span class="right badge badge-danger">AdamRMS</span>
+                            <span class="right badge badge-danger">Server-Wide</span>
                         </p>
                     </a>
                 </li>
@@ -736,7 +738,7 @@
                         <i class="nav-icon fas fa-unlock-alt"></i>
                         <p>
                             Permissions
-                            <span class="right badge badge-danger">AdamRMS</span>
+                            <span class="right badge badge-danger">Server-Wide</span>
                         </p>
                     </a>
                 </li>
@@ -747,7 +749,7 @@
                         <i class="nav-icon fas fa-city"></i>
                         <p>
                             Instances
-                            <span class="right badge badge-danger">AdamRMS</span>
+                            <span class="right badge badge-danger">Server-Wide</span>
                         </p>
                     </a>
                 </li>
@@ -758,7 +760,7 @@
                         <i class="nav-icon fas fa-gavel"></i>
                         <p>
                             Audit Log
-                            <span class="right badge badge-danger">AdamRMS</span>
+                            <span class="right badge badge-danger">Server-Wide</span>
                         </p>
                     </a>
                 </li>
@@ -775,7 +777,6 @@
     <!-- Content Wrapper. Contains page content -->
     <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp hidden-lg hidden-md hidden-sm"></div>-->
     <div class="content-wrapper" id="content-wrapper">
-        {% endif %}
         <div class="content-header">
             <div class="container-fluid">
                 {%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
@@ -805,55 +806,8 @@
         </div>
         <div class="content">
             <div class="container-fluid">
-            {% if USERDATA.users_changepass == '1' %}
-                <div class="row">
-                    <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
-                        <div class="card card-default">
-                            <div class="card-body" style="text-align: center;">
-                               <h2>Change your Password</h2>
-                                    <p>Please enter a new password:</p>
-                                    <input type="password" id="forcechangepass1" class="form-control input-lg"
-                                           placeholder="New Password" style="margin-bottom: 5px;" />
-                                    <input type="password" id="forcechangepass2" class="form-control input-lg"
-                                           placeholder="Confirm New Password"  style="margin-bottom: 5px;" />
-                                    <p>Choose a strong password longer than 8 characters that is a random alphanumeric string</p>
-                                    <button id="forcechangepassbutton" class="btn btn-default">Save</button>
-
-                            </div>
-                            <div class="card-footer">
-                                <a href="mailto:{{ CONFIG.PROJECT_SUPPORT_EMAIL }}">Contact Support</a>
-                            </div>
-                            <script>
-                                $(document).ready(function () {
-                                    $('#forcechangepassbutton').click(function () {
-                                        if ($("#forcechangepass1").val() != $("#forcechangepass2").val()) bootbox.alert("Sorry - Your passwords do not match!");
-                                        else if ($("#forcechangepass1").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
-                                        else {
-                                            $.ajax({
-                                                url: '{{ CONFIG.ROOTURL }}/api/account/forcePasswordChange.php?pass=' + $("#forcechangepass1").val(),
-                                                success: function (result) {
-                                                    if (result == '1') {
-                                                        location.reload();
-                                                    } else {
-                                                        bootbox.alert('Error - Could not send E-Mail again - Please refresh the page and try again!');
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                });
-                            </script>
-                        </div>
-                    </div>
-                        </div>
-            {% else %}
-                <div id="pageContent">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-            {% endif %}
-
-            {% if BODY %}
+                {% block content %}
+                {% endblock %}
             </div><!-- /.container-fluid -->
         </div><!-- /.content -->
     </div><!-- /.content-wrapper -->
@@ -868,51 +822,11 @@
         <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://bithell.studio">Bithell Studios Ltd</a>.</strong> All rights
         reserved.
     </footer>
-
-
-    <aside class="control-sidebar {% if USERDATA.users_dark_mode %}control-sidebar-dark{% else %}control-sidebar-light{% endif %}" id="assetSearchSidebar">
-        <!-- Control sidebar content goes here -->
-        <div class="p-3 control-sidebar-content">
-            <h5>Search assets</h5>
-            {% embed 'assets/searchForm.twig' with {'instance': USERDATA.instance.instances_id } %}
-                {% block formExtras %}
-                    {% if projects and 31|instancePermissions %}
-                    <div class="form-group">
-                        <label>Or, shop for project</label>
-                        <select class="form-control select2 select2bs4" name="projectid" id="projectIdSelectorForAssetSearch">
-                            {% for project in projects %}
-                                {% if project.projects_archived != 1 and thisProject.projects_id != project.projects_id and project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start %}
-                                    <option {% if USERDATA.users_selectedProjectID == project.projects_id %}selected{% endif %} value="{{ project.projects_id }}">{{ project.projects_name }}</option>
-                                {% endif %}
-                            {% endfor %}
-                            {% if thisProject %}
-                                 <option selected value="{{ thisProject.projects_id }}">{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</option>
-                            {% endif %}
-                        </select>
-                    </div>
-                    {% elseif thisProject %}
-                        <div class="form-group">
-                            <label>Show availability for project</label>
-                            <p>{{ thisProject.projects_name }}{{ thisProject.instances_name ? ' - ' ~ thisProject.instances_name : '' }}</p>
-                        </div>
-                    {% endif %}
-                {% endblock %}
-            {% endembed %}
-        </div>
-    </aside>
 </div>
 <script>
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover({
             html: true,
-        });
-        $(document).on("click",".changeProjectBasket[data-projectid]", function () {
-            var project = $(this).data("projectid");
-            ajaxcall("projects/changeSelectedProject.php", {
-                "projectid": project
-            }, function (data) {
-                location.reload();
-            });
         });
 
         function changeTheme(isDark){
@@ -921,7 +835,6 @@
                 //Trigger the theme change in js so that other plugins can change their theme
                 $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
                 $(document).trigger("themeChange", 'dark');
-                $('#assetSearchSidebar').removeClass("control-sidebar-light").addClass("control-sidebar-dark");
                 $('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
                 $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon-white.png");
                 $('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
@@ -931,7 +844,6 @@
                 //Trigger the theme change in js so that other plugins can change their theme
                 $(document).trigger("themeChange", 'light');
                 $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
-                $('#assetSearchSidebar').removeClass("control-sidebar-dark").addClass("control-sidebar-light");
                 $('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
                 $(".brand-link img").attr("src","{{ CONFIG.ASSETCDNURL }}/img/logoicon.png");
                 $('.brand-link').removeClass("navbar-dark").addClass("navbar-white");
@@ -962,7 +874,6 @@
             //Change Theme
             changeTheme(theme == "dark");
         });
-
 
         {% if 21|instancePermissions %}
         $(".newProjectButton").click(function () {
@@ -1020,5 +931,4 @@
 </script>
 {% include 'analytics.twig' %}
 </body>
-{% endif %}
 </html>

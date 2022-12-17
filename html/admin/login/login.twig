@@ -3,20 +3,14 @@
     <div id="browser">
 
     </div>
-    <a href="?login"><img src="{{ CONFIG.ASSETCDNURL }}/img/loginButtons/adamrms.png" alt="Login with AdamRMS" /></a>
-    <a href="?signup"><img src="{{ CONFIG.ASSETCDNURL }}/img/loginButtons/adamrms-join.png" alt="Signup with AdamRMS" /></a>
-    <a href="?google"><img src="{{ CONFIG.ASSETCDNURL }}/img/loginButtons/google.png" alt="Login with Google" /></a>
-
+    <a href="?google"><img src="{{ CONFIG.ASSETCDNURL }}/img/loginButtons/continueWithGoogle.png" alt="Login with Google" /></a><br/>
+    <a href="?login"><img src="{{ CONFIG.ASSETCDNURL }}/img/loginButtons/continueWithAdamrms.png" alt="Login with AdamRMS"  style="width: 220px;" /></a>
+    
 	<script>
         function isEmail(email) {
             var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
             return regex.test(email);
         }
         var initialData;
-		$( document ).ready(function() {
-		    if(/chrom(e|ium)/.test(navigator.userAgent.toLowerCase()) !== true){
-                $("#browser").html('<div class="alert alert-warning" role="alert"><h4 class="alert-heading">Unsupported Browser</h4>Sorry - Google Chrome is the only supported browser for AdamRMS, you may experience issues using the site in this browser. </div>');
-            }
-		});
 	</script>
 {% endblock %}

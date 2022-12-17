@@ -4,7 +4,8 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Access-Control-Allow-Origin: *");
-ini_set('max_execution_time', 300); //seconds
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 //Copy the payload over to get&post to maintain compatibility between the app and the frontend
 $dataPayload = json_decode(file_get_contents('php://input'));
 $dataPayload = (array) $dataPayload;
@@ -66,7 +67,7 @@ class assetAssignmentSelector
         if ($assignmentid) $DBLIB->where("assetsAssignments_id", $assignmentid);
         elseif ($linkedassigmentid) $DBLIB->where("assetsAssignments_linkedTo", $linkedassigmentid);
         else return false;
-        $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+        $DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
         $DBLIB->where("projects.projects_deleted", 0);
         $DBLIB->where("assets_deleted", 0);
         $DBLIB->where("assetsAssignments_deleted", 0);
