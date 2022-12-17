@@ -14,11 +14,12 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title py-2">Instance Export</h3>
-                <button onclick="addJoin($('#export-table').val())" class="btn btn-primary float-right d-none" id="add-join-button"><i class="fas fa-plus"></i> Add Table Join</button>
+                                <a href="https://adam-rms.com/docs/v1/user-guide/business/export" target="_blank" class="btn btn-info float-right ml-2"><i class="fas fa-question-circle"></i> Help</a>
+                <button onclick="addJoin($('#export-table').val())" class="btn btn-primary float-right d-none" id="add-join-button"><i class="fas fa-plus"></i> Add Related Information</button>
             </div>
             <div class="card-body">
                 <div class="mb-3" id="export-table-container">
-                    <label for"export-table">Base Table</label>
+                    <label for"export-table">What would you like to export? <span class="text-danger">*</span></label>
                     <select name="export-table" id="export-table" class="form-control">
                         <option selected disabled>Select a table...</option>
                         {% for table in tables %}
@@ -43,7 +44,7 @@
                         <div class="card">
                             <div class="mb-3">
                                 <div class="card-header">
-                                    <h4 class="card-title">Sort By?</h4>
+                                    <h4 class="card-title">Sort By?<span class="text-danger">*</span></h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -57,13 +58,13 @@
                                                 <div class="form-check">
                                                     <input onchange="updateOverview()" class="form-check-input" type="radio" name="column-order-direction" id="order-ascending" value="ASC" checked>
                                                     <label class="form-check-label" for="order-ascending">
-                                                        Ascending
+                                                        Ascending (A-Z)
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input onchange="updateOverview()" class="form-check-input" type="radio" name="column-order-direction" id="order-descending" value="DESC">
                                                     <label class="form-check-label" for="order-descending">
-                                                        Descending
+                                                        Descending (Z-A)
                                                     </label>
                                                 </div>
                                             </div>
@@ -84,8 +85,26 @@
                 <h3 class="card-title">Export Overview</h3>
             </div>
             <div class="card-body">
-                <ul class="list-group my-2" id="summary-list">
-                </ul> 
+                <p>You can export Assets, Asset Types, Projects, Clients, Locations and their related information in either .xlsx or .csv format.</p>
+                <p>All exports are based on the first table you select, and related information can be added to tailor the export for what you need.</p>
+                <p>Once you have selected a base table, you can select which columns you wish to include in the export, and re-arrange those columns within each table. You should also select a sorting column to arrange returned rows by.</p>
+                <div class="accordion" id="summary-accordion">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left text-dark" type="button" data-toggle="collapse" data-target="#summary-collapse" aria-expanded="true" aria-controls="summary-collapse">
+                                Export Summary
+                                </button>
+                            </h2>
+                        </div>
+
+                        <div id="summary-collapse" class="collapse" aria-labelledby="headingOne" data-parent="#summary-accordion">
+                            <div class="card-body">
+                                <ul class="list-group my-2" id="summary-list">Select a table to start the export.</ul> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="btn-group my-2 d-none" role="group" id="export-buttons">
                     <div class="input-group-text">Export as</div>
                     <button class="btn btn-primary export-button" data-filetype="csv">.CSV</button>
@@ -114,7 +133,7 @@
             $('.popover').remove();
 
             //Summary info
-            $('#summary-list').append('<li class="list-group-item"><b>Base table:</b> '+ this.value +'</li><li class="list-group-item"><b>Columns:</b> <span id="columns-display"><i>None</i></span</li><li class="list-group-item"><b>Sorting:</b> <span id="order-display"><i>None</i></span</li><li class="list-group-item"><b>Joined Tables:</b> <span id="joins-display"><i>None</i></span></li>');
+            $('#summary-list').append('<li class="list-group-item"><b><i class="fas fa-info-circle" data-toggle="popover" data-content="The table your export is based on"></i> Base table:</b> '+ this.value +'</li><li class="list-group-item"><b><i class="fas fa-info-circle" data-toggle="popover" data-content="A list of table columns that will be included in the export"></i> Columns:</b> <span id="columns-display"><i>None</i></span</li><li class="list-group-item"><b><i class="fas fa-info-circle" data-toggle="popover" data-content="How the results will be sorted"></i> Sorting:</b> <span id="order-display"><i>None</i></span</li><li class="list-group-item"><b><i class="fas fa-info-circle" data-toggle="popover" data-content="Any related information to your base table that are included in the export."></i> Joined Tables:</b> <span id="joins-display"><i>None</i></span></li>');
 
             //get stuff
             getColumns(this.value, "#export-column-table", "#export-sort-radios");
@@ -272,7 +291,7 @@
                     }
                 }
                 bootbox.prompt({
-                    title: "Add data from another table (table join)",
+                    title: "Add Related Information (Join a Table)",
                     inputType: "select",
                     multiple: false,
                     inputOptions: options,
@@ -289,9 +308,9 @@
                                 <div class="joinContainer container" data-parenttable="`+table+`" data-childtable="`+newTable+`" id="join-container-`+table+`-`+newTable+`">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h3 class="card-title py-2">Join `+ newTable +`</h3>
-                                            <button onclick="removeMe(this` +(table == $('#export-table').val() ? `, '`+table+`'` : `` ) +`)" class="btn btn-danger mx-1 float-right"><i class="fas fa-trash"></i> Remove Table Join</button>
-                                            ` +(data.response ? `<button onclick="addJoin('`+ newTable +`')" id="add-join-`+newTable+`-button" class="btn btn-primary mx-1 float-right"><i class="fas fa-plus"></i> Add Table Join</button>` : ``) + `
+                                            <h3 class="card-title py-2">Include `+ newTable +`</h3>
+                                            <button onclick="removeMe(this` +(table == $('#export-table').val() ? `, '`+table+`'` : `` ) +`)" class="btn btn-danger mx-1 float-right"><i class="fas fa-trash"></i> Remove this Related Information</button>
+                                            ` +(data.response ? `<button onclick="addJoin('`+ newTable +`')" id="add-join-`+newTable+`-button" class="btn btn-primary mx-1 float-right"><i class="fas fa-plus"></i> Add Related Information</button>` : ``) + `
                                         </div>
                                         <div class="card-body">
                                             <div class="row justify-content-center" id="join-container-`+table+`-`+newTable+`">
