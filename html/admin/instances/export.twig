@@ -118,7 +118,19 @@
 
             //get stuff
             getColumns(this.value, "#export-column-table", "#export-sort-radios");
-            $("#export-column-container, #export-sorting-container, #add-join-button").removeClass("d-none"); 
+            $("#export-column-container, #export-sorting-container").removeClass("d-none"); 
+
+            //check whether the new table has joins
+            ajaxcall("instances/export/getJoins.php", {
+                'table_name': this.value
+                }, function (data) {
+                    if (data.response && data.response.length > 0) {
+                        $("#add-join-button").removeClass("d-none");
+                    } else {
+                        $("#add-join-button").addClass("d-none");
+                    }
+                });
+
         });
 
         //The actual Exporting
@@ -200,7 +212,6 @@
     }
 
     function removeMe(element, table) {
-        console.log(table);
         $(element).parents("div.joinContainer").remove();
         //Show join adder button
         if (table != $('#export-table').val()){
