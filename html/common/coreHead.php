@@ -108,13 +108,53 @@ class bCMS {
         $DBLIB->orderBy($sort, $sortOrder);
         return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded","s3files_shareKey"]);
     }
+    function s3DataUri($fileid, $size = "comp") {
+        /**
+         * Returns a data URI for the file, upto a limit of 10MB. 
+         * The PDF library used to generate PDFs from HTML requires a data URI for images, so this is used to generate them. It can accept file URLs but misses the cors preflight when sending the request so fails CORS in the browser.
+         */
+        $file = $this->s3Passthrough($fileid, $size);
+        if (!$file) return false;
+
+        if ($file["type"] == "png") $type = "image/png";
+        elseif ($file["type"] == "jpg") $type = "image/jpeg";
+        elseif ($file["type"] == "jpeg") $type = "image/jpeg";
+        elseif ($file["type"] == "jfif") $type = "image/jpeg";
+        elseif ($file["type"] == "gif") $type = "image/gif";
+        elseif ($file["type"] == "heic") $type = "image/heic";
+        elseif ($file["type"] == "heif") $type = "image/heif";
+        else return false; // Only supports images
+
+        return 'data: '.$type.';base64,'.base64_encode($file['data']);
+    }
+    function s3Passthrough($fileid, $size = "comp") {
+        global $DBLIB;
+        $DBLIB->where("s3files_id", intval($fileid));
+        $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
+        $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
+        $DBLIB->where("s3files_meta_size", 10485760, "<="); //Limit files to 10mb for this function
+        $file = $DBLIB->getone("s3files", ["s3files_extension", "s3files_id"]);
+        if (!$file) return false;
+        
+        $url = $this->s3URL($file["s3files_id"], $size, false);
+        if (!$url) return false;
+        
+        $data = file_get_contents($url);
+        if (!$data) return false;
+
+        return [
+            "data" => $data,
+            "type" => $file["s3files_extension"],
+            "url" => $url
+        ];
+    }
     function s3URL($fileid, $size = "comp", $forceDownload = false, $expire = '+10 minutes', $shareKey = false) {
         global $DBLIB, $CONFIG,$AUTH;
         /*
          * File interface for Amazon AWS S3.
          *  Parameters
          *      f (required) - the file id as specified in the database
-         *      s (filesize) - false to get the original - available is "tiny" (100px) "small" (500px) "medium" (800px) "large" (1500px)
+         *      s (filesize) - false to get the original - available is "tiny" (100px) "small" (500px) "medium" (800px) "large" (1500px) "comp" (original size, compressed) "full" (original)
          *      d (optional, default false) - should a download be forced or should it be displayed in the browser? (if set it will download)
          *      e (optional, default 1 minute) - when should the link expire? Must be a string describing how long in words basically. If this file type has security features then it will default to 1 minute.
          */
@@ -329,236 +369,6 @@ class bCMS {
             array_push($return,$user['users_userid']);
         }
         return $return;
-    }
-    function deepSearch($instanceid=false,$page=1,$pageLimit=20,$sort="alphabet-a",$category=null,$keyword=[],$manufacturer=false,$group=false,$showLinked=false,$showArchived=false,$dateStart = false,$dateEnd = false,$tags=[]) {
-        global $DBLIB,$AUTH;
-        $scriptStartTime = microtime (true);
-        $DBLIB->setTrace(true, $_SERVER['SERVER_ROOT']);
-        $SEARCH = [
-            "INSTANCE_ID" => $instanceid,
-            "PAGE" =>  $page ? intval($page) : 1,
-            "PAGE_LIMIT" => $pageLimit ? intval($pageLimit) : 20,
-            "TERMS" => [
-                "CATEGORY" => $category,
-                "KEYWORDS" => (is_array($keyword)) ? $keyword : [],
-                "MANUFACTURER" => $manufacturer,
-                "GROUPS" => $group ?: false,
-                "DATE-START" => $dateStart,
-                "DATE-END" => $dateEnd,
-                "SORT" => $sort,
-                "TAGS" => (is_array($tags)) ? $tags : [],
-            ],
-            "SETTINGS" => [
-                "SHOWLINKED" => $showLinked,
-                "SHOWARCHIVED" => $showArchived
-            ]
-        ];
-        $RETURN = [
-            "PAGINATION" => [
-                "PAGE" => $SEARCH['PAGE']
-            ],
-            "ASSETS" => [],
-            "PROJECT" => [
-                "ID" => false
-            ]
-        ];
-
-        //Evaluate instance id
-        if ($SEARCH['INSTANCE_ID'] == null) {
-            if ($AUTH->login) $SEARCH['INSTANCE_ID'] = $AUTH->data['instance']['instances_id'];
-            else return false;
-        }
-        $DBLIB->where("instances_id",$SEARCH['INSTANCE_ID']);
-        $DBLIB->where("instances_deleted",0);
-        $SEARCH['INSTANCE'] = $DBLIB->getone("instances",['instances_publicConfig','instances_id','instances_config_currency']);
-        if (!$SEARCH['INSTANCE']) return false;
-        $SEARCH['INSTANCE']['instances_publicConfig'] = json_decode($SEARCH['INSTANCE']['instances_publicConfig'],true);
-        if (!$SEARCH['INSTANCE']['instances_publicConfig']['enableAssets'] and !$AUTH->login) return false;
-
-        //Evaluate dates
-        if ($dateStart and $dateEnd and ($SEARCH['INSTANCE']['instances_publicConfig']['enableAssetAvailability'] or $AUTH->login)) {
-            $dateStart = strtotime($dateStart);
-            $dateEnd = strtotime($dateEnd);
-            if ($dateEnd <= $dateStart) {
-                $dateStart = false;
-                $dateEnd = false;
-            }
-        } elseif ($AUTH->login and $AUTH->data['users_selectedProjectID'] != null and $AUTH->instancePermissionCheck(31)) {
-            $DBLIB->where("projects_id",$AUTH->data['users_selectedProjectID']);
-            $DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")"); //Duplicated elsewhere
-            $DBLIB->where("projects.projects_deleted", 0);
-            $DBLIB->where("projects_dates_deliver_start",NULL,"IS NOT");
-            $DBLIB->where("projects_dates_deliver_end",NULL,"IS NOT");
-            $thisProject = $DBLIB->getone("projects",["projects_dates_deliver_start","projects_dates_deliver_end"]);
-            if (!$thisProject) {
-                $dateStart = false;
-                $dateEnd = false;
-            } else {
-                $dateStart = strtotime($thisProject['projects_dates_deliver_start']);
-                $dateEnd = strtotime($thisProject['projects_dates_deliver_end']);
-                $RETURN['PROJECT']['ID'] = $AUTH->data['users_selectedProjectID'];
-            }
-        } else {
-            $dateStart = false;
-            $dateEnd = false;
-        }
-        $RETURN['PROJECT']['DATESTART'] = $dateStart;
-        $RETURN['PROJECT']['DATEEND'] = $dateEnd;
-        
-        //**START CHONKY QUERY**
-
-        //Evaluate categories
-        $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
-        $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
-        if ($SEARCH['TERMS']['CATEGORY']) $DBLIB->where('assetTypes.assetCategories_id', $SEARCH['TERMS']['CATEGORY'], 'IN');
-
-        //Evaluate manufacturers
-        $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
-        if ($SEARCH['TERMS']['MANUFACTURER']) $DBLIB->where('manufacturers.manufacturers_id',$SEARCH['TERMS']['MANUFACTURER'], 'IN');
-
-        //Sorting
-        $sortArray = explode("-",$SEARCH['TERMS']['SORT']);
-        if (count($sortArray) == 2) {
-            if ($sortArray[0] == "price") $DBLIB->orderBy("assetTypes.assetTypes_weekRate", ($sortArray[1] == "a" ? "ASC" : "DESC"));
-            elseif ($sortArray[0] == "value") $DBLIB->orderBy("assetTypes.assetTypes_value", ($sortArray[1] == "a" ? "ASC" : "DESC"));
-            elseif ($sortArray[0] == "alphabet") $DBLIB->orderBy("assetTypes.assetTypes_name", ($sortArray[1] == "a" ? "ASC" : "DESC"));
-            elseif ($sortArray[0] == "mass") $DBLIB->orderBy("assetTypes.assetTypes_mass", ($sortArray[1] == "a" ? "ASC" : "DESC"));
-            elseif ($sortArray[0] == "date") $DBLIB->orderBy("assetTypes.assetTypes_inserted", ($sortArray[1] == "a" ? "ASC" : "DESC"));
-            else $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC"); //Default
-        } else $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
-
-        $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
-
-        //Keywords
-        if (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
-            $thisWhere = false;
-            $thisValues = [];
-            foreach ($SEARCH['TERMS']['KEYWORDS'] as $word) {
-                if ($word != null) {
-                    if ($thisWhere != false) $thisWhere .= ' OR ';
-                    else $thisWhere = "(";
-                    $thisWhere .= "manufacturers.manufacturers_name LIKE ? OR assetTypes.assetTypes_description LIKE ? OR assetTypes.assetTypes_name LIKE ?";
-                    array_push($thisValues,'%' . $word . '%','%' . $word . '%','%' . $word . '%');
-                }
-            }
-            $DBLIB->where($thisWhere . ")",$thisValues);
-        }
-
-
-        //Limit the assets correctly
-        $subQuery = $DBLIB->subQuery();
-        $subQuery->where("assets.instances_id",$SEARCH['INSTANCE_ID']);
-        $subQuery->where("assets_deleted",0);
-        if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $subQuery->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
-
-        if ($SEARCH['TERMS']['GROUPS']) {
-            $thisWhere = false;
-            $thisValues = [];
-
-            foreach ($SEARCH['TERMS']['GROUPS'] as $group) {
-                if ($group != null) {
-                    if ($thisWhere != false) $thisWhere .= ' OR ';
-                    else $thisWhere = "(";
-                    $thisWhere .= "FIND_IN_SET(?, assets.assets_assetGroups)";
-                    array_push($thisValues,intval($group));
-                }
-            }
-            if ($thisWhere) $subQuery->where($thisWhere . ")",$thisValues);
-        }
-        if (!$SEARCH['SETTINGS']['SHOWLINKED']) $subQuery->where ("assets.assets_linkedTo", NULL, 'IS');
-        if ($SEARCH['TERMS']['TAGS']) {
-            $thisWhere = false;
-            $thisValues = [];
-            foreach ($SEARCH['TERMS']['TAGS'] as $word) {
-                if ($word != null) {
-                    if ($thisWhere != false) $thisWhere .= ' OR ';
-                    else $thisWhere = "(";
-                    $thisWhere .= "assets.assets_tag LIKE ?";
-                    array_push($thisValues,'%' . $word . '%');
-                }
-            }
-            if ($thisWhere) $subQuery->where($thisWhere . ")",$thisValues);
-        }
-        $subQuery->groupBy ("assetTypes_id");
-        $subQuery->get ("assets", null, "assetTypes_id");
-        $DBLIB->where ("assetTypes_id", $subQuery, 'in');
-
-        //The actual select
-        $DBLIB->pageLimit = $SEARCH["PAGE_LIMIT"];
-        $DBLIB->where("(assetTypes.instances_id IS NULL OR assetTypes.instances_id = ?)",[$SEARCH['INSTANCE_ID']]);
-        $assets = $DBLIB->arraybuilder()->paginate('assetTypes', $SEARCH["PAGE"], ["assetTypes.*", "manufacturers.*", "assetCategories.*", "assetCategoriesGroups_name"]);
-        $RETURN['PAGINATION']['TOTAL-PAGES'] = $DBLIB->totalPages;
-        $RETURN['PAGINATION']['COUNT'] = $DBLIB->totalCount;
-        $RETURN['PAGINATION']['OFFSET'] = $SEARCH["PAGE_LIMIT"]*($SEARCH["PAGE"]-1);
-        foreach ($assets as $asset) {
-            $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
-            $DBLIB->where("assets.instances_id",$SEARCH['INSTANCE_ID']);
-            $DBLIB->where("assets_deleted",0);
-            if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $DBLIB->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
-            if ($SEARCH['TERMS']['GROUPS']) {
-                $thisWhere = false;
-                $thisValues = [];
-
-                foreach ($SEARCH['TERMS']['GROUPS'] as $group) {
-                    if ($group != null) {
-                        if ($thisWhere != false) $thisWhere .= ' OR ';
-                        else $thisWhere = "(";
-                        $thisWhere .= "FIND_IN_SET(?, assets.assets_assetGroups)";
-                        array_push($thisValues,intval($group));
-                    }
-                }
-                if ($thisWhere) $DBLIB->where($thisWhere . ")",$thisValues);
-            }
-            if (!$SEARCH['SETTINGS']['SHOWLINKED']) $DBLIB->where ("assets.assets_linkedTo", NULL, 'IS');
-            if ($SEARCH['TERMS']['TAGS']) {
-                $thisWhere = false;
-                $thisValues = [];
-                foreach ($SEARCH['TERMS']['TAGS'] as $word) {
-                    if ($word != null) {
-                        if ($thisWhere != false) $thisWhere .= ' OR ';
-                        else $thisWhere = "(";
-                        $thisWhere .= "assets.assets_tag LIKE ?";
-                        array_push($thisValues,'%' . $word . '%');
-                    }
-                }
-                if ($thisWhere) $DBLIB->where($thisWhere . ")",$thisValues);
-            }
-            $DBLIB->orderBy("assets.assets_tag", "ASC");
-            $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass","assets_endDate"]);
-            if (!$assetTags) continue;
-            $asset['count'] = count($assetTags);
-            $asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
-            $asset['thumbnail'] = $this->s3List(2, $asset['assetTypes_id'],'s3files_meta_uploaded','ASC',1);
-            $asset['tags'] = [];
-            foreach ($assetTags as $tag) {
-                if ($dateStart and $dateEnd) {
-                    //Check availability
-                    $DBLIB->where("assets_id", $tag['assets_id']);
-                    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-                    $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . ")" . ($RETURN['PROJECT']['ID'] ? "OR (projects.projects_id = '" . $RETURN['PROJECT']['ID'] . "')" : '') . ")");
-                    $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
-                    $DBLIB->where("projects.projects_deleted", 0);
-                    $DBLIB->where("((projects_dates_deliver_start >= '" . date ("Y-m-d H:i:s",$dateStart)  . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateStart) . "' AND projects_dates_deliver_end <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateEnd) . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateStart) . "'))");
-                    $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name"]);
-                }
-                if (!$SEARCH['INSTANCE']['instances_publicConfig']['enableAssetsPrices'] and !$AUTH->login) {
-                    $tag['assets_dayRate'] = null;
-                    $tag['assets_weekRate'] = null;
-                } if (!$SEARCH['INSTANCE']['instances_publicConfig']["enableAssetsValues"] and !$AUTH->login) $tag['assets_value'] = null;
-                if (!$SEARCH['INSTANCE']['instances_publicConfig']["enableAssetNotes"] and !$AUTH->login) $tag['assets_notes'] = null;
-                $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
-                $asset['tags'][] = $tag;
-            }
-            if (!$SEARCH['INSTANCE']['instances_publicConfig']['enableAssetsPrices'] and !$AUTH->login) {
-                $asset['assetTypes_weekRate'] = null;
-                $asset['assetTypes_dayRate'] = null;
-            } if (!$SEARCH['INSTANCE']['instances_publicConfig']["enableAssetsValues"] and !$AUTH->login) $asset['assetTypes_value'] = null;
-            if (!$SEARCH['INSTANCE']['instances_publicConfig']["enableAssetDescriptions"] and !$AUTH->login) $asset['assetTypes_description'] = null;
-            $RETURN['ASSETS'][] = $asset;
-        }
-        $RETURN['SEARCH'] = $SEARCH;
-        $RETURN['SPEED'] = microtime (true)-$scriptStartTime;
-        return $RETURN;
     }
 }
 

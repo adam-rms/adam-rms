@@ -1,5 +1,4 @@
 <?php
-ini_set('max_execution_time', 300); //seconds
 require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck(84) or !isset($_GET['ids'])) die($TWIG->render('404.twig', $PAGEDATA));
 
@@ -86,63 +85,9 @@ if ($_GET['blanks'] > 0) {
     }
 }
 $PAGEDATA['GET'] = $_GET;
-if ($_GET['numStickers'] == 8) {
-    $margins = [
-        "top" => 13,
-        "bottom" => 10,
-        "left" => 5,
-        "right" => 5
-    ];
-} elseif ($_GET['numStickers'] == "8cable") {
-    $margins = [
-        "top" => 13,
-        "bottom" => 10,
-        "left" => 5,
-        "right" => 5
-    ];
-} else {
-    $margins = [
-        "top" => 5,
-        "bottom" => 5,
-        "left" => 5,
-        "right" => 5
-    ];
-}
+
 if (!isset($_GET['instanceName'])) $PAGEDATA['GET']['instanceName'] = false;
 elseif ($_GET['instanceName'] == "Hide" or $_GET['instanceName'] == null) $PAGEDATA['GET']['instanceName'] = false;
 
-
-//die($TWIG->render('maintenance/barcodePDF.twig', $PAGEDATA));
-$mpdf = new \Mpdf\Mpdf([
-        'tempDir' => sys_get_temp_dir().DIRECTORY_SEPARATOR.'mpdf',
-        'mode' => 'utf-8',
-        'format' => $_GET['pagesize'],
-        'setAutoTopMargin' => 'pad',
-        "orientation" => "P",
-        'margin_footer' => 0,
-        'margin_header' => 0,
-        "margin_top" => $margins['top'],
-        "margin_bottom" => $margins['bottom'],
-        "margin_left" => $margins['left'],
-        "margin_right" => $margins['right'],
-    ]);
-$mpdf->SetTitle("Asset Barcodes");
-$mpdf->shrink_tables_to_fit = 1;
-//$mpdf->SetColumns(2, null ,4);
-$mpdf->SetAuthor($PAGEDATA['USERDATA']['instance']['instances_name']);
-$mpdf->SetCreator("AdamRMS - the rental management system from Bithell Studios");
-$mpdf->SetSubject("Barcodes" . " | " . $PAGEDATA['USERDATA']['instance']['instances_name']);
-$mpdf->SetKeywords("AdamRMS");
-$mpdf->SetHTMLFooter('
-            <table width="100%" style="font-size: 7pt">
-                <tr>
-                    <td width="45%">Generated {DATE j M Y h:i:sa}</td>
-                    <td width="10%" align="center">{PAGENO}/{nbpg}</td>
-                    <td width="45%" style="text-align: right;">AdamRMS | &copy;{DATE Y} Bithell Studios Ltd.</td>
-                </tr>
-            </table>
-         ');
-$mpdf->WriteHTML($TWIG->render('maintenance/barcodePDF.twig', $PAGEDATA));
-$mpdf->Output(mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', ("Asset Barcodes - " . $PAGEDATA['USERDATA']['instance']['instances_name'])). '.pdf', (isset($_GET['download']) ? 'D' : 'I'));
-
+die($TWIG->render('maintenance/barcodePrint.twig', $PAGEDATA));
 ?>

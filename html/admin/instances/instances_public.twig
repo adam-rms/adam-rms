@@ -12,39 +12,10 @@
                     <h3 class="card-title">Configuration</h3>
                 </div>
                 <div class="card-body">
-                    <p>Public site allows you to embed parts of AdamRMS within your public-facing website, for example to share your asset lists and availability, as well as your crew vacancies.</p>
+                    <p>Public site allows you to embed parts of AdamRMS within your public-facing website, for example to share your crew vacancies.</p>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" name="enabled" {{ publicData.enabled ? 'checked' : '' }}>
                         <label class="form-check-label">Enabled</label>
-                    </div>
-                    <hr/>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="enableAssets" {{ publicData.enableAssets ? 'checked' : '' }}>
-                        <label class="form-check-label">Enable Asset List & Search</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="enableAssetsPrices"  {{ publicData.enableAssetsPrices ? 'checked' : '' }}>
-                        <label class="form-check-label">Show Asset Prices</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="enableAssetsValues" {{ publicData.enableAssetsValues ? 'checked' : '' }}>
-                        <label class="form-check-label">Show Asset Values</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="enableAssetAvailability" {{ publicData.enableAssetAvailability ? 'checked' : '' }}>
-                        <label class="form-check-label">Allow Asset Availability Checking</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="enableAssetsAssignmentNames" {{ publicData.enableAssetsAssignmentNames ? 'checked' : '' }}>
-                        <label class="form-check-label">Allow Asset Availability Checking To Reveal Names Of Projects Assets Are Assigned To</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="enableAssetDescriptions"  {{ publicData.enableAssetDescriptions ? 'checked' : '' }}>
-                        <label class="form-check-label">Show Asset Type Descriptions</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="enableAssetNotes"  {{ publicData.enableAssetNotes ? 'checked' : '' }}>
-                        <label class="form-check-label">Show Asset Notes</label>
                     </div>
                     <hr/>
                     <div class="form-check">
@@ -76,15 +47,6 @@
         });
     </script>
     <div class="col-12 col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Asset List and Search</h3>
-            </div>
-            <div class="card-body">
-                <p>Paste the following into your website content management system to embed the asset list and search.</p>
-                <pre style="white-space: pre-wrap;">{{ ('<iframe loading="eager" referrerpolicy="strict-origin-when-cross-origin" style="width: 100%; height: 100%; border:none;" src="' ~ CONFIG.ROOTURL ~ '/public/embed/assets.php?i=' ~ AUTH.data.instance.instances_id ~ '" title="AdamRMS Asset List and Search"></iframe>')|e('html') }}</pre>
-            </div>
-        </div>
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Crew Vacancies</h3>

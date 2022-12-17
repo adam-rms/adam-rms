@@ -52,17 +52,17 @@
                                   {{category.assetCategories_name}}
                               </td>
                               <td style="width:70px;">
-                                 {% if category.instances_id is not null %}
-                                     <div class="btn-group">
-                                         {% if 91|instancePermissions %}
+                                <div class="btn-group">
+                                    <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
+                                    {% if category.instances_id is not null %}
+                                        {% if 91|instancePermissions %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
-                                         {% endif %}
-                                         {% if 92|instancePermissions %}
-                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
-                                         {% endif %}
-                                     </div>
-
-                                 {% endif %}
+                                        {% endif %}
+                                        {% if 92|instancePermissions %}
+                                            <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
+                                        {% endif %}
+                                    {% endif %}
+                                 </div>
                               </td>
                           </tr>
                                 {% if category.instances_id is not null %}

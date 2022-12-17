@@ -1,5 +1,13 @@
 {% extends "assets/template.twig" %}
 {% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the AdamRMS Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+		</div>
+	</div>
     <div class="row">
         <div class="col-lg-12">
             <div class="card ">
@@ -35,15 +43,17 @@
                                 <th>Assets</th>
                                 <th>Asset Value</th>
                                 <th>Asset Mass</th>
-                                <th></th>
+                                <th>Last Project Activity</th>
+                                <th>Admin Actions</th>
                             </tr>
                             <tr>
-                                <td colspan="3"><b>Totals</b></td>
+                                <td colspan="3"><b>Server Totals</b></td>
                                 <td>
                                     {{ totals['STORAGEUSED']|formatsize }}
                                 </td>
                                 <td>{{ totals['STORAGEALLOWED']|formatsize }}+&infin;</td>
                                 <td>
+                                    {{ totals.users.total|number_format(0) }}
                                 </td>
                                 <td>
                                     {{ totals.assets.COUNT|number_format(0) }}
@@ -54,17 +64,29 @@
                                 <td>
                                     {{ totals.assets.MASS|mass }}
                                 </td>
+                                <td>
+                                    {{ totals.lastActivity.auditLog|date("d M Y") }}
+                                </td>
                                 <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: right;">Users without Instances</td>
+                                <td>
+                                    {{ totals.users.noInstances|number_format(0) }}
+                                </td>
+                                <td colspan="5"></td>
                             </tr>
                             </thead>
                             <tbody>
                             {% for instance in instances %}
-                                <tr
-                                        {% if instance.instances_deleted == '1' %}
-                                        class="danger"
-                                        {% endif %}>
+                                <tr>
                                     <td>{{ instance.instances_id }}</td>
-                                    <td>{{ instance.instances_name }}</td>
+                                    <td>
+                                        {{ instance.instances_name }}
+                                        {% if instance.instances_deleted == '1' %}
+                                        <br/><span class="badge badge-danger">SOFT-DELETED</span>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ instance.instances_plan }}</td>
                                     <td>
                                         {{ instance['STORAGEUSED']|formatsize }}
@@ -83,13 +105,27 @@
                                         {{ instance.assets.MASS|mass }}
                                     </td>
                                     <td>
-                                        {% if 21|permissions %}
-                                            <a href="{{ CONFIG.ROOTURL }}/?i={{ instance.instances_id }}"
-                                               title="Login to Instance">
-                                                <button type="button" class="btn btn-default"><i
-                                                            class="fa fa-sign-in-alt"></i></button>
-                                            </a>
-                                        {% endif %}
+                                        {{ instance.ACTIVITY.projectAuditLog ? instance.ACTIVITY.projectAuditLog|date("d M Y") : "" }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            {% if 21|permissions and instance.instances_deleted == 0 and USERDATA.instance.instances_id != instance.instances_id %}
+                                                <a href="{{ CONFIG.ROOTURL }}/?i={{ instance.instances_id }}"
+                                                title="Login to Instance">
+                                                    <button type="button" class="btn btn-warning">Login as Admin</button>
+                                                </a>
+                                            {% endif %}
+                                            {% if 23|permissions %}
+                                                {% if instance.instances_deleted == 0 %}
+                                                <button type="button" class="btn btn-danger deleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Delete</button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-success restoreInstanceButton" data-instanceid="{{ instance.instances_id }}">Undo Delete</button>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if 24|permissions and instance.instances_deleted == 1 %}
+                                                <button type="button"class="btn btn-danger permanentlyDeleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Permanently Delete</button>
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -129,18 +165,65 @@
         </div>
         <script>
             $(document).ready(function () {
-
                 $("#loadingoverlay").hide();
-                {% if 7|permissions %}
-                $(".logoutbutton").click(function () {
+                {% if 23|permissions %}
+                $(".deleteInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
                     $("#loadingoverlay").show();
-                    $.ajax({
-                        url: "{{ CONFIG.ROOTURL }}/api/account/destroyTokens.php?userid=" + $(this).data("userid"),
-                        success: function (result) {
-                            if (result == '1') {
-                                $("#loadingoverlay").hide();
+                    bootbox.confirm({
+                        message: "Are you sure you wish to soft-delete this instance? The instance can be restored.",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("instances/delete.php", {"instances_id":instanceId}, function (data) {
+                                    location.reload();
+                                });
                             } else {
-                                bootbox.alert("Sorry - Operation could not be completed! Please reload the page")
+                                $("#loadingoverlay").hide();
+                            }
+                        }
+                    });
+                });
+                $(".restoreInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    ajaxcall("instances/unDelete.php", {"instances_id":instanceId}, function (data) {
+                        location.reload();
+                    });
+                });
+                {% endif %}
+                {% if 24|permissions %}
+                $(".permanentlyDeleteInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    bootbox.confirm({
+                        message: "Are you sure you wish to hard-delete this instance? This is a permanent action and cannot be undone, there is no option to restore this instance.",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("instances/permanentlyDelete.php", {"instances_id":instanceId}, function (data) {
+                                    location.reload();
+                                });
+                            } else {
+                                $("#loadingoverlay").hide();
                             }
                         }
                     });

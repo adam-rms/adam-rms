@@ -11,7 +11,6 @@ if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
 $DBLIB->pageLimit = 20; //Users per page
 $DBLIB->orderBy("instances.instances_id", "ASC");
-$DBLIB->where("instances.instances_deleted", 0);
 if (strlen($PAGEDATA['search']) > 0) {
 	//Search
 	$DBLIB->where("(
@@ -57,9 +56,25 @@ foreach ($instances as $instance) {
 	$DBLIB->where("userInstances.userInstances_deleted",  0);
 	$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 	$instance['USERS'] = $DBLIB->getValue("users","COUNT(*)");
+	// Activity
+	$instance['ACTIVITY'] = [];
+	$DBLIB->join("projects", "auditLog.projects_id=projects.projects_id", "LEFT");
+	$DBLIB->orderBy("auditLog_timestamp", "DESC");
+	$DBLIB->where("projects.instances_id", $instance['instances_id']);
+	$DBLIB->where ("auditLog.projects_id", NULL, 'IS NOT');
+	$instance['ACTIVITY']['projectAuditLog'] = $DBLIB->getValue("auditLog", "auditLog_timestamp");
 
 
 	$PAGEDATA['instances'][] = $instance;
 }
+
+$PAGEDATA['totals']['users'] = [];
+$PAGEDATA['totals']['users']['total'] = $DBLIB->getValue("users", "count(*)");
+$DBLIB->where("(SELECT COUNT(*) FROM userInstances WHERE userInstances.users_userid=users.users_userid AND userInstances.userInstances_deleted=0 AND (userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "'))", 1, "<");
+$PAGEDATA['totals']['users']['noInstances'] = $DBLIB->getValue("users", "count(*)");
+
+$DBLIB->orderBy("auditLog_timestamp", "DESC");
+$PAGEDATA['totals']['lastActivity']['auditLog'] = $DBLIB->getValue("auditLog", "auditLog_timestamp");
+
 echo $TWIG->render('instances.twig', $PAGEDATA);
 ?>

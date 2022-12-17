@@ -12,7 +12,7 @@ else $PAGEDATA['search'] = null;
 
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
-$DBLIB->pageLimit = 20; //Users per page
+$DBLIB->pageLimit = isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 20; //Users per page
 $DBLIB->orderBy("users.users_name1", "ASC");
 $DBLIB->orderBy("users.users_name2", "ASC");
 $DBLIB->orderBy("users.users_created", "ASC");

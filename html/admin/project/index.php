@@ -1,10 +1,7 @@
 <?php
-ini_set('memory_limit','256M');
 require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
-
 require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data comes from
-
 
 //AuditLog
 $DBLIB->where("auditLog.auditLog_deleted", 0);
@@ -97,8 +94,5 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
 
 
 if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assetsPage.twig', $PAGEDATA);
-elseif (isset($_GET['pdf'])) {
-    $PAGEDATA['GET'] = $_GET;
-    $PAGEDATA['GET']['quote'] = $_GET['quote'] == "true";
-    die($TWIG->render('project/pdf.twig', $PAGEDATA));
-} else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
+else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
+?>
