@@ -11,7 +11,7 @@
 
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(39)) die("404");
+if (!$AUTH->instancePermissionCheck(99)) die("404");
 
 if (!isset($_POST['locations_id'])) die("404");
 
@@ -22,6 +22,6 @@ $client = $DBLIB->update("locations", ["locations.locations_archived" => 1]);
 
 if (!$client) finish(false);
 
-$bCMS->auditLog("ARCHIVE", "locations", "Moved the client to archive", $AUTH->data['users_userid'], null, $_POST['location_id']);
+$bCMS->auditLog("ARCHIVE", "locations", "Moved the location to archive", $AUTH->data['users_userid'], null, $_POST['location_id']);
 
 finish(true);
