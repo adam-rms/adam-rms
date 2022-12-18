@@ -34,6 +34,9 @@
                 <tr>
                     <td>
                         {% if project != role.projects_id %}
+                            {% if role.parentProject %}
+                                {{role.parentProject.projects_name}} &rarr;
+                            {% endif %}
                             {{ role.projects_name }}
                         {% else %}
                             &#8627;
@@ -86,6 +89,9 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
+                        {% if role.parentProject %}
+                            {{role.parentProject.projects_name}} &rarr;
+                        {% endif %}
                         {{ role.projects_name }}
                 </h3>
             </div>
@@ -100,7 +106,8 @@
                         </p>
                         <p>
                             <strong>Project Dates: </strong>
-                            {{role.projects_dates_use_start ? role.projects_dates_use_start|date("d M Y h:ia") }} - 
+                            {{role.projects_dates_use_start ? role.projects_dates_use_start|date("d M Y h:ia") }}
+                            {{role.projects_dates_use_start and role.projects_dates_use_end ? " - " }} 
                             {{role.projects_dates_use_end ? role.projects_dates_use_end|date("d M Y h:ia") }}
                         </p>
                         {% if role.projectsVacantRoles_deadline %}
