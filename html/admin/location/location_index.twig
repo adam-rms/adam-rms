@@ -129,6 +129,9 @@
                                 </td>
                                 <td class="project-actions text-right">
                                     <div class="btn-group">
+                                        {% if 100|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (location.files|length > 0 ? location.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
+                                        {% endif %}
                                         {% if 103|instancePermissions %}
                                             <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                         {% endif %}
