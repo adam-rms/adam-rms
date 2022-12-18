@@ -21,12 +21,22 @@ $DBLIB->orderBy("projectsVacantRoles.projectsVacantRoles_added","ASC");
 $roles = $DBLIB->get("projectsVacantRoles",null,["projectsVacantRoles.*","projects.*","users.users_userid", "users.users_name1", "users.users_name2", "users.users_email"]);
 $PAGEDATA['roles'] = [];
 foreach($roles as $role) {
+    //information about existing applications
     $DBLIB->where("projectsVacantRoles_id",$role['projectsVacantRoles_id']);
     $DBLIB->where("projectsVacantRolesApplications_deleted",0);
     $DBLIB->where("projectsVacantRolesApplications_withdrawn",0);
     $DBLIB->where("users_userid",$AUTH->data['users_userid']);
     $role['application'] = $DBLIB->getOne("projectsVacantRolesApplications",["projectsVacantRolesApplications_id"]);
     $role['projectsVacantRoles_questions'] = json_decode($role['projectsVacantRoles_questions'],true);
+
+    //get parent project if set
+    if ($role['projects_parent_project_id']) {
+        $DBLIB->where("projects_id",$role['projects_parent_project_id']);
+        $DBLIB->where("projects_deleted",0);
+        $DBLIB->where("projects_archived",0);
+        $role['parentProject'] = $DBLIB->getOne("projects",["projects_id","projects_name"]);
+    }
+
     $PAGEDATA['roles'][] = $role;
 }
 echo $TWIG->render('project/crew/vacancies.twig', $PAGEDATA);
