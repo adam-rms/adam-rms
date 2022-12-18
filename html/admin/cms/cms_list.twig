@@ -1,8 +1,5 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <script src="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css"/>
-
     <!--Sortable-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -199,14 +196,12 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Icon</span>
                                         </div>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-default iconpicker-component"><i></i></button>
-                                            <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle"  data-selected="{{ page.cmsPages_fontAwesome }}" data-id="{{ page.cmsPages_id }}" data-toggle="dropdown">
-                                                <span class="caret"></span>
-                                                <span class="sr-only">Toggle Dropdown</span>
-                                            </button>
-                                            <div class="dropdown-menu"></div>
-                                        </div>
+                                            <select class="form-control rms-icon-picker" name="cmsPages_fontAwesome">
+                                                {% if page.cmsPages_fontAwesome %}
+                                                    <option value="{{ page.cmsPages_fontAwesome }}">{{page.cmsPages_fontAwesome|replace({"fas fa-":""})}}</option>
+                                                {% endif %}
+                                            </select>
+                                        
                                     </div>
                                     <hr/>
                                     <h3>AdamRMS Dashboard</h3>
@@ -245,8 +240,48 @@
         {% endfor %}
         {% endif %}
         <script>
+            function formatState (state) {
+                var $state = $(
+                    '<span><i class="fas fa-' + state.text + '"></i> ' + state.text + '</span>'
+                );
+                return $state;
+            }
+
             $(document).ready(function () {
-                $('.iconpickerButtonSelector').iconpicker({ /*options*/ });
+                $('.modal').on('shown.bs.modal', function () {
+                    $(this).find('.rms-icon-picker').first().select2({
+                        tags: false,
+                        multiple: false,
+                        theme: "bootstrap4",
+                        minimumInputLength: 1,
+                        width: '50%',
+                        minimumResultsForSearch: 1,
+                        placeholder: "Search for an Icon",
+                        ajax: {
+                            url: "{{ CONFIG.ROOTURL }}/api/icons/getIcons.php",
+                            dataType: "json",
+                            type: "POST",
+                            data: function (params) {
+                                var queryParameters = {
+                                    search: params.term,
+                                }
+                                return queryParameters;
+                            },
+                            processResults: function (data) {
+                                if (data && data.result && data.response) {
+                                    return data.response;
+                                } else return {
+                                    results: []
+                                };
+                            }
+                        },
+                        templateSelection: formatState,
+                        templateResult: formatState,
+                    });
+                });
+                $('.modal').on('hidden.bs.modal', function () {
+                    $(this).find('.rms-icon-picker').first().select2('destroy');
+                });
                 {% if 126|instancePermissions %}
                 $('#pageListSortable').sortable({
                     placeholder         : 'sort-highlight',
@@ -263,7 +298,7 @@
                 });
                 $(".editForm").submit(function (event) {
                     var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
-                    formData.push({"name": "cmsPages_fontAwesome", "value":$(".iconpickerButtonSelector[data-id=" + $(this).data("id") + "]").data('iconpicker').iconpickerValue});
+                    formData.push({"name": "cmsPages_fontAwesome", "value":$(this).find('.rms-icon-picker').first().val()});
                     event.preventDefault();
                     ajaxcall("cms/editPageConfig.php", {formData}, function (data) {
                         location.reload();
