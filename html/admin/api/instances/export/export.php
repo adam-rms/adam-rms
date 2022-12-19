@@ -25,8 +25,8 @@ elseif ($_POST['filetype'] == "xlsx") {
 
 header("Pragma: no-cache");
 header("Expires: 0");
-//error_reporting(0); //Errors if shown mean it won't download right
-//ini_set('display_errors', 0);
+error_reporting(0); //Errors if shown mean it won't download right
+ini_set('display_errors', 0);
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
