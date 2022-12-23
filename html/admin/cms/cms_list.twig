@@ -240,21 +240,14 @@
         {% endfor %}
         {% endif %}
         <script>
-            function formatState (state) {
-                var $state = $(
-                    '<span><i class="fas fa-' + state.text + '"></i> ' + state.text + '</span>'
-                );
-                return $state;
-            }
-
             $(document).ready(function () {
+                {% if 126|instancePermissions %}
                 $('.modal').on('shown.bs.modal', function () {
                     $(this).find('.rms-icon-picker').first().select2({
                         tags: false,
                         multiple: false,
                         theme: "bootstrap4",
                         minimumInputLength: 1,
-                        width: '50%',
                         minimumResultsForSearch: 1,
                         placeholder: "Search for an Icon",
                         ajax: {
@@ -269,20 +262,26 @@
                             },
                             processResults: function (data) {
                                 if (data && data.result && data.response) {
-                                    return data.response;
+                                    return {
+                                        results: $.map(data.response, function (item) {
+                                            return {
+                                                text: item.label,
+                                                id: "fas fa-" + item.code
+                                            }
+                                        })
+                                    };
                                 } else return {
                                     results: []
                                 };
                             }
                         },
-                        templateSelection: formatState,
-                        templateResult: formatState,
+                        templateResult: input => $('<span><i class="' + input.id + '"></i>  -  ' + input.text + '</span>'),
+                        templateSelection: input => $('<span><i class="' + input.id + '"></i></span>')
                     });
                 });
                 $('.modal').on('hidden.bs.modal', function () {
                     $(this).find('.rms-icon-picker').first().select2('destroy');
                 });
-                {% if 126|instancePermissions %}
                 $('#pageListSortable').sortable({
                     placeholder         : 'sort-highlight',
                     handle              : '.handle',
