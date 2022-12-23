@@ -1,8 +1,4 @@
 {% extends "assets/template.twig" %}
-{% block htmlIncludes %}
-    <script src="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css"/>
-{% endblock %}
 {% block content %}
 
 <div class="row">
@@ -88,15 +84,11 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Icon</span>
                                                         </div>
-                                                        <div class="btn-group">
-                                                            <button type="button" class="btn btn-default iconpicker-component"><i
-                                                                        class="{{ category.assetCategories_fontAwesome }}"></i></button>
-                                                            <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle" data-toggle="dropdown" data-selected="{{ category.assetCategories_fontAwesome }}" data-id="{{ category.assetCategories_id }}">
-                                                                <span class="caret"></span>
-                                                                <span class="sr-only">Toggle Dropdown</span>
-                                                            </button>
-                                                            <div class="dropdown-menu"></div>
-                                                        </div>
+                                                        <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome">
+                                                            {% if category.assetCategories_fontAwesome %}
+                                                                <option value="{{ category.assetCategories_fontAwesome }}"></option>
+                                                            {% endif %}
+                                                        </select>
                                                     </div>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -153,14 +145,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Icon</span>
                             </div>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default iconpicker-component"><i></i></button>
-                                <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle" data-toggle="dropdown" id="newCategoryFormIcon">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <div class="dropdown-menu"></div>
-                            </div>
+                            <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome"></select>
                         </div>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -188,11 +173,49 @@
     {% endif %}
     <script>
         $(document).ready(function () {
-            $('.iconpickerButtonSelector').iconpicker({ /*options*/ });
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('.rms-icon-picker').first().select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    minimumResultsForSearch: 1,
+                    placeholder: "Search for an Icon",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/icons/getIcons.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                search: params.term,
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: item.label,
+                                            id: "fas fa-" + item.code
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    },
+                    templateResult: input => $('<span><i class="' + input.id + '"></i>&nbsp;' + input.text + '</span>'),
+                    templateSelection: input => $('<span><i class="' + input.id + '"></i></span>')
+                });
+            });
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('.rms-icon-picker').first().select2('destroy');
+            });
             {% if 90|instancePermissions %}
             $("#saveNewCategory").click(function () {
                 var formData = $("#newCategoryForm").serializeArray();
-                formData.push({"name": "assetCategories_fontAwesome", "value":$("#newCategoryFormIcon").data('iconpicker').iconpickerValue});
                 ajaxcall("categories/new.php", {formData}, function (data) {
                     location.reload();
                 });
@@ -201,7 +224,6 @@
             {% if 91|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
-                formData.push({"name": "assetCategories_fontAwesome", "value":$(".iconpickerButtonSelector[data-id=" + $(this).data("id") + "]").data('iconpicker').iconpickerValue});
                 console.log(formData);
                 ajaxcall("categories/edit.php", {formData}, function (data) {
                     location.reload();
