@@ -198,7 +198,7 @@
                                         </div>
                                             <select class="form-control rms-icon-picker" name="cmsPages_fontAwesome">
                                                 {% if page.cmsPages_fontAwesome %}
-                                                    <option value="{{ page.cmsPages_fontAwesome }}">{{page.cmsPages_fontAwesome|replace({"fas fa-":""})}}</option>
+                                                    <option value="{{ page.cmsPages_fontAwesome }}"></option>
                                                 {% endif %}
                                             </select>
                                         
@@ -275,7 +275,7 @@
                                 };
                             }
                         },
-                        templateResult: input => $('<span><i class="' + input.id + '"></i>  -  ' + input.text + '</span>'),
+                        templateResult: input => $('<span><i class="' + input.id + '"></i>&nbsp;' + input.text + '</span>'),
                         templateSelection: input => $('<span><i class="' + input.id + '"></i></span>')
                     });
                 });
