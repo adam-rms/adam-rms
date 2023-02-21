@@ -6,4 +6,16 @@
             {% endembed %}
         </div>
     </div>
+
+    <div class="card ">
+        <div class="card-header">
+            <h3 class="card-title">Calendar Export {{ auth.data.instance.instances_id }}</h3>
+        </div>
+        <div class="card-body">
+            <input type="url" class="form-control" disabled value="{{ CONFIG.ROOTURL }}/api/instances/calendar-export.php?id={{ instance.instances_id }}&key={{ instance.instances_calendarHash }}" />
+            <br>
+            Use this as an iCal link in your calendar app.
+        </div>
+    </div>
+
 {% endblock %}

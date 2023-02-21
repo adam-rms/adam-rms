@@ -3,6 +3,23 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Business Calendar", "BREADCRUMB" => false];
 
+$DBLIB->where("instances.instances_id", $AUTH->data['instance']['instances_id']); //Load instance data
+$PAGEDATA['instance'] = $DBLIB->getone("instances", ["instances.*"]);
+if (!$PAGEDATA['instance']) die($TWIG->render('404.twig', $PAGEDATA));
+
+if ($PAGEDATA['instance']['instances_calendarHash'] == null) {
+   $characters = 'abcdefghijklmnopqrstuvwxyz';
+   $charactersLength = strlen($characters);
+   $randomString = '';
+   for ($i = 0; $i < 50; $i++) {
+      $randomString .= $characters[rand(0, $charactersLength - 1)];
+   }
+   $DBLIB->where("instances.instances_id", $AUTH->data['instance']['instances_id']);
+   $DBLIB->update("instances", ['instances_calendarHash' => $randomString]);
+   //Generate a calendar hash
+   $PAGEDATA['instance']['instances_calendarHash'] = $randomString;
+}
+
 if (isset($_GET['location'])) {
     $DBLIB->where("locations_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
