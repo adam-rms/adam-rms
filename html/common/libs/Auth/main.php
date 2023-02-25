@@ -126,9 +126,10 @@ class bID
 
                         if (isset($_POST['instances_id'])) { //Used by the app
                             $this->setInstance($_POST['instances_id']);
-                        } elseif (isset($_SESSION['instanceID'])) {
-                            if (in_array(21, $this->permissions) and $_SESSION['instanceID'] != null and is_int($_SESSION['instanceID']) and !in_array($_SESSION['instanceID'], $this->data['instance_ids'])) {
-                                //They're assigned to an instance they are not in - so we need to download that instance as well for them
+                        } elseif (isset($_SESSION['instanceID']) and $_SESSION['instanceID'] != null and is_int($_SESSION['instanceID'])) {
+                            // An instance ID is set in their session so use that one
+                            if (in_array(21, $this->permissions) and !in_array($_SESSION['instanceID'], $this->data['instance_ids'])) {
+                                //They're assigned to an instance they are not in, and are a super administrator - so we need to download that instance as well for them
                                 $DBLIB->where("instances.instances_deleted", 0);
                                 $DBLIB->where("instances_id", $_SESSION['instanceID']);
                                 $instance = $DBLIB->getone("instances");
@@ -140,7 +141,7 @@ class bID
                                     $this->data['instance'] = $instance;
                                     $this->data['instances'][] = $instance;
                                 }
-                            } elseif ($_SESSION['instanceID'] != null) $this->setInstance($_SESSION['instanceID']); //Set instance normally
+                            } else $this->setInstance($_SESSION['instanceID']); //Set instance normally
                         }
                         if (!$this->data['instance'] and count($this->data['instances']) >0) {
                             foreach ($this->data['instances'] as $instance) {
@@ -178,7 +179,7 @@ class bID
             //Check they have this instance available
             if ($instance['instances_id'] == $instanceId) {
                 $this->data['instance'] = $instance;
-                if (!isset($_SESSION['instanceID']) or $this->data['instance']['instances_id'] != $_SESSION['instanceID']) {
+                if (!isset($_SESSION['instanceID']) or $this->data['instance']['instances_id'] != $_SESSION['instanceID'] or $this->data['instance']['instances_id'] != $this->data['users_selectedInstanceIDLast']) {
                     $_SESSION['instanceID'] = $this->data['instance']['instances_id'];
                     $DBLIB->where("users_userid",$this->data['users_userid']);
                     $DBLIB->update("users",["users_selectedInstanceIDLast"=>$this->data['instance']['instances_id']],1);
