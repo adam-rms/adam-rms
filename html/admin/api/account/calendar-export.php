@@ -13,6 +13,7 @@ $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);
 $DBLIB->where("users.users_userid", $_POST['uid']);
 $DBLIB->where("users_calendarHash", $_POST['key']);
+$DBLIB->where("users_calendarHash", NULL, 'IS NOT');
 $PAGEDATA['user'] = $DBLIB->getone("users", ["users.users_userid", "users.users_name1", "users.users_name2", "users.users_email"]);
 if (!$PAGEDATA['user']) die("404");
 

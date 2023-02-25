@@ -13,6 +13,7 @@ date_default_timezone_set($tz);
 $DBLIB->where("instances.instances_deleted", 0);
 $DBLIB->where("instances.instances_id", $_POST['id']);
 $DBLIB->where("instances.instances_calendarHash", $_POST['key']);
+$DBLIB->where("instances.instances_calendarHash", NULL, 'IS NOT');
 $PAGEDATA['instance'] = $DBLIB->getone("instances", ["instances.instances_id"]);
 if (!$PAGEDATA['instance']) die("404");
 
