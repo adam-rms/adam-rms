@@ -18,6 +18,7 @@ if (!$PAGEDATA['user']) die("404");
 
 $DBLIB->where("crewAssignments.users_userid", $PAGEDATA['user']['users_userid']);
 $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
+$DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("locations","projects.locations_id=locations.locations_id","LEFT");

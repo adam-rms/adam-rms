@@ -18,6 +18,7 @@ if (!$PAGEDATA['instance']) die("404");
 
 // Get all projects, and their location, client, and project manager
 $DBLIB->where("projects.instances_id", $PAGEDATA['instance']['instances_id']);
+$DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("locations","projects.locations_id=locations.locations_id","LEFT");
 $DBLIB->join("users AS pmusers", "projects.projects_manager=pmusers.users_userid", "LEFT");
