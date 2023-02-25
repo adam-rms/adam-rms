@@ -14,6 +14,7 @@ if ($AUTH->data['instance']['instances_calendarHash'] == null) {
    $DBLIB->update("instances", ['instances_calendarHash' => $randomString]);
    //Generate a calendar hash
    $AUTH->data['instance']['instances_calendarHash'] = $randomString;
+   $PAGEDATA['USERDATA']['instance']['instances_calendarHash'] = $randomString; //Update it here so twig uses the new value
 }
 
 if (isset($_GET['location'])) {
