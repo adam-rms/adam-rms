@@ -3,6 +3,19 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Business Calendar", "BREADCRUMB" => false];
 
+if ($AUTH->data['instance']['instances_calendarHash'] == null) {
+   $characters = 'abcdefghijklmnopqrstuvwxyz';
+   $charactersLength = strlen($characters);
+   $randomString = '';
+   for ($i = 0; $i < 50; $i++) {
+      $randomString .= $characters[rand(0, $charactersLength - 1)];
+   }
+   $DBLIB->where("instances.instances_id", $AUTH->data['instance']['instances_id']);
+   $DBLIB->update("instances", ['instances_calendarHash' => $randomString]);
+   //Generate a calendar hash
+   $AUTH->data['instance']['instances_calendarHash'] = $randomString;
+}
+
 if (isset($_GET['location'])) {
     $DBLIB->where("locations_deleted", 0);
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);

@@ -6,4 +6,53 @@
             {% endembed %}
         </div>
     </div>
+
+    <div class="card collapsed-card">
+        <div class="card-header">
+            <h3 class="card-title">Export Calendar</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <input type="url" class="form-control" disabled value="{{ CONFIG.ROOTURL }}/api/instances/calendar-export.php?id={{ USERDATA.instance.instances_id }}&key={{ USERDATA.instance.instances_calendarHash }}" />
+            <br/>
+            <h2>Google Calendar</h2>
+            <ol>
+                <li>Copy the URL at the top.</li>
+                <li><a href="https://calendar.google.com" target="_blank">Open Google Calendar</a>,
+                    click the <em>+</em> above <em>My calendars</em> and choose <em>From URL</em>.
+                </li>
+                <li>Paste the URL into the field named <em>URL of calendar</em> that appears and click
+                    <em>Add calendar</em>.
+                </li>
+                <li>After a few seconds, it should appear in your calendar. If it does not, try
+                    reloading Google Calendar.
+                </li>
+            </ol>
+            <h2>Apple Calendar</h2>
+            <ol>
+                <li>Copy the URL at the top.</li>
+                <li>In Apple Calendar, click the <em>File</em> menu and choose <em>New Calendar
+                        Subscription…</em>.
+                </li>
+                <li>Paste the URL into the dialog that appears and click <em>Subscribe</em>.</li>
+                <li>A window with settings of the calendar subscription will appear. Set <em>Auto-refresh</em>
+                    to <em>Every hour</em> to keep your calendar up to date and click <em>OK</em>.
+                </li>
+            </ol>
+            <h2>Outlook</h2>
+            <ol>
+                <li>Copy the URL at the top.</li>
+                <li>In Outlook, click <em>Open Calendar</em> and choose <em>From Internet…</em>.</li>
+                <li>Paste the URL into the Outlook dialog that appears and click <em>OK</em>.</li>
+                <li>After a few seconds, Outlook will ask if the internet calendar should be added.
+                    Click <em>Yes</em>.
+                </li>
+            </ol>
+        </div>
+    </div>
+
 {% endblock %}
