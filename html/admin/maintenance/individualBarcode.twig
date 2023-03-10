@@ -53,7 +53,7 @@
 
         <table style="vertical-align:top;">
             <tr>
-                {% if GET.lengthMode == 1 and asset['asset_definableFields_1'] != null %}
+                {% if GET.lengthMode == 1 and asset['asset_definableFields_1'] != null and asset['asset_definableFields_1'] matches '/^\\d+$/' %}
                 <td style="
                         background-color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],false) }};
                         color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],true) }};
