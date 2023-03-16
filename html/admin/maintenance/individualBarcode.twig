@@ -1,30 +1,30 @@
 {% if asset %}
     {% if GET.numStickers == "8" %}
-        <table>
-            <tr>
+        <div class="container">
+            <div class="container">
                 {% if GET.adamrmslogo == 1 %}
-                <td style="width:0.1px;">
+                <div class="item">
                     <img src="{{ CONFIG.ASSETCDNURL }}/img/logosmall.png" style="height: 60px;" />
-                </td>
+                </div>
                 {% endif %}
-                <td style="width:0.1px;">
+                <div class="item">
                     <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ asset.barcode.assetsBarcodes_value }}&size=60&width=1&type={{ asset.barcode.assetsBarcodes_type }}" alt="Barcode" style="margin-right: 3px;">
-                </td>
-                <td style="width: 0.1px; white-space:nowrap; vertical-align:middle;">
+                </div>
+                <div class="item">
                     {% if GET.tags != 0 %}<b>{{ asset.assets_tag|aTag }}</b>{% endif %}
                     {% if GET.mass == 1 %}{{ (asset['assets_mass'] ? ' - ' ~ asset['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? ' - ' ~ asset.assetTypes_mass|mass : '')) }}{% endif %}
                     {% if GET.tags != 0 or GET.mass == 1%}<br/>{% endif %}
                     {% if GET.typename == 1 %}{{ asset.assetTypes_name }}<br/>{% endif %}
                     {% if GET.definableField1 == 1 and asset.assetTypes_definableFields[0] != "" %}{{ asset.assetTypes_definableFields[0] }}: {{ asset['asset_definableFields_1'] }}<br/> {% endif %}
                     {% if GET.instanceName %}{{ USERDATA.instance.instances_name }}{% endif %}
-                </td>
+                </div>
                 {% if GET.instancelogo == 1 %}
-                <td style="vertical-align:middle;">
+                <div class="item">
                     <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="height:70px">
-                </td>
+                </div>
                 {% endif %}
-            </tr>
-        </table>
+            </div>
+        </div>
     {% elseif GET.numStickers == "8cable" %}
 
         {# Calculate column count #}
@@ -53,11 +53,11 @@
 
         <table style="vertical-align:top;">
             <tr>
-                {% if GET.lengthMode == 1 and asset['asset_definableFields_1'] != null %}
-                <td text-rotate="-90" style="
+                {% if GET.lengthMode == 1 and asset['asset_definableFields_1'] != null and asset['asset_definableFields_1'] matches '/^\\d+$/' %}
+                <td style="
                         background-color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],false) }};
                         color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],true) }};
-                        padding:5px;">
+                        padding:5px; writing-mode: vertical-rl;">
                     {% if asset['asset_definableFields_1'] < 1 %}
                         {% set loopCount = 5 %}
                     {% elseif asset['asset_definableFields_1'] < 10 %}
@@ -96,7 +96,7 @@
                         </tr>
                         <tr>
                             <td colspan="{{ colcount }}">
-                                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ asset.barcode.assetsBarcodes_value }}&size=140&width=2&type={{ asset.barcode.assetsBarcodes_type }}" alt="Barcode" style="margin-right: 3px;width:100px;">
+                                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ asset.barcode.assetsBarcodes_value }}&size=140&width=2&type={{ asset.barcode.assetsBarcodes_type }}" alt="Barcode" style="margin-left: 25%;width:100px;">
                             </td>
                         </tr>
                     </table>
