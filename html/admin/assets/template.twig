@@ -630,8 +630,16 @@
                                         {% else %}
                                         far fa-circle
                                         {% endif %}
+                                        {% if project.projects_status != -1 %}
                                         text-{{ STATUSES[project.projects_status]['class'] }}
-                                        " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                        {% endif %}"
+                                        {% if project.projects_status == -1 %}
+                                        title="{{project.projects_customProjectStatus['name']}}"
+                                        style="color: {{project.projects_customProjectStatus['backgroundColour']}}"
+                                        {% else %}
+                                        title="{{ STATUSES[project.projects_status]['name'] }}"
+                                        {% endif %}
+                                        ></i>
                                     <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                     <i class="fas fa-angle-left right"></i>
                                 </a>
@@ -644,8 +652,16 @@
                                                 {% else %}
                                                 far fa-sun
                                                 {% endif %}
-                                        text-{{ STATUSES[project.projects_status]['class'] }}
-                                        " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                                {% if project.projects_status != -1 %}
+                                                text-{{ STATUSES[project.projects_status]['class'] }}
+                                                {% endif %}"
+                                                {% if project.projects_status == -1 %}
+                                                title="{{project.projects_customProjectStatus['name']}}"
+                                                style="color: {{project.projects_customProjectStatus['backgroundColour']}}"
+                                                {% else %}
+                                                title="{{ STATUSES[project.projects_status]['name'] }}"
+                                                {% endif %}
+                                            ></i>
                                             <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                         </a>
                                     </li>
@@ -653,13 +669,21 @@
                                         <li class="nav-item">
                                             <a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}" class="nav-link">
                                                 <i class="nav-icon
-                                        {% if subProject.projects_manager == USERDATA.users_userid %}
-                                        fas fa-star
-                                        {% else %}
-                                        far fa-circle
-                                        {% endif %}
-                                        text-{{ STATUSES[subProject.projects_status]['class'] }}
-                                        " title="{{ STATUSES[subProject.projects_status]['name'] }}"></i>
+                                                    {% if subProject.projects_manager == USERDATA.users_userid %}
+                                                    fas fa-star
+                                                    {% else %}
+                                                    far fa-circle
+                                                    {% endif %}
+                                                    {% if subProject.projects_status != -1 %}
+                                                    text-{{ STATUSES[subProject.projects_status]['class'] }}
+                                                    {% endif %}"
+                                                    {% if subProject.projects_status == -1 %}
+                                                    title="{{subProject.projects_customProjectStatus['name']}}"
+                                                    style="color: {{subProject.projects_customProjectStatus['backgroundColour']}}"
+                                                    {% else %}
+                                                    title="{{ STATUSES[subProject.projects_status]['name'] }}"
+                                                    {% endif %}
+                                                ></i>
                                                 <p title="{{ subProject.projects_name }}">&#8627; {{ subProject.projects_name|u.truncate(19, '...') }}</p>
                                             </a>
                                         </li>
@@ -675,8 +699,16 @@
                                         {% else %}
                                         far fa-circle
                                         {% endif %}
+                                        {% if project.projects_status != -1 %}
                                         text-{{ STATUSES[project.projects_status]['class'] }}
-                                        " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                        {% endif %}"
+                                        {% if project.projects_status == -1 %}
+                                        title="{{project.projects_customProjectStatus['name']}}"
+                                        style="color: {{project.projects_customProjectStatus['backgroundColour']}}"
+                                        {% else %}
+                                        title="{{ STATUSES[project.projects_status]['name'] }}"
+                                        {% endif %}
+                                    ></i>
                                     <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
                                 </a>
                             </li>

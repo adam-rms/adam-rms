@@ -107,6 +107,12 @@
                             {% endif %}
                         </td>
                         <td class="project_progress">
+                            {% if project.projects_status == -1 %}
+                            {{ project.projects_customProjectStatus['name'] }}<br/>
+                            <small>
+                                {{ project.projects_customProjectStatus['description'] }}
+                            </small>
+                            {% else %}
                             {{ STATUSES[project.projects_status]['name'] }}<br/>
                             {% if STATUSES[project.projects_status]['order'] < 7 %}
                                 <div class="progress progress-sm">
@@ -117,6 +123,7 @@
                             <small>
                                 {{ STATUSES[project.projects_status]['description'] }}
                             </small>
+                            {% endif %}
                         </td>
                     </tr>
                     {% if project.subProjects %}

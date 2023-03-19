@@ -47,13 +47,14 @@ $DBLIB->orderBy("projects.projects_archived", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
 $DBLIB->orderBy("projects.projects_created", "ASC");
-$projectlist = $DBLIB->arraybuilder()->paginate("projects", $page, ["projects_id", "projectsTypes.*","projects_archived", "projects_name", "clients_name", "projects.clients_id", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "users.users_name1", "users.users_name2", "users.users_email", "users.users_thumbnail"]);
+$projectlist = $DBLIB->arraybuilder()->paginate("projects", $page, ["projects_id", "projectsTypes.*", "projects_archived", "projects_name", "clients_name", "projects.clients_id", "projects_dates_deliver_start", "projects_dates_deliver_end", "projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_customProjectStatus", "projects_manager", "users.users_name1", "users.users_name2", "users.users_email", "users.users_thumbnail"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 $PAGEDATA['PROJECTSLIST'] = [];
 foreach ($projectlist as $project) {
     $DBLIB->where("projects_id", $project['projects_id']);
     $DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
     $project['finance'] = $DBLIB->getOne("projectsFinanceCache");
+    $project['projects_customProjectStatus'] = json_decode($project['projects_customProjectStatus'], true);
 
     $DBLIB->where("projects_parent_project_id", $project['projects_id']);
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
@@ -64,9 +65,10 @@ foreach ($projectlist as $project) {
     $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
     $DBLIB->orderBy("projects.projects_name", "ASC");
     $DBLIB->orderBy("projects.projects_created", "ASC");
-    $subProjects = $DBLIB->get("projects", null, ["projects_id", "projectsTypes.*","projects_archived", "projects_name", "clients_name", "projects.clients_id", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager", "users.users_name1", "users.users_name2", "users.users_email", "users.users_thumbnail"]);
+    $subProjects = $DBLIB->get("projects", null, ["projects_id", "projectsTypes.*", "projects_archived", "projects_name", "clients_name", "projects.clients_id", "projects_dates_deliver_start", "projects_dates_deliver_end", "projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_customProjectStatus", "projects_manager", "users.users_name1", "users.users_name2", "users.users_email", "users.users_thumbnail"]);
     $project['subProjects'] = [];
     foreach ($subProjects as $subProject) {
+        $subProject['projects_customProjectStatus'] = json_decode($subProject['projects_customProjectStatus'], true);
         $DBLIB->where("projects_id", $project['projects_id']);
         $DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
         $subProject['finance'] = $DBLIB->getOne("projectsFinanceCache");
