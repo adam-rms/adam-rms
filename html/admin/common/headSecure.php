@@ -83,6 +83,7 @@ if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
         }
     }
     foreach ($projects as $index=>$project) { //Loop back throuhg the projects once more and join the subprojects up with their parents, preserving sorting again
+        $project['projects_customProjectStatus'] = json_decode($project['projects_customProjectStatus'], true);
         if ($project['projects_parent_project_id'] != null and isset($tempProjectKeys[$project['projects_parent_project_id']])) {
             $PAGEDATA['projects'][$tempProjectKeys[$project['projects_parent_project_id']]]['subProjects'][] = $project;
         }

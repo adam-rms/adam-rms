@@ -176,16 +176,23 @@
                                     {% endif %}
                                 </td>
                                 <td class="project_progress">
+                                    {% if subProject.projects_status == -1 %}
+                                    {{ subProject.projects_customProjectStatus['name'] }}<br/>
+                                    <small>
+                                        {{ subProject.projects_customProjectStatus['description'] }}
+                                    </small>
+                                    {% else %}
                                     {{ STATUSES[subProject.projects_status]['name'] }}<br/>
                                     {% if STATUSES[subProject.projects_status]['order'] < 7 %}
                                         <div class="progress progress-sm">
-                                            <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[subProject.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
+                                            <div class="progress-bar" style="color: {{ STATUSES[subProject.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[subProject.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[subProject.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[subProject.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
                                             </div>
                                         </div>
                                     {% endif %}
                                     <small>
                                         {{ STATUSES[subProject.projects_status]['description'] }}
                                     </small>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
