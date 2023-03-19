@@ -248,10 +248,17 @@
                                                     {% if project.projects_parent_project_id and project.projects_status_follow_parent %}
                                                     <div class="alert alert-info mb-1"><p>This sub-project is following the status of its parent project</p></div> 
                                                     {% endif %}
+                                                    {% if project.projects_status == -1 %}
+                                                    <div class="alert" style="background-color: {{project.projects_customProjectStatus["backgroundColour"] }}; color: {{ project.projects_customProjectStatus["foregroundColour"] }};">
+                                                        <h5><b>Status: </b>{{ project.projects_customProjectStatus['name'] }}</h5>
+                                                        {{ project.projects_customProjectStatus['description'] }}
+                                                    </div>
+                                                    {% else %}
                                                     <div class="alert" style="background-color: {{STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
                                                         <h5><b>Status: </b>{{ STATUSES[project.projects_status]['name'] }}</h5>
                                                         {{ STATUSES[project.projects_status]['description'] }}
                                                     </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -259,7 +266,7 @@
                                             <div class="btn-group float-right">
                                                 <button type="button" class="btn btn-default quickAddCommentButton">New Comment</button>
                                                 {% if 29|instancePermissions and not( project.projects_parent_project_id and project.projects_status_follow_parent) %}
-                                                    <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
+                                                    <button type="button" class="btn btn-secondary" id="editProjectStatus" data-toggle="modal" data-target="#projectStatusModal">Change Status</button>
                                                 {% endif %}
                                                 <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                                                     <span class="sr-only">Toggle Dropdown</span>
@@ -1314,7 +1321,104 @@
             </form>
         </div>
     </div>
+    <div class="modal fade" id="projectStatusModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Set Project Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="projectStatusModal-preset">Preset Statuses</label>
+                        <select class="form-control" id="projectStatusModal-preset">
+                            {% for id,status in STATUSES %}
+                                <option value='{{ id }}' {{(id == project.projects_status ? 'selected' : '')}}>
+                                    {{status.name ~ ' (' ~ status.description ~ ')'}}
+                                </option>
+                            {% endfor %}
+                            <option value='-1' {{(-1 == project.projects_status ? 'selected' : '')}}>Custom</option>
+                        </select>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                        <label for="projectStatusModal-name">Status Name</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="projectStatusModal-name" 
+                            placeholder="Status Name" 
+                            value="{{project.projects_status == -1 ? project.projects_customProjectStatus['name'] : STATUSES[project.projects_status]['name'] }}"
+                            {{project.projects_status == -1 ? '' : 'disabled'}}
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStatusModal-description">Status Description</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="projectStatusModal-description" 
+                            placeholder="Status Description" 
+                            value="{{project.projects_status == -1 ? project.projects_customProjectStatus['description'] : STATUSES[project.projects_status]['description'] }}"
+                            {{project.projects_status == -1 ? '' : 'disabled'}}
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStatusModal-colour">Status Background Colour</label>
+                        <input 
+                            type="color" 
+                            class="form-control" 
+                            id="projectStatusModal-colour" 
+                            value="{{project.projects_status == -1 ? project.projects_customProjectStatus['backgroundColour'] : STATUSES[project.projects_status]['backgroundColour'] }}"
+                            {{project.projects_status == -1 ? '' : 'disabled'}}
+                        />
+                    </div>
+                    <hr />
+                    {% if project.projects_status == -1 %}
+                    <div class="alert" id="projectStatusModal-summary" style="background-color: {{project.projects_customProjectStatus["backgroundColour"] }}; color: {{ project.projects_customProjectStatus["foregroundColour"] }};">
+                        <h5><b>Status: </b><span id="projectStatusModal-summary-name">{{ project.projects_customProjectStatus['name'] }}</span></h5>
+                        <span id="projectStatusModal-summary-description">{{ project.projects_customProjectStatus['description'] }}</span>
+                    </div>
+                    {% else %}
+                    <div class="alert" id="projectStatusModal-summary" style="background-color: {{STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
+                        <h5><b>Status: </b><span id="projectStatusModal-summary-name">{{ STATUSES[project.projects_status]['name'] }}</span></h5>
+                        <span id="projectStatusModal-summary-description">{{ STATUSES[project.projects_status]['description'] }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="projectStatusModal-submit">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
+        let statuses = {
+            {% for id,status in STATUSES %}
+                {{ id }} : {
+                    name: '{{ status.name }}',
+                    description: '{{ status.description }}',
+                    backgroundColour: '{{ status.backgroundColour }}',
+                    foregroundColour: '{{ status.foregroundColour }}'
+                },
+            {% endfor %}
+        };
+
+        function getForegroundColour(backgroundColour) {
+            // Check colour contrast of background colour to decide foreground colour
+            var c = backgroundColour.substring(1);      // strip #
+            var rgb = parseInt(c, 16);   // convert rrggbb to decimal
+            var r = (rgb >> 16) & 0xff;  // extract red
+            var g = (rgb >>  8) & 0xff;  // extract green
+            var b = (rgb >>  0) & 0xff;  // extract blue
+            var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+            return (brightness > 125) ? '#000000' : '#FFFFFF';
+        }
+
         $(document).ready(function () {
             $('#pdfGenerateModal').on('show.bs.modal', function (e) {
                 if ($(e.relatedTarget).data('quote')) {
@@ -1656,17 +1760,24 @@
             });
             {% endif %}
             {% if 29|instancePermissions %}
-            function changeStatus(newStatus) {
+            /**
+             * Change the status of the project
+             * @param newStatus {number | "custom"} - ID of the status 
+             * @param customStatus {json} - JSON object of the custom status
+             */
+            function changeStatus(newStatus, customStatus) {
+
                 ajaxcall("projects/changeStatus.php", {
                     "projects_status": newStatus,
-                    "projects_id": "{{ project.projects_id }}"
+                    "projects_id": "{{ project.projects_id }}",
+                    "projects_status_custom": customStatus
                 }, function (data) {
                     if (data.response.changed) {
                         location.reload();
                     } else {
                         var message = "The status of this project can't be changed because assets assigned to it have been assigned to other projects that clash. <br/><br/> Would you like to automatically remove the following assets from this project? This will have billing implications<br/><br/><br/><table class='table table-bordered'><tr><th>Tag</th><th>Name</th><th>Project Clashing</th></tr>";
                         $.each(data.response.assets, function( index, value ) {
-                            message += "<tr><td>A-" + value['assets_tag'] + "</td><td>" + value['assetTypes_name'] + "</td><td>" + value['projects_name'] + "</td></tr>";
+                            message += "<tr><td>" + value['assets_tag'] + "</td><td>" + value['assetTypes_name'] + "</td><td>" + value['projects_name'] + "</td></tr>";
                         });
                         bootbox.confirm({
                             message: message + "</table>",
@@ -1684,14 +1795,17 @@
                                 if (result) {
                                     {% if 31|instancePermissions %}
                                     var toRemove = [];
-                                    console.log(data.response.assets);
                                     $.each(data.response.assets, function( index, value ) {
                                         toRemove.push(value['old_assetsAssignments_id']);
                                     });
                                     ajaxcall("projects/assets/unassign.php", {
                                         "assetsAssignments": toRemove
                                         }, function (data) {
-                                            changeStatus(newStatus);
+                                            if (newStatus == "custom") {
+                                                changeStatus(newStatus, customStatus);
+                                            } else {
+                                                changeStatus(newStatus);
+                                            }
                                         });
                                     {% else %}
                                     bootbox.alert("Sorry - you don't have permission to remove these assets");
@@ -1702,47 +1816,72 @@
                     }
                 });
             }
-            $("#editProjectStatus").click(function () {
-                bootbox.prompt({
-                    title: "Set project status",
-                    inputType: 'select',
-                    value: {{ project.projects_status }},
-                    inputOptions: [
-                        {% for id,status in STATUSES %}
-                        {
-                            text: "{{ (status.name ~ " (" ~ status.description ~ ')')|escape('js') }}",
-                            value: '{{ id }}',
+
+            //update status preview on change
+            $("#projectStatusModal-preset").change(function () {
+                const newStatus = $(this).val();
+                if (newStatus != "-1") {
+                    //Using a preset, so disable the name and description fields
+                    $('#projectStatusModal-name, #projectStatusModal-description, #projectStatusModal-colour').prop( "disabled", true );
+                    //Set values based on the preset
+                    $('#projectStatusModal-name').val(statuses[newStatus].name);
+                    $('#projectStatusModal-summary-name').html(statuses[newStatus].name);
+
+                    $('#projectStatusModal-description').val(statuses[newStatus].description);
+                    $('#projectStatusModal-summary-description').html(statuses[newStatus].description);
+
+                    $('#projectStatusModal-colour').val(statuses[newStatus].backgroundColour);
+                    $('#projectStatusModal-summary').css({"backgroundColor": statuses[newStatus].backgroundColour,"color":statuses[newStatus].foregroundColour });
+                } else {
+                    //using a custom status, so enable the name and description fields
+                    $('#projectStatusModal-name, #projectStatusModal-description, #projectStatusModal-colour').prop( "disabled", false );
+                }
+            });
+            //custom preset updates, based on the values in the fields
+            $('#projectStatusModal-name').on("input", function () {
+                $('#projectStatusModal-summary-name').html($(this).val());
+            });
+            $('#projectStatusModal-description').on("input", function () {
+                $('#projectStatusModal-summary-description').html($(this).val());
+            });
+            $("#projectStatusModal-colour").on("input", function () {
+                $('#projectStatusModal-summary').css({"backgroundColor": $(this).val(), "color": getForegroundColour($(this).val()) });
+            });
+
+            $("#projectStatusModal-submit").click(function () {
+                const newStatus = $("#projectStatusModal-preset").val();
+                if (newStatus == "-1"){
+                    const customStatus = {
+                        "name": $('#projectStatusModal-name').val(),
+                        "description": $('#projectStatusModal-description').val(),
+                        "backgroundColour": $('#projectStatusModal-colour').val(),
+                        "foregroundColour": getForegroundColour($('#projectStatusModal-colour').val())
+                    };
+                    const encodedStatus = JSON.stringify(customStatus);
+                    changeStatus(newStatus, encodedStatus);
+
+                } else if ([{{ STATUSESAVAILABLE|join(",") }}].includes(parseInt(newStatus))) {
+                    bootbox.confirm({
+                        message: "This will allow assets assigned to this project to be assigned to other clashing projects - are you sure you wish to continue?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
                         },
-                        {% endfor %}
-                    ],
-                    callback: function (result) {
-                        if (result) {
-                            var newStatus = result;
-                            if ([{{ STATUSESAVAILABLE|join(",") }}].includes(parseInt(newStatus))) {
-                                bootbox.confirm({
-                                    message: "This will allow assets assigned to this project to be assigned to other clashing projects - are you sure you wish to continue?",
-                                    buttons: {
-                                        confirm: {
-                                            label: 'Yes',
-                                            className: 'btn-danger'
-                                        },
-                                        cancel: {
-                                            label: 'No',
-                                            className: 'btn-success'
-                                        }
-                                    },
-                                    callback: function (result) {
-                                        if (result) {
-                                            changeStatus(newStatus);
-                                        }
-                                    }
-                                });
-                            } else {
+                        callback: function (result) {
+                            if (result) {
                                 changeStatus(newStatus);
                             }
                         }
-                    }
-                });
+                    });
+                } else {
+                    changeStatus(newStatus);
+                }
             });
             {% endif %}
             {% if 30|instancePermissions %}

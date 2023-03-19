@@ -3,6 +3,11 @@ require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
 require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data comes from
 
+//Decode custom status
+if ($PAGEDATA['project']['projects_status'] == -1) {
+    $PAGEDATA['project']['projects_customProjectStatus'] = json_decode($PAGEDATA['project']['projects_customProjectStatus'], true);
+}
+
 //AuditLog
 $DBLIB->where("auditLog.auditLog_deleted", 0);
 $DBLIB->where("auditLog.projects_id", $PAGEDATA['project']['projects_id']);
