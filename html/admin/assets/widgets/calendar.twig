@@ -45,12 +45,12 @@
                     {% for project in projects %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
-                            title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
+                            title          : "[{{(project.projects_status == -1 ? project.projects_customProjectStatus['name']  : STATUSES[project.projects_status]["name"]|escape("js")) }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
                             start          : {{ project.projects_dates_use_start|date('U') }}*1000,
                             end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                             url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
-                            backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
-                            textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                            backgroundColor: '{{ (project.projects_status == -1 ? project.projects_customProjectStatus['backgroundColour']  : STATUSES[project.projects_status]["backgroundColour"])}}',
+                            textColor    : '{{ (project.projects_status == -1 ? project.projects_customProjectStatus['foregroundColour']  : STATUSES[project.projects_status]["foregroundColour"])}}'
                         },
                             {% if startDate > project.projects_dates_use_start|date("c") or startDate == false %}
                                 {% set startDate = project.projects_dates_use_start|date("c") %}
@@ -59,12 +59,12 @@
                         {%  for subproject in project.subProjects %}
                             {% if subproject.projects_dates_use_start != null and subproject.projects_dates_use_end != null %}
                                 {
-                                    title          : "↳ [{{ STATUSES[subproject.projects_status]["name"]|escape("js") }}] {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
+                                    title          : "↳ [{{ (subproject.projects_status == -1 ? subproject.projects_customProjectStatus['name']  : STATUSES[subproject.projects_status]["name"]|escape("js"))}}] {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
                                     start          : {{ subproject.projects_dates_use_start|date('U') }}*1000,
                                     end            : {{ subproject.projects_dates_use_end|date('U') }}*1000,
                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ subproject.projects_id }}',
-                                    backgroundColor: '{{ STATUSES[subproject.projects_status]["backgroundColour"] }}',
-                                    textColor    : '{{ STATUSES[subproject.projects_status]["foregroundColour"] }}'
+                                    backgroundColor: '{{ (subproject.projects_status == -1 ? subproject.projects_customProjectStatus['backgroundColour']  : STATUSES[subproject.projects_status]["backgroundColour"])}}',
+                                    textColor    : '{{ (subproject.projects_status == -1 ? subproject.projects_customProjectStatus['foregroundColour']  : STATUSES[subproject.projects_status]["foregroundColour"])}}'
                                 },
                                 {% if startDate > subproject.projects_dates_use_start|date("c") or startDate == false %}
                                     {% set startDate = subproject.projects_dates_use_start|date("c") %}

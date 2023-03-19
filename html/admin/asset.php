@@ -62,7 +62,12 @@ foreach ($assets as $asset) {
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
     $DBLIB->where("projects.projects_deleted", 0);
-    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_name","projects_dates_deliver_start","projects_dates_deliver_end", "assetsAssignments.assetsAssignmentsStatus_id"]);
+    $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_status", "projects.projects_customProjectStatus", "projects.projects_name", "projects_dates_deliver_start", "projects_dates_deliver_end", "assetsAssignments.assetsAssignmentsStatus_id"]);
+    foreach ($asset['assignments'] as $key => $assignment) {
+        if ($assignment['projects_status'] == -1) {
+            $asset['assignments'][$key]['projects_customProjectStatus'] = json_decode($assignment['projects_customProjectStatus'], true);
+        }
+    }
 
     $asset['files'] = $bCMS->s3List(4, $asset['assets_id']);
 

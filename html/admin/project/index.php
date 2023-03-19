@@ -7,6 +7,11 @@ require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data com
 if ($PAGEDATA['project']['projects_status'] == -1) {
     $PAGEDATA['project']['projects_customProjectStatus'] = json_decode($PAGEDATA['project']['projects_customProjectStatus'], true);
 }
+foreach ($PAGEDATA['project']['subProjects'] as $index => $subProject) {
+    if ($subProject['projects_status'] == -1) {
+        $PAGEDATA['project']['subProjects'][$index]['projects_customProjectStatus'] = json_decode($subProject['projects_customProjectStatus'], true);
+    }
+}
 
 //AuditLog
 $DBLIB->where("auditLog.auditLog_deleted", 0);
