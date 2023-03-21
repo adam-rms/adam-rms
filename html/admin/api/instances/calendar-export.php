@@ -25,11 +25,16 @@ $DBLIB->join("locations","projects.locations_id=locations.locations_id","LEFT");
 $DBLIB->join("users AS pmusers", "projects.projects_manager=pmusers.users_userid", "LEFT");
 $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
-$iCalProjects = $DBLIB->get("projects", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2","projects.projects_id", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "locations.locations_name","locations.locations_address"]);
+$iCalProjects = $DBLIB->get("projects", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2", "projects.projects_id", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_customProjectStatus", "locations.locations_name", "locations.locations_address"]);
 
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 
 foreach ($iCalProjects as $event) {
+    $status = $STATUSES[$event['projects_status']]['name'];
+    if ($event['projects_status'] == -1) {
+        $status = json_decode($event['projects_customProjectStatus'], true)['name'];
+    } 
+
     $vEvent = new \Eluceo\iCal\Component\Event();
     $vEvent->setUseTimezone(true);
     $vEvent
@@ -39,7 +44,7 @@ foreach ($iCalProjects as $event) {
         ->setSummary($event['projects_name'] . ($event['clients_name'] ? " (" . $event['clients_name'] . ")" : ""))
         ->setCategories(['events', 'AdamRMS'])
         ->setLocation($event['locations_name'] . "\n" . $event['locations_address'], $event['locations_name'] . "\n" . $event['locations_address'])
-        ->setDescription("Event Status: " . $STATUSES[$event['projects_status']]['name'] . "\n" . "Description: ". $event['projects_description'] . "\n" . "Project Manager: " . $event['pm_name1'] . " " . $event['pm_name2'])
+        ->setDescription("Event Status: " . $status  . "\n" . "Description: " . $event['projects_description'] . "\n" . "Project Manager: " . $event['pm_name1'] . " " . $event['pm_name2'])
     ;
     $vCalendar->addComponent($vEvent);
 }

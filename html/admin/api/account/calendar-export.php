@@ -27,7 +27,7 @@ $DBLIB->join("users AS pmusers", "projects.projects_manager=pmusers.users_userid
 $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
 $DBLIB->orderBy("projects.projects_id", "ASC");
 $DBLIB->orderBy("crewAssignments.crewAssignments_rank", "ASC");
-$assignments = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2","projects.projects_id","crewAssignments.crewAssignments_role", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "locations.locations_name","locations.locations_address"]);
+$assignments = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2", "projects.projects_id", "crewAssignments.crewAssignments_role", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_customProjectStatus", "locations.locations_name", "locations.locations_address"]);
 
 $thisProject = null;
 $iCalAssignments = [];
@@ -39,6 +39,11 @@ foreach ($assignments as $assignment) {
 
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 foreach ($iCalAssignments as $event) {
+    $status = $STATUSES[$event['projects_status']]['name'];
+    if ($event['projects_status'] == -1) {
+        $status = json_decode($event['projects_customProjectStatus'], true)['name'];
+    } 
+
     $vEvent = new \Eluceo\iCal\Component\Event();
     $vEvent->setUseTimezone(true);
     $vEvent
@@ -48,7 +53,7 @@ foreach ($iCalAssignments as $event) {
         ->setSummary($event['projects_name'] . ($event['clients_name'] ? " (" . $event['clients_name'] . ")" : ""))
         ->setCategories(['events', 'AdamRMS'])
         ->setLocation($event['locations_name'] . "\n" . $event['locations_address'], $event['locations_name'] . "\n" . $event['locations_address'])
-        ->setDescription('Role: ' . $event['crewAssignments_role'] . "\n" . "Event Status: " . $STATUSES[$event['projects_status']]['name'] . "\n" . "Description: ". $event['projects_description'] . "\n" . "Project Manager: " . $event['pm_name1'] . " " . $event['pm_name2'])
+        ->setDescription('Role: ' . $event['crewAssignments_role'] . "\n" . "Event Status: " . $status . "\n" . "Description: ". $event['projects_description'] . "\n" . "Project Manager: " . $event['pm_name1'] . " " . $event['pm_name2'])
         ->setMsBusyStatus("FREE")
     ;
     $vCalendar->addComponent($vEvent);
