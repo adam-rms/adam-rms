@@ -17,8 +17,6 @@ if ($_SESSION['app-oauth'] == "v2") {
   $baseLocation = $_SESSION['app-oauth'] . 'oauth_callback?legacy=true';
 }
 
-error_log("Base Location: " . $baseLocation);
-
 if ($_SESSION['oauth2']['userid'] && isset($_GET['approved'])) {
   $token = $GLOBALS['AUTH']->generateToken($_SESSION['oauth2']['userid'], false, null, true, "App OAuth2");
   $jwt = JWT::encode(array(
