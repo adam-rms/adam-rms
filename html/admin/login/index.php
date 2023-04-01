@@ -6,7 +6,7 @@ use \Firebase\JWT\JWT;
 $PAGEDATA['pageConfig'] = ["TITLE" => "Login"];
 
 if (isset($_GET['oauth-confirm']) && isset($_SESSION['oauth2'])) {
-	$PAGEDATA['oauth2']['client_id'] = $_SESSION['app-oauth']['client_id'];
+	$PAGEDATA['oauth2']['client_id'] = $_SESSION['oauth2']['client_id'];
 	//We've just logged in and want to give permission to the app
 	echo $TWIG->render('login/oauth-confirm.twig', $PAGEDATA);
 	exit;
@@ -36,6 +36,7 @@ if (isset($_GET['oauth-confirm']) && isset($_SESSION['oauth2'])) {
 
 	if ($GLOBALS['AUTH']->login) {
 		if ($_SESSION['app-oauth'] == "v2") {
+			$_SESSION['oauth2']['userid'] = $AUTH->data['users_userid'];
 			//We're already logged in so get permission to use the account
 			echo $TWIG->render('login/oauth-confirm.twig', $PAGEDATA);
 			exit;

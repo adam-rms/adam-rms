@@ -17,11 +17,13 @@ if ($_SESSION['app-oauth'] == "v2") {
   $baseLocation = $_SESSION['app-oauth'] . 'oauth_callback?legacy=true';
 }
 
-if ($_SESSION['app-oauth']['userid'] && isset($_GET['approved'])) {
-  $token = $GLOBALS['AUTH']->generateToken($_SESSION['app-oauth']['userid'], false, null, true, "App OAuth2");
+error_log("Base Location: " . $baseLocation);
+
+if ($_SESSION['oauth2']['userid'] && isset($_GET['approved'])) {
+  $token = $GLOBALS['AUTH']->generateToken($_SESSION['oauth2']['userid'], false, null, true, "App OAuth2");
   $jwt = JWT::encode(array(
     "iss" => $CONFIG['ROOTURL'],
-    "uid" => $_SESSION['app-oauth']['userid'],
+    "uid" => $_SESSION['oauth2']['userid'],
     "token" => $token,
     "exp" => time() + 21 * 24 * 60 * 60, //21 days token expiry
     "iat" => time()
