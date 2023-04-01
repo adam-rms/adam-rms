@@ -5,14 +5,42 @@ use \Firebase\JWT\JWT;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Login"];
 
-if (isset($_GET['app-oauth'])) {
-	$_SESSION['return'] = false;
-	if (isset($_GET['returnHost'])) {
-		$_SESSION['app-oauth'] = 'https://' . $_GET['returnHost'] . '/';
+if (isset($_GET['oauth-confirm']) && isset($_SESSION['oauth2'])) {
+	$PAGEDATA['oauth2']['client_id'] = $_SESSION['app-oauth']['client_id'];
+	//We've just logged in and want to give permission to the app
+	echo $TWIG->render('login/oauth-confirm.twig', $PAGEDATA);
+	exit;
+} elseif (isset($_GET['app-oauth'])) {
+	if ($_GET['app-oauth'] == "v2") {
+		//We want a token to login to an app
+		$_SESSION['return'] = false;
+		if (isset($_GET['redirect_uri']) && isset($_GET['state']) && isset($_GET['client_id'])) {
+			//Store this in the session so we can use it later
+			$_SESSION['app-oauth'] = "v2";
+			$_SESSION['oauth2'] = [
+				"redirect_uri" => $_GET['redirect_uri'],
+				"state" => $_GET['state'],
+				"client_id" => $_GET['client_id']
+			];
+			$PAGEDATA['oauth2']['client_id'] = $_GET['client_id'];
+		} else {
+			//We need this data to return, so throw an error
+			$PAGEDATA['ERROR'] = "Sorry, something went wrong authenticating with the app";
+			echo $TWIG->render('login/error.twig', $PAGEDATA);
+			exit;
+		}
 	} else {
+		//legacy app return
 		$_SESSION['app-oauth'] = "com.bstudios.adamrms://";
 	}
+
 	if ($GLOBALS['AUTH']->login) {
+		if ($_SESSION['app-oauth'] == "v2") {
+			//We're already logged in so get permission to use the account
+			echo $TWIG->render('login/oauth-confirm.twig', $PAGEDATA);
+			exit;
+		}
+		//legacy app return
 		$token = $GLOBALS['AUTH']->generateToken($AUTH->data['users_userid'], false, null, true, "App OAuth - already logged in");
 		$jwt = JWT::encode(array(
 			"iss" => $CONFIG['ROOTURL'],
@@ -135,16 +163,8 @@ elseif (isset($_GET['google'])) {
 	}
 	$bCMS->auditLog("INSERT", "users", json_encode($data), null, $newUser);
 	if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
-		//Duplicated in index.php
-		$token = $GLOBALS['AUTH']->generateToken($newUser, false, null, true, "App OAuth - Google");
-		$jwt = JWT::encode(array(
-			"iss" => $CONFIG['ROOTURL'],
-			"uid" => $newUser,
-			"token" => $token,
-			"exp" => time() + 21 * 24 * 60 * 60, //21 days token expiry
-			"iat" => time()
-		), $CONFIG['JWTKey']);
-		header("Location: " . $_SESSION['app-oauth'] . "oauth_callback?token=" . $jwt);
+		//get permission to use the new account in an app
+		echo $TWIG->render('login/oauth-confirm.twig', $PAGEDATA);
 		exit;
 	} else {
 		$GLOBALS['AUTH']->generateToken($newUser, false, null, true, "Web - Google");

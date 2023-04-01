@@ -37,16 +37,9 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         elseif ($user['users_emailVerified'] != 1) finish(false, ["code" => "VERIFYEMAIL", "message" => "Please verify your email address using the link we sent you to login","userid" => $user['users_userid']]);
 		else {
             if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
-                //Duplicated in index.php
-                $token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, null, true, "App OAuth");
-                $jwt = JWT::encode(array(
-                    "iss" => $CONFIG['ROOTURL'],
-                    "uid" => $user['users_userid'],
-                    "token" => $token,
-                    "exp" => time()+21*24*60*60, //21 days token expiry
-                    "iat" => time()
-                ), $CONFIG['JWTKey']);
-                finish(true,null,["redirect" => $_SESSION['app-oauth'] . "://oauth_callback?token=" . $jwt]);
+                $_SESSION['oauth2']['userid'] = $user['users_userid'];
+                finish(true, null, ["redirect" => $CONFIG['ROOTURL'] . "/login/?oauth-confirm=true"]);
+
             } else {
                 $GLOBALS['AUTH']->generateToken($user['users_userid'], false);
                 finish(true,null,["redirect" => (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL'])]);

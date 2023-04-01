@@ -1,0 +1,13 @@
+{% extends "login/login_template.twig" %}
+{% block content %}
+<div>
+  <h1 class="h3">An application would like to connect to your account</h1>
+  <p>This will give this application full access to your AdamRMS account.</p>
+  <p>Application Client ID: <i>{{ oauth2.client_id }}</i></p>
+
+  <p class="h3">Allow access?<p>
+  <a class="btn btn-danger" href="/api/login/oauth2.php?end_session=true">Deny &amp; Log Out</a>
+  <a class="btn btn-warning" href="/api/login/oauth2.php">Deny</a>
+  <a class="btn btn-success" href="/api/login/oauth2.php?approved=true">Allow</a>
+</div>
+{% endblock %}
