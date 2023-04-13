@@ -24,7 +24,7 @@ function changeStatus($projectID, $status) {
     $newStatus = $projectsStatusesWithKeys[$status];
     if (!$newStatus) finish(false);
 
-    if ($thisStatus["assetsAvailable"] && $newStatus["assetsAvailable"] != true) {
+    if ($newStatus["projectsStatuses_assetsReleased"] == 0) {
         //We're taking the project from a state where its assets had been released to a state where its assets are now locked down
         $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
         $DBLIB->where("assetsAssignments.projects_id", $project['projects_id']);
