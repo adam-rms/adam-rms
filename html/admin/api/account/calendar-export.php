@@ -25,7 +25,7 @@ $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("locations","projects.locations_id=locations.locations_id","LEFT");
 $DBLIB->join("users AS pmusers", "projects.projects_manager=pmusers.users_userid", "LEFT");
-$DBLIB->where("projectsStatuses.projectsStatuses_isCancelled", 0);
+$DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->orderBy("projects.projects_id", "ASC");
 $DBLIB->orderBy("crewAssignments.crewAssignments_rank", "ASC");
 $assignments = $DBLIB->get("crewAssignments", null, ["pmusers.users_name1 AS pm_name1", "pmusers.users_name2 AS pm_name2","projects.projects_id","crewAssignments.crewAssignments_role", "projects.projects_description", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projectsStatuses.projectsStatuses_name", "locations.locations_name","locations.locations_address"]);

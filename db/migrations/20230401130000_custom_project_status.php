@@ -26,8 +26,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#F5F5F5",
                 "projectsStatuses_rank" => 0,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "info"
             ],
             1 => [
@@ -36,8 +35,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#F5F5F5",
                 "projectsStatuses_rank" => 1,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "info"
             ],
             2 => [
@@ -46,8 +44,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#ffdd99",
                 "projectsStatuses_rank" => 2,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "warning"
             ],
             3 => [
@@ -56,8 +53,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#ffffff",
                 "projectsStatuses_backgroundColour" => "#66ff66",
                 "projectsStatuses_rank" => 3,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "success"
             ],
             4 => [
@@ -66,8 +62,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#ffdd99",
                 "projectsStatuses_rank" => 4,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "success"
             ],
             5 => [
@@ -76,8 +71,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#ffffff",
                 "projectsStatuses_backgroundColour" => "#66ff66",
                 "projectsStatuses_rank" => 5,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "primary"
             ],
             6 => [
@@ -86,8 +80,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#ffdd99",
                 "projectsStatuses_rank" => 6,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "primary"
             ],
             7 => [
@@ -96,8 +89,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#F5F5F5",
                 "projectsStatuses_rank" => 7,
-                "projectsStatuses_assetsAvailable" => false,
-                "projectsStatuses_isCancelled" => false,
+                "projectsStatuses_assetsReleased" => false,
                 "projectsStatuses_class" => "secondary"
             ],
             8 => [
@@ -106,8 +98,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#F5F5F5",
                 "projectsStatuses_rank" => 8,
-                "projectsStatuses_assetsAvailable" => true,
-                "projectsStatuses_isCancelled" => true,
+                "projectsStatuses_assetsReleased" => true,
                 "projectsStatuses_class" => "danger"
             ],
             9 => [
@@ -116,8 +107,7 @@ final class CustomProjectStatus extends AbstractMigration
                 "projectsStatuses_foregroundColour" => "#000000",
                 "projectsStatuses_backgroundColour" => "#F5F5F5",
                 "projectsStatuses_rank" => 9,
-                "projectsStatuses_assetsAvailable" => true,
-                "projectsStatuses_isCancelled" => true,
+                "projectsStatuses_assetsReleased" => true,
                 "projectsStatuses_class" => "danger"
             ]
         ];
@@ -185,17 +175,11 @@ final class CustomProjectStatus extends AbstractMigration
                 'limit' => MysqlAdapter::INT_REGULAR,
                 'after' => 'projectsStatuses_fontAwesome',
             ])
-            ->addColumn('projectsStatuses_assetsAvailable', 'boolean', [
+            ->addColumn('projectsStatuses_assetsReleased', 'boolean', [
                 'null' => false,
                 'default' => '0',
                 'limit' => MysqlAdapter::INT_TINY,
                 'after' => 'projectsStatuses_rank',
-            ])
-            ->addColumn('projectsStatuses_isCancelled', 'boolean', [
-                'null' => false,
-                'default' => '0',
-                'limit' => MysqlAdapter::INT_TINY,
-                'after' => 'projectsStatuses_assetsAvailable',
             ])
             ->addColumn('instances_id', 'integer', [
                 'null' => false,

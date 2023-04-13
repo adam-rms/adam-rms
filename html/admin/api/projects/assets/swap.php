@@ -41,7 +41,7 @@ $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
 $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
 $DBLIB->where("projects.projects_deleted", 0);
-$DBLIB->where("projectsStatuses.projectsStatuses_assetsAvailable", 0);
+$DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->where("((projects_dates_deliver_start >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_start"] . "'))");
 $assignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id"]);
 

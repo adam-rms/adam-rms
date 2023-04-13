@@ -223,8 +223,8 @@ foreach ($assets as $asset) {
             $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
             if ($RETURN['PROJECT']['ID']) {
                 // If a project is being searched for specifically then we need to check if the asset is assigned to that project or if it is assigned to another project
-                $DBLIB->where("(projectsStatuses.projectsStatuses_assetsAvailable = 0 OR projects.projects_id = '" . $RETURN['PROJECT']['ID'] . "')");
-            } else $DBLIB->where("projectsStatuses.projectsStatuses_assetsAvailable", 0);
+                $DBLIB->where("(projectsStatuses.projectsStatuses_assetsReleased = 0 OR projects.projects_id = '" . $RETURN['PROJECT']['ID'] . "')");
+            } else $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
             $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assetsAssignments.projects_id", "projects.projects_name"]);
         }
         $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);

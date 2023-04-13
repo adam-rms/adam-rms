@@ -69,7 +69,7 @@ foreach ($assetsToProcess as $asset) {
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
     $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
     $DBLIB->where("projects.projects_deleted", 0);
-    $DBLIB->where("(projects.projects_id = '" . $project['projects_id'] . "' OR projectsStatuses.projectsStatuses_assetsAvailable = 0)");
+    $DBLIB->where("(projects.projects_id = '" . $project['projects_id'] . "' OR projectsStatuses.projectsStatuses_assetsReleased = 0)");
     $DBLIB->where("((projects_dates_deliver_start >= '" . $project["projects_dates_deliver_start"] . "' AND projects_dates_deliver_start <= '" . $project["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $project["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $project["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $project["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $project["projects_dates_deliver_start"] . "'))");
     $assignment = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id"]);
     $flagsBlocks = assetFlagsAndBlocks($asset['assets_id']);

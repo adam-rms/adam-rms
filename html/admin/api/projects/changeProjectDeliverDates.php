@@ -33,7 +33,7 @@ if ($assets) {
         $DBLIB->where("assetsAssignments.assets_id", $asset['assets_id']);
         $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
         $DBLIB->where("projects.projects_deleted", 0);
-        $DBLIB->where("projectsStatuses.projectsStatuses_assetsAvailable", 0);
+        $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
         $DBLIB->where("(projects.projects_id != " .  $project['projects_id'] . ")"); //It might be there's a slight overlap with this project so avoid finding that
         $DBLIB->where("((projects_dates_deliver_start >= '" . $newDates["projects_dates_deliver_start"]  . "' AND projects_dates_deliver_start <= '" . $newDates["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $newDates["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $newDates["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $newDates["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $newDates["projects_dates_deliver_start"] . "'))");
         $assignment = $DBLIB->getone("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assetsAssignments.assets_id","assetsAssignments.projects_id", "assetTypes.assetTypes_name", "projects.projects_name", "assets.assets_tag"]);

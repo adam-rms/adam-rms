@@ -41,8 +41,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#F5F5F5",
         "projectsStatuses_rank" => 0,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "info"
     ],
     [
@@ -51,8 +50,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#F5F5F5",
         "projectsStatuses_rank" => 1,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "info"
     ],
     [
@@ -61,8 +59,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#ffdd99",
         "projectsStatuses_rank" => 2,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "warning"
     ],
     [
@@ -71,8 +68,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#ffffff",
         "projectsStatuses_backgroundColour" => "#66ff66",
         "projectsStatuses_rank" => 3,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "success"
     ],
     [
@@ -81,8 +77,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#ffdd99",
         "projectsStatuses_rank" => 4,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "success"
     ],
     [
@@ -91,8 +86,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#ffffff",
         "projectsStatuses_backgroundColour" => "#66ff66",
         "projectsStatuses_rank" => 5,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "primary"
     ],
     [
@@ -101,8 +95,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#ffdd99",
         "projectsStatuses_rank" => 6,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "primary"
     ],
     [
@@ -111,8 +104,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#F5F5F5",
         "projectsStatuses_rank" => 7,
-        "projectsStatuses_assetsAvailable" => false,
-        "projectsStatuses_isCancelled" => false,
+        "projectsStatuses_assetsReleased" => false,
         "projectsStatuses_class" => "secondary"
     ],
     [
@@ -121,8 +113,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#F5F5F5",
         "projectsStatuses_rank" => 8,
-        "projectsStatuses_assetsAvailable" => true,
-        "projectsStatuses_isCancelled" => true,
+        "projectsStatuses_assetsReleased" => true,
         "projectsStatuses_class" => "danger"
     ],
     [
@@ -131,8 +122,7 @@ $defaultProjectStatuses = [
         "projectsStatuses_foregroundColour" => "#000000",
         "projectsStatuses_backgroundColour" => "#F5F5F5",
         "projectsStatuses_rank" => 9,
-        "projectsStatuses_assetsAvailable" => true,
-        "projectsStatuses_isCancelled" => true,
+        "projectsStatuses_assetsReleased" => true,
         "projectsStatuses_class" => "danger"
     ]
 ];

@@ -80,19 +80,11 @@
                             </div>
                         {% endfor %}
                     {% endfor %}
-                    {% if project.projectsStatuses_assetsAvailable == 1 %}
+                    {% if project.projectsStatuses_assetsReleased == 1 %}
                     <div class="col-12">
                         <div class="alert alert-danger">
-                            <h5><i class="fas fa-exclamation-triangle"></i> Assets not locked</h5>
+                            <h5><i class="fas fa-exclamation-triangle"></i> Assets not locked - assets are released</h5>
                             Assets assigned to this project can be assigned to other projects that clash with this one, as the project is no longer active.
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if project.projectsStatuses_isCancelled == 1 %}
-                    <div class="col-12">
-                        <div class="alert alert-danger">
-                            <h5><i class="fas fa-exclamation-triangle"></i> Project cancelled</h5>
-                            This project has been cancelled, so no longer displays on business &amp; crew calendars
                         </div>
                     </div>
                     {% endif %}

@@ -39,7 +39,7 @@ $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
 $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
-$DBLIB->where("projectsStatuses.projectsStatuses_isCancelled", 0);
+$DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
@@ -49,7 +49,7 @@ $PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["cr
 //Project Manager Roles
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
-$DBLIB->where("projectsStatuses.projectsStatuses_isCancelled", 0);
+$DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->where("projects.projects_manager",  $PAGEDATA['user']['users_userid']);
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->where("projects.instances_id",  $AUTH->data['instance']['instances_id']);

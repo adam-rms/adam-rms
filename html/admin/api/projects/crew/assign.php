@@ -40,7 +40,7 @@ foreach ($_POST['users'] as $user) {
             $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
             $DBLIB->where("projects.projects_deleted", 0);
             $DBLIB->where("(crewAssignments.projects_id != " . $project['projects_id'] . ")");
-            $DBLIB->where("projectsStatuses.projectsStatuses_assetsAvailable", 0);
+            $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
             $DBLIB->where("((projects_dates_use_start >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_start"] . "' AND projects_dates_use_end <= '" . $project["projects_dates_use_end"] . "') OR (projects_dates_use_end >= '" . $project["projects_dates_use_end"] . "' AND projects_dates_use_start <= '" . $project["projects_dates_use_start"] . "'))");
             $existingAssignments = $DBLIB->get("crewAssignments", null, ["crewAssignments.projects_id", "projects.projects_name", "crewAssignments.crewAssignments_role"]);
         } else $existingAssignments = [];
