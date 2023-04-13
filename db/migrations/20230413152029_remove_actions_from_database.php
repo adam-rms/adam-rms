@@ -41,7 +41,7 @@ final class RemoveActionsFromDatabase extends AbstractMigration
             18 => 'VIEW-PHPINFO',
             19 => 'ASSETS:EDIT:ANY_ASSET_TYPE',
             20 => 'INSTANCES:VIEW',
-            21 => 'INSTANCES::FULL_PERMISSIONS_IN_INSTANCE',
+            21 => 'INSTANCES:FULL_PERMISSIONS_IN_INSTANCE',
             22 => 'USERS:EDIT:NOTIFICATION_SETTINGS',
             23 => 'INSTANCES:DELETE',
             24 => 'INSTANCES:PERMANENTLY_DELETE',            

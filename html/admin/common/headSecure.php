@@ -15,7 +15,7 @@ if (!$CONFIG['DEV']) {
         $scope->setUser(['username' => $GLOBALS['AUTH']->data['users_username'],"id"=> $GLOBALS['AUTH']->data['users_userid']]);
         if ($GLOBALS['AUTH']->data['instance']) $scope->setExtra('instances_id', $GLOBALS['AUTH']->data['instance']['instances_id']);
     });
-} elseif (!$AUTH->permissionCheck(17) and !$GLOBALS['AUTH']->data['viewSiteAs']) {
+} elseif (!$AUTH->serverPermissionCheck("USE-DEV") and !$GLOBALS['AUTH']->data['viewSiteAs']) {
     die("Sorry - you can't use this development version of the site - please visit adam-rms.com. <a href=\"" . $CONFIG['ROOTURL'] . "/login/?logout\">Logout</a>");
 }
 
@@ -107,7 +107,7 @@ if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
         $page['SUBPAGES'] = $DBLIB->get("cmsPages");
         $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
     }
-} elseif ($AUTH->permissionCheck(20) && $AUTH->permissionCheck(21)) {
+} elseif ($AUTH->serverPermissionCheck("INSTANCES:VIEW") && $AUTH->serverPermissionCheck("INSTANCES:FULL_PERMISSIONS_IN_INSTANCE")) {
     // User is a server admin who has no instance - this is often caused by them deleting one. Select an instance for them to use at random.
     $DBLIB->where("instances_deleted",0);
     $instance = $DBLIB->getOne("instances",["instances_id"]);

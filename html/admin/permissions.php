@@ -3,7 +3,7 @@ require_once __DIR__ . '/common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Permissions", "BREADCRUMB" => false];
 
-if (!$AUTH->permissionCheck(11)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->serverPermissionCheck("PERMISSIONS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 
 $DBLIB->orderBy("actionsCategories_order", "ASC");

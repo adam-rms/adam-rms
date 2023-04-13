@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 require_once __DIR__ . '/../../../common/libs/Auth/instanceActions.php';
-if (!$AUTH->permissionCheck(8) or !isset($_POST['instances_name'])) die("404");
+if (!$AUTH->serverPermissionCheck("INSTANCES:CREATE") or !isset($_POST['instances_name'])) die("404");
 
 $instance = $DBLIB->insert("instances", [
     "instances_name" => $_POST['instances_name'],

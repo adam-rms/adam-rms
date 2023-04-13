@@ -160,7 +160,7 @@ class bID
             $this->login = false;
         }
     }
-    public function permissionCheck($permissionId) {
+    public function serverPermissionCheck($permissionId) {
         if (!$this->login) return false; //Not logged in
         if (in_array($permissionId, $this->permissions)) return true;
         else return false;

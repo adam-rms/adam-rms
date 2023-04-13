@@ -11,13 +11,13 @@ class SearchUsers extends BaseSearch
     public function load(): array
     {
         // The user cannot access users
-        if (!$this->AUTH->instancePermissionCheck(52) and !$this->AUTH->permissionCheck(5)) {
+        if (!$this->AUTH->instancePermissionCheck(52) and !$this->AUTH->serverPermissionCheck("USERS:EDIT")) {
             return [];
         }
 
         $this->DBLIB->where("users.users_deleted", 0);
         $this->DBLIB->where("users.users_suspended", 0);
-        if (!$this->AUTH->permissionCheck(5)) {
+        if (!$this->AUTH->serverPermissionCheck("USERS:EDIT")) {
             $this->DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
             $this->DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
             $this->DBLIB->where("userInstances.userInstances_deleted",  0);

@@ -53,7 +53,7 @@ $TWIG->addFilter(new \Twig\TwigFilter('cleanString', function ($var) {
 $TWIG->addFilter(new \Twig\TwigFilter('permissions', function ($permissionid) {
     global $AUTH;
     if (!$AUTH->login) return false;
-    else return $AUTH->permissionCheck($permissionid);
+    else return $AUTH->serverPermissionCheck($permissionid);
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('instancePermissions', function ($permissionid) {
     global $AUTH;

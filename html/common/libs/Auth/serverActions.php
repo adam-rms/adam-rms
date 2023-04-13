@@ -222,7 +222,7 @@ $serverActions = [
     'LEGACY-ID' => 20,
     'LEGACY-Sort Rank' => 17,
   ],
-  'INSTANCES::FULL_PERMISSIONS_IN_INSTANCE' => [
+  'INSTANCES:FULL_PERMISSIONS_IN_INSTANCE' => [
     'Category' => 'Instances',
     'Table' => 'Instances',
     'Type' => '',

@@ -9,7 +9,7 @@ foreach ($_POST['formData'] as $item) {
 }
 if (strlen($array['assetTypes_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
-if (!$AUTH->permissionCheck(19)) {
+if (!$AUTH->serverPermissionCheck("ASSETS:EDIT:ANY_ASSET_TYPE")) {
     $DBLIB->where("(instances_id IS NOT NULL)");
     $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
 }
