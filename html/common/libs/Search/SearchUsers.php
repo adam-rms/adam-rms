@@ -11,7 +11,7 @@ class SearchUsers extends BaseSearch
     public function load(): array
     {
         // The user cannot access users
-        if (!$this->AUTH->instancePermissionCheck(52) and !$this->AUTH->serverPermissionCheck("USERS:EDIT")) {
+        if (!$this->AUTH->instancePermissionCheck("BUSINESS:USERS:VIEW:INDIVIDUAL_USER") and !$this->AUTH->serverPermissionCheck("USERS:EDIT")) {
             return [];
         }
 

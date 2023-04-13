@@ -3,7 +3,7 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Permissions", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(11)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("BUSINESS:ROLES_AND_PERMISSIONS:VIEW")) die("Sorry - you can't access this page");
 
 
 $DBLIB->orderBy("instanceActionsCategories_order", "ASC");

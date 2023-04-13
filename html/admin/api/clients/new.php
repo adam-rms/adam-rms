@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(37) or !isset($_POST['clients_name'])) die("404");
+if (!$AUTH->instancePermissionCheck("CLIENTS:CREATE") or !isset($_POST['clients_name'])) die("404");
 
 $client = $DBLIB->insert("clients", [
     "clients_name" => $_POST['clients_name'],

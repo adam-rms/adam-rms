@@ -5,7 +5,7 @@ use Money\Money;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Clients", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(36)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("CLIENTS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;

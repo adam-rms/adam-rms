@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(110)) die("404");
+if (!$AUTH->instancePermissionCheck("BUSINESS:USER_SIGNUP_CODES:CREATE")) die("404");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {

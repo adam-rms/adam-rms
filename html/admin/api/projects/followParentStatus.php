@@ -11,7 +11,7 @@
 
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(21) or !isset($_POST['projects_id']) or !isset($_POST['follow'])) finish(false);
+if (!$AUTH->instancePermissionCheck("PROJECTS:CREATE") or !isset($_POST['projects_id']) or !isset($_POST['follow'])) finish(false);
 
 
 

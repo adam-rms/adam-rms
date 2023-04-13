@@ -5,7 +5,7 @@ if (!isset($_GET['id'])) $_GET['id'] = $AUTH->data['users_userid'];
 
 $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);
-if ($AUTH->instancePermissionCheck(52) or $AUTH->serverPermissionCheck("USERS:EDIT")) {
+if ($AUTH->instancePermissionCheck("BUSINESS:USERS:VIEW:INDIVIDUAL_USER") or $AUTH->serverPermissionCheck("USERS:EDIT")) {
    $DBLIB->where("users.users_userid", $_GET['id']);
    if (!$AUTH->serverPermissionCheck("USERS:EDIT")) { //Superadmins can get at any user, but restrict users in that instance to just instance users
       $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");

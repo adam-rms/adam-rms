@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(124)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES")) die("404");
 
 $DBLIB->where("projectsVacantRoles.projectsVacantRoles_deleted",0);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);

@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
 
-if (!$AUTH->instancePermissionCheck(31) or !isset($_POST['projects_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN") or !isset($_POST['projects_id'])) die("404");
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("projects.projects_deleted", 0);
@@ -29,7 +29,7 @@ if (isset($_POST['assetGroups_id'])) {
 
     $DBLIB->where("FIND_IN_SET(" . $group['assetGroups_id'] . ", assets.assets_assetGroups)");
 } elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
-elseif ($AUTH->instancePermissionCheck(32)) {
+elseif ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS")) {
     $DBLIB->where("(assets_linkedTo IS NULL)"); //We'll handle linked assets later in the script but for now add all assets
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 } else finish(false,["message"=>"Cannot add all assets"]);

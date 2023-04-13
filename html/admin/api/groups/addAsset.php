@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(96)) die("404");
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP")) die("404");
 if (!isset($_POST['assetGroups_id']) or !is_numeric($_POST['assetGroups_id']) or !is_numeric($_POST['assetGroups_id'])) finish(false);
 
 $DBLIB->where("assets_id",$_POST['assets_id']);

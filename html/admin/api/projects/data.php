@@ -13,7 +13,7 @@ if (isset($_POST['formData'])) {
     }
 }
 if (isset($_POST['id'])) $_GET['id'] = $_POST['id'];
-if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) finish(false);
+if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW") or !isset($_GET['id'])) finish(false);
 
 //The project itself
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);

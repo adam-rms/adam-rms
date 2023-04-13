@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 
 
-if (!$AUTH->instancePermissionCheck(29) or !isset($_POST['projects_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS") or !isset($_POST['projects_id'])) die("404");
 
 function changeStatus($projectID, $status) {
     global $DBLIB, $AUTH, $bCMS;

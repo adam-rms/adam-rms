@@ -4,7 +4,7 @@ use Money\Currency;
 use Money\Money;
 use Money\Currencies\ISOCurrencies;
 use Money\Parser\DecimalMoneyParser;
-if (!$AUTH->instancePermissionCheck(19)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("ASSETS:DELETE")) die("Sorry - you can't access this page");
 
 if (!isset($_POST['assets_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 

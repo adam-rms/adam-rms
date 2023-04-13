@@ -6,7 +6,7 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (!is_numeric($array['signupCodes_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
-elseif (!$AUTH->instancePermissionCheck(111)) die("404");
+elseif (!$AUTH->instancePermissionCheck("BUSINESS:USER_SIGNUP_CODES:EDIT")) die("404");
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("signupCodes_deleted", 0);

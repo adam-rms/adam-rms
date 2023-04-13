@@ -28,7 +28,7 @@ if ($AUTH->data['instance']["instancePositions_id"] && $AUTH->data['instance']["
     if ($PAGEDATA['PAGE']) {
         $DBLIB->where("cmsPages_id",$PAGEDATA['PAGE']['cmsPages_id']);
         $DBLIB->orderBy("cmsPagesDrafts_timestamp","DESC");
-        if (isset($_GET['r']) and $AUTH->instancePermissionCheck(126)) {
+        if (isset($_GET['r']) and $AUTH->instancePermissionCheck("CMS:CMS_PAGES:EDIT")) {
             $DBLIB->where("cmsPagesDrafts_id",$_GET['r']);
             $PAGEDATA['specificRevision'] = true;
         }
@@ -41,7 +41,7 @@ if ($AUTH->data['instance']["instancePositions_id"] && $AUTH->data['instance']["
             "users_userid" => $AUTH->data['users_userid'],
             "cmsPages_type" => 3
         ]);
-        if ($AUTH->instancePermissionCheck(80)) $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),true);
+        if ($AUTH->instancePermissionCheck("BUSINESS:BUSINESS_STATS:VIEW")) $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),true);
         die($TWIG->render('dashboard-cmsPage.twig', $PAGEDATA));
     }
 }

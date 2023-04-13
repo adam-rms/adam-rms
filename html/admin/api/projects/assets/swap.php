@@ -11,7 +11,7 @@
 
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(31)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN")) die("404");
 if (!(isset($_POST['assetsAssignments_id'])) || !(isset($_POST['assets_id']))) finish(false);
 
 $DBLIB->where("assetsAssignments.assetsAssignments_id", $_POST['assetsAssignments_id']);

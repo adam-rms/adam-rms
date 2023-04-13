@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(99)) die("404");
+if (!$AUTH->instancePermissionCheck("LOCATIONS:EDIT")) die("404");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {

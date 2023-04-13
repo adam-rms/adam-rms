@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
-if (!$AUTH->instancePermissionCheck(34)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_PAYMENTS:CREATE")) die("404");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {

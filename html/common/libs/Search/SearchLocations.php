@@ -11,7 +11,7 @@ class SearchLocations extends BaseSearch
     public function load(): array
     {
         // The user cannot access Locations
-        if (!$this->AUTH->instancePermissionCheck(87)) {
+        if (!$this->AUTH->instancePermissionCheck("LOCATIONS:VIEW")) {
             return [];
         }
 

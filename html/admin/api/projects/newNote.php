@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(45)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_NOTES:CREATE:NOTES")) die("404");
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);

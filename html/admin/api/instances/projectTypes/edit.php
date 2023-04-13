@@ -6,7 +6,7 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (!is_numeric($array['projectsTypes_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
-elseif (!$AUTH->instancePermissionCheck(107)) die("404");
+elseif (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_TYPES:EDIT")) die("404");
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projectsTypes_deleted", 0);

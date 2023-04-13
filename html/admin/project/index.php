@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
-if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW") or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
 require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data comes from
 
 //AuditLog
@@ -15,13 +15,13 @@ $PAGEDATA['project']['auditLog'] = $DBLIB->get("auditLog",null, ["auditLog.*", "
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA["project"]['projects_name'], "BREADCRUMB" => false];
 
 //Edit Options - Client List
-if ($AUTH->instancePermissionCheck(22)) {
+if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:CLIENT")) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $PAGEDATA['clients'] = $DBLIB->get("clients", null, ["clients_id", "clients_name", "clients_archived"]);
 }
 
 //Edit Options - Locations list
-if ($AUTH->instancePermissionCheck(30)) {
+if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:ADDRESS")) {
     $thisProjectLocationFound = false;
     $PAGEDATA['locations'] = [];
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
