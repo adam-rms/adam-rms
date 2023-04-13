@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-md-6 col-lg-4">
-                            {% if 31|instancePermissions %}
+                            {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                                 <div class="form-group">
                                     <label>Project to assign assets to</label>
                                     <select class="form-control select2 select2bs4" name="project">
@@ -237,7 +237,7 @@
                                 <div class="card-footer">
                                     <div class="text-right">
                                         <div class="btn-group">
-                                            {% if searchResults.PROJECT.ID and 31|instancePermissions %}
+                                            {% if searchResults.PROJECT.ID and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                                                 {% if asset.count == 1 %}
                                                     {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < searchResults.PROJECT['DATEEND'] %}
                                                         <button title="Asset to be archived" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
@@ -613,7 +613,7 @@ $(document).ready(function () {
         autoplay: true,
         autoplaySpeed: 2000,
     });
-    {% if searchResults.PROJECT.ID != null and 31|instancePermissions %}
+    {% if searchResults.PROJECT.ID != null and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
     $(".addToBasketAssetButton").click(function () {
         var assetId=$(this).data("assetid");
         ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid"),"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {

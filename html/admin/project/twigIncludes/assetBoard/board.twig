@@ -8,11 +8,11 @@
                 <div class="card-body assetList" data-status="{{ status['assetsAssignmentsStatus_id'] }}">
                     {% for asset in status['assets'] %}
                         <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2" data-assignment="{{ asset['assetsAssignments_id'] }}" data-currentStatus="{{ status['assetsAssignmentsStatus_id'] }}">
-                            {% if status['assetsAssignmentsStatus_order'] > 0 and 53|instancePermissions %}
+                            {% if status['assetsAssignmentsStatus_order'] > 0 and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
                                 <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_order'] - 1 }})">«</button>
                             {% endif %}
                             <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}&instance={{ instanceid }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
-                            {% if status['assetsAssignmentsStatus_order'] < instanceAssets|length - 1 and 53|instancePermissions%}
+                            {% if status['assetsAssignmentsStatus_order'] < instanceAssets|length - 1 and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
                                 <button class="btn btn-outline-secondary col-1" onclick="changeStatus({{ asset['assetsAssignments_id'] }}, {{ status['assetsAssignmentsStatus_order'] +1 }})">»</button>
                             {% endif %}
                         </div>

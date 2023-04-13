@@ -1,8 +1,6 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_TYPES:CREATE")) die("Sorry - you can't access this page");
-
 $array = [];
 foreach ($_POST['formData'] as $item) {
     if (!isset($item['value'])) $item['value'] = null; //bug fix for nobody being tagged

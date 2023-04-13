@@ -45,13 +45,13 @@
                         </div>
                 </div>
                 <div class="card-footer">
-                    {% if 83|instancePermissions %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                     <button type="submit" class="btn btn-default">Save</button>
                     {% endif %}
                 </div>
             </form>
             <script>
-                {% if 83|instancePermissions %}
+                {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                 $(document).ready(function() {
                     $("#basicSettings").on("submit", function(e){
                         e.preventDefault();
@@ -77,13 +77,13 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    {% if 83|instancePermissions %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                     <button id="saveTermsAndPayment" class="btn btn-default">Save</button>
                     {% endif %}
                 </div>
             <script>
                 $(document).ready(function() {
-                    {% if 83|instancePermissions %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                     $('#saveTermsAndPayment').on('click', function() {
                         ajaxcall("instances/editInstance.php", {
                             'formData': [
@@ -126,7 +126,7 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    {% if 83|instancePermissions %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                     <button type="button" class="btn btn-default" id="addNewCableColourOption">Add Row</button>
                     <button type="submit" class="btn btn-default">Save</button>
                     {% endif %}
@@ -184,7 +184,7 @@
                         {% for status in USERDATA.instance['assetStatus'] %}
                             <tbody value="{{ status.assetsAssignmentsStatus_id }}">
                                 <tr class="row border">
-                                    {% if 83|instancePermissions %}
+                                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                                     <td class="border-right">
                                         <span class="handle">
                                             <i class="fas fa-ellipsis-v"></i>
@@ -204,12 +204,12 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    {% if 83|instancePermissions %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                         <button type="button" class="btn btn-default" id="newStatus">Add Row</button>
                     {% endif %}
                 </div>
             </form>
-            {% if 83|instancePermissions %}
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
             <script>
                 $(document).ready(function () {
                     $("#statusTable").sortable({
@@ -291,7 +291,7 @@
                 </div>
                 <div class="card-footer">
                     <p style="font-style: italic;">Add week dates to change week labelling on calendars across AdamRMS. This is normally used by schools and universities, and so in that instance they would put the week start dates as the day term starts for each term. Leave a space in the box to leave it blank.</p>
-                    {% if 83|instancePermissions %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                     <button type="button" class="btn btn-default" id="populate3months">Add next 3 months</button>
                     <button type="button" class="btn btn-default" id="addNewWeekValueRow">Add Row</button>
                     <button type="submit" class="btn btn-default">Save</button>
@@ -300,7 +300,7 @@
             </form>
             <script>
                 $(document).ready(function() {
-                    {% if 83|instancePermissions %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
                     $("#weekLabels").on("submit", function(e){
                         e.preventDefault();
                         var lastDate;
@@ -363,7 +363,7 @@
                     <i>None currently set</i>
                 {% endif %}
             </div>
-            {% if 83|instancePermissions %}
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
             <div class="card-footer">
                 <b>Logos are publicly accessible</b>
                 {% embed 'common/plugins/uppy.twig' with {'publicBool': true, 'type': 'INSTANCE-THUMBNAIL', 'paste': false, 'typeId': 5, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}
@@ -389,7 +389,7 @@
                     <i>None currently set</i>
                 {% endif %}
             </div>
-            {% if 83|instancePermissions %}
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
             <div class="card-footer">
                 <b>Email Headers are publicly accessible</b>
                 {% embed 'common/plugins/uppy.twig' with {'publicBool': true, 'type': 'INSTANCE-EMAILHEADER', 'paste': false, 'typeId': 10, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}

@@ -53,7 +53,7 @@
     if (localStorage.getItem("activeTab-board")) {
         $('a.assetsBoardToggle[href=\'#' + localStorage.getItem("activeTab-board") + '\']').tab('show');
     }
-    {% if 53|instancePermissions %}
+    {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
     function changeStatus(assetsAssignments_id, assetsAssignments_status){
         ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status, "status_is_order":true}, function (returned){
             window.location.reload();
@@ -61,7 +61,7 @@
     }
     {% endif %}
     $(document).ready(function () {
-        {% if 53|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
         $(".assetList").sortable({
             connectWith: "div",
             update: function( event, ui ){

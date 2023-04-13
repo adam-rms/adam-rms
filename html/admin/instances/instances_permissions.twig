@@ -6,7 +6,7 @@
 		<div class="card">
 			<div class="card-header">
 				<h3 class="card-title">Business Permissions</h3>
-				{% if 16|instancePermissions %}
+				{% if "BUSINESS:ROLES_AND_PERMISSIONS:CREATE"|instancePermissions %}
 				<div class="card-tools pull-right">
 					<button type="button" class="btn btn-tool" id="addNewInstancePosition"><i class="fa fa-plus"></i>
 					</button>
@@ -51,7 +51,7 @@
                                             {% endif %}
                                         {% endfor %}
 
-										{% if 12|instancePermissions %}
+										{% if "BUSINESS:ROLES_AND_PERMISSIONS:EDIT"|instancePermissions %}
                                         <input type="checkbox" data-permissionid="{{action.instanceActions_id}}" data-positionid="{{position.instancePositions_id}}" {% if action.instanceActions_id in position.instancePositions_actions|split(',') %}checked{% endif %}  {% if positioncannotbecausedep == "true" or positioncannotbecauseindep == "true" %}disabled{% endif %} />
 										{% else %}
 											{% if action.instanceActions_id in position.instancePositions_actions|split(',') %}
@@ -80,7 +80,7 @@
 		</div>
 	</div>
 </div>
-{% if 12|instancePermissions %}
+{% if "BUSINESS:ROLES_AND_PERMISSIONS:EDIT"|instancePermissions %}
 <script>
 $(document).ready(function() {
 
@@ -147,7 +147,7 @@ $(document).ready(function() {
 </script>
 {% endif %}
 
-	{% if 16|instancePermissions %}
+	{% if "BUSINESS:ROLES_AND_PERMISSIONS:CREATE"|instancePermissions %}
 	<script>
 		$(document).ready(function() {
 			$("#addNewInstancePosition").on("click", function () {

@@ -21,7 +21,7 @@
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if 93|instancePermissions %}
+                            {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
                             {% endif %}
                         </div>
@@ -59,10 +59,10 @@
                                         <i class="fas fa-eye"></i>
                                    {% endif %}
                                 </button>
-                                {% if 94|instancePermissions %}
+                                {% if "ASSETS:ASSET_GROUPS:EDIT"|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ group.assetGroups_id }}"><i class="fas fa-edit"></i></button>
                                 {% endif %}
-                                {% if 95|instancePermissions %}
+                                {% if "ASSETS:ASSET_GROUPS:DELETE:ASSETS_WITHIN_GROUP"|instancePermissions %}
                                     <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ group.assetGroups_id }}"><i class="fas fa-trash"></i></button>
                                 {% endif %}
                             </div>
@@ -113,7 +113,7 @@
             </div>
         </div>
     </div>
-    {% if 93|instancePermissions %}
+    {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
     <div class="modal fade" id="newModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -167,7 +167,7 @@
                     location.reload();
                 });
             });
-            {% if 93|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
             $("#saveNew").click(function () {
                 var formData = $("#newForm").serializeArray();
                 ajaxcall("groups/new.php", {formData}, function (data) {
@@ -175,7 +175,7 @@
                 });
             });
             {% endif %}
-            {% if 94|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:EDIT"|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
                 ajaxcall("groups/edit.php", {formData}, function (data) {
@@ -183,7 +183,7 @@
                 });
             });
             {% endif %}
-            {% if 95|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:DELETE:ASSETS_WITHIN_GROUP"|instancePermissions %}
             $(".deleteButton").click(function () {
                 var id = $(this).data("id");
                 bootbox.confirm({
@@ -213,7 +213,7 @@
                 tags: false,
                 multiple: true,
                 theme: "bootstrap4",
-                {% if 96|instancePermissions != true %}
+                {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions != true %}
                 disabled: true,
                 {% endif %}
                 minimumInputLength: 1,
@@ -246,7 +246,7 @@
                     }
                 }
             });
-            {% if 96|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions %}
             $('.assetsMembershipSelector').on('select2:select', function (e) {
                 var id =e.params.data.id;
                 ajaxcall("groups/addAsset.php", {

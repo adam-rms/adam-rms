@@ -31,9 +31,9 @@
                 <div class="text-muted">
                     <p class="text-sm">Project Manager
                         <b class="d-block">
-                                {% if 52|instancePermissions %}<a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ role.projects_manager }}">{% endif %}
+                                {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}<a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ role.projects_manager }}">{% endif %}
                                 {{role.users_name1 ~ " " ~ role.users_name2 ~ " (" ~ role.users_email ~ ")" }}
-                            {% if 52|instancePermissions %}</a>{% endif %}
+                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}</a>{% endif %}
                         </b>
                     </p>
                 </div>

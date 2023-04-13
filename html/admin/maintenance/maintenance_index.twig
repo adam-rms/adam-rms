@@ -11,7 +11,7 @@
             {% else %}
                 <a href="?completed" class="btn btn-sm btn-default">Show Completed Jobs</a>
             {% endif %}
-            {% if 63|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
                 <a href="job.php" class="btn btn-sm btn-success">New Job</a>
             {% endif %}
         </div>
