@@ -854,7 +854,7 @@
                                             {% for thisasset in assets %}
                                                 {% for assignment in thisasset.assignments %}
                                                 {
-                                                    title          : '[{{ assignment.projectsStatuses_name }} {{ assignment.projects_name }}',
+                                                    title          : '[{{ assignment.projectsStatuses_name }}] {{ assignment.projects_name }}',
                                                     start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                     end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
