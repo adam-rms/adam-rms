@@ -128,7 +128,7 @@ $defaultProjectStatuses = [
 ];
 foreach ($defaultProjectStatuses as $projectStatus) {
     $projectStatus['instances_id'] = $instance;
-    $insertProjectStatus = $DBLIB->insert("projectsStatus", $projectStatus);
+    $insertProjectStatus = $DBLIB->insert("projectsStatuses", $projectStatus);
     if (!$insertProjectStatus) finish(false, ["code" => "ADD-PROJECT-STATUS-FAIL", "message"=> "Could not create new project statuses"]);
 }
 
