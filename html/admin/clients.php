@@ -46,12 +46,13 @@ foreach ($clients as $client) {
 	$DBLIB->where("clients_id", $client['clients_id']);
 	$DBLIB->where("projects_deleted", 0);
 	$DBLIB->join("projectsTypes", "projects.projectsTypes_id=projectsTypes.projectsTypes_id");
+	$DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
 	$DBLIB->where("projectsTypes.projectsTypes_config_finance", 1);
 	if (!isset($_GET['future'])) {
 		$DBLIB->where("projects.projects_dates_use_end < '" . date('Y-m-d H:i:s'). "'");
 		$PAGEDATA['includeFuture'] = false;
 	} else $PAGEDATA['includeFuture'] = true;
-	$projects = $DBLIB->get("projects", null, ["projects_id","projects_status"]);
+	$projects = $DBLIB->get("projects", null, ["projects.projects_id","projectsStatuses.projectsStatuses_isCancelled"]);
 	$client['totalPayments'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
 	$client['totalOutstanding'] = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
 	foreach ($projects as $project) {
@@ -63,7 +64,7 @@ foreach ($clients as $client) {
 		$client['totalPayments'] = $client['totalPayments']->add(new Money($project['finance']['projectsFinanceCache_paymentsReceived'], new Currency($AUTH->data['instance']['instances_config_currency'])));
 
 		if (!$PAGEDATA['includeCancelled']) {
-			if ($GLOBALS['STATUSES'][$project['projects_status']]['isCancelled']) continue; //Skip this project
+			if ($project['projectsStatuses_isCancelled'] == '1') continue; //Skip this project
 		}
 		$client['totalOutstanding'] = $client['totalOutstanding']->add(new Money($project['finance']['projectsFinanceCache_grandTotal'], new Currency($AUTH->data['instance']['instances_config_currency'])));
 	}

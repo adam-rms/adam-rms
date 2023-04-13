@@ -45,29 +45,29 @@
                     {% for project in projects %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
-                            title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
+                            title          : "[{{ project.projectsStatuses_name|escape("js") }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
                             start          : {{ project.projects_dates_use_start|date('U') }}*1000,
                             end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                             url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
-                            backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
-                            textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                            backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
+                            textColor    : '{{ project.projectsStatuses_foregroundColour }}'
                         },
                             {% if startDate > project.projects_dates_use_start|date("c") or startDate == false %}
                                 {% set startDate = project.projects_dates_use_start|date("c") %}
                             {% endif %}
                         {% endif %}
-                        {%  for subproject in project.subProjects %}
-                            {% if subproject.projects_dates_use_start != null and subproject.projects_dates_use_end != null %}
+                        {%  for subProject in project.subProjects %}
+                            {% if subProject.projects_dates_use_start != null and subProject.projects_dates_use_end != null %}
                                 {
-                                    title          : "↳ [{{ STATUSES[subproject.projects_status]["name"]|escape("js") }}] {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
-                                    start          : {{ subproject.projects_dates_use_start|date('U') }}*1000,
-                                    end            : {{ subproject.projects_dates_use_end|date('U') }}*1000,
-                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ subproject.projects_id }}',
-                                    backgroundColor: '{{ STATUSES[subproject.projects_status]["backgroundColour"] }}',
-                                    textColor    : '{{ STATUSES[subproject.projects_status]["foregroundColour"] }}'
+                                    title          : "↳ [{{ subProject.projectsStatuses_name|escape("js") }}] {{ subProject.clients_name ? subProject.clients_name|escape("js") ~ " - " }}{{ subProject.projects_name|escape("js") }}",
+                                    start          : {{ subProject.projects_dates_use_start|date('U') }}*1000,
+                                    end            : {{ subProject.projects_dates_use_end|date('U') }}*1000,
+                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ subProject.projects_id }}',
+                                    backgroundColor: '{{ subProject.projectsStatuses_backgroundColour }}',
+                                    textColor    : '{{ subProject.projectsStatuses_foregroundColour }}'
                                 },
-                                {% if startDate > subproject.projects_dates_use_start|date("c") or startDate == false %}
-                                    {% set startDate = subproject.projects_dates_use_start|date("c") %}
+                                {% if startDate > subProject.projects_dates_use_start|date("c") or startDate == false %}
+                                    {% set startDate = subProject.projects_dates_use_start|date("c") %}
                                 {% endif %}
                             {% endif %}
                         {% endfor %}

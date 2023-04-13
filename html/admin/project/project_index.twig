@@ -80,11 +80,19 @@
                             </div>
                         {% endfor %}
                     {% endfor %}
-                    {% if STATUSES[project.projects_status]["assetsAvailable"] %}
+                    {% if project.projectsStatuses_assetsAvailable == 1 %}
                     <div class="col-12">
                         <div class="alert alert-danger">
                             <h5><i class="fas fa-exclamation-triangle"></i> Assets not locked</h5>
                             Assets assigned to this project can be assigned to other projects that clash with this one, as the project is no longer active.
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if project.projectsStatuses_isCancelled == 1 %}
+                    <div class="col-12">
+                        <div class="alert alert-danger">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Project cancelled</h5>
+                            This project has been cancelled, so no longer displays on business &amp; crew calendars
                         </div>
                     </div>
                     {% endif %}
@@ -248,9 +256,9 @@
                                                     {% if project.projects_parent_project_id and project.projects_status_follow_parent %}
                                                     <div class="alert alert-info mb-1"><p>This sub-project is following the status of its parent project</p></div> 
                                                     {% endif %}
-                                                    <div class="alert" style="background-color: {{STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
-                                                        <h5><b>Status: </b>{{ STATUSES[project.projects_status]['name'] }}</h5>
-                                                        {{ STATUSES[project.projects_status]['description'] }}
+                                                    <div class="alert" style="background-color: {{ project.projectsStatuses_backgroundColour }}; color: {{ project.projectsStatuses_foregroundColour }};">
+                                                        <h5><b>Status: </b>{{ project.projectsStatuses_name }}</h5>
+                                                        {{ project.projectsStatuses_description }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -1706,7 +1714,7 @@
                 bootbox.prompt({
                     title: "Set project status",
                     inputType: 'select',
-                    value: {{ project.projects_status }},
+                    value: {{ project.projectsStatuses_id }},
                     inputOptions: [
                         {% for id,status in STATUSES %}
                         {
