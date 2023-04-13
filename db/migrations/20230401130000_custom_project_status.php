@@ -239,5 +239,38 @@ final class CustomProjectStatus extends AbstractMigration
         ])
         ->save();
         
+        $this->execute("UPDATE instanceActionsCategories SET instanceActionsCategories_name = 'Project Types & Statuses' WHERE instanceActionsCategories_id=14;");
+
+        $this->table('instanceActions')->insert([
+            'instanceActions_id' => 134,
+            'instanceActions_name' => 'View list of Project Statuses',
+            'instanceActionsCategories_id' => 14,
+            'instanceActions_dependent' => null,
+            'instanceActions_incompatible' => null
+        ])->saveData();
+
+        $this->table('instanceActions')->insert([
+            'instanceActions_id' => 135,
+            'instanceActions_name' => 'Add new Project Status',
+            'instanceActionsCategories_id' => 14,
+            'instanceActions_dependent' => '134,136',
+            'instanceActions_incompatible' => null
+        ])->saveData();
+
+        $this->table('instanceActions')->insert([
+            'instanceActions_id' => 136,
+            'instanceActions_name' => 'Edit Project Statuses',
+            'instanceActionsCategories_id' => 14,
+            'instanceActions_dependent' => '134',
+            'instanceActions_incompatible' => null
+        ])->saveData();
+
+        $this->table('instanceActions')->insert([
+            'instanceActions_id' => 137,
+            'instanceActions_name' => 'Delete Project Statuses',
+            'instanceActionsCategories_id' => 14,
+            'instanceActions_dependent' => '134,136',
+            'instanceActions_incompatible' => null
+        ])->saveData();
     }
 }
