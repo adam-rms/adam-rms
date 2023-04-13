@@ -294,7 +294,7 @@
                             <div class="dropdown-divider"></div>
                         {% endfor %}
                         <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
-                        {% if 8|permissions %}
+                        {% if "INSTANCES:CREATE"|serverPermissions %}
                             <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
                         {% else %}
                             <a href="#" class="dropdown-item dropdown-footer"><i>Contact support to add new businesses</i></a>
@@ -697,10 +697,10 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if 2|permissions or 11|permissions or 7|permissions %}
+                {% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions %}
                 <li class="nav-header">SERVER ADMIN</li>
                 {% endif %}
-            {% if 2|permissions %}
+            {% if "USERS:CREATE"|serverPermissions %}
                 <li class="nav-item">
                     <a href="{{ CONFIG.ROOTURL }}/users.php" class="nav-link">
                         <i class="nav-icon fas fa-users"></i>
@@ -711,7 +711,7 @@
                     </a>
                 </li>
             {% endif %}
-            {% if 11|permissions %}
+            {% if "PERMISSIONS:VIEW"|serverPermissions %}
                 <li class="nav-item">
                     <a href="{{ CONFIG.ROOTURL }}/permissions.php" class="nav-link">
                         <i class="nav-icon fas fa-unlock-alt"></i>
@@ -722,7 +722,7 @@
                     </a>
                 </li>
             {% endif %}
-            {% if 20|permissions %}
+            {% if "INSTANCES:VIEW"|serverPermissions %}
                 <li class="nav-item">
                     <a href="{{ CONFIG.ROOTURL }}/instances.php" class="nav-link">
                         <i class="nav-icon fas fa-city"></i>
@@ -733,7 +733,7 @@
                     </a>
                 </li>
             {% endif %}
-            {% if 7|permissions %}
+            {% if "VIEW-AUDIT-LOG"|serverPermissions %}
                 <li class="nav-item">
                     <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
                         <i class="nav-icon fas fa-gavel"></i>

@@ -7,12 +7,10 @@
 				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
 				You are modifying settings and configuration that affect the whole of the AdamRMS Server, including all businesses (instances) running on it. Please be careful when making changes here.
 			</div>
-            {% if 3|permissions %}
-                <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 15px;">
-                    <h4><i class="fa fa-exclamation"></i> You have permission to view E-Mail addresses in this list</h4>
-                    Please use caution and do not divulge these email addresses as per appropriate privacy policies
-                </div>
-            {% endif %}
+            <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 15px;">
+                <h4><i class="fa fa-exclamation"></i> You have permission to view E-Mail addresses in this list</h4>
+                Please use caution and do not divulge these email addresses as per appropriate privacy policies
+            </div>
 		</div>
 	</div>
     <div class="row">
@@ -45,8 +43,7 @@
                                 <th>Username</th>
                                 <th>Firstname</th>
                                 <th>Lastname</th>
-                                {% if 3|permissions %}
-                                    <th>Email</th>{% endif %}
+                                <th>Email</th>
                                 <th>Roles</th>
                                 <th>Instances</th>
                                 <th></th>
@@ -63,9 +60,7 @@
                                     <td>{{ user.users_username }}</td>
                                     <td>{{ user["users_name1"] }}</td>
                                     <td>{{ user["users_name2"] }}</td>
-
-                                    {% if 3|permissions %}
-                                        <td>{{ user["users_email"] }} {{ user["users_emailVerified"] == 1 ? '<i class="fa fa-check-square-o">' : null }}</td>{% endif %}
+                                    <td>{{ user["users_email"] }} {{ user["users_emailVerified"] == 1 ? '<i class="fa fa-check-square-o">' : null }}</td>
                                     <td>
                                         {% if user.users_suspended == '1' %}
                                             <span class="badge bg-danger">Suspended</span><br/>
@@ -98,7 +93,7 @@
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                        {% if 6|permissions %}
+                                        {% if "USERS:VIEW:MAILINGS"|serverPermissions %}
                                             <button type="button" title="View Mailings for user" class="btn btn-info"
                                                     data-toggle="modal"
                                                     data-target="#useremailmodal{{ user["users_userid"] }}"
@@ -106,14 +101,14 @@
                                                         class="fa fa-envelope"></i></button>
                                         {% endif %}
                                         {% if user.users_userid != USERDATA.users_userid %}
-                                            {% if 5|permissions %}
+                                            {% if "USERS:EDIT"|serverPermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user["users_userid"] }}"
                                                    type="button" title="Edit user" class="btn btn-default"><i
                                                             class="fa fa-pencil-alt"></i></a>
                                             {% endif %}
                                             {% if user.users_suspended == '0' %}
                                                 <!--Destroy all user tokens-->
-                                                {% if 7|permissions %}
+                                                {% if "VIEW-AUDIT-LOG"|serverPermissions %}
                                                     <button type="button" title="Log User out on all devices"
                                                             class="btn btn-danger logoutbutton"
                                                             data-userid="{{ user.users_userid }}"><i
@@ -121,7 +116,7 @@
                                                 {% endif %}
                                             {% endif %}
 
-                                            {% if 9|permissions %}
+                                            {% if "USERS:EDIT:SUSPEND"|serverPermissions %}
                                                 <button type="button"
                                                         class="btn btn-{{ user.users_suspended == '1' ? 'success' : 'danger' }} suspenduser"
                                                         data-suspendval="{{ user.users_suspended == '1' ? '0' : '1' }}"
@@ -129,7 +124,7 @@
                                                         title="{{ user.users_suspended == '0' ? 'Suspend user' : 'Un-Suspend user' }}">
                                                     <i class="fa fa-times-circle"></i></button>
                                             {% endif %}
-                                            {% if 10|permissions %}
+                                            {% if "USERS:VIEW_SITE_AS"|serverPermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs.php?userid={{ user["users_userid"] }}"
                                                    title="Login as User">
                                                     <button type="button" class="btn btn-default"><i
@@ -176,7 +171,7 @@
             </div>
         </div>
         {% for user in users %}
-            {% if 6|permissions %}
+            {% if "USERS:VIEW:MAILINGS"|serverPermissions %}
                 <div id="useremailmodal{{ user["users_userid"] }}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -239,7 +234,7 @@
                 }
 
                 $("#loadingoverlay").hide();
-                {% if 7|permissions %}
+                {% if "VIEW-AUDIT-LOG"|serverPermissions %}
                 $(".logoutbutton").click(function () {
                     $("#loadingoverlay").show();
                     $.ajax({
@@ -254,7 +249,7 @@
                     });
                 });
                 {% endif %}
-                {% if 9|permissions %}
+                {% if "USERS:EDIT:SUSPEND"|serverPermissions %}
                 $(".suspenduser").click(function () {
                     $("#loadingoverlay").show();
                     $.ajax({

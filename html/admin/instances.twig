@@ -109,20 +109,20 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic example">
-                                            {% if 21|permissions and instance.instances_deleted == 0 and USERDATA.instance.instances_id != instance.instances_id %}
+                                            {% if "INSTANCES:FULL_PERMISSIONS_IN_INSTANCE"|serverPermissions and instance.instances_deleted == 0 and USERDATA.instance.instances_id != instance.instances_id %}
                                                 <a href="{{ CONFIG.ROOTURL }}/?i={{ instance.instances_id }}"
                                                 title="Login to Instance">
                                                     <button type="button" class="btn btn-warning">Login as Admin</button>
                                                 </a>
                                             {% endif %}
-                                            {% if 23|permissions %}
+                                            {% if "INSTANCES:DELETE"|serverPermissions %}
                                                 {% if instance.instances_deleted == 0 %}
                                                 <button type="button" class="btn btn-danger deleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Delete</button>
                                                 {% else %}
                                                 <button type="button" class="btn btn-success restoreInstanceButton" data-instanceid="{{ instance.instances_id }}">Undo Delete</button>
                                                 {% endif %}
                                             {% endif %}
-                                            {% if 24|permissions and instance.instances_deleted == 1 %}
+                                            {% if "INSTANCES:PERMANENTLY_DELETE"|serverPermissions and instance.instances_deleted == 1 %}
                                                 <button type="button"class="btn btn-danger permanentlyDeleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Permanently Delete</button>
                                             {% endif %}
                                         </div>
@@ -166,7 +166,7 @@
         <script>
             $(document).ready(function () {
                 $("#loadingoverlay").hide();
-                {% if 23|permissions %}
+                {% if "INSTANCES:DELETE"|serverPermissions %}
                 $(".deleteInstanceButton").click(function () {
                     var instanceId = $(this).data("instanceid");
                     $("#loadingoverlay").show();
@@ -201,7 +201,7 @@
                     });
                 });
                 {% endif %}
-                {% if 24|permissions %}
+                {% if "INSTANCES:PERMANENTLY_DELETE"|serverPermissions %}
                 $(".permanentlyDeleteInstanceButton").click(function () {
                     var instanceId = $(this).data("instanceid");
                     $("#loadingoverlay").show();

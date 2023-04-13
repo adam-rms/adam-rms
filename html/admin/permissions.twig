@@ -75,7 +75,7 @@
                                             {% endif %}
                                         {% endfor %}
 
-										{% if 12|permissions %}
+										{% if "PERMISSIONS:EDIT"|serverPermissions %}
                                         <input type="checkbox" data-permissionid="{{action.actions_id}}" data-positionid="{{position.positionsGroups_id}}" {% if action.actions_id in position.positionsGroups_actions|split(',') %}checked{% endif %}  {% if positioncannotbecausedep == "true" or positioncannotbecauseindep == "true" %}disabled{% endif %} />
 										{% else %}
 										   {% if action.actions_id in position.positionsGroups_actions|split(',') %}
@@ -98,7 +98,7 @@
 		</div>
 	</div>
 </div>
-{% if 12|permissions %}
+{% if "PERMISSIONS:EDIT"|serverPermissions %}
 <script>
 $(document).ready(function() {
 	$("#loading").hide();

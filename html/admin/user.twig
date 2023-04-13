@@ -84,7 +84,7 @@
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
-                        {% if user.users_userid == USERDATA.users_userid or 5|permissions %}
+                        {% if user.users_userid == USERDATA.users_userid or "USERS:EDIT"|serverPermissions %}
                             <li class="nav-item"><a class="nav-link" href="#account" data-toggle="tab">Account Settings</a></li>
                             <li class="nav-item"><a class="nav-link" href="#notifications" data-toggle="tab">Notifications</a></li>
                             <li class="nav-item"><a class="nav-link" href="#profilepicture" data-toggle="tab">Profile Picture</a></li>
@@ -92,7 +92,7 @@
                         {% if user.users_userid == USERDATA.users_userid %}
                             <li class="nav-item"><a class="nav-link" href="#passwordsocial" data-toggle="tab">Password & Sign-in</a></li>
                         {% endif %}
-                        {% if (16|permissions and user.users_userid == USERDATA.users_userid) or 5|permissions %}
+                        {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
                             <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">AdamRMS Positions</a></li>
                         {% endif %}
                         {% if user.crewAssignments|length > 0 %}<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Crew Roles</a></li>{% endif %}
@@ -105,7 +105,7 @@
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
                     <div class="tab-content">
-                        {% if user.users_userid == USERDATA.users_userid or 5|permissions %}
+                        {% if user.users_userid == USERDATA.users_userid or "USERS:EDIT"|serverPermissions %}
                             <div class="tab-pane p-3" id="account">
                                 <form id="account-form">
                                     <div class="form-group">
@@ -232,7 +232,7 @@
                                 {% if user.users_thumbnail != null %}
                                     <img src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
                                 {% endif %}
-                                {% if 14|permissions or user.users_userid == USERDATA.users_userid %}
+                                {% if "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
                                     {% embed 'common/plugins/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
                                         {% block success %}
                                             ajaxcall("account/thumbnail.php", {
@@ -305,7 +305,7 @@
                             {% endif %}
                         </div>
                         {% endif %}
-                        {% if (16|permissions and user.users_userid == USERDATA.users_userid) or 5|permissions %}
+                        {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
                         <div class="tab-pane table-responsive p-0" id="positions" style="height: 600px;">
                             <table class="table" border="0" style="overflow-x: scroll;">
                                 <thead>
@@ -313,7 +313,7 @@
                                     <th>Title</th>
                                     <th>From</th>
                                     <th>To</th>
-                                    {% if user.users_userid != USERDATA.users_userid and 13|permissions %}
+                                    {% if user.users_userid != USERDATA.users_userid and "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
                                         <th></th>
                                     {% endif %}
                                 </tr>
@@ -321,7 +321,7 @@
                                 <tbody>
                                 {% for position in user.POSITIONS %}
                                     <tr>
-                                        {% if 13|permissions and user.users_userid != USERDATA.users_userid %}
+                                        {% if "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions and user.users_userid != USERDATA.users_userid %}
                                             <td>
                                                 <div class="form-group">
                                                     <select class="form-control positionID">
@@ -369,7 +369,7 @@
                                         {% endif %}
                                     </tr>
                                     {% endfor %}
-                                {% if user.users_userid != USERDATA.users_userid and 13|permissions %}
+                                {% if user.users_userid != USERDATA.users_userid and "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
                                     <tr><td colspan="999" style="font-weight: bold;">Add position</td></tr>
                                     <tr>
                                         <td>
@@ -404,7 +404,7 @@
                                 {% endif %}
                                 <script>
                                     $(document).ready(function() {
-                                        {% if 13|permissions %}
+                                        {% if "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
                                         $('.savePermissionEdit').click(function() {
                                             ajaxcall("account/permissions.php", {
                                                 "users_userid":"{{ user.users_userid }}",
