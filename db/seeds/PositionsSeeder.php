@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . '/../../html/common/libs/Auth/serverActions.php';
 
 use Phinx\Seed\AbstractSeed;
 
@@ -19,12 +19,7 @@ class PositionsSeeder extends AbstractSeed
             [
                 "positionsGroups_id"=> 1,
                 "positionsGroups_name"=> "Administrator",
-                "positionsGroups_actions"=> "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22"
-            ],
-            [
-                "positionsGroups_id"=> 999,
-                "positionsGroups_name"=> "User",
-                "positionsGroups_actions"=> ",8"
+                "positionsGroups_actions"=> array_keys($serverActions)
             ]
         ];
 
@@ -34,12 +29,6 @@ class PositionsSeeder extends AbstractSeed
                 "positions_displayName"=> "Super-admin",
                 "positions_positionsGroups"=> "1",
                 "positions_rank"=> 1
-            ],
-            [
-                 "positions_id"=> 999,
-                 "positions_displayName"=> "User",
-                 "positions_positionsGroups"=> "999",
-                 "positions_rank"=> 99
             ]
         ];
 
