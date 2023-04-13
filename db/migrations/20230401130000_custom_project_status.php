@@ -226,14 +226,20 @@ final class CustomProjectStatus extends AbstractMigration
             ])
             ->save();
         
+        /**
+         * In order to update the existing statuses, you need to make sure the auto increment starting value is higher than the highest existing status id, otherwise existing updates will over-write each other
+         */
+        $autoIncrementStartingValue = 1000;
+        
         $instances = $this->fetchAll('SELECT instances_id FROM instances');   
         foreach ($instances as $instance) {
             foreach ($originalStatuses as $statusId => $status) {
                 $status['instances_id'] = $instance['instances_id'];
+                $status['projectsStatuses_id'] = $autoIncrementStartingValue++;
                 $this->table('projectsStatuses')->insert($status)->saveData();
                 $thisId = $this->getAdapter()->getConnection()->lastInsertId();
                 if (!$thisId) throw new Exception('Failed to insert status');
-                $this->execute('UPDATE projects SET projects_status = ' . intVal($thisId) . ' WHERE instances_id = ' . $instance['instances_id']. ' AND projects_status = ' . $statusId);
+                $this->execute('UPDATE projects SET projects_status = ' . intVal($thisId) . ' WHERE (instances_id=' . $instance['instances_id']. ' AND projects_status=' . $statusId . ')');
             }
         }
 
@@ -248,5 +254,6 @@ final class CustomProjectStatus extends AbstractMigration
             'delete' => 'CASCADE',
         ])
         ->save();
+        
     }
 }
