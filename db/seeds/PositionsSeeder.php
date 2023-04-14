@@ -19,7 +19,7 @@ class PositionsSeeder extends AbstractSeed
             [
                 "positionsGroups_id"=> 1,
                 "positionsGroups_name"=> "Administrator",
-                "positionsGroups_actions"=> array_keys($serverActions)
+                "positionsGroups_actions"=> implode(",",array_keys($serverActions))
             ]
         ];
 
