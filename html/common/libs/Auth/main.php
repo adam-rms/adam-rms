@@ -34,7 +34,7 @@ class bID
             $DBLIB->where("authTokens_valid", '1');
             $tokencheckresult = $DBLIB->getOne("authTokens");
             if ($tokencheckresult != null) {
-                if ((strtotime($tokencheckresult["authTokens_created"]) + (1 * 12 * (3600 * 1000))) < time()) {
+                if ((strtotime($tokencheckresult["authTokens_created"]) + (12 * 60 * 60)) < time()) { // Tokens are valid for 12 hrs (this includes the mobile app), which matches the session timeout
                     if ($CONFIG['DEV']) $this->debug .= "Token expired at " . $tokencheckresult["authTokens_created"] . " - server time is " . time() . "<br/>";
                     $this->login = false;
                 } else {
@@ -72,8 +72,6 @@ class bID
 
                         $this->login = true;
 
-                        //$DBLIB->where("userPositions_end >= '" . date('Y-m-d H:i:s') . "'");
-                        //$DBLIB->where("userPositions_start <= '" . date('Y-m-d H:i:s') . "'");
                         $DBLIB->orderBy("positions_rank", "ASC");
                         $DBLIB->orderBy("positions_displayName", "ASC");
                         $DBLIB->join("positions", "userPositions.positions_id=positions.positions_id", "LEFT");
