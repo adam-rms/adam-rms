@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(124)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES")) die($TWIG->render('404.twig', $PAGEDATA));
 
 date_default_timezone_set('Europe/London'); //So deadlines show in right timezone
 $DBLIB->where("projectsVacantRoles.projectsVacantRoles_id",$_GET['id']);

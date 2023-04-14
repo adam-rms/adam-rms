@@ -95,7 +95,7 @@
                         <div class="card-header">
                             <ul class="nav nav-pills" id="nav-bar">
                                 <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
-                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and 31|instancePermissions %}
+                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                                     <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/assets.php?project={{project.projects_id}}&project_referer={{project.projects_id}}"><i class="fas fa-plus"></i> Add Assets</a></li>
                                 {% endif %}
                                 {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
@@ -103,10 +103,10 @@
                                     <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab"><i class="fas fa-shipping-fast"></i> Asset Dispatch</a></li>
                                 {% endif %}
                                 <li class="nav-item"><a class="nav-link" href="#file-view" data-toggle="tab"><i class="fas fa-file-alt"></i> {%  if project.projectsTypes_config_files == 1 %}Files, {% endif %}{% if project.projectsTypes_config_notes == 1 %}Notes, {% endif %} Invoices & Quotes</a></li>
-                                {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                                {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                                     <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab"><i class="fas fa-pound-sign"></i> Finance</a></li>
                                 {% endif %}
-                                {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
+                                {% if "PROJECTS:PROJECT_CREW:VIEW"|instancePermissions and project.projectsTypes_config_crew == 1 %}
                                     <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab"><i class="fas fa-users"></i> Crew</a></li>
                                 {% endif %}
                                 {% if project.subProjects %}
@@ -126,7 +126,7 @@
                                         <div class="card-header">
                                             <h3 class="card-title">{{ project.projectsTypes_name }}</h3>
                                             <div class="card-tools">
-                                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and 32|instancePermissions %}
+                                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS"|instancePermissions %}
                                                     <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject"><i class="fas fa-dolly"></i></button>
                                                 {% endif %}
                                             </div>
@@ -152,7 +152,7 @@
                                                         <hr/>
                                                     {% endif %}
                                                     <div class="text-muted">
-                                                        {% if 22|instancePermissions and project.projectsTypes_config_client == 1 %}
+                                                        {% if "PROJECTS:EDIT:CLIENT"|instancePermissions and project.projectsTypes_config_client == 1 %}
                                                             <p class="text-sm">Client</p>
                                                             <select class="form-control select2bs4" multiple id="editProjectClient">
                                                                 {% if project.clients_id == "" %}
@@ -167,12 +167,12 @@
                                                         {% elseif project.projectsTypes_config_client == 1  %}
                                                             <p class="text-sm">Client
                                                                 <b class="d-block">
-                                                                    <a  style="color: inherit; text-decoration: inherit;"  {% if 36|instancePermissions %}href="{{ CONFIG.ROOTURL }}/clients.php"{% endif %}>
+                                                                    <a  style="color: inherit; text-decoration: inherit;"  {% if "CLIENTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/clients.php"{% endif %}>
                                                                         {{ project.clients_name }}</a>
                                                                 </b>
                                                             </p>
                                                         {% endif %}
-                                                        {% if 23|instancePermissions %}
+                                                        {% if "PROJECTS:EDIT:LEAD"|instancePermissions %}
                                                             <p class="text-sm">Project Manager</p>
                                                             <select class="form-control select2bs4" multiple id="editProjectManager">
                                                                 {% for user in potentialProjectManagers %}
@@ -182,17 +182,17 @@
                                                         {% else %}
                                                             <p class="text-sm">Project Manager
                                                                 <b class="d-block">
-                                                                    {% if 52|instancePermissions %}
+                                                                    {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                                                     <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}">
                                                                         {% endif %}
                                                                         {{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}
-                                                                        {% if 52|instancePermissions %}
+                                                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                                                     </a>
                                                                     {% endif %}
                                                                 </b>
                                                             </p>
                                                         {% endif %}
-                                                        {% if 30|instancePermissions and project.projectsTypes_config_venue == 1  %}
+                                                        {% if "PROJECTS:EDIT:ADDRESS"|instancePermissions and project.projectsTypes_config_venue == 1  %}
                                                             <p class="text-sm">Venue</p>
                                                             <select class="form-control select2bs4" multiple id="editProjectAddress">
                                                                 {% if project.locations_id == "" %}
@@ -209,11 +209,11 @@
                                                             </select>
                                                         {% elseif project.projectsTypes_config_venue == 1 %}
                                                             <p class="text-sm">Venue
-                                                                <b class="d-block"><a  style="color: inherit; text-decoration: inherit;"  {% if 87|instancePermissions %}href="{{ CONFIG.ROOTURL }}/location/"{% endif %}>{{ project.locations_name }}</a></b>
+                                                                <b class="d-block"><a  style="color: inherit; text-decoration: inherit;"  {% if "LOCATIONS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/location/"{% endif %}>{{ project.locations_name }}</a></b>
                                                             </p>
                                                         {% endif %}
                                                         <p class="text-sm">Dates
-                                                            {% if 27|instancePermissions %}
+                                                            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="far fa-clock"></i></span>
@@ -226,7 +226,7 @@
                                                         </p>
                                                         {% if project.projectsTypes_config_assets == 1 %}
                                                             <p class="text-sm">Dates assets in use
-                                                            {% if 27|instancePermissions %}
+                                                            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
                                                                 <div class="input-group">
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="far fa-clock"></i></span>
@@ -258,13 +258,13 @@
                                         <div class="card-footer">
                                             <div class="btn-group float-right">
                                                 <button type="button" class="btn btn-default quickAddCommentButton">New Comment</button>
-                                                {% if 29|instancePermissions and not( project.projects_parent_project_id and project.projects_status_follow_parent) %}
+                                                {% if "PROJECTS:EDIT:STATUS"|instancePermissions and not( project.projects_parent_project_id and project.projects_status_follow_parent) %}
                                                     <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
                                                 {% endif %}
                                                 <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                                                     <span class="sr-only">Toggle Dropdown</span>
                                                     <div class="dropdown-menu" role="menu">
-                                                        {% if 21|instancePermissions %}
+                                                        {% if "PROJECTS:CREATE"|instancePermissions %}
                                                             {% if project.subProjects == null %}
                                                                 <a class="dropdown-item" id="assignParentProject">Assign Parent Project</a>
                                                             {% endif %}
@@ -281,26 +281,26 @@
                                                                 <div class="dropdown-divider"></div>
                                                             {% endif %}
                                                         {% endif %}
-                                                        {% if 28|instancePermissions %}
+                                                        {% if "PROJECTS:EDIT:NAME"|instancePermissions %}
                                                             <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
                                                         {% endif %}
-                                                        {% if 24|instancePermissions %}
+                                                        {% if "PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS"|instancePermissions %}
                                                             <a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>
                                                         {% endif %}
-                                                        {% if 28|instancePermissions or 24|instancePermissions%}
+                                                        {% if "PROJECTS:EDIT:NAME"|instancePermissions or "PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS"|instancePermissions%}
                                                             <div class="dropdown-divider"></div>
                                                         {% endif %}
-                                                        {% if 104|instancePermissions and potentialProjectTypes|length > 1 %}
+                                                        {% if "PROJECTS:EDIT:PROJECT_TYPE"|instancePermissions and potentialProjectTypes|length > 1 %}
                                                             <a class="dropdown-item" id="editProjectType" href="#">Change Project Type</a>
                                                         {% endif %}
-                                                        {% if 25|instancePermissions %}
+                                                        {% if "PROJECTS:ARCHIVE"|instancePermissions %}
                                                             {% if project.projects_archived == 1 %}
                                                                 <a class="dropdown-item" id="archiveProject" href="#">Remove from Archive</a>
                                                             {% else %}
                                                                 <a class="dropdown-item" id="archiveProject" href="#">Archive</a>
                                                             {% endif %}
                                                         {% endif %}
-                                                        {% if 26|instancePermissions %}<a class="dropdown-item" id="deleteProject" href="#">Delete</a>{% endif %}
+                                                        {% if "PROJECTS:DELETE"|instancePermissions %}<a class="dropdown-item" id="deleteProject" href="#">Delete</a>{% endif %}
                                                     </div>
                                                 </button>
                                             </div>
@@ -384,7 +384,7 @@
                                                             <span class="text">{{ note.projectsNotes_title }}</span>
                                                             <div class="tools">
                                                                 <a href="{{ CONFIG.ROOTURL }}/project/noteExport.php?id={{ note.projectsNotes_id }}" style="color: #495057; padding-right: 10px;" target="_blank" title="Print Note"><i class="fas fa-print"></i></a>
-                                                                {% if 44|instancePermissions %}
+                                                                {% if "PROJECTS:PROJECT_NOTES:EDIT:NOTES"|instancePermissions %}
                                                                 <a href="#" data-toggle="modal" data-target="#noteModal{{ note.projectsNotes_id }}" style="color: #495057;" title="Edit File"><i class="fas fa-pencil-alt"></i></a>
                                                                 {% endif %}
                                                             </div>
@@ -394,7 +394,7 @@
                                             </div>
                                             <div class="card-footer">
                                                 <div class="btn-group float-right">
-                                                    {% if 45|instancePermissions and project.projectsTypes_config_notes == 1 %}
+                                                    {% if "PROJECTS:PROJECT_NOTES:CREATE:NOTES"|instancePermissions and project.projectsTypes_config_notes == 1 %}
                                                         <button type="button" class="btn btn-default" id="newProjectNote">Create Note</button>
                                                     {% endif %}
                                                 </div>
@@ -512,7 +512,7 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="payments-view">
-                            {% if 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                            {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12">
                                         <div class="card">
@@ -596,7 +596,7 @@
                                             <div class="card-footer">
                                                 <div class="btn-group float-right">
                                                     <a href="{{ CONFIG.USERGUIDEURL }}projects/finance" target="_blank" type="button" class="btn btn-info">Help</a>
-                                                    {% if 34|instancePermissions %}
+                                                    {% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
                                                         <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
                                                         <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                                                             <span class="sr-only">Toggle Dropdown</span>
@@ -625,7 +625,7 @@
                                             </div>
                                             <div class="card-footer">
                                                 <div class="btn-group float-right">
-                                                    {% if 46|instancePermissions %}
+                                                    {% if "PROJECTS:EDIT:INVOICE_NOTES"|instancePermissions %}
                                                         <button type="button" class="btn btn-default editProjectInvoiceNotes" title="Edit">Edit Invoice Notes</button>
                                                     {% endif %}
                                                 </div>
@@ -659,10 +659,10 @@
                                                             <td>{{ payment.payments_comment|nl2br }}</td>
                                                             <td>{{ payment.payments_amount|money }}</td>
                                                             <td style="min-width:140px;">
-                                                                {% if 121|instancePermissions %}
+                                                                {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
                                                                     <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                 {% endif %}
-                                                                {% if 35|instancePermissions %}
+                                                                {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
                                                                     <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
                                                                 {% endif %}
                                                             </td>
@@ -708,10 +708,10 @@
                                                                 <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
-                                                                    {% if 121|instancePermissions %}
+                                                                    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
                                                                         <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
-                                                                    {% if 35|instancePermissions %}
+                                                                    {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
                                                                     {% endif %}
                                                                 </td>
@@ -757,10 +757,10 @@
                                                                 <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
-                                                                    {% if 121|instancePermissions %}
+                                                                    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
                                                                         <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
-                                                                    {% if 35|instancePermissions %}
+                                                                    {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
                                                                     {% endif %}
                                                                 </td>
@@ -799,10 +799,10 @@
                                                                 <td style="width:100px;">{{ payment.payments_amount|money }}</td>
                                                                 <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
                                                                 <td>
-                                                                    {% if 121|instancePermissions %}
+                                                                    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
                                                                         <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
                                                                     {% endif %}
-                                                                    {% if 35|instancePermissions %}
+                                                                    {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
                                                                         <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
                                                                     {% endif %}
                                                                 </td>
@@ -828,7 +828,7 @@
                             {% endif %}
                         </div>
                         <div class="tab-pane" id="crew-view">
-                            {% if 47|instancePermissions and project.projectsTypes_config_crew == 1 %}
+                            {% if "PROJECTS:PROJECT_CREW:VIEW"|instancePermissions and project.projectsTypes_config_crew == 1 %}
                                 <div class="card">
                                     <div class="card-body p-0">
                                         <ul id="crewList" class="todo-list">
@@ -839,7 +839,7 @@
                                                 {% elseif crew.users_email|length < 1 %}
                                                     class="warning"
                                                         {% endif %}>
-                                                    {% if 51|instancePermissions %}
+                                                    {% if "PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS"|instancePermissions %}
                                                         <span class="handle">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                     <i class="fas fa-ellipsis-v"></i>
@@ -850,11 +850,11 @@
                                         {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
                                             <i>Vacant</i>
                                         {% elseif crew.users_name1 %}
-                                            {% if 52|instancePermissions %}
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ crew.users_userid }}">
                                             {% endif %}
                                             {{ crew.users_name1 ~ " " ~ crew.users_name2 }}
-                                            {% if 52|instancePermissions %}
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                                 </a>
                                             {% endif %}
                                         {% else %}
@@ -865,7 +865,7 @@
                                                         <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role|escape('html_attr')}}" data-content="{{ crew.crewAssignments_comment|escape('html_attr') }}"></i>
                                                     {% endif %}
                                                     <div class="tools">
-                                                        {% if 49|instancePermissions %}
+                                                        {% if "PROJECTS:PROJECT_CREW:EDIT"|instancePermissions %}
                                                             <i class="far fa-edit editCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" data-role="{{crew.crewAssignments_role|escape('html_attr')}}" data-comment="{{crew.crewAssignments_comment|escape('html_attr')}}" title="Edit"></i>
                                                             <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
 
@@ -879,13 +879,13 @@
                                     <div class="card-footer">
                                         <div class="btn-group float-right">
                                             <a href="{{ CONFIG.USERGUIDEURL }}projects/crew/" target="_blank" type="button" class="btn btn-info">Help</a>
-                                            {% if 50|instancePermissions and project.crewAssignments|length > 0 %}
+                                            {% if "PROJECTS:PROJECT_CREW:VIEW:EMAIL_CREW"|instancePermissions and project.crewAssignments|length > 0 %}
                                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
                                             {% endif %}
-                                            {% if 123|instancePermissions %}
+                                            {% if "PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT"|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary">Crew Recruitment</a>
                                             {% endif %}
-                                            {% if 48|instancePermissions %}
+                                            {% if "PROJECTS:PROJECT_CREW:CREATE"|instancePermissions %}
                                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
                                             {% endif %}
                                         </div>
@@ -958,7 +958,7 @@
             </div>
         </div>
     </div>
-    {% if 34|instancePermissions %}
+    {% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
     <div class="modal fade" id="newPaymentModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1030,7 +1030,7 @@
     </div>
     </div>
     {% endif %}
-    {% if 44|instancePermissions and project.projectsTypes_config_notes == 1 %}
+    {% if "PROJECTS:PROJECT_NOTES:EDIT:NOTES"|instancePermissions and project.projectsTypes_config_notes == 1 %}
         {% for note in project.notes %}
             <div class="modal fade" id="noteModal{{ note.projectsNotes_id }}">
                 <div class="modal-dialog modal-xl">
@@ -1053,7 +1053,7 @@
             </div>
         {% endfor %}
     {% endif %}
-    {% if 48|instancePermissions %}
+    {% if "PROJECTS:PROJECT_CREW:CREATE"|instancePermissions %}
         <div class="modal fade" id="addCrewModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -1089,7 +1089,7 @@
             </div>
         </div>
     {% endif %}
-    {% if 50|instancePermissions %}
+    {% if "PROJECTS:PROJECT_CREW:VIEW:EMAIL_CREW"|instancePermissions %}
         <div class="modal fade" id="emailCrewModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -1110,7 +1110,7 @@
             </div>
         </div>
     {% endif %}
-    {% if 121|instancePermissions %}
+    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
     {% for payment in []|merge(FINANCIALS.payments.received.ledger)|merge(FINANCIALS.payments.sales.ledger)|merge(FINANCIALS.payments.subHire.ledger)|merge(FINANCIALS.payments.staff.ledger) %}
         <div class="modal fade" id="filesModal{{ payment.payments_id }}">
             <div class="modal-dialog modal-lg">
@@ -1125,7 +1125,7 @@
                         {% embed 'common/plugins/fileBox.twig' with {'files': payment.files } %}
                         {% endembed %}
                     </div>
-                    {% if 122|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
                         <div class="modal-footer">
                             {% embed 'common/plugins/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
                                 {% block success %}
@@ -1153,7 +1153,7 @@
                     {% embed 'common/plugins/fileBox.twig' with {'files': files } %}
                     {% endembed %}
                 </div>
-                {% if 102|instancePermissions %}
+                {% if "PROJECTS:PROJECT_FLIE_ATTACHMENTS:CREATE"|instancePermissions %}
                     <div class="modal-footer">
                         {% embed 'common/plugins/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
                             {% block success %}
@@ -1271,7 +1271,7 @@
                                     <label class="form-check-label">Equipment Masses</label>
                                 </div>
                             {% endif %}
-                            {% if 33|instancePermissions and project.projectsTypes_config_finance == 1  %}
+                            {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1  %}
                                 <hr/>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="finance" checked>
@@ -1380,7 +1380,7 @@
                     }
                 });
             });
-            {% if 22|instancePermissions %}
+            {% if "PROJECTS:EDIT:CLIENT"|instancePermissions %}
             $('#editProjectClient').select2({
                 tags: false,
                 multiple: false,
@@ -1398,7 +1398,7 @@
                 });
             });
             {% endif %}
-            {% if 104|instancePermissions %}
+            {% if "PROJECTS:EDIT:PROJECT_TYPE"|instancePermissions %}
             $("#editProjectType").click(function () {
                 bootbox.prompt({
                     title: "Change Project Type",
@@ -1425,7 +1425,7 @@
                 });
             });
             {% endif %}
-            {% if 23|instancePermissions %}
+            {% if "PROJECTS:EDIT:LEAD"|instancePermissions %}
             $('#editProjectManager').select2({
                 tags: false,
                 multiple: false,
@@ -1443,7 +1443,7 @@
                 });
             });
             {% endif %}
-            {% if 24|instancePermissions %}
+            {% if "PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS"|instancePermissions %}
             $("#editProjectDescription").click(function () {
                 bootbox.prompt({
                     title: "Edit Project Description",
@@ -1462,7 +1462,7 @@
                 });
             });
             {% endif %}
-            {% if 46|instancePermissions %}
+            {% if "PROJECTS:EDIT:INVOICE_NOTES"|instancePermissions %}
             $(".editProjectInvoiceNotes").click(function () {
                 bootbox.prompt({
                     title: "Edit Project Invoice Notes",
@@ -1481,7 +1481,7 @@
                 });
             });
             {% endif %}
-            {% if 25|instancePermissions %}
+            {% if "PROJECTS:ARCHIVE"|instancePermissions %}
             $("#archiveProject").click(function () {
                 {% if project.projects_archived != 1 %}
                 bootbox.confirm({
@@ -1528,7 +1528,7 @@
                 {% endif %}
             });
             {% endif %}
-            {% if 26|instancePermissions %}
+            {% if "PROJECTS:DELETE"|instancePermissions %}
             $("#deleteProject").click(function () {
                 bootbox.confirm({
                     message: "Are you sure you wish to delete the project?",
@@ -1552,7 +1552,7 @@
                 });
             });
             {% endif %}
-            {% if 27|instancePermissions %}
+            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
             $('#datePickerInput').daterangepicker({
                 timePicker: true,
                 timePickerIncrement: 15,
@@ -1607,7 +1607,7 @@
                             },
                             callback: function (result) {
                                 if (result) {
-                                    {% if 31|instancePermissions %}
+                                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                                     var toRemove = [];
                                     console.log(data.response.assets);
                                     $.each(data.response.assets, function( index, value ) {
@@ -1636,7 +1636,7 @@
 
 
             {% endif %}
-            {% if 28|instancePermissions %}
+            {% if "PROJECTS:EDIT:NAME"|instancePermissions %}
             $("#editProjectName").click(function () {
                 bootbox.prompt({
                     title: "Change Project Name",
@@ -1655,7 +1655,7 @@
                 });
             });
             {% endif %}
-            {% if 29|instancePermissions %}
+            {% if "PROJECTS:EDIT:STATUS"|instancePermissions %}
             function changeStatus(newStatus) {
                 ajaxcall("projects/changeStatus.php", {
                     "projectsStatuses_id": newStatus,
@@ -1682,7 +1682,7 @@
                             },
                             callback: function (result) {
                                 if (result) {
-                                    {% if 31|instancePermissions %}
+                                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                                     var toRemove = [];
                                     console.log(data.response.assets);
                                     $.each(data.response.assets, function( index, value ) {
@@ -1749,7 +1749,7 @@
                 });
             });
             {% endif %}
-            {% if 30|instancePermissions %}
+            {% if "PROJECTS:EDIT:ADDRESS"|instancePermissions %}
             $('#editProjectAddress').select2({
                 tags: false,
                 multiple: false,
@@ -1776,7 +1776,7 @@
                 });
             });
             {% endif %}
-            {% if 32|instancePermissions %}
+            {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS"|instancePermissions %}
             $("#addAllAssetsToProject").click(function () {
                 bootbox.confirm({
                     message: "Are you sure you wish to add all assets in the business that are available to the project?",
@@ -1800,7 +1800,7 @@
                 });
             });
             {% endif %}
-            {% if 34|instancePermissions %}
+            {% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
             $('#newPaymentModal-form-date').daterangepicker({
                 timePicker: true,
                 timePickerIncrement: 1,
@@ -1841,7 +1841,7 @@
                 });
             });
             {% endif %}
-            {% if 35|instancePermissions %}
+            {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
             $(".deletePaymentButton").click(function () {
                 var id = $(this).data("paymentid");
                 bootbox.confirm({
@@ -1866,7 +1866,7 @@
                 });
             });
             {% endif %}
-            {% if 44|instancePermissions %}
+            {% if "PROJECTS:PROJECT_NOTES:EDIT:NOTES"|instancePermissions %}
             $('.summernote').summernote({
                 minHeight: 500,             // set minimum height of editor
                 maxHeight: null,             // set maximum height of editor
@@ -1907,7 +1907,7 @@
                 });
             });
             {% endif %}
-            {% if 45|instancePermissions %}
+            {% if "PROJECTS:PROJECT_NOTES:CREATE:NOTES"|instancePermissions %}
             $("#newProjectNote").click(function () {
                 bootbox.prompt({
                     title: "Note Title",
@@ -1925,7 +1925,7 @@
                 });
             });
             {% endif %}
-            {% if 49|instancePermissions %}
+            {% if "PROJECTS:PROJECT_CREW:EDIT"|instancePermissions %}
             $(".editCrewAssignment").click(function () {
                 var id = $(this).data("assignment");
                 var role = $(this).data("role");
@@ -1974,7 +1974,7 @@
                 });
             });
             {% endif %}
-            {% if 48|instancePermissions %}
+            {% if "PROJECTS:PROJECT_CREW:CREATE"|instancePermissions %}
             $("#addCrewModal-users").select2({
                 tags: true,
                 tokenSeparators: [','],
@@ -2041,7 +2041,7 @@
                 }
             });
             {% endif %}
-            {% if 51|instancePermissions %}
+            {% if "PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS"|instancePermissions %}
             $('#crewList').sortable({
                 placeholder         : 'sort-highlight',
                 handle              : '.handle',
@@ -2056,7 +2056,7 @@
                 }
             });
             {% endif %}
-            {% if 21|instancePermissions %}
+            {% if "PROJECTS:CREATE"|instancePermissions %}
             $("#newSubProject").click(function () {
                 bootbox.prompt({
                     title: "Select Sub-Project Type",

@@ -37,11 +37,11 @@
                             {% for user in users %}
                                 <tr>
                                     <td>
-                                        {% if 52|instancePermissions %}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                         <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
                                             {% endif %}
                                             {{ user["users_name1"] }} {{ user["users_name2"] }}
-                                        {% if 52|instancePermissions %}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                         </a>
                                         {% endif %}
                                     </td>
@@ -78,10 +78,10 @@
                                     <td>
                                         <div class="btn-group">
                                             {% if module.modules_type != 1 %}
-                                                {% if 119|instancePermissions %}
+                                                {% if "TRAINING:EDIT:CERTIFY_USER"|instancePermissions %}
                                                     <button class="btn btn-sm btn-success certifyButton" data-userid="{{ user['users_userid'] }}">Certify</button>
                                                 {% endif %}
-                                                {% if 120|instancePermissions and user.userModulesCertifications|length >0  %}
+                                                {% if "TRAINING:EDIT:REVOKE_USER_CERTIFICATION"|instancePermissions and user.userModulesCertifications|length >0  %}
                                                     <button class="btn btn-sm btn-danger revokeButton" data-userid="{{ user['users_userid'] }}">Revoke all</button>
                                                 {% endif %}
                                             {% endif %}
@@ -124,7 +124,7 @@
     </div>
     <script>
         $(document).ready(function() {
-            {% if 119|instancePermissions %}
+            {% if "TRAINING:EDIT:CERTIFY_USER"|instancePermissions %}
             $('.certifyButton').on('click', function(e){
                 var userid = $(this).data("userid");
                 bootbox.prompt("Certification Comment", function(result){
@@ -140,7 +140,7 @@
                 });
             });
             {% endif %}
-            {% if 120|instancePermissions %}
+            {% if "TRAINING:EDIT:REVOKE_USER_CERTIFICATION"|instancePermissions %}
             $('.revokeButton').on('click', function(e){
                 var userid = $(this).data("userid");
                 ajaxcall("training/revokeAll.php", {

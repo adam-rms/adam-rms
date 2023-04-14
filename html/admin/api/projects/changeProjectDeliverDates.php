@@ -3,7 +3,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
 
-if (!$AUTH->instancePermissionCheck(27) or !isset($_POST['projects_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:DATES") or !isset($_POST['projects_id'])) die("404");
 $newDates = ["projects_dates_deliver_start" => date ("Y-m-d H:i:s", strtotime($_POST['projects_dates_deliver_start'])), "projects_dates_deliver_end" => date ("Y-m-d H:i:s", strtotime($_POST['projects_dates_deliver_end']))];
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);

@@ -11,7 +11,7 @@ class SearchProjects extends BaseSearch
     public function load(): array
     {
         // The user cannot access projects
-        if (!$this->AUTH->instancePermissionCheck(20)) {
+        if (!$this->AUTH->instancePermissionCheck("PROJECTS:VIEW")) {
             return [];
         }
 

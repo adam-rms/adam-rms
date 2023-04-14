@@ -11,7 +11,7 @@
 
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(39)) die("404");
+if (!$AUTH->instancePermissionCheck("CLIENTS:EDIT")) die("404");
 
 if (!isset($_POST['clients_id'])) die("404");
 

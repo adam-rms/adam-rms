@@ -31,23 +31,23 @@
             {% endfor %}
             <li class="pt-2 px-3">
                 <div class="card-tools">
-                    {% if 41|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
                             <i class="far fa-comment"></i></button>
                     {% endif %}
-                    {% if 43|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                         <button type="button" class="btn btn-tool" title="Set discount" id="setAssetAssignmentDiscount">
                             <i class="fas fa-percent"></i></button>
                     {% endif %}
-                    {% if 42|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                         <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
                             <i class="fas fa-coins"></i></button>
                     {% endif %}
-                    {% if 53|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Set status" id="setAllAssetStatus">
                             <i class="fas fa-clipboard-check"></i></button>
                     {% endif %}
-                    {% if 31|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Swap Asset" id="swapAsset">
                             <i class="fas fa-sync"></i>
                         </button>
@@ -176,7 +176,7 @@
         $(".categoryFilter").hide();
         $(".typeFilter").hide();
 
-        {% if 41|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
         $("#setAssetAssignmentComment").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
@@ -198,7 +198,7 @@
             }
         });
         {% endif %}
-        {% if 42|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions %}
         $("#setAssetAssignmentPrice").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
@@ -222,7 +222,7 @@
             }
         });
         {% endif %}
-        {% if 43|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT"|instancePermissions %}
         $("#setAssetAssignmentDiscount").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
@@ -247,7 +247,7 @@
             }
         });
         {% endif %}
-        {% if 31|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
         $("#setAssetAssignmentDelete").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
@@ -332,7 +332,7 @@
             }
         });
         {% endif %}
-        {% if 53|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
         $("#setAllAssetStatus").click(function () {
             let selected = getSelected();
             if (selected.length > 0) {

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(16) or !isset($_POST['name'])) die("404");
+if (!$AUTH->instancePermissionCheck("BUSINESS:ROLES_AND_PERMISSIONS:CREATE") or !isset($_POST['name'])) die("404");
 
 $instance = $DBLIB->insert("instancePositions", [
     "instances_id" => $AUTH->data['instance']['instances_id'],

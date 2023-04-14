@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(84)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_BARCODES:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Asset Barcodes", "BREADCRUMB" => true];
 

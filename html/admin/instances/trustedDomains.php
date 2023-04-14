@@ -3,7 +3,7 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Trusted Domains", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(133)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->orderBy("instancePositions_rank", "ASC");
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);

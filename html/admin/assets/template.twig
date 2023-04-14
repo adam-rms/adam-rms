@@ -294,7 +294,7 @@
                             <div class="dropdown-divider"></div>
                         {% endfor %}
                         <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
-                        {% if 8|permissions %}
+                        {% if "INSTANCES:CREATE"|serverPermissions %}
                             <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
                         {% else %}
                             <a href="#" class="dropdown-item dropdown-footer"><i>Contact support to add new businesses</i></a>
@@ -371,7 +371,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            {% if 80|instancePermissions %}
+                            {% if "BUSINESS:BUSINESS_STATS:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/stats.php" class="nav-link">
                                         <i class="nav-icon fas fa-chart-bar"></i>
@@ -390,7 +390,7 @@
                                 </a>
                             </li>
 
-                            {% if 36|instancePermissions %}
+                            {% if "CLIENTS:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
                                         <i class="nav-icon fas fa-briefcase"></i>
@@ -400,7 +400,7 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 40|instancePermissions %}
+                            {% if "FINANCE:PAYMENTS_LEDGER:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
                                         <i class="nav-icon fas fa-coins"></i>
@@ -411,7 +411,7 @@
                                 </li>
                             {% endif %}
 
-                            {% if 87|instancePermissions %}
+                            {% if "LOCATIONS:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
                                         <i class="fa fa-map-marked-alt nav-icon"></i>
@@ -430,7 +430,7 @@
                                 </a>
                             </li>
                             <li class="nav-header">USER MANAGEMENT</li>
-                            {% if 2|instancePermissions %}
+                            {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
                                         <i class="nav-icon fas fa-users"></i>
@@ -440,7 +440,7 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 11|instancePermissions %}
+                            {% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
                                         <i class="nav-icon fas fa-unlock-alt"></i>
@@ -450,7 +450,7 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 109|instancePermissions %}
+                            {% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/signupCodes.php" class="nav-link">
                                         <i class="fas fa-key nav-icon"></i>
@@ -460,7 +460,7 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 133|instancePermissions %}
+                            {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/trustedDomains.php" class="nav-link">
                                         <i class="far fa-building nav-icon"></i>
@@ -471,7 +471,7 @@
                                 </li>
                             {% endif %}
                             <li class="nav-header">SETTINGS</li>
-                            {% if 81|instancePermissions %}
+                            {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
                                         <i class="nav-icon fas fa-cog"></i>
@@ -489,7 +489,7 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 105|instancePermissions %}
+                            {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
                                         <i class="fas fa-theater-masks nav-icon"></i>
@@ -499,7 +499,7 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 89|instancePermissions %}
+                            {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
                                         <i class="fas fa-list nav-icon"></i>
@@ -509,7 +509,7 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if 125|instancePermissions %}
+                            {% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
                                 <li class="nav-item">
                                     <a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
                                         <i class="far fa-newspaper nav-icon"></i>
@@ -521,7 +521,7 @@
                             {% endif %}
                         </ul>
                     </li>
-                    {% if 113|instancePermissions %}
+                    {% if "TRAINING:VIEW"|instancePermissions %}
                     <li class="nav-item">
                         <a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
                             <i class="nav-icon fas fa-graduation-cap"></i>
@@ -529,7 +529,7 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if 124|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES"|instancePermissions %}
                         <li class="nav-item">
                             <a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
                                 <i class="nav-icon fas fa-notes-medical"></i>
@@ -583,7 +583,7 @@
                             <p>Assets</p>
                         </a>
                     </li>
-                    {% if 17|instancePermissions %}
+                    {% if "ASSETS:CREATE"|instancePermissions %}
                         <li class="nav-item">
                             <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
                                 <i class="fas fa-plus nav-icon"></i>
@@ -599,7 +599,7 @@
                             </p>
                         </a>
                     </li>                    
-                    {% if 63|instancePermissions %}
+                    {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
                         <li class="nav-item">
                             <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
                                 <i class="nav-icon fas fa-paint-roller"></i>
@@ -609,7 +609,7 @@
                             </a>
                         </li>
                     {% endif %}
-                    {% if 84|instancePermissions %}
+                    {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions %}
                         <li class="nav-item">
                             <a href="{{ CONFIG.ROOTURL}}/maintenance/barcode.php" class="nav-link">
                                 <i class="fas fa-barcode nav-icon"></i>
@@ -617,7 +617,7 @@
                             </a>
                         </li>
                     {% endif %}
-                {% if 20|instancePermissions %}
+                {% if "PROJECTS:VIEW"|instancePermissions %}
                     <li class="nav-header">PROJECTS</li>
                     {% set archive = false %}
                     {% for project in projects %}
@@ -688,7 +688,7 @@
                             <p>List</p>
                         </a>
                     </li>
-                    {% if 21|instancePermissions %}
+                    {% if "PROJECTS:CREATE"|instancePermissions %}
                         <li class="nav-item">
                             <a href="#" class="nav-link newProjectButton">
                                 <i class="nav-icon fas fa-plus"></i>
@@ -697,12 +697,12 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if 2|permissions or 11|permissions or 7|permissions %}
+                {% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions %}
                 <li class="nav-header">SERVER ADMIN</li>
                 {% endif %}
-            {% if 2|permissions %}
+            {% if "USERS:CREATE"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/users.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/users.php" class="nav-link">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Users
@@ -711,9 +711,9 @@
                     </a>
                 </li>
             {% endif %}
-            {% if 11|permissions %}
+            {% if "PERMISSIONS:VIEW"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/permissions.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/permissions.php" class="nav-link">
                         <i class="nav-icon fas fa-unlock-alt"></i>
                         <p>
                             Permissions
@@ -722,9 +722,9 @@
                     </a>
                 </li>
             {% endif %}
-            {% if 20|permissions %}
+            {% if "INSTANCES:VIEW"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/instances.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/instances.php" class="nav-link">
                         <i class="nav-icon fas fa-city"></i>
                         <p>
                             Instances
@@ -733,9 +733,9 @@
                     </a>
                 </li>
             {% endif %}
-            {% if 7|permissions %}
+            {% if "VIEW-AUDIT-LOG"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/auditLog.php" class="nav-link">
                         <i class="nav-icon fas fa-gavel"></i>
                         <p>
                             Audit Log
@@ -854,7 +854,7 @@
             changeTheme(theme == "dark");
         });
 
-        {% if 21|instancePermissions %}
+        {% if "PROJECTS:CREATE"|instancePermissions %}
         $(".newProjectButton").click(function () {
             bootbox.prompt({
                 title: "Select Project Type",

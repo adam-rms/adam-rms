@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(48)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:CREATE")) die("404");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {

@@ -13,7 +13,7 @@
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if 106|instancePermissions %}
+                            {% if "PROJECTS:PROJECT_TYPES:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" id="addType"><i class="fa fa-plus"></i></button>
                             {% endif %}
                         </div>
@@ -42,16 +42,16 @@
                               </td>
                               {% for id,name in options %}
                                   <td>
-                                      <input type="checkbox" data-typeid="{{ type.projectsTypes_id }}" {{ (type[id] == 1 ? 'checked' : '') }} {% if 107|instancePermissions %}{% else %}disabled{% endif %} data-option="{{ id }}">
+                                      <input type="checkbox" data-typeid="{{ type.projectsTypes_id }}" {{ (type[id] == 1 ? 'checked' : '') }} {% if "PROJECTS:PROJECT_TYPES:EDIT"|instancePermissions %}{% else %}disabled{% endif %} data-option="{{ id }}">
 
                                   </td>
                               {% endfor %}
                               <td>
                                  <div class="btn-group">
-                                     {% if 107|instancePermissions %}
+                                     {% if "PROJECTS:PROJECT_TYPES:EDIT"|instancePermissions %}
                                         <button type="button" class="btn btn-default btn-sm editButton" data-typeid="{{ type.projectsTypes_id }}" data-value="{{type.projectsTypes_name}}"><i class="fas fa-edit"></i></button>
                                      {% endif %}
-                                     {% if 108|instancePermissions and type.count < 1 %}
+                                     {% if "PROJECTS:PROJECT_TYPES:DELETE"|instancePermissions and type.count < 1 %}
                                          <button type="button" class="btn btn-danger btn-sm deleteButton" data-typeid="{{ type.projectsTypes_id }}"><i class="fas fa-trash"></i></button>
                                      {% endif %}
                                  </div>
@@ -68,7 +68,7 @@
     <script>
         $(document).ready(function () {
             $("#loading").hide();
-            {% if 106|instancePermissions %}
+            {% if "PROJECTS:PROJECT_TYPES:CREATE"|instancePermissions %}
             $("#addType").click(function () {
                 bootbox.prompt({
                     title: "Add Project Type",
@@ -83,7 +83,7 @@
                 });
             });
             {% endif %}
-            {% if 107|instancePermissions %}
+            {% if "PROJECTS:PROJECT_TYPES:EDIT"|instancePermissions %}
             $(':checkbox').change(function() {
                 $("#loading").show();
                 var id = $(this).data("typeid");
@@ -108,7 +108,7 @@
                 });
             });
             {% endif %}
-            {% if 108|instancePermissions %}
+            {% if "PROJECTS:PROJECT_TYPES:DELETE"|instancePermissions %}
             $(".deleteButton").click(function () {
                 var id = $(this).data("typeid");
                 bootbox.confirm({

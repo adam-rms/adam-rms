@@ -27,11 +27,11 @@
                         {% for app in applications %}
                             <tr>
                                 <td>
-                                    {% if 52|instancePermissions %}
+                                    {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                     <a style="color: inherit; text-decoration: inherit;" target="_blank" href="{{ CONFIG.ROOTURL }}/user.php?id={{ app.users_userid }}">
                                         {% endif %}
                                         {{app.users_name1 ~ " " ~ app.users_name2 ~ " (" ~ app.users_email ~ ")" }}
-                                        {% if 52|instancePermissions %}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                     </a>
                                     {% endif %}
                                 </td>

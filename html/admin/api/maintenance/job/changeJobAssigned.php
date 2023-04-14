@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(68) or !isset($_POST['maintenanceJobs_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB") or !isset($_POST['maintenanceJobs_id'])) die("404");
 
 if ($_POST['users_userid'] != 0) {
     $DBLIB->where("users_userid", $_POST['users_userid']);

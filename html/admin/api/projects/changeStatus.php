@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(29) or !isset($_POST['projects_id'])) die("404");
+
+if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS") or !isset($_POST['projects_id'])) die("404");
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projectsStatuses_deleted", 0);

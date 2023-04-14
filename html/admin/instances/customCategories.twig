@@ -13,7 +13,7 @@
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if 90|instancePermissions %}
+                            {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
                             {% endif %}
                         </div>
@@ -51,10 +51,10 @@
                                 <div class="btn-group">
                                     <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
                                     {% if category.instances_id is not null %}
-                                        {% if 91|instancePermissions %}
+                                        {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
                                         {% endif %}
-                                        {% if 92|instancePermissions %}
+                                        {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}
                                     {% endif %}
@@ -123,7 +123,7 @@
             </div>
         </div>
     </div>
-    {% if 90|instancePermissions %}
+    {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
     <div class="modal fade" id="newModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -213,7 +213,7 @@
             $('.modal').on('hidden.bs.modal', function () {
                 $(this).find('.rms-icon-picker').first().select2('destroy');
             });
-            {% if 90|instancePermissions %}
+            {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
             $("#saveNewCategory").click(function () {
                 var formData = $("#newCategoryForm").serializeArray();
                 ajaxcall("categories/new.php", {formData}, function (data) {
@@ -221,7 +221,7 @@
                 });
             });
             {% endif %}
-            {% if 91|instancePermissions %}
+            {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
                 console.log(formData);
@@ -230,7 +230,7 @@
                 });
             });
             {% endif %}
-            {% if 92|instancePermissions %}
+            {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
             $(".deleteButton").click(function () {
                 var id = $(this).data("id");
                 bootbox.confirm({

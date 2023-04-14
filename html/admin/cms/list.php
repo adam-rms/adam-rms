@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(125)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("CMS:CMS_PAGES:CREATE")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['includeArchived'] = (isset($_GET['archive']) and $_GET['archive'] == 1 ? true : false);
 

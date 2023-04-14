@@ -57,7 +57,7 @@ $SEARCH['INSTANCE'] = $DBLIB->getone("instances",['instances_id','instances_conf
 if (!$SEARCH['INSTANCE']) die($TWIG->render('404.twig', $PAGEDATA));
 
 //Evaluate dates or project
-if ($SEARCH['PROJECT_ID'] and $AUTH->instancePermissionCheck(31)) {
+if ($SEARCH['PROJECT_ID'] and $AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN")) {
     $DBLIB->where("projects_id", $SEARCH['PROJECT_ID']);
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(63)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("MAINTENANCE_JOBS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 elseif (!isset($_GET['id'])) {
     $PAGEDATA['pageConfig'] = ["TITLE" => "New Maintenance Job", "BREADCRUMB" => false];
     die($TWIG->render('maintenance/maintenance_newJob.twig', $PAGEDATA));
@@ -31,7 +31,7 @@ foreach ($PAGEDATA['jobStatuses'] as $status) {
 
 
 //Potentially assigned to job
-if ($AUTH->instancePermissionCheck(68)) {
+if ($AUTH->instancePermissionCheck("MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB")) {
     $DBLIB->orderBy("users.users_name1", "ASC");
     $DBLIB->orderBy("users.users_name2", "ASC");
     $DBLIB->orderBy("users.users_created", "ASC");

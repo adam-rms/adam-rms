@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(123)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->where("projectsVacantRoles_deleted",0);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);

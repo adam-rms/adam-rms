@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(23) or !isset($_POST['projects_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:LEAD") or !isset($_POST['projects_id'])) die("404");
 
 $DBLIB->where("users_userid", $_POST['users_userid']);
 $user = $DBLIB->getone("users",["users_userid", "users_name1", "users_name2"]);

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(30) or !isset($_POST['projects_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:ADDRESS") or !isset($_POST['projects_id'])) die("404");
 
 if ($_POST['locations_id'] != "") {
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);

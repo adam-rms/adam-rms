@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(132)) die("404");
+if (!$AUTH->instancePermissionCheck("CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS")) die("404");
 
 if (!isset($_POST['instancePositions_id']) or !is_numeric($_POST['instancePositions_id'])) finish(false);
 

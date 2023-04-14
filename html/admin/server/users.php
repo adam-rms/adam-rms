@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Users", "BREADCRUMB" => false];
 
-if (!$AUTH->permissionCheck(2)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->serverPermissionCheck("USERS:CREATE")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA["mailings"] = [];
 
@@ -57,5 +57,5 @@ foreach ($users as $user) {
 	$PAGEDATA["users"][] = $user;
 }
 
-echo $TWIG->render('users.twig', $PAGEDATA);
+echo $TWIG->render('server/users.twig', $PAGEDATA);
 ?>

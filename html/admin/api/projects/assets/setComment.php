@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(41) or !isset($_POST['assetsAssignments'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT") or !isset($_POST['assetsAssignments'])) die("404");
 foreach ($_POST['assetsAssignments'] as $assignment) {
     $DBLIB->where("assetsAssignments_id", $assignment);
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(120) or !isset($_POST['userid']) or !isset($_POST['modules_id'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
+if (!$AUTH->instancePermissionCheck("TRAINING:EDIT:REVOKE_USER_CERTIFICATION") or !isset($_POST['userid']) or !isset($_POST['modules_id'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
 
 $DBLIB->where("users_userid",$_POST['userid']);
 $DBLIB->where("modules_id", $_POST['modules_id']);

@@ -27,7 +27,7 @@
                             <p></p>
                         
                         <p>
-                            {% if 38|instancePermissions %}
+                            {% if "ASSETS:MANUFACTURERS:CREATE"|instancePermissions %}
                                 <a href="/manufacturers.php">Add new manufacturer</a> |&nbsp;
                             {% endif %}
                             <a href="#" id="unknownManufacturerShortlink">Manufacturer unknown</a>
@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <label>Asset Type</label>
                     <select class="form-control  select2bs4" id="assetType" placeholder=""></select>
-                    {% if 18|instancePermissions %}
+                    {% if "ASSETS:ASSET_TYPES:CREATE"|instancePermissions %}
                     <div style="text-align: right">
                         <p><a href="#" id="addNewType">Add new type</a></p>
                     </div>

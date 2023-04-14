@@ -13,10 +13,10 @@
                         <a href="{{ CONFIG.USERGUIDEURL }}training/" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
                         {% if drafts %}
                             <a type="button" class="btn btn-default btn-sm" href="?">Published Modules</a>
-                        {% elseif 114|instancePermissions %}
+                        {% elseif "TRAINING:VIEW:DRAFT_MODULES"|instancePermissions %}
                             <a type="button" class="btn btn-default btn-sm" href="?drafts">Draft Modules</a>
                         {% endif %}
-                        {% if 115|instancePermissions %}
+                        {% if "TRAINING:CREATE"|instancePermissions %}
                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModuleModal"><i class="fa fa-plus"></i></button>
                         {% endif %}
                     </div>
@@ -100,7 +100,7 @@
                     <div class="card-footer">
                         <div class="text-right">
                             <div class="btn-group">
-                                {% if 116|instancePermissions %}
+                                {% if "TRAINING:EDIT"|instancePermissions %}
                                     <button data-toggle="modal" data-target="#editModuleModal{{ module.modules_id }}" class="btn btn-sm btn-default" title="Edit"><i class="fas fa-edit"></i></button>
                                     {% if module.modules_type != 3 %}
                                     <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&steps" class="btn btn-sm btn-default" title="Edit Module Steps">
@@ -108,7 +108,7 @@
                                     </a>
                                     {% endif %}
                                 {% endif %}
-                                {% if 117|instancePermissions %}
+                                {% if "TRAINING:VIEW:USER_PROGRESS_IN_MODULES"|instancePermissions %}
                                     <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&users" class="btn btn-sm btn-default" title="User list">
                                         <i class="fas fa-user-graduate"></i>
                                     </a>
@@ -130,8 +130,8 @@
         {% endfor %}
         </div>
     </div>
-    {% if 116|instancePermissions %}
-        {% if 115|instancePermissions %}
+    {% if "TRAINING:EDIT"|instancePermissions %}
+        {% if "TRAINING:CREATE"|instancePermissions %}
             {% if modules %}
              {% set  modules = modules|merge([{ "NEW": true }]) %}
             {% else %}
@@ -220,7 +220,7 @@
                 theme: "bootstrap4",
                 width: '100%'
             });
-            {% if 116|instancePermissions %}
+            {% if "TRAINING:EDIT"|instancePermissions %}
             $(".saveEditForm").click(function () {
                 if ($(this).data("id")) {
                     var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
@@ -228,7 +228,7 @@
                         location.reload();
                     });
                 } else {
-                    {% if 115|instancePermissions %}
+                    {% if "TRAINING:CREATE"|instancePermissions %}
                     var formData = $("#editFormNew").serializeArray();
                     ajaxcall("modules/new.php", {formData}, function (data) {
                         window.location.href = "?drafts";

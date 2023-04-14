@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(133)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS")) die("Sorry - you can't access this page");
 $array = [];
 if (!isset($_POST['formData'])) die("404");
 foreach ($_POST['formData'] as $item) {

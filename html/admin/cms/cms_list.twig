@@ -18,7 +18,7 @@
                     <div class="card-tools pull-right">
                         <form class="input-group input-group-sm" method="GET">
                             <a href="{{ CONFIG.USERGUIDEURL }}cms/cms-pages" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
-                            {% if 132|instancePermissions %}
+                            {% if "CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS"|instancePermissions %}
                                 <a href="customDashboards.php" type="button" class="btn btn-secondary btn-sm">Custom Dashboards</a>
                             {% endif %}
                             {% if includeArchived %}
@@ -51,7 +51,7 @@
                             <tbody value="{{ page.cmsPages_id }}">
                             <tr>
                                 <td>
-                                    {% if 126|instancePermissions %}
+                                    {% if "CMS:CMS_PAGES:EDIT"|instancePermissions %}
                                     <span class="handle">
                                         <i class="fas fa-ellipsis-v"></i>
                                         <i class="fas fa-ellipsis-v"></i>
@@ -91,7 +91,7 @@
                                 <td style="width:70px;">
                                     <div class="btn-group">
                                         <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ page.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
-                                        {% if 126|instancePermissions %}
+                                        {% if "CMS:CMS_PAGES:EDIT"|instancePermissions %}
                                             <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
                                             <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ page.cmsPages_id }}"><i class="fas fa-cog"></i></button>
                                             {% if page.cmsPages_archived == 0 %}
@@ -141,7 +141,7 @@
                                     <td style="width:70px;">
                                         <div class="btn-group">
                                             <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ page.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
-                                            {% if 126|instancePermissions %}
+                                            {% if "CMS:CMS_PAGES:EDIT"|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ page.cmsPages_id }}" type="button" class="d-none d-sm-block btn btn-default btn-sm"><i class="fas fa-edit"></i></a>
                                                 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ page.cmsPages_id }}"><i class="fas fa-cog"></i></button>
                                                 {% if page.cmsPages_archived == 0 %}
@@ -160,7 +160,7 @@
                 </div>
             </div>
         </div>
-        {% if 126|instancePermissions %}
+        {% if "CMS:CMS_PAGES:EDIT"|instancePermissions %}
             {% if CMSPagesAll %}
                 {% set  CMSPagesAll = CMSPagesAll|merge([{ "NEW": true, "cmsPages_id": "NEW" }]) %}
             {% else %}
@@ -241,7 +241,7 @@
         {% endif %}
         <script>
             $(document).ready(function () {
-                {% if 126|instancePermissions %}
+                {% if "CMS:CMS_PAGES:EDIT"|instancePermissions %}
                 $('.modal').on('shown.bs.modal', function () {
                     $(this).find('.rms-icon-picker').first().select2({
                         tags: false,

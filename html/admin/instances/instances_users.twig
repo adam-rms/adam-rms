@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="card-body table-responsive p-0">
-                    {% if 3|instancePermissions %}
+                    {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
                         <div class="input-group  mb-3" style="padding: 10px; padding-bottom: 0;">
                             <select class="form-control" multiple="multiple" id="addUserToInstance"></select>
                             <button type="button" style="margin-top: 5px;" class="btn btn-default btn-sm" id="addUserToInstance-button">Add to business</button>
@@ -59,11 +59,11 @@
                                         {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
                                             <span class="badge bg-danger">Archived</span>
                                         {% endif %}
-                                        {% if 52|instancePermissions %}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                         <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
                                             {% endif %}
                                             {{ user.users_username }}
-                                            {% if 52|instancePermissions %}
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                         </a>
                                                 {% endif %}
 
@@ -79,11 +79,11 @@
                                     <td>{{ user.instancePositions_displayName }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            {% if 6|instancePermissions %}
+                                            {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
                                                 <button title="Change Role" class="btn btn-default" data-toggle="modal" data-target="#userInstance{{ user.userInstances_id }}Modal"><i
                                                             class="fa fa-pencil-alt"></i></button>
                                             {% endif %}
-                                            {% if 118|instancePermissions %}
+                                            {% if "BUSINESS:USERS:EDIT:ARCHIVE"|instancePermissions %}
                                                 {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
                                                         <button type="button" title="Remove from Archive" data-userid="{{ user.users_userid }}" class="btn btn-success unArchiveFromInstance"><i class="fas fa-archive"></i></button>
                                                     {% else %}
@@ -93,7 +93,7 @@
 
                                                 {% endif %}
                                             {% endif %}
-                                            {% if 5|instancePermissions %}
+                                            {% if "BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS"|instancePermissions %}
                                                 <button
                                                    type="button" title="Remove" data-userid="{{ user.users_userid }}" class="btn btn-danger removeFromInstance"><i
                                                             class="fa fa-trash"></i></button>
@@ -137,7 +137,7 @@
             </div>
         </div>
     </div>
-    {% if 6|instancePermissions %}
+    {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
     {% for user in users %}
     <div class="modal fade" id="userInstance{{ user.userInstances_id }}Modal">
         <div class="modal-dialog">
@@ -180,7 +180,7 @@
     {% endif %}
     <script>
         $(document).ready(function() {
-            {% if 5|instancePermissions %}
+            {% if "BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS"|instancePermissions %}
             $('.removeFromInstance').on('click', function(e){
                 var userid = $(this).data("userid");
                 bootbox.confirm("Are you sure you wish to remove this user from the business?<br/><br/>If you're the last user in the business this will also remove access to the business forever, including all projects", function(result){
@@ -192,7 +192,7 @@
                 });
             });
             {% endif %}
-            {% if 118|instancePermissions %}
+            {% if "BUSINESS:USERS:EDIT:ARCHIVE"|instancePermissions %}
             $('.archiveFromInstance').on('click', function(e){
                 var userid = $(this).data("userid");
                 bootbox.confirm("Are you sure you wish to archive this user in the business?", function(result){
@@ -215,7 +215,7 @@
             });
             {% endif %}
 
-            {% if 6|instancePermissions %}
+            {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
             $('.saveUserInstanceModal').on('click', function(e){
                 var userinstanceid = $(this).data("userinstanceid");
                 ajaxcall("instances/editUser.php", {"label": $(".labelUserInstanceModal[data-userinstanceid=" + userinstanceid + "]").val(), "position": $(".instancePositionUserInstanceModal[data-userinstanceid=" + userinstanceid + "]").val(),"userinstanceid": userinstanceid}, function() {
@@ -223,7 +223,7 @@
                 }, true);
             });
             {% endif %}
-            {% if 3|instancePermissions %}
+            {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
             $("#addUserToInstance").select2({
                 tags: false,
                 multiple: true,

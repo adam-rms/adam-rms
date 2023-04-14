@@ -35,7 +35,7 @@
                             <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                {% if 37|instancePermissions %}
+                                {% if "CLIENTS:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" id="newClientButton"><i class="fa fa-plus"></i></button>
                                 {% endif %}
                             </div>
@@ -56,7 +56,7 @@
                                     <th>Notes</th>
                                     <th>Total Paid</th>
                                     <th>To Pay</th>
-                                    {% if 39|instancePermissions %}<th></th>{% endif %}
+                                    {% if "CLIENTS:EDIT"|instancePermissions %}<th></th>{% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,7 +64,7 @@
                                 <tr>
                                     <td>
 
-                                        <a {% if 20|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?client={{ client.clients_id }}"{% endif %}>
+                                        <a {% if "PROJECTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?client={{ client.clients_id }}"{% endif %}>
                                             {{ client.clients_name }}
                                         </a>
                                     </td>
@@ -81,7 +81,7 @@
                                     <td>{{ client.clients_notes|nl2br }}</td>
                                     <td>{{ client['totalPayments']|money }}</td>
                                     <td>{% if client['totalOutstanding']|moneyPositive %}{{ client['totalOutstanding']|money }}{% endif %}</td>
-                                    {% if 39|instancePermissions %}
+                                    {% if "CLIENTS:EDIT"|instancePermissions %}
                                     <td>
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#clientModal{{ client.clients_id }}"><i class="fas fa-edit"></i></button>
@@ -185,7 +185,7 @@
         <script>
             $(document).ready(function () {
                 $("#loadingoverlay").hide();
-                {% if 37|instancePermissions %}
+                {% if "CLIENTS:CREATE"|instancePermissions %}
                 $("#newClientButton").click(function () {
                     bootbox.prompt("Enter Client Name", function (result) {
                         if (result) {
@@ -196,7 +196,7 @@
                     });
                 });
                 {% endif %}
-                {% if 39|instancePermissions %}
+                {% if "CLIENTS:EDIT"|instancePermissions %}
                 $(".saveClientEdit-button").click(function () {
                     var formData = $(".clientEdit-form[data-clientid=" + $(this).data("clientid") + "]").serializeArray();
                     ajaxcall("clients/edit.php", {formData}, function (data) {

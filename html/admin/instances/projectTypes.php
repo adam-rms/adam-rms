@@ -3,7 +3,7 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Project Types", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(105)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_TYPES:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;

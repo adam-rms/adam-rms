@@ -13,7 +13,7 @@
                 {% embed 'common/plugins/fileBox.twig' with {'files': LOCATION.files } %}
                 {% endembed %}
             </div>
-            {% if 101|instancePermissions %}
+            {% if "LOCATIONS:LOCATION_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
             <div class="card-footer">
                 {% embed 'common/plugins/uppy.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 11, 'subTypeId': LOCATION['locations_id'], 'imagesOnly': false } %}
                     {% block success %}

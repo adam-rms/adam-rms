@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(43) or !isset($_POST['assetsAssignments'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT") or !isset($_POST['assetsAssignments'])) die("404");
 use Money\Currency;
 use Money\Money;
 

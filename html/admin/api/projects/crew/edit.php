@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(49)) finish(false);
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:EDIT")) finish(false);
 
 $DBLIB->where("crewAssignments_id", $_POST['crewAssignments_id']);
 $DBLIB->where("crewAssignments_deleted", 0);

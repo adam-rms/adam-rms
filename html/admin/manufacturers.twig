@@ -18,7 +18,7 @@
                             <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                {% if 38|instancePermissions %}
+                                {% if "ASSETS:MANUFACTURERS:CREATE"|instancePermissions %}
                                     <button type="button" class="btn btn-default" id="newManufacturerButton"><i class="fa fa-plus"></i></button>
                                 {% endif %}
                             </div>
@@ -51,7 +51,7 @@
         <script>
             $(document).ready(function () {
                 $("#loadingoverlay").hide();
-                {% if 38|instancePermissions %}
+                {% if "ASSETS:MANUFACTURERS:CREATE"|instancePermissions %}
                 $("#newManufacturerButton").click(function () {
                     bootbox.prompt("Enter Manufacturer Name", function (result) {
                         if (result) {
