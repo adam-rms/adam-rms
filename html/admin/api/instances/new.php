@@ -34,6 +34,103 @@ $projectType = $DBLIB->insert("projectsTypes", [
 ]);
 if (!$projectType) finish(false, ["code" => "ADD-PROJECT-TYPE-FAIL", "message"=> "Could not create new project type"]);
 
+$defaultProjectStatuses = [
+    [
+        "projectsStatuses_name" => "Added to RMS",
+        "projectsStatuses_description" => "Default",
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#F5F5F5",
+        "projectsStatuses_rank" => 0,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "info"
+    ],
+    [
+        "projectsStatuses_name" => "Targeted",
+        "projectsStatuses_description" => "Being targeted as a lead",
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#F5F5F5",
+        "projectsStatuses_rank" => 1,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "info"
+    ],
+    [
+        "projectsStatuses_name" => "Quote Sent",
+        "projectsStatuses_description" => "Waiting for client confirmation",
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#ffdd99",
+        "projectsStatuses_rank" => 2,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "warning"
+    ],
+    [
+        "projectsStatuses_name" => "Confirmed",
+        "projectsStatuses_description" => "Booked in with client",
+        "projectsStatuses_foregroundColour" => "#ffffff",
+        "projectsStatuses_backgroundColour" => "#66ff66",
+        "projectsStatuses_rank" => 3,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "success"
+    ],
+    [
+        "projectsStatuses_name" => "Prep",
+        "projectsStatuses_description" => "Being prepared for dispatch" ,
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#ffdd99",
+        "projectsStatuses_rank" => 4,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "success"
+    ],
+    [
+        "projectsStatuses_name" => "Dispatched",
+        "projectsStatuses_description" => "Sent to client" ,
+        "projectsStatuses_foregroundColour" => "#ffffff",
+        "projectsStatuses_backgroundColour" => "#66ff66",
+        "projectsStatuses_rank" => 5,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "primary"
+    ],
+    [
+        "projectsStatuses_name" => "Returned",
+        "projectsStatuses_description" => "Waiting to be checked in ",
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#ffdd99",
+        "projectsStatuses_rank" => 6,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "primary"
+    ],
+    [
+        "projectsStatuses_name" => "Closed",
+        "projectsStatuses_description" => "Pending move to Archive",
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#F5F5F5",
+        "projectsStatuses_rank" => 7,
+        "projectsStatuses_assetsReleased" => false,
+        "projectsStatuses_class" => "secondary"
+    ],
+    [
+        "projectsStatuses_name" => "Cancelled",
+        "projectsStatuses_description" => "Project Cancelled",
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#F5F5F5",
+        "projectsStatuses_rank" => 8,
+        "projectsStatuses_assetsReleased" => true,
+        "projectsStatuses_class" => "danger"
+    ],
+    [
+        "projectsStatuses_name" => "Lead Lost",
+        "projectsStatuses_description" => "Project Cancelled",
+        "projectsStatuses_foregroundColour" => "#000000",
+        "projectsStatuses_backgroundColour" => "#F5F5F5",
+        "projectsStatuses_rank" => 9,
+        "projectsStatuses_assetsReleased" => true,
+        "projectsStatuses_class" => "danger"
+    ]
+];
+foreach ($defaultProjectStatuses as $projectStatus) {
+    $projectStatus['instances_id'] = $instance;
+    $insertProjectStatus = $DBLIB->insert("projectsStatuses", $projectStatus);
+    if (!$insertProjectStatus) finish(false, ["code" => "ADD-PROJECT-STATUS-FAIL", "message"=> "Could not create new project statuses"]);
+}
 
 $count = 0;
 foreach (["Pending pick","Picked","Prepping","Tested","Packed","Dispatched","Awaiting Check-in","Case opened","Unpacked","Tested","Stored"] as $item) {

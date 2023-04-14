@@ -630,8 +630,8 @@
                                         {% else %}
                                         far fa-circle
                                         {% endif %}
-                                        text-{{ STATUSES[project.projects_status]['class'] }}
-                                        " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                        text-{{ project.projectsStatuses_class }}
+                                        " title="{{ project.projectsStatuses_name }}"></i>
                                     <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                     <i class="fas fa-angle-left right"></i>
                                 </a>
@@ -644,8 +644,8 @@
                                                 {% else %}
                                                 far fa-sun
                                                 {% endif %}
-                                        text-{{ STATUSES[project.projects_status]['class'] }}
-                                        " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                        text-{{ project.projectsStatuses_class }}
+                                        " title="{{ project.projectsStatuses_name }}"></i>
                                             <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                         </a>
                                     </li>
@@ -658,8 +658,8 @@
                                         {% else %}
                                         far fa-circle
                                         {% endif %}
-                                        text-{{ STATUSES[subProject.projects_status]['class'] }}
-                                        " title="{{ STATUSES[subProject.projects_status]['name'] }}"></i>
+                                        text-{{ subProject.projectsStatuses_class }}
+                                        " title="{{ subProject.projectsStatuses_name }}"></i>
                                                 <p title="{{ subProject.projects_name }}">&#8627; {{ subProject.projects_name|u.truncate(19, '...') }}</p>
                                             </a>
                                         </li>
@@ -675,8 +675,8 @@
                                         {% else %}
                                         far fa-circle
                                         {% endif %}
-                                        text-{{ STATUSES[project.projects_status]['class'] }}
-                                        " title="{{ STATUSES[project.projects_status]['name'] }}"></i>
+                                        text-{{ project.projectsStatuses_class }}
+                                        " title="{{ project.projectsStatuses_name }}"></i>
                                     <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
                                 </a>
                             </li>

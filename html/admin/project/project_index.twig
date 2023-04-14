@@ -80,10 +80,10 @@
                             </div>
                         {% endfor %}
                     {% endfor %}
-                    {% if STATUSES[project.projects_status]["assetsAvailable"] %}
+                    {% if project.projectsStatuses_assetsReleased == 1 %}
                     <div class="col-12">
                         <div class="alert alert-danger">
-                            <h5><i class="fas fa-exclamation-triangle"></i> Assets not locked</h5>
+                            <h5><i class="fas fa-exclamation-triangle"></i> Assets not locked - assets are released</h5>
                             Assets assigned to this project can be assigned to other projects that clash with this one, as the project is no longer active.
                         </div>
                     </div>
@@ -248,9 +248,9 @@
                                                     {% if project.projects_parent_project_id and project.projects_status_follow_parent %}
                                                     <div class="alert alert-info mb-1"><p>This sub-project is following the status of its parent project</p></div> 
                                                     {% endif %}
-                                                    <div class="alert" style="background-color: {{STATUSES[project.projects_status]["backgroundColour"] }}; color: {{ STATUSES[project.projects_status]["foregroundColour"] }};">
-                                                        <h5><b>Status: </b>{{ STATUSES[project.projects_status]['name'] }}</h5>
-                                                        {{ STATUSES[project.projects_status]['description'] }}
+                                                    <div class="alert" style="background-color: {{ project.projectsStatuses_backgroundColour }}; color: {{ project.projectsStatuses_foregroundColour }};">
+                                                        <h5><b>Status: </b>{{ project.projectsStatuses_name }}</h5>
+                                                        {{ project.projectsStatuses_description }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -1658,7 +1658,7 @@
             {% if 29|instancePermissions %}
             function changeStatus(newStatus) {
                 ajaxcall("projects/changeStatus.php", {
-                    "projects_status": newStatus,
+                    "projectsStatuses_id": newStatus,
                     "projects_id": "{{ project.projects_id }}"
                 }, function (data) {
                     if (data.response.changed) {
@@ -1706,18 +1706,22 @@
                 bootbox.prompt({
                     title: "Set project status",
                     inputType: 'select',
-                    value: {{ project.projects_status }},
+                    value: {{ project.projectsStatuses_id }},
                     inputOptions: [
-                        {% for id,status in STATUSES %}
-                        {
-                            text: "{{ (status.name ~ " (" ~ status.description ~ ')')|escape('js') }}",
-                            value: '{{ id }}',
-                        },
+                        {% set STATUSESAVAILABLE = [] %}
+                        {% for STATUS in POSSIBLEPROJECTSTATUSES %}
+                            {
+                                text: "{{ (STATUS.projectsStatuses_name ~ " (" ~ STATUS.projectsStatuses_description ~ ')')|escape('js') }}",
+                                value: '{{ STATUS.projectsStatuses_id }}',
+                            },
+                            {% if STATUS.projectsStatuses_assetsReleased == 1 %}
+                                {% set STATUSESAVAILABLE = STATUSESAVAILABLE|merge([STATUS.projectsStatuses_id]) %}
+                            {% endif %}
                         {% endfor %}
                     ],
                     callback: function (result) {
                         if (result) {
-                            var newStatus = result;
+                            var newStatus = result;                            
                             if ([{{ STATUSESAVAILABLE|join(",") }}].includes(parseInt(newStatus))) {
                                 bootbox.confirm({
                                     message: "This will allow assets assigned to this project to be assigned to other clashing projects - are you sure you wish to continue?",

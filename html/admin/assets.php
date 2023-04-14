@@ -1,4 +1,4 @@
-<?php
+<?php 
 require_once __DIR__ . '/common/headSecure.php';
 
 $scriptStartTime = microtime (true);
@@ -217,10 +217,14 @@ foreach ($assets as $asset) {
             //Check availability
             $DBLIB->where("assets_id", $tag['assets_id']);
             $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-            $DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . ")" . ($RETURN['PROJECT']['ID'] ? "OR (projects.projects_id = '" . $RETURN['PROJECT']['ID'] . "')" : '') . ")");
             $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
             $DBLIB->where("projects.projects_deleted", 0);
             $DBLIB->where("((projects_dates_deliver_start >= '" . date ("Y-m-d H:i:s",$dateStart)  . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateStart) . "' AND projects_dates_deliver_end <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateEnd) . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateStart) . "'))");
+            $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
+            if ($RETURN['PROJECT']['ID']) {
+                // If a project is being searched for specifically then we need to check if the asset is assigned to that project or if it is assigned to another project
+                $DBLIB->where("(projectsStatuses.projectsStatuses_assetsReleased = 0 OR projects.projects_id = '" . $RETURN['PROJECT']['ID'] . "')");
+            } else $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
             $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assetsAssignments.projects_id", "projects.projects_name"]);
         }
         $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
