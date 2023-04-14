@@ -524,12 +524,12 @@
                                             {% set latestEnd = false %}
                                             {% for project in user.crewAssignments %}
                                             {
-                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }} ({{ STATUSES[project.projects_status]["name"] }})",
+                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }} ({{ project.projectsStatuses_name|escape("js") }})",
                                                 start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
                                                 end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
                                                 url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',
-                                                backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
-                                                textColor: '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                                                backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
+                                                textColor: '{{ project.projectsStatuses_foregroundColour }}'
                                             },
                                             {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
                                             {% set earliestStart = project.projects_dates_use_start|date("c") %}

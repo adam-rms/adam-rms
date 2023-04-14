@@ -103,6 +103,12 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
     }
 }
 
+//Edit Options - Locations list
+if ($AUTH->instancePermissionCheck(29)) {
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("projectsStatuses_deleted", 0);
+    $PAGEDATA['POSSIBLEPROJECTSTATUSES'] = $DBLIB->get("projectsStatuses", null, ["projectsStatuses_id", "projectsStatuses_name", "projectsStatuses_description", "projectsStatuses_assetsReleased"]);
+}
 
 if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assetsPage.twig', $PAGEDATA);
 else echo $TWIG->render('project/project_index.twig', $PAGEDATA);

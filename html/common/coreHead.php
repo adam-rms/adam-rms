@@ -394,116 +394,6 @@ function generateNewTag() {
     } else return "A-0001";
 }
 
-$GLOBALS['STATUSES'] = [
-    0 => [
-        "name" => "Added to RMS",
-        "description" => "Default",
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#F5F5F5",
-        "order" => 0,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "info"
-    ],
-    1 => [
-        "name" => "Targeted",
-        "description" => "Being targeted as a lead",
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#F5F5F5",
-        "order" => 1,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "info"
-    ],
-    2 => [
-        "name" => "Quote Sent",
-        "description" => "Waiting for client confirmation",
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#ffdd99",
-        "order" => 2,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "warning"
-    ],
-    3 => [
-        "name" => "Confirmed",
-        "description" => "Booked in with client",
-        "foregroundColour" => "#ffffff",
-        "backgroundColour" => "#66ff66",
-        "order" => 3,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "success"
-    ],
-    4 => [
-        "name" => "Prep",
-        "description" => "Being prepared for dispatch" ,
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#ffdd99",
-        "order" => 4,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "success"
-    ],
-    5 => [
-        "name" => "Dispatched",
-        "description" => "Sent to client" ,
-        "foregroundColour" => "#ffffff",
-        "backgroundColour" => "#66ff66",
-        "order" => 5,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "primary"
-    ],
-    6 => [
-        "name" => "Returned",
-        "description" => "Waiting to be checked in ",
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#ffdd99",
-        "order" => 6,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "primary"
-    ],
-    7 => [
-        "name" => "Closed",
-        "description" => "Pending move to Archive",
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#F5F5F5",
-        "order" => 7,
-        "assetsAvailable" => false,
-        "isCancelled" => false,
-        "class" => "secondary"
-    ],
-    8 => [
-        "name" => "Cancelled",
-        "description" => "Project Cancelled",
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#F5F5F5",
-        "order" => 8,
-        "assetsAvailable" => true,
-        "isCancelled" => true,
-        "class" => "danger"
-    ],
-    9 => [
-        "name" => "Lead Lost",
-        "description" => "Project Cancelled",
-        "foregroundColour" => "#000000",
-        "backgroundColour" => "#F5F5F5",
-        "order" => 9,
-        "assetsAvailable" => true,
-        "isCancelled" => true,
-        "class" => "danger"
-    ]
-];
-$GLOBALS['STATUSES-AVAILABLE'] = [];
-foreach ($GLOBALS['STATUSES'] as $key => $status) {
-    if ($status['assetsAvailable']) array_push($GLOBALS['STATUSES-AVAILABLE'], $key);
-}
-usort($GLOBALS['STATUSES'], function($a, $b) {
-    return $a['order'] - $b['order'];
-});
-
 $GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
     1 => ["class" => "danger","id" => 1,"text" => "Emergency"],
     2 => ["class" => "danger", "id" => 2, "text" => "Business Critical"],
@@ -690,8 +580,6 @@ class projectFinanceCacher {
 
 
 $PAGEDATA = array('CONFIG' => $CONFIG);
-$PAGEDATA['STATUSES'] = $GLOBALS['STATUSES'];
-$PAGEDATA['STATUSESAVAILABLE'] = $GLOBALS['STATUSES-AVAILABLE'];
 $PAGEDATA['MAINTENANCEJOBPRIORITIES'] = $GLOBALS['MAINTENANCEJOBPRIORITIES'];
 
 

@@ -28,14 +28,14 @@ if ($_POST['follow'] === 'true') {
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->where("projects.projects_id", $project['projects_parent_project_id']);
-    $parentProject = $DBLIB->getone("projects", ["projects_status"]);
+    $parentProject = $DBLIB->getone("projects", ["projectsStatuses_id"]);
     if (!$parentProject) finish(false);
 
     //set subproject status to parent project status
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->where("projects.projects_id", $_POST['projects_id']);
-    $DBLIB->update("projects", ["projects_status" => $parentProject['projects_status'], "projects_status_follow_parent" => 1]);
+    $DBLIB->update("projects", ["projectsStatuses_id" => $parentProject['projectsStatuses_id'], "projects_status_follow_parent" => 1]);
     
     finish(true, null, ["changed" => true]);
 } else {

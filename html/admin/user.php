@@ -37,17 +37,19 @@ $PAGEDATA['user']['users_email_md5'] = md5($PAGEDATA['user']['users_email']);
 $DBLIB->where("crewAssignments.users_userid", $PAGEDATA['user']['users_userid']);
 $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
 $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
+$DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
-$DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
+$DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->orderBy("projects.projects_name", "ASC");
 $DBLIB->where("projects.instances_id",  $AUTH->data['instance']['instances_id']);
-$PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
+$PAGEDATA['user']['crewAssignments'] = $DBLIB->get("crewAssignments", null, ["crewAssignments.*", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_id", "projectsStatuses.projectsStatuses_name", "projectsStatuses.projectsStatuses_foregroundColour","projectsStatuses.projectsStatuses_backgroundColour"]);
 
 //Project Manager Roles
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
-$DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
+$DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
+$DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->where("projects.projects_manager",  $PAGEDATA['user']['users_userid']);
 $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
 $DBLIB->where("projects.instances_id",  $AUTH->data['instance']['instances_id']);
@@ -55,7 +57,7 @@ $DBLIB->orderBy("projects.projects_dates_use_end", "ASC");
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->orderBy("projects.projects_name", "ASC");
 $DBLIB->where("projects.projects_parent_project_id IS NULL");
-$PAGEDATA['user']['projectManagement'] = $DBLIB->get("projects", null, ["projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_status", "projects.projects_id"]);
+$PAGEDATA['user']['projectManagement'] = $DBLIB->get("projects", null, ["projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_id", "projectsStatuses.projectsStatuses_name", "projectsStatuses.projectsStatuses_foregroundColour","projectsStatuses.projectsStatuses_backgroundColour"]);
 
 $DBLIB->where("users_userid", $PAGEDATA['user']['users_userid']);
 $DBLIB->orderBy("userPositions_start", "ASC");
