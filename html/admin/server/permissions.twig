@@ -42,53 +42,38 @@
 				<table class="table table-striped table-head-fixed" >
 					<thead>
 						<tr>
-							<th></th>
-							<th></th>
+							<th style="font-style: italic; font-weight: normal;">Action</th>
 							{% for position in positions %}
-							<th>{{position.positionsGroups_name}}</th>
+								<th>{{position.positionsGroups_name}}</th>
 							{% endfor %}
 						</tr>
 					</thead>
 					<tbody>
-						{% for category in actions %}
+						{% for key,action in actions %}
 							<tr>
-								<td colspan="{{ 2+positions|length }}"><h3>{{ category.category.actionsCategories_name }}</h3></td>
-							</tr>
-							{% for action in category.actions %}
-								<tr>
-									<td>{{action.actions_id}}</td>
-									<td>{{action.actions_name}}</td>
-									{% for position in positions %}
-                                        {% set positioncannotbecausedep = "false" %}
-                                        {% set positioncannotbecauseindep = "false" %}
+								<td>{{key}}</td>
+								{% for position in positions %}
+										{% set positioncannotbecausedep = "false" %}
 									<td>
-                                        {% for dependentactionid in action.actions_dependent|split(',') %}
-                                            {% if dependentactionid != "" and dependentactionid not in position.positionsGroups_actions|split(',') %}
-												<span class="badge bg-warning" title="Requires other permission to be set first">{{ dependentactionid }}</span>
-                                                {% set positioncannotbecausedep = "true" %}
-                                            {% endif %}
-                                        {% endfor %}
-                                        {% for independentactionid in action.actions_incompatible|split(',') %}
-                                            {% if independentactionid != "" and independentactionid in position.positionsGroups_actions|split(',') %}
-												<span class="badge bg-warning" title="Requires other permission to be removed first">{{ independentactionid }}</span>
-                                                {% set positioncannotbecauseindep = "true" %}
-                                            {% endif %}
-                                        {% endfor %}
-
+										{% for dependentactionid in action.Dependencies %}
+												{% if dependentactionid != "" and dependentactionid not in position.positionsGroups_actions|split(',') %}
+														<span class="badge bg-warning" title="Requires {{ dependentactionid }} permission to be enabled">{{ dependentactionid }}</span>
+														{% set positioncannotbecausedep = "true" %}
+												{% endif %}
+										{% endfor %}
 										{% if "PERMISSIONS:EDIT"|serverPermissions %}
-                                        <input type="checkbox" data-permissionid="{{action.actions_id}}" data-positionid="{{position.positionsGroups_id}}" {% if action.actions_id in position.positionsGroups_actions|split(',') %}checked{% endif %}  {% if positioncannotbecausedep == "true" or positioncannotbecauseindep == "true" %}disabled{% endif %} />
+											<input type="checkbox" data-permissionid="{{key}}" data-positionid="{{position.positionsGroups_id}}" {% if key in position.positionsGroups_actions|split(',') %}checked{% endif %}  {% if positioncannotbecausedep == "true" %}disabled{% endif %} />
 										{% else %}
-										   {% if action.actions_id in position.positionsGroups_actions|split(',') %}
-											   <i class="fa fa-check-square-o"></i>
+											{% if key in position.positionsGroups_actions|split(',') %}
+												<i class="fa fa-check-square-o"></i>
 											{% else %}
 												<i class="fa fa-square-o"></i>
 											{% endif %}
 										{% endif %}
 									</td>
 								{% endfor %}
-							{% endfor %}
-						</tr>
-					{% endfor %}
+							</tr>
+						{% endfor %}
 					</tbody>
 				</table>
 			</div>
