@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Instances", "BREADCRUMB" => false];
 
@@ -76,5 +76,5 @@ $PAGEDATA['totals']['users']['noInstances'] = $DBLIB->getValue("users", "count(*
 $DBLIB->orderBy("auditLog_timestamp", "DESC");
 $PAGEDATA['totals']['lastActivity']['auditLog'] = $DBLIB->getValue("auditLog", "auditLog_timestamp");
 
-echo $TWIG->render('instances.twig', $PAGEDATA);
+echo $TWIG->render('server/instances.twig', $PAGEDATA);
 ?>

@@ -114,7 +114,7 @@ if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
     $instance = $DBLIB->getOne("instances",["instances_id"]);
     if ($instance) {
         $_SESSION['instanceID'] = $instance["instances_id"];
-        header("Location: " . $CONFIG['ROOTURL'] . "/instances.php");
+        header("Location: " . $CONFIG['ROOTURL'] . "/server/instances.php");
         exit;
     } else {
         $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false, "NOMENU" => true];

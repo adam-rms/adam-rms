@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Permissions", "BREADCRUMB" => false];
 
@@ -36,5 +36,5 @@ foreach ($actualPositions as $position) {
     $PAGEDATA['actualPositions'][] = $position;
 }
 
-echo $TWIG->render('permissions.twig', $PAGEDATA);
+echo $TWIG->render('server/permissions.twig', $PAGEDATA);
 ?>

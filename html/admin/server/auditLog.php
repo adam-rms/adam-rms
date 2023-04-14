@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Audit Log", "BREADCRUMB" => false];
 
@@ -43,5 +43,5 @@ foreach ($items as $item) {
 }
 
 
-echo $TWIG->render('auditLog.twig', $PAGEDATA);
+echo $TWIG->render('server/auditLog.twig', $PAGEDATA);
 ?>

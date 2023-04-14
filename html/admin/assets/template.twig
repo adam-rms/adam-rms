@@ -702,7 +702,7 @@
                 {% endif %}
             {% if "USERS:CREATE"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/users.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/users.php" class="nav-link">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Users
@@ -713,7 +713,7 @@
             {% endif %}
             {% if "PERMISSIONS:VIEW"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/permissions.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/permissions.php" class="nav-link">
                         <i class="nav-icon fas fa-unlock-alt"></i>
                         <p>
                             Permissions
@@ -724,7 +724,7 @@
             {% endif %}
             {% if "INSTANCES:VIEW"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/instances.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/instances.php" class="nav-link">
                         <i class="nav-icon fas fa-city"></i>
                         <p>
                             Instances
@@ -735,7 +735,7 @@
             {% endif %}
             {% if "VIEW-AUDIT-LOG"|serverPermissions %}
                 <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/auditLog.php" class="nav-link">
+                    <a href="{{ CONFIG.ROOTURL }}/server/auditLog.php" class="nav-link">
                         <i class="nav-icon fas fa-gavel"></i>
                         <p>
                             Audit Log
