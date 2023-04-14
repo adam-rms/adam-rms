@@ -17,7 +17,7 @@ $position = $DBLIB->insert("instancePositions", [
     "instances_id" => $instance,
     "instancePositions_displayName" => "Administrator",
     "instancePositions_rank" => 1,
-    "instancePositions_actions" => array_keys($instanceActions)
+    "instancePositions_actions" => implode(",",array_keys($instanceActions))
 ]);
 if (!$position) finish(false, ["code" => "CREATE-POSITION-FAIL", "message"=> "Could not create new business"]);
 
