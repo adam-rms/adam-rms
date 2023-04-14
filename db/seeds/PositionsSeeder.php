@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/../../html/common/libs/Auth/serverActions.php';
 
 use Phinx\Seed\AbstractSeed;
 
@@ -15,6 +14,7 @@ class PositionsSeeder extends AbstractSeed
      */
     public function run()
     {
+        require_once __DIR__ . '/../../html/common/libs/Auth/serverActions.php';
         $positionGroups = [
             [
                 "positionsGroups_id"=> 1,
