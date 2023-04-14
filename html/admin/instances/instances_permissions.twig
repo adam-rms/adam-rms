@@ -17,7 +17,7 @@
 				<table class="table table-head-fixed" >
 					<thead>
 						<tr>
-							<th style="font-weight: normal;">Code</th>
+							<th style="font-weight: normal; width:30%">Code</th>
 							<th style="font-weight: normal;">Category</th>
 							<th style="font-weight: normal;">Table</th>
 							<th style="font-weight: normal;">Type</th>
@@ -29,14 +29,20 @@
 					</thead>
 					<tbody>
 						{% for action in actions %}
+							{% if action.Category != currentCategory %}
+							<tr style="border-top:2px solid black !important">
+							{% elseif action.Table != currentTable %}
+							<tr style="border-top:2px dashed black !important">
+							{% else %}
 							<tr>
+							{% endif %}
 								<td>
 									{{ action.key }}
 									{% if action.Comment %}<br/>{{ action.Comment }}{% endif %}
 									{% if action.Caution %}<br/><span class="badge badge-danger">{{ action.Caution }}</span>{% endif %}
 								</td>
-								{% if action.Category != currentCategory %} <td rowspan="{{ actionTypeCounts[action.Category]['Count'] }}">{{ action.Category }}</td> {% set currentCategory = action.Category %}{% endif %}
-								{% if action.Table != currentTable %} <td rowspan="{{ actionTypeCounts[action.Category]['Tables'][action.Table]['Count'] }}">{{ action.Table }}</td> {% set currentTable = action.Table %}{% endif %}
+								{% if action.Category != currentCategory %} <td rowspan="{{ actionTypeCounts[action.Category]['Count'] }}">{{ action.Category }}</td> {% set currentCategory = action.Category %}{% set currentTable = null %}{% endif %}
+								{% if action.Table != currentTable %} <td rowspan="{{ actionTypeCounts[action.Category]['Tables'][action.Table]['Count'] }}">{{ action.Table }}</td> {% set currentTable = action.Table %}{% set currentType = null %}{% endif %}
 								{% if action.Type != currentType %} <td rowspan="{{ actionTypeCounts[action.Category]['Tables'][action.Table]['Types'][action.Type] }}">{{ action.Type }}</td> {% set currentType = action.Type %}{% endif %}
 								<td>{{ action.Detail }}</td>
 								{% for position in positions %}
