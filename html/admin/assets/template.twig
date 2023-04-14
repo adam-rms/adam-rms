@@ -429,6 +429,16 @@
                                     </p>
                                 </a>
                             </li>
+                            {% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
+                                        <i class="far fa-newspaper nav-icon"></i>
+                                        <p>
+                                            CMS Pages
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
                             <li class="nav-header">USER MANAGEMENT</li>
                             {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
                                 <li class="nav-item">
@@ -489,35 +499,45 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
-                                        <i class="fas fa-theater-masks nav-icon"></i>
-                                        <p>
-                                            Project Types
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
-                                        <i class="fas fa-list nav-icon"></i>
-                                        <p>
-                                            Custom Categories
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
-                                        <i class="far fa-newspaper nav-icon"></i>
-                                        <p>
-                                            CMS Pages
-                                        </p>
-                                    </a>
-                                </li>
+                            {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-list nav-icon"></i>
+                                    <p>
+                                    Advanced Settings
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                                        <li class="nav-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
+                                                <p>
+                                                    Project Types
+                                                </p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+                                        <li class="nav-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/instances/projectStatuses.php" class="nav-link">
+                                                <p>
+                                                    Project Statuses
+                                                </p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+                                        <li class="nav-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
+                                                <p>
+                                                    Custom Categories
+                                                </p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
                             {% endif %}
                         </ul>
                     </li>
