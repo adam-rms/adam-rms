@@ -52,18 +52,25 @@ class bID
         $DBLIB->where("authTokens_type", $tokenType);
         $tokenCheck = $DBLIB->getOne("authTokens", ["authTokens_token", "authTokens_created", "authTokens_ipAddress", "users_userid", "authTokens_adminId", "authTokens_type"]);
 
-        if (!$tokenCheck) throw new AuthFail('Token not found in DB');
-        elseif ((strtotime($tokenCheck["authTokens_created"]) + (12 * 60 * 60)) < time()) // Tokens are valid for 12 hrs (this includes the mobile app), which matches the session timeout
+        if (!$tokenCheck) {
+            throw new AuthFail('Token not found in DB');
+        } elseif ((strtotime($tokenCheck["authTokens_created"]) + (12 * 60 * 60)) < time()) {
+             // Tokens are valid for 12 hrs (this includes the mobile app), which matches the session timeout
             throw new AuthFail("Token expired at " . $tokenCheck["authTokens_created"] . " - server time is " . time());
-        elseif (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-            if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) 
+        } elseif (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+            if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
                 throw new AuthFail("IP from Cloudflare doesn't match token");
+            }
         } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            if ($_SERVER["HTTP_X_FORWARDED_FOR"] != $tokenCheck["authTokens_ipAddress"]) 
+            if ($_SERVER["HTTP_X_FORWARDED_FOR"] != $tokenCheck["authTokens_ipAddress"]) {
                 throw new AuthFail("IP from Heroku/generic proxy doesn't match token");
-        } elseif($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) 
+            }
+        } elseif($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
             throw new AuthFail("IP direct doesn't match token");
-        else return $tokenCheck;
+        }
+
+        //Tests have passed, return the token
+        return $tokenCheck;
     }
     function __construct()
     {
