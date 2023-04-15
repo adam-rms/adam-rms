@@ -26,6 +26,10 @@
             return false;
         });
         $('#passwordResetButton').click(function(){
+            if ($("#form1Input").val().length <= 0) {
+                toastr.warning("Please enter something into the username/email box");
+                return;
+            }
             $.ajax({
                 url: "../api/login/forgotPassword.php",
                 type: "POST",

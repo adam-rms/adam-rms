@@ -24,5 +24,7 @@ final class TermsOfService extends AbstractMigration
             'after' => 'users_changepass'
         ])
         ->save();
+
+        $this->execute('UPDATE users SET users_termsAccepted = users_created WHERE users_oauth_googleid IS NULL'); //For users that don't have a google link we can prove they accepted the terms at sign up
     }
 }
