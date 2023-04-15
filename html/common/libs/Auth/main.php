@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/instanceActions.php';
+require_once __DIR__ . '/serverActions.php';
 date_default_timezone_set("UTC");
 use \Firebase\JWT\JWT;
 
@@ -14,7 +15,6 @@ class AuthFail extends Exception {
 }
 class bID
 {
-    const APP_SCOPES = [""];
     const TOKEN_LENGTH = 32;
     public $login;
     private $token;
@@ -49,7 +49,7 @@ class bID
         $DBLIB->where('authTokens_token', $GLOBALS['bCMS']->sanitizeString($token));
         $DBLIB->where("authTokens_valid", '1');
         $DBLIB->where("authTokens_type", $tokenType);
-        $tokenCheck = $DBLIB->getOne("authTokens", ["authTokens_token", "authTokens_created", "authTokens_ipAddress", "users_userid", "authTokens_adminId"]);
+        $tokenCheck = $DBLIB->getOne("authTokens", ["authTokens_token", "authTokens_created", "authTokens_ipAddress", "users_userid", "authTokens_adminId", "authTokens_type"]);
 
         if (!$tokenCheck) throw new AuthFail('Token not found in DB');
         elseif ((strtotime($tokenCheck["authTokens_created"]) + (12 * 60 * 60)) < time()) // Tokens are valid for 12 hrs (this includes the mobile app), which matches the session timeout
@@ -66,8 +66,7 @@ class bID
     }
     function __construct()
     {
-        global $DBLIB, $CONFIG, $instanceActions;
-
+        global $DBLIB, $CONFIG, $instanceActions, $serverActions;
         try {
             //Get the token
             $this->token = $this->checkToken($this->getToken());
@@ -85,89 +84,104 @@ class bID
                 $this->data['viewSiteAs'] = $DBLIB->getOne("users");
             }
 
-            // Get the users server permissions
-            $DBLIB->orderBy("positions_rank", "ASC");
-            $DBLIB->orderBy("positions_displayName", "ASC");
-            $DBLIB->join("positions", "userPositions.positions_id=positions.positions_id", "LEFT");
-            $DBLIB->where("users_userid", $this->data['users_userid']);
-            $positions = $DBLIB->get("userPositions");
-            $this->data['positions'] = [];
-            $permissionCodes = [];
-            foreach ($positions as $position) {
-                $this->data['positions'][] = $position;
-                $position['groups'] = explode(",", $position['positions_positionsGroups']);
-                foreach ($position['groups'] as $positiongroup) {
-                    $DBLIB->where("positionsGroups_id", $positiongroup);
-                    $positiongroup = $DBLIB->getone("positionsGroups", ["positionsGroups_actions"]);
-                    $permissionCodes = array_merge($permissionCodes, explode(",", $positiongroup['positionsGroups_actions']), explode(",", $position['userPositions_extraPermissions']));
-                }
-            }
-            $this->serverPermissions = array_unique($permissionCodes);
-
-            // Get the users instance permissions
-            $DBLIB->orderBy("instances.instances_id", "ASC");
-            $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
-            $DBLIB->join("instances", "instancePositions.instances_id=instances.instances_id", "LEFT");
-            $DBLIB->where("users_userid", $this->data['users_userid']);
-            $DBLIB->where("userInstances_deleted", 0);
-            $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
-            $DBLIB->where("instances.instances_deleted", 0);
-            $instances = $DBLIB->get("userInstances");
-            $this->data['instances'] = [];
-            $this->data['instance_ids'] = [];
-            foreach ($instances as $instance) {
-                $instance['permissions'] = [];
-                //Seems to work better when done like this for the API calls as it prevents the array becoming associative
-                if ($instance['instancePositions_actions']) {
-                    $actionsArray = explode(",", $instance['instancePositions_actions']);
-                    foreach ($actionsArray as $action) {
-                        $instance['permissions'][]= trim($action);
-                    }
-                }
-                if ($instance['userInstances_extraPermissions']) {
-                    $extraActionsArray = explode(",", $instance['userInstances_extraPermissions']);
-                    foreach ($extraActionsArray as $action) {
-                        $instance['permissions'][]= trim($action);
-                    }
-                }
-                $instance['permissions'] = array_unique($instance['permissions']);
-
-                $instance['publicData'] = json_decode($instance['instances_publicConfig'],true);
-                $this->data['instances'][] = $instance;
-                array_push($this->data['instance_ids'], $instance['instances_id']);
-            }
-            $this->data['instance'] = false;
-
-            if (isset($_POST['instances_id'])) { //Used by the app
-                $this->setInstance($_POST['instances_id']);
-            } elseif (isset($_SESSION['instanceID']) and $_SESSION['instanceID'] != null and is_int($_SESSION['instanceID'])) {
-                // An instance ID is set in their session so use that one
-                if (in_array("INSTANCES:FULL_PERMISSIONS_IN_INSTANCE", $this->serverPermissions) and !in_array($_SESSION['instanceID'], $this->data['instance_ids'])) {
-                    //They're assigned to an instance they are not in, and are a super administrator - so we need to download that instance as well for them
-                    $DBLIB->where("instances.instances_deleted", 0);
-                    $DBLIB->where("instances_id", $_SESSION['instanceID']);
-                    $instance = $DBLIB->getone("instances");
-                    if (!$instance) $this->data['instance'] = false;
-                    else {
-                        $instance['userInstances_label'] = 'Server Admin Login';
-                        $instance['permissions'] = array_keys($instanceActions);
-                        array_push($this->data['instance_ids'], $_SESSION['instanceID']);
-                        $this->data['instance'] = $instance;
-                        $this->data['instances'][] = $instance;
-                    }
-                } else $this->setInstance($_SESSION['instanceID']); //Set instance normally
-            }
-            if (!$this->data['instance'] and count($this->data['instances']) >0) {
-                foreach ($this->data['instances'] as $instance) {
-                    if ($instance['instances_id'] == $this->data['users_selectedInstanceIDLast']) $this->setInstance($instance['instances_id']); //Try and pick the instance they last selected to make life nicer for them
-                }
-                if (!$this->data['instance']) $this->setInstance($this->data['instances'][0]['instances_id']); //No instance has been found - pick the first
-            }
-
             $this->login = true;
         } catch (AuthFail $e) {
             if ($CONFIG['DEV']) $this->debug = $e->getMessage();
             $this->login = false;
+        }
+
+
+        // Get the users server permissions
+        $DBLIB->orderBy("positions_rank", "ASC");
+        $DBLIB->orderBy("positions_displayName", "ASC");
+        $DBLIB->join("positions", "userPositions.positions_id=positions.positions_id", "LEFT");
+        $DBLIB->where("users_userid", $this->data['users_userid']);
+        $positions = $DBLIB->get("userPositions");
+        $this->data['positions'] = [];
+        $permissionCodes = [];
+        foreach ($positions as $position) {
+            $this->data['positions'][] = $position;
+            $position['groups'] = explode(",", $position['positions_positionsGroups']);
+            foreach ($position['groups'] as $positiongroup) {
+                $DBLIB->where("positionsGroups_id", $positiongroup);
+                $positiongroup = $DBLIB->getone("positionsGroups", ["positionsGroups_actions"]);
+                $permissionCodes = array_merge($permissionCodes, explode(",", $positiongroup['positionsGroups_actions']), explode(",", $position['userPositions_extraPermissions']));
+            }
+        }
+
+
+        $this->serverPermissions = [];
+        foreach ($permissionCodes as $permission) {
+            if (in_array($permission, array_keys($serverActions)) and in_array($this->token['authTokens_type'], $serverActions[$permission]['Supported Token Types'])) {
+                array_push($this->serverPermissions, $permission);
+            }
+        }
+        $this->serverPermissions = array_unique($this->serverPermissions);
+
+        // Get the users instance permissions
+        $DBLIB->orderBy("instances.instances_id", "ASC");
+        $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+        $DBLIB->join("instances", "instancePositions.instances_id=instances.instances_id", "LEFT");
+        $DBLIB->where("users_userid", $this->data['users_userid']);
+        $DBLIB->where("userInstances_deleted", 0);
+        $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
+        $DBLIB->where("instances.instances_deleted", 0);
+        $instances = $DBLIB->get("userInstances");
+        $this->data['instances'] = [];
+        $this->data['instance_ids'] = [];
+        foreach ($instances as $instance) {
+            $permissionsArray = [];
+            //Seems to work better when done like this for the mobile app calls as it prevents the array becoming associative
+            if ($instance['instancePositions_actions']) {
+                $actionsArray = explode(",", $instance['instancePositions_actions']);
+                foreach ($actionsArray as $action) {
+                    array_push($permissionsArray,trim($action));
+                }
+            }
+            if ($instance['userInstances_extraPermissions']) {
+                $extraActionsArray = explode(",", $instance['userInstances_extraPermissions']);
+                foreach ($extraActionsArray as $action) {
+                    array_push($permissionsArray,trim($action));
+                }
+            }
+            $permissionsArray = array_unique($permissionsArray);
+            $instance['permissions'] = [];
+            foreach ($permissionsArray as $permission) {
+                if (in_array($permission, array_keys($instanceActions)) and in_array($this->token['authTokens_type'], $instanceActions[$permission]['Supported Token Types'])) {
+                    array_push($instance['permissions'], $permission);
+                }
+            }
+
+            $instance['publicData'] = json_decode($instance['instances_publicConfig'],true);
+            $this->data['instances'][] = $instance;
+            array_push($this->data['instance_ids'], $instance['instances_id']);
+        }
+        
+        $this->data['instance'] = false;
+        if (isset($_POST['instances_id'])) { //Used by the app
+            $this->setInstance($_POST['instances_id']);
+        } elseif (isset($_SESSION['instanceID']) and $_SESSION['instanceID'] != null and is_int($_SESSION['instanceID'])) {
+            // An instance ID is set in their session so use that one
+            if (in_array("INSTANCES:FULL_PERMISSIONS_IN_INSTANCE", $this->serverPermissions) and !in_array($_SESSION['instanceID'], $this->data['instance_ids']) and $this->token['authTokens_type'] == "web-session") {
+                //They're assigned to an instance they are not in, and are a super administrator - so we need to download that instance as well for them
+                $DBLIB->where("instances.instances_deleted", 0);
+                $DBLIB->where("instances_id", $_SESSION['instanceID']);
+                $instance = $DBLIB->getone("instances");
+                if (!$instance) $this->data['instance'] = false;
+                else {
+                    $instance['userInstances_label'] = 'Server Admin Login';
+                    $instance['permissions'] = array_keys($instanceActions);
+                    array_push($this->data['instance_ids'], $_SESSION['instanceID']);
+                    $this->data['instance'] = $instance;
+                    $this->data['instances'][] = $instance;
+                }
+            } else $this->setInstance($_SESSION['instanceID']); //Set instance normally
+        }
+        if (!$this->data['instance'] and count($this->data['instances']) >0) {
+            foreach ($this->data['instances'] as $instance) {
+                if ($instance['instances_id'] == $this->data['users_selectedInstanceIDLast']) $this->setInstance($instance['instances_id']); //Try and pick the instance they last selected to make life nicer for them
+            }
+            if (!$this->data['instance']) $this->setInstance($this->data['instances'][0]['instances_id']); //No instance has been found - pick the first
         }
     }
 
@@ -331,7 +345,7 @@ class bID
         );
         if (!$DBLIB->insert('passwordResetCodes', $data)) throw new Exception('Fatal Error sending a reset E-Mail');
         require_once __DIR__ . '/../../../admin/api/notifications/main.php';
-        if (notify(1,$userid,false,  "Reset your password", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Someone requested to reset your password - if this was not you please contact our support team urgently.</h1><p style="margin: 0;"><a href="' . $CONFIG['ROOTURL'] . '/api/account/passwordReset.php?code=' . $code . '">Reset account password for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i>')) return true;
+        if (notify(1,$userid,false,  "Reset your password", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Someone requested to reset your password</h1><p style="margin: 0;">If this was not you, please contact our support team urgently.<br /><br /><a href="' . $CONFIG['ROOTURL'] . '/api/account/passwordReset.php?code=' . $code . '">Reset account password for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i>')) return true;
         else return false;
     }
     function destroyTokens($userid = null) {
