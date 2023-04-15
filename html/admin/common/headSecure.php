@@ -2,11 +2,11 @@
 require_once __DIR__ . '/head.php';
 require_once __DIR__ . '/../assets/widgets/statsWidgets.php'; //Stats on homepage etc.
 
-//DON'T FORGET THIS IS DUPLICATED SOMEWHAT IN API HEAD SECURE AS SECURITY IS HANDLED SLIGHTLY DIFFERENTLY ON THE API END
+//THIS IS DUPLICATED SOMEWHAT IN API HEAD SECURE AS SECURITY IS HANDLED SLIGHTLY DIFFERENTLY ON THE API END
 
 if (!$GLOBALS['AUTH']->login) {
-    if ($CONFIG['DEV']) die("<h2>Debugging enabled - auth fail debug details</h2>" . $GLOBALS['AUTH']->debug . "<br/><br/><br/>Login false - redirect to <a href='" . $CONFIG['ROOTURL'] . "/login/'>" . $CONFIG['ROOTURL'] . "/login/</a>");
     $_SESSION['return'] = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    if ($CONFIG['DEV']) die("<br/><a href='" . $CONFIG['ROOTURL'] . "/login/'>" . $CONFIG['ROOTURL'] . "/login/</a>");
     header("Location: " . $CONFIG['ROOTURL'] . "/login/");
     die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/login/" . '" />');
 }
@@ -40,7 +40,10 @@ if ($AUTH->data['users_emailVerified'] == 1) {
     }
 } else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'] = [];
 
-if ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
+if ($CONFIG['TermsOfServiceURL'] and ($PAGEDATA['USERDATA']['users_termsAccepted'] == 0 or $PAGEDATA['USERDATA']['users_termsAccepted'] == null)) {
+    $PAGEDATA['pageConfig'] = ["TITLE" => "Accept Terms", "BREADCRUMB" => false, "NOMENU" => true];
+    die($TWIG->render('index_acceptTerms.twig', $PAGEDATA));
+} elseif ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
     $PAGEDATA['pageConfig'] = ["TITLE" => "Change Password", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_forceChangePassword.twig', $PAGEDATA));
 } elseif ($AUTH->data['instance']) {

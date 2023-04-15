@@ -247,7 +247,7 @@
                 </li>
             {% endif %}
         </ul>
-        {% if USERDATA.instances|length > 0 %}
+        {% if USERDATA.instances|length > 0 and pageConfig.NOMENU != true %}
         <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/search.php" method="GET">
             <div class="input-group input-group-sm">
                 <input class="form-control form-control-navbar" name="term" type="search" placeholder="Search" aria-label="Search">
