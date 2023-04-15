@@ -23,10 +23,14 @@ if (isset($_GET['app-oauth'])) {
 	//If they're logged in, take them back to root - this fixes a loop redirect issue
 	header("Location: " . $CONFIG['ROOTURL'] . "/");
 	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
-}
+} 
 
 if (isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
 elseif (isset($_GET['login'])) echo $TWIG->render('login/login.twig', $PAGEDATA);
+elseif (isset($_GET['app-magiclink'])) {
+	$PAGEDATA['MAGIC-LINK-URL'] = $_GET['app-magiclink'];
+	echo $TWIG->render('login/magicLink.twig', $PAGEDATA);
+}
 elseif (isset($_GET['google'])) {
 	//Similar setup can be found in the link provider api endpoint
 	$CONFIG['AUTH-PROVIDERS']['GOOGLE']['callback'] = $CONFIG['ROOTURL'] . '/login/index.php?google';
