@@ -16,6 +16,7 @@ class AuthFail extends Exception {
 class bID
 {
     const TOKEN_LENGTH = 32;
+    public $VALIDMAGICLINKREDIRECTS = ["com.bstudios.adamrms://magic-link"];
     public $login;
     private $token;
     public $data;
@@ -108,7 +109,6 @@ class bID
                 $permissionCodes = array_merge($permissionCodes, explode(",", $positiongroup['positionsGroups_actions']), explode(",", $position['userPositions_extraPermissions']));
             }
         }
-
 
         $this->serverPermissions = [];
         foreach ($permissionCodes as $permission) {
@@ -356,6 +356,27 @@ class bID
 
         $DBLIB->where ('users_userid', $userid);
         if ($DBLIB->update ('authTokens', ["authTokens_valid" => 0])) return true;
+        else return false;
+    }
+
+    function sendMagicLink($email, $redirect) {
+        global $DBLIB, $CONFIG;
+
+        if (strlen($email) < 1) return false;
+        $email = trim(strtolower($email));
+        $DBLIB->where("users_email", $email);
+        $DBLIB->where("users_emailVerified", 1);
+        $DBLIB->where("users_email IS NOT NULL");
+        $userID = $DBLIB->getValue("users", "users_userid");
+        if (!$userID) return false;
+
+
+        if (!in_array($redirect, $this->VALIDMAGICLINKREDIRECTS)) return false; //Only allow certain redirects, as otherwise this is a vector to spam users with any email text you like
+
+        $token = $this->generateToken($userID, false, "App v2", "app-v2-magic-email");
+        if (!$token) return false;
+        require_once __DIR__ . '/../../../admin/api/notifications/main.php';
+        if (notify(4, $userID,  false,"Login to AdamRMS App", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Login to the app</h1><p style="margin: 0;"><a href="' . $CONFIG['ROOTURL'] . "/login?app-magiclink=" . $redirect . "&magic-token=" . $token . '">Click to login to the mobile app</a></p><br/><i><b>N.B.</b>If you did not request this code, please do not click the link, and contact our support team</i>')) return true;
         else return false;
     }
 }

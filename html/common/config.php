@@ -94,6 +94,14 @@ $CONFIG = array(
                 "canDisable" => false
             ],
             [
+                "id" => 4,
+                "group" => "Account",
+                "name" => "Magic email login link",
+                "methods" => [1],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
                 "id" => 2,
                 "group" => "Account",
                 "name" => "Added to Business",

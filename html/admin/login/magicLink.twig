@@ -14,17 +14,17 @@
 		});
         $("#magicLink").submit(function(){
             event.preventDefault();
-            if ($("#form2Input").val().length <= 0) {
+            if ($("#email").val().length <= 0) {
                 toastr.warning("Please enter something into the email box");
             } else {
                 $.ajax({
-                    url: "../api/login/login.php",
+                    url: "../api/login/magicLogin.php",
                     type: "POST",
                     dataType: 'json',
-                    data: {"formInput" : $("#form1Input").val(),"password": $("#form2Input").val()},
+                    data: {"formInput" : $("#email").val(),"redirect": "{{ MAGICLINKURL|escape("js") }}"},
                     success: function(result) {
                         if (result.result) {
-                            window.location.href = result.response.redirect;
+                            toastr.success("Email sent");
                     	} else {
                             toastr.error(result.error.message);
                         }
