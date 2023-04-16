@@ -87,7 +87,7 @@ elseif (isset($_GET['app-magiclink']) and in_array($_GET['app-magiclink'], $GLOB
 		if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
 			$token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, "App OAuth - Google", "app-v1");
 			$jwt = $GLOBALS['AUTH']->issueJWT($token, $user['users_userid']);
-			finish(true,null,["redirect" => $_SESSION['app-oauth'] . "://oauth_callback?token=" . $jwt]);
+			header("Location: " . $_SESSION['app-oauth'] . "oauth_callback?token=" . $jwt);
 			exit;
 		} else {
 			$GLOBALS['AUTH']->generateToken($user['users_userid'], false, "Web - Google", "web-session");
