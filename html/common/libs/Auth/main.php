@@ -377,9 +377,9 @@ class bID
         $userID = $DBLIB->getValue("users", "users_userid");
         if (!$userID) return false;
 
-
-        if (!in_array($redirect, $this->VALIDMAGICLINKREDIRECTS)) return false; //Only allow certain redirects, as otherwise this is a vector to spam users with any email text you like
-
+        if (!$CONFIG['DEV']) { //Only allow certain redirects in production
+            if (!in_array($redirect, $this->VALIDMAGICLINKREDIRECTS)) return false; //Only allow certain redirects, as otherwise this is a vector to spam users with any email text you like
+        }
         $token = $this->generateToken($userID, false, "App v2", "app-v2-magic-email");
         if (!$token) return false;
         require_once __DIR__ . '/../../../admin/api/notifications/main.php';
