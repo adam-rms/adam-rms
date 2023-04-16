@@ -27,7 +27,7 @@ if (isset($_GET['app-oauth'])) {
 
 if (isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
 elseif (isset($_GET['login'])) echo $TWIG->render('login/login.twig', $PAGEDATA);
-elseif (isset($_GET['app-magiclink']) and in_array($_GET['app-magiclink'], $GLOBALS['AUTH']->VALIDMAGICLINKREDIRECTS)) {
+elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLOBALS['AUTH']->VALIDMAGICLINKREDIRECTS) or $CONFIG['DEV'])) {
 	if (isset($_GET['magic-token'])) {
 		header("Location: " . $_GET['app-magiclink'] . "?token=" . $_GET['magic-token']);
 		die('<meta http-equiv="refresh" content="0; url="' . $_GET['app-magiclink'] . "?token=" . $_GET['magic-token'] . '" />');
