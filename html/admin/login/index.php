@@ -69,7 +69,7 @@ elseif (isset($_GET['app-magiclink']) and in_array($_GET['app-magiclink'], $GLOB
 
 	$DBLIB->where("users_oauth_googleid", $userProfile->identifier);
 	$DBLIB->where("users_deleted", 0);
-	$user = $DBLIB->getOne("users", ["users.users_suspended", "users.users_userid", "users.users_hash", "users.users_emailVerified"]);
+	$user = $DBLIB->getOne("users", ["users.users_suspended", "users.users_userid", "users.users_hash", "users.users_emailVerified", "users.users_email"]);
 	if ($user) {
 		if ($user['users_suspended'] != '0') {
 			$PAGEDATA['ERROR'] = "Sorry, your user account is suspended";
@@ -77,7 +77,7 @@ elseif (isset($_GET['app-magiclink']) and in_array($_GET['app-magiclink'], $GLOB
 			exit;
 		} 
 		
-		if ($user['users_emailVerified'] != 1) {
+		if ($user['users_emailVerified'] != 1 and strtolower($userProfile->emailVerified) == strtolower($user['users_email'])) {
 			// Update their email verification status
 			$DBLIB->where("users_userid", $user['users_userid']);
 			$DBLIB->update("users", ["users_emailVerified" => 1]);
