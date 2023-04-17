@@ -385,5 +385,14 @@ class bID
         if (notify(4, $userID,  false,"Login to AdamRMS App", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Login to the app</h1><p style="margin: 0;"><a href="' . $CONFIG['ROOTURL'] . "/login?app-magiclink=" . $redirect . "&magic-token=" . $token . '">Click to login to the mobile app</a></p><br/><i><b>N.B.</b>If you did not request this code, please do not click the link, and contact our support team</i>')) return true;
         else return false;
     }
+
+    public function verifyMagicLink($magicToken)
+    {
+        try {
+            return $this->checkToken(["token" => $magicToken, "type" => "app-v2-magic-email"]);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }
 ?>
