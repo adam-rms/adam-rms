@@ -35,7 +35,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 			echo $TWIG->render('login/error.twig', $PAGEDATA);
 			exit;
 		}
-		$jwt = $AUTH->issueJWT($_GET['magic-token'], $tokenData['users_userid']);
+		$jwt = $AUTH->issueJWT($_GET['magic-token'], $tokenData['users_userid'], "app-v2-magic-email");
 		header("Location: " . $_GET['app-magiclink'] . "?token=" . $jwt);
 		die('<meta http-equiv="refresh" content="0; url="' . $_GET['app-magiclink'] . "?token=" . $jwt . '" />');
 	}
@@ -93,7 +93,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		//Log them in successfully - duplicated below for signup
 		if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
 			$token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, "App OAuth - Google", "app-v1");
-			$jwt = $GLOBALS['AUTH']->issueJWT($token, $user['users_userid']);
+			$jwt = $GLOBALS['AUTH']->issueJWT($token, $user['users_userid'], "app-v1");
 			header("Location: " . $_SESSION['app-oauth'] . "oauth_callback?token=" . $jwt);
 			exit;
 		} else {

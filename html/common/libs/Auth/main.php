@@ -267,14 +267,16 @@ class bID
         }
     }
 
-    function issueJWT($token, $userID) {
+    function issueJWT($token, $userID, $type)
+    {
         global $CONFIG;
         $jwt = JWT::encode(array(
             "iss" => $CONFIG['ROOTURL'],
             "uid" => $userID,
             "token" => $token,
             "exp" => time()+12*60*60, //12 hours token expiry
-            "iat" => time()
+            "iat" => time(),
+            "type" => $type //app-v1, app-v2-magic-email - this is assumed to be valid 
         ), $CONFIG['JWTKey']);
         return $jwt;
     }
