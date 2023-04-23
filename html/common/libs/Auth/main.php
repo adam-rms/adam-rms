@@ -267,7 +267,7 @@ class bID
         }
     }
 
-    function issueJWT($token, $userID)
+    function issueJWT($token, $userID, $type)
     {
         global $CONFIG;
         $jwt = JWT::encode(array(
@@ -275,7 +275,8 @@ class bID
             "uid" => $userID,
             "token" => $token,
             "exp" => time()+12*60*60, //12 hours token expiry
-            "iat" => time()
+            "iat" => time(),
+            "type" => $type
         ), $CONFIG['JWTKey']);
         return $jwt;
     }
@@ -381,7 +382,7 @@ class bID
         if (!in_array($redirect, $this->VALIDMAGICLINKREDIRECTS) and !$CONFIG['DEV']) return false; //Only allow certain redirects in production, as otherwise this is a vector to spam users with any email text you like
 
         $token = $this->generateToken($userID, false, "App v2", "app-v2-magic-email");
-        $jwt = $this->issueJWT($token, $userID);
+        $jwt = $this->issueJWT($token, $userID, "app-v2-magic-email");
         if (!$token or !$jwt) return false;
         require_once __DIR__ . '/../../../admin/api/notifications/main.php';
         if (notify(4, $userID,  false,"Login to AdamRMS App", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Login to the app</h1><p style="margin: 0;"><a href="' . $CONFIG['ROOTURL'] . "/login?app-magiclink=" . $redirect . "&magic-token=" . $jwt . '">Click to login to the mobile app</a></p><br/><i><b>N.B.</b>If you did not request this code, please do not click the link, and contact our support team</i>')) return true;
