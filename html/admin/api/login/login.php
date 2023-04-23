@@ -38,7 +38,7 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
 		else {
             if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
                 $token = $GLOBALS['AUTH']->generateToken($user['users_userid'], false, "App OAuth", "app-v1");
-                $jwt = $GLOBALS['AUTH']->issueJWT($token, $user['users_userid']);
+                $jwt = $GLOBALS['AUTH']->issueJWT($token, $user['users_userid'], "app-v1");
                 finish(true,null,["redirect" => $_SESSION['app-oauth'] . "oauth_callback?token=" . $jwt]);
             } else {
                 $GLOBALS['AUTH']->generateToken($user['users_userid'], false, "Web", "web-session");
