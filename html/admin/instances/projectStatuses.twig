@@ -1,4 +1,12 @@
 {% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+{% endblock %}
 {% block content %}
 
 <div class="row">
@@ -24,23 +32,36 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <td style="width:15px;"></td>
-                            <td style="width:15px;"><b>Icon</b></td>
-                            <td>
-                                <b>Name</b>
-                            </td>
-                            <td></td>
+                            <th style="width:60px;"></th>
+                            <th style="width:40px;">Icon</th>
+                            <th>Name</th>
+                            <th style="width:150px;">Colour</th>
+                            <th style="width:150px;">Assets Released</th>
+                            <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="pageListSortable">
                     {% for status in projectStatuses %}
-                        <tr>
-                            <td></td>
+                        <tr value="{{ status.projectsStatuses_id }}">
+                            <td>
+                                {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions %}
+                                    <span class="handle">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                   </span>
+                                {% endif %}
+                            </td>
                             <td>
                                 <i class="{{ status.projectsStatuses_fontAwesome }}"></i>
                             </td>
                             <td>
                                 {{status.projectsStatuses_name}}
+                            </td>
+                            <td class="text-uppercase" style="background-color:{{ status.projectsStatuses_backgroundColour }}; color: {{ status.projectsStatuses_foregroundColour }}">{{ status.projectsStatuses_class }}</td>
+                            <td class="text-center">
+                                {% if status.projectsStatuses_assetsReleased %}
+                                    <i class="fas fa-check"></i>
+                                {% endif %}
                             </td>
                             <td style="width:70px;">
                                 <div class="btn-group">
@@ -269,6 +290,19 @@
                 ajaxcall("instances/projectStatus/edit.php", {formData}, function (data) {
                     location.reload();
                 });
+            });
+            $('#pageListSortable').sortable({
+                placeholder         : 'sort-highlight',
+                handle              : '.handle',
+                forcePlaceholderSize: true,
+                zIndex              : 999999,
+                update: function( event, ui ) {
+                    console.log($("#pageListSortable").sortable('toArray', {attribute: 'value'}));
+                    ajaxcall("instances/projectStatus/editPageRank.php", {
+                        "order": $("#pageListSortable").sortable('toArray', {attribute: 'value'})
+                    }, null, true);
+
+                }
             });
             {% endif %}
             {% if "PROJECTS:PROJECT_STATUSES:DELETE"|instancePermissions %}
