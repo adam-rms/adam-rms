@@ -87,7 +87,7 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form class="edit-form" data-id="{{ status.projectsStatuses_name }}">
+                                            <form class="edit-form" data-id="{{ status.projectsStatuses_id }}">
                                                 <input type="hidden" name="projectsStatuses_id" value="{{ status.projectsStatuses_id }}"/>
                                                 <div class="input-group" style="margin-bottom: 5px;">
                                                     <div class="input-group-prepend">
@@ -106,13 +106,12 @@
                                                         <span class="input-group-text">Class</span>
                                                     </div>
                                                     <select class="form-control" name="projectsStatuses_class" value="{{ status.projectsStatuses_class }}">
-                                                        <option value="default">None</option>
-                                                        <option value="primary">Primary</option>
-                                                        <option value="secondary">Secondary</option>
-                                                        <option value="success">Success</option>
-                                                        <option value="danger">Danger</option>
-                                                        <option value="warning">Warning</option>
-                                                        <option value="info">Info</option>
+                                                        <option value="info" {{ (status.projectsStatuses_class == "info" ? "selected" : "") }}>Info</option>
+                                                        <option value="primary" {{ (status.projectsStatuses_class == "primary" ? "selected" : "") }}>Primary</option>
+                                                        <option value="secondary" {{ (status.projectsStatuses_class == "secondary" ? "selected" : "") }}>Secondary</option>
+                                                        <option value="success" {{ (status.projectsStatuses_class == "success" ? "selected" : "") }}>Success</option>
+                                                        <option value="danger" {{ (status.projectsStatuses_class == "danger" ? "selected" : "") }}>Danger</option>
+                                                        <option value="warning" {{ (status.projectsStatuses_class == "warning" ? "selected" : "") }}>Warning</option>
                                                     </select>
                                                 </div>
                                                 <div class="input-group" style="margin-bottom: 5px;">
@@ -124,6 +123,12 @@
                                                             <option value="{{ status.projectsStatuses_fontAwesome }}"></option>
                                                         {% endif %}
                                                     </select>
+                                                </div>
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Text Colour</span>
+                                                    </div>
+                                                    <input type="color" class="form-control" name="projectsStatuses_foregroundColour" value="{{ status.projectsStatuses_foregroundColour }}">
                                                 </div>
                                                 <div class="input-group" style="margin-bottom: 5px;">
                                                     <div class="input-group-prepend">
@@ -196,6 +201,12 @@
                                 <span class="input-group-text">Icon</span>
                             </div>
                             <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome"></select>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Text Colour</span>
+                            </div>
+                            <input type="color" class="form-control" name="projectsStatuses_foregroundColour">
                         </div>
                         <div class="input-group" style="margin-bottom: 5px;">
                             <div class="input-group-prepend">
@@ -277,7 +288,6 @@
             {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
             $("#saveNewCategory").click(function () {
                 var formData = $("#newCategoryForm").serializeArray();
-                formData.push({"name": "projectsStatuses_foregroundColour", "value": getForegroundColour(formData[3].value) } );
                 ajaxcall("instances/projectStatus/new.php", {formData}, function (data) {
                     location.reload();
                 });
@@ -286,7 +296,6 @@
             {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
-                formData.push({"name": "projectsStatuses_foregroundColour", "value": getForegroundColour(formData[3].value) } ); 
                 ajaxcall("instances/projectStatus/edit.php", {formData}, function (data) {
                     location.reload();
                 });
