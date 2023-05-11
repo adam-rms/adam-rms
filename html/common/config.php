@@ -37,6 +37,7 @@ $CONFIG = array(
     "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
     "ROOTURL" => getenv('bCMS__ROOTURL'),
     "PROJECT_SUPPORT_EMAIL" => "studios@jbithell.com",
+    "TermsOfServiceURL" => "https://adam-rms.com/legal",
     'AWS' => [
         'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
         'SECRET' => getenv('bCMS__AWS_SERVER_SECRET_KEY'),
@@ -88,6 +89,14 @@ $CONFIG = array(
                 "id" => 3,
                 "group" => "Account",
                 "name" => "Email verification",
+                "methods" => [1],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
+                "id" => 4,
+                "group" => "Account",
+                "name" => "Magic email login link",
                 "methods" => [1],
                 "default" => true,
                 "canDisable" => false

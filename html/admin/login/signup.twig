@@ -26,12 +26,6 @@
             <button class="btn btn-primary" type="submit" value="Submit">Next</button>
         </div>
     </form>
-    <form id="form3d">
-        <p>Please confirm you have read and accept our <a href="https://adam-rms.com/legal" target="_blank">terms</a></p>
-        <div style="width: 100%; text-align:right;">
-            <button class="btn btn-success" type="submit" value="Submit">I accept</button>
-        </div>
-    </form>
     <form id="formVerifyEmail">
         <p>Please check your email address for our verification email</p>
         <p><i>Every now and again our E-Mails get sucked up by hungry spam filters - If you can't find our E-Mail please check your spam/junk folder</i></p>
@@ -155,7 +149,7 @@
                                     toastr.warning("Sorry this username is taken - please try choosing another");
                                 } else {
                                     $("#form3c").fadeOut(function () {
-                                        $("#form3d").fadeIn();
+                                        loginStep3d();
                                     });
                                 }
                             } else {
@@ -167,11 +161,6 @@
                     });
                 }
             }
-
-            $("#form3d").submit(function () {
-                loginStep3d();
-                return false;
-            });
 
             function loginStep3d() {
                 //Terms and conditions now accepted
@@ -187,9 +176,7 @@
                         "email": $("#form3bInput").val()
                     }, success: function (result) {
                         if (result.result) {
-                            $("#form3d").fadeOut(function () {
-                                $("#formVerifyEmail").fadeIn(); //Show them that they were supposed to verify email address
-                            });
+                            $("#formVerifyEmail").fadeIn(); //Show them that they were supposed to verify email address
                         } else {
                             toastr.error(result.error.message);
                         }

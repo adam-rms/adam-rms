@@ -104,9 +104,10 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
 }
 
 //Edit Options - Locations list
-if ($AUTH->instancePermissionCheck(29)) {
+if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS")) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projectsStatuses_deleted", 0);
+    $DBLIB->orderBy("projectsStatuses_rank", "ASC");
     $PAGEDATA['POSSIBLEPROJECTSTATUSES'] = $DBLIB->get("projectsStatuses", null, ["projectsStatuses_id", "projectsStatuses_name", "projectsStatuses_description", "projectsStatuses_assetsReleased"]);
 }
 

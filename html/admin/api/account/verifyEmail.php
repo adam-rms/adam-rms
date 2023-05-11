@@ -3,13 +3,14 @@
 
 	header('Content-Type:text/plain');
 	if (!isset($_POST['code'])) {
-        header('Location: ' . $CONFIG['ROOTURL']); //If it fails we may as well just assume they have tried to click it a second time.
+        header('Location: ' . $CONFIG['ROOTURL']);
         exit;
 	}
 
 	$DBLIB->where('emailVerificationCodes_code', $bCMS->sanitizeString($_POST['code']));
+	$DBLIB->where('emailVerificationCodes_valid', 1);
 	$code = $DBLIB->getOne('emailVerificationCodes');
-	if (isset($code) and $code['emailVerificationCodes_valid'] == '1') {
+	if ($code) {
 		if (strtotime($code['emailVerificationCodes_timestamp']) < (time()-(60*60*48))) {
 			//Code has expired - send another
             if ($AUTH->verifyEmail()) die("Sorry - Your code has expired - we've sent you another one instead");
