@@ -8,18 +8,16 @@ if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_STATUSES:VIEW")) die($TWIG
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
 
-$DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
-$DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
+$DBLIB->orderBy("projectsstatuses.projectsStatuses_rank", "ASC");
 if (strlen($PAGEDATA['search']) > 0) {
     //Search
     $DBLIB->where("(
-		assetCategories.assetCategories_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' 
+      projectsstatuses.projectsStatuses_name LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%' 
     )");
 }
 $DBLIB->where("(instances_id IS NULL OR instances_id = '" . $AUTH->data['instance']["instances_id"] . "')");
-$DBLIB->where("assetCategories_deleted",0);
-$DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
-$PAGEDATA['categories'] = $DBLIB->get('assetCategories');
+$DBLIB->where("projectsstatuses.projectsStatuses_deleted",0);
+$PAGEDATA['projectStatuses'] = $DBLIB->get("projectsstatuses");
 
 echo $TWIG->render('instances/projectStatuses.twig', $PAGEDATA);
 ?>

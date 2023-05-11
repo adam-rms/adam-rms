@@ -6,14 +6,14 @@
         <div class="card ">
             <div class="card-header">
                 <h3 class="card-title">
-                    Categories
+                    Project Statuses
                 </h3>
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
+                            {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
                             {% endif %}
                         </div>
@@ -22,113 +22,122 @@
             </div>
             <div class="card-body table-responsive p-0">
                 <table class="table table-bordered">
-                    {% set currentCategoryGroup = false %}
-                    {% for category in categories %}
-                        {% if currentCategoryGroup != category.assetCategoriesGroups_name %}
-                        {% if currentCategoryGroup %}
-                            {# Close the previous one for starting a new one #}
-                            </tbody>
-                    {% endif %}
-                        {% set currentCategoryGroup = category.assetCategoriesGroups_name %}
-                            <thead>
-                            <tr>
-                                <td style="width:15px;"><i class="{{ category.assetCategoriesGroups_fontAwesome }}"></i></td>
-                                <td colspan="2">
-                                    <b>{{ category.assetCategoriesGroups_name }}</b>
-                                </td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                    {% endif %}
-                          <tr>
-                              <td>
-                                  <i class="{{ category.assetCategories_fontAwesome }}"></i>
-                              </td>
-                              <td>
-                                  {{category.assetCategories_name}}
-                              </td>
-                              <td style="width:70px;">
+                    <thead>
+                        <tr>
+                            <td style="width:15px;"></td>
+                            <td style="width:15px;"><b>Icon</b></td>
+                            <td>
+                                <b>Name</b>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for status in projectStatuses %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                <i class="{{ status.projectsStatuses_fontAwesome }}"></i>
+                            </td>
+                            <td>
+                                {{status.projectsStatuses_name}}
+                            </td>
+                            <td style="width:70px;">
                                 <div class="btn-group">
-                                    <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
-                                    {% if category.instances_id is not null %}
-                                        {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
-                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
+                                    {% if status.instances_id is not null %}
+                                        {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions %}
+                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ status.projectsStatuses_id }}"><i class="fas fa-edit"></i></button>
                                         {% endif %}
-                                        {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
-                                            <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
+                                        {% if "PROJECTS:PROJECT_STATUSES:DELETE"|instancePermissions %}
+                                            <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ status.projectsStatuses_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}
                                     {% endif %}
                                  </div>
                               </td>
-                          </tr>
-                                {% if category.instances_id is not null %}
-                                <div class="modal fade" id="editModal{{ category.assetCategories_id }}">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Edit {{category.assetCategories_name}}</h4>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="edit-form" data-id="{{ category.assetCategories_id }}">
-                                                    <input type="hidden" name="assetCategories_id" value="{{ category.assetCategories_id }}"/>
-                                                    <div class="input-group" style="margin-bottom: 5px;">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Name</span>
-                                                        </div>
-                                                        <input type="text" class="form-control" name="assetCategories_name" value="{{ category.assetCategories_name }}">
+                        </tr>
+                        {% if status.instances_id is not null %}
+                            <div class="modal fade" id="editModal{{ status.projectsStatuses_id }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Edit {{status.projectsStatuses_name}}</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form class="edit-form" data-id="{{ status.projectsStatuses_name }}">
+                                                <input type="hidden" name="projectsStatuses_id" value="{{ status.projectsStatuses_id }}"/>
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Name</span>
                                                     </div>
-                                                    <div class="input-group" style="margin-bottom: 5px;">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Icon</span>
-                                                        </div>
-                                                        <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome">
-                                                            {% if category.assetCategories_fontAwesome %}
-                                                                <option value="{{ category.assetCategories_fontAwesome }}"></option>
-                                                            {% endif %}
-                                                        </select>
+                                                    <input type="text" class="form-control" name="projectsStatuses_name" value="{{ status.projectsStatuses_name }}">
+                                                </div>
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Description</span>
                                                     </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Category Group</span>
-                                                        </div>
-                                                        <select class="form-control" name="assetCategoriesGroups_id">
-                                                            {% set currentCategoryGroupSub = false %}
-                                                            {% for categorySub in categories %}
-                                                                {% if currentCategoryGroupSub != categorySub.assetCategoriesGroups_name %}
-                                                                    {% set currentCategoryGroupSub = categorySub.assetCategoriesGroups_name %}
-                                                                    <option {% if category.assetCategoriesGroups_id == categorySub.assetCategoriesGroups_id %}selected{% endif %} value="{{ categorySub.assetCategoriesGroups_id }}">{{ categorySub.assetCategoriesGroups_name }}</option>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        </select>
+                                                    <input type="text" class="form-control" name="projectsStatuses_description" value="{{ status.projectsStatuses_description }}">
+                                                </div>
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Class</span>
                                                     </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer justify-content-between">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ category.assetCategories_id }}">Save changes</button>
-                                            </div>
+                                                    <select class="form-control" name="projectsStatuses_class" value="{{ status.projectsStatuses_class }}">
+                                                        <option value="default">None</option>
+                                                        <option value="primary">Primary</option>
+                                                        <option value="secondary">Secondary</option>
+                                                        <option value="success">Success</option>
+                                                        <option value="danger">Danger</option>
+                                                        <option value="warning">Warning</option>
+                                                        <option value="info">Info</option>
+                                                    </select>
+                                                </div>
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Icon</span>
+                                                    </div>
+                                                    <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome">
+                                                        {% if status.projectsStatuses_fontAwesome %}
+                                                            <option value="{{ status.projectsStatuses_fontAwesome }}"></option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Background Colour</span>
+                                                    </div>
+                                                    <input type="color" class="form-control" name="projectsStatuses_backgroundColour" value="{{ status.projectsStatuses_backgroundColour }}">
+                                                </div>
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Release Assets?</span>
+                                                    </div>
+                                                    <input type="checkbox" class="form-control" name="projectsStatuses_assetsReleased"  aria-describedby="assetsReleased" {{status.projectsStatuses_assetsReleased ? "checked": ""}}>
+                                                    <small id="assetsReleased" class="form-text text-muted">This allows assets assigned to this project to be used by other projects</small>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ status.projectsStatuses_id }}">Save changes</button>
                                         </div>
                                     </div>
                                 </div>
-                                {% endif %}
-                            {% endfor %}
-                            {% if currentCategoryGroup %}
-                            {# Close the previous category group if you had any #}
-                            </tbody>
-                    {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </table>
             </div>
         </div>
     </div>
-    {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
+    {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
     <div class="modal fade" id="newModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">New Custom Category</h4>
+                    <h4 class="modal-title">New Project Status</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -139,27 +148,46 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Name</span>
                             </div>
-                            <input required type="text" class="form-control" name="assetCategories_name">
+                            <input required type="text" class="form-control" name="projectsStatuses_name">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Description</span>
+                            </div>
+                            <input type="text" class="form-control" name="projectsStatuses_description" >
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Class</span>
+                            </div>
+                            <select class="form-control" name="projectsStatuses_class">
+                                <option value="default">None</option>
+                                <option value="primary">Primary</option>
+                                <option value="secondary">Secondary</option>
+                                <option value="success" selected>Success</option>
+                                <option value="danger">Danger</option>
+                                <option value="warning">Warning</option>
+                                <option value="info">Info</option>
+                            </select>
                         </div>
                         <div class="input-group" style="margin-bottom: 5px;">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Icon</span>
                             </div>
-                            <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome"></select>
+                            <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome"></select>
                         </div>
-                        <div class="input-group">
+                        <div class="input-group" style="margin-bottom: 5px;">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">Category Group</span>
+                                <span class="input-group-text">Background Colour</span>
                             </div>
-                            <select required class="form-control" name="assetCategoriesGroups_id">
-                                {% set currentCategoryGroupSub = false %}
-                                {% for categorySub in categories %}
-                                    {% if currentCategoryGroupSub != categorySub.assetCategoriesGroups_name %}
-                                        {% set currentCategoryGroupSub = categorySub.assetCategoriesGroups_name %}
-                                        <option value="{{ categorySub.assetCategoriesGroups_id }}">{{ categorySub.assetCategoriesGroups_name }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
+                            <input type="color" class="form-control" name="projectsStatuses_backgroundColour" value="#F5F5F5">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Release Assets?</span>
+                            </div>
+                            <input type="checkbox" class="form-control" name="projectsStatuses_assetsReleased"  aria-describedby="assetsReleased">
+                            <small id="assetsReleased" class="form-text text-muted">This allows assets assigned to this project to be used by other projects</small>
                         </div>
                     </form>
                 </div>
@@ -172,6 +200,18 @@
     </div>
     {% endif %}
     <script>
+        function getForegroundColour(backgroundColour) {
+            // Check colour contrast of background colour to decide foreground colour
+            var c = backgroundColour.substring(1);      // strip #
+            var rgb = parseInt(c, 16);   // convert rrggbb to decimal
+            var r = (rgb >> 16) & 0xff;  // extract red
+            var g = (rgb >>  8) & 0xff;  // extract green
+            var b = (rgb >>  0) & 0xff;  // extract blue
+            var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+            return (brightness > 125) ? '#000000' : '#FFFFFF';
+        }
+
         $(document).ready(function () {
             $('.modal').on('shown.bs.modal', function () {
                 $(this).find('.rms-icon-picker').first().select2({
@@ -213,29 +253,30 @@
             $('.modal').on('hidden.bs.modal', function () {
                 $(this).find('.rms-icon-picker').first().select2('destroy');
             });
-            {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
+            {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
             $("#saveNewCategory").click(function () {
                 var formData = $("#newCategoryForm").serializeArray();
-                ajaxcall("categories/new.php", {formData}, function (data) {
+                formData.push({"name": "projectsStatuses_foregroundColour", "value": getForegroundColour(formData[3].value) } );
+                ajaxcall("instances/projectStatus/new.php", {formData}, function (data) {
                     location.reload();
                 });
             });
             {% endif %}
-            {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
+            {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
-                console.log(formData);
-                ajaxcall("categories/edit.php", {formData}, function (data) {
+                formData.push({"name": "projectsStatuses_foregroundColour", "value": getForegroundColour(formData[3].value) } ); 
+                ajaxcall("instances/projectStatus/edit.php", {formData}, function (data) {
                     location.reload();
                 });
             });
             {% endif %}
-            {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
+            {% if "PROJECTS:PROJECT_STATUSES:DELETE"|instancePermissions %}
             $(".deleteButton").click(function () {
                 var id = $(this).data("id");
                 bootbox.confirm({
                     title:"Are you sure?",
-                    message: "Categories aren't fully deleted until all assets in the category are moved to other categories",
+                    message: "This may leave some projects with Unknown Statuses.",
                     buttons: {
                         confirm: {
                             label: 'Yes',
@@ -248,8 +289,8 @@
                     },
                     callback: function (result) {
                         if (result) {
-                            var formData = [{"name": "assetCategories_id", "value":id },{"name": "assetCategories_deleted", "value":"1" }];
-                            ajaxcall("categories/edit.php", {formData}, function (data) {
+                            var formData = [{"name": "projectsStatuses_id", "value":id },{"name": "projectsStatuses_deleted", "value":"1" }];
+                            ajaxcall("instances/projectStatus/edit.php", {formData}, function (data) {
                                 location.reload();
                             });
                         }
