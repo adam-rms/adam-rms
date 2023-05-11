@@ -9,8 +9,8 @@ foreach ($_POST['formData'] as $item) {
 }
 if (strlen($array['projectsStatuses_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
-$status = $DBLIB->insert("projectsstatuses", $array);
+$status = $DBLIB->insert("projectsStatuses", $array);
 if (!$status) finish(false);
 
-$bCMS->auditLog("INSERT", "projectsstatuses", json_encode($array), $AUTH->data['users_userid']);
+$bCMS->auditLog("INSERT", "projectsStatuses", json_encode($array), $AUTH->data['users_userid']);
 finish(true);

@@ -12,8 +12,8 @@ if (strlen($array['projectsStatuses_id']) <1) finish(false, ["code" => "PARAM-ER
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projectsStatuses_deleted", 0);
 $DBLIB->where("projectsStatuses_id", $array['projectsStatuses_id']);
-$status = $DBLIB->update("projectsstatuses", $array);
+$status = $DBLIB->update("projectsStatuses", $array);
 if (!$status) finish(false);
 
-$bCMS->auditLog("EDIT", "projectsstatuses", json_encode($array), $AUTH->data['users_userid']);
+$bCMS->auditLog("EDIT", "projectsStatuses", json_encode($array), $AUTH->data['users_userid']);
 finish(true);
