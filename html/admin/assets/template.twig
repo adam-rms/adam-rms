@@ -645,7 +645,9 @@
                             <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon
-                                        {% if project.projects_manager == USERDATA.users_userid %}
+                                        {% if project.projectsStatuses_fontAwesome %}
+                                            {{ project.projectsStatuses_fontAwesome }}
+                                        {% elseif project.projects_manager == USERDATA.users_userid %}
                                         fas fa-star
                                         {% else %}
                                         far fa-circle
@@ -673,7 +675,9 @@
                                         <li class="nav-item">
                                             <a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}" class="nav-link">
                                                 <i class="nav-icon
-                                        {% if subProject.projects_manager == USERDATA.users_userid %}
+                                        {% if subProject.projectsStatuses_fontAwesome %}
+                                            {{ subProject.projectsStatuses_fontAwesome }}
+                                        {% elseif subProject.projects_manager == USERDATA.users_userid %}
                                         fas fa-star
                                         {% else %}
                                         far fa-circle
@@ -690,7 +694,9 @@
                             <li class="nav-item">
                                 <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
                                     <i class="nav-icon
-                                        {% if project.projects_manager == USERDATA.users_userid %}
+                                        {% if project.projectsStatuses_fontAwesome %}
+                                            {{ project.projectsStatuses_fontAwesome }}
+                                        {% elseif project.projects_manager == USERDATA.users_userid %}
                                         fas fa-star
                                         {% else %}
                                         far fa-circle
