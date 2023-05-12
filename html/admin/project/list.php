@@ -8,6 +8,14 @@ $PAGEDATA['pageConfig'] = ["TITLE" => "Projects", "BREADCRUMB" => false];
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
 
+if (isset($_GET['status'])) {
+    $DBLIB->where("projectsStatuses.projectsStatuses_id", intval($_GET['status']));
+    $DBLIB->where("projectsStatuses.instances_id", $AUTH->data['instance']["instances_id"]);
+    $PAGEDATA['STATUS'] = $DBLIB->getOne("projectsStatuses", ["projectsStatuses_id", "projectsStatuses_name"]);
+    if ($PAGEDATA['STATUS']) $PAGEDATA['pageConfig']['TITLE'] = "Projects with status " . $PAGEDATA['STATUS']['projectsStatuses_name'];
+} else $PAGEDATA['STATUS'] = null;
+
+
 if (isset($_GET['client'])) {
     $DBLIB->where("clients.clients_deleted", 0);
     $DBLIB->where("clients.instances_id", $AUTH->data['instance']['instances_id']);
@@ -40,6 +48,7 @@ if (strlen($PAGEDATA['search']) > 0) {
 }
 if ($PAGEDATA['CLIENT']) $DBLIB->where("projects.clients_id", $PAGEDATA['CLIENT']['clients_id']);
 if ($PAGEDATA['LOCATION']) $DBLIB->where("projects.locations_id", $PAGEDATA['LOCATION']['locations_id']);
+if ($PAGEDATA['STATUS']) $DBLIB->where("projects.projectsStatuses_id", $PAGEDATA['STATUS']['projectsStatuses_id']);
 $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
 $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->join("projectsTypes", "projects.projectsTypes_id=projectsTypes.projectsTypes_id", "LEFT");

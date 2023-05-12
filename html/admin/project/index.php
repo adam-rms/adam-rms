@@ -103,7 +103,7 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
     }
 }
 
-//Edit Options - Locations list
+//Edit Options - Project Statuses list
 if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS")) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projectsStatuses_deleted", 0);

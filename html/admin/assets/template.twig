@@ -429,6 +429,16 @@
                                     </p>
                                 </a>
                             </li>
+                            {% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
+                                <li class="nav-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
+                                        <i class="far fa-newspaper nav-icon"></i>
+                                        <p>
+                                            CMS Pages
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
                             <li class="nav-header">USER MANAGEMENT</li>
                             {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
                                 <li class="nav-item">
@@ -489,35 +499,45 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
-                                        <i class="fas fa-theater-masks nav-icon"></i>
-                                        <p>
-                                            Project Types
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
-                                        <i class="fas fa-list nav-icon"></i>
-                                        <p>
-                                            Custom Categories
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
-                                        <i class="far fa-newspaper nav-icon"></i>
-                                        <p>
-                                            CMS Pages
-                                        </p>
-                                    </a>
-                                </li>
+                            {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-list nav-icon"></i>
+                                    <p>
+                                    Advanced Settings
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                                        <li class="nav-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
+                                                <p>
+                                                    Project Types
+                                                </p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+                                        <li class="nav-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/instances/projectStatuses.php" class="nav-link">
+                                                <p>
+                                                    Project Statuses
+                                                </p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+                                        <li class="nav-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
+                                                <p>
+                                                    Custom Categories
+                                                </p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
                             {% endif %}
                         </ul>
                     </li>
@@ -625,13 +645,13 @@
                             <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon
-                                        {% if project.projects_manager == USERDATA.users_userid %}
+                                        {% if project.projectsStatuses_fontAwesome %}
+                                            {{ project.projectsStatuses_fontAwesome }}
+                                        {% elseif project.projects_manager == USERDATA.users_userid %}
                                         fas fa-star
                                         {% else %}
                                         far fa-circle
-                                        {% endif %}
-                                        text-{{ project.projectsStatuses_class }}
-                                        " title="{{ project.projectsStatuses_name }}"></i>
+                                        {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}" title="{{ project.projectsStatuses_name }}"></i>
                                     <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                     <i class="fas fa-angle-left right"></i>
                                 </a>
@@ -643,9 +663,7 @@
                                                 fas fa-sun
                                                 {% else %}
                                                 far fa-sun
-                                                {% endif %}
-                                        text-{{ project.projectsStatuses_class }}
-                                        " title="{{ project.projectsStatuses_name }}"></i>
+                                                {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}"  title="{{ project.projectsStatuses_name }}"></i>
                                             <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
                                         </a>
                                     </li>
@@ -653,13 +671,13 @@
                                         <li class="nav-item">
                                             <a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}" class="nav-link">
                                                 <i class="nav-icon
-                                        {% if subProject.projects_manager == USERDATA.users_userid %}
+                                        {% if subProject.projectsStatuses_fontAwesome %}
+                                            {{ subProject.projectsStatuses_fontAwesome }}
+                                        {% elseif subProject.projects_manager == USERDATA.users_userid %}
                                         fas fa-star
                                         {% else %}
                                         far fa-circle
-                                        {% endif %}
-                                        text-{{ subProject.projectsStatuses_class }}
-                                        " title="{{ subProject.projectsStatuses_name }}"></i>
+                                        {% endif %}" style="color: {{ subProject.projectsStatuses_backgroundColour }}"  title="{{ subProject.projectsStatuses_name }}"></i>
                                                 <p title="{{ subProject.projects_name }}">&#8627; {{ subProject.projects_name|u.truncate(19, '...') }}</p>
                                             </a>
                                         </li>
@@ -670,13 +688,13 @@
                             <li class="nav-item">
                                 <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
                                     <i class="nav-icon
-                                        {% if project.projects_manager == USERDATA.users_userid %}
+                                        {% if project.projectsStatuses_fontAwesome %}
+                                            {{ project.projectsStatuses_fontAwesome }}
+                                        {% elseif project.projects_manager == USERDATA.users_userid %}
                                         fas fa-star
                                         {% else %}
                                         far fa-circle
-                                        {% endif %}
-                                        text-{{ project.projectsStatuses_class }}
-                                        " title="{{ project.projectsStatuses_name }}"></i>
+                                        {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}" title="{{ project.projectsStatuses_name }}"></i>
                                     <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
                                 </a>
                             </li>

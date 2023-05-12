@@ -2,7 +2,7 @@
 {% block content %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ CLIENT['clients_name'] and LOCATION['locations_name'] ? ' & ' : '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
+            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ CLIENT['clients_name'] and LOCATION['locations_name'] ? ' & ' : '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }} {{ STATUS ? ' with status ' ~ STATUS.projectsStatuses_name : ''}}</h3>
             {% if CLIENT['clients_archived'] %}
             <span class="badge badge-warning ml-2">Client Archived</span>
             {% endif %}
