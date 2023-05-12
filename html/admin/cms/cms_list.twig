@@ -16,22 +16,16 @@
                         {{ (includeArchived ? "Archived")}} CMS Pages
                     </h3>
                     <div class="card-tools pull-right">
-                        <form class="input-group input-group-sm" method="GET">
-                            <a href="{{ CONFIG.USERGUIDEURL }}cms/cms-pages" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
-                            {% if "CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS"|instancePermissions %}
-                                <a href="customDashboards.php" type="button" class="btn btn-secondary btn-sm">Custom Dashboards</a>
-                            {% endif %}
-                            {% if includeArchived %}
-                                <a href="?" type="button" class="btn btn-default btn-sm">View Published Pages</a>
-                            {% else %}
-                                <a href="?archive=1" type="button" class="btn btn-default  btn-sm">View Archived Pages</a>
-                            {% endif %}
-                            <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-search"></i></button>
-                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModalNEW"><i class="fa fa-plus"></i></button>
-                            </div>
-                        </form>
+                        <a href="{{ CONFIG.USERGUIDEURL }}cms/cms-pages" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+                        {% if "CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS"|instancePermissions %}
+                            <a href="customDashboards.php" type="button" class="btn btn-secondary btn-sm">Custom Dashboards</a>
+                        {% endif %}
+                        {% if includeArchived %}
+                            <a href="?" type="button" class="btn btn-default btn-sm">View Published Pages</a>
+                        {% else %}
+                            <a href="?archive=1" type="button" class="btn btn-default  btn-sm">View Archived Pages</a>
+                        {% endif %}
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModalNEW"><i class="fa fa-plus"></i></button>
                     </div>
                 </div>
                 <div class="card-body table-responsive p-0">
