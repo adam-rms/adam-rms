@@ -16,6 +16,7 @@ if (strlen($array['projectsStatuses_id']) <1) finish(false, ["code" => "PARAM-ER
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projectsStatuses_deleted", 0);
 $DBLIB->where("projectsStatuses_id", $array['projectsStatuses_id']);
+if ($array["projectsStatuses_assetsReleased"] == 0) $DBLIB->where("projectsStatuses_assetsReleased", 0); // Once assets are released they cannot be unreleased
 $status = $DBLIB->update("projectsStatuses", $array);
 if (!$status) finish(false);
 

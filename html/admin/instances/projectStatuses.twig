@@ -17,15 +17,9 @@
                     Project Statuses
                 </h3>
                 <div class="card-tools pull-right">
-                    <form class="input-group input-group-sm" method="GET">
-                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
-                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
-                            {% endif %}
-                        </div>
-                    </form>
+                    {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
+                        <button type="button" class="btn btn-tool" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
+                    {% endif %}
                 </div>
             </div>
             <div class="card-body table-responsive p-0">
@@ -34,17 +28,17 @@
                         <tr>
                             <th style="width:60px;"></th>
                             <th style="width:40px;">Icon</th>
-                            <th>Name</th>
-                            <th style="width:150px;">Colour</th>
-                            <th style="width:150px;">Assets Released</th>
+                            <th style="width:40px;">Projects</th>
+                            <th>Name &amp; Style</th>
+                            <th style="width:40px;">Assets Released</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody id="pageListSortable">
                     {% for status in projectStatuses %}
-                        <tr value="{{ status.projectsStatuses_id }}">
+                        <tr value="{{ status.projectsStatuses_id }}" class="warning">
                             <td>
-                                {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions %}
+                                {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions and status.projectsStatuses_deleted != true %}
                                     <span class="handle">
                                         <i class="fas fa-ellipsis-v"></i>
                                         <i class="fas fa-ellipsis-v"></i>
@@ -54,10 +48,16 @@
                             <td>
                                 <i class="{{ status.projectsStatuses_fontAwesome }}"></i>
                             </td>
-                            <td>
+                            <td><a href="{{CONFIG.ROOTURL}}/project/list.php?status={{status.projectsStatuses_id}}">{{ status.project_count > 0 ? status.project_count : '' }}</a></td>
+                            <td style="background-color:{{ status.projectsStatuses_backgroundColour }}; color: {{ status.projectsStatuses_foregroundColour }}">
                                 {{status.projectsStatuses_name}}
+                                {% if status.projectsStatuses_description != '' %}
+                                    <br/><small>{{status.projectsStatuses_description}}</small>
+                                {% endif %}
+                                {% if status.projectsStatuses_deleted %}
+                                    <br/><span class="badge badge-info">Status deleted, but used by {{ status.project_count ~ " project" ~ (status.project_count != 1 ? 's': '') }}</span>
+                                {% endif %}
                             </td>
-                            <td class="text-uppercase" style="background-color:{{ status.projectsStatuses_backgroundColour }}; color: {{ status.projectsStatuses_foregroundColour }}">{{ status.projectsStatuses_class }}</td>
                             <td class="text-center">
                                 {% if status.projectsStatuses_assetsReleased %}
                                     <i class="fas fa-check"></i>
@@ -65,94 +65,91 @@
                             </td>
                             <td style="width:70px;">
                                 <div class="btn-group">
-                                    {% if status.instances_id is not null %}
-                                        {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions %}
-                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ status.projectsStatuses_id }}"><i class="fas fa-edit"></i></button>
-                                        {% endif %}
-                                        {% if "PROJECTS:PROJECT_STATUSES:DELETE"|instancePermissions %}
-                                            <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ status.projectsStatuses_id }}"><i class="fas fa-trash"></i></button>
-                                        {% endif %}
+                                    {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions and status.projectsStatuses_deleted != true %}
+                                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ status.projectsStatuses_id }}"><i class="fas fa-edit"></i></button>
+                                    {% endif %}
+                                    {% if "PROJECTS:PROJECT_STATUSES:DELETE"|instancePermissions and status.projectsStatuses_deleted != true %}
+                                        <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ status.projectsStatuses_id }}"><i class="fas fa-trash"></i></button>
                                     {% endif %}
                                  </div>
+                                 {% if status.projectsStatuses_deleted %}
+                                    <span class="badge badge-danger">Deleted</span>
+                                 {% endif %}
                               </td>
                         </tr>
-                        {% if status.instances_id is not null %}
-                            <div class="modal fade" id="editModal{{ status.projectsStatuses_id }}">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Edit {{status.projectsStatuses_name}}</h4>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form class="edit-form" data-id="{{ status.projectsStatuses_id }}">
-                                                <input type="hidden" name="projectsStatuses_id" value="{{ status.projectsStatuses_id }}"/>
-                                                <div class="input-group" style="margin-bottom: 5px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Name</span>
-                                                    </div>
-                                                    <input type="text" class="form-control" name="projectsStatuses_name" value="{{ status.projectsStatuses_name }}">
+                        <div class="modal fade" id="editModal{{ status.projectsStatuses_id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Edit {{status.projectsStatuses_name}}</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="edit-form" data-id="{{ status.projectsStatuses_id }}">
+                                            <input type="hidden" name="projectsStatuses_id" value="{{ status.projectsStatuses_id }}"/>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Name</span>
                                                 </div>
-                                                <div class="input-group" style="margin-bottom: 5px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Description</span>
-                                                    </div>
-                                                    <input type="text" class="form-control" name="projectsStatuses_description" value="{{ status.projectsStatuses_description }}">
+                                                <input type="text" class="form-control" name="projectsStatuses_name" value="{{ status.projectsStatuses_name }}">
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Description</span>
                                                 </div>
-                                                <div class="input-group" style="margin-bottom: 5px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Class</span>
-                                                    </div>
-                                                    <select class="form-control" name="projectsStatuses_class" value="{{ status.projectsStatuses_class }}">
-                                                        <option value="info" {{ (status.projectsStatuses_class == "info" ? "selected" : "") }}>Info</option>
-                                                        <option value="primary" {{ (status.projectsStatuses_class == "primary" ? "selected" : "") }}>Primary</option>
-                                                        <option value="secondary" {{ (status.projectsStatuses_class == "secondary" ? "selected" : "") }}>Secondary</option>
-                                                        <option value="success" {{ (status.projectsStatuses_class == "success" ? "selected" : "") }}>Success</option>
-                                                        <option value="danger" {{ (status.projectsStatuses_class == "danger" ? "selected" : "") }}>Danger</option>
-                                                        <option value="warning" {{ (status.projectsStatuses_class == "warning" ? "selected" : "") }}>Warning</option>
-                                                    </select>
+                                                <input type="text" class="form-control" name="projectsStatuses_description" value="{{ status.projectsStatuses_description }}">
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Icon</span>
                                                 </div>
-                                                <div class="input-group" style="margin-bottom: 5px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Icon</span>
-                                                    </div>
-                                                    <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome">
-                                                        {% if status.projectsStatuses_fontAwesome %}
-                                                            <option value="{{ status.projectsStatuses_fontAwesome }}"></option>
-                                                        {% endif %}
-                                                    </select>
+                                                <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome">
+                                                    {% if status.projectsStatuses_fontAwesome %}
+                                                        <option value="{{ status.projectsStatuses_fontAwesome }}"></option>
+                                                    {% endif %}
+                                                </select>
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Text Colour</span>
                                                 </div>
-                                                <div class="input-group" style="margin-bottom: 5px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Text Colour</span>
-                                                    </div>
-                                                    <input type="color" class="form-control" name="projectsStatuses_foregroundColour" value="{{ status.projectsStatuses_foregroundColour }}">
+                                                <input type="color" class="form-control" name="projectsStatuses_foregroundColour" value="{{ status.projectsStatuses_foregroundColour }}">
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Background Colour</span>
                                                 </div>
-                                                <div class="input-group" style="margin-bottom: 5px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Background Colour</span>
-                                                    </div>
-                                                    <input type="color" class="form-control" name="projectsStatuses_backgroundColour" value="{{ status.projectsStatuses_backgroundColour }}">
-                                                </div>
+                                                <input type="color" class="form-control" name="projectsStatuses_backgroundColour" value="{{ status.projectsStatuses_backgroundColour }}">
+                                            </div>
+                                            {% if status.projectsStatuses_assetsReleased != true and status.project_count < 1 %}
                                                 <div class="input-group" style="margin-bottom: 5px;">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">Release Assets?</span>
                                                     </div>
                                                     <input type="checkbox" class="form-control" name="projectsStatuses_assetsReleased"  aria-describedby="assetsReleased" {{status.projectsStatuses_assetsReleased ? "checked": ""}}>
-                                                    <small id="assetsReleased" class="form-text text-muted">This allows assets assigned to this project to be used by other projects</small>
+                                                    <small class="form-text text-muted">If a project's status is "release assets", then assets assigned to those projects can be used by other projects, the project doesn't show in calendars, and crew are released from the project. This is intended for projects that are cancelled.</small>
                                                 </div>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer justify-content-between">
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ status.projectsStatuses_id }}">Save changes</button>
-                                        </div>
+                                            {% else %}
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Release Assets?</span>
+                                                    </div>
+                                                    <input type="hidden" name="projectsStatuses_assetsReleased" value="{{status.projectsStatuses_assetsReleased ? "on": "off"}}">
+                                                    <input type="checkbox" class="form-control" aria-describedby="assetsReleased" {{status.projectsStatuses_assetsReleased ? "checked": ""}} disabled>
+                                                    <small class="form-text text-muted">Assets assigned to projects with this status can be used by other projects, the project doesn't show in calendars, and crew are released from the project. You can't modify this setting as the status has already been used by projects, or because assets have already been released.</small>
+                                                </div>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ status.projectsStatuses_id }}">Save changes</button>
                                     </div>
                                 </div>
                             </div>
-                        {% endif %}
+                        </div>
                     {% endfor %}
                 </table>
             </div>
@@ -184,20 +181,6 @@
                         </div>
                         <div class="input-group" style="margin-bottom: 5px;">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">Class</span>
-                            </div>
-                            <select class="form-control" name="projectsStatuses_class">
-                                <option value="default">None</option>
-                                <option value="primary">Primary</option>
-                                <option value="secondary">Secondary</option>
-                                <option value="success" selected>Success</option>
-                                <option value="danger">Danger</option>
-                                <option value="warning">Warning</option>
-                                <option value="info">Info</option>
-                            </select>
-                        </div>
-                        <div class="input-group" style="margin-bottom: 5px;">
-                            <div class="input-group-prepend">
                                 <span class="input-group-text">Icon</span>
                             </div>
                             <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome"></select>
@@ -219,7 +202,7 @@
                                 <span class="input-group-text">Release Assets?</span>
                             </div>
                             <input type="checkbox" class="form-control" name="projectsStatuses_assetsReleased"  aria-describedby="assetsReleased">
-                            <small id="assetsReleased" class="form-text text-muted">This allows assets assigned to this project to be used by other projects</small>
+                            <small class="form-text text-muted">If a project's status is "release assets", then assets assigned to those projects can be used by other projects, the project doesn't show in calendars, and crew are released from the project. This is intended for projects that are cancelled.</small>
                         </div>
                     </form>
                 </div>
@@ -232,18 +215,6 @@
     </div>
     {% endif %}
     <script>
-        function getForegroundColour(backgroundColour) {
-            // Check colour contrast of background colour to decide foreground colour
-            var c = backgroundColour.substring(1);      // strip #
-            var rgb = parseInt(c, 16);   // convert rrggbb to decimal
-            var r = (rgb >> 16) & 0xff;  // extract red
-            var g = (rgb >>  8) & 0xff;  // extract green
-            var b = (rgb >>  0) & 0xff;  // extract blue
-            var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-            return (brightness > 125) ? '#000000' : '#FFFFFF';
-        }
-
         $(document).ready(function () {
             $('.modal').on('shown.bs.modal', function () {
                 $(this).find('.rms-icon-picker').first().select2({
@@ -319,7 +290,7 @@
                 var id = $(this).data("id");
                 bootbox.confirm({
                     title:"Are you sure?",
-                    message: "This may leave some projects with Unknown Statuses.",
+                    message: "Users will not be able to change the status of projects to this status if it is deleted. This will not affect projects that are already set to this status",
                     buttons: {
                         confirm: {
                             label: 'Yes',
