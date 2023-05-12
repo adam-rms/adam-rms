@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 
 
-if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS") or !isset($_POST['projects_id'])) die("404");
+//if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS") or !isset($_POST['projects_id'])) die("404");
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $projectsStatuses = $DBLIB->get("projectsStatuses");
@@ -10,7 +10,6 @@ $projectsStatusesWithKeys = [];
 foreach ($projectsStatuses as $projectStatus) {
     $projectsStatusesWithKeys[$projectStatus['projectsStatuses_id']] = $projectStatus;
 }
-
 
 function changeStatus($projectID, $status) {
     global $DBLIB, $AUTH, $bCMS, $projectsStatusesWithKeys;
@@ -22,7 +21,7 @@ function changeStatus($projectID, $status) {
 
     $thisStatus = $projectsStatusesWithKeys[$project['projectsStatuses_id']];
     $newStatus = $projectsStatusesWithKeys[$status];
-    if (!$newStatus) finish(false);
+    if (!$newStatus) finish(false, ["code"=>"UNKNOWN", "message"=> "Status not found"]);
 
     if ($newStatus["projectsStatuses_assetsReleased"] == 0) {
         //We're taking the project from a state where its assets had been released to a state where its assets are now locked down
@@ -58,7 +57,7 @@ function changeStatus($projectID, $status) {
     $DBLIB->where("projects.projects_id", $project['projects_id']);
     $projectupdate =  $DBLIB->update("projects", ["projects.projectsStatuses_id" => $status]);
     if (!$projectupdate) finish(false);
-    $bCMS->auditLog("UPDATE-STATUS", "projects", "Set the status to ". $projectsStatusesWithKeys[$status]['name'], $AUTH->data['users_userid'],null, $projectID);
+    $bCMS->auditLog("UPDATE-STATUS", "projects", "Set the status to ". $newStatus['projectsStatuses_name'], $AUTH->data['users_userid'],null, $projectID);
 }
 
 //update this project
