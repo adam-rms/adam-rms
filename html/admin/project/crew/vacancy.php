@@ -38,6 +38,7 @@ if ($PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'] != null) 
   $PAGEDATA['role']['canViewApplications'] = $DBLIB->get("users", null, ["users.users_userid", "users.users_name1", "users.users_name2"]);
 } else $PAGEDATA['role']['canViewApplications'] = [];
 
+if (isset($_GET['from'])) $PAGEDATA['referringPage'] = $_GET['from'];
 
 $PAGEDATA['pageConfig'] = ["TITLE" => 'Crew Vacancy: ' . $role['projects_name'] . ' - ' . $role['projectsVacantRoles_name'], "BREADCRUMB" => true];
 

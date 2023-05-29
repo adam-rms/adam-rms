@@ -64,6 +64,15 @@ if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:ADDRESS")) {
     }
 }
 
+//Crew Recruitment
+if ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES")) {
+    $DBLIB->where("projectsVacantRoles.projectsVacantRoles_deleted",0);
+    $DBLIB->where("projectsVacantRoles.projectsVacantRoles_open",1);
+    $DBLIB->where("(projectsVacantRoles.projectsVacantRoles_deadline IS NULL OR projectsVacantRoles.projectsVacantRoles_deadline >= '" . date("Y-m-d H:i:s") . "')");
+    $DBLIB->where("(projectsVacantRoles.projectsVacantRoles_slots > projectsVacantRoles.projectsVacantRoles_slotsFilled)");
+    $DBLIB->where("projectsVacantRoles.projects_id", $PAGEDATA['project']['projects_id']);
+    $PAGEDATA['crewRecruitment'] = $DBLIB->get("projectsVacantRoles");
+}
 
 /**
  * Variables for the board view (asset dispatch)
