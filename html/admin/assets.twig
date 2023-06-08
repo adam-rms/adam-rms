@@ -272,7 +272,10 @@
                                                                             <th>&pound;/day</th>
                                                                             <th>&pound;/week</th>
                                                                             <th style="width:1%"><i class="fas fa-flag"></i></th>
-                                                                            <th style="width:30px;"></th>
+                                                                            <th style="width:30px;">
+                                                                                <button class="btn btn-success addToBasketAssetTypeButton {% if asset.countAvailable < 1 %} d-none {% endif %}" title "Add all of this asset type to the project" data-assetTypeId="{{ asset.assetTypes_id }}"><i class="fas fa-dolly"></i></button>
+                                                                                <button class="btn btn-warning removeFromBasketAssetTypeButton {% if asset.countAvailable > 0 %} d-none {% endif %}" title="Remove all of this asset type" data-assetTypeId="{{ asset.assetTypes_id }}"><i class="fas fa-dolly"></i></button>
+                                                                            </th>
                                                                         </tr>
                                                                         {% for thisasset in asset.tags %}
                                                                             <tr>
@@ -299,7 +302,7 @@
                                                                                             {%  if thisasset.assignment and searchResults.PROJECT.ID != thisasset.assignment[0].projects_id %}
                                                                                                 <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                                                             {% endif %}
-                                                                                            <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% else %}{% set someassignable = true %}{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                            <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                                                         {% else %}
                                                                                             <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                                                         {% endif %}
@@ -312,7 +315,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
+                                                    <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                                 {% endif %}
                                             {% elseif searchResults.PROJECT.DATESTART and searchResults.PROJECT.DATEEND %}
                                                 {% if asset.count == 1 %}
@@ -625,6 +628,12 @@ $(document).ready(function () {
             });
         });
     });
+    $(".addToBasketAssetTypeButton").click(function () {
+        var assetTypeId = $(this).data("assettypeid");
+        ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
+            window.location.reload();
+        });
+    });
     $(".removeFromBasketAssetButton").click(function () {
         var assetId = $(this).data("assetid");
         bootbox.confirm({
@@ -648,6 +657,29 @@ $(document).ready(function () {
                             type: 'success',
                             title: 'Removed from {{ searchResults.PROJECT.NAME }}'
                         });
+                    });
+                }
+            }
+        });
+    });
+    $(".removeFromBasketAssetTypeButton").click(function () {
+        var assetTypesId = $(this).data("assettypeid");
+        bootbox.confirm({
+            message: "Are you sure you wish to remove these assets from the project?",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    ajaxcall("projects/assets/unassign.php", {"assetTypes_id":assetTypesId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
+                        window.location.reload();
                     });
                 }
             }

@@ -2,7 +2,8 @@
 require_once __DIR__ . '/../../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
-if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN") or (!isset($_POST['assetsAssignments']) and !isset($_POST['assets_id']))) die("404");
+
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN") or (!isset($_POST['assetsAssignments']) and !isset($_POST['assets_id']) and !isset($_POST['assetTypes_id']))) die("404");
 
 if (isset($_POST['assets_id']) and isset($_POST['projects_id']) and !isset($_POST['assetsAssignments'])) {
     //Convert for where only the asset id and project is known
@@ -12,6 +13,17 @@ if (isset($_POST['assets_id']) and isset($_POST['projects_id']) and !isset($_POS
     $assignment = $DBLIB->getone("assetsAssignments", ["assetsAssignments_id"]);
     if ($assignment) $_POST['assetsAssignments'] = [$assignment['assetsAssignments_id']];
     else finish(false,["message"=>"Could not find assignment"]);
+}
+
+if (isset($_POST['assetTypes_id']) and isset($_POST['projects_id']) and !isset($_POST['assetsAssignments'])) {
+    //convert for where we only know assetType ID and project
+    $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id");
+    $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
+    $DBLIB->where("assetsAssignments.projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
+    $assignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments_id"]);
+    if ($assignments) $_POST['assetsAssignments'] = array_column($assignments, "assetsAssignments_id");
+    else finish(false, ["message" => "Could not find Assignment"]);
 }
 
 $assignmentsRemove = new assetAssignmentSelector($_POST['assetsAssignments']);
