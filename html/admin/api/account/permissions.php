@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
-if (!$AUTH->permissionCheck(13)) die("Sorry - you can't access this page");
+if (!$AUTH->serverPermissionCheck("PERMISSIONS:EDIT:USER_POSITION")) die("Sorry - you can't access this page");
 
 if (!isset($_POST['action']) or !isset($_POST['users_userid']) or !isset($_POST["userPositions_id"])) finish(false, ["code" => null, "message"=> "Attribute error"]);
 

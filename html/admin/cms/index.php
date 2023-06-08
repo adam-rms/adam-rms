@@ -12,7 +12,7 @@ if (!$PAGEDATA['PAGE']) die($TWIG->render('401.twig', $PAGEDATA));
 
 $DBLIB->where("cmsPages_id",$PAGEDATA['PAGE']['cmsPages_id']);
 $DBLIB->orderBy("cmsPagesDrafts_timestamp","DESC");
-if (isset($_GET['r']) and $AUTH->instancePermissionCheck(126)) {
+if (isset($_GET['r']) and $AUTH->instancePermissionCheck("CMS:CMS_PAGES:EDIT")) {
     $DBLIB->where("cmsPagesDrafts_id",$_GET['r']);
     $PAGEDATA['specificRevision'] = true;
 }
@@ -26,7 +26,7 @@ $DBLIB->insert("cmsPagesViews",[
     "cmsPages_type" => 1
 ]);
 
-if ($AUTH->instancePermissionCheck(80)) $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),true);
+if ($AUTH->instancePermissionCheck("BUSINESS:BUSINESS_STATS:VIEW")) $PAGEDATA['WIDGETS'] = new statsWidgets(explode(",",$AUTH->data['users_widgets']),true);
 
 echo $TWIG->render('cms/cms_index.twig', $PAGEDATA);
 ?>

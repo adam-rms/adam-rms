@@ -11,7 +11,7 @@
 
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(31)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN")) die("404");
 if (!(isset($_POST['assetsAssignments_id'])) || !(isset($_POST['assets_id']))) finish(false);
 
 $DBLIB->where("assetsAssignments.assetsAssignments_id", $_POST['assetsAssignments_id']);
@@ -39,8 +39,9 @@ if (!$assetToSwap) finish(false);
 $DBLIB->where("assetsAssignments.assets_id", $assetToSwap['assets_id']);
 $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
 $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+$DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
 $DBLIB->where("projects.projects_deleted", 0);
-$DBLIB->where("(projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
+$DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->where("((projects_dates_deliver_start >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_start"] . "'))");
 $assignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id"]);
 

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(116)) die("404");
+if (!$AUTH->instancePermissionCheck("TRAINING:EDIT")) die("404");
 
 $array = [];
 $array['modules_visibleToGroups'] = [];

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(56) or !isset($_POST['s3files_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("ASSETS:FILE_ATTACHMENTS:EDIT") or !isset($_POST['s3files_id'])) die("404");
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("s3files_id", $_POST['s3files_id']);

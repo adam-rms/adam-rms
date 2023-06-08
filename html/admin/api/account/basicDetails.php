@@ -8,7 +8,7 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 
-if (!$AUTH->permissionCheck(5)) $array['users_userid'] = $AUTH->data['users_userid'];
+if (!$AUTH->serverPermissionCheck("USERS:EDIT")) $array['users_userid'] = $AUTH->data['users_userid'];
 
 $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);

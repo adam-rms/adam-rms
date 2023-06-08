@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(103)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("LOCATIONS:LOCATION_BARCODES:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("locations.locations_deleted", 0);

@@ -1,21 +1,10 @@
 <?php
-require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/../common/headSecure.php';
+require_once __DIR__ . '/../../common/libs/Auth/serverActions.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Permissions", "BREADCRUMB" => false];
 
-if (!$AUTH->permissionCheck(11)) die($TWIG->render('404.twig', $PAGEDATA));
-
-
-$DBLIB->orderBy("actionsCategories_order", "ASC");
-$PAGEDATA['actionsCategories'] = $DBLIB->get("actionsCategories");
-
-$PAGEDATA['actions'] = [];
-foreach ($PAGEDATA['actionsCategories'] as $category) {
-    $DBLIB->orderBy("actions_id", "ASC");
-    $DBLIB->orderBy("actions_name", "ASC");
-    $DBLIB->where("actionsCategories_id", $category["actionsCategories_id"]);
-    $PAGEDATA['actions'][] = ["category" => $category, "actions" => $DBLIB->get("actions")];
-}
+if (!$AUTH->serverPermissionCheck("PERMISSIONS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $positions = $DBLIB->get("positionsGroups");
 $PAGEDATA['positions'] = [];
@@ -36,5 +25,7 @@ foreach ($actualPositions as $position) {
     $PAGEDATA['actualPositions'][] = $position;
 }
 
-echo $TWIG->render('permissions.twig', $PAGEDATA);
+$PAGEDATA['actions'] = $serverActions;
+
+echo $TWIG->render('server/permissions.twig', $PAGEDATA);
 ?>

@@ -13,7 +13,7 @@
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if 110|instancePermissions %}
+                            {% if "BUSINESS:USER_SIGNUP_CODES:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" id="addType"><i class="fa fa-plus"></i></button>
                             {% endif %}
                         </div>
@@ -60,7 +60,7 @@
                                   {{ code.signupCodes_role }}
                               </td>
                               <td>
-                                  <select class="form-control roleGroupSelect" data-codeid="{{ code.signupCodes_id }}" {% if 111|instancePermissions %}{% else %}disabled{% endif %}>
+                                  <select class="form-control roleGroupSelect" data-codeid="{{ code.signupCodes_id }}" {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}{% else %}disabled{% endif %}>
                                       {% if code.instancePositions_id == "" %}
                                           <option value="" selected></option>
                                       {% endif %}
@@ -70,14 +70,14 @@
                                   </select>
                               </td>
                               <td>
-                                  <input type="checkbox" data-codeid="{{ code.signupCodes_id }}" {{ (code.signupCodes_valid == 1 ? 'checked' : '') }} {% if 111|instancePermissions %}{% else %}disabled{% endif %}>
+                                  <input type="checkbox" data-codeid="{{ code.signupCodes_id }}" {{ (code.signupCodes_valid == 1 ? 'checked' : '') }} {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}{% else %}disabled{% endif %}>
                               </td>
                               <td>
                                  <div class="btn-group">
-                                     {% if 111|instancePermissions %}
+                                     {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}
                                         <button type="button" class="btn btn-default btn-sm editButton" data-codeid="{{ code.signupCodes_id }}" data-role="{{ code.signupCodes_role }}" data-notes="{{ code.signupCodes_notes }}" data-value="{{code.signupCodes_name}}"><i class="fas fa-edit"></i></button>
                                      {% endif %}
-                                     {% if 112|instancePermissions and code.count < 1 %}
+                                     {% if "BUSINESS:USER_SIGNUP_CODES:DELETE"|instancePermissions and code.count < 1 %}
                                          <button type="button" class="btn btn-danger btn-sm deleteButton" data-codeid="{{ code.signupCodes_id }}"><i class="fas fa-trash"></i></button>
                                      {% endif %}
                                  </div>
@@ -98,7 +98,7 @@
     <script>
         $(document).ready(function () {
             $("#loading").hide();
-            {% if 110|instancePermissions %}
+            {% if "BUSINESS:USER_SIGNUP_CODES:CREATE"|instancePermissions %}
             $("#addType").click(function () {
                 bootbox.prompt({
                     title: "Add Signup Code - enter the code itself",
@@ -127,7 +127,7 @@
                 });
             });
             {% endif %}
-            {% if 111|instancePermissions %}
+            {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}
             $(':checkbox').change(function() {
                 $("#loading").show();
                 var id = $(this).data("codeid");
@@ -196,7 +196,7 @@
                 });
             });
             {% endif %}
-            {% if 112|instancePermissions %}
+            {% if "BUSINESS:USER_SIGNUP_CODES:DELETE"|instancePermissions %}
             $(".deleteButton").click(function () {
                 var id = $(this).data("codeid");
                 bootbox.confirm({

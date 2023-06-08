@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(21) or !isset($_POST['projects_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:CREATE") or !isset($_POST['projects_id'])) die("404");
 
 if($_POST['projects_parent_project_id'] == -1) {
     $parent_id = null;

@@ -11,7 +11,7 @@ class SearchProjects extends BaseSearch
     public function load(): array
     {
         // The user cannot access projects
-        if (!$this->AUTH->instancePermissionCheck(20)) {
+        if (!$this->AUTH->instancePermissionCheck("PROJECTS:VIEW")) {
             return [];
         }
 
@@ -20,7 +20,7 @@ class SearchProjects extends BaseSearch
         $this->DBLIB->where("projects.projects_deleted", 0);
         $this->DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
         $this->DBLIB->join("users", "projects.projects_manager=users.users_userid",);
-        $projects = $this->DBLIB->get("projects", null, ["projects_id", "projects_archived", "projects_name", "projects_description", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end", "projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager as projects_manager_id", "concat(users_name1, ' ', users_name2) AS projects_manager"]);
+        $projects = $this->DBLIB->get("projects", null, ["projects_id", "projects_archived", "projects_name", "projects_description", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end", "projects_dates_use_start", "projects_dates_use_end", "projects_manager as projects_manager_id", "concat(users_name1, ' ', users_name2) AS projects_manager"]);
 
         // Generate the array and return the function
         return array_map(function ($project) {
@@ -55,7 +55,6 @@ class SearchProjects extends BaseSearch
                     $project['projects_name'],
                     $project['projects_description'],
                     $project['projects_manager'],
-                    $project['projects_status'],
                     $project['clients_name'],
                 ], $readable_dates),
                 'title' => $project['projects_name'],

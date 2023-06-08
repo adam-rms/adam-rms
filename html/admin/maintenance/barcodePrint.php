@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
-if (!$AUTH->instancePermissionCheck(84) or !isset($_GET['ids'])) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_BARCODES:VIEW") or !isset($_GET['ids'])) die($TWIG->render('404.twig', $PAGEDATA));
 
 $ids = explode(",",$_GET['ids']);
 $groups = explode(",",$_GET['groups']);

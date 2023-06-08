@@ -114,7 +114,7 @@
                     layout: 'noBorders',
                     margin: [ 0, 10, 0, 10 ]
                 },
-                {% if GET['finance'] and 33|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                {% if GET['finance'] and "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                 {
                     table: {
                         widths: [ "35%", "15%", "35%", "15%"],

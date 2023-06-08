@@ -10,7 +10,7 @@ if (!$CONFIG['DEV']) {
         $scope->setUser(['username' => $GLOBALS['AUTH']->data['users_username'],"id"=> $GLOBALS['AUTH']->data['users_userid']]);
         if ($GLOBALS['AUTH']->data['instance']) $scope->setExtra('instances_id', $AUTH->data['instance']['instances_id']);
     });
-} elseif (!$AUTH->permissionCheck(17) and !$GLOBALS['AUTH']->data['viewSiteAs']) finish(false,["message"=>"Can't use dev site"]);
+} elseif (!$AUTH->serverPermissionCheck("USE-DEV") and !$GLOBALS['AUTH']->data['viewSiteAs']) finish(false,["message"=>"Can't use dev site"]);
 
 $PAGEDATA['AUTH'] = $GLOBALS['AUTH'];
 $PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;

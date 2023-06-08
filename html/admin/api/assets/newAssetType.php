@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(18)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_TYPES:CREATE")) die("Sorry - you can't access this page");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {

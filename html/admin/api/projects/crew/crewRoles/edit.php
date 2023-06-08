@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(123)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT")) die("404");
 
 $array = [];
 $array['projectsVacantRoles_visibleToGroups'] = [];

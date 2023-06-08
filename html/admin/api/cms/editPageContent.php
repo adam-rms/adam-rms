@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(126)) die("404");
+if (!$AUTH->instancePermissionCheck("CMS:CMS_PAGES:EDIT")) die("404");
 
 if (!isset($_POST['cmsPages_id'])) finish(false);
 $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);

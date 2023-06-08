@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->permissionCheck(23) or !isset($_POST['instances_id'])) die("404");
+if (!$AUTH->serverPermissionCheck("INSTANCES:DELETE") or !isset($_POST['instances_id'])) die("404");
 
 $DBLIB->where('instances_id', $_POST['instances_id']);
 $DBLIB->where("instances_deleted", 1);

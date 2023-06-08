@@ -50,10 +50,10 @@ $TWIG->addFilter(new \Twig\TwigFilter('cleanString', function ($var) {
     global $bCMS;
     return $bCMS->cleanString($var);
 }));
-$TWIG->addFilter(new \Twig\TwigFilter('permissions', function ($permissionid) {
+$TWIG->addFilter(new \Twig\TwigFilter('serverPermissions', function ($permissionid) {
     global $AUTH;
     if (!$AUTH->login) return false;
-    else return $AUTH->permissionCheck($permissionid);
+    else return $AUTH->serverPermissionCheck($permissionid);
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('instancePermissions', function ($permissionid) {
     global $AUTH;

@@ -86,11 +86,11 @@
                                 </p>
                                 <p class="text-sm">Creator
                                     <b class="d-block">
-                                        {% if 52|instancePermissions %}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                         <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}">
                                             {% endif %}
                                             {{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}
-                                            {% if 52|instancePermissions %}
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                         </a>
                                         {% endif %}
                                     </b>
@@ -98,7 +98,7 @@
                                 <p class="text-sm">Created
                                     <b class="d-block">{{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}</b>
                                 </p>
-                                {% if 68|instancePermissions %}
+                                {% if "MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB"|instancePermissions %}
                                     <p class="text-sm">Assigned to</p>
                                     <select class="form-control select2bs4" multiple id="editJobAssigned">
                                         <option value="0" {{ job.userAssignedUserName1 == null ? 'selected' }}>Unassigned</option>
@@ -109,11 +109,11 @@
                                 {% else %}
                                     <p class="text-sm">Assigned to
                                         <b class="d-block">
-                                            {% if 52|instancePermissions %}
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                             <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}">
                                                 {% endif %}
                                                 {{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}
-                                                {% if 52|instancePermissions %}
+                                                {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                             </a>
                                             {% endif %}
                                         </b>
@@ -121,7 +121,7 @@
                                 {% endif %}
                                 <p class="text-sm">Flag
                                     <b class="d-block">
-                                        <select class="form-control" id="maintenanceJobsflagAssets" {% if 78|instancePermissions != true or job.maintenanceJobsStatuses_id == 2 %} disabled {% endif %}>
+                                        <select class="form-control" id="maintenanceJobsflagAssets" {% if "MAINTENANCE_JOBS:EDIT:ASSET_FLAGS"|instancePermissions != true or job.maintenanceJobsStatuses_id == 2 %} disabled {% endif %}>
                                             <option value="0" {% if job.maintenanceJobs_flagAssets == 0 %} selected {% endif %}>No Flag</option>
                                             <option value="1" {% if job.maintenanceJobs_flagAssets == 1 %} selected {% endif %}>Flag on Assets</option>
                                         </select>
@@ -129,7 +129,7 @@
                                 </p>
                                 <p class="text-sm">Block
                                     <b class="d-block">
-                                        <select class="form-control" id="maintenanceJobsblockAssets" {% if 79|instancePermissions != true or job.maintenanceJobsStatuses_id == 2 %} disabled {% endif %}>
+                                        <select class="form-control" id="maintenanceJobsblockAssets" {% if "MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS"|instancePermissions != true or job.maintenanceJobsStatuses_id == 2 %} disabled {% endif %}>
                                             <option value="0" {% if job.maintenanceJobs_blockAssets == 0 %} selected {% endif %}>No Block</option>
                                             <option value="1" {% if job.maintenanceJobs_blockAssets == 1 %} selected {% endif %}>Block assets from being assigned to Projects</option>
                                         </select>
@@ -137,7 +137,7 @@
                                 </p>
                                 <p class="text-sm">Priority
                                     <b class="d-block">
-                                        <select class="form-control" id="jobPriority" {% if 77|instancePermissions != true %} disabled {% endif %}>
+                                        <select class="form-control" id="jobPriority" {% if "MAINTENANCE_JOBS:EDIT:JOB_PRIORITY"|instancePermissions != true %} disabled {% endif %}>
                                             {% for type in MAINTENANCEJOBPRIORITIES %}
                                                 <option value="{{ type.id }}" {% if job.maintenanceJobs_priority == type.id %} selected {% endif %}>{{ type.text }}</option>
                                             {% endfor %}
@@ -146,7 +146,7 @@
                                 </p>
 
                                 <p class="text-sm">Due Date
-                                    {% if 67|instancePermissions %}
+                                    {% if "MAINTENANCE_JOBS:EDIT:JOB_DUE_DATE"|instancePermissions %}
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="far fa-clock"></i></span>
@@ -159,7 +159,7 @@
                                 </p>
                                 <p class="text-sm">Users Watching
                                     <b class="d-block" style="padding-top: 10px;">
-                                        <select class="form-control" multiple="multiple" {% if 69|instancePermissions != true %}disabled{% endif %} placeholder="Select users to be tagged for updates in the job" id="usersTagged">
+                                        <select class="form-control" multiple="multiple" {% if "MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB"|instancePermissions != true %}disabled{% endif %} placeholder="Select users to be tagged for updates in the job" id="usersTagged">
                                             {% for user in job.tagged %}
                                                 <option value="{{user.users_userid}}" selected="selected">{{user.users_name1 ~ " " ~ user.users_name2}}</option>
                                             {% endfor %}
@@ -172,16 +172,16 @@
                 </div>
                 <div class="card-footer">
                     <div class="btn-group float-right">
-                        {% if 73|instancePermissions %}
+                        {% if "MAINTENANCE_JOBS:EDIT:STATUS"|instancePermissions %}
                             <button type="button" class="btn btn-info" id="editJobStatus">Change Status</button>
                         {% endif %}
-                        {% if 70|instancePermissions or 72|instancePermissions %}
+                        {% if "MAINTENANCE_JOBS:EDIT:NAME"|instancePermissions or "MAINTENANCE_JOBS:DELETE"|instancePermissions %}
                         <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
                             <span class="sr-only">Toggle Dropdown</span>
                             <div class="dropdown-menu" role="menu">
-                                {% if 70|instancePermissions %}<a class="dropdown-item" id="editJobName" href="#">Edit Name</a>{% endif %}
+                                {% if "MAINTENANCE_JOBS:EDIT:NAME"|instancePermissions %}<a class="dropdown-item" id="editJobName" href="#">Edit Name</a>{% endif %}
                                 <div class="dropdown-divider"></div>
-                                {% if 72|instancePermissions %}<a class="dropdown-item" id="deleteJob" href="#">Delete</a>{% endif %}
+                                {% if "MAINTENANCE_JOBS:DELETE"|instancePermissions %}<a class="dropdown-item" id="deleteJob" href="#">Delete</a>{% endif %}
                             </div>
                         </button>
                         {% endif %}
@@ -212,7 +212,7 @@
                                 </span>
                                  <div class="tools">
                                      <i class="fas fa-info-circle" style="color:#495057;" data-toggle="popover" title="{{ asset.manufacturers_name|replace({'"':"'"}) }}" data-content="{{ asset.assetTypes_name|replace({'"':"'"}) }}"></i>
-                                     {% if 75|instancePermissions %}<i class="fas fa-trash deleteAssetJobAssignment" data-assetid="{{ asset.assets_id }}" title="Remove Asset"></i>{% endif %}
+                                     {% if "MAINTENANCE_JOBS:EDIT"|instancePermissions %}<i class="fas fa-trash deleteAssetJobAssignment" data-assetid="{{ asset.assets_id }}" title="Remove Asset"></i>{% endif %}
                                 </div>
                             </li>
                         {% endfor %}
@@ -220,7 +220,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="btn-group float-right">
-                       {% if 74|instancePermissions %}
+                       {% if "MAINTENANCE_JOBS:EDIT:ADD_ASSETS"|instancePermissions %}
                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addAssetModal">Add Assets</button>
                                <div class="modal fade" id="addAssetModal">
                                    <div class="modal-dialog">
@@ -296,7 +296,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                {% if 71|instancePermissions %}
+                {% if "MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB"|instancePermissions %}
                 <div class="card-footer">
                     <form id="sendMessage" style="margin-bottom: 5px;">
                         <div class="input-group">
@@ -306,7 +306,7 @@
                         </span>
                         </div>
                     </form>
-                    {% if 76|instancePermissions %}
+                    {% if "MAINTENANCE_JOBS:MAINTENANCE_JOBS_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                         {% embed 'common/plugins/uppy.twig' with {'type': 'JOB-FILE', 'paste': true, 'typeId': 8, 'subTypeId': job.maintenanceJobs_id, 'imagesOnly': false, 'disableMultiple': true } %}
                             {% block success %}
                                 ajaxcall("maintenance/job/sendMessage.php", {
@@ -355,9 +355,9 @@
                                         <div class="timeline-item">
                                             <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
                                             <h3 class="timeline-header">
-                                                {% if 52|instancePermissions %}
+                                                {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ event.users_userid }}">
-                                                {% endif %}{{ event.users_name1 ~ " " ~ event.users_name2}}{% if 52|instancePermissions %}</a>{% endif %}
+                                                {% endif %}{{ event.users_name1 ~ " " ~ event.users_name2}}{% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}</a>{% endif %}
                                                 {% if event.auditLog_actionType == "INSERT" %}
                                                     created the job
                                                 {% else %}
@@ -391,7 +391,7 @@
     </div>
     <script>
         $(document).ready(function () {
-            {% if 68|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB"|instancePermissions %}
             $('#editJobAssigned').select2({
                 tags: false,
                 multiple: false,
@@ -409,7 +409,7 @@
                 });
             });
             {% endif %}
-            {% if 72|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:DELETE"|instancePermissions %}
             $("#deleteJob").click(function () {
                 bootbox.confirm({
                     message: "Are you sure you wish to delete the job - this should not be done unless it is a duplicate or was created by mistake?",
@@ -433,7 +433,7 @@
                 });
             });
             {% endif %}
-            {% if 67|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:JOB_DUE_DATE"|instancePermissions %}
             $('#datePickerInputDue').daterangepicker({
                 singleDatePicker: true,
                 timePicker: true,
@@ -454,7 +454,7 @@
                 $('#datePickerInputDue').val('');
                 {% endif %}
             {% endif %}
-            {% if 70|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:NAME"|instancePermissions %}
             $("#editJobName").click(function () {
                 bootbox.prompt({
                     title: "Change job Name",
@@ -473,7 +473,7 @@
                 });
             });
             {% endif %}
-            {% if 69|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB"|instancePermissions %}
             $("#usersTagged").select2({
                 tags: false,
                 multiple: true,
@@ -524,7 +524,7 @@
                 });
             });
             {% endif %}
-            {% if 71|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB"|instancePermissions %}
             function sendMessage() {
                 var message = $("#sendMessageField").val();
                 if (message.length > 0) {
@@ -547,7 +547,7 @@
                 return false;
             });
             {% endif %}
-            {% if 73|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:STATUS"|instancePermissions %}
             $("#editJobStatus").click(function () {
                 bootbox.prompt({
                     title: "Change job status",
@@ -580,7 +580,7 @@
                 });
             });
             {% endif %}
-            {% if 75|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT"|instancePermissions %}
             $(".deleteAssetJobAssignment").click(function () {
                 var id = $(this).data("assetid");
                 bootbox.confirm({
@@ -609,7 +609,7 @@
                 });
             });
             {% endif %}
-            {% if 74|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:ADD_ASSETS"|instancePermissions %}
             $("#addAssetModal-assets").select2({
                 tags: false,
                 multiple: true,
@@ -658,7 +658,7 @@
                 }
             });
             {% endif %}
-            {% if 77|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:JOB_PRIORITY"|instancePermissions %}
             $('#jobPriority').on('change', function() {
                 ajaxcall("maintenance/job/changePriority.php", {
                     "maintenanceJobs_priority": this.value,
@@ -668,7 +668,7 @@
                 });
             });
             {% endif %}
-            {% if 78|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:ASSET_FLAGS"|instancePermissions %}
             $('#maintenanceJobsflagAssets').on('change', function() {
                 ajaxcall("maintenance/job/changeFlag.php", {
                     "maintenanceJobs_flagAssets": this.value,
@@ -678,7 +678,7 @@
                 });
             });
             {% endif %}
-            {% if 79|instancePermissions %}
+            {% if "MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS"|instancePermissions %}
             $('#maintenanceJobsblockAssets').on('change', function() {
                 ajaxcall("maintenance/job/changeBlock.php", {
                     "maintenanceJobs_blockAssets": this.value,

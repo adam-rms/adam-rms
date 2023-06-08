@@ -3,7 +3,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 header("Content-Type: text/plain");
 
 
-if (!$AUTH->instancePermissionCheck(12) or !isset($_POST['position'])) die("404");
+if (!$AUTH->instancePermissionCheck("BUSINESS:ROLES_AND_PERMISSIONS:EDIT") or !isset($_POST['position'])) die("404");
 
 $DBLIB->where ('instancePositions_id', $bCMS->sanitizeString($_POST['position']));
 $position = $DBLIB->getone("instancePositions");

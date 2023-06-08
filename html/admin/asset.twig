@@ -56,11 +56,11 @@
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
                         </ul>
-                        {% if 97|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                        {% if "ASSETS:ARCHIVE"|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <hr/>
                             <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
-                        {% if 19|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                        {% if "ASSETS:DELETE"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                         {% endif %}
                     </div>
@@ -110,7 +110,7 @@
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
                     {% endif %}
                     {% if assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") >= "now"|date("U")  %}
-                        {% if 84|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
+                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                             <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
                         {% endif %}
                     {% endif %}
@@ -182,10 +182,10 @@
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
                         <li class="nav-item"><a class="nav-link active" href="#calendarBoxAsset" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
-                        {% if 59|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit {{ assets[0].assets_tag|aTag }}</a></li>{% endif %}
-                        {% if 61|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
-                        {% if 84|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
-                        {% if  63|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
+                        {% if "ASSETS:EDIT"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit {{ assets[0].assets_tag|aTag }}</a></li>{% endif %}
+                        {% if "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
+                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
+                        {% if  "MAINTENANCE_JOBS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -224,12 +224,12 @@
                                             {% for thisasset in assets %}
                                             {% for assignment in thisasset.assignments %}
                                             {
-                                                title          : '{{ thisasset.assets_tag|aTag }} [{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
+                                                title          : '{{ thisasset.assets_tag|aTag }} [{{ assignment.projectsStatuses_name|escape("js") }}] {{ assignment.projects_name }}',
                                                 start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                 end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                 url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
-                                                backgroundColor: '{{ STATUSES[assignment.projects_status]["backgroundColour"] }}',
-                                                textColor    : '{{ STATUSES[assignment.projects_status]["foregroundColour"] }}'
+                                                backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
+                                                textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                             },
                                             {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
                                             {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
@@ -257,7 +257,7 @@
                                 })
                             </script>
                         </div>
-                        {% if 59|instancePermissions %}
+                        {% if "ASSETS:EDIT"|instancePermissions %}
                             <div class="tab-pane" style="padding:0"  id="editAsset">
                                 <div class="card" style="margin-bottom:0;">
                                     <div class="card-header p-2">
@@ -266,7 +266,7 @@
                                             <li class="nav-item"><a class="nav-link" href="#linked" data-toggle="tab">Asset Link</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#groups" data-toggle="tab">Groups</a></li>
                                             {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
-                                            {% if 82|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
+                                            {% if "ASSETS:EDIT:OVVERRIDES"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
                                             <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
                                         </ul>
                                     </div><!-- /.card-header -->
@@ -325,7 +325,7 @@
                                                 </form>
                                                 <button class="btn btn-default float-right" id="saveAssetDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
-                                            {% if 82|instancePermissions %}
+                                            {% if "ASSETS:EDIT:OVVERRIDES"|instancePermissions %}
                                                 <div class="tab-pane" style="padding: 1.25rem" id="editAssetDetailsOverrides">
                                                     <div class="callout">
                                                         Overriding the details of the asset means that these settings below will take precedence over the properties for the type - this allows you to have multiple assets within a type with different masses for example
@@ -385,9 +385,9 @@
                             </div>
                         {% endif %}
 
-                        {% if 61|instancePermissions %}
+                        {% if "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
                             <div class="tab-pane" style="padding: 1.25rem"  id="files">
-                                {% if 62|instancePermissions %}
+                                {% if "ASSETS:ASSET_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                                     <div class="callout callout-default">
                                         Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
                                     </div>
@@ -402,7 +402,7 @@
                                 {% endembed %}
                             </div>
                         {% endif %}
-                        {% if 84|instancePermissions  %}
+                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  %}
                             <div class="tab-pane" style="padding: 0" id="barcodes">
                                 <table class="table table-striped projects">
                                     <thead>
@@ -457,7 +457,7 @@
                                                 {% endif %}
                                             </td>
                                             <td>
-                                                {% if 86|instancePermissions %}
+                                                {% if "ASSETS:ASSET_BARCODES:DELETE"|instancePermissions %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteBarcodeButton" data-barcodeid="{{ barcode['assetsBarcodes_id'] }}"><i class="fa fa-trash"></i></button>
                                                 {% endif %}
                                             </td>
@@ -467,12 +467,12 @@
                                 </table>
                             </div>
                         {% endif %}
-                        {% if 63|instancePermissions %}
+                        {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
                                 <div class="card" style="margin-bottom:0;">
                                     <div class="card-header p-2">
                                         <ul class="nav nav-pills">
-                                            {% if 64|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>
                                             <li class="nav-item"><a class="nav-link active" href="#maintenance-flags" data-toggle="tab">Blocks &amp; Flags</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsOutstanding" data-toggle="tab">Jobs Outstanding</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsCompleted" data-toggle="tab">Jobs Completed</a></li>
@@ -753,10 +753,10 @@
                         {% endif %}
 
 
-                        {% if 58|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                        {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Edit Type</a></li>
                         {% endif %}
-                        {% if 54|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
+                        {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -803,10 +803,10 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                {% if 97|instancePermissions and (thisasset.assets_endDate is null or thisasset.assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
+                                                {% if "ASSETS:ARCHIVE"|instancePermissions and (thisasset.assets_endDate is null or thisasset.assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                                                     <button title="Archive" class="btn btn-sm btn-warning archiveAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fas fa-archive"></i></button>
                                                 {% endif %}
-                                                {% if 19|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                                                {% if "ASSETS:DELETE"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
                                                 {% endif %}
 
@@ -854,12 +854,12 @@
                                             {% for thisasset in assets %}
                                                 {% for assignment in thisasset.assignments %}
                                                 {
-                                                    title          : '[{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
+                                                    title          : '[{{ assignment.projectsStatuses_name }}] {{ assignment.projects_name }}',
                                                     start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                     end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
-                                                    backgroundColor: '{{ STATUSES[assignment.projects_status]["backgroundColour"] }}',
-                                                    textColor    : '{{ STATUSES[assignment.projects_status]["foregroundColour"] }}'
+                                                    backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
+                                                    textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                                 },
                                                 {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
                                                     {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
@@ -888,7 +888,7 @@
                             </script>
                         </div>
                         {% endif %}
-                        {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                        {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions and (asset.assetInstances_id != null or "ASSETS:EDIT:ANY_ASSET_TYPE"|serverPermissions) and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                         <div class="tab-pane" style="padding:0"  id="settings">
                             <div class="card" style="margin-bottom:0;">
                                 <div class="card-header p-2">
@@ -996,7 +996,7 @@
                                             <button class="btn btn-default float-right" id="saveTypeDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                         </div>
                                         <div class="tab-pane" style="padding: 1.25rem" id="thumbnail">
-                                            {% if 55|instancePermissions %}
+                                            {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                                                 {% embed 'common/plugins/uppy.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': true, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
                                                     {% block success %}
                                                         console.log(responseJson.id);
@@ -1012,7 +1012,7 @@
                                 </div><!-- /.card-body -->
                             </div>
                         </div>
-                        {% elseif 58|instancePermissions %}
+                        {% elseif "ASSETS:ASSET_TYPES:EDIT"|instancePermissions %}
                         <div class="tab-pane" style="padding: 1.25rem" id="settings">
                             <div class="alert alert-info" role="alert">
                                 <h4 class="alert-heading">Asset type maintained by the AdamRMS</h4>Sorry - this asset type is shared between a number of different businesses as a pre-defined template, to edit it please <a href="{{ CONFIG.ROOTURL }}/support.php">get in touch with support</a>
@@ -1020,9 +1020,9 @@
                         </div>
                         {% endif %}
 
-                        {% if 54|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                        {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                         <div class="tab-pane" style="padding: 1.25rem"  id="typeFiles">
-                            {% if 55|instancePermissions %}
+                            {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                             <div class="callout callout-default">
                                 Use this area to store files relevant to all assets of this type such as instruction manuals
                             </div>
@@ -1037,12 +1037,12 @@
                             {% endembed %}
                         </div>
                         {% endif %}
-                        {% if 63|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                        {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
                                 <div class="card" style="margin-bottom:0;">
                                     <div class="card-header p-2">
                                         <ul class="nav nav-pills">
-                                            {% if 64|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>
                                             <li class="nav-item"><a class="nav-link active" href="#maintenance-flags" data-toggle="tab">Blocks &amp; Flags</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsOutstanding" data-toggle="tab">Jobs Outstanding</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsCompleted" data-toggle="tab">Jobs Completed</a></li>
@@ -1338,7 +1338,7 @@
                     fade: true,
                     cssEase: 'linear'
                 });
-                {% if 19|instancePermissions %}
+                {% if "ASSETS:DELETE"|instancePermissions %}
                 $(".deleteAssetButton").click(function () {
                     var assetid = $(this).data("assetid");
                     bootbox.confirm({
@@ -1363,7 +1363,7 @@
                     });
                 });
                 {% endif %}
-                {% if 97|instancePermissions %}
+                {% if "ASSETS:ARCHIVE"|instancePermissions %}
                 $(".archiveAssetButton").click(function () {
                     var assetid = $(this).data("assetid");
                     var date;
@@ -1407,7 +1407,7 @@
                     });
                 });
                 {% endif %}
-                {% if 86|instancePermissions %}
+                {% if "ASSETS:ASSET_BARCODES:DELETE"|instancePermissions %}
                 $(".deleteBarcodeButton").click(function () {
                     var barcodeid = $(this).data("barcodeid");
                     bootbox.confirm({
@@ -1433,7 +1433,7 @@
                     });
                 });
                 {% endif %}
-                {% if 58|instancePermissions %}
+                {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions %}
                 $("#addNewType-value").change(function() {
                     $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
                     $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
@@ -1454,7 +1454,7 @@
                     }, false);
                 });
                 {% endif %}
-                {% if 59|instancePermissions %}
+                {% if "ASSETS:EDIT"|instancePermissions %}
                 $('#saveAssetSettingsButton').on('click', function() {
                     var formData = $("#editAssetDetailsForm").serializeArray();
                     formData.push({"name": "assets_id", "value": "{{assets[0]['assets_id']}}"});
@@ -1469,7 +1469,7 @@
                         location.reload();
                     }, false);
                 });
-                {% if 82|instancePermissions %}
+                {% if "ASSETS:EDIT:OVVERRIDES"|instancePermissions %}
                 $('#editAssetDetailsOverridesButton').on('click', function() {
                     var formData = $("#editAssetDetailsOverridesForm").serializeArray();
                     formData.push({"name": "assets_id", "value": "{{assets[0]['assets_id']}}"});
@@ -1604,7 +1604,7 @@
                     tags: false,
                     multiple: true,
                     theme: "bootstrap4",
-                    {% if 96|instancePermissions != true %}
+                    {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions != true %}
                     disabled: true,
                     {% endif %}
                     minimumInputLength: 1,
@@ -1637,7 +1637,7 @@
                         }
                     }
                 });
-                {% if 96|instancePermissions %}
+                {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions %}
                 $('#assetGroups').on('select2:select', function (e) {
                     var id =e.params.data.id;
                     ajaxcall("groups/addAsset.php", {
@@ -1653,7 +1653,7 @@
                     });
                 });
                 {% endif %}
-                {% if 63|instancePermissions %}
+                {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
                 $("#tagUserInJob").select2({
                     tags: false,
                     multiple: true,

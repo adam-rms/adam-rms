@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 $return = [];
 
-if (!$AUTH->instancePermissionCheck(20)) die("401");
+if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW")) die("401");
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
@@ -16,7 +16,7 @@ if (isset($_POST['subprojects'])) {
     $DBLIB->where("projects.projects_parent_project_id IS NULL");
 }
 
-$projects = $DBLIB->get("projects", null, ["projects_id", "projects_archived", "projects_name", "clients_name", "projects_dates_deliver_start", "projects_dates_deliver_end","projects_dates_use_start", "projects_dates_use_end", "projects_status", "projects_manager"]);
+$projects = $DBLIB->get("projects", null, ["projects.projects_id", "projects.projects_name", "clients.clients_name", "projects.projects_manager"]);
 
 foreach ($projects as $project) {
     $subprojectData = [];

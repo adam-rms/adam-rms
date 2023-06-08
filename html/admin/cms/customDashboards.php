@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(132)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);
 $DBLIB->where("cmsPages_deleted",0);

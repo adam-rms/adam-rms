@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
-if (!$AUTH->instancePermissionCheck(20) or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW") or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
 require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data comes from
 
 //AuditLog
@@ -15,13 +15,13 @@ $PAGEDATA['project']['auditLog'] = $DBLIB->get("auditLog",null, ["auditLog.*", "
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA["project"]['projects_name'], "BREADCRUMB" => false];
 
 //Edit Options - Client List
-if ($AUTH->instancePermissionCheck(22)) {
+if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:CLIENT")) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
     $PAGEDATA['clients'] = $DBLIB->get("clients", null, ["clients_id", "clients_name", "clients_archived"]);
 }
 
 //Edit Options - Locations list
-if ($AUTH->instancePermissionCheck(30)) {
+if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:ADDRESS")) {
     $thisProjectLocationFound = false;
     $PAGEDATA['locations'] = [];
     $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
@@ -64,6 +64,15 @@ if ($AUTH->instancePermissionCheck(30)) {
     }
 }
 
+//Crew Recruitment
+if ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES")) {
+    $DBLIB->where("projectsVacantRoles.projectsVacantRoles_deleted",0);
+    $DBLIB->where("projectsVacantRoles.projectsVacantRoles_open",1);
+    $DBLIB->where("(projectsVacantRoles.projectsVacantRoles_deadline IS NULL OR projectsVacantRoles.projectsVacantRoles_deadline >= '" . date("Y-m-d H:i:s") . "')");
+    $DBLIB->where("(projectsVacantRoles.projectsVacantRoles_slots > projectsVacantRoles.projectsVacantRoles_slotsFilled)");
+    $DBLIB->where("projectsVacantRoles.projects_id", $PAGEDATA['project']['projects_id']);
+    $PAGEDATA['crewRecruitment'] = $DBLIB->get("projectsVacantRoles");
+}
 
 /**
  * Variables for the board view (asset dispatch)
@@ -103,6 +112,13 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
     }
 }
 
+//Edit Options - Project Statuses list
+if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS")) {
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("projectsStatuses_deleted", 0);
+    $DBLIB->orderBy("projectsStatuses_rank", "ASC");
+    $PAGEDATA['POSSIBLEPROJECTSTATUSES'] = $DBLIB->get("projectsStatuses", null, ["projectsStatuses_id", "projectsStatuses_name", "projectsStatuses_description", "projectsStatuses_assetsReleased"]);
+}
 
 if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assetsPage.twig', $PAGEDATA);
 else echo $TWIG->render('project/project_index.twig', $PAGEDATA);

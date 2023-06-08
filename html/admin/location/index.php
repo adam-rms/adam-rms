@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(87)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("LOCATIONS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['pageConfig'] = ["TITLE" => (isset($_GET['archive']) ? "Archived " : "") . "Locations", "BREADCRUMB" => false];
 

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(86)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_BARCODES:DELETE")) die("Sorry - you can't access this page");
 
 if (!isset($_POST['barcodes_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
