@@ -10,10 +10,9 @@ try {
     //Do Nothing
 }
 
-header("Content-Security-Policy: default-src 'none';" .
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.adam-rms.com https://cdnjs.cloudflare.com https://static.cloudflareinsights.com    https://www.youtube.com https://*.ytimg.com https://*.freshstatus.io https://cdn.jsdelivr.net;".
+header("Content-Security-Policy: default-src 'none';" . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.adam-rms.com https://cdnjs.cloudflare.com https://static.cloudflareinsights.com    https://www.youtube.com https://*.ytimg.com https://*.freshstatus.io;" .
     //          We have laods of inline JS                                  Libs                                             CF Analytics   Training
-    "style-src 'unsafe-inline' 'self' https://*.adam-rms.com https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net;".
+    "style-src 'unsafe-inline' 'self' https://*.adam-rms.com https://cdnjs.cloudflare.com https://fonts.googleapis.com;" .
     //          We have loads of inline CSS                 Libs                        GFonts
     "font-src 'self' data: https://*.adam-rms.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com;" .
     //                                               Loading in google fonts     more gfonts               Fonts from libs like fontawesome
