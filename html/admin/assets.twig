@@ -251,7 +251,6 @@
                                                         <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                     {% endif %}
                                                 {% else %}
-                                                    {% set someassignable = false %}
                                                     <div class="modal fade" id="assetDetailsModal{{ asset.assetTypes_id }}">
                                                         <div class="modal-dialog modal-xl">
                                                             <div class="modal-content">
@@ -331,7 +330,6 @@
                                                         <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                     {% endif %}
                                                 {% else %}
-                                                    {% set someassignable = false %}
                                                     <div class="modal fade" id="assetDetailsModal{{ asset.assetTypes_id }}">
                                                         <div class="modal-dialog modal-xl">
                                                             <div class="modal-content">
@@ -378,7 +376,7 @@
                                                                                             {%  if thisasset.assignment %}
                                                                                                 <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                             {% else %}
-                                                                                            <button title="Available" {% set someassignable = true %} class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
+                                                                                            <button title="Available" class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                                                             {% endif %}
                                                                                         {% else %}
                                                                                             <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
@@ -392,7 +390,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
+                                                    <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                             {% endif %}
                                         {% endif %}
                                             <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default" target="_blank">
