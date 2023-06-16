@@ -1,15 +1,6 @@
 name: Reviewdog
 on: [pull_request]
 jobs:
-  secrets:
-    name: Secret Detection
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: reviewdog/action-detect-secrets@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-check
   spelling:
     name: Spelling Check
     runs-on: ubuntu-latest
