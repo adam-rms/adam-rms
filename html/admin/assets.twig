@@ -251,7 +251,6 @@
                                                         <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                     {% endif %}
                                                 {% else %}
-                                                    {% set someassignable = false %}
                                                     <div class="modal fade" id="assetDetailsModal{{ asset.assetTypes_id }}">
                                                         <div class="modal-dialog modal-xl">
                                                             <div class="modal-content">
@@ -272,7 +271,9 @@
                                                                             <th>&pound;/day</th>
                                                                             <th>&pound;/week</th>
                                                                             <th style="width:1%"><i class="fas fa-flag"></i></th>
-                                                                            <th style="width:30px;"></th>
+                                                                            <th style="width:30px;">
+                                                                                <button class="btn btn-success addToBasketAssetTypeButton" {% if asset.countAvailable < 1 %} disabled {% endif %}" title "Add all of this asset type to the project" data-assetTypeId="{{ asset.assetTypes_id }}"><i class="fas fa-dolly"></i></button>
+                                                                            </th>
                                                                         </tr>
                                                                         {% for thisasset in asset.tags %}
                                                                             <tr>
@@ -295,11 +296,11 @@
                                                                                         {% if thisasset.assets_endDate != null and thisasset.assets_endDate < searchResults.PROJECT['DATEEND'] %}
                                                                                             <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                                                         {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
-                                                                                            <button title="Remove from project" {% if (not thisasset.assignment) or searchResults.PROJECT.ID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                            <button title="Remove from project" {% if (not thisasset.assignment) or searchResults.PROJECT.ID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}" data-assetTypeId="{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                                                                             {%  if thisasset.assignment and searchResults.PROJECT.ID != thisasset.assignment[0].projects_id %}
                                                                                                 <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
                                                                                             {% endif %}
-                                                                                            <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% else %}{% set someassignable = true %}{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                                                            <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}" data-assetTypeId="{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                                                                         {% else %}
                                                                                             <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                                                         {% endif %}
@@ -312,7 +313,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
+                                                    <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                                 {% endif %}
                                             {% elseif searchResults.PROJECT.DATESTART and searchResults.PROJECT.DATEEND %}
                                                 {% if asset.count == 1 %}
@@ -328,7 +329,6 @@
                                                         <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                     {% endif %}
                                                 {% else %}
-                                                    {% set someassignable = false %}
                                                     <div class="modal fade" id="assetDetailsModal{{ asset.assetTypes_id }}">
                                                         <div class="modal-dialog modal-xl">
                                                             <div class="modal-content">
@@ -375,7 +375,7 @@
                                                                                             {%  if thisasset.assignment %}
                                                                                                 <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-danger" disabled><i class="fa fa-times"></i></button>
                                                                                             {% else %}
-                                                                                            <button title="Available" {% set someassignable = true %} class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
+                                                                                            <button title="Available" class="btn btn-sm btn-success" disabled><i class="fa fa-check"></i></button>
                                                                                             {% endif %}
                                                                                         {% else %}
                                                                                             <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
@@ -389,7 +389,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm {{ someassignable ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
+                                                    <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                             {% endif %}
                                         {% endif %}
                                             <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default" target="_blank">
@@ -619,6 +619,19 @@ $(document).ready(function () {
         ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid"),"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
             $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
             $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+            Toast.fire({
+                type: 'success',
+                title: 'Added to {{ searchResults.PROJECT.NAME }}'
+            });
+        });
+    });
+    $(".addToBasketAssetTypeButton").click(function () {
+        const thisButton = $(this);
+        var assetTypeId = thisButton.data("assettypeid");
+        ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
+            $(".addToBasketAssetButton[data-assettypeid=" + assetTypeId + "]").hide();
+            $(".removeFromBasketAssetButton[data-assettypeid=" + assetTypeId + "]").show();
+            thisButton.prop('disabled', true);
             Toast.fire({
                 type: 'success',
                 title: 'Added to {{ searchResults.PROJECT.NAME }}'

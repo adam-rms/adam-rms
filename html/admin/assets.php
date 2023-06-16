@@ -206,9 +206,11 @@ foreach ($assets as $asset) {
         if ($thisWhere) $DBLIB->where($thisWhere . ")",$thisValues);
     }
     $DBLIB->orderBy("assets.assets_tag", "ASC");
-    $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes","assets_tag","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10","assets_dayRate","assets_weekRate","assets_value","assets_mass","assets_endDate"]);
+    $assetTags = $DBLIB->get("assets", null, ["assets_id", "assets_notes", "assets_tag", "asset_definableFields_1", "asset_definableFields_2", "asset_definableFields_3", "asset_definableFields_4", "asset_definableFields_5", "asset_definableFields_6", "asset_definableFields_7", "asset_definableFields_8", "asset_definableFields_9", "asset_definableFields_10", "assets_dayRate", "assets_weekRate", "assets_value", "assets_mass", "assets_endDate"]);
     if (!$assetTags) continue;
     $asset['count'] = count($assetTags);
+    $asset['countBlocked'] = 0;
+    $asset['countAvailable'] = 0;
     $asset['fields'] = explode(",", $asset['assetTypes_definableFields']);
     $asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id'],'s3files_meta_uploaded','ASC',1);
     $asset['tags'] = [];
@@ -228,11 +230,13 @@ foreach ($assets as $asset) {
             $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assetsAssignments.projects_id", "projects.projects_name"]);
         }
         $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
+        if ($tag['assignment'] or $tag['flagsblocks']['COUNT']['BLOCK'] > 0) $asset['countBlocked']++;
         $asset['tags'][] = $tag;
     }
+    $asset['countAvailable'] = $asset['count'] - $asset['countBlocked'];
     $RETURN['ASSETS'][] = $asset;
 }
-$RETURN['SPEED'] = microtime (true)-$scriptStartTime;
+$RETURN['SPEED'] = microtime(true) - $scriptStartTime;
 
 
 $PAGEDATA['searchOptions'] = [];
@@ -276,5 +280,4 @@ if (count($SEARCH['TERMS']['CATEGORY']) > 0) {
 
 $RETURN['SEARCH'] = $SEARCH;
 $PAGEDATA['searchResults'] = $RETURN;
-
 echo $TWIG->render('assets.twig', $PAGEDATA);
