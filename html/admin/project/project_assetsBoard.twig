@@ -50,13 +50,56 @@
     </div>
 </div>
 <script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    const assetStatuses = {{ BOARDASSETS|json_encode|raw }}
+
     if (localStorage.getItem("activeTab-board")) {
         $('a.assetsBoardToggle[href=\'#' + localStorage.getItem("activeTab-board") + '\']').tab('show');
     }
     {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-    function changeStatus(assetsAssignments_id, assetsAssignments_status){
+    function checkStatusButton(statusOrder){
+        
+    }
+
+    /**
+     * Function to change the status of an asset assignment
+     * @param assetsAssignments_id Id of the AssetAssignment
+     * @param assetsAssignments_status current status order of the AssetAssignment
+     * @param assetCard JQuery reference to the asset card to be moved
+     */
+    function changeStatus(assetsAssignments_id, assetsAssignments_status, assetCard){
+        const thisCard = $(assetCard[0]);
         ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":assetsAssignments_id, "assetsAssignments_status":assetsAssignments_status, "status_is_order":true}, function (returned){
-            window.location.reload();
+            //update AssetCard to hide relevent buttons
+            const newStatus = assetStatuses[thisCard.data("instance")].find(function (status){
+                return status.assetsAssignmentsStatus_id == assetsAssignments_status;
+            });
+            if (newStatus) {
+                if (newStatus['assetsAssignmentsStatus_order'] == 0 ) {
+                    thisCard.find('.status-back').hide();
+                    thisCard.find('.status-forward').show();
+                } else if (newStatus['assetsAssignmentsStatus_order'] == assetStatuses[thisCard.data("instance")].length - 1 ) {
+                    thisCard.find('.status-back').show();
+                    thisCard.find('.status-forward').hide();
+                } else {
+                    thisCard.find('.status-back').show();
+                    thisCard.find('.status-forward').show();
+                }
+
+                //Update AssetCard to store new status
+                thisCard.data("currentstatus", newStatus.assetsAssignmentsStatus_id);
+
+                Toast.fire({
+                    type: 'success',
+                    title: 'Asset Status Updated'
+                });
+            }
         });
     }
     {% endif %}
@@ -67,21 +110,52 @@
             update: function( event, ui ){
                 /*
                 Update function is called twice, once for the old list and once for the new list.
-                The lists, this, has a data attribute, status, that can be compared with each asset, ui.item[0].
+                The lists, this, have a data attribute, status, that can be compared with each asset, ui.item[0].
                 If the groupStatus is the same as the old status, this call can be ignored as this is the old list update call.
                 Function call will refresh the page and sort any graphical issues.
                  */
-                let groupStatus = this.dataset.status;
-                let assetOldStatus = ui.item[0].dataset.currentstatus;
-                let assetAssignment = ui.item[0].dataset.assignment;
+                const groupStatus = this.dataset.status;
+                const assetOldStatus = ui.item[0].dataset.currentstatus;
+                const assetAssignment = ui.item[0].dataset.assignment;
 
                 if (assetOldStatus !== groupStatus) {
-                    ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":parseInt(assetAssignment), "assetsAssignments_status":parseInt(groupStatus)}, function (returned){
-                        window.location.reload();
-                    });
+                    changeStatus(parseInt(assetAssignment),parseInt(groupStatus), ui.item);
                 }
             }
-        })
+        });
+
+        $(".status-back").click(function (){
+            const assetCard = $(this).parent();
+            const assetAssignment = assetCard.data("assignment");
+            const assetOldStatusId = assetCard.data("currentstatus");
+            const assetOldStatus = assetStatuses[assetCard.data("instance")].find(function (status){
+                return status.assetsAssignmentsStatus_id == assetOldStatusId;
+            });
+            const newStatus = assetStatuses[assetCard.data("instance")].find(function (status){
+                return status.assetsAssignmentsStatus_order == assetOldStatus.assetsAssignmentsStatus_order - 1;
+            });
+            if (newStatus) {
+                changeStatus(parseInt(assetAssignment),parseInt(newStatus.assetsAssignmentsStatus_id), assetCard);
+            }
+            //move card to new status
+            assetCard.detach().appendTo(".assetList[data-status=" + newStatus.assetsAssignmentsStatus_id + "][data-instance=" + assetCard.data("instance") + "]");
+        });
+        $(".status-forward").click(function (){
+            const assetCard = $(this).parent();
+            const assetAssignment = assetCard.data("assignment");
+            const assetOldStatusId = assetCard.data("currentstatus");
+            const assetOldStatus = assetStatuses[assetCard.data("instance")].find(function (status){
+                return status.assetsAssignmentsStatus_id == assetOldStatusId;
+            });
+            const newStatus = assetStatuses[assetCard.data("instance")].find(function (status){
+                return status.assetsAssignmentsStatus_order == assetOldStatus.assetsAssignmentsStatus_order + 1;
+            });
+            if (newStatus) {
+                changeStatus(parseInt(assetAssignment),parseInt(newStatus.assetsAssignmentsStatus_id), assetCard);
+            }
+            //move card to new status
+            assetCard.detach().appendTo(".assetList[data-status=" + newStatus.assetsAssignmentsStatus_id + "][data-instance=" + assetCard.data("instance") + "]");
+        });
         {% endif %}
 
 
