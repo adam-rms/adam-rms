@@ -762,6 +762,17 @@
                     </a>
                 </li>
             {% endif %}
+            {% if "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/server/import.php" class="nav-link">
+                        <i class="nav-icon fas fa-upload"></i>
+                        <p>
+                            Import
+                            <span class="right badge badge-danger">Server-Wide</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
 
                 {% endif %}
                 </ul>

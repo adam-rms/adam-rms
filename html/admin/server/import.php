@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-$PAGEDATA['pageConfig'] = ["TITLE" => "Instances", "BREADCRUMB" => false];
+$PAGEDATA['pageConfig'] = ["TITLE" => "Import", "BREADCRUMB" => false];
 
 if (!$AUTH->serverPermissionCheck("INSTANCES:IMPORT:ASSETS")) die($TWIG->render('404.twig', $PAGEDATA));
 
