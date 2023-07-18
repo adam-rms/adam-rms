@@ -139,7 +139,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		echo $TWIG->render('login/error.twig', $PAGEDATA);
 		exit;
 	} else {
-		$GLOBALS['AUTH']->generateToken($user['users_userid'], false, "Web - Google", "web-session");
+		$GLOBALS['AUTH']->generateToken($newUser['users_userid'], false, "Web - Google", "web-session");
 		header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
 		exit;
 	}
