@@ -14,10 +14,10 @@
             </div>
             <div class="card-body">
                 <p class="card-text">Migrate an asset from one instance to another. This will make sure the Asset Type, Manufacturer and Category are copied over to the new instance and linked correctly.</p>
-                <form class="form">
+                <form class="form" id="migrate-form">
                     <div class="form-group">
-                        <label for="assetTag">Asset Tag</label>
-                        <select class="form-control" id="assets_tag" name="assets_tag"></select>
+                        <label for="assetTag">Asset</label>
+                        <select class="form-control" id="assets_id" name="assets_id"></select>
                     </div>
                     <div class="form-group">
                         <label for="instance">New Instance</label>
@@ -36,7 +36,7 @@
 </div>
 <script>
     $(document).ready(function () {
-        $("#assets_tag").select2({
+        $("#assets_id").select2({
             tags: false,
             theme: "bootstrap4",
             minimumInputLength: 1,
@@ -69,11 +69,9 @@
                 }
             }
         });
-        $('#migrate-submit').click(function (e) {
+        $('#migrate-form').submit(function (e) {
             e.preventDefault();
-            var formData = new FormData();
-            formData.append('assets_tag', $('#assets_tag').val());
-            formData.append('instances_id', $('#instances_id').val());
+            var formData = $(this).serializeArray();
 
             $.ajax({
                 url: "{{ CONFIG.ROOTURL }}/api/server/migrateAsset.php",
@@ -90,7 +88,7 @@
                     } else {
                         Swal.fire({
                             title: 'Migration Error',
-                            text: data.error,
+                            text: data.error.message,
                             icon: 'error',
                             confirmButtonText: 'OK'
                         })
