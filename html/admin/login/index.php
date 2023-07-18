@@ -52,7 +52,14 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 	 *
 	 * Note that if the user is already authenticated, then any subsequent call to this method will be ignored.
 	 */
-	$adapter->authenticate();
+	try {
+		$adapter->authenticate();
+	} catch (\Exception $e) {
+		//Issue with auth state, which is a problem with the user's browser. We can't do anything about this, so just show an error
+		$PAGEDATA['ERROR'] = "Sorry, something went wrong authenticating with Google.";
+		echo $TWIG->render('login/error.twig', $PAGEDATA);
+		exit;
+	}
 	$accessToken = $adapter->getAccessToken(); //We don't actually use this - we could in theory just drop it?
 	$userProfile = $adapter->getUserProfile();
 	$adapter->disconnect(); //Disconnect this authentication from the session, so they can pick another account
