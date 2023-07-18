@@ -73,31 +73,27 @@ for ($i = 1; $i < count($csv); $i++) {
         continue;
     }
     $DBLIB->where("assetTypes_name", "%" . $row[0] . "%", "LIKE");
-    $DBLIB->where("assetTypes.instances_id", $_POST['instances_id']);
-    $DBLIB->orwhere("assetTypes.instances_id", NULL, "IS");
+    $DBLIB->where("(assetTypes.instances_id = ? or assetTypes.instances_id IS NULL)", [$_POST['instances_id']]);
     $assetType = $DBLIB->getOne("assetTypes", ["assetTypes.assetTypes_id"]);
 
     if(!$assetType){
         //Create new asset type
         //Manufacturer
-        if(!isset($row[8]) or $row[8] == null) $row[8] = "Unknown/Generic"; //Use the generic manufacturer if none specified
+        if($row[8] == "") $row[8] = "Unknown/Generic"; //Use the generic manufacturer if none specified
         $DBLIB->where("manufacturers_name", "%" . $row[8] . "%", "LIKE");
-        $DBLIB->where("manufacturers.instances_id", $_POST['instances_id']);
-        $DBLIB->orwhere("manufacturers.instances_id", NULL, "IS");
+        $DBLIB->where("(manufacturers.instances_id = ? or manufacturers.instances_id IS NULL)", [$_POST['instances_id']]);
         $manufacturer = $DBLIB->getOne("manufacturers", ["manufacturers.manufacturers_id"]);
         if (!$manufacturer) {
             $manufacturer = [
                 "manufacturers_name" => $row[8],
                 "instances_id" => $_POST['instances_id']
             ];
-            $DBLIB->insert("manufacturers", $manufacturer);
-            $manufacturer['manufacturers_id'] = $DBLIB->getInsertId();
+            $manufacturer['manufacturers_id'] = $DBLIB->insert("manufacturers", $manufacturer);
         }
-
+        
         //Asset Category
         $DBLIB->where("assetCategories_id", $row[7]);
-        $DBLIB->where("assetCategories.instances_id", $_POST['instances_id']);
-        $DBLIB->orwhere("assetCategories.instances_id", NULL, "IS");
+        $DBLIB->where("(assetCategories.instances_id = ? or assetCategories.instances_id IS NULL)", [$_POST['instances_id']]);
         $DBLIB->where("assetCategories.assetCategories_deleted", 0);
         $assetCategory = $DBLIB->getOne("assetCategories", ["assetCategories.assetCategories_id"]);
         if (!$assetCategory) {
@@ -130,8 +126,7 @@ for ($i = 1; $i < count($csv); $i++) {
             "assetTypes_weekRate" => $row[5],
             "assetTypes_value" => $row[6],   
         ];
-        $DBLIB->insert("assetTypes", $assetType);
-        $assetType['assetTypes_id'] = $DBLIB->getInsertId();
+        $assetType['assetTypes_id'] = $DBLIB->insert("assetTypes", $assetType);
         if ($assetType['assetTypes_id']) array_push($createdAssetTypes, $assetType);
         else array_push($failedAssets, ["tag" => $row[9], "reason" => "Error creating Asset Type"]);
 
@@ -171,8 +166,7 @@ for ($i = 1; $i < count($csv); $i++) {
         "assets_value" => $row[14],
         "assets_mass" => $row[15],
     ];
-    $DBLIB->insert("assets", $asset);
-    $asset['assets_id'] = $DBLIB->getInsertId();
+    $asset['assets_id'] = $DBLIB->insert("assets", $asset);
 
     if ($asset['assets_id']) array_push($successfulAssets, $asset);
     else array_push($failedAssets, ["tag" => $row[9], "reason" => "Unknown error"]);
