@@ -57,7 +57,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 	} catch (\Exception $e) {
 		//Issue with auth state, which is a problem with the user's browser. We can't do anything about this, so just show an error
 		$PAGEDATA['ERROR'] = "Sorry, something went wrong authenticating with Google.";
-		echo $TWIG->render('login/error.twig', $PAGEDATA);
+		die($TWIG->render('login/error.twig', $PAGEDATA));
 		exit;
 	}
 	$accessToken = $adapter->getAccessToken(); //We don't actually use this - we could in theory just drop it?
@@ -139,7 +139,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		echo $TWIG->render('login/error.twig', $PAGEDATA);
 		exit;
 	} else {
-		$GLOBALS['AUTH']->generateToken($newUser['users_userid'], false, "Web - Google", "web-session");
+		$GLOBALS['AUTH']->generateToken($newUser, false, "Web - Google", "web-session");
 		header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
 		exit;
 	}
