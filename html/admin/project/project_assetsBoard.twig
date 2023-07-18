@@ -63,9 +63,6 @@
         $('a.assetsBoardToggle[href=\'#' + localStorage.getItem("activeTab-board") + '\']').tab('show');
     }
     {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-    function checkStatusButton(statusOrder){
-        
-    }
 
     /**
      * Function to change the status of an asset assignment
@@ -120,6 +117,7 @@
 
                 if (assetOldStatus !== groupStatus) {
                     changeStatus(parseInt(assetAssignment),parseInt(groupStatus), ui.item);
+                    ui.item[0].dataset.currentstatus = groupStatus;
                 }
             }
         });
