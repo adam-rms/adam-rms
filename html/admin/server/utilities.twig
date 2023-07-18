@@ -1,0 +1,103 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Server Utilities</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Instance Migration</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Migrate an asset from one instance to another. This will make sure the Asset Type, Manufacturer and Category are copied over to the new instance and linked correctly.</p>
+                <form class="form">
+                    <div class="form-group">
+                        <label for="assetTag">Asset Tag</label>
+                        <select class="form-control" id="assets_tag" name="assets_tag"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="instance">New Instance</label>
+                        <select class="form-control" id="instances_id" name="instances_id">
+                            <option disabled selected>Select Instance</option>
+                            {% for instance in instances %}
+                            <option value="{{ instance.instances_id }}">{{ instance.instances_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="migrate-submit">Migrate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#assets_tag").select2({
+            tags: false,
+            theme: "bootstrap4",
+            minimumInputLength: 1,
+            width: '100%',
+            minimumResultsForSearch: 1,
+            placeholder: "Search for an asset...",
+            ajax: {
+                url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                dataType: "json",
+                type: "POST",
+                data: function (params) {
+                    var queryParameters = {
+                        term: params.term
+                    }
+                    return queryParameters;
+                },
+                processResults: function (data) {
+                    if (data && data.result && data.response) {
+                        return {
+                            results: $.map(data.response, function (item) {
+                                return {
+                                    text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                    id: item.assets_id
+                                }
+                            })
+                        };
+                    } else return {
+                        results: []
+                    };
+                }
+            }
+        });
+        $('#migrate-submit').click(function (e) {
+            e.preventDefault();
+            var formData = new FormData();
+            formData.append('assets_tag', $('#assets_tag').val());
+            formData.append('instances_id', $('#instances_id').val());
+
+            $.ajax({
+                url: "{{ CONFIG.ROOTURL }}/api/server/migrateAsset.php",
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    if (data && data.result) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Asset migrated successfully',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Migration Error',
+                            text: data.error,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        })
+                    }
+                },
+            })
+        })
+    });
+</script>
+{% endblock %}
