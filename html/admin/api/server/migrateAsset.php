@@ -34,10 +34,18 @@ if ($assetType['instances_id'] !== NULL) {
         if (!$manufacturer) finish(false, ["code"=>"MANUFACTURER_NOT_FOUND", "message"=>"Manufacturer not found"]);//Shouldn't be possible to get here!
         //Create new manufacturer if needed
         if ($manufacturer['instances_id'] != $_POST['instances_id'] && $manufacturer['instances_id'] != NULL) {
-            $manufacturer['instances_id'] = $_POST['instances_id'];
-            $manufacturer['manufacturers_internalAdamRMSNote'] = "Created during asset migration";
-            unset($manufacturer['manufacturers_id']);
-            $manufacturer['manufacturers_id'] = $DBLIB->insert("manufacturers", $manufacturer);
+            //See if they have a similarly named manufacturer
+            $DBLIB->where("manufacturers_name", "%" . $manufacturer['manufacturers_name'] . "%", 'LIKE');
+            $DBLIB->where("instances_id", $_POST['instances_id']);
+            $possibleManufacturer = $DBLIB->getOne("manufacturers", ["manufacturers.*"]);
+            if ($possibleManufacturer) {
+                $manufacturer = $possibleManufacturer;
+            } else {
+                $manufacturer['instances_id'] = $_POST['instances_id'];
+                $manufacturer['manufacturers_internalAdamRMSNote'] = "Created during asset migration";
+                unset($manufacturer['manufacturers_id']);
+                $manufacturer['manufacturers_id'] = $DBLIB->insert("manufacturers", $manufacturer);
+            }
         } 
 
         //Get Category
@@ -47,9 +55,17 @@ if ($assetType['instances_id'] !== NULL) {
         if (!$category) finish(false, ["code"=>"CATEGORY_NOT_FOUND", "message"=>"Category not found"]);
         //Create new category if needed
         if ($category['instances_id'] != $_POST['instances_id'] && $category['instances_id'] != NULL) {
-            $category['instances_id'] = $_POST['instances_id'];
-            unset($category['assetCategories_id']);
-            $category['assetCategories_id'] = $DBLIB->insert("assetCategories", $category);
+            //See if they have a similarly named category
+            $DBLIB->where("assetCategories_name", "%" . $category['assetCategories_name'] . "%", 'LIKE');
+            $DBLIB->where("instances_id", $_POST['instances_id']);
+            $possibleCategory = $DBLIB->getOne("assetCategories", ["assetCategories.*"]);
+            if ($possibleCategory) {
+                $category = $possibleCategory;
+            } else {
+                $category['instances_id'] = $_POST['instances_id'];
+                unset($category['assetCategories_id']);
+                $category['assetCategories_id'] = $DBLIB->insert("assetCategories", $category);
+            }
         }
 
         //Create AssetType
