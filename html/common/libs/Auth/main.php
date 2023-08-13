@@ -237,6 +237,7 @@ class bID
     function generateToken($userID, $adminUserID = false, $deviceType, $tokenType) {
         global $DBLIB;
         if (!in_array($tokenType, ["web-session", "app-v1", "app-v2-magic-email"])) throw new Exception("Unknown token type");
+        if (is_null($userID)) throw new Exception("User ID cannot be null");
 
         $tokenKey = $this->generateTokenKey();
         $data = [
