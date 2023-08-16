@@ -383,26 +383,25 @@
                                             <div class="tab-pane" style="padding: 1.25rem" id="moveAsset">
                                                 <div class="callout callout-danger">
                                                     <p>Transferring an asset to another business will remove it from this business, which will affect existing projects.</p>
-                                                    <p>You can only transfer assets to businesses you have permission to migrate assets in - you need to have the <code>ASSETS:TRANSFER</code> permission for the business you are migrating to for it to appear here.</p>
+                                                    <p>You can only transfer assets if you have the <code>ASSETS:TRANSFER</code> permission for the business you are transfering the asset into.</p>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="assetMigrateInstance">Business to transfer to</label>
+                                                    <label for="assetMigrateInstance">Business to transfer asset to</label>
                                                     <select class="form-control select2bs4" id="assetMigrateInstance" placeholder="Select an Instance"></select>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="assetMigrateAssetType">Asset Type</label>
-                                                    <select disabled class="form-control select2bs4" id="assetMigrateAssetType" placeholder="Select an Asset Type" aria-describedby="assetMigrateAssetTypeHelp"></select>
-                                                    <small id="assetMigrateAssetTypeHelp" class="form-text text-muted">Please select a Business first</small>
+                                                <div class="form-group" style="display: none;">
+                                                    <label for="assetMigrateAssetType">Asset Type for asset in new business</label>
+                                                    <select class="form-control select2bs4" id="assetMigrateAssetType" placeholder="Select an Asset Type"></select>
                                                 </div>
-                                                <div class="form-group mt-2">
+                                                <div class="form-group mt-2" style="display: none;">
                                                     <label for="assetMigrateManufacturer">New Asset Type Manufacturer</label>
-                                                    <select disabled class="form-control select2bs4" id="assetMigrateManufacturer" placeholder="Select a Manufacturer" aria-describedby="assetMigrateManufacturerHelp"></select>
-                                                    <small id="assetMigrateManufacturerHelp" class="form-text text-muted">Please select "Copied from Asset" in Asset Type to create a new asset type</small>
+                                                    <select class="form-control select2bs4" id="assetMigrateManufacturer" placeholder="Select a Manufacturer" aria-describedby="assetMigrateManufacturerHelp"></select>
+                                                    <small id="assetMigrateManufacturerHelp" class="form-text text-muted">Select the manufacturer that this copied asset type should use</small>
                                                 </div>
-                                                <div class="form-group">
+                                                <div class="form-group" style="display: none;">
                                                     <label for="assetMigrateCategory">New Asset Type Category</label>
-                                                    <select disabled class="form-control select2bs4" id="assetMigrateCategory" placeholder="Select a Category" aria-describedby="assetMigrateCategoryHelp"></select>
-                                                    <small id="assetMigrateCategoryHelp" class="form-text text-muted">Please select "Copied from Asset" in Asset Type to create a new asset type</small>
+                                                    <select class="form-control select2bs4" id="assetMigrateCategory" placeholder="Select a Category" aria-describedby="assetMigrateCategoryHelp"></select>
+                                                    <small id="assetMigrateCategoryHelp" class="form-text text-muted">Which category should this asset type be placed in?</small>
                                                 </div> 
                                                 <button class="btn btn-default float-right" id="assetMigrate" style="margin-top:10px;margin-bottom:10px;">Migrate</button>                 
                                             </div>
@@ -1732,7 +1731,7 @@
                     tags: false,
                     multiple: false,
                     theme: "bootstrap4",
-                    minimumInputLength: 1,
+                    minimumInputLength: 0,
                     width: '100%',
                     minimumResultsForSearch: 1,
                     placeholder: "Search for a Business",
@@ -1767,7 +1766,7 @@
 
                 $("#assetMigrateInstance").on('select2:select', function () {
                     var id = $(this).select2('data')[0].id;
-                    $('#assetMigrateAssetType').prop("disabled",false);
+                    $('#assetMigrateAssetType').parent().show();
                     try {
                         // destroy select2 if already initialized
                         $('#assetMigrateAssetType').select2('destroy');
@@ -1777,7 +1776,7 @@
                         tags: false,
                         multiple: false,
                         theme: "bootstrap4",
-                        minimumInputLength: 1,
+                        minimumInputLength: 0,
                         width: '100%',
                         minimumResultsForSearch: 1,
                         placeholder: "Search for an Asset Type",
@@ -1802,13 +1801,13 @@
                                     return {
                                         // add "Other" to the end of the list
                                         results: [...responseData, {
-                                            text: "Copied from Asset",
+                                            text: "Copy the existing asset type ({{asset.assetTypes_name}}) into business",
                                             id: "-1"
                                         }]
                                     };
                                 } else return {
                                     results: [{
-                                            text: "Copied from Asset",
+                                            text: "Copy the existing asset type ({{asset.assetTypes_name}}) into business",
                                             id: "-1"
                                         }]
                                 };
@@ -1816,12 +1815,10 @@
                         }
                     })
                 });
-
                 $("#assetMigrateAssetType").on('select2:select', function () {
                     const id = $(this).select2('data')[0].id;
                     const instanceId = $("#assetMigrateInstance").select2('data')[0].id;
                     //Reset selectboxes
-                    $('#assetMigrateManufacturer, #assetMigrateCategory').prop("disabled",id != "-1");
                     try {
                         // destroy select2 if already initialized
                         $('#assetMigrateManufacturer, #assetMigrateCategory').select2('destroy');
@@ -1829,11 +1826,13 @@
                     $('#assetMigrateManufacturer, #assetMigrateCategory').empty();
 
                     if (id == "-1") {
+                        $('#assetMigrateManufacturer').parent().show();
+                        $('#assetMigrateCategory').parent().show();
                         $('#assetMigrateManufacturer').select2({
                             tags: false,
                             multiple: false,
                             theme: "bootstrap4",
-                            minimumInputLength: 1,
+                            minimumInputLength: 0,
                             width: '100%',
                             minimumResultsForSearch: 1,
                             placeholder: "Search for a Manufacturer",
@@ -1858,13 +1857,13 @@
                                         return {
                                         // add "Other" to the end of the list
                                         results: [...responseData,{
-                                            text: "Copied from Asset",
+                                            text: "Copy {{ asset.manufacturers_name }} into business",
                                             id: "-1"
                                         }]
                                     };
                                     } else return {
                                         results: [{
-                                            text: "Copied from Asset",
+                                            text: "Copy {{ asset.manufacturers_name }} into business",
                                             id: "-1"
                                         }]
                                     };
@@ -1875,7 +1874,7 @@
                             tags: false,
                             multiple: false,
                             theme: "bootstrap4",
-                            minimumInputLength: 1,
+                            minimumInputLength: 0,
                             width: '100%',
                             minimumResultsForSearch: 1,
                             placeholder: "Search for a Category",
@@ -1905,6 +1904,9 @@
                                 }
                             }
                         })
+                    } else {
+                        $('#assetMigrateManufacturer').parent().hide();
+                        $('#assetMigrateCategory').parent().hide();
                     }
                 });
 
