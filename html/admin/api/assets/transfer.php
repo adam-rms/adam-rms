@@ -4,7 +4,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 //Check user has permission to transfer assets in this instance 
 if (!$AUTH->instancePermissionCheck("ASSETS:TRANSFER")) die("404");
 //Check other instance exists for this user
-if (!array_search($_POST['new_instances_id'], array_column($AUTH->data['instances'], 'instances_id'))) die("404");
+if (array_search($_POST['new_instances_id'], array_column($AUTH->data['instances'], 'instances_id')) === false) die("404");
 //check user has permission in other instance 
 if (!in_array("ASSETS:TRANSFER", $AUTH->data['instances'][array_search($_POST['new_instances_id'], array_column($AUTH->data['instances'], 'instances_id'))]['permissions'])) die("403");
 
