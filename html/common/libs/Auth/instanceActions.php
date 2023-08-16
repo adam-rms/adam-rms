@@ -372,6 +372,17 @@ $instanceActions = [
     'LEGACY-ID' => 38,
     'LEGACY-Sort Rank' => 4,
   ],
+  'ASSETS:TRANSFER' => [
+    'Category' => 'Assets',
+    'Table' => 'Assets',
+    'Type' => 'Transfer',
+    'Detail' => null,
+    'Combined Text Description' => 'Assets: Transfer ',
+    'Dependencies' => ['ASSETS:CREATE', 'ASSETS:EDIT', 'ASSETS:DELETE', 'ASSETS:ASSET_TYPES:CREATE', 'ASSETS:ASSET_TYPES:EDIT', 'ASSETS:ASSET_CATEGORIES:VIEW', 'ASSETS:MANUFACTURERS:CREATE'],
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+    'Caution' => 'Allows user to transfer assets to another business'
+  ],
   'BUSINESS:BUSINESS_SETTINGS:EDIT' => [
     'Category' => 'Business',
     'Table' => 'Business Settings',
