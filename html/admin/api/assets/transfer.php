@@ -53,15 +53,16 @@ if ($_POST['assetTypes_id']) {
     } else {
         //We need to create a manufacturer in the new instance
         $DBLIB->where("manufacturers_id", $assetType['manufacturers_id']);
+        $DBLIB->where("instances_id IS NULL or instances_id = " .  $_POST['new_instances_id']);
         $oldInstanceManufacturer = $DBLIB->getOne("manufacturers", ["manufacturers.*"]);
         if (!$oldInstanceManufacturer) finish(false, ["code"=>"MANUFACTURER_NOT_FOUND", "message"=>"Manufacturer from asset type not found"]);//Shouldn't be possible to get here!
         //Create new manufacturer if needed
-        if ($oldInstanceManufacturer['instances_id'] != $_POST['new_instances_id'] && $oldInstanceManufacturer['instances_id'] != NULL) {
+        if ($oldInstanceManufacturer['instances_id'] != NULL) {
             $oldInstanceManufacturer['instances_id'] = $_POST['new_instances_id'];
             $oldInstanceManufacturer['manufacturers_internalAdamRMSNote'] = "Created during asset migration";
             unset($oldInstanceManufacturer['manufacturers_id']);
-            $manufacturer['manufacturers_id'] = $DBLIB->insert("manufacturers", $manufacturer);
-        } 
+            $manufacturer['manufacturers_id'] = $DBLIB->insert("manufacturers", $oldInstanceManufacturer);
+        }
     }
     
 
