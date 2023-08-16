@@ -268,6 +268,7 @@
                                             {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
                                             {% if "ASSETS:EDIT:OVVERRIDES"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
                                             <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
+                                            {% if "ASSETS:TRANSFER"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#moveAsset" data-toggle="tab">Transfer Asset</a></li>{% endif %}
                                         </ul>
                                     </div><!-- /.card-header -->
                                     <div class="card-body" style="padding: 0;">
@@ -378,6 +379,34 @@
                                                 <select class="form-control  select2bs4 assetSelect2" id="assetTypeChange" placeholder="{{ asset.assetTypes_name }}" value="{{ asset.assetTypes_id }}"></select>
                                                 <button class="btn btn-default float-right" id="saveAssetTypeChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
+                                            {% if "ASSETS:TRANSFER"|instancePermissions %}
+                                            <div class="tab-pane" style="padding: 1.25rem" id="moveAsset">
+                                                <div class="callout callout-danger">
+                                                    <p>Transferring an asset to another business will remove it from this business, which will affect existing projects.</p>
+                                                    <p>You can only transfer assets to businesses you have permission to migrate assets in - you need to have the <code>ASSETS:TRANSFER</code> permission for the business you are migrating to for it to appear here.</p>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="assetMigrateInstance">Business to transfer to</label>
+                                                    <select class="form-control select2bs4" id="assetMigrateInstance" placeholder="Select an Instance"></select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="assetMigrateAssetType">Asset Type</label>
+                                                    <select disabled class="form-control select2bs4" id="assetMigrateAssetType" placeholder="Select an Asset Type" aria-describedby="assetMigrateAssetTypeHelp"></select>
+                                                    <small id="assetMigrateAssetTypeHelp" class="form-text text-muted">Please select a Business first</small>
+                                                </div>
+                                                <div class="form-group mt-2">
+                                                    <label for="assetMigrateManufacturer">New Asset Type Manufacturer</label>
+                                                    <select disabled class="form-control select2bs4" id="assetMigrateManufacturer" placeholder="Select a Manufacturer" aria-describedby="assetMigrateManufacturerHelp"></select>
+                                                    <small id="assetMigrateManufacturerHelp" class="form-text text-muted">Please select "Copied from Asset" in Asset Type to create a new asset type</small>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="assetMigrateCategory">New Asset Type Category</label>
+                                                    <select disabled class="form-control select2bs4" id="assetMigrateCategory" placeholder="Select a Category" aria-describedby="assetMigrateCategoryHelp"></select>
+                                                    <small id="assetMigrateCategoryHelp" class="form-text text-muted">Please select "Copied from Asset" in Asset Type to create a new asset type</small>
+                                                </div> 
+                                                <button class="btn btn-default float-right" id="assetMigrate" style="margin-top:10px;margin-bottom:10px;">Migrate</button>                 
+                                            </div>
+                                            {% endif %}
                                         </div>
                                         <!-- /.tab-content -->
                                     </div><!-- /.card-body -->
@@ -1696,6 +1725,239 @@
                             window.location.href = "{{ CONFIG.ROOTURL }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
                         }, false);
                     }
+                });
+                {% endif %}
+                {% if "ASSETS:TRANSFER"|instancePermissions %}
+                $("#assetMigrateInstance").select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    width: '100%',
+                    minimumResultsForSearch: 1,
+                    placeholder: "Search for a Business",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/instances/list.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                term: params.term
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        if (item.permissions.includes("ASSETS:TRANSFER")) {
+                                            return {
+                                                text: item.instances_name,
+                                                id: item.instances_id
+                                            }
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    }
+                })
+
+                $("#assetMigrateInstance").on('select2:select', function () {
+                    var id = $(this).select2('data')[0].id;
+                    $('#assetMigrateAssetType').prop("disabled",false);
+                    try {
+                        // destroy select2 if already initialized
+                        $('#assetMigrateAssetType').select2('destroy');
+                    } catch (e) {} // ignore
+                    $('#assetMigrateAssetType').empty();
+                    $('#assetMigrateAssetType').select2({
+                        tags: false,
+                        multiple: false,
+                        theme: "bootstrap4",
+                        minimumInputLength: 1,
+                        width: '100%',
+                        minimumResultsForSearch: 1,
+                        placeholder: "Search for an Asset Type",
+                        ajax: {
+                            url: "{{ CONFIG.ROOTURL }}/api/assets/searchType.php?other_instances_id=" + id,
+                            dataType: "json",
+                            type: "POST",
+                            data: function (params) {
+                                var queryParameters = {
+                                    term: params.term
+                                }
+                                return queryParameters;
+                            },
+                            processResults: function (data) {
+                                if (data && data.result && data.response) {
+                                    const responseData = $.map(data.response, function (item) {
+                                            return {
+                                                text: item.manufacturers_name + " - " + item.assetTypes_name,
+                                                id: item.assetTypes_id
+                                            }
+                                        });
+                                    return {
+                                        // add "Other" to the end of the list
+                                        results: [...responseData, {
+                                            text: "Copied from Asset",
+                                            id: "-1"
+                                        }]
+                                    };
+                                } else return {
+                                    results: [{
+                                            text: "Copied from Asset",
+                                            id: "-1"
+                                        }]
+                                };
+                            }
+                        }
+                    })
+                });
+
+                $("#assetMigrateAssetType").on('select2:select', function () {
+                    const id = $(this).select2('data')[0].id;
+                    const instanceId = $("#assetMigrateInstance").select2('data')[0].id;
+                    //Reset selectboxes
+                    $('#assetMigrateManufacturer, #assetMigrateCategory').prop("disabled",id != "-1");
+                    try {
+                        // destroy select2 if already initialized
+                        $('#assetMigrateManufacturer, #assetMigrateCategory').select2('destroy');
+                    } catch (e) {} // ignore
+                    $('#assetMigrateManufacturer, #assetMigrateCategory').empty();
+
+                    if (id == "-1") {
+                        $('#assetMigrateManufacturer').select2({
+                            tags: false,
+                            multiple: false,
+                            theme: "bootstrap4",
+                            minimumInputLength: 1,
+                            width: '100%',
+                            minimumResultsForSearch: 1,
+                            placeholder: "Search for a Manufacturer",
+                            ajax: {
+                                url: "{{ CONFIG.ROOTURL }}/api/manufacturer/search.php?other_instances_id=" + instanceId,
+                                dataType: "json",
+                                type: "POST",
+                                data: function (params) {
+                                    var queryParameters = {
+                                        term: params.term
+                                    }
+                                    return queryParameters;
+                                },
+                                processResults: function (data) {
+                                    if (data && data.result && data.response) {
+                                        const responseData = $.map(data.response, function (item) {
+                                                return {
+                                                    text: item.manufacturers_name,
+                                                    id: item.manufacturers_id
+                                                }
+                                            })
+                                        return {
+                                        // add "Other" to the end of the list
+                                        results: [...responseData,{
+                                            text: "Copied from Asset",
+                                            id: "-1"
+                                        }]
+                                    };
+                                    } else return {
+                                        results: [{
+                                            text: "Copied from Asset",
+                                            id: "-1"
+                                        }]
+                                    };
+                                }
+                            }
+                        });
+                        $('#assetMigrateCategory').select2({
+                            tags: false,
+                            multiple: false,
+                            theme: "bootstrap4",
+                            minimumInputLength: 1,
+                            width: '100%',
+                            minimumResultsForSearch: 1,
+                            placeholder: "Search for a Category",
+                            ajax: {
+                                url: "{{ CONFIG.ROOTURL }}/api/categories/search.php?other_instances_id=" + instanceId,
+                                dataType: "json",
+                                type: "POST",
+                                data: function (params) {
+                                    var queryParameters = {
+                                        term: params.term
+                                    }
+                                    return queryParameters;
+                                },
+                                processResults: function (data) {
+                                    if (data && data.result && data.response) {
+                                        return {
+                                            results: $.map(data.response, function (item) {
+                                                return {
+                                                    text: item.assetCategoriesGroups_name + " - " + item.assetCategories_name,
+                                                    id: item.assetCategories_id
+                                                }
+                                            })
+                                        };
+                                    } else return {
+                                        results: []
+                                    };
+                                }
+                            }
+                        })
+                    }
+                });
+
+                $("#assetMigrate").on("click", function () {
+                    const newInstanceId = $("#assetMigrateInstance").select2('data')[0].id;
+                    const newAssetTypeId = $("#assetMigrateAssetType").select2('data')[0].id;
+                    let newManufacturerId = -1;
+                    let newCategoryId = -1;
+                    try {
+                        newManufacturerId = $("#assetMigrateManufacturer").select2('data')[0].id;
+                        newCategoryId = $("#assetMigrateCategory").select2('data')[0].id;
+                    } catch (e) { } //ignore
+                    const assetId = {{ assets[0]['assets_id'] }};
+                    
+                    let args = {}
+                    if (newAssetTypeId == "-1") {
+                        args = {
+                            "assets_id": assetId,
+                            "new_instances_id": newInstanceId,
+                            "newAssetType": false,
+                            "manufacturers_id": (newManufacturerId == -1 ? false : newManufacturerId), //can be "Copied from Asset"
+                            "assetCategories_id": newCategoryId,
+                        }
+                    } else {
+                        args = {
+                            "assets_id": assetId,
+                            "new_instances_id": newInstanceId,
+                            "assetTypes_id": newAssetTypeId,
+                        }
+                    }
+                    bootbox.confirm({
+                        message: "Are you sure you wish to transfer this asset?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("assets/transfer.php", 
+                                    args,
+                                    function (data) {
+                                        location.href = "{{ CONFIG.ROOTURL }}/assets.php";
+                                    }
+                                );
+                            }
+                        }
+                    });
                 });
                 {% endif %}
             });

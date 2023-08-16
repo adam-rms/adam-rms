@@ -1,15 +1,30 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-$instanceID = $AUTH->data['instance']["instances_id"];
+if (isset($_POST['other_instances_id'])) {
+    //For Asset Migration, we want the categories that are in the instance we are migrating to
+    //Check user has permission to transfer assets in this instance 
+    if (!$AUTH->instancePermissionCheck("ASSETS:TRANSFER")) die("403");
+    //Check other instance exists for this user
+    if (!$AUTH->data['instances'][$_POST['other_instances_id'] - 1]) die("404");
+    //check user has permission in other instance 
+    if (!in_array("ASSETS:TRANSFER", $AUTH->data['instances'][$_POST['other_instances_id']-1]['permissions'])) die("403");
 
-$assetCategories= $DBLIB->subQuery();
-$assetCategories->where("assets.instances_id",$instanceID);
-$assetCategories->where("assets_deleted",0);
-$assetCategories->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
-$assetCategories->groupBy ("assetTypes.assetCategories_id");
-$assetCategories->get ("assets", null, "assetCategories_id");
-$DBLIB->where("assetCategories_id", $assetCategories, "IN");
+    $instanceID = $_POST['other_instances_id'];
+} else {
+    //We want the categories that are in the current instance
+    $instanceID = $AUTH->data['instance']["instances_id"];
+}
+
+if(!isset($_POST['other_instances_id'])) { //We want all manufacturers if we are migrating
+    $assetCategories= $DBLIB->subQuery();
+    $assetCategories->where("assets.instances_id",$instanceID);
+    $assetCategories->where("assets_deleted",0);
+    $assetCategories->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
+    $assetCategories->groupBy ("assetTypes.assetCategories_id");
+    $assetCategories->get ("assets", null, "assetCategories_id");
+    $DBLIB->where("assetCategories_id", $assetCategories, "IN");
+}
 $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
 $DBLIB->orderBy("assetCategories_rank", "ASC");
 $DBLIB->where("assetCategories_deleted",0);
