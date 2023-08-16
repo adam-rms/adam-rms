@@ -16,7 +16,7 @@ if (isset($_POST['other_instances_id'])) {
     $instanceID = $AUTH->data['instance']["instances_id"];
 }
 
-if(!isset($_POST['other_instances_id'])) { //We want all manufacturers if we are migrating
+if($instanceID == $AUTH->data['instance']["instances_id"]) { // For transfering assets between instances, don't include the subquery
     $assetCategories= $DBLIB->subQuery();
     $assetCategories->where("assets.instances_id",$instanceID);
     $assetCategories->where("assets_deleted",0);
