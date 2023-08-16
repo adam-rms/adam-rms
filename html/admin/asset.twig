@@ -1749,7 +1749,7 @@
                             if (data && data.result && data.response) {
                                 return {
                                     results: $.map(data.response, function (item) {
-                                        if (item.permissions.includes("ASSETS:TRANSFER")) {
+                                        if (item.permissions.includes("ASSETS:TRANSFER") && item.instances_id != "{{ USERDATA.instance.instances_id }}") {
                                             return {
                                                 text: item.instances_name,
                                                 id: item.instances_id
