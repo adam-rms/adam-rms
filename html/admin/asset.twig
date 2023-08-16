@@ -1801,13 +1801,13 @@
                                     return {
                                         // add "Other" to the end of the list
                                         results: [...responseData, {
-                                            text: "Copy the existing asset type ({{asset.assetTypes_name}}) into business",
+                                            text: "Copy the existing asset type ({{asset.assetTypes_name|escape("js")}}) into business",
                                             id: "-1"
                                         }]
                                     };
                                 } else return {
                                     results: [{
-                                            text: "Copy the existing asset type ({{asset.assetTypes_name}}) into business",
+                                            text: "Copy the existing asset type ({{asset.assetTypes_name|escape("js")}}) into business",
                                             id: "-1"
                                         }]
                                 };
@@ -1857,13 +1857,13 @@
                                         return {
                                         // add "Other" to the end of the list
                                         results: [...responseData,{
-                                            text: "Copy {{ asset.manufacturers_name }} into business",
+                                            text: "Copy {{ asset.manufacturers_name|escape("js") }} into business",
                                             id: "-1"
                                         }]
                                     };
                                     } else return {
                                         results: [{
-                                            text: "Copy {{ asset.manufacturers_name }} into business",
+                                            text: "Copy {{ asset.manufacturers_name|escape("js") }} into business",
                                             id: "-1"
                                         }]
                                     };
