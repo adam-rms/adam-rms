@@ -381,7 +381,7 @@ $instanceActions = [
     'Dependencies' => ['ASSETS:CREATE', 'ASSETS:EDIT', 'ASSETS:DELETE', 'ASSETS:ASSET_TYPES:CREATE', 'ASSETS:ASSET_TYPES:EDIT', 'ASSETS:ASSET_CATEGORIES:VIEW', 'ASSETS:MANUFACTURERS:CREATE'],
     'Comment' => null,
     'Supported Token Types' => ["web-session"],
-    'Caution' => 'This permission allows you to transfer assets to another Business'
+    'Caution' => 'Allows user to transfer assets to another business'
   ],
   'BUSINESS:BUSINESS_SETTINGS:EDIT' => [
     'Category' => 'Business',
