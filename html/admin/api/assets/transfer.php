@@ -78,7 +78,7 @@ if (isset($_POST['assetTypes_id'])) {
     $assetType['assetCategories_id'] = $category['assetCategories_id'];
     unset($assetType['assetTypes_id']);
     $assetType['assetTypes_id'] = $DBLIB->insert("assetTypes", $assetType);
-
+    if (!$assetType['assetTypes_id']) finish(false, ["code"=>"ASSET_TYPE_NOT_CREATED", "message"=>"Asset type not created"]);
 
 }
 
