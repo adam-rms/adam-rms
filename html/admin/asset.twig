@@ -1913,16 +1913,16 @@
                 $("#assetMigrate").on("click", function () {
                     const newInstanceId = $("#assetMigrateInstance").select2('data')[0].id;
                     const newAssetTypeId = $("#assetMigrateAssetType").select2('data')[0].id;
-                    let newManufacturerId = -1;
-                    let newCategoryId = -1;
-                    try {
-                        newManufacturerId = $("#assetMigrateManufacturer").select2('data')[0].id;
-                        newCategoryId = $("#assetMigrateCategory").select2('data')[0].id;
-                    } catch (e) { } //ignore
+
                     const assetId = {{ assets[0]['assets_id'] }};
                     
                     let args = {}
                     if (newAssetTypeId == "-1") {
+                        let newManufacturerId = -1;
+                        newCategoryId = $("#assetMigrateCategory").select2('data')[0].id;
+                        try {
+                            newManufacturerId = $("#assetMigrateManufacturer").select2('data')[0].id;  
+                        } catch (e) { } //ignore
                         args = {
                             "assets_id": assetId,
                             "new_instances_id": newInstanceId,
