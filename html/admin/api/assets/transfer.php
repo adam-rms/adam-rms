@@ -23,7 +23,7 @@ if ($asset['instances_id'] == $_POST['new_instances_id']) finish(false, ["code"=
 
 //Get assetType
 // $_POST['assetTypes_id'] is either an id of a type in the new instance or ``false`` if we need to create the asset type in the new instance
-if ($_POST['assetTypes_id']) {
+if (isset($_POST['assetTypes_id'])) {
     //We have been given an assetTypes_id from the new instance
     $DBLIB->where("assetTypes_id", $_POST['assetTypes_id']);
     $DBLIB->where("instances_id IS NULL or instances_id = " .  $_POST['new_instances_id']);
