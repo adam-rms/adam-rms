@@ -90,11 +90,11 @@ $asset['assets_linkedTo'] = NULL; //We don't migrate linked assets
 unset($asset['assets_id']);
 $asset['assets_id'] = $DBLIB->insert("assets", $asset);
 if (!$asset['assets_id']) finish(false, ["code"=>"ASSET_NOT_CREATED", "message"=>"Asset not created"]);
-$bCMS->auditLog("TRANSFER-ASSET", "assets", $asset['assets_id'], $AUTH->data['users_userid']);
+$bCMS->auditLog("TRANSFER-ASSET", "assets", "Asset moved from instance " . $AUTH->data['instance']["instances_id"] . " to " . $_POST['new_instances_id'] . " instance - new id " . $asset['assets_id'], $AUTH->data['users_userid']);
 
 //Archive asset in old instance
 $archiveAssetData = [
-    "assets_archived" => "Asset moved to another Business",
+    "assets_archived" => "Asset moved to another business",
     "assets_endDate" => date("Y-m-d H:i:s", time())
 ];
 $DBLIB->where("assets_id", $_POST['assets_id']);
