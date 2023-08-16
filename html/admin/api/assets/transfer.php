@@ -26,7 +26,7 @@ if ($asset['instances_id'] == $_POST['new_instances_id']) finish(false, ["code"=
 if ($_POST['assetTypes_id']) {
     //We have been given an assetTypes_id from the new instance
     $DBLIB->where("assetTypes_id", $_POST['assetTypes_id']);
-    $DBLIB->where("instances_id", $_POST['new_instances_id']);
+    $DBLIB->where("instances_id IS NULL or instances_id = " .  $_POST['new_instances_id']);
     $assetType = $DBLIB->getOne("assetTypes", ["assetTypes.*"]);
     if (!$assetType) finish(false, ["code"=>"ASSET_TYPE_NOT_FOUND", "message"=>"Asset type not found"]);
 
@@ -38,7 +38,7 @@ if ($_POST['assetTypes_id']) {
 
     //Get assetType from old instance
     $DBLIB->where("assetTypes_id", $asset['assetTypes_id']);
-    $DBLIB->where("instances_id", $AUTH->data['instance']["instances_id"]);
+    $DBLIB->where("instances_id IS NULL or instances_id = " .  $AUTH->data['instance']["instances_id"]);
     $assetType = $DBLIB->getOne("assetTypes", ["assetTypes.*"]);
     if (!$assetType) finish(false, ["code"=>"ASSET_TYPE_NOT_FOUND", "message"=>"Asset type not found"]);
 
