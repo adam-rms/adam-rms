@@ -26,7 +26,7 @@ if ($asset['instances_id'] == $_POST['new_instances_id']) finish(false, ["code"=
 if (isset($_POST['assetTypes_id'])) {
     //We have been given an assetTypes_id from the new instance
     $DBLIB->where("assetTypes_id", $_POST['assetTypes_id']);
-    $DBLIB->where("instances_id IS NULL or instances_id = " .  $_POST['new_instances_id']);
+    $DBLIB->where("(instances_id IS NULL or instances_id = " .  $_POST['new_instances_id']. ")");
     $assetType = $DBLIB->getOne("assetTypes", ["assetTypes.*"]);
     if (!$assetType) finish(false, ["code"=>"ASSET_TYPE_NOT_FOUND", "message"=>"Asset type not found"]);
 
@@ -38,7 +38,7 @@ if (isset($_POST['assetTypes_id'])) {
 
     //Get assetType from old instance
     $DBLIB->where("assetTypes_id", $asset['assetTypes_id']);
-    $DBLIB->where("instances_id IS NULL or instances_id = " .  $AUTH->data['instance']["instances_id"]);
+    $DBLIB->where("(instances_id IS NULL or instances_id = " .  $AUTH->data['instance']["instances_id"] . ")");
     $assetType = $DBLIB->getOne("assetTypes", ["assetTypes.*"]);
     if (!$assetType) finish(false, ["code"=>"ASSET_TYPE_NOT_FOUND", "message"=>"Asset type not found"]);
 
@@ -46,14 +46,14 @@ if (isset($_POST['assetTypes_id'])) {
     if ($_POST['manufacturers_id']) {
         //We have been given the new manufacturer id to use, double check it exists
         $DBLIB->where("manufacturers_id", $_POST['manufacturers_id']);
-        $DBLIB->where("instances_id IS NULL or instances_id = " .  $_POST['new_instances_id']);
+        $DBLIB->where("(instances_id IS NULL or instances_id = " .  $_POST['new_instances_id'] . ")");
         $manufacturer = $DBLIB->getOne("manufacturers", ["manufacturers.*"]);
         if (!$manufacturer) finish(false, ["code"=>"MANUFACTURER_NOT_FOUND", "message"=>"Manufacturer from given id not found"]);
 
     } else {
         //We need to create a manufacturer in the new instance
         $DBLIB->where("manufacturers_id", $assetType['manufacturers_id']);
-        $DBLIB->where("instances_id IS NULL or instances_id = " .  $_POST['new_instances_id']);
+        $DBLIB->where("(instances_id IS NULL or instances_id = " .  $_POST['new_instances_id'] . ")");
         $oldInstanceManufacturer = $DBLIB->getOne("manufacturers", ["manufacturers.*"]);
         if (!$oldInstanceManufacturer) finish(false, ["code"=>"MANUFACTURER_NOT_FOUND", "message"=>"Manufacturer from asset type not found"]);//Shouldn't be possible to get here!
         //Create new manufacturer if needed
@@ -64,12 +64,11 @@ if (isset($_POST['assetTypes_id'])) {
             $manufacturer['manufacturers_id'] = $DBLIB->insert("manufacturers", $oldInstanceManufacturer);
         }
     }
-    
 
     //Get Category
     $DBLIB->where("assetCategories_id", $_POST['assetCategories_id']);
     $DBLIB->where("assetCategories_deleted", 0);
-    $DBLIB->where("instances_id IS NULL OR instances_id = " . $_POST['new_instances_id']);
+    $DBLIB->where("(instances_id IS NULL OR instances_id = " . $_POST['new_instances_id'] . ")");
     $category = $DBLIB->getOne("assetCategories", ["assetCategories.*"]);
     if (!$category) finish(false, ["code"=>"CATEGORY_NOT_FOUND", "message"=>"Category not found"]);
 
