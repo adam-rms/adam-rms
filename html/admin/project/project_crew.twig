@@ -101,7 +101,14 @@
                             </p>
                             <div class="project-actions text-center">
                                 <div class="btn-group">
-                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}&from=project">More Info and Apply</a>
+                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}&from=project">
+                                        More Info and
+                                        {% if role.projectsVacantRoles_firstComeFirstServed %}
+                                        Sign Up
+                                        {% else %}
+                                        Apply
+                                        {% endif %}
+                                    </a>
                                 </div>
                             </div>
                         </div>      
