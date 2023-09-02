@@ -105,7 +105,11 @@
             <form class="applyForm" data-id="{{ role.projectsVacantRoles_id }}">
                 <div class="card-header">
                     <h3 class="card-title">
+                        {% if role.projectsVacantRoles_firstComeFirstServed %}
+                        Sign Up
+                        {% else %}
                         Apply
+                        {% endif %}
                     </h3>
                 </div>
                 <div class="card-body">
@@ -190,13 +194,23 @@
                     {% endif %}
                 </div>
                 <div class="card-footer justify-content-between">
-                    <button type="submit" class="btn btn-success">Apply</button>
+                    <button type="submit" class="btn btn-success">
+                    {% if role.projectsVacantRoles_firstComeFirstServed %}
+                    Sign Up
+                    {% else %}
+                    Apply
+                    {% endif %}
+                    </button>
                 </div>
             </form>
             {% else %}
             <div class="card-header">
                 <h3 class="card-title">
+                    {% if role.projectsVacantRoles_firstComeFirstServed %}
+                    Sign Up
+                    {% else %}
                     Apply
+                    {% endif %}
                 </h3>
             </div>
             <div class="card-body">
