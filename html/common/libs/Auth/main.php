@@ -61,6 +61,10 @@ class bID
             if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
                 throw new AuthFail("IP from Cloudflare doesn't match token. Received [" . $_SERVER["HTTP_CF_CONNECTING_IP"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
+        } elseif (isset($_SERVER["do-connecting-ip"])) {
+            if ($_SERVER["do-connecting-ip"] != $tokenCheck["authTokens_ipAddress"]) {
+                throw new AuthFail("IP from DigitalOcean doesn't match token. Received [" . $_SERVER["do-connecting-ip"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
+            }
         } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
             if ($_SERVER["HTTP_X_FORWARDED_FOR"] != $tokenCheck["authTokens_ipAddress"]) {
                 throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . $_SERVER["HTTP_X_FORWARDED_FOR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
@@ -238,13 +242,18 @@ class bID
         global $DBLIB;
         if (!in_array($tokenType, ["web-session", "app-v1", "app-v2-magic-email"])) throw new Exception("Unknown token type");
 
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
+        elseif (isset($_SERVER["do-connecting-ip"])) $ipAddress = $_SERVER["do-connecting-ip"];
+        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        else $ipAddress = $_SERVER["REMOTE_ADDR"];
+
         $tokenKey = $this->generateTokenKey();
         $data = [
             "authTokens_created" => date('Y-m-d G:i:s'),
             "authTokens_token" => $tokenKey,
             "users_userid" => $userID,
             "authTokens_deviceType" => $deviceType,
-            "authTokens_ipAddress" => isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"]),
+            "authTokens_ipAddress" => $ipAddress,
             "authTokens_type" => $tokenType
         ];
         if ($adminUserID) $data["authTokens_adminId"] = intval($adminUserID); //Admin login as
