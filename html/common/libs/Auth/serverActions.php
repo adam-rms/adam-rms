@@ -157,6 +157,15 @@ $serverActions = [
     'LEGACY-ID' => 21,
     'LEGACY-Sort Rank' => 18,
   ],
+  'INSTANCES:IMPORT:ASSETS' => [
+    'Category' => 'Instances',
+    'Table' => 'Instances',
+    'Type' => 'Import',
+    'Detail' => 'Import Assets to any Instance',
+    'Dependencies' => ['INSTANCES:VIEW'],
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+  ],
   'INSTANCES:DELETE' => [
     'Category' => 'Instances',
     'Table' => 'Instances',

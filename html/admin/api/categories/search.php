@@ -1,15 +1,30 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-$instanceID = $AUTH->data['instance']["instances_id"];
+if (isset($_POST['other_instances_id'])) {
+    //For Asset Migration, we want the categories that are in the instance we are migrating to
+    //Check user has permission to transfer assets in this instance 
+    if (!$AUTH->instancePermissionCheck("ASSETS:TRANSFER")) die("403");
+    //Check other instance exists for this user
+    if (array_search($_POST['other_instances_id'], array_column($AUTH->data['instances'], 'instances_id')) === false) die("404");
+    //check user has permission in other instance 
+    if (!in_array("ASSETS:TRANSFER", $AUTH->data['instances'][array_search($_POST['other_instances_id'], array_column($AUTH->data['instances'], 'instances_id'))]['permissions'])) die("403");
 
-$assetCategories= $DBLIB->subQuery();
-$assetCategories->where("assets.instances_id",$instanceID);
-$assetCategories->where("assets_deleted",0);
-$assetCategories->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
-$assetCategories->groupBy ("assetTypes.assetCategories_id");
-$assetCategories->get ("assets", null, "assetCategories_id");
-$DBLIB->where("assetCategories_id", $assetCategories, "IN");
+    $instanceID = $_POST['other_instances_id'];
+} else {
+    //We want the categories that are in the current instance
+    $instanceID = $AUTH->data['instance']["instances_id"];
+}
+
+if($instanceID == $AUTH->data['instance']["instances_id"]) { // For transfering assets between instances, don't include the subquery
+    $assetCategories= $DBLIB->subQuery();
+    $assetCategories->where("assets.instances_id",$instanceID);
+    $assetCategories->where("assets_deleted",0);
+    $assetCategories->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
+    $assetCategories->groupBy ("assetTypes.assetCategories_id");
+    $assetCategories->get ("assets", null, "assetCategories_id");
+    $DBLIB->where("assetCategories_id", $assetCategories, "IN");
+}
 $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
 $DBLIB->orderBy("assetCategories_rank", "ASC");
 $DBLIB->where("assetCategories_deleted",0);
