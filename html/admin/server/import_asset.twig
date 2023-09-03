@@ -46,6 +46,7 @@
                 <h5 class="card-subtitle">Uploaded Assets</h5>
                 <table class="table">
                     <thead>
+                        <th scope="col">Row</th>
                         <th scope="col">Asset Tag</th>
                         <th scope="col">Asset Type</th>
                     </thead>
@@ -55,6 +56,7 @@
                 <h5 class="card-subtitle">Failed Assets</h5>
                 <table class="table">
                     <thead>
+                        <th scope="col">Row</th>
                         <th scope="col">Asset Tag</th>
                         <th scope="col">Reason</th>
                     </thead>
@@ -93,18 +95,18 @@
                             });
                         }
                         if (data.response.successfulAssets.length == 0) {
-                            $("#uploaded-assets").append("<tr class='text-center'><td colspan='2'>No Assets uploaded</td></tr>");
+                            $("#uploaded-assets").append("<tr class='text-center'><td colspan='3'>No Assets uploaded</td></tr>");
                         } else {
                             data.response.successfulAssets.forEach(element => {
-                                $("#uploaded-assets").append("<tr><td>" + element.assets_tag + "</td><td>" + element.assetTypes_id + "</td></tr>")
+                                $("#uploaded-assets").append("<tr><td>" + element.row + "</td><td>" + element.assets_tag + "</td><td>" + element.assetTypes_id + "</td></tr>")
                             });
                         }
                         
                         if (data.response.failedAssets.length == 0) {
-                            $("#failed-assets").append("<tr class='text-center'><td colspan='2'>All Assets uploaded successfully</td></tr>");
+                            $("#failed-assets").append("<tr class='text-center'><td colspan='3'>All Assets uploaded successfully</td></tr>");
                         } else {
                             data.response.failedAssets.forEach(element => {
-                                $("#failed-assets").append("<tr><td>" + element.tag + "</td><td>" + element.reason + "</td></tr>")
+                                $("#failed-assets").append("<tr><td>" + element.row + "</td><td>" + element.tag + "</td><td>" + element.reason + "</td></tr>")
                             });
                         }
                         

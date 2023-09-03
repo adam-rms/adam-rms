@@ -55,21 +55,21 @@ for ($i = 1; $i < count($csv); $i++) {
     });
 
     //Check if asset with given tag already exists
-    if (isset($row[9])){
+    if (isset($row[9]) and $row[9] != null){
         $DBLIB->where("assets_tag", $row[9]);
         $DBLIB->where("assets.instances_id", $_POST['instances_id']);
         $DBLIB->where("assets.assets_deleted", 0);
         $asset = $DBLIB->getOne("assets", ["assets.assets_id"]);
         if ($asset) {
             //Don't override existing information
-            array_push($failedAssets, ["tag" => $row[9], "reason" => "Asset with tag " . $row[9] . " already exists"]);
+            array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset with tag " . $row[9] . " already exists"]);
             continue; 
         }
-    }
-
+    } else $row[9] = generateNewTag();
+    
     //Asset Type
     if (!isset($row[0]) or $row[0] == null) {
-        array_push($failedAssets, ["tag" => $row[9], "reason" => "Asset Type not specified"]);
+        array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset Type not specified"]);
         continue;
     }
     $DBLIB->where("assetTypes_name", "%" . $row[0] . "%", "LIKE");
@@ -99,7 +99,7 @@ for ($i = 1; $i < count($csv); $i++) {
         if (!$assetCategory) {
             //Asset Category not found
             //This is the one thing we can't just create with data from the CSV
-            array_push($failedAssets, ["tag" => $row[9], "reason" => "Asset Category with name '". $row[7] . "' not found"]);
+            array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset Category with name '". $row[7] . "' not found"]);
             continue;
         }
 
@@ -128,21 +128,8 @@ for ($i = 1; $i < count($csv); $i++) {
         ];
         $assetType['assetTypes_id'] = $DBLIB->insert("assetTypes", $assetType);
         if ($assetType['assetTypes_id']) array_push($createdAssetTypes, $assetType);
-        else array_push($failedAssets, ["tag" => $row[9], "reason" => "Error creating Asset Type"]);
+        else array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Error creating Asset Type"]);
 
-    }
-
-    //Asset Tag
-    if (!isset($row[9]) or $row[9] == null) $row[9] = generateNewTag();
-    else {
-        //check Tag is not going to be duplicated
-        $DBLIB->where("assets.instances_id",$AUTH->data['instance']['instances_id']);
-        $DBLIB->where("assets.assets_tag", $array['assets_tag']);
-        $duplicateAssetTag = $DBLIB->getValue ("assets", "count(*)");
-        if ($duplicateAssetTag > 0) {
-            array_push($failedAssets, ["tag" => $row[9], "reason" => "Asset with tag " . $row[9] . " already exists"]);
-            continue; 
-        }
     }
 
     //Asset
@@ -169,7 +156,7 @@ for ($i = 1; $i < count($csv); $i++) {
     $asset['assets_id'] = $DBLIB->insert("assets", $asset);
 
     if ($asset['assets_id']) array_push($successfulAssets, $asset);
-    else array_push($failedAssets, ["tag" => $row[9], "reason" => "Unknown error"]);
+    else array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Unknown error"]);
 }
 
 return finish(true, null, ["createdTypes" => $createdAssetTypes,"successfulAssets" => $successfulAssets, "failedAssets" => $failedAssets]);
