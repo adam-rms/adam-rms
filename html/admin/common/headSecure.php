@@ -5,7 +5,7 @@ require_once __DIR__ . '/../assets/widgets/statsWidgets.php'; //Stats on homepag
 //THIS IS DUPLICATED SOMEWHAT IN API HEAD SECURE AS SECURITY IS HANDLED SLIGHTLY DIFFERENTLY ON THE API END
 
 if (!$GLOBALS['AUTH']->login) {
-    $_SESSION['return'] = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $_SESSION['return'] = str_replace("html/admin/", "", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
     if ($CONFIG['DEV']) die($GLOBALS['AUTH']->debug . "<br/><a href='" . $CONFIG['ROOTURL'] . "/login/'>" . $CONFIG['ROOTURL'] . "/login/</a>");
     header("Location: " . $CONFIG['ROOTURL'] . "/login/");
     die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/login/" . '" />');
