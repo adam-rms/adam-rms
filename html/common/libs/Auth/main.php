@@ -59,14 +59,14 @@ class bID
             throw new AuthFail("Token expired at " . $tokenCheck["authTokens_created"] . " - server time is " . time());
         } elseif (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
             if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Cloudflare doesn't match token");
+                throw new AuthFail("IP from Cloudflare doesn't match token. Received [" . $_SERVER["HTTP_CF_CONNECTING_IP"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
         } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
             if ($_SERVER["HTTP_X_FORWARDED_FOR"] != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Heroku/generic proxy doesn't match token");
+                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . $_SERVER["HTTP_X_FORWARDED_FOR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
         } elseif($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
-            throw new AuthFail("IP direct doesn't match token");
+            throw new AuthFail("IP direct doesn't match token. Received [" . $_SERVER["REMOTE_ADDR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
         }
 
         //Tests have passed, return the token
