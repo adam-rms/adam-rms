@@ -61,13 +61,9 @@ class bID
             if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
                 throw new AuthFail("IP from Cloudflare doesn't match token. Received [" . $_SERVER["HTTP_CF_CONNECTING_IP"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
-        } elseif (isset($_SERVER["do-connecting-ip"])) {
-            if ($_SERVER["do-connecting-ip"] != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from DigitalOcean doesn't match token. Received [" . $_SERVER["do-connecting-ip"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
-            }
         } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            if ($_SERVER["HTTP_X_FORWARDED_FOR"] != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . $_SERVER["HTTP_X_FORWARDED_FOR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
+            if (array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) != $tokenCheck["authTokens_ipAddress"]) {
+                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
         } elseif($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
             throw new AuthFail("IP direct doesn't match token. Received [" . $_SERVER["REMOTE_ADDR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
@@ -243,8 +239,7 @@ class bID
         if (!in_array($tokenType, ["web-session", "app-v1", "app-v2-magic-email"])) throw new Exception("Unknown token type");
 
         if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
-        elseif (isset($_SERVER["do-connecting-ip"])) $ipAddress = $_SERVER["do-connecting-ip"];
-        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]));
         else $ipAddress = $_SERVER["REMOTE_ADDR"];
 
         $tokenKey = $this->generateTokenKey();

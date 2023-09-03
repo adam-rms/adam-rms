@@ -23,8 +23,7 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         else $bruteforceattempt = false;
 
         if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
-        elseif (isset($_SERVER["do-connecting-ip"])) $ipAddress = $_SERVER["do-connecting-ip"];
-        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]));
         else $ipAddress = $_SERVER["REMOTE_ADDR"];
 
         //Record this login attempt
