@@ -31,7 +31,7 @@ $CONFIG = array(
     'ASSETCDNURL' => getenv('bCMS__ASSETS_URL'),
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
     'ERRORS' => ['SENTRY' => getenv('bCMS__SENTRYLOGIN'), "SENTRYPublic" => getenv('bCMS__SENTRYLOGINPUBLIC')],
-    'VERSION' => ['ENV' => getenv('bCMS__VERSION'), 'COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')],
+    'VERSION' => ['ENV' => getenv('bCMS__VERSION') ? (strlen(getenv('bCMS__VERSION')) > 7 ? substr(getenv('bCMS__VERSION'), 0, 7) : getenv('bCMS__VERSION')) : false, 'COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')], //Version number is the first 7 characters of the commit hash for certain deployments, and for others there's a nice numerical tag.
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
     "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
