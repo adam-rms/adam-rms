@@ -12,11 +12,6 @@ if (isset($_GET['i'])) {
         header("Location: " . $CONFIG['ROOTURL'] . "?");
     }
 }
-if ($AUTH->serverPermissionCheck("VIEW-PHPINFO") and isset($_GET['phpversion'])) {
-    phpinfo(INFO_ALL & ~INFO_ENVIRONMENT);
-    exit;
-}
-
 
 if ($AUTH->data['instance']["instancePositions_id"] && $AUTH->data['instance']["cmsPages_id"] != null) {
     $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);

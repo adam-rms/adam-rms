@@ -226,18 +226,6 @@ $serverActions = [
     'LEGACY-ID' => 13,
     'LEGACY-Sort Rank' => 10,
   ],
-  'VIEW-PHPINFO' => [
-    'Category' => 'Instances',
-    'Table' => '',
-    'Type' => '',
-    'Detail' => '',
-    'Dependencies' => null,
-    'Comment' => null,
-    'Supported Token Types' => ["web-session"],
-    'LEGACY-Description' => 'View PHP Info',
-    'LEGACY-ID' => 18,
-    'LEGACY-Sort Rank' => 15,
-  ],
   'VIEW-AUDIT-LOG' => [
     'Category' => 'General sys admin',
     'Table' => '',
