@@ -13,7 +13,7 @@ if (isset($_GET['i'])) {
     }
 }
 if ($AUTH->serverPermissionCheck("VIEW-PHPINFO") and isset($_GET['phpversion'])) {
-    phpinfo();
+    phpinfo(INFO_ALL & ~INFO_ENVIRONMENT);
     exit;
 }
 
