@@ -22,9 +22,13 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         if ($previousattempts > 6) $bruteforceattempt = true; //Only log it as a brute force if they get it wrong
         else $bruteforceattempt = false;
 
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
+        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]));
+        else $ipAddress = $_SERVER["REMOTE_ADDR"];
+
         //Record this login attempt
         $DBLIB->insert ('loginAttempts', [
-            "loginAttempts_ip" => (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"]),
+            "loginAttempts_ip" => $ipAddress,
             "loginAttempts_textEntered" => $input,
             "loginAttempts_timestamp" => date('Y-m-d G:i:s'),
             "loginAttempts_blocked" => ($bruteforceattempt ? '1' : '0'),

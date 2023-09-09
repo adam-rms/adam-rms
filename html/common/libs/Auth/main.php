@@ -59,14 +59,14 @@ class bID
             throw new AuthFail("Token expired at " . $tokenCheck["authTokens_created"] . " - server time is " . time());
         } elseif (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
             if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Cloudflare doesn't match token");
+                throw new AuthFail("IP from Cloudflare doesn't match token. Received [" . $_SERVER["HTTP_CF_CONNECTING_IP"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
         } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            if ($_SERVER["HTTP_X_FORWARDED_FOR"] != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Heroku/generic proxy doesn't match token");
+            if (array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) != $tokenCheck["authTokens_ipAddress"]) {
+                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
         } elseif($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
-            throw new AuthFail("IP direct doesn't match token");
+            throw new AuthFail("IP direct doesn't match token. Received [" . $_SERVER["REMOTE_ADDR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
         }
 
         //Tests have passed, return the token
@@ -239,13 +239,17 @@ class bID
         if (!in_array($tokenType, ["web-session", "app-v1", "app-v2-magic-email"])) throw new Exception("Unknown token type");
         if (is_null($userID)) throw new Exception("User ID cannot be null");
 
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
+        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]));
+        else $ipAddress = $_SERVER["REMOTE_ADDR"];
+
         $tokenKey = $this->generateTokenKey();
         $data = [
             "authTokens_created" => date('Y-m-d G:i:s'),
             "authTokens_token" => $tokenKey,
             "users_userid" => $userID,
             "authTokens_deviceType" => $deviceType,
-            "authTokens_ipAddress" => isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"]),
+            "authTokens_ipAddress" => $ipAddress,
             "authTokens_type" => $tokenType
         ];
         if ($adminUserID) $data["authTokens_adminId"] = intval($adminUserID); //Admin login as

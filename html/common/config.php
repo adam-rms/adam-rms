@@ -31,13 +31,13 @@ $CONFIG = array(
     'ASSETCDNURL' => getenv('bCMS__ASSETS_URL'),
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
     'ERRORS' => ['SENTRY' => getenv('bCMS__SENTRYLOGIN'), "SENTRYPublic" => getenv('bCMS__SENTRYLOGINPUBLIC')],
-    'VERSION' => ['COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')],
+    'VERSION' => ['ENV' => getenv('bCMS__VERSION') ? (strlen(getenv('bCMS__VERSION')) > 7 ? substr(getenv('bCMS__VERSION'), 0, 7) : getenv('bCMS__VERSION')) : false, 'COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')], //Version number is the first 7 characters of the commit hash for certain deployments, and for others there's a nice numerical tag.
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
-    "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
+    "PROJECT_FROM_EMAIL" => getenv('bCMS__FROM_EMAIL'),
     "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
     "ROOTURL" => getenv('bCMS__ROOTURL'),
-    "PROJECT_SUPPORT_EMAIL" => "studios@jbithell.com",
-    "TermsOfServiceURL" => "https://adam-rms.com/legal",
+    "PROJECT_SUPPORT_EMAIL" => getenv('bCMS__SUPPORT_EMAIL'),
+    "TermsOfServiceURL" => getenv('bCMS__TOS_URL'),
     'AWS' => [
         'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
         'SECRET' => getenv('bCMS__AWS_SERVER_SECRET_KEY'),
@@ -65,7 +65,7 @@ $CONFIG = array(
         ]
     ],
     'FRESHDESK' => [
-        'URL' => "https://bstudios.freshdesk.com",
+        'URL' => getenv('bCMS__FRESHDESK_URL'),
         'APIKEY' => getenv('bCMS__FRESHDESK')
     ],
     'NOTIFICATIONS' => [
