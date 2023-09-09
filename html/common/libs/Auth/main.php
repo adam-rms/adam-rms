@@ -50,7 +50,7 @@ class bID
         $DBLIB->where('authTokens_token', $GLOBALS['bCMS']->sanitizeString($token));
         $DBLIB->where("authTokens_valid", '1');
         $DBLIB->where("authTokens_type", $tokenType);
-        $tokenCheck = $DBLIB->getOne("authTokens", ["authTokens_token", "authTokens_created", "authTokens_ipAddress", "users_userid", "authTokens_adminId", "authTokens_type"]);
+        $tokenCheck = $DBLIB->getOne("authTokens", ["authTokens_token", "authTokens_created", "authTokens_ipAddress", "users_userid", "authTokens_adminId", "authTokens_type", "authTokens_id"]);
 
         if (!$tokenCheck) {
             throw new AuthFail('Token not found in DB');
@@ -91,6 +91,8 @@ class bID
                 $DBLIB->where("users_userid", $this->token["authTokens_adminId"]);
                 $this->data['viewSiteAs'] = $DBLIB->getOne("users");
             }
+
+            $this->data['authTokens_id'] = $this->token["authTokens_id"];
 
             $this->login = true;
         } catch (AuthFail $e) {

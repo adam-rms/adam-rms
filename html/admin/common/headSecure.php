@@ -23,6 +23,16 @@ $PAGEDATA['AUTH'] = $AUTH;
 $PAGEDATA['USERDATA'] = $AUTH->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
+$DBLIB->insert("analyticsEvents", [
+    "analyticsEvents_timetsamp" => date ("Y-m-d H:i:s"),
+    "users_userid" => $AUTH->data['users_userid'],
+    "adminUser_users_userid" => $AUTH->data['viewSiteAs'] ? $AUTH->data['viewSiteAs']['users_userid'] : null,
+    "authTokens_id" => $AUTH->data['authTokens_id'],
+    "instances_id" => $AUTH->data['instance'] ?  $AUTH->data['instance']['instances_id'] : null,
+    "analyticsEvents_path" => strtok($_SERVER["REQUEST_URI"], '?'),
+    "analyticsEvents_action" => 'PAGE-REQUEST',
+    "analyticsEvents_payload" => count($_GET) > 0 ? json_encode($_GET) : null,
+]);
 
 // Create a set of instances that can be joined via the trusted domains route
 if ($AUTH->data['users_emailVerified'] == 1) {
