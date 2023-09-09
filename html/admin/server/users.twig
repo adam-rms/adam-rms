@@ -1,5 +1,11 @@
 {% extends "assets/template.twig" %}
+{% block htmlIncludes %}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js" integrity="sha512-OQlawZneA7zzfI6B1n1tjUuo3C5mtYuAWpQdg+iI9mkDoo7iFzTqnQHf+K5ThOWNJ9AbXL4+ZDwH7ykySPQc+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock %}
 {% block content %}
 	<div class="row">
 		<div class="col-lg-6 offset-lg-3 col-md-12">
@@ -15,7 +21,7 @@
 	</div>
     <div class="row">
         <div class="col-lg-12">
-            <div class="card ">
+            <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
                         {% if search|length > 0 %}
@@ -25,29 +31,29 @@
                         {% endif %}
                     </h3>
                     <div class="card-tools pull-right">
-                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                        <!--<form class="input-group input-group-sm" style="width: 150px;" method="GET">
                             <input type="text" name="q" class="form-control pull-right" placeholder="Search" value="{{ search }}" />
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                             </div>
-
-                        </form>
+                        </form>-->
                     </div>
                 </div>
-                <div class="card-body table-responsive p-0">
+                <div class="card-body">
                     {% if users|length > 0 %}
-                        <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
+                        <table class="table table-head-fixed" id="userTable" border="0" style="overflow-x: scroll;">
                             <thead>
                             <tr>
-                                <th>Thumbnail</th>
                                 <th>Username</th>
                                 <th>Firstname</th>
-                                <th>Lastname</th>
+                                <th data-searchable="false">Lastname</th>
                                 <th>Email</th>
-                                <th>Roles</th>
-                                <th>Instances</th>
-                                <th></th>
-                                <th></th>
+                                <th data-orderable="false">Roles</th>
+                                <th data-orderable="false">Instances</th>
+                                <th data-searchable="false">Accepted TOS</th>
+                                <th data-searchable="false">Last Login</th>
+                                <th data-searchable="false">Last Page View</th>
+                                <th data-orderable="false"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -56,9 +62,9 @@
                                         {% if user.users_suspended == '1' %}
                                         class="danger"
                                         {% endif %}>
-                                    <td><img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}"></td>
+                                    <!--<td><img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}"></td>-->
                                     <td>{{ user.users_username }}</td>
-                                    <td>{{ user["users_name1"] }}</td>
+                                    <td data-search="{{ (user["users_name1"] ~ " " ~ user["users_name2"])|escape("html_attr") }}">{{ user["users_name1"] }}</td>
                                     <td>{{ user["users_name2"] }}</td>
                                     <td>{{ user["users_email"] }} {{ user["users_emailVerified"] == 1 ? '<i class="fa fa-check-square-o">' : null }}</td>
                                     <td>
@@ -87,9 +93,14 @@
                                             {{ instance.instances_name }} ({{ instance.instances_plan }}) - {{ instance.userInstances_label }} ({{ instance.instancePositions_displayName }})<br/>
                                         {% endfor %}
                                     </td>
-                                    <td>
-
-
+                                    <td data-order="{{ user.users_termsAccepted ? user.users_termsAccepted|date("U") : 0 }}">
+                                        {{ user.users_termsAccepted ? user.users_termsAccepted|date("d/M/Y G:i:s") : '' }}
+                                    </td>
+                                    <td data-order="{{ user.lastLogin.authTokens_created ? user.lastLogin.authTokens_created|date("U") : 0 }}">
+                                        {{ user.lastLogin.authTokens_created ? user.lastLogin.authTokens_created|date("d/M/Y G:i:s") : null }}
+                                    </td>
+                                    <td data-order="{{ user.lastAnalytics.analyticsEvents_timetsamp ? user.lastAnalytics.analyticsEvents_timetsamp|date("U") : 0 }}">
+                                        {{ user.lastAnalytics.analyticsEvents_timetsamp ? user.lastAnalytics.analyticsEvents_timetsamp|date("d/M/Y G:i:s") : null }}
                                     </td>
                                     <td>
                                         <div class="btn-group">
@@ -138,6 +149,19 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                        <script>
+                        $(function () {
+                            $('#userTable').DataTable({
+                                "paging": true,
+                                "lengthChange": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false,
+                                "responsive": true,
+                            });
+                        });
+                        </script>
                     {% else %}
                         <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
                     {% endif %}
@@ -145,29 +169,6 @@
                 <div class="overlay" id="loadingoverlay">
                     <i class="fas fa-sync fa-spin fa-3x"></i>
                 </div>
-                {% if pagination.total > 1 %}
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-right">
-                        {% if pagination.page > 1 %}
-                        <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
-                        {% endif %}
-
-                        {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
-                            <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
-                                    {% if pagination.page == i %}
-                                        <b>{{ i }}</b>
-                                    {% else %}
-                                        {{ i }}
-                                    {% endif %}
-                                </a></li>
-                        {% endfor %}
-
-                        {% if pagination.page < pagination.total %}
-                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-                {% endif %}
             </div>
         </div>
         {% for user in users %}

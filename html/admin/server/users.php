@@ -10,9 +10,6 @@ $PAGEDATA["mailings"] = [];
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;
 
-if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
-else $page = 1;
-$DBLIB->pageLimit = isset($_GET['pageLimit']) ? $_GET['pageLimit'] : 20; //Users per page
 $DBLIB->orderBy("users.users_name1", "ASC");
 $DBLIB->orderBy("users.users_name2", "ASC");
 $DBLIB->orderBy("users.users_created", "ASC");
@@ -27,8 +24,7 @@ if (strlen($PAGEDATA['search']) > 0) {
     )");
 }
 //if (!isset($_GET['suspended'])) $DBLIB->where ("users.users_suspended", "0");
-$users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.*"]);
-$PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
+$users = $DBLIB->get('users', null, ["users.*"]);
 foreach ($users as $user) {
 	$DBLIB->where('users_userid', $user['users_userid']);
 	$PAGEDATA["mailings"][$user['users_userid']] = $DBLIB->get('emailSent'); //Get user's E-Mails
@@ -52,6 +48,16 @@ foreach ($users as $user) {
 	$DBLIB->orderBy("positions_displayName", "ASC");
 	$DBLIB->join("positions", "positions.positions_id=userPositions.positions_id", "LEFT");
 	$user['currentPositions'] = $DBLIB->get("userPositions",null,["positions.positions_displayName","userPositions.userPositions_displayName"]);
+
+	$DBLIB->where("users_userid", $user['users_userid']);
+	$DBLIB->where("(authTokens_adminId IS NULL)");
+	$DBLIB->orderBy("authTokens_created", "DESC");
+	$user['lastLogin'] = $DBLIB->getOne("authtokens",["authTokens_created"]);
+
+	$DBLIB->where("users_userid", $user['users_userid']);
+	$DBLIB->where("(adminUser_users_userid IS NULL)");
+	$DBLIB->orderBy("analyticsEvents_timetsamp", "DESC");
+	$user['lastAnalytics'] = $DBLIB->getOne("analyticsEvents",["analyticsEvents_timetsamp"]);
 
 
 	$PAGEDATA["users"][] = $user;
