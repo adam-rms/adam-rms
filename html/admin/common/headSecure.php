@@ -24,7 +24,7 @@ $PAGEDATA['USERDATA'] = $AUTH->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
 $DBLIB->insert("analyticsEvents", [
-    "analyticsEvents_timetsamp" => date ("Y-m-d H:i:s"),
+    "analyticsEvents_timestamp" => date ("Y-m-d H:i:s"),
     "users_userid" => $AUTH->data['users_userid'],
     "adminUser_users_userid" => $AUTH->data['viewSiteAs'] ? $AUTH->data['viewSiteAs']['users_userid'] : null,
     "authTokens_id" => $AUTH->data['authTokens_id'],

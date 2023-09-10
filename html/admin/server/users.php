@@ -52,12 +52,12 @@ foreach ($users as $user) {
 	$DBLIB->where("users_userid", $user['users_userid']);
 	$DBLIB->where("(authTokens_adminId IS NULL)");
 	$DBLIB->orderBy("authTokens_created", "DESC");
-	$user['lastLogin'] = $DBLIB->getOne("authtokens",["authTokens_created"]);
+	$user['lastLogin'] = $DBLIB->getOne("authTokens",["authTokens_created"]);
 
 	$DBLIB->where("users_userid", $user['users_userid']);
 	$DBLIB->where("(adminUser_users_userid IS NULL)");
-	$DBLIB->orderBy("analyticsEvents_timetsamp", "DESC");
-	$user['lastAnalytics'] = $DBLIB->getOne("analyticsEvents",["analyticsEvents_timetsamp"]);
+	$DBLIB->orderBy("analyticsEvents_timestamp", "DESC");
+	$user['lastAnalytics'] = $DBLIB->getOne("analyticsEvents",["analyticsEvents_timestamp"]);
 
 
 	$PAGEDATA["users"][] = $user;
