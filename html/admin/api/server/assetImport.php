@@ -4,7 +4,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if (!$AUTH->serverPermissionCheck("INSTANCES:IMPORT:ASSETS") or !isset($_POST['instances_id'])) die("404");
 
 //Expected list of headers for the CSV file
-$CSVHEADERS = ["assetTypes_name","assetTypes_description","assetTypes_productLink","assetTypes_mass","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value","assetCategories_name","manufacturers_name","assets_tag","assets_notes","assets_storageLocation","assets_dayRate","assets_WeekRate","assets_value","assets_mass","assetType_definableFieldsName_1","assetType_definableFieldsName_2","assetType_definableFieldsName_3","assetType_definableFieldsName_4","assetType_definableFieldsName_5","assetType_definableFieldsName_6","assetType_definableFieldsName_7","assetType_definableFieldsName_8","assetType_definableFieldsName_9","assetType_definableFieldsName_10","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10"];
+$CSVHEADERS = ["assetTypes_name","assetTypes_description","assetTypes_productLink","assetTypes_mass","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value","assetCategories_id","manufacturers_name","assets_tag","assets_notes","assets_storageLocation","assets_dayRate","assets_WeekRate","assets_value","assets_mass","assetType_definableFieldsName_1","assetType_definableFieldsName_2","assetType_definableFieldsName_3","assetType_definableFieldsName_4","assetType_definableFieldsName_5","assetType_definableFieldsName_6","assetType_definableFieldsName_7","assetType_definableFieldsName_8","assetType_definableFieldsName_9","assetType_definableFieldsName_10","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10"];
 
 $createdAssetTypes = [];
 $successfulAssets = [];
@@ -92,14 +92,14 @@ for ($i = 1; $i < count($csv); $i++) {
         }
         
         //Asset Category
-        $DBLIB->where("assetCategories_name", "%" . $row[7] . "%", "LIKE");
+        $DBLIB->where("assetCategories_id", $row[7],);
         $DBLIB->where("(assetCategories.instances_id = ? or assetCategories.instances_id IS NULL)", [$_POST['instances_id']]);
         $DBLIB->where("assetCategories.assetCategories_deleted", 0);
         $assetCategory = $DBLIB->getOne("assetCategories", ["assetCategories.assetCategories_id"]);
         if (!$assetCategory) {
             //Asset Category not found
             //This is the one thing we can't just create with data from the CSV
-            array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset Category with name '". $row[7] . "' not found"]);
+            array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset Category with id '". $row[7] . "' not found in this instance"]);
             continue;
         }
 
