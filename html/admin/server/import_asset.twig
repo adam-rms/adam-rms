@@ -123,4 +123,38 @@
         });
     });
 </script>
+
+<div class="row">
+    <div class="col-lg-4 offset-lg-4 col-md-12" style="padding: 5px;">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Asset Categories</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-subtitle">Match the category id to the category you wish to use</h5>
+                <table class="table">
+                    <thead>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                    </thead>
+                    <tbody>
+                {% for category in categories %}
+                    {% if instance != category.instances_name %}
+                    <tr>
+                        <td colspan="2" style="font-weight: bold;">{{ category.instances_name }}</td>
+                    </tr>
+                    {% set instance = category.instances_name %}
+                    {% endif %}
+                    <tr>
+                        <td>{{ category.assetCategories_id }}</td>
+                        <td>{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
