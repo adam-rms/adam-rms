@@ -155,6 +155,9 @@ for ($i = 1; $i < count($csv); $i++) {
     ];
     $asset['assets_id'] = $DBLIB->insert("assets", $asset);
 
+    //Add Row ID to asset array for logging output
+    $assets['row'] = $i;
+
     if ($asset['assets_id']) array_push($successfulAssets, $asset);
     else array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Unknown error"]);
 }
