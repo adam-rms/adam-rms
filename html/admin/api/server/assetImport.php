@@ -120,11 +120,11 @@ for ($i = 1; $i < count($csv); $i++) {
             "assetTypes_description" => $row[1],
             "assetTypes_productLink" => $row[2],
             "assetTypes_definableFields" => $definableFields,
-            "assetTypes_mass" => $row[3],
-            "assetTypes_inserted" => time(),
-            "assetTypes_dayRate" => $row[4],
-            "assetTypes_weekRate" => $row[5],
-            "assetTypes_value" => $row[6],   
+            "assetTypes_mass" => $row[3] ?: 0,
+            "assetTypes_inserted" => date('Y-m-d H:i:s'),
+            "assetTypes_dayRate" => $row[4] ?: 0,
+            "assetTypes_weekRate" => $row[5] ?: 0,
+            "assetTypes_value" => $row[6] ?: 0,   
         ];
         $assetType['assetTypes_id'] = $DBLIB->insert("assetTypes", $assetType);
         if ($assetType['assetTypes_id']) array_push($createdAssetTypes, $assetType);
@@ -148,15 +148,15 @@ for ($i = 1; $i < count($csv); $i++) {
         "asset_definableFields_8" => $row[33],
         "asset_definableFields_9" => $row[34],
         "asset_definableFields_10" => $row[35],
-        "assets_dayRate" => $row[12],
-        "assets_weekRate" => $row[13],
-        "assets_value" => $row[14],
-        "assets_mass" => $row[15],
+        "assets_dayRate" => $row[12] ?: 0,
+        "assets_weekRate" => $row[13] ?: 0,
+        "assets_value" => $row[14] ?: 0,
+        "assets_mass" => $row[15] ?: 0,
     ];
     $asset['assets_id'] = $DBLIB->insert("assets", $asset);
 
     //Add Row ID to asset array for logging output
-    $assets['row'] = $i;
+    $asset['row'] = $i;
 
     if ($asset['assets_id']) array_push($successfulAssets, $asset);
     else array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Unknown error"]);
