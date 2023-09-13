@@ -1396,6 +1396,7 @@
             });
             $(".deleteCrewAssignment").click(function () {
                 var id = $(this).data("assignment");
+                var hasVacancy = Boolean($(this).data("vacancy"));
                 bootbox.confirm({
                     message: "Are you sure you wish to remove this crew member - they will be notified?",
                     buttons: {
@@ -1410,9 +1411,30 @@
                     },
                     callback: function (result) {
                         if (result) {
-                            ajaxcall("projects/crew/unassign.php", {"crewAssignments_id": id}, function (data) {
-                                location.reload();
-                            });
+                            if (hasVacancy) {
+                                bootbox.confirm({
+                                    message: "Would you like to reopen applications for this crew role?",
+                                    buttons: {
+                                        confirm: {
+                                            label: "Yes",
+                                            className: "btn-success",
+                                        },
+                                        cancel: {
+                                            label: "No",
+                                            className: "btn-default"
+                                        }
+                                    },
+                                    callback: function(reopen) {
+                                        ajaxcall("projects/crew/unassign.php", {"crewAssignments_id": id, "reopenVacancy": reopen}, function (data) {
+                                            location.reload();
+                                        });
+                                    }
+                                });
+                            } else {
+                                ajaxcall("projects/crew/unassign.php", {"crewAssignments_id": id}, function (data) {
+                                    location.reload();
+                                });
+                            }
                         }
                     }
                 });

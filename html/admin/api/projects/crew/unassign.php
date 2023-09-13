@@ -8,7 +8,7 @@ $DBLIB->where("crewAssignments_deleted", 0);
 $DBLIB->join("projects", "crewAssignments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
-$assignment = $DBLIB->getone("crewAssignments", ["crewAssignments.crewAssignments_id", "crewAssignments.users_userid", "projects.projects_id", "projects.projects_name","crewAssignments.crewAssignments_role"]);
+$assignment = $DBLIB->getone("crewAssignments", ["crewAssignments.crewAssignments_id", "crewAssignments.users_userid", "projects.projects_id", "projects.projects_name","crewAssignments.crewAssignments_role","crewAssignments.projectsVacantRoles_id"]);
 if (!$assignment) finish(false);
 else {
     $bCMS->auditLog("UNASSIGN-CREW", "crewAssignments", $assignment['crewAssignments_id'], $AUTH->data['users_userid'],null, $assignment['projects_id']);
@@ -16,6 +16,12 @@ else {
         notify(10, $assignment["users_userid"], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " removed you from the crew of the project " . $assignment['projects_name'] . " in the role of " . $assignment["crewAssignments_role"]);
     }
     $DBLIB->where("crewAssignments_id", $assignment['crewAssignments_id']);
-    if ($DBLIB->update("crewAssignments", ["crewAssignments_deleted" => 1])) finish(true);
+    if ($DBLIB->update("crewAssignments", ["crewAssignments_deleted" => 1])) {
+        if ($_POST['reopenVacancy'] === "true" && $assignment["projectsVacantRoles_id"]) {
+            $DBLIB->where("projectsVacantRoles_id",$assignment['projectsVacantRoles_id']);
+            $DBLIB->update("projectsVacantRoles",["projectsVacantRoles_slotsFilled"=>$DBLIB->dec(1)],1);
+        }
+        finish(true);
+    }
     else finish(false);
 }
