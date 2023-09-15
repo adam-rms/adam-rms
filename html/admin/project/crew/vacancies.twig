@@ -135,7 +135,13 @@
                                 {% if role.application %}
                                     <button type="button" class="btn btn-default btn-sm" disabled>Applied</button>
                                 {% else %}
-                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">Apply</a>
+                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">
+                                        {% if role.projectsVacantRoles_firstComeFirstServed %}
+                                        Sign Up
+                                        {% else %}
+                                        Apply
+                                        {% endif %}
+                                    </a>
                                 {% endif %}
                             </div>
                         </div>
