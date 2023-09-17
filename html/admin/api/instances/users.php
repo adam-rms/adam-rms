@@ -33,16 +33,16 @@ $users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.users_username
 $return = [];
 foreach ($users as $user) {
   $return[] = [
-    'userid' => $user['users_userid'],
-    'username' => $user['users_username'],
-    'name1' => $user['users_name1'],
-    'name2' => $user['users_name2'],
-    'email' => $user['users_email'],
-    'emailVerified' => $user['users_emailVerified'] === 1,
-    'suspended' => $user['users_suspended'] === 1,
-    'positionId' => $user['instancePositions_id'],
-    'positionDisplayName' => $user['instancePositions_displayName'],
-    'thumbnail' => $user['users_thumbnail'],
+    'users_userid' => $user['users_userid'],
+    'users_username' => $user['users_username'],
+    'users_name1' => $user['users_name1'],
+    'users_name2' => $user['users_name2'],
+    'users_email' => $user['users_email'],
+    'users_emailVerified' => $user['users_emailVerified'] === 1,
+    'users_suspended' => $user['users_suspended'] === 1,
+    'instancePositions_id' => $user['instancePositions_id'],
+    'instancePositions_displayName' => $user['instancePositions_displayName'],
+    'users_thumbnail' => $user['users_thumbnail'],
   ];
 }
 
