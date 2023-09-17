@@ -57,7 +57,7 @@
         timer: 3000
     });
 
-    const assetStatuses = {{ BOARDASSETS|json_encode|raw }}
+    const assetStatuses = {{ BOARDSTATUSES|json_encode|raw }}
 
     if (localStorage.getItem("activeTab-board")) {
         $('a.assetsBoardToggle[href=\'#' + localStorage.getItem("activeTab-board") + '\']').tab('show');
