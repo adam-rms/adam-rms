@@ -22,28 +22,28 @@ if (strlen($q) > 0) {
 		OR users_name1 LIKE '%" . $bCMS->sanitizeString($q) . "%'
 		OR users_name2 LIKE '%" . $bCMS->sanitizeString($q) . "%'
 		OR users_email LIKE '%" . $bCMS->sanitizeString($q) . "%'
-    )");
+		)");
 }
 $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
-$DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
-$DBLIB->where("userInstances.userInstances_deleted",  0);
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("userInstances.userInstances_deleted", 0);
 $DBLIB->where("userInstances.userInstances_archived", null, "IS");
 $users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.users_username", "users.users_name1", "users.users_name2", "users.users_userid", "users.users_email", "users.users_emailVerified", "users.users_suspended","users.users_suspended", "instancePositions.instancePositions_displayName", "userInstances.instancePositions_id","users.users_thumbnail"]);
 $return = [];
 foreach ($users as $user) {
-  $return[] = [
-    'users_userid' => $user['users_userid'],
-    'users_username' => $user['users_username'],
-    'users_name1' => $user['users_name1'],
-    'users_name2' => $user['users_name2'],
-    'users_email' => $user['users_email'],
-    'users_emailVerified' => $user['users_emailVerified'] === 1,
-    'users_suspended' => $user['users_suspended'] === 1,
-    'instancePositions_id' => $user['instancePositions_id'],
-    'instancePositions_displayName' => $user['instancePositions_displayName'],
-    'users_thumbnail' => $user['users_thumbnail'],
-  ];
+	$return[] = [
+		'users_userid' => $user['users_userid'],
+		'users_username' => $user['users_username'],
+		'users_name1' => $user['users_name1'],
+		'users_name2' => $user['users_name2'],
+		'users_email' => $user['users_email'],
+		'users_emailVerified' => $user['users_emailVerified'] === 1,
+		'users_suspended' => $user['users_suspended'] === 1,
+		'instancePositions_id' => $user['instancePositions_id'],
+		'instancePositions_displayName' => $user['instancePositions_displayName'],
+		'users_thumbnail' => $user['users_thumbnail'],
+	];
 }
 
 finish(true, null, $return);
