@@ -4,7 +4,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if (!$AUTH->instancePermissionCheck("BUSINESS:USERS:VIEW:LIST")) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
 
 if (isset($_GET['q'])) $q = $bCMS->sanitizeString($_GET['q']);
-else $q = null;
+else $q = '';
 
 if (isset($_GET['page'])) $page = $bCMS->sanitizeString($_GET['page']);
 else $page = 1;
