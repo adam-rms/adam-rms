@@ -30,9 +30,9 @@ $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted", 0);
 $DBLIB->where("userInstances.userInstances_archived", null, "IS");
 $users = $DBLIB->arraybuilder()->paginate('users', $page, ["users.users_username", "users.users_name1", "users.users_name2", "users.users_userid", "users.users_email", "users.users_emailVerified", "users.users_suspended","users.users_suspended", "instancePositions.instancePositions_displayName", "userInstances.instancePositions_id","users.users_thumbnail"]);
-$return = [];
+$return = ["users" => [], "pagination" => ["thisPageUsers" => count($users), "thisPage" => $page, "totalPages" => $DBLIB->totalPages, "totalUsers" => $DBLIB->totalCount]];
 foreach ($users as $user) {
-	$return[] = [
+	$return["users"][] = [
 		'users_userid' => $user['users_userid'],
 		'users_username' => $user['users_username'],
 		'users_name1' => $user['users_name1'],
