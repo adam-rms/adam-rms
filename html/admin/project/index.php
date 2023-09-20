@@ -79,6 +79,7 @@ if ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FO
  * Variables for the board view (asset dispatch)
  */
 $PAGEDATA['BOARDASSETS'] = [];
+$PAGEDATA['BOARDSTATUSES'] = []; //A slimmer version of the above for loading into Javascript!
 foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
     $tempAssets = [];
     foreach ($PAGEDATA['FINANCIALS']['assetsAssigned'] as $assetType){
@@ -91,6 +92,7 @@ foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
         }
     }
     $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']] = $status;
+    $PAGEDATA['BOARDSTATUSES'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']] = $status; //For the JS Array
     $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']]["assets"] = $tempAssets;
 }
 foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go through the sub projects
@@ -98,6 +100,7 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
     $DBLIB->where("assetsAssignmentsStatus.instances_id", $instance['instance']['instances_id']);
     $DBLIB->where("assetsAssignmentsStatus.assetsAssignmentsStatus_deleted", 0);
     $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']] = $DBLIB->get("assetsAssignmentsStatus");
+    $PAGEDATA['BOARDSTATUSES'][$instance['instance']['instances_id']] = $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']]; //for the JS Array
     foreach ($PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']] as $status) {
         $tempAssets=[];
         foreach ($instance["assets"] as $assetType){
