@@ -1,5 +1,6 @@
 <div class="p-2 scrolling-head h-100" >
     {% for status in instanceAssets %}
+        {% if status.instances_id == instanceid %}
         <div class="col-2 pageAssetSortable">
             <div class="card">
                 <div class="card-header">
@@ -20,5 +21,6 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     {% endfor %}
 </div>
