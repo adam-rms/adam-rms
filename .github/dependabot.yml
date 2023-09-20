@@ -7,18 +7,21 @@ updates:
       interval: "daily"
       time: "17:00"
       timezone: "Europe/London"
-    open-pull-requests-limit: 50
+    open-pull-requests-limit: 5
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
       interval: "daily"
       time: "17:00"
       timezone: "Europe/London"
-    open-pull-requests-limit: 50
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        versions: ["version-update:semver-major"]
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "daily"
       time: "17:00"
       timezone: "Europe/London"
-    open-pull-requests-limit: 50
+    open-pull-requests-limit: 5
