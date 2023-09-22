@@ -238,6 +238,18 @@ $serverActions = [
     'LEGACY-ID' => 7,
     'LEGACY-Sort Rank' => 4,
   ],
+  'VIEW-ANALYTICS' => [
+    'Category' => 'General sys admin',
+    'Table' => '',
+    'Type' => '',
+    'Detail' => '',
+    'Dependencies' => null,
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+    'LEGACY-Description' => '',
+    'LEGACY-ID' => null,
+    'LEGACY-Sort Rank' => null,
+  ],
   'USE-DEV' => [
     'Category' => 'Instances',
     'Table' => '',
