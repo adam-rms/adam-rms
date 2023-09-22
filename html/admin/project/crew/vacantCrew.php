@@ -9,7 +9,7 @@ $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $_GET['id']);
 $PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*"]);
-if (!$PAGEDATA['project']) die("404");
+if (!$PAGEDATA['project']) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->where("projectsVacantRoles_deleted",0);
 $DBLIB->where("projects_id",$PAGEDATA['project']['projects_id']);

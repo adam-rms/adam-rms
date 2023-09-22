@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW") or !isset($_GET['id'])) die($TWIG->render('404.twig', $PAGEDATA));
+$PAGEDATA['USE_TWIG_404'] = true;
 require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data comes from
 
 //AuditLog
