@@ -1,0 +1,72 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the AdamRMS Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+		</div>
+	</div>
+    <div class="row">
+         <div class="col-lg-4 offset-lg-2 col-md-6 offset-md-3 col-sm-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Analytics - User Views
+                    </h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-head-fixed" border="0" style="overflow-x: scroll;">
+                        <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Page Views</th>
+                            <th>% API Calls</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in viewsByUser %}
+                            {% if user.countSum > 0 %}
+                            <tr>
+                                <td>{{ user.users_name1 ~ " " ~ user.users_name2 }}</td>
+                                <td>{{ (user.countSum)|number_format }}</td>
+                                <td>{{ user.countSum > 0 ? ((user.countApi/user.countSum)*100)|number_format(2) ~ "%": '' }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Analytics - Page Views
+                    </h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-head-fixed" border="0" style="overflow-x: scroll;">
+                        <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Page Views</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for page in viewsByPage %}
+                            {% if page.count > 10 %}
+                            <tr>
+                                <td>{{ page.analyticsEvents_path|replace({'/html/admin': ""}) }}</td>
+                                <td>{{ page.count|number_format }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
