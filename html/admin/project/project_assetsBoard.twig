@@ -66,12 +66,19 @@
     // Create an array of status ids, ordered
     const assetStatusesRaw = JSON.parse('{{ BOARDSTATUSES|json_encode|raw }}');
     var assetStatuses = {};
-    for (const [key, value] of Object.entries(assetStatusesRaw)) {
-        var newDir = {"orderedStatusIds": [], "allData": value};
-        value.forEach((item) => {
-            newDir["orderedStatusIds"].push(item["assetsAssignmentsStatus_id"]);
-        });
-        assetStatuses[key] = newDir;
+    for (const [instanceid, instanceStatuses] of Object.entries(assetStatusesRaw)) {
+        var newDir = {"orderedStatusIds": [], "allData": instanceStatuses};
+        // In theory, if the statuses have been sorted by the user dragging them around then the orders will be in order and so JS will recognise them as an array. Otherwise they'll be an object (e.g. if someone has deleted a status but not dragged them around)
+        if (Array.isArray(instanceStatuses)) {
+            instanceStatuses.forEach((item) => {
+                newDir["orderedStatusIds"].push(item["assetsAssignmentsStatus_id"]);
+            });
+        } else if (typeof instanceStatuses === 'object') {
+            for (const [key, value] of Object.entries(instanceStatuses)) {
+                newDir["orderedStatusIds"].push(value["assetsAssignmentsStatus_id"]);
+            }
+        }
+        assetStatuses[instanceid] = newDir;
     }
     // Show/Hide relevant buttons for touchscreen control
     function drawButtons() {
