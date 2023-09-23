@@ -23,7 +23,7 @@ $DBLIB->insert("analyticsEvents", [
     "adminUser_users_userid" => $AUTH->data['viewSiteAs'] ? $AUTH->data['viewSiteAs']['users_userid'] : null,
     "authTokens_id" => $AUTH->data['authTokens_id'],
     "instances_id" => $AUTH->data['instance'] ?  $AUTH->data['instance']['instances_id'] : null,
-    "analyticsEvents_path" => $_SERVER['REQUEST_URI'],
+    "analyticsEvents_path" => strtok($_SERVER["REQUEST_URI"], '?'),
     "analyticsEvents_action" => "API-CALL",
     "analyticsEvents_payload" => json_encode($_POST),
 ]);
