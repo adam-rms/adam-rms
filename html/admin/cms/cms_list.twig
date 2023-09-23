@@ -38,6 +38,7 @@
                                 <th>Name</th>
                                 <th>Security</th>
                                 <th>Page URL</th>
+                                <th>Views</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -81,6 +82,9 @@
                                 </td>
                                 <td>
                                     <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">/cms/?p={{ page.cmsPages_id }}</a><br/>
+                                </td>
+                                <td>
+                                    {{ page.views|number_format }}
                                 </td>
                                 <td style="width:70px;">
                                     <div class="btn-group">
@@ -131,6 +135,9 @@
                                     </td>
                                     <td>
                                         <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}">/cms/?p={{ page.cmsPages_id }}</a><br/>
+                                    </td>
+                                    <td>
+                                        {{ page.views|number_format }}
                                     </td>
                                     <td style="width:70px;">
                                         <div class="btn-group">
