@@ -20,5 +20,11 @@ if (!isset($_GET['showAPI'])) $DBLIB->where("analyticsEvents.analyticsEvents_act
 $PAGEDATA['viewsByPage'] = $DBLIB->get("analyticsEvents",null,["COUNT(analyticsEvents.analyticsEvents_id) AS count", "analyticsEvents.analyticsEvents_path"]);
 
 
+$DBLIB->groupBy("hour");
+$DBLIB->groupBy("day");
+$DBLIB->orderBy("day", "ASC");
+$DBLIB->orderBy("hour", "ASC");
+$PAGEDATA['viewsByHour'] = $DBLIB->get("analyticsEvents", null, ["HOUR(analyticsEvents_timestamp) as hour", "DAYNAME(analyticsEvents_timestamp) as day", "count(*) AS count"]);
+
 echo $TWIG->render('server/analytics/pageViews.twig', $PAGEDATA);
 ?>
