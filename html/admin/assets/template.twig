@@ -715,7 +715,7 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions %}
+                {% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions or "VIEW-ANALYTICS"|serverPermissions or "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
                 <li class="nav-header">SERVER ADMIN</li>
                 {% endif %}
             {% if "USERS:CREATE"|serverPermissions %}
@@ -757,6 +757,17 @@
                         <i class="nav-icon fas fa-gavel"></i>
                         <p>
                             Audit Log
+                            <span class="right badge badge-danger">Server-Wide</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if "VIEW-ANALYTICS"|serverPermissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/server/analytics/" class="nav-link">
+                        <i class="nav-icon far fa-chart-bar"></i>
+                        <p>
+                            Analytics
                             <span class="right badge badge-danger">Server-Wide</span>
                         </p>
                     </a>
