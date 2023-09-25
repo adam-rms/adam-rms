@@ -25,7 +25,7 @@ final class AddCalendarSettings extends AbstractMigration
             'text', 
             [
                 'null' => true,
-                'default' => '{"showProjectStatus":"true","showSubProjects":"true", "useCustomWeekNumbers":"true", "defaultView":"dayGridMonth",}',
+                'default' => '{"showProjectStatus":true,"showSubProjects":true,"useCustomWeekNumbers":true,"defaultView":"dayGridMonth"}',
                 'after' => 'instances_trustedDomains'
             ]
         )
