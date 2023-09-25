@@ -13,7 +13,7 @@ $DBLIB->where("cmsPages_archived",($PAGEDATA['includeArchived'] ? 1: 0));
 $DBLIB->where("cmsPages_subOf",NULL,"IS");
 $DBLIB->orderBy("cmsPages_navOrder","ASC");
 $DBLIB->orderBy("cmsPages_id","ASC");
-$cmsPages = $DBLIB->get("cmsPages");
+$cmsPages = $DBLIB->get("cmsPages", null, "cmsPages.*, (SELECT count(*) FROM cmsPagesViews WHERE cmsPagesViews.cmsPages_id = cmsPages.cmsPages_id) as views");
 $PAGEDATA['CMSPages'] = [];
 $PAGEDATA['CMSPagesAll'] = [];
 foreach ($cmsPages as $page) {
@@ -23,7 +23,7 @@ foreach ($cmsPages as $page) {
     $DBLIB->where("cmsPages_subOf",$page['cmsPages_id']);
     $DBLIB->orderBy("cmsPages_name","ASC");
     $DBLIB->orderBy("cmsPages_id","ASC");
-    $page['SUBPAGES'] = $DBLIB->get("cmsPages");
+    $page['SUBPAGES'] = $DBLIB->get("cmsPages", null, "cmsPages.*, (SELECT count(*) FROM cmsPagesViews WHERE cmsPagesViews.cmsPages_id = cmsPages.cmsPages_id) as views");
     foreach ($page['SUBPAGES'] as $subPage) {
         $PAGEDATA['CMSPagesAll'][] = $subPage;
     }
