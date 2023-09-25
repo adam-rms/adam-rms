@@ -498,8 +498,6 @@
                                         </p>
                                     </a>
                                 </li>
-                            {% endif %}
-                            {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="fas fa-list nav-icon"></i>
@@ -509,6 +507,13 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ CONFIG.ROOTURL }}/instances/calendarSettings.php" class="nav-link">
+                                            <p>
+                                                Calendar Settings
+                                            </p>
+                                        </a>
+                                    </li>
                                     {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
                                         <li class="nav-item">
                                             <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
