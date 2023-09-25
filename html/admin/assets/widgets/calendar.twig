@@ -19,6 +19,7 @@
                 editable  : false,
                 droppable : false,
                 themeSystem: 'bootstrap',
+                initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
                 nextDayThreshold: '05:00:00',
                 height: 800,
                 firstDay: 1,
@@ -45,7 +46,7 @@
                     {% for project in projects %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
-                            title          : "[{{ project.projectsStatuses_name|escape("js") }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
+                            title          : "{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ project.projectsStatuses_name|escape("js") }}] {% endif %}{{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
                             start          : {{ project.projects_dates_use_start|date('U') }}*1000,
                             end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                             url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
@@ -56,28 +57,30 @@
                                 {% set startDate = project.projects_dates_use_start|date("c") %}
                             {% endif %}
                         {% endif %}
-                        {%  for subProject in project.subProjects %}
-                            {% if subProject.projects_dates_use_start != null and subProject.projects_dates_use_end != null %}
-                                {
-                                    title          : "↳ [{{ subProject.projectsStatuses_name|escape("js") }}] {{ subProject.clients_name ? subProject.clients_name|escape("js") ~ " - " }}{{ subProject.projects_name|escape("js") }}",
-                                    start          : {{ subProject.projects_dates_use_start|date('U') }}*1000,
-                                    end            : {{ subProject.projects_dates_use_end|date('U') }}*1000,
-                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ subProject.projects_id }}',
-                                    backgroundColor: '{{ subProject.projectsStatuses_backgroundColour }}',
-                                    textColor    : '{{ subProject.projectsStatuses_foregroundColour }}'
-                                },
-                                {% if startDate > subProject.projects_dates_use_start|date("c") or startDate == false %}
-                                    {% set startDate = subProject.projects_dates_use_start|date("c") %}
+                        {% if USERDATA['instance']['calendarSettings'].showSubProjects %}
+                            {%  for subProject in project.subProjects %}
+                                {% if subProject.projects_dates_use_start != null and subProject.projects_dates_use_end != null %}
+                                    {
+                                        title          : "↳ {% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ subProject.projectsStatuses_name|escape("js") }}] {% endif %}{{ subProject.clients_name ? subProject.clients_name|escape("js") ~ " - " }}{{ subProject.projects_name|escape("js") }}",
+                                        start          : {{ subProject.projects_dates_use_start|date('U') }}*1000,
+                                        end            : {{ subProject.projects_dates_use_end|date('U') }}*1000,
+                                        url            : '{{CONFIG.ROOTURL}}/project/?id={{ subProject.projects_id }}',
+                                        backgroundColor: '{{ subProject.projectsStatuses_backgroundColour }}',
+                                        textColor    : '{{ subProject.projectsStatuses_foregroundColour }}'
+                                    },
+                                    {% if startDate > subProject.projects_dates_use_start|date("c") or startDate == false %}
+                                        {% set startDate = subProject.projects_dates_use_start|date("c") %}
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
+                            {% endfor %}
+                        {% endif %}
                     {% endfor %}
                 ],
                 {% if useStartDate and startDate %}
                 initialDate: '{{ startDate|date("c") }}',
                 {% endif %}
                 weekNumbers: true,
-                {% if USERDATA.instance['instances_weekStartDates'] %}
+                {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
                 weekNumberContent : function(week) {
                     var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
                     for (const [date, label] of Object.entries(weekStartDates)) {
