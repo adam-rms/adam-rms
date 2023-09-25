@@ -274,7 +274,7 @@
                         {% if USERDATA.instances|length > 1 %}
                             <span class="dropdown-header">Your Businesses</span>
                             {% for instance in USERDATA.instances %}
-                                <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item">
+                                <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
                                     {{instance.instances_name}}
                                     <p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
                                     {% if USERDATA.instance.instances_id == instance.instances_id %}
@@ -933,7 +933,14 @@
             });
         });
         {% endif %}
-
+        {% if USERDATA.instances|length > 1 %}
+            $(".changeInstanceActionButton[data-newinstance]").click(function (event) {
+                event.preventDefault();
+                ajaxcall("instances/switch.php", {'instances_id': $(this).data("newinstance")}, function (data) {
+                    location.reload();
+                });
+            });
+        {% endif %}
     });
     console.log("Welcome to {{ CONFIG.PROJECT_NAME|escape("js") }} version {{ (CONFIG.VERSION.ENV ?: CONFIG.VERSION.TAG)|escape("js") }}");
 </script>
