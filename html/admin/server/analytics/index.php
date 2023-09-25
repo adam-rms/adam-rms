@@ -6,7 +6,7 @@ if (!$AUTH->serverPermissionCheck("VIEW-ANALYTICS")) die($TWIG->render('404.twig
 
 $PAGEDATA['analyticsEventsCount'] = $DBLIB->getValue ("analyticsEvents", "count(analyticsEvents_id)");
 
-echo $TWIG->render('server/analytics/index.twig', $PAGEDATA);
+echo $TWIG->render('server/analytics/analytics_index.twig', $PAGEDATA);
 ?>
 
 
