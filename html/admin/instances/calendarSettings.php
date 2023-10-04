@@ -7,4 +7,4 @@ if (!$AUTH->instancePermissionCheck("BUSINESS:BUSINESS_SETTINGS:VIEW")) die($TWI
 
 $PAGEDATA['calendarSettings'] = $AUTH->data['instance']['calendarSettings'];
 
-echo $TWIG->render('instances/calendar_settings.twig', $PAGEDATA);
+echo $TWIG->render('instances/instances_calendarSettings.twig', $PAGEDATA);
