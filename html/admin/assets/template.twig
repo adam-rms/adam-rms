@@ -498,6 +498,8 @@
                                         </p>
                                     </a>
                                 </li>
+                            {% endif %}
+                            {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="fas fa-list nav-icon"></i>
@@ -507,6 +509,7 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
+                                    {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
                                     <li class="nav-item">
                                         <a href="{{ CONFIG.ROOTURL }}/instances/calendarSettings.php" class="nav-link">
                                             <p>
@@ -514,6 +517,7 @@
                                             </p>
                                         </a>
                                     </li>
+                                    {% endif %}
                                     {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
                                         <li class="nav-item">
                                             <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
