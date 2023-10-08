@@ -12,26 +12,30 @@
                     <div class="card-title">Calendar Settings</div>
                 </div>
                 <div class="card-body">
+                    <p>These settings only apply to calendars across the dashboard. <br />
+                    <small>iCal calendars and those in the app are not affected by these settings.</small></p>
                     <div class="form-check py-2">
                         <input type="checkbox" class="form-check-input" name="showProjectStatus" {{ calendarSettings.showProjectStatus ? 'checked' : '' }}>
-                        <label class="form-check-label">Show Project Statuses before Project Name</label>
+                        <label class="form-check-label">Show Project Statuses with Project Name</label>
                     </div>
                     <div class="form-check py-2">
                         <input type="checkbox" class="form-check-input" name="showSubProjects" {{ calendarSettings.showSubProjects ? 'checked' : '' }}>
-                        <label class="form-check-label">Show SubProjects on general calendars</label>
+                        <label class="form-check-label">Show SubProjects on calendars</label>
                     </div>
                     <div class="form-check py-2">
-                        <input type="checkbox" class="form-check-input" name="useCustomWeekNumbers" {{ calendarSettings.useCustomWeekNumbers ? 'checked' : '' }}>
+                        <input type="checkbox" class="form-check-input" name="useCustomWeekNumbers" {{ calendarSettings.useCustomWeekNumbers ? 'checked' : '' }} aria-describedby="useCustomWeekNumbersHelp">
                         <label class="form-check-label">Use Custom Week Labels</label>
+                        <small id="useCustomWeekNumbersHelp" class="form-text text-muted">Does not apply to asset calendars</small>
                     </div>
                     <div class="form-group py-2">
                         <label for="defaultView">Default Calendar View</label>
-                            <select class="form-control" id="defaultView" name="defaultView">
-                                <option value="dayGridMonth" {{ (calendarSettings.defaultView == 'dayGridMonth') ? 'selected' : '' }}>Month View</option>
-                                <option value="timeGridWeek" {{ (calendarSettings.defaultView == 'timeGridWeek') ? 'selected' : '' }}>Week View</option>
-                                <option value="timeGridDay" {{ (calendarSettings.defaultView == 'timeGridDay') ? 'selected' : '' }}>Day View</option>
-                                <option value="listWeek" {{ (calendarSettings.defaultView == 'listWeek') ? 'selected' : '' }}>List View</option>
-                            </select>
+                        <select class="form-control" id="defaultView" name="defaultView"  aria-describedby="defaultViewHelp">
+                            <option value="dayGridMonth" {{ (calendarSettings.defaultView == 'dayGridMonth') ? 'selected' : '' }}>Month View</option>
+                            <option value="timeGridWeek" {{ (calendarSettings.defaultView == 'timeGridWeek') ? 'selected' : '' }}>Week View</option>
+                            <option value="timeGridDay" {{ (calendarSettings.defaultView == 'timeGridDay') ? 'selected' : '' }}>Day View</option>
+                            <option value="listWeek" {{ (calendarSettings.defaultView == 'listWeek') ? 'selected' : '' }}>List View</option>
+                        </select>
+                        <small id="defaultViewHelp" class="form-text text-muted">Does not apply to asset calendars</small>
                     </div>
                 </div>
                 {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
