@@ -504,6 +504,7 @@
                                     var calendar = new Calendar(document.getElementById('calendar'), {
                                         nextDayThreshold: '05:00:00',
                                         themeSystem: 'bootstrap',
+                                        initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
                                         buttonText: {
                                             today: 'Today',
                                             month: 'Month',
@@ -523,7 +524,7 @@
                                             {% set latestEnd = false %}
                                             {% for project in user.crewAssignments %}
                                             {
-                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }} ({{ project.projectsStatuses_name|escape("js") }})",
+                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} ({{ project.projectsStatuses_name|escape("js") }}){% endif %}",
                                                 start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
                                                 end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
                                                 url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',
@@ -549,7 +550,7 @@
                                         },
                                         firstDay: 1,
                                         weekNumbers: true,
-                                        {% if USERDATA.instance['instances_weekStartDates'] %}
+                                        {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
                                         weekNumberContent : function(week) {
                                             var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
                                             for (const [date, label] of Object.entries(weekStartDates)) {
