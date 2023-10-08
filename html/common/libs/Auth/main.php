@@ -162,7 +162,7 @@ class bID
             }
 
             $instance['publicData'] = json_decode($instance['instances_publicConfig'],true);
-            $instance['calendarSettings'] = json_decode($instance['instances_calendarConfig']);
+            $instance['calendarSettings'] = json_decode($instance['instances_calendarConfig'], true);
             $this->data['instances'][] = $instance;
             array_push($this->data['instance_ids'], $instance['instances_id']);
         }
