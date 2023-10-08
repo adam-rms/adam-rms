@@ -224,7 +224,7 @@
                                             {% for thisasset in assets %}
                                             {% for assignment in thisasset.assignments %}
                                             {
-                                                title          : '{{ thisasset.assets_tag|aTag }} [{{ assignment.projectsStatuses_name|escape("js") }}] {{ assignment.projects_name }}',
+                                                title          : '{{ thisasset.assets_tag|aTag }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} [{{ assignment.projectsStatuses_name|escape("js") }}]{% endif %} {{ assignment.projects_name }}',
                                                 start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                 end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                 url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
@@ -246,11 +246,8 @@
                                         },
                                         editable  : false,
                                         droppable : false, // this allows things to be dropped onto the calendar !!!
-                                        drop      : function(info) {
-
-                                        },
                                         height: 600,
-                                        firstDay: 1,
+                                        firstDay: 1
                                     });
 
                                     calendar.render();
@@ -882,7 +879,7 @@
                                             {% for thisasset in assets %}
                                                 {% for assignment in thisasset.assignments %}
                                                 {
-                                                    title          : '[{{ assignment.projectsStatuses_name }}] {{ assignment.projects_name }}',
+                                                    title          : '{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ assignment.projectsStatuses_name }}] {% endif %}{{ assignment.projects_name }}',
                                                     start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                     end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
@@ -904,11 +901,8 @@
                                         },
                                         editable  : false,
                                         droppable : false, // this allows things to be dropped onto the calendar !!!
-                                        drop      : function(info) {
-
-                                        },
                                         height: 600,
-                                        firstDay: 1,
+                                        firstDay: 1
                                     });
 
                                     calendar.render();
