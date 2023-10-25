@@ -11,10 +11,10 @@ $DBLIB->where("projectsVacantRoles_id",$_GET['id']);
 $PAGEDATA['role'] = $DBLIB->getOne("projectsVacantRoles");
 if (!$PAGEDATA['role']) die($TWIG->render('404.twig', $PAGEDATA));
 
-if ($role['projectsVacantRoles_privateToPM'] == 1) {
-    if ($PAGEDATA['project']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
-} elseif ($role['projectsVacantRoles_applicationVisibleToUsers'] != null) {
-    if (!in_array($AUTH->data["users_userid"], explode(",",$role['projectsVacantRoles_applicationVisibleToUsers'])) and $PAGEDATA['project']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
+if ($PAGEDATA['role']['projectsVacantRoles_privateToPM'] == 1) {
+    if ($PAGEDATA['role']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
+} elseif ($PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'] != null) {
+    if (!in_array($AUTH->data["users_userid"], explode(",",$PAGEDATA['role']['projectsVacantRoles_applicationVisibleToUsers'])) and $PAGEDATA['role']['projects_manager'] != $AUTH->data["users_userid"]) die($TWIG->render('404.twig', $PAGEDATA));
 }
 
 
