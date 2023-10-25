@@ -13,7 +13,10 @@
                 <th style="width: 15%; min-width:300px;">
                     Project
                 </th>
-                <th style="width: 15%; min-width:300px;">
+                <th style="width: 15%; min-width:150px;">
+                    Project Client
+                </th>
+                <th style="width: 10%; min-width:200px;">
                     Project Dates
                 </th>
                 <th style="min-width:150px;">
@@ -40,6 +43,11 @@
                             {{ role.projects_name }}
                         {% else %}
                             &#8627;
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if project != role.projects_id %}
+                        {{role.clients_name}}
                         {% endif %}
                     </td>
                     <td>
