@@ -19,6 +19,7 @@ if (!$asset) finish(false, ["code" => "LIST-ASSETTYPES-FAIL", "message"=> "Could
 if (isset($array['assets_tag']) and $array['assets_tag'] != null) {
     $DBLIB->where("assets.instances_id",$AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets.assets_tag", $array['assets_tag']);
+    $DBLIB->where("assets.assets_deleted", 0); //Deleted assets can't be restored, so can be used
     $duplicateAssetTag = $DBLIB->getValue ("assets", "count(*)");
     if ($duplicateAssetTag > 0) finish(false, ["code" => "INSERT-FAIL", "message"=> "Sorry that tag you chose was a duplicate - please choose another one"]);
 } else $array['assets_tag'] = generateNewTag();
