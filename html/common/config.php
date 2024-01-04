@@ -36,7 +36,6 @@ $CONFIG = array(
     "PROJECT_FROM_EMAIL" => getenv('bCMS__FROM_EMAIL'),
     "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
     "ROOTURL" => getenv('bCMS__ROOTURL'),
-    "PROJECT_SUPPORT_EMAIL" => getenv('bCMS__SUPPORT_EMAIL'),
     "TermsOfServiceURL" => getenv('bCMS__TOS_URL'),
     'AWS' => [
         'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
