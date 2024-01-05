@@ -187,9 +187,6 @@ class bCMS {
                 $secure = false;
                 // Instance thumbnail
                 break;
-            case 6:
-                // Instance file
-                break;
             case 7:
                 //Project file
                 break;
