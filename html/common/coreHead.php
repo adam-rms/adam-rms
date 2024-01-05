@@ -99,6 +99,29 @@ class bCMS {
         if ($DBLIB->insert("auditLog", $data)) return true;
         else throw new Exception("Could not audit log - " . $DBLIB->getLastError());
     }
+    function s3FileTypeDescriptors() {
+        return [
+            2 => "Asset Type Thumbnail Image",
+            3 => "Asset Type File Attachment",
+            4 => "Asset File Attachment",
+            5 => "Business Thumbnail Image",
+            7 => "Project File Attachment",
+            8 => "Maintenance Job File Attachment",
+            9 => "User Thumbnail Image",
+            10 => "Business Email Header Image",
+            11 => "Location File Attachment",
+            12 => "Training Module Thumbnail Image",
+            13 => "Training Module Image used in Content",
+            14 => "Payment File Attachment",
+            15 => "Public Site File Attachment",
+            16 => "Public Site Image used in Homepage Content",
+            17 => "Public Site Homepage Header Image",
+            18 => "Project Vacant Role Application File Attachment",
+            19 => "CMS Page Image used in Content",
+            20 => "Project Invoice",
+            21 => "Project Quote",
+        ];
+    }
     function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC', $limit = null) {
         global $DBLIB, $CONFIG;
         $DBLIB->where("s3files_meta_type", $typeid);

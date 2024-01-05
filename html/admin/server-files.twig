@@ -1,0 +1,93 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+    <div class="row">
+         <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Storage Usage by Instance
+                    </h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-head-fixed" border="0" style="overflow-x: scroll;">
+                        <thead>
+                        <tr>
+                            <th>Instance</th>
+                            <th>Storage Used</th>
+                            <th>% of Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for instance in instancesForStorage %}
+                            <tr>
+                                <td>{{ instance.instances_name }}</td>
+                                <td>{{ instance.STORAGEUSED|formatsize }}</td>
+                                <td>{{ ((instance.STORAGEUSED/totalStorageUsed)*100)|number_format(2) ~ "%" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Storage Usage by File Type
+                    </h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-head-fixed" border="0" style="overflow-x: scroll;">
+                        <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Storage Used</th>
+                            <th>% of Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for fileType in fileTypesForStorage %}
+                            <tr>
+                                <td>{{ fileType.descriptor }}s</td>
+                                <td>{{ fileType.STORAGEUSED|formatsize }}</td>
+                                <td>{{ ((fileType.STORAGEUSED/totalStorageUsed)*100)|number_format(2) ~ "%" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Top 20 Files
+                    </h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-head-fixed" border="0" style="overflow-x: scroll;">
+                        <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Type</th>
+                            <th>Instance</th>
+                            <th>Size</th>
+                            <th>% of Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for file in top20Files %}
+                            <tr>
+                                <td>{{ file.s3files_name ~ "." ~ file.s3files_extension }}</td>
+                                <td>{{ fileTypeIDDescriptors[file.s3files_meta_type] }}</td>
+                                <td>{{ file.instances_name }}</td>
+                                <td>{{ file.s3files_meta_size|formatsize }}</td>
+                                <td>{{ ((file.s3files_meta_size/totalStorageUsed)*100)|number_format(2) ~ "%" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

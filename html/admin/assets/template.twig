@@ -715,8 +715,8 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if 2|permissions or 11|permissions or 7|permissions %}
-                <li class="nav-header">BITHELL STUDIOS STAFF</li>
+                {% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions or "VIEW-ANALYTICS"|serverPermissions or "INSTANCES:IMPORT:ASSETS"|serverPermissions or "FILES:VIEW"|serverPermissions %}
+                <li class="nav-header">SERVER ADMIN</li>
                 {% endif %}
             {% if 2|permissions %}
                 <li class="nav-item">
@@ -757,7 +757,40 @@
                         <i class="nav-icon fas fa-gavel"></i>
                         <p>
                             Audit Log
-                            <span class="right badge badge-danger">AdamRMS</span>
+                            <span class="right badge badge-danger">Server-Wide</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if "VIEW-ANALYTICS"|serverPermissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/server/analytics/" class="nav-link">
+                        <i class="nav-icon far fa-chart-bar"></i>
+                        <p>
+                            Analytics
+                            <span class="right badge badge-danger">Server-Wide</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if "FILES:VIEW"|serverPermissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/server/files.php" class="nav-link">
+                        <i class="nav-icon fas fa-hdd"></i>
+                        <p>
+                            File Storage
+                            <span class="right badge badge-danger">Server-Wide</span>
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            {% if "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
+                <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL }}/server/import.php" class="nav-link">
+                        <i class="nav-icon fas fa-upload"></i>
+                        <p>
+                            Import
+                            <span class="right badge badge-danger">Server-Wide</span>
                         </p>
                     </a>
                 </li>
