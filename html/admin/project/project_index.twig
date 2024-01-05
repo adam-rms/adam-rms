@@ -566,7 +566,7 @@
                     </div>
                     {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
                         <div class="modal-footer">
-                            {% embed 'common/plugins/uppy.twig'  with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+                            {% embed 'common/plugins/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
                                 {% block success %}
                                     console.log(responseJson.id);
                                 {% endblock %}
@@ -594,7 +594,7 @@
                 </div>
                 {% if "PROJECTS:PROJECT_FLIE_ATTACHMENTS:CREATE"|instancePermissions %}
                     <div class="modal-footer">
-                        {% embed 'common/plugins/uppy.twig'with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
+                        {% embed 'common/plugins/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
                             {% block success %}
                                 console.log(responseJson.id);
                             {% endblock %}
