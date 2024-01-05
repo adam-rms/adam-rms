@@ -169,11 +169,8 @@ class bCMS {
 
         $instanceIgnore = false;
         $secure = true;
+        // This list is also used to populate the files deletion suggestor
         switch ($file['s3files_meta_type']) {
-            case 1:
-                $instanceIgnore = true;
-                //This is a user thumbnail
-                break;
             case 2:
                 $instanceIgnore = true;
                 $secure = false; //Needs to be viewed on the public site
