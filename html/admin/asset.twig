@@ -1,16 +1,16 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
 
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.css" />
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick-theme.css" />
-    <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.2.1/jquery-migrate.min.js" integrity="sha512-fDGBclS3HUysEBIKooKWFDEWWORoA20n60OwY7OSYgxGEew9s7NgDaPkj7gqQcVXnASPvZAiFW8DiytstdlGtQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -611,7 +611,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -621,7 +621,7 @@
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
                                                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -707,7 +707,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -717,7 +717,7 @@
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
                                                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -1178,7 +1178,7 @@
                                                                 <ul class="list-inline">
                                                                     <li class="list-inline-item">
                                                                         <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                            <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                            <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                         </a>
                                                                     </li>
                                                                 </ul>
@@ -1188,7 +1188,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1274,7 +1274,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1284,7 +1284,7 @@
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
                                                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>

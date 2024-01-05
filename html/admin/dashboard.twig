@@ -25,28 +25,6 @@
             </div>
         </div>
         {% endif %}
-        {% if APPLOGIN == null %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-mobile mr-1"></i>
-                        Mobile App
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <a href='https://play.google.com/store/apps/details?id=com.bstudios.adamrms&utm_source=webdashboard&utm_campaign=dashboardwidget&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' target="_blank">
-                        <img alt='Get it on Google Play' src='{{ CONFIG.ASSETCDNURL }}/img/storeIcons/google-play-badge.png' style="max-width:100%;width: 250px;" />
-                    </a>
-                    <a href='https://apps.apple.com/us/app/id1519443182?utm_source=webdashboard&utm_campaign=dashboardwidget' target="_blank">
-                        <img alt='Download on the App Store' src='{{ CONFIG.ASSETCDNURL }}/img/storeIcons/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg' style="max-width:100%;width: 200px;" />
-                    </a>
-                </div>
-                <div class="card-footer">
-                    The App Store logo and Apple icon are trademarks of Apple Inc.<br/>
-                    Google Play and the Google Play logo are trademarks of Google LLC.
-                </div>
-            </div>
-        {% endif %}
         {% set widgets = WIDGETS.getAllDashboard() %}
         {% for widget in widgets %}
             {% embed 'assets/widgets/' ~ widget ~ '.twig' %}

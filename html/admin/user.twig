@@ -1,9 +1,5 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <!--Password Strength-->
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/css/strength.css"/>
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/libs/strength.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
             integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
@@ -18,7 +14,7 @@
                 <div class="card-body box-profile">
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
-                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}"
+                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
                     <h3 class="profile-username text-center">{{ user.users_name1 }} {{ user.users_name2 }}</h3>
@@ -253,11 +249,6 @@
                                 <input type="password" placeholder="Current Password" class="form-control" id="current_pass" />
                             </div>
                             <div class="form-group">
-                                <style>
-                                    .button_strength {
-                                        display: none;
-                                    }
-                                </style>
                                 <label for="username">New Password</label>
                                 <input type="password" placeholder="New Password" class="form-control" id="passnew" /><br/>
                                 <input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
@@ -265,7 +256,6 @@
                             <button id="save-password-settings" class="btn btn-default">Change Password</button>
                             <script>
                                 $(document).ready(function() {
-                                    $("#passnew").strength();
                                     $('#save-password-settings').click(function() {
                                         if ($('#passnew').val() != $('#passconf').val()) {
                                             bootbox.alert("Sorry - Your new password's don't match!");
