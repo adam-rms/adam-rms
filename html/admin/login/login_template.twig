@@ -33,7 +33,7 @@
             "hideDuration": "1000",
         }
     </script>
-    {%  set background = CONFIG.ASSETCDNURL ~ "/img/loginImages/" ~ random(["ahmed-hasan-Lvon5hPT818-unsplash.jpg","anthony-delanoix-hzgs56Ze49s-unsplash.jpg","danny-howe-74kShnX5zZI-unsplash.jpg","danny-howe-bn-D2bCvpik-unsplash.jpg","fabian-centeno-k4s5mTSYULI-unsplash.jpg","jessey-bijl-5Rt5KhbUp5g-unsplash.jpg","leon--eh7p_Ovgjo-unsplash.jpg","luis-morera-GsoirbS7-bA-unsplash.jpg","sam-moqadam-qLMPn_MApAo-unsplash.jpg","stone-hood-qbd-pqDX8f4-unsplash.jpg","yvette-de-wit-NYrVisodQ2M-unsplash.jpg"]) %}
+    {%  set background = CONFIG.ROOTURL ~ "/static-assets/img/loginImages/" ~ random(["ahmed-hasan-Lvon5hPT818-unsplash.jpg","anthony-delanoix-hzgs56Ze49s-unsplash.jpg","danny-howe-74kShnX5zZI-unsplash.jpg","danny-howe-bn-D2bCvpik-unsplash.jpg","fabian-centeno-k4s5mTSYULI-unsplash.jpg","jessey-bijl-5Rt5KhbUp5g-unsplash.jpg","leon--eh7p_Ovgjo-unsplash.jpg","luis-morera-GsoirbS7-bA-unsplash.jpg","sam-moqadam-qLMPn_MApAo-unsplash.jpg","stone-hood-qbd-pqDX8f4-unsplash.jpg","yvette-de-wit-NYrVisodQ2M-unsplash.jpg"]) %}
     <style>
         html, body, .container, #masterRow {
             height: 99%;
@@ -77,7 +77,7 @@
                             col-sm-8 offset-sm-2
                             col-xs-10 offset-xs-1">
             <div id="masterBox">
-                <a href="?"><img src="{{ CONFIG.ASSETCDNURL }}/img/logo.png" style="width:30%; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader" /></a>
+                <a href="?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/logo.png" style="width:30%; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader" /></a>
                 {% block content %}
                 {% endblock %}
             </div>

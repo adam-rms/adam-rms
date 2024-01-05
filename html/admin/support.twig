@@ -54,7 +54,7 @@
                                             <div class="card">
                                                 <div class="card-footer card-comments">
                                                     <div class="card-comment">
-                                                        <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}" alt="User Image">
+                                                        <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" alt="User Image">
                                                         <div class="comment-text">
                                                             <span class="username">
                                                                 {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
@@ -67,7 +67,7 @@
                                                         {% if message.private == false %}
                                                             {% if message.incoming %}
                                                                 <div class="card-comment">
-                                                                    <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}" alt="User Image">
+                                                                    <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" alt="User Image">
                                                                     <div class="comment-text">
                                                                         <span class="username">
                                                                             {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
@@ -78,7 +78,7 @@
                                                                 </div>
                                                             {% else %}
                                                             <div class="card-comment">
-                                                                <img class="img-circle img-sm" src="{{ CONFIG.ASSETCDNURL }}/img/logoicon.png" alt="User Image">
+                                                                <img class="img-circle img-sm" src="{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png" alt="User Image">
                                                                 <div class="comment-text">
                                                                     <span class="username">
                                                                         AdamRMS Support
