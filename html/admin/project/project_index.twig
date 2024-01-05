@@ -594,7 +594,7 @@
                 </div>
                 {% if "PROJECTS:PROJECT_FLIE_ATTACHMENTS:CREATE"|instancePermissions %}
                     <div class="modal-footer">
-                        {% embed 'common/plugins/uppy.twig' with currentLocation.upload %}
+                        {% embed 'common/plugins/uppy.twig'with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
                             {% block success %}
                                 console.log(responseJson.id);
                             {% endblock %}

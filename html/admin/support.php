@@ -32,7 +32,7 @@ else $tickets = [];
 
 $PAGEDATA['TICKETS'] = [];
 foreach ($tickets as $ticket) {
-  $ticket['conversation'] = freshdeskCall("tickets/" . $ticket['id'] . "/conversations"); //TODO improve performance here
+  $ticket['conversation'] = freshdeskCall("tickets/" . $ticket['id'] . "/conversations");
   $ticket['status'] = $ticketStatus[$ticket['status']];
   $ticket['priority'] = $ticketPriority[$ticket['priority']];
   $ticket['source'] = $ticketSource[$ticket['source']];

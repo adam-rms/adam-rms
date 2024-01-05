@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(129)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("FILES:FILE_BROWSER:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "File Browser", "BREADCRUMB" => false];
 
