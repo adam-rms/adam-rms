@@ -15,6 +15,7 @@
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
                                  src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"
+                                 loading="lazy"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
                     <h3 class="profile-username text-center">{{ user.users_name1 }} {{ user.users_name2 }}</h3>
@@ -225,7 +226,7 @@
                             </div>
                             <div class="tab-pane table-responsive p-3" id="profilepicture">
                                 {% if user.users_thumbnail != null %}
-                                    <img src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
+                                    <img loading="lazy" src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
                                 {% endif %}
                                 {% if "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
                                     {% embed 'common/plugins/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}

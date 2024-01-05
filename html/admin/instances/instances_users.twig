@@ -52,7 +52,7 @@
                                         {% endif %}>
                                     <td>
                                         {% if user.users_thumbnail %}
-                                            <img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                            <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                         {% endif %}
                                     </td>
                                     <td>

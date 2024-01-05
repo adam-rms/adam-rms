@@ -270,7 +270,7 @@
             </div>
             <div class="card-body">
                 {% if USERDATA.instance.instances_logo != null %}
-                    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 100%;">
+                    <img loading="lazy" src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 100%;">
                 {% else %}
                     <i>None currently set</i>
                 {% endif %}
@@ -296,7 +296,7 @@
             </div>
             <div class="card-body">
                 {% if USERDATA.instance.instances_emailHeader != null %}
-                    <img src="{{ USERDATA.instance.instances_emailHeader|s3URL("medium") }}" style="width: 100%;">
+                    <img loading="lazy" src="{{ USERDATA.instance.instances_emailHeader|s3URL("medium") }}" style="width: 100%;">
                 {% else %}
                     <i>None currently set</i>
                 {% endif %}
