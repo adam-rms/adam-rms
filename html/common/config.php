@@ -14,7 +14,7 @@ if(file_exists(__DIR__ . '/../../.env')) {
 if (getenv('bCMS__ERRORS') == "true") {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+    error_reporting(E_ERROR | E_PARSE);
 } else {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
@@ -26,15 +26,16 @@ $CONFIG = array(
     'DB_DATABASE' => getenv('bCMS__DB_DATABASE'),
     'DB_USERNAME' => getenv('bCMS__DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
     'DB_PASSWORD' => getenv('bCMS__DB_PASSWORD'),
+    'DB_PORT' => getenv('bCMS__DB_PORT') ?: 3306,
     'PROJECT_NAME' => "AdamRMS",
-    'ASSETCDNURL' => getenv('bCMS__ASSETS_URL'),
     'SENDGRID' => ['APIKEY' => getenv('bCMS__SendGridAPIKEY')],
     'ERRORS' => ['SENTRY' => getenv('bCMS__SENTRYLOGIN'), "SENTRYPublic" => getenv('bCMS__SENTRYLOGINPUBLIC')],
-    'VERSION' => ['COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')],
+    'VERSION' => ['ENV' => getenv('bCMS__VERSION') ? (strlen(getenv('bCMS__VERSION')) > 7 ? substr(getenv('bCMS__VERSION'), 0, 7) : getenv('bCMS__VERSION')) : false, 'COMMIT' => file_get_contents (__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents (__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents (__DIR__ . '/version/COMMITFULL.txt')], //Version number is the first 7 characters of the commit hash for certain deployments, and for others there's a nice numerical tag.
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
-    "PROJECT_FROM_EMAIL" => "studios@jbithell.com",
+    "PROJECT_FROM_EMAIL" => getenv('bCMS__FROM_EMAIL'),
+    "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
     "ROOTURL" => getenv('bCMS__ROOTURL'),
-    "PROJECT_SUPPORT_EMAIL" => "studios@jbithell.com",
+    "TermsOfServiceURL" => getenv('bCMS__TOS_URL'),
     'AWS' => [
         'KEY' => getenv('bCMS__AWS_SERVER_KEY'),
         'SECRET' => getenv('bCMS__AWS_SERVER_SECRET_KEY'),
@@ -62,7 +63,7 @@ $CONFIG = array(
         ]
     ],
     'FRESHDESK' => [
-        'URL' => "https://bstudios.freshdesk.com",
+        'URL' => getenv('bCMS__FRESHDESK_URL'),
         'APIKEY' => getenv('bCMS__FRESHDESK')
     ],
     'NOTIFICATIONS' => [
@@ -86,6 +87,14 @@ $CONFIG = array(
                 "id" => 3,
                 "group" => "Account",
                 "name" => "Email verification",
+                "methods" => [1],
+                "default" => true,
+                "canDisable" => false
+            ],
+            [
+                "id" => 4,
+                "group" => "Account",
+                "name" => "Magic email login link",
                 "methods" => [1],
                 "default" => true,
                 "canDisable" => false
@@ -115,6 +124,14 @@ $CONFIG = array(
                 "canDisable" => true
             ],
             [
+                "id" => 20,
+                "group" => "Crewing",
+                "name" => "Crew Role Name Changed",
+                "methods" => [1,3,4],
+                "default" => true,
+                "canDisable" => true
+            ],
+            [
                 "id" => 12,
                 "group" => "Maintenance",
                 "name" => "Tagged in new Maintenance Job",
@@ -134,14 +151,6 @@ $CONFIG = array(
                 "id" => 14,
                 "group" => "Maintenance",
                 "name" => "Maintenance Job changed Status",
-                "methods" => [1,3,4],
-                "default" => true,
-                "canDisable" => true
-            ],
-            [
-                "id" => 15,
-                "group" => "Maintenance",
-                "name" => "Assigned Maintenance Job",
                 "methods" => [1,3,4],
                 "default" => true,
                 "canDisable" => true

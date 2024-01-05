@@ -2,25 +2,35 @@
 require_once __DIR__ . '/../../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
-if (!$AUTH->instancePermissionCheck(31) or (!isset($_POST['assetsAssignments']) and !isset($_POST['assets_id']))) die("404");
 
-if (isset($_POST['assets_id']) and !isset($_POST['assetsAssignments'])) {
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN") or (!isset($_POST['assetsAssignments']) and !isset($_POST['assets_id']) and !isset($_POST['assetTypes_id']))) die("404");
+
+if (isset($_POST['assets_id']) and isset($_POST['projects_id']) and !isset($_POST['assetsAssignments'])) {
     //Convert for where only the asset id and project is known
     $DBLIB->where("assets_id", $_POST['assets_id']);
-    $DBLIB->where("projects_id", $AUTH->data['users_selectedProjectID']);
+    $DBLIB->where("projects_id", $_POST['projects_id']);
     $DBLIB->where("assetsAssignments_deleted", 0);
     $assignment = $DBLIB->getone("assetsAssignments", ["assetsAssignments_id"]);
     if ($assignment) $_POST['assetsAssignments'] = [$assignment['assetsAssignments_id']];
     else finish(false,["message"=>"Could not find assignment"]);
 }
 
-
+if (isset($_POST['assetTypes_id']) and isset($_POST['projects_id']) and !isset($_POST['assetsAssignments'])) {
+    //convert for where we only know assetType ID and project
+    $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id");
+    $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
+    $DBLIB->where("assetsAssignments.projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
+    $assignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments_id"]);
+    if ($assignments) $_POST['assetsAssignments'] = array_column($assignments, "assetsAssignments_id");
+    else finish(false, ["message" => "Could not find Assignment"]);
+}
 
 $assignmentsRemove = new assetAssignmentSelector($_POST['assetsAssignments']);
 $assignmentsRemove = $assignmentsRemove->getData();
 if (!$assignmentsRemove['projectid']) finish(false,["message"=>"Cannot find projectid"]);
 $DBLIB->where("projects.projects_id", $assignmentsRemove["projectid"]);
-$DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+$DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("projects.projects_deleted", 0);
 $project = $DBLIB->getone("projects",["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_name"]);
 if (!$project) finish(false,["message"=>"Cannot find project"]);

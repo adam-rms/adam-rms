@@ -2,14 +2,19 @@
 {% block content %}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }}</h3>
-
+            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ CLIENT['clients_name'] and LOCATION['locations_name'] ? ' & ' : '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }} {{ STATUS ? ' with status ' ~ STATUS.projectsStatuses_name : ''}}</h3>
+            {% if CLIENT['clients_archived'] %}
+            <span class="badge badge-warning ml-2">Client Archived</span>
+            {% endif %}
+            {% if LOCATION['locations_archived'] %}
+            <span class="badge badge-warning ml-2">Location Archived</span>
+            {% endif %}
             <div class="card-tools">
                 <form class="input-group input-group-sm"  method="GET">
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
-                        {% if 21|instancePermissions %}<button type="button" class="btn btn-default newProjectButton"  title="Add new project"><i class="fa fa-plus"></i></button>{% endif %}
+                        {% if "PROJECTS:CREATE"|instancePermissions %}<button type="button" class="btn btn-default newProjectButton"  title="Add new project"><i class="fa fa-plus"></i></button>{% endif %}
                     </div>
                 </form>
             </div>
@@ -86,7 +91,7 @@
                             <ul class="list-inline">
                                 <li class="list-inline-item">
                                     <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                        <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                        <img alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                     </a>
                                 </li>
                             </ul>
@@ -102,15 +107,9 @@
                             {% endif %}
                         </td>
                         <td class="project_progress">
-                            {{ STATUSES[project.projects_status]['name'] }}<br/>
-                            {% if STATUSES[project.projects_status]['order'] < 7 %}
-                                <div class="progress progress-sm">
-                                    <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[project.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
-                                    </div>
-                                </div>
-                            {% endif %}
+                            {{ project.projectsStatuses_name }}<br/>
                             <small>
-                                {{ STATUSES[project.projects_status]['description'] }}
+                                {{ project.projectsStatuses_description }}
                             </small>
                         </td>
                     </tr>
@@ -147,8 +146,8 @@
                                 <td>
                                     <ul class="list-inline">
                                         <li class="list-inline-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                                <img alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ subProject.users_email ~ ")" }}">
+                                                <img alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                             </a>
                                         </li>
                                     </ul>
@@ -164,15 +163,9 @@
                                     {% endif %}
                                 </td>
                                 <td class="project_progress">
-                                    {{ STATUSES[subProject.projects_status]['name'] }}<br/>
-                                    {% if STATUSES[subProject.projects_status]['order'] < 7 %}
-                                        <div class="progress progress-sm">
-                                            <div class="progress-bar" style="color: {{ STATUSES[project.projects_status]['foregroundColour'] }}!important;background-color: {{ STATUSES[project.projects_status]['backgroundColour']}}!important;width: {{ ((STATUSES[project.projects_status]['order']/6)*100)|round }}%;" role="progressbar" aria-volumenow="{{ STATUSES[subProject.projects_status]['order'] }}" aria-volumemin="0" aria-volumemax="6">
-                                            </div>
-                                        </div>
-                                    {% endif %}
+                                    {{ subProject.projectsStatuses_name }}<br/>
                                     <small>
-                                        {{ STATUSES[subProject.projects_status]['description'] }}
+                                        {{ subProject.projectsStatuses_description }}
                                     </small>
                                 </td>
                             </tr>

@@ -11,7 +11,7 @@ class SearchClients extends BaseSearch
     public function load(): array
     {
         // The user cannot access Clients
-        if (!$this->AUTH->instancePermissionCheck(36)) {
+        if (!$this->AUTH->instancePermissionCheck("CLIENTS:VIEW")) {
             return [];
         }
 

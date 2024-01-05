@@ -1,0 +1,235 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the AdamRMS Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% if search|length > 0 %}
+                            Search results for instances matching <b>{{ search }}</b>
+                        {% else %}
+                            Instances
+                        {% endif %}
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                            <input type="text" name="q" class="form-control pull-right" placeholder="Search" value="{{ search }}" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    {% if instances|length > 0 %}
+                        <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Plan</th>
+                                <th>Storage Used</th>
+                                <th>Storage Limit</th>
+                                <th>Users</th>
+                                <th>Assets</th>
+                                <th>Asset Value</th>
+                                <th>Asset Mass</th>
+                                <th>Last Project Activity</th>
+                                <th>Admin Actions</th>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><b>Server Totals</b></td>
+                                <td>
+                                    {{ totals['STORAGEUSED']|formatsize }}
+                                </td>
+                                <td>{{ totals['STORAGEALLOWED']|formatsize }}+&infin;</td>
+                                <td>
+                                    {{ totals.users.total|number_format(0) }}
+                                </td>
+                                <td>
+                                    {{ totals.assets.COUNT|number_format(0) }}
+                                </td>
+                                <td>
+                                    {{ totals.assets.VALUE|money }}
+                                </td>
+                                <td>
+                                    {{ totals.assets.MASS|mass }}
+                                </td>
+                                <td>
+                                    {{ totals.lastActivity.auditLog|date("d M Y") }}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: right;">Users without Instances</td>
+                                <td>
+                                    {{ totals.users.noInstances|number_format(0) }}
+                                </td>
+                                <td colspan="5"></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for instance in instances %}
+                                <tr>
+                                    <td>{{ instance.instances_id }}</td>
+                                    <td>
+                                        {{ instance.instances_name }}
+                                        {% if instance.instances_deleted == '1' %}
+                                        <br/><span class="badge badge-danger">SOFT-DELETED</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ instance.instances_plan }}</td>
+                                    <td>
+                                        {{ instance['STORAGEUSED']|formatsize }}
+                                    </td>
+                                    <td>{{ (instance.instances_storageLimit > 0 ? instance.instances_storageLimit|formatsize : "&infin;") }}</td>
+                                    <td>
+                                        {{ instance.USERS }}
+                                    </td>
+                                    <td>
+                                        {{ instance.assets.COUNT|number_format(0) }}
+                                    </td>
+                                    <td>
+                                       {{ instance.assets.VALUE|money }}
+                                    </td>
+                                    <td>
+                                        {{ instance.assets.MASS|mass }}
+                                    </td>
+                                    <td>
+                                        {{ instance.ACTIVITY.projectAuditLog ? instance.ACTIVITY.projectAuditLog|date("d M Y") : "" }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            {% if "INSTANCES:FULL_PERMISSIONS_IN_INSTANCE"|serverPermissions and instance.instances_deleted == 0 and USERDATA.instance.instances_id != instance.instances_id %}
+                                                <a href="{{ CONFIG.ROOTURL }}/?i={{ instance.instances_id }}"
+                                                title="Login to Instance">
+                                                    <button type="button" class="btn btn-warning">Login as Admin</button>
+                                                </a>
+                                            {% endif %}
+                                            {% if "INSTANCES:DELETE"|serverPermissions %}
+                                                {% if instance.instances_deleted == 0 %}
+                                                <button type="button" class="btn btn-danger deleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Delete</button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-success restoreInstanceButton" data-instanceid="{{ instance.instances_id }}">Undo Delete</button>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if "INSTANCES:PERMANENTLY_DELETE"|serverPermissions and instance.instances_deleted == 1 %}
+                                                <button type="button"class="btn btn-danger permanentlyDeleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Permanently Delete</button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
+                    {% endif %}
+                </div>
+                <div class="overlay" id="loadingoverlay">
+                    <i class="fas fa-sync fa-spin fa-3x"></i>
+                </div>
+                {% if pagination.total > 1 %}
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {% if pagination.page > 1 %}
+                        <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                        {% endif %}
+
+                        {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                                    {% if pagination.page == i %}
+                                        <b>{{ i }}</b>
+                                    {% else %}
+                                        {{ i }}
+                                    {% endif %}
+                                </a></li>
+                        {% endfor %}
+
+                        {% if pagination.page < pagination.total %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $("#loadingoverlay").hide();
+                {% if "INSTANCES:DELETE"|serverPermissions %}
+                $(".deleteInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    bootbox.confirm({
+                        message: "Are you sure you wish to soft-delete this instance? The instance can be restored.",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("instances/delete.php", {"instances_id":instanceId}, function (data) {
+                                    location.reload();
+                                });
+                            } else {
+                                $("#loadingoverlay").hide();
+                            }
+                        }
+                    });
+                });
+                $(".restoreInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    ajaxcall("instances/unDelete.php", {"instances_id":instanceId}, function (data) {
+                        location.reload();
+                    });
+                });
+                {% endif %}
+                {% if "INSTANCES:PERMANENTLY_DELETE"|serverPermissions %}
+                $(".permanentlyDeleteInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    bootbox.confirm({
+                        message: "Are you sure you wish to hard-delete this instance? This is a permanent action and cannot be undone, there is no option to restore this instance.",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("instances/permanentlyDelete.php", {"instances_id":instanceId}, function (data) {
+                                    location.reload();
+                                });
+                            } else {
+                                $("#loadingoverlay").hide();
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+            });
+        </script>
+    </div>
+{% endblock %}

@@ -1,36 +1,10 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <!--Password Strength-->
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/css/strength.css"/>
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/libs/strength.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
             integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css"
-          integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css"
-          integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css"
-          integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css"
-          integrity="sha256-saO3mkZVAcyqsfgsGMrmE7Cs/TLN1RgVykZ5dnnJKug=" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css"
-          integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous"/>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"
-            integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js"
-            integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js"
-            integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js"
-            integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.js"
-            integrity="sha256-q57s73NpMCTQ4ZXqb1X5bIywrICySeB6WvYxFGfz/PA=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js"
-            integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -40,7 +14,7 @@
                 <div class="card-body box-profile">
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
-                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}"
+                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
                     <h3 class="profile-username text-center">{{ user.users_name1 }} {{ user.users_name2 }}</h3>
@@ -105,7 +79,7 @@
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
-                        {% if user.users_userid == USERDATA.users_userid or 5|permissions %}
+                        {% if user.users_userid == USERDATA.users_userid or "USERS:EDIT"|serverPermissions %}
                             <li class="nav-item"><a class="nav-link" href="#account" data-toggle="tab">Account Settings</a></li>
                             <li class="nav-item"><a class="nav-link" href="#notifications" data-toggle="tab">Notifications</a></li>
                             <li class="nav-item"><a class="nav-link" href="#profilepicture" data-toggle="tab">Profile Picture</a></li>
@@ -113,7 +87,7 @@
                         {% if user.users_userid == USERDATA.users_userid %}
                             <li class="nav-item"><a class="nav-link" href="#passwordsocial" data-toggle="tab">Password & Sign-in</a></li>
                         {% endif %}
-                        {% if (16|permissions and user.users_userid == USERDATA.users_userid) or 5|permissions %}
+                        {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
                             <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">AdamRMS Positions</a></li>
                         {% endif %}
                         {% if user.crewAssignments|length > 0 %}<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Crew Roles</a></li>{% endif %}
@@ -126,7 +100,7 @@
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
                     <div class="tab-content">
-                        {% if user.users_userid == USERDATA.users_userid or 5|permissions %}
+                        {% if user.users_userid == USERDATA.users_userid or "USERS:EDIT"|serverPermissions %}
                             <div class="tab-pane p-3" id="account">
                                 <form id="account-form">
                                     <div class="form-group">
@@ -253,7 +227,7 @@
                                 {% if user.users_thumbnail != null %}
                                     <img src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
                                 {% endif %}
-                                {% if 14|permissions or user.users_userid == USERDATA.users_userid %}
+                                {% if "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
                                     {% embed 'common/plugins/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
                                         {% block success %}
                                             ajaxcall("account/thumbnail.php", {
@@ -275,11 +249,6 @@
                                 <input type="password" placeholder="Current Password" class="form-control" id="current_pass" />
                             </div>
                             <div class="form-group">
-                                <style>
-                                    .button_strength {
-                                        display: none;
-                                    }
-                                </style>
                                 <label for="username">New Password</label>
                                 <input type="password" placeholder="New Password" class="form-control" id="passnew" /><br/>
                                 <input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
@@ -287,7 +256,6 @@
                             <button id="save-password-settings" class="btn btn-default">Change Password</button>
                             <script>
                                 $(document).ready(function() {
-                                    $("#passnew").strength();
                                     $('#save-password-settings').click(function() {
                                         if ($('#passnew').val() != $('#passconf').val()) {
                                             bootbox.alert("Sorry - Your new password's don't match!");
@@ -326,7 +294,7 @@
                             {% endif %}
                         </div>
                         {% endif %}
-                        {% if (16|permissions and user.users_userid == USERDATA.users_userid) or 5|permissions %}
+                        {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
                         <div class="tab-pane table-responsive p-0" id="positions" style="height: 600px;">
                             <table class="table" border="0" style="overflow-x: scroll;">
                                 <thead>
@@ -334,7 +302,7 @@
                                     <th>Title</th>
                                     <th>From</th>
                                     <th>To</th>
-                                    {% if user.users_userid != USERDATA.users_userid and 13|permissions %}
+                                    {% if user.users_userid != USERDATA.users_userid and "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
                                         <th></th>
                                     {% endif %}
                                 </tr>
@@ -342,7 +310,7 @@
                                 <tbody>
                                 {% for position in user.POSITIONS %}
                                     <tr>
-                                        {% if 13|permissions and user.users_userid != USERDATA.users_userid %}
+                                        {% if "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions and user.users_userid != USERDATA.users_userid %}
                                             <td>
                                                 <div class="form-group">
                                                     <select class="form-control positionID">
@@ -390,7 +358,7 @@
                                         {% endif %}
                                     </tr>
                                     {% endfor %}
-                                {% if user.users_userid != USERDATA.users_userid and 13|permissions %}
+                                {% if user.users_userid != USERDATA.users_userid and "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
                                     <tr><td colspan="999" style="font-weight: bold;">Add position</td></tr>
                                     <tr>
                                         <td>
@@ -425,7 +393,7 @@
                                 {% endif %}
                                 <script>
                                     $(document).ready(function() {
-                                        {% if 13|permissions %}
+                                        {% if "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
                                         $('.savePermissionEdit').click(function() {
                                             ajaxcall("account/permissions.php", {
                                                 "users_userid":"{{ user.users_userid }}",
@@ -522,16 +490,11 @@
                                     /* initialize the calendar
                                      -----------------------------------------------------------------*/
                                     var Calendar = FullCalendar.Calendar;
-                                    var Draggable = FullCalendarInteraction.Draggable;
-                                    var calendarEl = document.getElementById('calendar');
 
-                                    // initialize the external events
-                                    // -----------------------------------------------------------------
-
-                                    var calendar = new Calendar(calendarEl, {
-                                        plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
+                                    var calendar = new Calendar(document.getElementById('calendar'), {
                                         nextDayThreshold: '05:00:00',
-                                        customButtons: {},
+                                        themeSystem: 'bootstrap',
+                                        initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
                                         buttonText: {
                                             today: 'Today',
                                             month: 'Month',
@@ -539,7 +502,7 @@
                                             day: 'Day',
                                             list: 'List'
                                         },
-                                        header: {
+                                        headerToolbar: {
                                             left: 'prev,next today',
                                             center: 'title',
                                             right: 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
@@ -551,12 +514,12 @@
                                             {% set latestEnd = false %}
                                             {% for project in user.crewAssignments %}
                                             {
-                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }} ({{ STATUSES[project.projects_status]["name"] }})",
+                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} ({{ project.projectsStatuses_name|escape("js") }}){% endif %}",
                                                 start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
                                                 end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
                                                 url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',
-                                                backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
-                                                textColor: '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                                                backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
+                                                textColor: '{{ project.projectsStatuses_foregroundColour }}'
                                             },
                                             {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
                                             {% set earliestStart = project.projects_dates_use_start|date("c") %}
@@ -575,26 +538,21 @@
                                         drop: function (info) {
 
                                         },
-                                        height: 800,
                                         firstDay: 1,
                                         weekNumbers: true,
-                                        weekNumbersWithinDays: true,
-                                        {% if user.instance.weekStartDates %}
-                                        weekNumberCalculation: function (date) {
-                                            var dates = [{{ user.instance.weekStartDates|join(",") }}];
-                                            var today = new Date();
-                                            var thisDate = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', {month: 'long'})) + ' ' + date.getFullYear() + ' 00:00:00');
-                                            var idOfThis;
-                                            for (var i = 0; i < dates.length; i++) {
-                                                if (thisDate <= (dates[i]) - (7 * 24 * 60 * 60 * 1000)) {
-                                                    if (i == 0) {
-                                                        return "";
-                                                    }
-                                                    idOfThis = i - 1;
-                                                    break;
+                                        {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
+                                        weekNumberContent : function(week) {
+                                            var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
+                                            for (const [date, label] of Object.entries(weekStartDates)) {
+                                                if (moment(week.date).isSame(date, 'isoWeek')) {
+                                                    //This date is in this week so return the label
+                                                    if (label === " ") return null;
+                                                    else return label;
                                                 }
                                             }
-                                            return (Math.round((thisDate - dates[idOfThis]) / (7 * 24 * 60 * 60 * 1000)) + 1);
+                                            //default to week number if it doesn't have a label
+                                            return week.num;
+                                            
                                         },
                                         {% else %}
                                         weekNumberCalculation: "ISO",

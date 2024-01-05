@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(18)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_TYPES:CREATE")) die("Sorry - you can't access this page");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {
@@ -9,6 +9,7 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['manufacturers_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if (strlen($array['assetTypes_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No asset type name provided"]);
 
 $array['instances_id'] = $AUTH->data['instance']["instances_id"];
 $array['assetTypes_inserted'] = date('Y-m-d H:i:s');

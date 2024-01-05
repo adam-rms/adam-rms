@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Update 'VARIANT' to pick a version of PHP version: 8, 8.1, 8.0, 7, 7.4
+        # Append -bullseye or -buster to pin to an OS version.
+        # Use -bullseye variants on local arm64/Apple Silicon.
+        VARIANT: "8.1"
+        NODE_VERSION: "none"
+
+    volumes:
+      - ..:/workspace:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+    # Uncomment the next line to use a non-root user for all processes.
+    # user: vscode
+    depends_on:
+      - db
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+    environment: 
+      - bCMS__DB_HOSTNAME=127.0.0.1
+      - bCMS__DB_DATABASE=db
+      - bCMS__DB_USERNAME=user
+      - bCMS__DB_PASSWORD=pass
+      - bCMS__ROOTURL=
+      - bCMS__ERRORS=true
+      - bCMS__DB_PORT=3306
+  db:
+    image: index.docker.io/mysql/mysql-server:8.0
+    command: --default-authentication-plugin=mysql_native_password --innodb-thread-concurrency=0 --sort_buffer_size=512K
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - ./docker/mysql:/etc/mysql/conf.d
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+volumes:
+  db_data: null

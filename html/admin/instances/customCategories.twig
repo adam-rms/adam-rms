@@ -1,8 +1,4 @@
 {% extends "assets/template.twig" %}
-{% block htmlIncludes %}
-    <script src="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css"/>
-{% endblock %}
 {% block content %}
 
 <div class="row">
@@ -17,7 +13,7 @@
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if 90|instancePermissions %}
+                            {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
                             {% endif %}
                         </div>
@@ -52,17 +48,17 @@
                                   {{category.assetCategories_name}}
                               </td>
                               <td style="width:70px;">
-                                 {% if category.instances_id is not null %}
-                                     <div class="btn-group">
-                                         {% if 91|instancePermissions %}
+                                <div class="btn-group">
+                                    <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
+                                    {% if category.instances_id is not null %}
+                                        {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
-                                         {% endif %}
-                                         {% if 92|instancePermissions %}
-                                             <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
-                                         {% endif %}
-                                     </div>
-
-                                 {% endif %}
+                                        {% endif %}
+                                        {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
+                                            <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
+                                        {% endif %}
+                                    {% endif %}
+                                 </div>
                               </td>
                           </tr>
                                 {% if category.instances_id is not null %}
@@ -88,15 +84,11 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Icon</span>
                                                         </div>
-                                                        <div class="btn-group">
-                                                            <button type="button" class="btn btn-default iconpicker-component"><i
-                                                                        class="{{ category.assetCategories_fontAwesome }}"></i></button>
-                                                            <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle" data-toggle="dropdown" data-selected="{{ category.assetCategories_fontAwesome }}" data-id="{{ category.assetCategories_id }}">
-                                                                <span class="caret"></span>
-                                                                <span class="sr-only">Toggle Dropdown</span>
-                                                            </button>
-                                                            <div class="dropdown-menu"></div>
-                                                        </div>
+                                                        <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome">
+                                                            {% if category.assetCategories_fontAwesome %}
+                                                                <option value="{{ category.assetCategories_fontAwesome }}"></option>
+                                                            {% endif %}
+                                                        </select>
                                                     </div>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -131,7 +123,7 @@
             </div>
         </div>
     </div>
-    {% if 90|instancePermissions %}
+    {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
     <div class="modal fade" id="newModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -153,14 +145,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Icon</span>
                             </div>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default iconpicker-component"><i></i></button>
-                                <button type="button" class="iconpickerButtonSelector btn btn-default dropdown-toggle" data-toggle="dropdown" id="newCategoryFormIcon">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <div class="dropdown-menu"></div>
-                            </div>
+                            <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome"></select>
                         </div>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -188,27 +173,64 @@
     {% endif %}
     <script>
         $(document).ready(function () {
-            $('.iconpickerButtonSelector').iconpicker({ /*options*/ });
-            {% if 90|instancePermissions %}
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('.rms-icon-picker').first().select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    minimumResultsForSearch: 1,
+                    placeholder: "Search for an Icon",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/icons/getIcons.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                search: params.term,
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: item.label,
+                                            id: "fas fa-" + item.code
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    },
+                    templateResult: input => $('<span><i class="' + input.id + '"></i>&nbsp;' + input.text + '</span>'),
+                    templateSelection: input => $('<span><i class="' + input.id + '"></i></span>')
+                });
+            });
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('.rms-icon-picker').first().select2('destroy');
+            });
+            {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
             $("#saveNewCategory").click(function () {
                 var formData = $("#newCategoryForm").serializeArray();
-                formData.push({"name": "assetCategories_fontAwesome", "value":$("#newCategoryFormIcon").data('iconpicker').iconpickerValue});
                 ajaxcall("categories/new.php", {formData}, function (data) {
                     location.reload();
                 });
             });
             {% endif %}
-            {% if 91|instancePermissions %}
+            {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
-                formData.push({"name": "assetCategories_fontAwesome", "value":$(".iconpickerButtonSelector[data-id=" + $(this).data("id") + "]").data('iconpicker').iconpickerValue});
                 console.log(formData);
                 ajaxcall("categories/edit.php", {formData}, function (data) {
                     location.reload();
                 });
             });
             {% endif %}
-            {% if 92|instancePermissions %}
+            {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
             $(".deleteButton").click(function () {
                 var id = $(this).data("id");
                 bootbox.confirm({

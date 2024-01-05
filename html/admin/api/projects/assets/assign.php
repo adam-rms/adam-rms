@@ -3,12 +3,11 @@ require_once __DIR__ . '/../../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
 
-if (!$AUTH->instancePermissionCheck(31)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN") or !isset($_POST['projects_id'])) die("404");
 
-$DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+$DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("projects.projects_deleted", 0);
-if (isset($_POST['projects_id'])) $DBLIB->where("projects.projects_id", $_POST['projects_id']);
-else $DBLIB->where("projects.projects_id", $AUTH->data['users_selectedProjectID']);
+$DBLIB->where("projects.projects_id", $_POST['projects_id']);
 $project = $DBLIB->getone("projects", ["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_defaultDiscount","projects_name"]);
 if (!$project) finish(false,["message"=>"Project not found"]);
 
@@ -30,18 +29,23 @@ if (isset($_POST['assetGroups_id'])) {
 
     $DBLIB->where("FIND_IN_SET(" . $group['assetGroups_id'] . ", assets.assets_assetGroups)");
 } elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
-elseif ($AUTH->instancePermissionCheck(32)) $DBLIB->where("(assets_linkedTo IS NULL)"); //We'll handle linked assets later in the script but for now add all assets
-else die("404"); //Can't do an add all
+elseif (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
+elseif ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS")) {
+    $DBLIB->where("(assets_linkedTo IS NULL)"); //We'll handle linked assets later in the script but for now add all assets
+    $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+} else finish(false,["message"=>"Cannot add all assets"]);
 $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . $project["projects_dates_deliver_end"] . "')");
-$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("assets.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("assets_deleted", 0);
 $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
 $assetIDs = $DBLIB->get("assets", null, $assetRequiredFields);
 
 function linkedAssets($assetId,$linkCount) {
-    global $DBLIB,$assetsToProcess,$assetRequiredFields,$project;
-    $DBLIB->where("assets_linkedTo", $assetId);
-    $DBLIB->where("assets_deleted", 0);
+    global $DBLIB,$assetsToProcess,$assetRequiredFields,$project,$assetsLinked;
+    array_push($assetsLinked,$assetId);
+    $DBLIB->where("assets.assets_linkedTo", $assetId);
+    $DBLIB->where("assets.assets_id", $assetsLinked, "NOT IN"); // Make sure an asset is not double counted
+    $DBLIB->where("assets.assets_deleted", 0);
     $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . $project["projects_dates_deliver_end"] . "')");
     $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
     $assets = $DBLIB->get("assets",null,$assetRequiredFields);
@@ -52,6 +56,7 @@ function linkedAssets($assetId,$linkCount) {
     }
 }
 $assetsToProcess = [];
+$assetsLinked = [];
 foreach ($assetIDs as $asset) {
     $asset['linkedto'] = false;
     $assetsToProcess[] = $asset;
@@ -63,8 +68,9 @@ foreach ($assetsToProcess as $asset) {
     $DBLIB->where("assets_id", $asset['assets_id']);
     $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+    $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
     $DBLIB->where("projects.projects_deleted", 0);
-    $DBLIB->where("(projects.projects_id = '" . $project['projects_id'] . "' OR projects.projects_status NOT IN (" . implode(",", $GLOBALS['STATUSES-AVAILABLE']) . "))");
+    $DBLIB->where("(projects.projects_id = '" . $project['projects_id'] . "' OR projectsStatuses.projectsStatuses_assetsReleased = 0)");
     $DBLIB->where("((projects_dates_deliver_start >= '" . $project["projects_dates_deliver_start"] . "' AND projects_dates_deliver_start <= '" . $project["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $project["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $project["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $project["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $project["projects_dates_deliver_start"] . "'))");
     $assignment = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id"]);
     $flagsBlocks = assetFlagsAndBlocks($asset['assets_id']);

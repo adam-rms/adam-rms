@@ -1,0 +1,160 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
+        <div class="card px-2">
+            <div class="card-header row">
+                <h4 class="card-title my-auto">Import Assets</h4>
+                <a class="btn btn-info btn-sm ml-auto" href="{{CONFIG.ROOTURL}}/assets/templates/asset-import-template.csv">Download a template</a>
+            </div>
+            <div class="card-body">
+                <p>Assets can be imported by uploading a CSV file. The CSV should be comma-delimited and with the headers found in the downloaded template above.</p>
+                <hr />
+                <form class="form" action="{{CONFIG.ROOTURL}}/api/server/assetImport.php">
+                    <div class="form-group">
+                        <label for="instances_id">Instance</label>
+                        <select id="instances_id" name="instances_id" class="form-control" required>
+                            <option disabled selected>Select an Instance</option>
+                            {% for instance in instances %}
+                            <option value="{{ instance.instances_id }}">{{ instance.instances_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="csvFile">CSV File</label>
+                        <input type="file" class="form-control-file" id="csvFile" required>
+                    </div>
+                    <button type="submit" id="import-upload" class="btn btn-primary">Import</button>
+                </form>
+            </div>
+        </div>
+        <div class="card" style="display: none;" id="status-card">
+            <div class="card-header">
+                <h4 class="card-title">Imported Assets</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-subtitle">Created Asset Types</h5>
+                <table class="table">
+                    <thead>
+                        <th scope="col">Asset Type ID</th>
+                        <th scope="col">Asset Type Name</th>
+                    </thead>
+                    <tbody id="created-types"></tbody>
+                </table>
+                <hr/>
+                <h5 class="card-subtitle">Uploaded Assets</h5>
+                <table class="table">
+                    <thead>
+                        <th scope="col">Row</th>
+                        <th scope="col">Asset Tag</th>
+                        <th scope="col">Asset Type</th>
+                    </thead>
+                    <tbody id="uploaded-assets"></tbody>
+                </table>
+                <hr/>
+                <h5 class="card-subtitle">Failed Assets</h5>
+                <table class="table">
+                    <thead>
+                        <th scope="col">Row</th>
+                        <th scope="col">Asset Tag</th>
+                        <th scope="col">Reason</th>
+                    </thead>
+                    <tbody id="failed-assets"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#import-upload").click(function (e) {
+            e.preventDefault();
+            var formData = new FormData();
+            formData.append('instances_id', $("#instances_id").val());
+            formData.append('csvFile', $("#csvFile")[0].files[0]);
+            $.ajax({
+                url: "{{CONFIG.ROOTURL}}/api/server/assetImport.php",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.result) {
+                        $("#status-card").show();
+                        $("#created-types").empty();
+                        $("#uploaded-assets").empty();
+                        $("#failed-assets").empty();
+
+                        if (data.response.createdTypes.length == 0) {
+                            $("#created-types").append("<tr class='text-center'><td colspan='2'>No new Asset Types created</td></tr>");
+                        } else {
+                            data.response.createdTypes.forEach(element => {
+                                $("#created-types").append("<tr><td>" + element.assetTypes_id + "</td><td>" + element.assetTypes_name + "</td></tr>")
+                            });
+                        }
+                        if (data.response.successfulAssets.length == 0) {
+                            $("#uploaded-assets").append("<tr class='text-center'><td colspan='3'>No Assets uploaded</td></tr>");
+                        } else {
+                            data.response.successfulAssets.forEach(element => {
+                                $("#uploaded-assets").append("<tr><td>" + element.row + "</td><td>" + element.assets_tag + "</td><td>" + element.assetTypes_id + "</td></tr>")
+                            });
+                        }
+                        
+                        if (data.response.failedAssets.length == 0) {
+                            $("#failed-assets").append("<tr class='text-center'><td colspan='3'>All Assets uploaded successfully</td></tr>");
+                        } else {
+                            data.response.failedAssets.forEach(element => {
+                                $("#failed-assets").append("<tr><td>" + element.row + "</td><td>" + element.tag + "</td><td>" + element.reason + "</td></tr>")
+                            });
+                        }
+                        
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: data.error,
+                            type: "error",
+                            confirmButtonText: "OK"
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<div class="row">
+    <div class="col-lg-4 offset-lg-4 col-md-12" style="padding: 5px;">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Asset Categories</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-subtitle">Match the category id to the category you wish to use</h5>
+                <table class="table">
+                    <thead>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                    </thead>
+                    <tbody>
+                {% for category in categories %}
+                    {% if instance != category.instances_name %}
+                    <tr>
+                        <td colspan="2" style="font-weight: bold;">{{ category.instances_name }}</td>
+                    </tr>
+                    {% set instance = category.instances_name %}
+                    {% endif %}
+                    <tr>
+                        <td>{{ category.assetCategories_id }}</td>
+                        <td>{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "login/login_template.twig" %}
+{% block content %}
+    <form id="magicLink">
+        <p>Enter your email address and we'll send you a link to log in to this app</p>
+		<input class="form-control form-control-lg" id="email" autocomplete="email" placeholder="Email" type="email" required style="margin-top: 10px; margin-bottom: 10px;" autofocus>
+		<div style="width: 100%; text-align:right;">
+            <a href="?signup" class="btn btn-secondary">Create account</a>
+            <button class="btn btn-primary" type="submit" value="Submit">Generate Link</button>
+		</div>
+	</form>
+	<script>
+    	$( document ).ready(function() {
+		    $("#magicLink").fadeIn();
+		});
+        $("#magicLink").submit(function(){
+            event.preventDefault();
+            if ($("#email").val().length <= 0) {
+                toastr.warning("Please enter something into the email box");
+            } else {
+                $.ajax({
+                    url: "../api/login/magicLogin.php",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {"formInput" : $("#email").val(),"redirect": "{{ MAGICLINKURL|escape("js") }}"},
+                    success: function(result) {
+                        if (result.result) {
+                            toastr.success("Email sent");
+                    	} else {
+                            toastr.error(result.error.message);
+                        }
+                    },
+                    error: function(){
+                        toastr.error("Please refresh the page and check your internet connection");
+                    }
+                });
+            }
+            return false;
+        });
+	</script>
+{% endblock %}

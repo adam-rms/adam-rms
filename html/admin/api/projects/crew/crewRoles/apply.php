@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(124)) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES")) die("404");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {
@@ -12,7 +12,7 @@ foreach ($_POST['formData'] as $item) {
 if (strlen($array['projectsVacantRoles_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
 $DBLIB->where("projectsVacantRoles_deleted",0);
-if ($AUTH->data['instance']["instancePositions_id"]) $DBLIB->where("(projectsVacantRoles_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", projectsVacantRoles_visibleToGroups) > 0))"); //If the user doesn't have a position - they're bstudios staff
+if ($AUTH->data['instance']["instancePositions_id"]) $DBLIB->where("(projectsVacantRoles_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", projectsVacantRoles_visibleToGroups) > 0))"); //If the user doesn't have a position - they're server admins
 $DBLIB->join("projects","projectsVacantRoles.projects_id=projects.projects_id","LEFT");
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
@@ -48,7 +48,7 @@ if ($role['projectsVacantRoles_firstComeFirstServed']) {
         "users_userid" => $AUTH->data['users_userid'],
         "crewAssignments_role" => $role['projectsVacantRoles_name']
     ]);
-    if (!$insert) finish(false, ["message"=>"Application received, but there was a problem assigning you to the event - please contact the project manager"]);
+    if (!$insert) finish(false, ["message"=>"Application received, but there was a problem assigning you to the project - please contact the project manager"]);
 
     $DBLIB->where("projectsVacantRoles_id",$role['projectsVacantRoles_id']);
     $DBLIB->update("projectsVacantRoles",["projectsVacantRoles_slotsFilled"=>$role['projectsVacantRoles_slotsFilled']+1],1);

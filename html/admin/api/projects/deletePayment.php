@@ -3,7 +3,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 use Money\Currency;
 use Money\Money;
 
-if (!$AUTH->instancePermissionCheck(35) or !isset($_POST['payments_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_PAYMENTS:DELETE") or !isset($_POST['payments_id'])) die("404");
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);

@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function () {
-        {% if 56|instancePermissions %}
+        {% if "ASSETS:FILE_ATTACHMENTS:EDIT"|instancePermissions %}
         $(".renameFile").click(function () {
             var id = $(this).data("s3fileid");
             var filename = $(this).data("s3filename");
@@ -21,7 +21,7 @@
             });
         });
         {% endif %}
-        {% if 57|instancePermissions %}
+        {% if "ASSETS:FILE_ATTACHMENTS:DELETE"|instancePermissions %}
         $(".deleteFile").click(function () {
             var id = $(this).data("s3fileid");
             bootbox.confirm({
@@ -49,19 +49,11 @@
             });
         });
         {% endif %}
-        {% if 127|instancePermissions %}
+        {% if "FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS"|instancePermissions %}
         function showShareKeyDialog(file,shareKey) {
             bootbox.dialog({
                 title: 'Shared File',
-                message: "<p>This file has been shared, which makes it visible to everyone on the web - be careful when publishing private or sensitive information.</p>"
-                {% if USERDATA.instance['publicData']['customDomains'] %}
-                    {% for domain in USERDATA.instance['publicData']['customDomains'] %}
-                        {% if domain != "localhost" %}
-                             + '<div class="input-group"><input type="text" class="form-control" value="' + "https://{{ domain }}/file/?f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>'
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                + '<div class="input-group"><input type="text" class="form-control" value="' + "{{ CONFIG.ROOTURL }}/api/file/?r&f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>',
+                message: '<p>This file has been shared, which makes it visible to everyone on the web - be careful when publishing private or sensitive information.</p><div class="input-group"><input type="text" class="form-control" value="' + "{{ CONFIG.ROOTURL }}/api/file/?r&f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>',
                 size: 'large',
                 buttons: {
                     disableshare: {

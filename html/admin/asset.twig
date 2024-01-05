@@ -1,24 +1,16 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
 
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css" integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js" integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js" integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.css" />
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick-theme.css" />
-    <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="{{ CONFIG.ASSETCDNURL }}/libs/slick-1.8.1/slick/slick.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.2.1/jquery-migrate.min.js" integrity="sha512-fDGBclS3HUysEBIKooKWFDEWWORoA20n60OwY7OSYgxGEew9s7NgDaPkj7gqQcVXnASPvZAiFW8DiytstdlGtQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -35,7 +27,7 @@
                         {% endif %}
                         {% if assets[0]['link'] %}
                             <div class="callout callout-success">
-                                Asset is linked to asset <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
+                                Asset is linked to asset <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
                             </div>
                         {% endif %}
                         {% if assets[0]['assets_notes']|length > 0 %}
@@ -63,31 +55,12 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
-                            {% if thisProject and asset.assetsAssignment.assetsAssignmentsStatus_name != null %}
-                                <li class="list-group-item">
-                                    <b>Asset Status on {{ thisProject.projects_name }}</b> <a href="{{ CONFIG.ROOTURL }}/project/?id={{ USERDATA.users_selectedProjectID }}" class="float-right">{{ asset.assetsAssignment.assetsAssignmentsStatus_name }}</a>
-                                </li>
-                            {% endif %}
                         </ul>
-                        {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-                            {% if assets[0].assets_endDate != null and assets[0].assets_endDate < thisProject["projects_dates_deliver_end"] %}
-                                <button title="Asset to be removed" class="btn btn-block btn-success" disabled>Can't add to project</button>
-                            {% elseif assets[0].flagsblocks.COUNT.BLOCK < 1 %}
-                                <button title="Remove from project" {% if (not assets[0].assignment) or USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-block btn-warning removeFromBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Remove from Project</button>
-                                {%  if assets[0].assignment and USERDATA.users_selectedProjectID != assets[0].assignment[0].projects_id %}
-                                    <button title="Assigned to {{ assets[0].assignment[0]['projects_name'] }}" class="btn btn-block btn-success" disabled>Can't add to project</button>
-                                {% endif %}
-                                <button title="Add to project" {% if assets[0].assignment %} style="display:none;"{% endif %} class="btn btn-block btn-success addToBasketAssetButton" data-assetid="{{ assets[0]['assets_id'] }}">Add to Project</button>
-                            {% endif %}
-                            {% if thisProject and 53|instancePermissions and asset.assetsAssignment != null%}
-                                <button title="Change Asset Status" class="btn btn-block btn-info" id="changeAssetStatusButton">Change Asset Status</button>
-                            {% endif %}
-                        {% endif %}
-                        {% if 97|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  %}
+                        {% if "ASSETS:ARCHIVE"|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <hr/>
                             <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
-                        {% if 19|instancePermissions %}
+                        {% if "ASSETS:DELETE"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                         {% endif %}
                     </div>
@@ -137,7 +110,7 @@
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
                     {% endif %}
                     {% if assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") >= "now"|date("U")  %}
-                        {% if 84|instancePermissions %}
+                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                             <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
                         {% endif %}
                     {% endif %}
@@ -148,6 +121,11 @@
 
 
         <div class="col-md-9">
+            {% if ASSET_INSTANCE.instances_id != USERDATA.instance.instances_id %}
+                <div class="alert alert-info">
+                    <h5>Showing assets from business {{ ASSET_INSTANCE.instances_name }}</h5>
+                </div>
+            {% endif %}
             {% if assets|length == 1 %}
                 {% for flag in assets[0].flagsblocks.BLOCK %}
                     <div class="alert alert-danger">
@@ -179,7 +157,7 @@
                                 <tbody>
                                 {% for asset in assets[0]['linkedToThis'] %}
                                 <tr>
-                                    <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag']|aTag }}</a></td>
+                                    <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag']|aTag }}</a></td>
                                     <td>
                                         {% for i in range(1, asset['tier']) %}
                                             {% if i == 1 %}
@@ -199,15 +177,15 @@
                     </div>
                 {% endif %}
             {% endif %}
-            {% if assets|length == 1 %}
+            {% if assets|length == 1 and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
             <div class="card card-secondary card-outline">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
                         <li class="nav-item"><a class="nav-link active" href="#calendarBoxAsset" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
-                        {% if 59|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit {{ assets[0].assets_tag|aTag }}</a></li>{% endif %}
-                        {% if 61|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
-                        {% if 84|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
-                        {% if  63|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
+                        {% if "ASSETS:EDIT"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit {{ assets[0].assets_tag|aTag }}</a></li>{% endif %}
+                        {% if "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
+                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
+                        {% if  "MAINTENANCE_JOBS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -219,7 +197,6 @@
                                     /* initialize the calendar
                                      -----------------------------------------------------------------*/
                                     var Calendar = FullCalendar.Calendar;
-                                    var Draggable = FullCalendarInteraction.Draggable;
 
                                     var calendarEl = document.getElementById('calendar');
 
@@ -227,7 +204,7 @@
                                     // -----------------------------------------------------------------
 
                                     var calendar = new Calendar(calendarEl, {
-                                        plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                                        themeSystem: 'bootstrap',
                                         buttonText:  {
                                             today:    'Today',
                                             month:    'Month',
@@ -235,7 +212,7 @@
                                             day:      'Day',
                                             list:     'List'
                                         },
-                                        header    : {
+                                        headerToolbar : {
                                             left  : 'prev,next today',
                                             center: 'title',
                                             right : 'dayGridMonth,timeGridWeek'
@@ -247,12 +224,12 @@
                                             {% for thisasset in assets %}
                                             {% for assignment in thisasset.assignments %}
                                             {
-                                                title          : '{{ thisasset.assets_tag|aTag }} [{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
+                                                title          : '{{ thisasset.assets_tag|aTag }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} [{{ assignment.projectsStatuses_name|escape("js") }}]{% endif %} {{ assignment.projects_name }}',
                                                 start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                 end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                 url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
-                                                backgroundColor: '{{ STATUSES[assignment.projects_status]["backgroundColour"] }}',
-                                                textColor    : '{{ STATUSES[assignment.projects_status]["foregroundColour"] }}'
+                                                backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
+                                                textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                             },
                                             {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
                                             {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
@@ -269,18 +246,15 @@
                                         },
                                         editable  : false,
                                         droppable : false, // this allows things to be dropped onto the calendar !!!
-                                        drop      : function(info) {
-
-                                        },
                                         height: 600,
-                                        firstDay: 1,
+                                        firstDay: 1
                                     });
 
                                     calendar.render();
                                 })
                             </script>
                         </div>
-                        {% if 59|instancePermissions %}
+                        {% if "ASSETS:EDIT"|instancePermissions %}
                             <div class="tab-pane" style="padding:0"  id="editAsset">
                                 <div class="card" style="margin-bottom:0;">
                                     <div class="card-header p-2">
@@ -289,8 +263,9 @@
                                             <li class="nav-item"><a class="nav-link" href="#linked" data-toggle="tab">Asset Link</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#groups" data-toggle="tab">Groups</a></li>
                                             {% if assetFieldsLength > 0 %}<li class="nav-item"><a class="nav-link" href="#editAssetFields" data-toggle="tab">Custom Fields</a></li>{% endif %}
-                                            {% if 82|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
+                                            {% if "ASSETS:EDIT:OVVERRIDES"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAssetDetailsOverrides" data-toggle="tab">Asset Type Overrides</a></li>{% endif %}
                                             <li class="nav-item"><a class="nav-link" href="#editAssetType" data-toggle="tab">Change Type</a></li>
+                                            {% if "ASSETS:TRANSFER"|instancePermissions and assets[0].assets_endDate is null %}<li class="nav-item"><a class="nav-link" href="#moveAsset" data-toggle="tab">Transfer Asset</a></li>{% endif %}
                                         </ul>
                                     </div><!-- /.card-header -->
                                     <div class="card-body" style="padding: 0;">
@@ -348,7 +323,7 @@
                                                 </form>
                                                 <button class="btn btn-default float-right" id="saveAssetDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
-                                            {% if 82|instancePermissions %}
+                                            {% if "ASSETS:EDIT:OVVERRIDES"|instancePermissions %}
                                                 <div class="tab-pane" style="padding: 1.25rem" id="editAssetDetailsOverrides">
                                                     <div class="callout">
                                                         Overriding the details of the asset means that these settings below will take precedence over the properties for the type - this allows you to have multiple assets within a type with different masses for example
@@ -401,6 +376,33 @@
                                                 <select class="form-control  select2bs4 assetSelect2" id="assetTypeChange" placeholder="{{ asset.assetTypes_name }}" value="{{ asset.assetTypes_id }}"></select>
                                                 <button class="btn btn-default float-right" id="saveAssetTypeChangeButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                             </div>
+                                            {% if "ASSETS:TRANSFER"|instancePermissions %}
+                                            <div class="tab-pane" style="padding: 1.25rem" id="moveAsset">
+                                                <div class="callout callout-danger">
+                                                    <p>Transferring an asset to another business will archive it in this business, which will affect existing projects. When transferring, the following paramenters are not copied across to the other business: maintenance jobs, flags/blocks, file attachments, images, assignments to projects, barcodes, barcode scans &amp; groups</p>
+                                                    <p>You can only transfer assets if you have the <code>ASSETS:TRANSFER</code> permission for the business you are transfering the asset into.</p> 
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="assetMigrateInstance">Business to transfer asset to</label>
+                                                    <select class="form-control select2bs4" id="assetMigrateInstance" placeholder="Select an Instance"></select>
+                                                </div>
+                                                <div class="form-group" style="display: none;">
+                                                    <label for="assetMigrateAssetType">Asset Type for asset in new business</label>
+                                                    <select class="form-control select2bs4" id="assetMigrateAssetType" placeholder="Select an Asset Type"></select>
+                                                </div>
+                                                <div class="form-group mt-2" style="display: none;">
+                                                    <label for="assetMigrateManufacturer">New Asset Type Manufacturer</label>
+                                                    <select class="form-control select2bs4" id="assetMigrateManufacturer" placeholder="Select a Manufacturer" aria-describedby="assetMigrateManufacturerHelp"></select>
+                                                    <small id="assetMigrateManufacturerHelp" class="form-text text-muted">Select the manufacturer that this copied asset type should use</small>
+                                                </div>
+                                                <div class="form-group" style="display: none;">
+                                                    <label for="assetMigrateCategory">New Asset Type Category</label>
+                                                    <select class="form-control select2bs4" id="assetMigrateCategory" placeholder="Select a Category" aria-describedby="assetMigrateCategoryHelp"></select>
+                                                    <small id="assetMigrateCategoryHelp" class="form-text text-muted">Which category should this asset type be placed in?</small>
+                                                </div> 
+                                                <button class="btn btn-default float-right" id="assetMigrate" style="margin-top:10px;margin-bottom:10px;">Migrate</button>                 
+                                            </div>
+                                            {% endif %}
                                         </div>
                                         <!-- /.tab-content -->
                                     </div><!-- /.card-body -->
@@ -408,9 +410,9 @@
                             </div>
                         {% endif %}
 
-                        {% if 61|instancePermissions %}
+                        {% if "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
                             <div class="tab-pane" style="padding: 1.25rem"  id="files">
-                                {% if 62|instancePermissions %}
+                                {% if "ASSETS:ASSET_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                                     <div class="callout callout-default">
                                         Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
                                     </div>
@@ -425,7 +427,7 @@
                                 {% endembed %}
                             </div>
                         {% endif %}
-                        {% if 84|instancePermissions %}
+                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  %}
                             <div class="tab-pane" style="padding: 0" id="barcodes">
                                 <table class="table table-striped projects">
                                     <thead>
@@ -480,7 +482,7 @@
                                                 {% endif %}
                                             </td>
                                             <td>
-                                                {% if 86|instancePermissions %}
+                                                {% if "ASSETS:ASSET_BARCODES:DELETE"|instancePermissions %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteBarcodeButton" data-barcodeid="{{ barcode['assetsBarcodes_id'] }}"><i class="fa fa-trash"></i></button>
                                                 {% endif %}
                                             </td>
@@ -490,12 +492,12 @@
                                 </table>
                             </div>
                         {% endif %}
-                        {% if 63|instancePermissions %}
+                        {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
                                 <div class="card" style="margin-bottom:0;">
                                     <div class="card-header p-2">
                                         <ul class="nav nav-pills">
-                                            {% if 64|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>
                                             <li class="nav-item"><a class="nav-link active" href="#maintenance-flags" data-toggle="tab">Blocks &amp; Flags</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsOutstanding" data-toggle="tab">Jobs Outstanding</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsCompleted" data-toggle="tab">Jobs Completed</a></li>
@@ -609,7 +611,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -619,7 +621,7 @@
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
                                                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -705,7 +707,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -715,7 +717,7 @@
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
                                                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -766,22 +768,20 @@
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
                         {% if asset.oneasset %}
-                            <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}">View All</a></li>
+                            <li class="nav-item"><a class="nav-link" href="?id={{asset.assetTypes_id}}&instance={{ASSET_INSTANCE.instances_id}}">View All</a></li>
                         {% elseif assets|length > 1 %}
                             <li class="nav-item"><a class="nav-link" href="#assets" data-toggle="tab">Assets</a></li>
                         {% endif %}
 
-                        {% if assets|length > 1 %}
+                        {% if assets|length > 1 and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                         <li class="nav-item"><a class="nav-link active" href="#calendarBox" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
                         {% endif %}
 
 
-                        {% if 58|instancePermissions and (asset.assetInstances_id != null or 19|permissions) %}
+                        {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Edit Type</a></li>
-                        {% elseif 58|instancePermissions %}
-                            <li class="nav-item"><a class="nav-link" href="#" title="Locked as this asset type was built by AdamRMS">Edit Type</a></li>
                         {% endif %}
-                        {% if 54|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
+                        {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">
@@ -804,7 +804,7 @@
                                 </tr>
                                 {% for thisasset in assets %}
                                     <tr>
-                                        <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}">{{ thisasset.assets_tag|aTag }}</a></td>
+                                        <td><a href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}&instance={{ASSET_INSTANCE.instances_id}}">{{ thisasset.assets_tag|aTag }}</a></td>
                                         {% for field in asset.fields %}
                                             <td>{{ thisasset['asset_definableFields_' ~ loop.index] }}</td>
                                         {% endfor %}
@@ -828,26 +828,15 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-                                                    {% if thisasset.assets_endDate != null and thisasset.assets_endDate < thisProject["projects_dates_deliver_end"] %}
-                                                        <button title="Asset to be removed" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
-                                                    {% elseif thisasset.flagsblocks.COUNT.BLOCK < 1 %}
-                                                        <button title="Remove from project" {% if (not thisasset.assignment) or USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                        {%  if thisasset.assignment and USERDATA.users_selectedProjectID != thisasset.assignment[0].projects_id %}
-                                                            <button title="Assigned to {{ thisasset.assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
-                                                        {% endif %}
-                                                        <button title="Add to project" {% if thisasset.assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
-                                                    {% endif %}
-                                                {% endif %}
-                                                {% if 97|instancePermissions and (thisasset.assets_endDate is null or thisasset.assets_endDate|date("U") > "now"|date("U"))%}
+                                                {% if "ASSETS:ARCHIVE"|instancePermissions and (thisasset.assets_endDate is null or thisasset.assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
                                                     <button title="Archive" class="btn btn-sm btn-warning archiveAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fas fa-archive"></i></button>
                                                 {% endif %}
-                                                {% if 19|instancePermissions %}
+                                                {% if "ASSETS:DELETE"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                                                     <button title="Delete" class="btn btn-sm btn-danger deleteAssetButton" data-assetid="{{ thisasset['assets_id'] }}"><i class="fa fa-trash"></i></button>
                                                 {% endif %}
 
 
-                                                <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
+                                                <a class="btn btn-sm btn-info" title="View" href="?id={{ asset.assetTypes_id }}&asset={{ thisasset.assets_id }}&instance={{ASSET_INSTANCE.instances_id}}"><i class="far fa-arrow-alt-circle-right"></i></a>
                                                 </div>
                                         </td>
                                     </tr>
@@ -863,7 +852,6 @@
                                     /* initialize the calendar
                                      -----------------------------------------------------------------*/
                                     var Calendar = FullCalendar.Calendar;
-                                    var Draggable = FullCalendarInteraction.Draggable;
 
                                     var calendarEl = document.getElementById('calendar');
 
@@ -871,7 +859,7 @@
                                     // -----------------------------------------------------------------
 
                                     var calendar = new Calendar(calendarEl, {
-                                        plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                                        themeSystem: 'bootstrap',
                                         buttonText:  {
                                             today:    'Today',
                                             month:    'Month',
@@ -879,7 +867,7 @@
                                             day:      'Day',
                                             list:     'List'
                                         },
-                                        header    : {
+                                        headerToolbar : {
                                             left  : 'prev,next today',
                                             center: 'title',
                                             right : 'dayGridMonth'
@@ -891,12 +879,12 @@
                                             {% for thisasset in assets %}
                                                 {% for assignment in thisasset.assignments %}
                                                 {
-                                                    title          : '[{{ STATUSES[assignment.projects_status]["name"] }}] {{ assignment.projects_name }}',
+                                                    title          : '{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ assignment.projectsStatuses_name }}] {% endif %}{{ assignment.projects_name }}',
                                                     start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                     end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
                                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
-                                                    backgroundColor: '{{ STATUSES[assignment.projects_status]["backgroundColour"] }}',
-                                                    textColor    : '{{ STATUSES[assignment.projects_status]["foregroundColour"] }}'
+                                                    backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
+                                                    textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                                 },
                                                 {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
                                                     {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
@@ -913,11 +901,8 @@
                                         },
                                         editable  : false,
                                         droppable : false, // this allows things to be dropped onto the calendar !!!
-                                        drop      : function(info) {
-
-                                        },
                                         height: 600,
-                                        firstDay: 1,
+                                        firstDay: 1
                                     });
 
                                     calendar.render();
@@ -925,7 +910,7 @@
                             </script>
                         </div>
                         {% endif %}
-                        {% if 58|instancePermissions %}
+                        {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions and (asset.assetInstances_id != null or "ASSETS:EDIT:ANY_ASSET_TYPE"|serverPermissions) and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                         <div class="tab-pane" style="padding:0"  id="settings">
                             <div class="card" style="margin-bottom:0;">
                                 <div class="card-header p-2">
@@ -1033,7 +1018,7 @@
                                             <button class="btn btn-default float-right" id="saveTypeDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                         </div>
                                         <div class="tab-pane" style="padding: 1.25rem" id="thumbnail">
-                                            {% if 55|instancePermissions %}
+                                            {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                                                 {% embed 'common/plugins/uppy.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': true, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
                                                     {% block success %}
                                                         console.log(responseJson.id);
@@ -1049,11 +1034,17 @@
                                 </div><!-- /.card-body -->
                             </div>
                         </div>
+                        {% elseif "ASSETS:ASSET_TYPES:EDIT"|instancePermissions %}
+                        <div class="tab-pane" style="padding: 1.25rem" id="settings">
+                            <div class="alert alert-info" role="alert">
+                                <h4 class="alert-heading">Asset type maintained by the AdamRMS</h4>Sorry - this asset type is shared between a number of different businesses as a pre-defined template, to edit it please <a href="{{ CONFIG.ROOTURL }}/support.php">get in touch with support</a>
+                            </div>
+                        </div>
                         {% endif %}
 
-                        {% if 54|instancePermissions %}
+                        {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                         <div class="tab-pane" style="padding: 1.25rem"  id="typeFiles">
-                            {% if 55|instancePermissions %}
+                            {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                             <div class="callout callout-default">
                                 Use this area to store files relevant to all assets of this type such as instruction manuals
                             </div>
@@ -1068,12 +1059,12 @@
                             {% endembed %}
                         </div>
                         {% endif %}
-                        {% if 63|instancePermissions %}
+                        {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
                                 <div class="card" style="margin-bottom:0;">
                                     <div class="card-header p-2">
                                         <ul class="nav nav-pills">
-                                            {% if 64|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>{% endif %}
+                                            <li class="nav-item"><a class="nav-link" href="#maintenance-newJob" data-toggle="tab">New Job</a></li>
                                             <li class="nav-item"><a class="nav-link active" href="#maintenance-flags" data-toggle="tab">Blocks &amp; Flags</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsOutstanding" data-toggle="tab">Jobs Outstanding</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsCompleted" data-toggle="tab">Jobs Completed</a></li>
@@ -1187,7 +1178,7 @@
                                                                 <ul class="list-inline">
                                                                     <li class="list-inline-item">
                                                                         <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                            <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                            <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                         </a>
                                                                     </li>
                                                                 </ul>
@@ -1197,7 +1188,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1283,7 +1274,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                <img alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1293,7 +1284,7 @@
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
                                                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}">
+                                                                                    <img alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -1369,7 +1360,7 @@
                     fade: true,
                     cssEase: 'linear'
                 });
-                {% if 19|instancePermissions %}
+                {% if "ASSETS:DELETE"|instancePermissions %}
                 $(".deleteAssetButton").click(function () {
                     var assetid = $(this).data("assetid");
                     bootbox.confirm({
@@ -1394,7 +1385,7 @@
                     });
                 });
                 {% endif %}
-                {% if 97|instancePermissions %}
+                {% if "ASSETS:ARCHIVE"|instancePermissions %}
                 $(".archiveAssetButton").click(function () {
                     var assetid = $(this).data("assetid");
                     var date;
@@ -1438,7 +1429,7 @@
                     });
                 });
                 {% endif %}
-                {% if 86|instancePermissions %}
+                {% if "ASSETS:ASSET_BARCODES:DELETE"|instancePermissions %}
                 $(".deleteBarcodeButton").click(function () {
                     var barcodeid = $(this).data("barcodeid");
                     bootbox.confirm({
@@ -1464,78 +1455,7 @@
                     });
                 });
                 {% endif %}
-                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-                $(".addToBasketAssetButton").click(function () {
-                    var assetId=$(this).data("assetid");
-                    ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid")}, function (data) {
-                        $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
-                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Added to {{ thisProject.projects_name }}'
-                        });
-                        {% if asset.oneasset %}
-                        window.location.reload();
-                        {% endif %}
-                    });
-                });
-                $(".removeFromBasketAssetButton").click(function () {
-                    var assetId = $(this).data("assetid");
-                    bootbox.confirm({
-                        message: "Are you sure you wish to remove this asset from the project?",
-                        buttons: {
-                            confirm: {
-                                label: 'Yes',
-                                className: 'btn-danger'
-                            },
-                            cancel: {
-                                label: 'No',
-                                className: 'btn-success'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
-                                $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
-                                ajaxcall("projects/assets/unassign.php", {"assets_id":assetId}, function (data) {
-                                    Toast.fire({
-                                        type: 'success',
-                                        title: 'Removed from {{ thisProject.projects_name }}'
-                                    });
-                                    {% if asset.oneasset %}
-                                    window.location.reload();
-                                    {% endif %}
-                                });
-                            }
-                        }
-                    });
-                });
-                {% endif %}
-                {% if USERDATA.users_selectedProjectID != null and 53|instancePermissions and asset.assetsAssignment != null%}
-                $("#changeAssetStatusButton").click(function () {
-                    bootbox.prompt({
-                        title: "Set status of this Asset for {{ thisProject.projects_name }}",
-                        inputType: 'select',
-                        value: "{{ asset.assetsAssignment.assetsAssignmentsStatus_id }}",
-                        inputOptions: [
-                            {% for status in assetsAssignmentsStatus %}
-                            {
-                                text: '{{ status.assetsAssignmentsStatus_name|escape('js')}}',
-                                value: '{{ status.assetsAssignmentsStatus_id }}'
-                            },
-                            {% endfor %}
-                        ],
-                        callback: function (result) {
-                            if (result) {
-                                ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":{{ asset.assetsAssignment.assetsAssignments_id }}, "assetsAssignments_status":result}, function (){
-                                    window.location.reload();
-                                });
-                            }
-                        }
-                    });
-                });
-                {% endif %}
-                {% if 58|instancePermissions %}
+                {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions %}
                 $("#addNewType-value").change(function() {
                     $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
                     $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
@@ -1556,7 +1476,7 @@
                     }, false);
                 });
                 {% endif %}
-                {% if 59|instancePermissions %}
+                {% if "ASSETS:EDIT"|instancePermissions %}
                 $('#saveAssetSettingsButton').on('click', function() {
                     var formData = $("#editAssetDetailsForm").serializeArray();
                     formData.push({"name": "assets_id", "value": "{{assets[0]['assets_id']}}"});
@@ -1571,7 +1491,7 @@
                         location.reload();
                     }, false);
                 });
-                {% if 82|instancePermissions %}
+                {% if "ASSETS:EDIT:OVVERRIDES"|instancePermissions %}
                 $('#editAssetDetailsOverridesButton').on('click', function() {
                     var formData = $("#editAssetDetailsOverridesForm").serializeArray();
                     formData.push({"name": "assets_id", "value": "{{assets[0]['assets_id']}}"});
@@ -1627,7 +1547,7 @@
                             },
                         ];
                         ajaxcall("assets/editAsset.php", {formData}, function (data) {
-                            window.location.href = "{{ CONFIG.ROOTURL }}/asset.php?id=" + $("#assetTypeChange").val();
+                            window.location.href = "{{ CONFIG.ROOTURL }}/asset.php?instance={{ASSET_INSTANCE.instances_id}}&id=" + $("#assetTypeChange").val();
                         }, false);
                     }
                 });
@@ -1706,7 +1626,7 @@
                     tags: false,
                     multiple: true,
                     theme: "bootstrap4",
-                    {% if 96|instancePermissions != true %}
+                    {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions != true %}
                     disabled: true,
                     {% endif %}
                     minimumInputLength: 1,
@@ -1739,7 +1659,7 @@
                         }
                     }
                 });
-                {% if 96|instancePermissions %}
+                {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions %}
                 $('#assetGroups').on('select2:select', function (e) {
                     var id =e.params.data.id;
                     ajaxcall("groups/addAsset.php", {
@@ -1755,7 +1675,7 @@
                     });
                 });
                 {% endif %}
-                {% if 63|instancePermissions %}
+                {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
                 $("#tagUserInJob").select2({
                     tags: false,
                     multiple: true,
@@ -1798,6 +1718,241 @@
                             window.location.href = "{{ CONFIG.ROOTURL }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
                         }, false);
                     }
+                });
+                {% endif %}
+                {% if "ASSETS:TRANSFER"|instancePermissions %}
+                $("#assetMigrateInstance").select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 0,
+                    width: '100%',
+                    minimumResultsForSearch: 1,
+                    placeholder: "Search for a Business",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/instances/list.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                term: params.term
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        if (item.permissions.includes("ASSETS:TRANSFER") && item.instances_id != "{{ USERDATA.instance.instances_id }}") {
+                                            return {
+                                                text: item.instances_name,
+                                                id: item.instances_id
+                                            }
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    }
+                })
+
+                $("#assetMigrateInstance").on('select2:select', function () {
+                    var id = $(this).select2('data')[0].id;
+                    $('#assetMigrateAssetType').parent().show();
+                    try {
+                        // destroy select2 if already initialized
+                        $('#assetMigrateAssetType').select2('destroy');
+                    } catch (e) {} // ignore
+                    $('#assetMigrateAssetType').empty();
+                    $('#assetMigrateAssetType').select2({
+                        tags: false,
+                        multiple: false,
+                        theme: "bootstrap4",
+                        minimumInputLength: 0,
+                        width: '100%',
+                        minimumResultsForSearch: 1,
+                        placeholder: "Search for an Asset Type",
+                        ajax: {
+                            url: "{{ CONFIG.ROOTURL }}/api/assets/searchType.php?other_instances_id=" + id,
+                            dataType: "json",
+                            type: "POST",
+                            data: function (params) {
+                                var queryParameters = {
+                                    term: params.term
+                                }
+                                return queryParameters;
+                            },
+                            processResults: function (data) {
+                                if (data && data.result && data.response) {
+                                    const responseData = $.map(data.response, function (item) {
+                                            return {
+                                                text: item.manufacturers_name + " - " + item.assetTypes_name,
+                                                id: item.assetTypes_id
+                                            }
+                                        });
+                                    return {
+                                        // add "Other" to the end of the list
+                                        results: [...responseData, {
+                                            text: "Copy the existing asset type ({{asset.assetTypes_name|escape("js")}}) into business",
+                                            id: "-1"
+                                        }]
+                                    };
+                                } else return {
+                                    results: [{
+                                            text: "Copy the existing asset type ({{asset.assetTypes_name|escape("js")}}) into business",
+                                            id: "-1"
+                                        }]
+                                };
+                            }
+                        }
+                    })
+                });
+                $("#assetMigrateAssetType").on('select2:select', function () {
+                    const id = $(this).select2('data')[0].id;
+                    const instanceId = $("#assetMigrateInstance").select2('data')[0].id;
+                    //Reset selectboxes
+                    try {
+                        // destroy select2 if already initialized
+                        $('#assetMigrateManufacturer, #assetMigrateCategory').select2('destroy');
+                    } catch (e) {} // ignore
+                    $('#assetMigrateManufacturer, #assetMigrateCategory').empty();
+
+                    if (id == "-1") {
+                        $('#assetMigrateManufacturer').parent().show();
+                        $('#assetMigrateCategory').parent().show();
+                        $('#assetMigrateManufacturer').select2({
+                            tags: false,
+                            multiple: false,
+                            theme: "bootstrap4",
+                            minimumInputLength: 0,
+                            width: '100%',
+                            minimumResultsForSearch: 1,
+                            placeholder: "Search for a Manufacturer",
+                            ajax: {
+                                url: "{{ CONFIG.ROOTURL }}/api/manufacturer/search.php?other_instances_id=" + instanceId,
+                                dataType: "json",
+                                type: "POST",
+                                data: function (params) {
+                                    var queryParameters = {
+                                        term: params.term
+                                    }
+                                    return queryParameters;
+                                },
+                                processResults: function (data) {
+                                    if (data && data.result && data.response) {
+                                        const responseData = $.map(data.response, function (item) {
+                                                return {
+                                                    text: item.manufacturers_name,
+                                                    id: item.manufacturers_id
+                                                }
+                                            })
+                                        return {
+                                        // add "Other" to the end of the list
+                                        results: [...responseData,{
+                                            text: "Copy {{ asset.manufacturers_name|escape("js") }} into business",
+                                            id: "-1"
+                                        }]
+                                    };
+                                    } else return {
+                                        results: [{
+                                            text: "Copy {{ asset.manufacturers_name|escape("js") }} into business",
+                                            id: "-1"
+                                        }]
+                                    };
+                                }
+                            }
+                        });
+                        $('#assetMigrateCategory').select2({
+                            tags: false,
+                            multiple: false,
+                            theme: "bootstrap4",
+                            minimumInputLength: 0,
+                            width: '100%',
+                            minimumResultsForSearch: 1,
+                            placeholder: "Search for a Category",
+                            ajax: {
+                                url: "{{ CONFIG.ROOTURL }}/api/categories/search.php?other_instances_id=" + instanceId,
+                                dataType: "json",
+                                type: "POST",
+                                data: function (params) {
+                                    var queryParameters = {
+                                        term: params.term
+                                    }
+                                    return queryParameters;
+                                },
+                                processResults: function (data) {
+                                    if (data && data.result && data.response) {
+                                        return {
+                                            results: $.map(data.response, function (item) {
+                                                return {
+                                                    text: item.assetCategoriesGroups_name + " - " + item.assetCategories_name,
+                                                    id: item.assetCategories_id
+                                                }
+                                            })
+                                        };
+                                    } else return {
+                                        results: []
+                                    };
+                                }
+                            }
+                        })
+                    } else {
+                        $('#assetMigrateManufacturer').parent().hide();
+                        $('#assetMigrateCategory').parent().hide();
+                    }
+                });
+
+                $("#assetMigrate").on("click", function () {
+                    const newInstanceId = $("#assetMigrateInstance").select2('data')[0].id;
+                    const newAssetTypeId = $("#assetMigrateAssetType").select2('data')[0].id;
+
+                    const assetId = {{ assets[0]['assets_id'] }};
+                    
+                    let args = {}
+                    if (newAssetTypeId == "-1") {
+                        let newManufacturerId = -1;
+                        newCategoryId = $("#assetMigrateCategory").select2('data')[0].id;
+                        try {
+                            newManufacturerId = $("#assetMigrateManufacturer").select2('data')[0].id;  
+                        } catch (e) { } //ignore
+                        args = {
+                            "assets_id": assetId,
+                            "new_instances_id": newInstanceId,
+                            "manufacturers_id": (newManufacturerId == -1 ? false : newManufacturerId), //can be "Copied from Asset"
+                            "assetCategories_id": newCategoryId,
+                        }
+                    } else {
+                        args = {
+                            "assets_id": assetId,
+                            "new_instances_id": newInstanceId,
+                            "assetTypes_id": newAssetTypeId,
+                        }
+                    }
+                    bootbox.confirm({
+                        message: "Are you sure you wish to transfer this asset?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("assets/transfer.php", 
+                                    args,
+                                    function (data) {
+                                        location.href = "{{ CONFIG.ROOTURL }}/assets.php";
+                                    }
+                                );
+                            }
+                        }
+                    });
                 });
                 {% endif %}
             });

@@ -5,8 +5,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.min.js" integrity="sha256-jPK1ABk4CuFvSr31v4CLU7X7XCvixZSi8fTTCw/tsto=" crossorigin="anonymous"></script>
 
 
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/js/libs/gridstrap/jquery.gridstrap.min.css">
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/libs/gridstrap/jquery.gridstrap.min.js"></script>
+    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/gridstrap/jquery.gridstrap.min.css">
+    <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/gridstrap/jquery.gridstrap.min.js"></script>
 {% endblock %}
 {% block content %}
     {% set possibleCardStyles = ["primary","secondary","success","danger","warning","info","light","dark"] %}
@@ -28,61 +28,16 @@
     <div id="resize-grid" class="row">
         {% if PAGE.DRAFTS[0]['cmsPagesDrafts_dataARRAY'] %}
             {% for card in PAGE.DRAFTS[0]['cmsPagesDrafts_dataARRAY']['cards'] %}
-                {# Duplicated below in template card! #}
-                <div class="col-xs-12 col-sm-12 col-md-{{ card.width }} col-lg-{{ card.width }} cell">
-                    <div class="card {% if card.outline == "true" %}card-outline{% endif %} {% if card.color %}card-{{ card.color}}{% endif %}">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                {{ card.title }}
-                            </h3>
-                            <div class="card-tools pull-right">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-default btn-sm editCardButton"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-default btn-sm editConfigButton"><i class="fas fa-cog"></i></button>
-                                    <button type="button" class="btn btn-default btn-sm delete"><i class="fas fa-trash"></i></button>
-                                    <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="shrink"><i class="fas fa-compress-arrows-alt"></i></button>
-                                    <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="expand"><i class="fas fa-expand-arrows-alt"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body" style="overflow-x:hidden;">
-                            {{ card.content|raw }}
-                        </div>
-                        <!--<div class="card-footer">
-
-                        </div>-->
-                    </div>
-                </div>
+                {% embed 'cms/cms_edit_card.twig' with {'card': card } %}{% endembed %}
             {% endfor %}
         {% endif %}
     </div>
-    <div style="display:none;" id="templateCard">
-        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 cell">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Untitled Card
-                    </h3>
-                    <div class="card-tools pull-right">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-default btn-sm editCardButton"><i class="fas fa-edit"></i></button>
-                            <button type="button" class="btn btn-default btn-sm editConfigButton"><i class="fas fa-cog"></i></button>
-                            <button type="button" class="btn btn-default btn-sm delete"><i class="fas fa-trash"></i></button>
-                            <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="shrink"><i class="fas fa-compress-arrows-alt"></i></button>
-                            <button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="expand"><i class="fas fa-expand-arrows-alt"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body" style="overflow-x:hidden;">
-
-                </div>
-                <!--<div class="card-footer">
-
-                </div>-->
-            </div>
+    {% for card in [ {'type': 'custom' }, {'type': 'calendar' }, {'type': 'inventoryTotal' }, {'type': 'storageUsage' }, {'type': 'userCount' }, {'type': 'maintenanceOutstanding' }, {'type': 'myMaintenance' } ] %}
+        {% set card = card|merge({"width": 4 , "title": "Untitled Card"}) %}
+        <div style="display:none;" class="templateCard" data-type="{{ card.type ?: "custom" }}">
+            {% embed 'cms/cms_edit_card.twig' with {'card': card } %}{% endembed %}
         </div>
-
-    </div>
+    {% endfor %}
     <div class="modal fade" id="editCardModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -199,7 +154,7 @@
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
                                             <a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}&r={{ draft.cmsPagesDrafts_id }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
-                                            <button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="{{ draft.cmsPagesDrafts_revisionID }}" title="Rollback to this change"><i class="fas fa-history"></i></button>
+                                            <button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="{{ draft.cmsPagesDrafts_id }}" title="Rollback to this change"><i class="fas fa-history"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -397,7 +352,45 @@
                 });
             });
             $(document).on("click","#addNewCard",function(event) {
-                gs.insertCell($('#templateCard').children(".cell").prop('outerHTML'),0);
+                bootbox.prompt({
+                    title: "Card Type",
+                    inputType: "select",
+                    inputOptions: [
+                    {
+                        text: "Custom Card",
+                        value: "custom",
+                    },
+                    {
+                        text: "Calendar",
+                        value: "calendar",
+                    },
+                    {
+                        text: "Stats: Assets Total Value",
+                        value: "inventoryTotal",
+                    },
+                    {
+                        text: "Stats: Number of Users on AdamRMS",
+                        value: "userCount",
+                    },
+                    {
+                        text: "Stats: Maintenance Jobs Outstanding",
+                        value: "maintenanceOutstanding",
+                    },
+                    {
+                        text: "Stats: My Maintenance Jobs",
+                        value: "myMaintenance",
+                    },
+                    {
+                        text: "Stats: Storage Usage on AdamRMS",
+                        value: "storageUsage",
+                    }
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            gs.insertCell($('.templateCard[data-type=' + result + ']').children(".cell").prop('outerHTML'),0);
+                        }
+                    }
+                });
             });
 
             $(document).on("click",".restoreRevisionButton[data-id]",function(event) {
@@ -461,15 +454,18 @@
                         }
                     });
                     //card-secondary
+                    var type = $.trim($(item).find(".card[data-type]").data("type"))
                     var thisBox = {
                         "width":width,
-                        "content":$.trim($(item).find(".card-body").html()),
-                        "title":$.trim($(item).find(".card-title").text()),
+                        "content":(type == "custom" ? $.trim($(item).find(".card-body").html()) : ""),
+                        "title":$.trim($(item).find(".card-title").first().text()),
+                        "type":type,
                         "outline":outline,
                         "color":color
                     };
                     saveData.cards.push(thisBox);
                 });
+                console.log(saveData);
                 return saveData;
             }
             window.addEventListener("beforeunload", function(event) {

@@ -14,16 +14,9 @@
                             <button type="submit" class="btn btn-lg btn-default">
                                 <i class="fa fa-search"></i> Search
                             </button>
-                            <button type="button" class="btn btn-lg btn-default" id="searchFormAssetButton" data-widget="control-sidebar" data-controlsidebar-slide="true">
+                            <a href="{{ CONFIG.ROOTURL }}/assets.php" type="button" class="btn btn-lg btn-default">
                                 Search Assets
-                            </button>                            
-                            <script>
-                                $(document).ready(function() {
-                                    $("body").on("click", "#searchFormAssetButton", function(e) {
-                                        $("select[name='keyword[]']").val(null).append(new Option("{{term}}", 1, true, true)).trigger("change");
-                                    });
-                                })
-                            </script>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -37,12 +30,14 @@
                     <div class="card-header">
                         <h3 class="card-title" style="margin-top: 0.4rem;">
                             {% if term and results['total'] is defined and results['total'] > 0 %}
-                                Showing {{ offset >0 ? 'results ' ~ offset ~ '-' ~ (offset + limit) : results['results']|length }} of {{ results['total'] }} result{{ results['total'] == 1 ? '' : 's' }} found in {{ results['speed']|round(3) }} second{{ results['speed']|round(3) != 1 ? 's':'' }}
+                                Showing {{ offset >0 ? 'results ' ~ offset ~ '-' ~ (offset + limit) : results['results']|length }} of {{ results['total'] }} result{{ results['total'] == 1 ? '' : 's' }} found in {{ results['speed']|round(3) }} second{{ results['speed']|round(3) != 1 ? 's':'' }}.
                             {% else %}
-                                No results found for {{ term }}
+                                No results found for {{ term }}.
                             {% endif %}
+                            <a href="{{ CONFIG.USERGUIDEURL }}search" target="_blank">Help</a>
                         </h3>
                         <div class="card-tools pull-right">
+                            
                             {% if results['total'] > 0 and results['results'] > limit %}
                                 <ul class="pagination pagination-sm m-0">
 

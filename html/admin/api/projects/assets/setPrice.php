@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(43) or !isset($_POST['assetsAssignments'])) die("404");
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE") or !isset($_POST['assetsAssignments'])) die("404");
 use Money\Currency;
 use Money\Money;
 use Money\Currencies\ISOCurrencies;
@@ -15,7 +15,7 @@ $assignmentsSetDiscount = new assetAssignmentSelector($_POST['assetsAssignments'
 $assignmentsSetDiscount = $assignmentsSetDiscount->getData();
 if (!$assignmentsSetDiscount['projectid']) finish(false,["message"=>"Cannot find projectid"]);
 $DBLIB->where("projects.projects_id", $assignmentsSetDiscount["projectid"]);
-$DBLIB->where("projects.instances_id IN (" . implode(",", $AUTH->data['instance_ids']) . ")");
+$DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("projects.projects_deleted", 0);
 $project = $DBLIB->getone("projects",["projects_id","projects_dates_deliver_start","projects_dates_deliver_end"]);
 if (!$project) finish(false,["message"=>"Cannot find project"]);

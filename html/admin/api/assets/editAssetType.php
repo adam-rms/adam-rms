@@ -4,7 +4,7 @@ use Money\Currency;
 use Money\Money;
 use Money\Currencies\ISOCurrencies;
 use Money\Parser\DecimalMoneyParser;
-if (!$AUTH->instancePermissionCheck(58)) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_TYPES:EDIT")) die("Sorry - you can't access this page");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {
@@ -18,7 +18,7 @@ $array['assetTypes_value'] = $moneyParser->parse(($array['assetTypes_value'] ?? 
 $array['assetTypes_dayRate'] = $moneyParser->parse(($array['assetTypes_dayRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
 $array['assetTypes_weekRate'] = $moneyParser->parse(($array['assetTypes_weekRate'] ?? '0.00'), $AUTH->data['instance']['instances_config_currency'])->getAmount();
 
-if (!$AUTH->permissionCheck(19)) {
+if (!$AUTH->serverPermissionCheck("ASSETS:EDIT:ANY_ASSET_TYPE")) {
     $DBLIB->where("(instances_id IS NOT NULL)");
     $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
 }

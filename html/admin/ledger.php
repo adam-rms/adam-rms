@@ -4,7 +4,7 @@ use Money\Currency;
 use Money\Money;
 $PAGEDATA['pageConfig'] = ["TITLE" => "Ledger", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(40)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("FINANCE:PAYMENTS_LEDGER:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;

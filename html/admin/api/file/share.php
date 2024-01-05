@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(127) or !isset($_POST['s3files_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS") or !isset($_POST['s3files_id'])) die("404");
 
 
 $shareKey = $bCMS->randomString(40);

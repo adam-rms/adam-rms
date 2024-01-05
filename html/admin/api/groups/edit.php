@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(94)) die("404");
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_GROUPS:EDIT")) die("404");
 
 $array = [];
 foreach ($_POST['formData'] as $item) {

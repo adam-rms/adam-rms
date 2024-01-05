@@ -1,6 +1,6 @@
-{% if STATUSES[project.projects_status]["assetsAvailable"] %}
+{% if project.projectsStatuses_assetsReleased %} 
     <div class="alert alert-danger">
-        <h5>Assets not locked</h5>
+        <h5>Assets not locked - assets are released</h5>
         Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
     </div>
 {% endif %}
@@ -31,23 +31,23 @@
             {% endfor %}
             <li class="pt-2 px-3">
                 <div class="card-tools">
-                    {% if 41|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
                             <i class="far fa-comment"></i></button>
                     {% endif %}
-                    {% if 43|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                         <button type="button" class="btn btn-tool" title="Set discount" id="setAssetAssignmentDiscount">
                             <i class="fas fa-percent"></i></button>
                     {% endif %}
-                    {% if 42|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                         <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
                             <i class="fas fa-coins"></i></button>
                     {% endif %}
-                    {% if 53|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Set status" id="setAllAssetStatus">
                             <i class="fas fa-clipboard-check"></i></button>
                     {% endif %}
-                    {% if 31|instancePermissions %}
+                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Swap Asset" id="swapAsset">
                             <i class="fas fa-sync"></i>
                         </button>
@@ -56,6 +56,7 @@
                     {% endif %}
                     <button type="button" class="btn btn-tool" title="Expand All" id="expandAll">
                         <i class="fas fa-angle-down"></i> Expand</button>
+                    <a type="button" class="btn btn-tool" href="{{ CONFIG.USERGUIDEURL }}projects/assets" target="_blank">Help</a>
                 </div>
             </li>
         </ul>
@@ -175,7 +176,7 @@
         $(".categoryFilter").hide();
         $(".typeFilter").hide();
 
-        {% if 41|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
         $("#setAssetAssignmentComment").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
@@ -197,7 +198,7 @@
             }
         });
         {% endif %}
-        {% if 42|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions %}
         $("#setAssetAssignmentPrice").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
@@ -206,7 +207,7 @@
                     message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
                     inputType: 'number',
                     min: 0,
-                    step: 1,
+                    step: 0.01,
                     callback: function (result) {
                         if (result) {
                             ajaxcall("projects/assets/setPrice.php", {
@@ -221,13 +222,13 @@
             }
         });
         {% endif %}
-        {% if 43|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT"|instancePermissions %}
         $("#setAssetAssignmentDiscount").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
                 bootbox.prompt({
                     title: "Set Discount",
-                    message: "Example: a discount of 20% would multiply the hire cost by 0.8<br/><br/>This will override any existing discounts set in this project for the assets selected",
+                    message: "Discounts the selected assets by a percentage.<br /><br />E.g. Inputting 20 would multiply the price by 0.8<br />This will override any existing discounts set in this project for the assets selected.",
                     inputType: 'number',
                     min: 0,
                     max: 100,
@@ -246,7 +247,7 @@
             }
         });
         {% endif %}
-        {% if 31|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
         $("#setAssetAssignmentDelete").click(function () {
             var selected = getSelected();
             if (selected.length > 0) {
@@ -331,7 +332,7 @@
             }
         });
         {% endif %}
-        {% if 53|instancePermissions %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
         $("#setAllAssetStatus").click(function () {
             let selected = getSelected();
             if (selected.length > 0) {

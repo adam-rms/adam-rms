@@ -1,0 +1,45 @@
+<style>
+    body {
+        font-size: {{ GET.numStickers == "8cable" ? '9' : '18' }}px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        padding: 0;
+        margin: 0;
+        /* Print spooler needs to know to print background colours */
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+    }
+    
+    .container {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        flex-flow: row wrap;
+    }
+
+    .item {
+        padding: 10px;
+        flex: 0 1 auto;
+        margin: 5px
+    }
+
+    .border {
+        border: 1px solid #000;
+    }
+</style>
+
+<script>
+    window.onload = function () {
+        //window.print();
+    }
+</script>
+<body>
+    <div class="container">
+        {% for i in range(0,(assets|length - 1)) %}
+            <div class="item border">
+                {% include 'maintenance/individualBarcode.twig' with {asset: assets[i],GET:GET} %}
+            </div>
+        {% endfor %}
+    </div>
+</body>

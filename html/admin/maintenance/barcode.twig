@@ -5,6 +5,9 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Settings</h3>
+                    <div class="card-tools pull-right">
+                        <a href="{{ CONFIG.USERGUIDEURL }}assets/asset-barcodes" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -98,7 +101,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="btn-group float-right">
-                        <button type="button" class="btn btn-default" id="generateButton">Generate PDF</button>
+                        <button type="button" class="btn btn-default" id="generateButton">Generate</button>
                     </div>
                 </div>
             </div>
@@ -149,7 +152,7 @@
             $("#generateButton").click(function () {
                 var assets = $("#assetSearch").val();
                 var groups = $("#assetGroups").val();
-                window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePDF.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&groups=" + groups.join() + "&download=1";
+                window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePrint.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&groups=" + groups.join() + "&download=1";
             });
 
             $("#assetSearch").select2({

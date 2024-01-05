@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 header('Content-type: text/html');
-if (!$AUTH->permissionCheck(6)) die("Sorry you don't have access to this");
+if (!$AUTH->serverPermissionCheck("USERS:VIEW:MAILINGS")) die("Sorry you don't have access to this");
 	$PAGEDATA['title'] = "E-Mail Viewer";
 	$output = '<style>
 					* {

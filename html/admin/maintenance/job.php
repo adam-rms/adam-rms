@@ -1,8 +1,7 @@
 <?php
-if (isset($_GET['pdf'])) ini_set('max_execution_time', 300); //seconds
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(63)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("MAINTENANCE_JOBS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 elseif (!isset($_GET['id'])) {
     $PAGEDATA['pageConfig'] = ["TITLE" => "New Maintenance Job", "BREADCRUMB" => false];
     die($TWIG->render('maintenance/maintenance_newJob.twig', $PAGEDATA));
@@ -14,7 +13,7 @@ $DBLIB->where("maintenanceJobs.maintenanceJobs_id", $_GET['id']);
 $DBLIB->join("users AS userCreator", "userCreator.users_userid=maintenanceJobs.maintenanceJobs_user_creator", "LEFT");
 $DBLIB->join("users AS userAssigned", "userAssigned.users_userid=maintenanceJobs.maintenanceJobs_user_assignedTo", "LEFT");
 $PAGEDATA['job'] = $DBLIB->getone("maintenanceJobs", ["maintenanceJobs.*", "userCreator.users_userid AS userCreatorUserID", "userCreator.users_name1 AS userCreatorUserName1", "userCreator.users_name2 AS userCreatorUserName2", "userCreator.users_email AS userCreatorUserEMail","userAssigned.users_name1 AS userAssignedUserName1","userAssigned.users_userid AS userAssignedUserID", "userAssigned.users_name2 AS userAssignedUserName2", "userAssigned.users_email AS userAssignedUserEMail"]);
-if (!$PAGEDATA['job']) die("404");
+if (!$PAGEDATA['job']) die($TWIG->render('404.twig', $PAGEDATA));
 
 // Statuses
 $DBLIB->where("maintenanceJobsStatuses_deleted", 0);
@@ -32,7 +31,7 @@ foreach ($PAGEDATA['jobStatuses'] as $status) {
 
 
 //Potentially assigned to job
-if ($AUTH->instancePermissionCheck(68)) {
+if ($AUTH->instancePermissionCheck("MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB")) {
     $DBLIB->orderBy("users.users_name1", "ASC");
     $DBLIB->orderBy("users.users_name2", "ASC");
     $DBLIB->orderBy("users.users_created", "ASC");
@@ -100,6 +99,5 @@ $PAGEDATA['job']['messages'] = $DBLIB->get("maintenanceJobsMessages",null, ["s3f
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['job']['maintenanceJobs_title'], "BREADCRUMB" => false];
 
-if (isset($_GET['pdf'])) {
-} else echo $TWIG->render('maintenance/job.twig', $PAGEDATA);
+echo $TWIG->render('maintenance/job.twig', $PAGEDATA);
 ?>

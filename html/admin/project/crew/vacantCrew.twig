@@ -68,7 +68,7 @@
                                 <td class="project-actions text-right">
                                     <div class="btn-group">
                                         {% if role.applications > 0 %}
-                                            <a class="btn btn-success btn-sm{% if project.projects_manager != USERDATA.users_userid and role.projectsVacantRoles_privateToPM == 1 %} disabled" href="#" title="Applications are only visible to the project manager"{% else %}" href="applications.php?id={{ role.projectsVacantRoles_id }}"{% endif %}>Applications</a>
+                                            <a class="btn btn-success btn-sm{% if role.canViewApplications != true %} disabled" href="#" title="You do not have permission to view applications"{% else %}" href="applications.php?id={{ role.projectsVacantRoles_id }}"{% endif %}>Applications</a>
                                         {% endif %}
                                         <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ role.projectsVacantRoles_id }}"><i class="fas fa-edit"></i></button>
                                         {% if role.applications < 1 %}
@@ -112,7 +112,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Description</span>
                                 </div>
-                                <textarea type="text" required class="form-control" name="projectsVacantRoles_description" placeholder="Drum revolve operator will be on a 9am to 11pm crew call, with relevant BECTU breaks. You'll be client facing so uniform will be required. " rows="6">{{ role.projectsVacantRoles_description }}</textarea>
+                                <textarea type="text" required class="form-control" name="projectsVacantRoles_description" placeholder="Drum revolve operator will be on a 9am to 11pm crew call, with relevant BECTU breaks. You'll be client facing so uniform will be required." rows="6">{{ role.projectsVacantRoles_description }}</textarea>
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
@@ -135,22 +135,30 @@
                             </div>
                             <div class="input-group" style="margin-bottom: 5px;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Applications visible to Project Manager Only</span>
-                                </div>
-                                <input type="checkbox" class="form-control" name="projectsVacantRoles_privateToPM" {{ role.projectsVacantRoles_privateToPM == 1 ? 'checked disabled' : (role.NEW ? 'checked')  }}  />
-                                {% if role.projectsVacantRoles_privateToPM == 1 %}
-                                <input type="hidden" name="projectsVacantRoles_privateToPM" value="on"/>
-                                {% endif %}
-                            </div>
-                            <div class="input-group" style="margin-bottom: 5px;">
-                                <div class="input-group-prepend">
                                     <span class="input-group-text" data-toggle="tooltip" data-placement="bottom" title="Allow people to assign themselves to this role, and automatically close the role once it has been filled">
                                         First Come First Served
                                     </span>
                                 </div>
                                 <input type="checkbox" class="form-control" name="projectsVacantRoles_firstComeFirstServed" {{ role.projectsVacantRoles_firstComeFirstServed == 1 ? 'checked' : ''  }}  />
                             </div>
-
+                            <hr/>
+                            <h3>Application Security</h3>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Applications visible to Project Manager Only</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_privateToPM" {{ project.projects_manager != USERDATA.users_userid ? 'disabled' : '' }} {{ role.projectsVacantRoles_privateToPM == 1 ? 'checked' : (role.NEW ? 'checked')  }}  />
+                            </div>
+                            <div class="form-group">
+                                <label>Limit visibility of applications to:</label>
+                                <select multiple class="form-control select2 select2bs4" {{ project.projects_manager != USERDATA.users_userid ? 'disabled' : '' }} name="projectsVacantRoles_applicationVisibleToUsers">
+                                    {% for user in users %}
+                                        <option value="{{ user.users_userid }}" {% if user.users_userid in role.projectsVacantRoles_applicationVisibleToUsers|split(',') %}selected{% endif %}>{{ user.users_name1 ~ " " ~ user.users_name2 }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="form-text text-muted">This list is ignored if the project manager only checkbox above is checked. Leave the checkbox unchecked and the limit visibility of applications box blank to allow everyone to view applications</small>
+                            </div>
+                            <small class="form-text text-muted">These settings can only be changed by the project manager</small>
                             <hr/>
                             <h3>Role Visibility</h3>
                             <div class="input-group" style="margin-bottom: 5px;">

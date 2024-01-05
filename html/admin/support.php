@@ -27,7 +27,7 @@ $ticketStatus = [2=>"Open",3=>"Pending",4=>"Resolved",5=>"Closed"];
 $ticketPriority = [1=>"Low",2=>"Medium",3=>"High",4=>"Urgent"];
 $ticketSource = [1=>"Email",2=>"Portal",3=>"Phone",7=>"Chat",9=>"Widget",10=>"Outbound Email"];
 
-if ($PAGEDATA['USERDATA']['users_emailVerified'] === 1) $tickets = freshdeskCall("tickets?order_by=created_at&include=description&order_type=desc&email=" . urlencode($PAGEDATA['USERDATA']['users_email']));
+if ($PAGEDATA['USERDATA']['users_emailVerified'] === 1 and $CONFIG['FRESHDESK']['APIKEY'] != null and $CONFIG['FRESHDESK']['URL'] != null) $tickets = freshdeskCall("tickets?order_by=created_at&include=description&order_type=desc&email=" . urlencode($PAGEDATA['USERDATA']['users_email']));
 else $tickets = [];
 
 $PAGEDATA['TICKETS'] = [];

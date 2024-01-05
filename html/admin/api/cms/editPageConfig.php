@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(126)) die("404");
+if (!$AUTH->instancePermissionCheck("CMS:CMS_PAGES:EDIT")) die("404");
 
 $array = [];
 $array['cmsPages_visibleToGroups'] = [];
@@ -15,7 +15,7 @@ foreach ($_POST['formData'] as $item) {
 if ($array['cmsPages_visibleToGroups'] == []) $array['cmsPages_visibleToGroups'] = null;
 else $array['cmsPages_visibleToGroups'] = implode(",",$array['cmsPages_visibleToGroups']);
 
-$checkboxes = ['cmsPages_showPublic','cmsPages_showNav','cmsPages_showPublicNav'];
+$checkboxes = ['cmsPages_showNav'];
 foreach ($checkboxes as $checkbox) {
     if (isset($array[$checkbox]) and $array[$checkbox] == "on") $array[$checkbox] = 1;
     else $array[$checkbox] = 0;

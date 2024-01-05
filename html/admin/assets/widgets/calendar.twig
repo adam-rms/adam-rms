@@ -1,46 +1,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css" integrity="sha256-Lfe6+s5LEek8iiZ31nXhcSez0nmOxP+3ssquHMR3Alo=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css" integrity="sha256-AVsv7CEpB2Y1F7ZjQf0WI8SaEDCycSk4vnDRt0L2MNQ=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css" integrity="sha256-DOWdbe6a1VwJwFpkimY6z5tW9mmrBNre2jZsAige5PE=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css" integrity="sha256-saO3mkZVAcyqsfgsGMrmE7Cs/TLN1RgVykZ5dnnJKug=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css" integrity="sha256-auNBxJ+1OpvUJfYRsPihqLzJFUM9D3gpb8nOh5v0LiM=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js" integrity="sha256-GBryZPfVv8G3K1Lu2QwcqQXAO4Szv4xlY4B/ftvyoMI=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js" integrity="sha256-MUHmW5oHmLLsvmMWBO8gVtKYrjVwUSFau6pRXu8dtnA=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js" integrity="sha256-FT1eN+60LmWX0J8P25UuTjEEE0ZYvpC07nnU6oFKFuI=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js" integrity="sha256-L9T+qE3Ms6Rsuxl+KwLST6a3R/2o6m33zB5mR2KyPjU=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.js" integrity="sha256-q57s73NpMCTQ4ZXqb1X5bIywrICySeB6WvYxFGfz/PA=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js" integrity="sha256-7ZOfggrgAdwfWGQAdm659B99D8KDYYNtA/mHYhsPwwg=" crossorigin="anonymous"></script>
 <div class="card card-primary">
+    {% set calendarId = random() %}
     <div class="card-body p-0">
-        <div id="calendar"></div>
+        <div id="calendar{{ calendarId }}"></div>
     </div>
     <script>
         $(function () {
             /* initialize the calendar
              -----------------------------------------------------------------*/
-            var Calendar = FullCalendar.Calendar;
-            var Draggable = FullCalendarInteraction.Draggable;
-            var calendarEl = document.getElementById('calendar');
-
-            // initialize the external events
-            // -----------------------------------------------------------------
-
-            var calendar = new Calendar(calendarEl, {
+            const Calendar = FullCalendar.Calendar;
+            
+            const calendar{{ calendarId }} = new Calendar(document.getElementById('calendar{{ calendarId }}'), {
                 timeZone: 'UTC',
-                plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid','list' ],
+                editable  : false,
+                droppable : false,
+                themeSystem: 'bootstrap',
+                initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
                 nextDayThreshold: '05:00:00',
-                customButtons: {
-                    {% if 21|instancePermissions and false %}
-                    addProjectButton: {
-                        text: 'Add Project',
-                        click: function() {
-                            $("#newProjectButton").click();
-                        }
-                    }
-                    {% endif %}
-                },
+                height: 800,
+                firstDay: 1,
                 buttonText:  {
                     today:    'Today',
                     month:    'Month',
@@ -48,95 +30,76 @@
                     day:      'Day',
                     list:     'List'
                 },
-                header    : {
-                    left  : 'prev,next today{% if 21|instancePermissions %} addProjectButton{% endif %}',
+                headerToolbar: {
+                    left  : 'prev,next today',
                     center: 'title',
                     right : 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
                 },
                 titleFormat: function(date) {
-                    console.log();
                     const monthNames = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"
                     ]
                     return "{{ LOCATION ? LOCATION.locations_name ~ ": " }}" + monthNames[date['date']['month']] + " " + date['date']['year'];
                 },
-                //Random default events
-                events    : [
-                    {% set earliestStart = false %}
-                    {% set latestEnd = false %}
+                events : [
+                    {% set startDate = false %}
                     {% for project in projects %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
-                            title          : "[{{ STATUSES[project.projects_status]["name"]|escape("js") }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
+                            title          : "{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ project.projectsStatuses_name|escape("js") }}] {% endif %}{{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
                             start          : {{ project.projects_dates_use_start|date('U') }}*1000,
                             end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                             url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
-                            backgroundColor: '{{ STATUSES[project.projects_status]["backgroundColour"] }}',
-                            textColor    : '{{ STATUSES[project.projects_status]["foregroundColour"] }}'
+                            backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
+                            textColor    : '{{ project.projectsStatuses_foregroundColour }}'
                         },
-                            {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
-                                {% set earliestStart = project.projects_dates_use_start|date("c") %}
-                            {% endif %}
-                            {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
-                                {% set latestEnd = project.projects_dates_use_end|date("c") %}
+                            {% if startDate > project.projects_dates_use_start|date("c") or startDate == false %}
+                                {% set startDate = project.projects_dates_use_start|date("c") %}
                             {% endif %}
                         {% endif %}
-                        {%  for subproject in project.subProjects %}
-                            {% if subproject.projects_dates_use_start != null and subproject.projects_dates_use_end != null %}
-                                {
-                                    title          : "↳ [{{ STATUSES[subproject.projects_status]["name"]|escape("js") }}] {{ subproject.clients_name ? subproject.clients_name|escape("js") ~ " - " }}{{ subproject.projects_name|escape("js") }}",
-                                    start          : {{ subproject.projects_dates_use_start|date('U') }}*1000,
-                                    end            : {{ subproject.projects_dates_use_end|date('U') }}*1000,
-                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ subproject.projects_id }}',
-                                    backgroundColor: '{{ STATUSES[subproject.projects_status]["backgroundColour"] }}',
-                                    textColor    : '{{ STATUSES[subproject.projects_status]["foregroundColour"] }}'
-                                },
-                                {% if earliestStart > subproject.projects_dates_use_start|date("c") or earliestStart == false %}
-                                    {% set earliestStart = subproject.projects_dates_use_start|date("c") %}
+                        {% if USERDATA['instance']['calendarSettings'].showSubProjects %}
+                            {%  for subProject in project.subProjects %}
+                                {% if subProject.projects_dates_use_start != null and subProject.projects_dates_use_end != null %}
+                                    {
+                                        title          : "↳ {% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ subProject.projectsStatuses_name|escape("js") }}] {% endif %}{{ subProject.clients_name ? subProject.clients_name|escape("js") ~ " - " }}{{ subProject.projects_name|escape("js") }}",
+                                        start          : {{ subProject.projects_dates_use_start|date('U') }}*1000,
+                                        end            : {{ subProject.projects_dates_use_end|date('U') }}*1000,
+                                        url            : '{{CONFIG.ROOTURL}}/project/?id={{ subProject.projects_id }}',
+                                        backgroundColor: '{{ subProject.projectsStatuses_backgroundColour }}',
+                                        textColor    : '{{ subProject.projectsStatuses_foregroundColour }}'
+                                    },
+                                    {% if startDate > subProject.projects_dates_use_start|date("c") or startDate == false %}
+                                        {% set startDate = subProject.projects_dates_use_start|date("c") %}
+                                    {% endif %}
                                 {% endif %}
-                                {% if latestEnd < subproject.projects_dates_use_end|date("c") or latestEnd == false %}
-                                    {% set latestEnd = subproject.projects_dates_use_end|date("c") %}
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
+                            {% endfor %}
+                        {% endif %}
                     {% endfor %}
                 ],
-                validRange: {
-                    start: '{{ earliestStart|date("c") }}',
-                    end: '{{ latestEnd|date("c") }}'
-                },
-                editable  : false,
-                droppable : false, // this allows things to be dropped onto the calendar !!!
-                drop      : function(info) {
-
-                },
-                height: 800,
-                firstDay: 1,
+                {% if useStartDate and startDate %}
+                initialDate: '{{ startDate|date("c") }}',
+                {% endif %}
                 weekNumbers: true,
-                weekNumbersWithinDays:true,
-                {% if USERDATA.instance.weekStartDates %}
-                weekNumberCalculation: function(date) {
-                    var dates = [{{ USERDATA.instance.weekStartDates|join(",") }}];
-                    var today = new Date();
-                    var thisDate = Date.parse(date.getDate() + ' ' + (date.toLocaleString('default', { month: 'long' })) + ' ' + date.getFullYear() + ' 00:00:00');
-                    var idOfThis;
-                    for (var i = 0; i < dates.length; i++) {
-                        if (thisDate <= (dates[i])-(7 * 24 * 60 * 60 * 1000)) {
-                            if (i == 0) {
-                                return "";
-                            }
-                            idOfThis = i-1;
-                            break;
+                {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
+                weekNumberContent : function(week) {
+                    var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
+                    for (const [date, label] of Object.entries(weekStartDates)) {
+                        if (moment(week.date).isSame(date, 'isoWeek')) {
+                            //This date is in this week so return the label
+                            if (label === " ") return null;
+                            else return label;
                         }
                     }
-                    return (Math.round((thisDate-dates[idOfThis]) / (7 * 24 * 60 * 60 * 1000))+1);
+                    //default to week number if it doesn't have a label
+                    return week.num;
+                    
                 },
                 {% else %}
                 weekNumberCalculation: "ISO",
                 {% endif %}
             });
 
-            calendar.render();
+            calendar{{ calendarId }}.render();
         })
     </script>
 </div>

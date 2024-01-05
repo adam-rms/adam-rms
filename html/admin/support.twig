@@ -3,6 +3,7 @@
 {% block content %}
 
     <div class="row">
+        {% if TICKETS|length > 0 %}
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
@@ -10,7 +11,6 @@
                         My Support Tickets
                     </h3>
                 </div>
-                {% if TICKETS|length > 0 %}
                 <div class="card-body table-responsive p-0">
                     <table class="table table-head-fixed table-striped" border="0" style="overflow-x: scroll;">
                         <thead>
@@ -54,7 +54,7 @@
                                             <div class="card">
                                                 <div class="card-footer card-comments">
                                                     <div class="card-comment">
-                                                        <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}" alt="User Image">
+                                                        <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" alt="User Image">
                                                         <div class="comment-text">
                                                             <span class="username">
                                                                 {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
@@ -67,7 +67,7 @@
                                                         {% if message.private == false %}
                                                             {% if message.incoming %}
                                                                 <div class="card-comment">
-                                                                    <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}" alt="User Image">
+                                                                    <img class="img-circle img-sm" src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" alt="User Image">
                                                                     <div class="comment-text">
                                                                         <span class="username">
                                                                             {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
@@ -78,7 +78,7 @@
                                                                 </div>
                                                             {% else %}
                                                             <div class="card-comment">
-                                                                <img class="img-circle img-sm" src="{{ CONFIG.ASSETCDNURL }}/img/logoicon.png" alt="User Image">
+                                                                <img class="img-circle img-sm" src="{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png" alt="User Image">
                                                                 <div class="comment-text">
                                                                     <span class="username">
                                                                         AdamRMS Support
@@ -100,11 +100,6 @@
                         </tbody>
                     </table>
                 </div>
-                {% else %}
-                <div class="card-body">
-                    <p>You have no support tickets, but why not open one? The support team can assist with all sorts of enquiries, such as restoring things that have been deleted or making manual changes that the interface doesn't allow you to do.</p>
-                </div>
-                {% endif %}
                 <div class="card-footer">
                     <button data-toggle="modal" data-target="#newTicketModal" type="button" class="btn btn-default">Create New Ticket</button>
                     <div class="modal fade" id="newTicketModal">
@@ -117,7 +112,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <p style="padding: 15px;">Before creating a support ticket, please try and first <a href="https://adam-rms.com/docs/tutorial/intro">consult the user guide</a> to see if your issue is covered there.</p>
+                                    <p style="padding: 15px;">Before creating a support ticket, please try and first <a href="{{ CONFIG.USERGUIDEURL }}intro">consult the user guide</a> to see if your issue is covered there.</p>
                                     <form id="createTicketForm">
                                         <div class="input-group" style="margin-bottom: 5px;">
                                             <div class="input-group-prepend">
@@ -142,6 +137,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        {% endif %}
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -150,13 +148,7 @@
                 </div>
                 <div class="card-body">
                     <p>
-                        AdamRMS is a platform provided to {{ USERDATA.instance.instances_name }} by Bithell Studios Ltd. It is a web based application that allows {{ USERDATA.instance.instances_name }} to manage their inventory of assets.
-                    </p>
-                    <p>
-                        The version of AdamRMS you are using is hosted by Bithell Studios on servers within either the European Union or the United Kingdom of Great Britain and Northern Ireland. Bithell Studios takes its commitment to the environment seriously, and all carbon emmisions are offset.
-                    </p>
-                    <p>
-                        You are running version {{ CONFIG.VERSION.TAG }} of AdamRMS.
+                        You are running version {{ CONFIG.VERSION.ENV ?: CONFIG.VERSION.TAG }} of AdamRMS. <a href="https://adam-rms.com">Check out the user guide</a> for help getting started.
                     </p>
                 </div>
                 <div class="card-footer">

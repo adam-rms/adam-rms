@@ -1,7 +1,7 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -9,6 +9,9 @@
         <div class="card box-solid">
             <div class="card-header">
                 <h3 class="card-title">Add new Asset</h3>
+                <div class="card-tools pull-right">
+                    <a href="{{ CONFIG.USERGUIDEURL }}assets/new-assets" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+                </div>
             </div>
             <div class="card-body">
                 <form id="addNewForm">
@@ -24,7 +27,7 @@
                             <p></p>
                         
                         <p>
-                            {% if 38|instancePermissions %}
+                            {% if "ASSETS:MANUFACTURERS:CREATE"|instancePermissions %}
                                 <a href="/manufacturers.php">Add new manufacturer</a> |&nbsp;
                             {% endif %}
                             <a href="#" id="unknownManufacturerShortlink">Manufacturer unknown</a>
@@ -34,7 +37,7 @@
                 <div class="form-group">
                     <label>Asset Type</label>
                     <select class="form-control  select2bs4" id="assetType" placeholder=""></select>
-                    {% if 18|instancePermissions %}
+                    {% if "ASSETS:ASSET_TYPES:CREATE"|instancePermissions %}
                     <div style="text-align: right">
                         <p><a href="#" id="addNewType">Add new type</a></p>
                     </div>

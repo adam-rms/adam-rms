@@ -1,7 +1,7 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 {% endblock %}
 {% block content %}
 
@@ -14,13 +14,14 @@
                 </h3>
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">
+                        <a href="{{ CONFIG.USERGUIDEURL }}assets/asset-groups" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
                         <div class="input-group-prepend">
                             <a href="{{ CONFIG.ROOTURL }}/user.php" type="button" class="btn btn-default">Notification Settings</a>
                         </div>
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if 93|instancePermissions %}
+                            {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
                             {% endif %}
                         </div>
@@ -50,9 +51,7 @@
                         </td>
                         <td style="width:70px;">
                             <div class="btn-group">
-                                {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-                                    <button title="Add Items to Project" class="btn btn-sm btn-success addToBasketGroupButton" data-id="{{ group.assetGroups_id }}"><i class="fa fa-shopping-basket"></i></button>
-                                {% endif %}
+                                <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?group%5B%5D={{ group.assetGroups_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
                                 <button type="button" title="Watch this group" class="btn btn-primary btn-sm watchButton" data-id="{{ group.assetGroups_id }}">
                                     {% if group.assetGroups_id in watching %}
                                         <i class="fas fa-eye-slash"></i>
@@ -60,10 +59,10 @@
                                         <i class="fas fa-eye"></i>
                                    {% endif %}
                                 </button>
-                                {% if 94|instancePermissions %}
+                                {% if "ASSETS:ASSET_GROUPS:EDIT"|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ group.assetGroups_id }}"><i class="fas fa-edit"></i></button>
                                 {% endif %}
-                                {% if 95|instancePermissions %}
+                                {% if "ASSETS:ASSET_GROUPS:DELETE:ASSETS_WITHIN_GROUP"|instancePermissions %}
                                     <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ group.assetGroups_id }}"><i class="fas fa-trash"></i></button>
                                 {% endif %}
                             </div>
@@ -114,7 +113,7 @@
             </div>
         </div>
     </div>
-    {% if 93|instancePermissions %}
+    {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
     <div class="modal fade" id="newModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -168,7 +167,7 @@
                     location.reload();
                 });
             });
-            {% if 93|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
             $("#saveNew").click(function () {
                 var formData = $("#newForm").serializeArray();
                 ajaxcall("groups/new.php", {formData}, function (data) {
@@ -176,25 +175,7 @@
                 });
             });
             {% endif %}
-            {% if USERDATA.users_selectedProjectID != null and 31|instancePermissions %}
-            $(".addToBasketGroupButton").click(function () {
-                ajaxcall("projects/assets/assign.php", {"assetGroups_id":$(this).data("id")}, function (data) {
-                    console.log(data.response.failed)
-                    if (data.response.failed.length < 1) {
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Added to {{ thisProject.projects_name }}'
-                        });
-                    } else {
-                        Toast.fire({
-                            type: 'warning',
-                            title: 'Was only able to add some assets to {{ thisProject.projects_name }} from this group'
-                        });
-                    }
-                });
-            });
-            {% endif %}
-            {% if 94|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:EDIT"|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
                 ajaxcall("groups/edit.php", {formData}, function (data) {
@@ -202,7 +183,7 @@
                 });
             });
             {% endif %}
-            {% if 95|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:DELETE:ASSETS_WITHIN_GROUP"|instancePermissions %}
             $(".deleteButton").click(function () {
                 var id = $(this).data("id");
                 bootbox.confirm({
@@ -232,7 +213,7 @@
                 tags: false,
                 multiple: true,
                 theme: "bootstrap4",
-                {% if 96|instancePermissions != true %}
+                {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions != true %}
                 disabled: true,
                 {% endif %}
                 minimumInputLength: 1,
@@ -265,7 +246,7 @@
                     }
                 }
             });
-            {% if 96|instancePermissions %}
+            {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions %}
             $('.assetsMembershipSelector').on('select2:select', function (e) {
                 var id =e.params.data.id;
                 ajaxcall("groups/addAsset.php", {

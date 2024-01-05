@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck(3) or !isset($_POST['rolegroup'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
+if (!$AUTH->instancePermissionCheck("BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL") or !isset($_POST['rolegroup'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
 
 if (count($_POST['users']) < 1) finish(true);
 

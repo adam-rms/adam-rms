@@ -5,7 +5,7 @@ use Money\Money;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Custom Categories", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck(89)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_CATEGORIES:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
 else $PAGEDATA['search'] = null;

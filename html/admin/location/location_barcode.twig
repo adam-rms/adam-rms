@@ -7,11 +7,16 @@
         margin-top:2px;
     }
 </style>
+<script>
+    window.onload = function () {
+        window.print();
+    }
+</script>
 <body>
     {% if USERDATA.instance.instances_logo %}
     <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 40%;margin-bottom: 4px;">
     {% endif %}
-    <!--<img src="{{ CONFIG.ASSETCDNURL }}/img/logosmall.png" style="width: 40%;" />-->
+    <!--<img src="{{ CONFIG.ROOTURL}}/static-assets/img/logosmall.png" style="width: 40%;" />-->
     <h3>{{ USERDATA.instance.instances_name }}</h3>
     <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ barcode.locationsBarcodes_value }}&size=200&width=4&type={{ barcode.locationsBarcodes_type }}" alt="Barcode" style="height: 40%;max-width:80%;margin:10px;">
     <h1>{{ location.locations_name }}</h1>

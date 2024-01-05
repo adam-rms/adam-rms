@@ -29,12 +29,17 @@
                                     <td>{{ entry.cmsPagesViews_timestamp }}</td>
                                     <td>
                                         {% if entry.users_userid != null %}
-                                            {% if 52|instancePermissions %}
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
                                                     {{ entry.users_name1 }} {{ entry.users_name2 }}
                                                 </a>
                                             {% else %}
                                                 {{ entry.users_name1 }} {{ entry.users_name2 }}
+                                            {% endif %}
+                                            {% if entry.cmsPages_type and entry.cmsPages_type == 2 %}
+                                                <span class="badge badge-info">Mobile App</span>
+                                            {% elseif entry.cmsPages_type and entry.cmsPages_type == 3 %}
+                                                <span class="badge badge-default">Custom Dashboard</span>
                                             {% endif %}
                                         {% else %}
                                             Public access

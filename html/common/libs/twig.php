@@ -6,7 +6,7 @@ use Money\Formatter\IntlMoneyFormatter;
 use Money\Formatter\DecimalMoneyFormatter;
 use Twig\Extra\String\StringExtension;
 //TWIG
-$TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../../admin/',__DIR__ . '/../../public/',__DIR__ . '/../templates/']);
+$TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../../admin/',__DIR__ . '/../templates/']);
 if ($CONFIG['DEV']) {
     $TWIG = new \Twig\Environment($TWIGLOADER, array(
         'debug' => true,
@@ -50,10 +50,10 @@ $TWIG->addFilter(new \Twig\TwigFilter('cleanString', function ($var) {
     global $bCMS;
     return $bCMS->cleanString($var);
 }));
-$TWIG->addFilter(new \Twig\TwigFilter('permissions', function ($permissionid) {
+$TWIG->addFilter(new \Twig\TwigFilter('serverPermissions', function ($permissionid) {
     global $AUTH;
     if (!$AUTH->login) return false;
-    else return $AUTH->permissionCheck($permissionid);
+    else return $AUTH->serverPermissionCheck($permissionid);
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('instancePermissions', function ($permissionid) {
     global $AUTH;
@@ -72,7 +72,7 @@ $TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false)
     global $CONFIG;
     return $CONFIG['ROOTURL'] . "/api/file/index.php?r&f=" . $fileid . "&s=" . $size;
 }));
-$TWIG->addFilter(new \Twig\TwigFilter('cableColourConfig', function ($raw) {
+$TWIG->addFilter(new \Twig\TwigFilter('jsonDecode', function ($raw) {
     if ($raw == null) return [];
     $data = json_decode($raw,true);
     return $data;

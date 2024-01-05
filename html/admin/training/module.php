@@ -1,10 +1,18 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-if (!$AUTH->instancePermissionCheck(113)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->instancePermissionCheck("TRAINING:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $DBLIB->where("modules.modules_deleted", 0);
-if (!$AUTH->instancePermissionCheck(114)) $DBLIB->where("modules.modules_show", 1);
+// If user does not have draft edit permissions, only show live modules
+if (!$AUTH->instancePermissionCheck("TRAINING:VIEW:DRAFT_MODULES")) $DBLIB->where("modules.modules_show", 1);
+// Check if module has group visibility permissions
+// if the user can edit modules and is trying to edit this module (ie. viewing steps or users), ignore group visibility permissions
+if ($AUTH->data['instance']["instancePositions_id"] && !(($AUTH->instancePermissionCheck("TRAINING:EDIT") && isset($_GET['steps'])) || ($AUTH->instancePermissionCheck("TRAINING:VIEW:USER_PROGRESS_IN_MODULES") && isset($_GET['users'])) )) {
+    $DBLIB->where("(modules.modules_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", modules.modules_visibleToGroups) > 0))");
+} 
+// Check if module has steps to complete - ie. not a physical only module (type 3)
+$DBLIB->where("modules.modules_type != 3");
 $DBLIB->where("modules.modules_id", $_GET['id']);
 $DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['module'] = $DBLIB->getOne('modules', ["modules.*"]);
@@ -16,13 +24,13 @@ $DBLIB->where("modules_id",$PAGEDATA['module']['modules_id']);
 $DBLIB->orderBy("modulesSteps_order","ASC");
 $DBLIB->orderBy("modulesSteps_deleted", "ASC");
 $DBLIB->orderBy("modulesSteps_id", "ASC");
-if (!$AUTH->instancePermissionCheck(116) or !isset($_GET['steps'])) $DBLIB->where("modulesSteps_show",1);
+if (!$AUTH->instancePermissionCheck("TRAINING:EDIT") or !isset($_GET['steps'])) $DBLIB->where("modulesSteps_show",1);
 $PAGEDATA['module']['steps'] = $DBLIB->get("modulesSteps");
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['module']['modules_name'], "BREADCRUMB" => false];
 
 
-if (isset($_GET['users']) and $AUTH->instancePermissionCheck(117)) {
+if (isset($_GET['users']) and $AUTH->instancePermissionCheck("TRAINING:VIEW:USER_PROGRESS_IN_MODULES")) {
     //Users
     if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
     else $PAGEDATA['search'] = null;
@@ -79,7 +87,7 @@ if (isset($_GET['users']) and $AUTH->instancePermissionCheck(117)) {
     }
     echo $TWIG->render('training/training_users.twig', $PAGEDATA);
 }
-elseif (isset($_GET['steps']) and $AUTH->instancePermissionCheck(116)) echo $TWIG->render('training/training_steps.twig', $PAGEDATA);
+elseif (isset($_GET['steps']) and $AUTH->instancePermissionCheck("TRAINING:EDIT")) echo $TWIG->render('training/training_steps.twig', $PAGEDATA);
 else {
     $DBLIB->where("modules_id",$PAGEDATA['module']['modules_id']);
     $DBLIB->where("userModules.users_userid",$AUTH->data['users_userid']);
