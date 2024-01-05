@@ -192,7 +192,7 @@
                                                     <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" target="_blank">
                                                     <img class="img-fluid" loading="lazy" style="max-height: 200px;"
                                                         src="{{ thumb.s3files_id|s3URL("small") }}"
-                                                        alt="{{asset.assetTypes_name}}"></a>
+                                                        fetchpriority="low" alt="{{asset.assetTypes_name}}"></a>
                                                 </div>
                                             {% endfor %}
                                         </div>

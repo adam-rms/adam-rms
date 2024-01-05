@@ -31,7 +31,7 @@ $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
     $asset['thumbnails'] = [];
     foreach ($bCMS->s3List(2, $asset['assetTypes_id']) as $thumbnail) {
-        $thumbnail['url'] = $bCMS->s3URL($thumbnail['s3files_id'], ($_POST['imageComp'] ? $_POST['imageComp'] : false), false, '+1 hour');
+        $thumbnail['url'] = $bCMS->s3URL($thumbnail['s3files_id'], false, '+1 hour');
         $asset['thumbnails'][] = $thumbnail;
     }
 

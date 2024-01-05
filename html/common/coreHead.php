@@ -131,12 +131,12 @@ class bCMS {
         $DBLIB->orderBy($sort, $sortOrder);
         return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded","s3files_shareKey"]);
     }
-    function s3DataUri($fileid, $size = "comp") {
+    function s3DataUri($fileid) {
         /**
          * Returns a data URI for the file, upto a limit of 10MB. 
          * The PDF library used to generate PDFs from HTML requires a data URI for images, so this is used to generate them. It can accept file URLs but misses the cors preflight when sending the request so fails CORS in the browser.
          */
-        $file = $this->s3Passthrough($fileid, $size);
+        $file = $this->s3Passthrough($fileid);
         if (!$file) return false;
 
         if ($file["type"] == "png") $type = "image/png";
@@ -150,7 +150,7 @@ class bCMS {
 
         return 'data: '.$type.';base64,'.base64_encode($file['data']);
     }
-    function s3Passthrough($fileid, $size = "comp") {
+    function s3Passthrough($fileid) {
         global $DBLIB;
         $DBLIB->where("s3files_id", intval($fileid));
         $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
@@ -159,7 +159,7 @@ class bCMS {
         $file = $DBLIB->getone("s3files", ["s3files_extension", "s3files_id"]);
         if (!$file) return false;
         
-        $url = $this->s3URL($file["s3files_id"], $size, false);
+        $url = $this->s3URL($file["s3files_id"], false);
         if (!$url) return false;
         
         $data = file_get_contents($url);
@@ -171,13 +171,12 @@ class bCMS {
             "url" => $url
         ];
     }
-    function s3URL($fileid, $size = "comp", $forceDownload = false, $expire = '+10 minutes', $shareKey = false) {
+    function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false) {
         global $DBLIB, $CONFIG,$AUTH;
         /*
          * File interface for Amazon AWS S3.
          *  Parameters
          *      f (required) - the file id as specified in the database
-         *      s (filesize) - false to get the original - available is "tiny" (100px) "small" (500px) "medium" (800px) "large" (1500px) "comp" (original size, compressed) "full" (original)
          *      d (optional, default false) - should a download be forced or should it be displayed in the browser? (if set it will download)
          *      e (optional, default 1 minute) - when should the link expire? Must be a string describing how long in words basically. If this file type has security features then it will default to 1 minute.
          */
@@ -188,41 +187,13 @@ class bCMS {
         $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
         $file = $DBLIB->getone("s3files");
         if (!$file) return false;
-        if ($file['s3files_compressed'] == 1) {
-            //If we have a compressed version of this file opt to use it!
-            switch ($size) {
-                case "tiny":
-                    $file['s3files_filename'] .= '_tiny';
-                    break;
-                case "small":
-                    $file['s3files_filename'] .= '_small';
-                    break;
-                case "medium":
-                    $file['s3files_filename'] .= '_medium';
-                    break;
-                case "large":
-                    $file['s3files_filename'] .= '_large';
-                    break;
-                case "comp":
-                    $file['s3files_filename'] .= '_comp';
-                    break;
-                case "full":
-                    break;
-                default:
-                    $file['s3files_filename'] .= '_comp';
-                    break;
-            }
-        }
         if ($expire == null or $expire === false) $expire = '+1 minute';
         $file['expiry'] = $expire;
 
         $instanceIgnore = false;
         $secure = true;
+        // This list is also used to populate the files deletion suggestor
         switch ($file['s3files_meta_type']) {
-            case 1:
-                $instanceIgnore = true;
-                //This is a user thumbnail
-                break;
             case 2:
                 $instanceIgnore = true;
                 $secure = false; //Needs to be viewed on the public site
@@ -238,9 +209,6 @@ class bCMS {
                 $instanceIgnore = true;
                 $secure = false;
                 // Instance thumbnail
-                break;
-            case 6:
-                // Instance file - ie the files you get in the file browser in the root directory
                 break;
             case 7:
                 //Project file
