@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class DropProjectStatusClass extends AbstractMigration
+final class RemoveImageCompression extends AbstractMigration
 {
     /**
      * Change Method.
