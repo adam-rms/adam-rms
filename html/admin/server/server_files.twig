@@ -1,7 +1,7 @@
 {% extends "assets/template.twig" %}
 {% block content %}
     <div class="row">
-         <div class="col-lg-4 col-md-6 col-sm-12">
+         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="col-lg-5 col-md-6 col-sm-12">
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -78,8 +78,8 @@
                         <tbody>
                         {% for file in top20Files %}
                             <tr>
-                                <td>{{ file.s3files_name ~ "." ~ file.s3files_extension }}</td>
-                                <td>{{ fileTypeIDDescriptors[file.s3files_meta_type] }}</td>
+                                <td><a target="_blank" href="{{ CONFIG.ROOTURL ~ '/api/file/?r=true&f=' ~ file.s3files_id }}">{{ file.s3files_name ~ "." ~ file.s3files_extension }}</a></td>
+                                <td><a target="_blank" href="{{ CONFIG.ROOTURL ~ file.navigateToParent }}">{{ fileTypeIDDescriptors[file.s3files_meta_type] }}</a></td>
                                 <td>{{ file.instances_name }}</td>
                                 <td>{{ file.s3files_meta_size|formatsize }}</td>
                                 <td>{{ ((file.s3files_meta_size/totalStorageUsed)*100)|number_format(2) ~ "%" }}</td>

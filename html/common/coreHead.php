@@ -106,7 +106,7 @@ class bCMS {
             4 => "Asset File Attachment",
             5 => "Business Thumbnail Image",
             7 => "Project File Attachment",
-            8 => "Maintenance Job File Attachment",
+            8 => "Maintenance Job Message File Attachment",
             9 => "User Thumbnail Image",
             10 => "Business Email Header Image",
             11 => "Location File Attachment",
@@ -121,6 +121,84 @@ class bCMS {
             20 => "Project Invoice",
             21 => "Project Quote",
         ];
+    }
+    function s3FileNavigateToParent($typeId, $subTypeId, $instance) {
+        global $DBLIB;
+        switch ($typeId) {
+            case 2:
+                return "/asset.php?id=" . $subTypeId . "&instance=" . $instance;
+                break;
+            case 3:
+                return "/asset.php?id=" . $subTypeId . "&instance=" . $instance;
+                break;
+            case 4:
+                $DBLIB->where("assets_id", $subTypeId);
+                $asset = $DBLIB->getOne("assets", ["assetTypes_id"]);
+                if (!$asset) return false;
+                return "/asset.php?id=" . $asset["assetTypes_id"] . "&asset=" . $subTypeId . "&instance=" . $instance;
+                break;
+            case 5:
+                return false;
+                break;
+            case 7:
+                return "/project/?id=" . $subTypeId . "#file-view";
+                break;
+            case 8:
+                $DBLIB->where("maintenanceJobsMessages_id", $subTypeId);
+                $job = $DBLIB->getOne("maintenanceJobsMessages", ["maintenanceJobs_id"]);
+                if (!$job) return false;
+                return "/maintenance/job.php?id=" . $job['maintenanceJobs_id'];
+                break;
+            case 9:
+                return "/user.php?id=" . $subTypeId;
+                break;
+            case 10:
+                return "/instances/settings.php";
+                break;
+            case 11:
+                return "/location/?files&id=" . $subTypeId;
+                break;
+            case 12:
+                return "/training/";
+                break;
+            case 13:
+                return "/training/";
+                break;
+            case 14:
+                $DBLIB->where("payments_id", $subTypeId);
+                $payment = $DBLIB->getOne("payments", ["projects_id"]);
+                if (!$payment) return false;
+                return "/project/?id=" . $payment['projects_id'] . "#file-view";
+                break;
+            case 15:
+                return "/instances/public.php";
+                break;
+            case 16:
+                return "/instances/public.php";
+                break;
+            case 17:
+                return "/instances/public.php";
+                break;
+            case 18:
+                $DBLIB->where("projectsVacantRolesApplications_id", $subTypeId);
+                $DBLIB->join("projectsVacantRoles", "projectsVacantRoles.projectsVacantRoles_id=projectsVacantRolesApplications.projectsVacantRoles_id", "LEFT");
+                $application = $DBLIB->getOne("projectsVacantRolesApplications", ["projectsVacantRoles.projects_id"]);
+                if (!$application) return false;
+                return "/project/crew/vacantCrew.php?id=" . $application['projects_id'];
+                break;
+            case 19:
+                return "/cms/list.php";
+                break;
+            case 20:
+                return "/project/?id=" . $subTypeId . "#file-view";
+                break;
+            case 21:
+                return "/project/?id=" . $subTypeId . "#file-view";
+                break;
+            default:
+                return false;
+                break;
+        }
     }
     function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC', $limit = null) {
         global $DBLIB, $CONFIG;

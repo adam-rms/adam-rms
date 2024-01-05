@@ -43,11 +43,17 @@ $DBLIB->where("(s3files_meta_deleteOn IS NULL)");
 $DBLIB->where("s3files_meta_physicallyStored", 1);
 $DBLIB->join("instances", "s3files.instances_id = instances.instances_id", "LEFT");
 $DBLIB->orderBy("s3files_meta_size", "DESC");
-$PAGEDATA['top20Files'] = $DBLIB->get('s3files', 20, ['s3files.s3files_id', 's3files.s3files_name', 's3files.s3files_extension', 'instances.instances_name', 's3files_meta_size', 's3files_meta_type']);
+$top20Files = $DBLIB->get('s3files', 20, ['s3files.s3files_id', 's3files.s3files_name', 's3files.s3files_extension', 'instances.instances_name', 's3files_meta_size', 's3files_meta_type', 's3files_meta_subType', 's3files.instances_id']);
+$PAGEDATA['top20Files'] = [];
+foreach ($top20Files as $key => $file) {
+    $file['navigateToParent'] = $bCMS->s3FileNavigateToParent($file['s3files_meta_type'], $file['s3files_meta_subType'], $file['instances_id']);
+    $PAGEDATA['top20Files'][] = $file;
+}
 
-// Files where instances have been deleted
-$DBLIB->where("s3files_meta_type", 1);
 
+// Files that can be deleted for the following types as the file is not used anywhere anymore
+
+// TODO expand this list by using some queries below
 $fileTypeIDDeletionDetectors = [
     5 => [
         "table" => "instances",
@@ -71,7 +77,5 @@ $fileTypeIDDeletionDetectors = [
     ]
 ];
 
-
-
-echo $TWIG->render('server/server-files.twig', $PAGEDATA);
+echo $TWIG->render('server/server_files.twig', $PAGEDATA);
 ?>
