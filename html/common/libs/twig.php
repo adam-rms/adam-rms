@@ -68,9 +68,10 @@ $TWIG->addFilter(new \Twig\TwigFilter('randomString', function ($characters) {
     global $bCMS;
     return $bCMS->randomString($characters);
 }));
-$TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = false) {
+$TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = null) {
     global $CONFIG;
-    return $CONFIG['ROOTURL'] . "/api/file/index.php?r&f=" . $fileid . "&s=" . $size;
+    // The size parameter is no longer used, but is kept incase it is used in the future.
+    return $CONFIG['ROOTURL'] . "/api/file/index.php?r&f=" . $fileid;
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('jsonDecode', function ($raw) {
     if ($raw == null) return [];
