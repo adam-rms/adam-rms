@@ -39,9 +39,6 @@ function finish($result = false, $error = ["code" => null, "message"=> null], $r
     if ($error) $dataReturn["error"] = $error;
     else $dataReturn["response"] = $response;
 
-    if (!empty( $GLOBALS['DBLIB']->trace)) {
-        header("X-AdamRMS-DBTrace: " . json_encode( $GLOBALS['DBLIB']->trace));
-    }
     die(json_encode($dataReturn));
 }
 use Money\Currency;
