@@ -49,6 +49,36 @@
         </div>
     </div>
 </div>
+{% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+<div class="modal fade" id="scanAssetModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Scan In Asset</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Note: only assets from the currently selected business ({{ USERDATA.instance.instances_name }}) can be scanned.</p>
+                <div class="form-group assetStatusDiv">
+                    <label>Asset Status</label>
+                    <select class="form-control" id="assetStatus">
+                        {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group assetTagDiv">
+                    <label>Asset Tag or Barcode</label>
+                    <input type="text" class="form-control" id="assetTag" />
+                </div>
+                <div id="assetTagResult"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 <script>
     const Toast = Swal.mixin({
         toast: true,
@@ -140,6 +170,47 @@
             changeStatus(parseInt(assetAssignment),parseInt(assetNextStatus));
             //move card to new status
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
+        });
+
+        $("#scanAssetModal").each(function() {
+            const statusSelect = $(this).find("#assetStatus");
+            $(this).find("#assetTag").on("keydown", function(e) {
+                if (e.key !== "Enter") {
+                    return;
+                }
+                e.preventDefault();
+                const that = this;
+                const assetTag = $(this).val();
+                const assetStatus = statusSelect.val();
+                console.log(`Tag: ${assetTag}, Status: ${assetStatus}`);
+                $.ajax({
+                    url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusBarcode.php",
+                    type: "POST",
+                    data: {
+                        type: "",
+                        text: assetTag,
+                        assetsAssignments_status: assetStatus,
+                        projects_id: {{ project.projects_id }},
+                    },
+                    cache: false,
+                    success: function(result, status, data) {
+                        console.log(result);
+                        if (result.result === true) {
+                            const assetCard = $(".assetDispatchAssetList[data-instance={{ USERDATA.instance["instances_id"] }}] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
+                            assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance={{ USERDATA.instance["instances_id"] }}]");
+                        } else {
+                            Toast.fire({
+                                type: 'error',
+                                title: assetTag + ": " + result.error.message
+                            });
+                            const resultDiv = $("<div>").addClass("alert alert-danger").text(assetTag + ": " + result.error.message);
+                            $("#assetTagResult").prepend(resultDiv);
+                        }
+                        $(that).val("");
+                        $(that).focus();
+                    },
+                });
+            });
         });
         {% endif %}
 
