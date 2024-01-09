@@ -10,6 +10,7 @@ $DBLIB->where("assetsBarcodes_deleted",0);
 if ($_POST["type"]) {
     $DBLIB->where("assetsBarcodes_type", $_POST['type']);
 }
+// AND takes precedence over OR
 $DBLIB->orWhere("assets_tag", $_POST["text"]);
 $asset = $DBLIB->getone("assets",["assets.assets_id","assetsBarcodes_id"]);
 if ($asset and $asset['assets_id'] != null) {
@@ -24,8 +25,6 @@ if ($asset and $asset['assets_id'] != null) {
         ];
         $DBLIB->insert("assetsBarcodesScans",$scan);
     }
-
-    $DBLIB->setTrace(true);
 
     $DBLIB->where("assets_id", $asset['assets_id']);
     $DBLIB->where("projects.projects_id", $_POST['projects_id']);
