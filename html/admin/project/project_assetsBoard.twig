@@ -182,7 +182,6 @@
                 const that = this;
                 const assetTag = $(this).val();
                 const assetStatus = statusSelect.val();
-                console.log(`Tag: ${assetTag}, Status: ${assetStatus}`);
                 $.ajax({
                     url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusBarcode.php",
                     type: "POST",
@@ -194,7 +193,6 @@
                     },
                     cache: false,
                     success: function(result, status, data) {
-                        console.log(result);
                         if (result.result === true) {
                             const assetCard = $(".assetDispatchAssetList[data-instance={{ USERDATA.instance["instances_id"] }}] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
                             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance={{ USERDATA.instance["instances_id"] }}]");
