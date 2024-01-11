@@ -1,9 +1,3 @@
-{% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions and instanceid == USERDATA.instance["instances_id"] %}
-<button type="button" class="btn btn-default" title="Scan Assets" id="scanAssets" data-toggle="modal" data-target="#scanAssetModal">
-    <i class="fas fa-barcode"></i>
-    Scan In Assets
-</button>
-{% endif %}
 <div class="p-2 scrolling-head h-100" >
     {% for status in instanceAssets %}
         {% if status.instances_id == instanceid %}

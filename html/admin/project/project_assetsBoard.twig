@@ -18,6 +18,12 @@
             max-width: 100%;
         }
     }
+    #navItemScanAssets {
+        height: 100%;
+    }
+    #navItemScanAssets button {
+        background-color: transparent;
+    }
 </style>
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0 card-tabs">
@@ -32,6 +38,13 @@
                     <a class="nav-link assetsBoardToggle" id="asset-board-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
                 </li>
             {% endfor %}
+            {% if FINANCIALS.assetsAssigned|length > 0 and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+                <li class="nav-item" id="navItemScanAssets">
+                    <button type="button" class="nav-link" title="Scan Assets" id="scanAssets" data-toggle="modal" data-target="#scanAssetModal">
+                        <i class="fas fa-barcode"></i>
+                    </button>
+                </li>
+            {% endif %}
         </ul>
     </div>
     <div class="card-body p-0">
@@ -209,6 +222,12 @@
                     },
                 });
             });
+        });
+        $('#asset-board-tab-thisinstance').on('shown.bs.tab', function() {
+            $("#navItemScanAssets").show();
+        });
+        $('#asset-board-tab-thisinstance').on('hidden.bs.tab', function() {
+            $("#navItemScanAssets").hide();
         });
         {% endif %}
 
