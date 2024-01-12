@@ -354,14 +354,16 @@
                             </p>
                         </a>
                     </li>
+                {% endif %}
                     <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/support.php" class="nav-link">
+                        <a href="{{ CONFIG.SUPPORTURL }}" target="_blank" class="nav-link">
                             <i class="nav-icon fas fa-question-circle"></i>
                             <p>
                                 Support
                             </p>
                         </a>
                     </li>
+                {% if USERDATA.instances|length > 0 %}
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-city"></i>

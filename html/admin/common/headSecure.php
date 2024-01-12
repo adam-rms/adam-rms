@@ -16,7 +16,7 @@ if (!$CONFIG['DEV']) {
         if ($GLOBALS['AUTH']->data['instance']) $scope->setExtra('instances_id', $GLOBALS['AUTH']->data['instance']['instances_id']);
     });
 } elseif (!$AUTH->serverPermissionCheck("USE-DEV") and !$GLOBALS['AUTH']->data['viewSiteAs']) {
-    die("Sorry - you can't use this development version of the site - please visit adam-rms.com. <a href=\"" . $CONFIG['ROOTURL'] . "/login/?logout\">Logout</a>");
+    die("Sorry - you can't use this development version of the site. <a href=\"" . $CONFIG['ROOTURL'] . "/login/?logout\">Logout</a>");
 }
 
 $PAGEDATA['AUTH'] = $AUTH;

@@ -34,6 +34,7 @@ $CONFIG = array(
     "nextHash" => "sha256", //Hashing algorithm to put new passwords in
     "PROJECT_FROM_EMAIL" => getenv('bCMS__FROM_EMAIL'),
     "USERGUIDEURL" => "https://adam-rms.com/docs/v1/user-guide/",
+    "SUPPORTURL" => "https://adam-rms.com/support/",
     "ROOTURL" => getenv('bCMS__ROOTURL'),
     "TermsOfServiceURL" => getenv('bCMS__TOS_URL'),
     'AWS' => [
@@ -61,10 +62,6 @@ $CONFIG = array(
             ],
             'scope' => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
         ]
-    ],
-    'FRESHDESK' => [
-        'URL' => getenv('bCMS__FRESHDESK_URL'),
-        'APIKEY' => getenv('bCMS__FRESHDESK')
     ],
     'NOTIFICATIONS' => [
         "METHODS" => [
