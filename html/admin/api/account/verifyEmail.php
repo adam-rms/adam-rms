@@ -14,7 +14,7 @@
 		if (strtotime($code['emailVerificationCodes_timestamp']) < (time()-(60*60*48))) {
 			//Code has expired - send another
             if ($AUTH->verifyEmail()) die("Sorry - Your code has expired - we've sent you another one instead");
-            else die("Sorry - Your code has expired - please contact support");
+            else die("Sorry - Your code has expired - please try to create another code or contact the support team");
         }
 		$DBLIB->where ('users_userid', $code['users_userid']);
 		$DBLIB->update ('users', ["users_emailVerified" => "1"]); //Verify E-Mail
