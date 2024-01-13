@@ -5,7 +5,7 @@ if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STA
 
 $DBLIB->where("assets_deleted",0);
 $DBLIB->where("assets_tag", $_POST["text"]);
-$asset = $DBLIB->getone("assets",["assets.assets_id","assetsBarcodes_id"]);
+$asset = $DBLIB->getone("assets",["assets.assets_id"]);
 if ($asset and $asset['assets_id'] != null) {
     $DBLIB->where("assets_id", $asset['assets_id']);
     $DBLIB->where("projects.projects_id", $_POST['projects_id']);
