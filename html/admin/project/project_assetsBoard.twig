@@ -193,47 +193,45 @@
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
         });
 
-        $("#quickDispatchModal").each(function() {
-            const that = this;
-            const statusSelect = $(this).find("#assetStatus");
-            function doQuickDispatch() {
-                const assetTag = $(that).find("#assetTag").val();
-                const assetStatus = statusSelect.val();
-                $.ajax({
-                    url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusByTag.php",
-                    type: "POST",
-                    data: {
-                        type: "",
-                        text: assetTag,
-                        assetsAssignments_status: assetStatus,
-                        projects_id: {{ project.projects_id }},
-                    },
-                    cache: false,
-                    success: function(result, status, data) {
-                        if (result.result === true) {
-                            const assetCard = $(".assetDispatchAssetList[data-instance={{ USERDATA.instance["instances_id"] }}] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
-                            assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance={{ USERDATA.instance["instances_id"] }}]");
-                        } else {
-                            Toast.fire({
-                                type: 'error',
-                                title: assetTag + ": " + result.error.message
-                            });
-                            const resultDiv = $("<div>").addClass("alert alert-danger").text(assetTag + ": " + result.error.message);
-                            $("#assetTagResult").prepend(resultDiv);
-                        }
-                        $(that).find("#assetTag").val("").focus();
-                    },
-                });
-            }
-            $(this).find("#assetTag").on("keydown", function(e) {
-                if (e.key !== "Enter") {
-                    return;
-                }
-                e.preventDefault();
-                doQuickDispatch();
+        const statusSelect = $("#assetStatus");
+        function doQuickDispatch() {
+            const assetTag = $("#assetTag").val();
+            const assetStatus = statusSelect.val();
+            $.ajax({
+                url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusByTag.php",
+                type: "POST",
+                data: {
+                    type: "",
+                    text: assetTag,
+                    assetsAssignments_status: assetStatus,
+                    projects_id: {{ project.projects_id }},
+                },
+                cache: false,
+                success: function(result, status, data) {
+                    if (result.result === true) {
+                        const assetCard = $(".assetDispatchAssetList[data-instance={{ USERDATA.instance["instances_id"] }}] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
+                        assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance={{ USERDATA.instance["instances_id"] }}]");
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: assetTag + ": " + result.error.message
+                        });
+                        const resultDiv = $("<div>").addClass("alert alert-danger").text(assetTag + ": " + result.error.message);
+                        $("#assetTagResult").prepend(resultDiv);
+                    }
+                    $("#assetTag").val("");
+                    $("#assetTag").focus();
+                },
             });
-            $(this).find("#scanAssetDispatch").on("click", doQuickDispatch);
+        }
+        $("#assetTag").on("keydown", function(e) {
+            if (e.key !== "Enter") {
+                return;
+            }
+            e.preventDefault();
+            doQuickDispatch();
         });
+        $("#scanAssetDispatch").on("click", doQuickDispatch);
         $('#asset-board-tab-thisinstance').on('shown.bs.tab', function() {
             $("#navItemQuickDispatch").show();
         });
