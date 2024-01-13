@@ -7,6 +7,11 @@ $DBLIB->where("assets_deleted",0);
 $DBLIB->where("assets_tag", $_POST["text"]);
 $asset = $DBLIB->getone("assets",["assets.assets_id"]);
 if ($asset and $asset['assets_id'] != null) {
+    $DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $status = $DBLIB->getone("assetsAssignmentsStatus",["assetsAssignmentsStatus_id"]);
+    if (!$status or $status['assetsAssignmentsStatus_id'] == null) finish(false, ["message" => "Status not found","code"=>"STATUSNOTFOUND"]);
+
     $DBLIB->where("assets_id", $asset['assets_id']);
     $DBLIB->where("projects.projects_id", $_POST['projects_id']);
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
