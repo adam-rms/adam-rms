@@ -18,10 +18,10 @@
             max-width: 100%;
         }
     }
-    #navItemScanAssets {
+    #navItemQuickDispatch {
         height: 100%;
     }
-    #navItemScanAssets button {
+    #navItemQuickDispatch button {
         background-color: transparent;
     }
 </style>
@@ -39,9 +39,9 @@
                 </li>
             {% endfor %}
             {% if FINANCIALS.assetsAssigned|length > 0 and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-                <li class="nav-item" id="navItemScanAssets">
-                    <button type="button" class="nav-link" title="Scan Assets" id="scanAssets" data-toggle="modal" data-target="#scanAssetModal">
-                        <i class="fas fa-barcode"></i>
+                <li class="nav-item" id="navItemQuickDispatch">
+                    <button type="button" class="nav-link" title="Quick Dispatch" data-toggle="modal" data-target="#quickDispatchModal">
+                        <i class="fas fas fa-shipping-fast"></i>
                     </button>
                 </li>
             {% endif %}
@@ -63,17 +63,17 @@
     </div>
 </div>
 {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-<div class="modal fade" id="scanAssetModal">
+<div class="modal fade" id="quickDispatchModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Scan In Asset</h4>
+                <h4 class="modal-title">Quick Dispatch</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Note: only assets from the currently selected business ({{ USERDATA.instance.instances_name }}) can be scanned.</p>
+                <p>Note: only assets from the currently selected business ({{ USERDATA.instance.instances_name }}) can be dispatched.</p>
                 <div class="form-group assetStatusDiv">
                     <label>Asset Status</label>
                     <select class="form-control" id="assetStatus">
@@ -83,9 +83,17 @@
                     </select>
                 </div>
                 <div class="form-group assetTagDiv">
-                    <label>Asset Tag or Barcode</label>
-                    <input type="text" class="form-control" id="assetTag" />
+                    <label>Asset Tag</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="assetTag" />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="scanAssetDispatch">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                <p>If you have a barcode scanner, click into the box above and start scanning.</p>
                 <div id="assetTagResult"></div>
             </div>
         </div>
@@ -185,15 +193,11 @@
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
         });
 
-        $("#scanAssetModal").each(function() {
+        $("#quickDispatchModal").each(function() {
+            const that = this;
             const statusSelect = $(this).find("#assetStatus");
-            $(this).find("#assetTag").on("keydown", function(e) {
-                if (e.key !== "Enter") {
-                    return;
-                }
-                e.preventDefault();
-                const that = this;
-                const assetTag = $(this).val();
+            function doQuickDispatch() {
+                const assetTag = $(that).find("#assetTag").val();
                 const assetStatus = statusSelect.val();
                 $.ajax({
                     url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusBarcode.php",
@@ -217,17 +221,24 @@
                             const resultDiv = $("<div>").addClass("alert alert-danger").text(assetTag + ": " + result.error.message);
                             $("#assetTagResult").prepend(resultDiv);
                         }
-                        $(that).val("");
-                        $(that).focus();
+                        $(that).find("#assetTag").val("").focus();
                     },
                 });
+            }
+            $(this).find("#assetTag").on("keydown", function(e) {
+                if (e.key !== "Enter") {
+                    return;
+                }
+                e.preventDefault();
+                doQuickDispatch();
             });
+            $(this).find("#scanAssetDispatch").on("click", doQuickDispatch);
         });
         $('#asset-board-tab-thisinstance').on('shown.bs.tab', function() {
-            $("#navItemScanAssets").show();
+            $("#navItemQuickDispatch").show();
         });
         $('#asset-board-tab-thisinstance').on('hidden.bs.tab', function() {
-            $("#navItemScanAssets").hide();
+            $("#navItemQuickDispatch").hide();
         });
         {% endif %}
 
