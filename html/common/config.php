@@ -53,6 +53,7 @@ $CONFIG = array(
         ]
     ],
     'DEV' => (getenv('bCMS__ERRORS') == "true" ? true : false),
+    'ENABLE_DEV_DB_EDITOR' => (getenv('bCMS__DEV_MODE_DB_EDITOR') == "true" ? true : false),
     'JWTKey' => getenv('bCMS__JWT'),
     'AUTH-PROVIDERS' => [
         "GOOGLE" => [
