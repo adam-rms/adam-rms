@@ -200,7 +200,7 @@
                 const assetTag = $(that).find("#assetTag").val();
                 const assetStatus = statusSelect.val();
                 $.ajax({
-                    url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusBarcode.php",
+                    url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusByTag.php",
                     type: "POST",
                     data: {
                         type: "",
