@@ -38,7 +38,7 @@
                     <a class="nav-link assetsBoardToggle" id="asset-board-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
                 </li>
             {% endfor %}
-            {% if FINANCIALS.assetsAssigned|length > 0 and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+            {% if (FINANCIALS.assetsAssigned|length > 0 or FINANCIALS.assetsAssignedSUB|length > 0) and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
                 <li class="nav-item" id="navItemQuickDispatch">
                     <button type="button" class="nav-link" title="Quick Dispatch" data-toggle="modal" data-target="#quickDispatchModal">
                         <i class="fas fas fa-shipping-fast"></i>
@@ -72,29 +72,60 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <p>Note: only assets from the currently selected business ({{ USERDATA.instance.instances_name }}) can be dispatched.</p>
-                <div class="form-group assetStatusDiv">
-                    <label>Asset Status</label>
-                    <select class="form-control" id="assetStatus">
-                        {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
-                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+            <div class="modal-body p-0">
+                <ul class="nav nav-tabs" role="tablist">
+                    {% if FINANCIALS.assetsAssigned|length > 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="pill" href="#quick-dispatch-modal-board-thisinstance" role="tab" aria-controls="quick-dispatch-modal-board-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
+                        </li>
+                    {% endif %}
+                    {% for instance in FINANCIALS.assetsAssignedSUB %}
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#quick-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="quick-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="p-3">
+                    <div class="tab-content">
+                        <div class="tab-pane show active p2" id="quick-dispatch-modal-board-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
+                            <p>Enter an asset's tag from {{ USERDATA.instance.instances_name }} tag to set its status.</p>
+                            <div class="form-group assetStatusDiv">
+                                <label>Set Asset Status to</label>
+                                <select class="form-control assetStatusSelectorQuickDispatch" data-instanceid="{{ USERDATA.instance["instances_id"] }}">
+                                    {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
+                                    <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        {% for instance in FINANCIALS.assetsAssignedSUB %}
+                        <div class="tab-pane p2" id="quick-dispatch-modal-board-instance{{ instance['instance']['instances_id'] }}">
+                            <p>Enter an asset's tag from {{  instance['instance'].instances_name }} tag to set its status.</p>
+                            <div class="form-group assetStatusDiv">
+                                <label>Set Asset Status to</label>
+                                <select class="form-control assetStatusSelectorQuickDispatch" data-instanceid="{{ instance['instance']['instances_id'] }}">
+                                    {% for status in BOARDSTATUSES[instance['instance']['instances_id']] %}
+                                    <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
                         {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group assetTagDiv">
-                    <label>Asset Tag</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="assetTag" />
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="scanAssetDispatch">
-                                <i class="fas fa-arrow-right"></i>
-                            </button>
+                    </div>                
+                    <div class="form-group assetTagDiv">
+                        <label>Asset Tag</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="assetTag" />
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="scanAssetDispatch">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
+                    <p>If you have a barcode scanner, click into the box above and start scanning.</p>
+                    <div id="assetTagResult"></div>
                 </div>
-                <p>If you have a barcode scanner, click into the box above and start scanning.</p>
-                <div id="assetTagResult"></div>
             </div>
         </div>
     </div>
@@ -193,16 +224,15 @@
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
         });
 
-        const statusSelect = $("#assetStatus");
         function doQuickDispatch() {
             const assetTag = $("#assetTag").val();
-            const assetStatus = statusSelect.val();
+            const assetStatus = $(".assetStatusSelectorQuickDispatch:visible").val();
+            const instanceId = $(".assetStatusSelectorQuickDispatch:visible").data("instanceid");
             // Not using ajaxcall so we can have our own error handling for the alert boxes
             $.ajax({
                 url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusByTag.php",
                 type: "POST",
                 data: {
-                    type: "",
                     text: assetTag,
                     assetsAssignments_status: assetStatus,
                     projects_id: {{ project.projects_id }},
@@ -210,8 +240,9 @@
                 cache: false,
                 success: function(result, status, data) {
                     if (result.result === true) {
-                        const assetCard = $(".assetDispatchAssetList[data-instance={{ USERDATA.instance["instances_id"] }}] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
-                        assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance={{ USERDATA.instance["instances_id"] }}]");
+                        const assetCard = $(".assetDispatchAssetList[data-instance=" + instanceId + "] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
+                        assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance=" + instanceId + "]");
+                        drawButtons();
                     } else {
                         Toast.fire({
                             type: 'error',
@@ -240,12 +271,6 @@
             doQuickDispatch();
         });
         $("#scanAssetDispatch").on("click", doQuickDispatch);
-        $('#asset-board-tab-thisinstance').on('shown.bs.tab', function() {
-            $("#navItemQuickDispatch").show();
-        });
-        $('#asset-board-tab-thisinstance').on('hidden.bs.tab', function() {
-            $("#navItemQuickDispatch").hide();
-        });
         {% endif %}
 
 
