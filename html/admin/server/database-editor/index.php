@@ -29,6 +29,7 @@ function adminer_object()
     }
     function loginForm()
     {
+      echo '<p>The username is <b>user</b> and password is <b>pass</b> for devcontainer installations. This editor should only be used for developing AdamRMS, not where real user data is being used.</p>';
       echo '<input type="hidden" name="auth[driver]" value="server"><input type="text" name="auth[username]" id="username" autocomplete="off" value="user"><input type="password" name="auth[password]" value="pass" autocomplete="off">';
       echo "<input type='submit' value='Login'>";
     }
@@ -45,5 +46,5 @@ function adminer_object()
 
   return new AdminerSoftware;
 }
-
+define('RUN_ADMINER', true); 
 require_once __DIR__ . '/editor-4.8.1-mysql-en.php';
