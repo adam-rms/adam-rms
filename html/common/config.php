@@ -5,11 +5,6 @@
  * Any settings must go in the environment variables
  */
 require_once(__DIR__ . '/../../vendor/autoload.php'); //Composer
-if(file_exists(__DIR__ . '/../../.env')) {
-    //Load local env viles
-    $dotEnvLib = Dotenv\Dotenv::createMutable(__DIR__. '/../../');
-    $dotEnvLib->load();
-}
 
 if (getenv('bCMS__ERRORS') == "true") {
     ini_set('display_errors', 1);
