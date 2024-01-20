@@ -74,6 +74,18 @@
         <div class="col-lg-3 col-6">
             <div class="small-box bg-primary">
                 <div class="inner">
+                    <h3>Logo</h3>
+                    <p>Configure the logo and email branding.</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-images"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/logo.php" class="small-box-footer">Manage Logo <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
                     <h3>Public Site</h3>
                     <p>Embed parts of AdamRMS within your public-facing website.</p>
                 </div>
@@ -83,8 +95,30 @@
                 <a href="{{ CONFIG.ROOTURL }}/instances/public.php" class="small-box-footer">Manage Public Site <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        {% endif %}
-        {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Invoices</h3>
+                    <p>Configure invoice exports from projects.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/invoices.php" class="small-box-footer">Manage Invoices <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Barcodes</h3>
+                    <p>Configure barcode exports.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/barcodes.php" class="small-box-footer">Manage Barcodes <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
         <div class="col-lg-3 col-6">
             <div class="small-box bg-primary">
                 <div class="inner">
@@ -123,6 +157,20 @@
                     
                 </div>
                 <a href="{{ CONFIG.ROOTURL }}/instances/projectStatuses.php" class="small-box-footer">Manage Project Statuses <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Asset Statuses</h3>
+                    <p>Configure the possible status of an asset in a project.</p>
+                </div>
+                <div class="icon">
+                    
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/asset-status.php" class="small-box-footer">Manage Asset Statuses <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         {% endif %}
