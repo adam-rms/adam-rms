@@ -38,3 +38,168 @@ $array['assetTypes_weekRate'] = $moneyParser->parse(($array['assetTypes_weekRate
 $result = $DBLIB->insert("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetTypes_productLink','assetCategories_id','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"instances_id","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert asset type"]);
 else finish(true, null, ["assetTypes_id" => $result]);
+
+/** @OA\Post(
+ *     path="/assets/newAssetType.php", 
+ *     summary="Create Asset Type", 
+ *     description="Creates an asset type  
+Requires Instance Permission ASSETS:ASSET_TYPES:CREATE
+", 
+ *     operationId="createAssetType", 
+ *     @OA\Tag(name="assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="assetTypes_id", 
+ *                     type="integer", 
+ *                     description="The ID of the asset type",
+ *                 ),
+ *         ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="code", 
+ *                     type="string", 
+ *                     description="The error code",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *         ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="The data to create the asset type from",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="assetTypes_name", 
+ *                 type="string", 
+ *                 description="The name of the asset type",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_description", 
+ *                 type="string", 
+ *                 description="The description of the asset type",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetCategories_id", 
+ *                 type="integer", 
+ *                 description="The ID of the asset category",
+ *             ),
+ *             @OA\Property(
+ *                 property="manufacturers_id", 
+ *                 type="integer", 
+ *                 description="The ID of the manufacturer",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_productLink", 
+ *                 type="string", 
+ *                 description="Link to the website of the asset type",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_1", 
+ *                 type="string", 
+ *                 description="The first definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_2", 
+ *                 type="string", 
+ *                 description="The second definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_3", 
+ *                 type="string", 
+ *                 description="The third definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_4", 
+ *                 type="string", 
+ *                 description="The fourth definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_5", 
+ *                 type="string", 
+ *                 description="The fifth definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_6", 
+ *                 type="string", 
+ *                 description="The sixth definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_7", 
+ *                 type="string", 
+ *                 description="The seventh definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_8", 
+ *                 type="string", 
+ *                 description="The eighth definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_9", 
+ *                 type="string", 
+ *                 description="The ninth definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_10", 
+ *                 type="string", 
+ *                 description="The tenth definable field",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_mass", 
+ *                 type="number", 
+ *                 description="The weight of the asset type",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_inserted", 
+ *                 type="string", 
+ *                 description="The date the asset type was inserted",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_dayRate", 
+ *                 type="number", 
+ *                 description="The day rate of the asset type",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_weekRate", 
+ *                 type="number", 
+ *                 description="The week rate of the asset type",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_value", 
+ *                 type="number", 
+ *                 description="The value of the asset type",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */

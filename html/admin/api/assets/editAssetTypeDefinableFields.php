@@ -32,3 +32,118 @@ else {
     $bCMS->auditLog("EDIT-ASSET-TYPE-DEFINABLEFIELDS", "assetTypes", json_encode($array), $AUTH->data['users_userid'],null, $array['assetTypes_id']);
     finish(true);
 }
+
+/** @OA\Post(
+ *     path="/assets/editAssetTypeDefinableFields.php", 
+ *     summary="Edit an Asset Type's Definable Fields", 
+ *     description="Edits an asset type's definable fields  
+Requires Instance Permission ASSETS:ASSET_TYPES:EDIT
+", 
+ *     operationId="editAssetTypeDefinableFields", 
+ *     @OA\Tag(name="assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message", 
+ *                     type="null", 
+ *                     description="an empty array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="The data to update the asset type's definable fields with",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="assetTypes_id", 
+ *                 type="integer", 
+ *                 description="The ID of the asset type to update",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_1", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_2", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_3", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_4", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_5", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_6", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_7", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_8", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_9", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_definableFields_10", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */

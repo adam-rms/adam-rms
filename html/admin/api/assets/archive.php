@@ -24,3 +24,46 @@ else {
     $bCMS->auditLog("ARCHIVE", "assets", $asset['assets_id'], $AUTH->data['users_userid']);
     finish(true);
 }
+
+/** @OA\Post(
+ *     path="/assets/archive.php", 
+ *     summary="Archive an Asset", 
+ *     description="Archives an asset  
+Requires Instance Permission ASSETS:ARCHIVE
+", 
+ *     operationId="archiveAsset", 
+ *     @OA\Tag(name="assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assets_id",
+ *         in="query",
+ *         description="The ID of the asset to archive",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="reason",
+ *         in="query",
+ *         description="The reason for archiving the asset",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="date",
+ *         in="query",
+ *         description="The date the asset was archived, usually today",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

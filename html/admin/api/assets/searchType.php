@@ -30,3 +30,69 @@ if (isset($_POST['term'])) {
 $assets = $DBLIB->get("assetTypes", 15, ["assetTypes_name", "assetTypes_id", "assetCategories_name", "assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);
 if (!$assets) finish(false, ["code" => "LIST-ASSETTYPES-FAIL", "message"=> "Could not search"]);
 else finish(true, null, $assets);
+
+/** @OA\Post(
+ *     path="/assets/searchType.php", 
+ *     summary="Asset Type Search", 
+ *     description="Searches for asset types by name or manufacturer
+", 
+ *     operationId="assetTypeSearch", 
+ *     @OA\Tag(name="assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="list of assets",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="The term to search for",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="manufacturer",
+ *         in="query",
+ *         description="The manufacturer to search for",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

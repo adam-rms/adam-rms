@@ -58,3 +58,61 @@ foreach ($assets as $asset) {
 
 if ($ASSET_OPTIONS) finish(true, null, $ASSET_OPTIONS);
 finish(true, ["code" => "NO-ASSETS", "message"=>"No Assets Available"]); //this is not an error, just information that there are no assets!
+
+/** @OA\Post(
+ *     path="/assets/substitutions.php", 
+ *     summary="Get Swappable Assets", 
+ *     description="Gets a list of assets that can be swapped with the given asset assignment
+", 
+ *     operationId="getSwappableAssets", 
+ *     @OA\Tag(name="assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="An array of assets",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments_id",
+ *         in="query",
+ *         description="The ID of the asset assignment",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ * )
+ */
