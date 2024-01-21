@@ -35,4 +35,44 @@ if ($_POST['action'] == "DELETE") {
     }
 } else finish(false, ["code" => null, "message"=> "Attribute action error"]);
 
-?>
+/** @OA\Post(
+ *     path="/account/permissions.php", 
+ *     summary="Permission Management", 
+ *     description="Manage user pemissions
+Requires server permission PERMISSIONS:EDIT:USER_POSITION", 
+ *     operationId="permissionManagement", 
+ *     @OA\Tag(name="account"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="action",
+ *         in="query",
+ *         description="DELETE, EDIT or new",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="users_userid",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="userPositions_id",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

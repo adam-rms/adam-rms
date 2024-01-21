@@ -33,3 +33,92 @@ else {
     $bCMS->auditLog("EDIT-ACCOUNT", "users", json_encode($array), $AUTH->data['users_userid'],$array['users_userid']);
     finish(true);
 }
+
+
+/** @OA\Post(
+ *     path="/account/basicDetails.php", 
+ *     summary="Update User Details", 
+ *     description="Update basic user details", 
+ *     operationId="updateBasicDetails", 
+ *     @OA\Tag(name="account"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="OK",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Not Found",
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="formData",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="users_userid", 
+ *                 type="string", 
+ *                 description="The ID of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_email", 
+ *                 type="string", 
+ *                 description="The email address of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_username", 
+ *                 type="string", 
+ *                 description="The username of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_name1", 
+ *                 type="string", 
+ *                 description="The first name of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_name2", 
+ *                 type="string", 
+ *                 description="The last name of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_social_facebook", 
+ *                 type="string", 
+ *                 description="The Facebook username of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_social_twitter", 
+ *                 type="string", 
+ *                 description="The Twitter username of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_social_instagram", 
+ *                 type="string", 
+ *                 description="The Instagram username of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_social_linkedin", 
+ *                 type="string", 
+ *                 description="The LinkedIn username of the user",
+ *             ),
+ *             @OA\Property(
+ *                 property="users_social_snapchat", 
+ *                 type="string", 
+ *                 description="The Snapchat username of the user",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */

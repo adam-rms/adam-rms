@@ -11,3 +11,19 @@ if ($AUTH->destroyTokens($bCMS->sanitizeString($_POST['userid']))) {
 } else die("2");
 
 
+/** @OA\Post(
+ *     path="/account/destroyTokens.php", 
+ *     summary="Destroy Tokens", 
+ *     description="Destroy all tokens for a user", 
+ *     operationId="destroyTokens", 
+ *     @OA\Tag(name="account"), 
+ *     @OA\Parameter(
+ *         name="userid",
+ *         in="query",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"
+ *         ), 
+ *     ), 
+ * )
+ */

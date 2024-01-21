@@ -8,4 +8,36 @@
 		finish(true);
 	}
 	else finish(false);
-?>
+
+/** @OA\Post(
+ *     path="/account/notifications.php", 
+ *     summary="Notifications", 
+ *     description="Set the notification settings for a user", 
+ *     operationId="setNotifications", 
+ *     @OA\Tag(name="account"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ * 		   @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="users_userid",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="settings",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="json"), 
+ *         ), 
+ * )
+ */

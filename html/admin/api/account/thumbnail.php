@@ -10,4 +10,36 @@ if ($DBLIB->update ('users', ["users_thumbnail" => $bCMS->sanitizeString($_POST[
 	finish(true);
 }
 else finish(false);
-?>
+
+/** @OA\Post(
+ *     path="/account/thumbnail.php", 
+ *     summary="Thumbnail", 
+ *     description="Set the thumbnail for a user", 
+ *     operationId="setThumbnail", 
+ *     @OA\Tag(name="account"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="OK",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="users_userid",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="thumbnail",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */
