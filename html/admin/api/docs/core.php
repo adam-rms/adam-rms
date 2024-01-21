@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '../../../common/head.php';
 
+//Documentation headers etc. This page doesn't actually render any content
+
+
 //Defines for the top level api documentation
 define('VERSION', $CONFIG['VERSION']['TAG']);
 
@@ -53,13 +56,4 @@ define('VERSION', $CONFIG['VERSION']['TAG']);
  *      ),     
  *  )
  */
-
-
-
-$finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in(__DIR__.'/../../../');
-
-$openapi = \OpenApi\Generator::scan($finder);
-
-header('Content-Type: application/json');
-print_r($openapi->toJson());
 

@@ -1,0 +1,87 @@
+name: Generate API Docs
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Generate OpenAPI docs
+      run: ./vendor/bin/openapi -b html/admin/api/docs/core.php ./html/admin/api -o apiDocs.yaml
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: 'apiDocs.yaml'
+        path: 'apiDocs.yaml'
+        if-no-files-found: 'error'
+        overwrite: 'true'
+
+  # Generate ReDocly static API docs
+  generate:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          
+      - uses: actions/download-artifact@v4
+        with:
+          name: 'apiDocs.yaml'
+
+      - name: Install ReDocly
+        run: npm i @redocly/cli
+      
+      - name: Build ReDocly
+        run: npx @redocly/cli build-docs apiDocs.yaml 
+
+      - name: Upload GH Pages Artefact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'redoc-static.html'
+          
+  # Deploy to GH Pages
+  deploy:
+    needs: [build, generate]
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
