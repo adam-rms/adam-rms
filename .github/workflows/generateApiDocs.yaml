@@ -13,10 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: zip, mysqli, intl, gd
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+    - uses: actions/checkout@v3
 
     - name: Cache Composer packages
       id: composer-cache
@@ -31,7 +33,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Generate OpenAPI docs
-      run: ./vendor/bin/openapi -b html/admin/api/docs/core.php ./html/admin/api -o apiDocs.yaml
+      run: php html/admin/api/docs/generator.php > apiDocs.yaml
 
     - uses: actions/upload-artifact@v4
       with:
@@ -58,12 +60,12 @@ jobs:
         run: npm i @redocly/cli
       
       - name: Build ReDocly
-        run: npx @redocly/cli build-docs apiDocs.yaml 
+        run: npx @redocly/cli build-docs apiDocs.yaml --output ./dist/index.html
 
       - name: Upload GH Pages Artefact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: 'redoc-static.html'
+          path: 'dist/'
           
   # Deploy to GH Pages
   deploy:

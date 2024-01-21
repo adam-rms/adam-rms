@@ -1,16 +1,11 @@
 <?php
-require_once __DIR__ . '../../../common/head.php';
 
 //Documentation headers etc. This page doesn't actually render any content
-
-
-//Defines for the top level api documentation
-define('VERSION', $CONFIG['VERSION']['TAG']);
 
 /**
  * @OA\Info(
  *  title="AdamRMS API", 
- *  version=VERSION,
+ *  version="1.200.0",
  *  description="AdamRMS is a free, open source advanced Rental Management System for Theatre, AV & Broadcast. This is the API listing for the v1 API, which is currently in Production and active development. You can find out more about AdamRMS at [https://adam-rms.com](https://adam-rms.com).",
  *  termsOfService="https://adam-rms.com/legal",
  *  @OA\Contact(
