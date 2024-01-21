@@ -45,3 +45,63 @@ if(isset($_FILES['file'])) {
         else finish(true, null, ["id" => $id, "resize" => false,"url" => $CONFIG['ROOTURL'] . '/api/file/?f=' . $id]);
     } else finish(false, ["code" => null, "message" => "S3 Upload Error"]);
 }
+
+/** @OA\Post(
+ *     path="/s3files/appUploader.php", 
+ *     summary="App Uploader", 
+ *     description="Upload a file to S3
+", 
+ *     operationId="appUploader", 
+ *     @OA\Tag(name="s3files"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="filename",
+ *         in="query",
+ *         description="File Name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="typename",
+ *         in="query",
+ *         description="File Type",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="typeid",
+ *         in="query",
+ *         description="File Type ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="subtype",
+ *         in="query",
+ *         description="File Subtype",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="public",
+ *         in="query",
+ *         description="Public File",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="file",
+ *         in="files",
+ *         description="File",
+ *         required="true", 
+ *         ), 
+ * )
+ */

@@ -33,4 +33,35 @@ if (!$progress) {
     else finish(true);
 }
 
-
+/** @OA\Post(
+ *     path="/training/completeStep.php", 
+ *     summary="Complete Step", 
+ *     description="Complete a training step
+", 
+ *     operationId="completeStep", 
+ *     @OA\Tag(name="training"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="query",
+ *         description="Step ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

@@ -22,3 +22,76 @@ $id = $DBLIB->insert("s3files",$fileData);
 echo $DBLIB->getLastError();
 if (!$id) finish(false, ["code" => null, "message" => "Error"]);
 else finish(true, null, ["id" => $id, "resize" => false,"url" => $CONFIG['ROOTURL'] . '/api/file/?f=' . $id]);
+
+/** @OA\Post(
+ *     path="/s3files/uploadSuccess.php", 
+ *     summary="Upload Success", 
+ *     description="Upload a file to S3
+", 
+ *     operationId="uploadSuccess", 
+ *     @OA\Tag(name="s3files"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="name",
+ *         in="query",
+ *         description="File Name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="size",
+ *         in="query",
+ *         description="File Size",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="typeid",
+ *         in="query",
+ *         description="File Type ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="subtype",
+ *         in="query",
+ *         description="File Subtype",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="orignalName",
+ *         in="query",
+ *         description="Original File Name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="public",
+ *         in="query",
+ *         description="Public File",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ * )
+ */

@@ -12,3 +12,53 @@ $insert = $DBLIB->insert("userModulesCertifications",[
 ]);
 if (!$insert) finish(false, ["message"=> "Could not add certification"]);
 else finish(true);
+
+/** @OA\Post(
+ *     path="/training/certify.php", 
+ *     summary="Certify", 
+ *     description="Certify a user for a module  
+Requires instance permission TRAINING:EDIT:CERTIFY_USER
+", 
+ *     operationId="certify", 
+ *     @OA\Tag(name="training"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="userid",
+ *         in="query",
+ *         description="User ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="modules_id",
+ *         in="query",
+ *         description="Module ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="comment",
+ *         in="query",
+ *         description="Comment",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

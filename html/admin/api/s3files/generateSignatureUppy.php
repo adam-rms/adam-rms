@@ -39,3 +39,54 @@ echo json_encode([
         'content-type' => $contentType,
     ],
 ]);
+
+/** @OA\Post(
+ *     path="/s3files/generateSignatureUppy.php", 
+ *     summary="Generate Signature Uppy", 
+ *     description="Generate a signature for uploading a file to S3
+", 
+ *     operationId="generateSignatureUppy", 
+ *     @OA\Tag(name="s3files"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="method", 
+ *                     type="string", 
+ *                     description="HTTP Method",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="url", 
+ *                     type="string", 
+ *                     description="File URL",
+ *                 ),
+ *         ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="filename",
+ *         in="query",
+ *         description="File Name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="contentType",
+ *         in="query",
+ *         description="Content Type",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */
