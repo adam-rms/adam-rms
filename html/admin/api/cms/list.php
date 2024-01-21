@@ -24,3 +24,32 @@ foreach ($DBLIB->get("cmsPages",null,["cmsPages_fontAwesome","cmsPages_name","cm
     $NAVIGATIONCMSPages[] = $page;
 }
 finish(true,null,$NAVIGATIONCMSPages);
+
+/** @OA\Get(
+ *     path="/cms/list.php", 
+ *     summary="List CMS Pages", 
+ *     description="List all pages", 
+ *     operationId="listPages", 
+ *     @OA\Tag(name="cms"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="An Array containing all pages",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     )
+ */

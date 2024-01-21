@@ -34,3 +34,76 @@ $insert = $DBLIB->insert("cmsPagesDrafts",[
 ]);
 if ($insert) finish(true,null,["revision"=>$revision,"revisionID"=>$insert]);
 else finish(false);
+
+/** @OA\Post(
+ *     path="/cms/editPageContent.php", 
+ *     summary="Edit CMS Page Content", 
+ *     description="Edit a page content  
+Requires Instance Permission CMS:CMS_PAGES:EDIT", 
+ *     operationId="editPageContent", 
+ *     @OA\Tag(name="cms"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Error",
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="cmsPages_id",
+ *         in="query",
+ *         description="The ID of the page",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="pageData",
+ *         in="query",
+ *         description="The page data",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="changelog",
+ *         in="query",
+ *         description="The description of the change",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

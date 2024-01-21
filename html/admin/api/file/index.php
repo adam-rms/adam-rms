@@ -16,3 +16,79 @@ else {
         die();
     } else finish(true,null,["url" => $file]);
 }
+
+/** @OA\Post(
+ *     path="/file/index.php", 
+ *     summary="Get File", 
+ *     description="Get a file
+", 
+ *     operationId="getFile", 
+ *     @OA\Tag(name="file_uploads"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="308", 
+ *         description="Success - Redirect to this address",
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="f",
+ *         in="query",
+ *         description="The file id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="d",
+ *         in="query",
+ *         description="should a download be forced or should it be displayed in the browser? (if set it will download)",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="r",
+ *         in="query",
+ *         description="should the url be returned by the script as plain text or a redirect triggered? (if set it will redirect)",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="e",
+ *         in="query",
+ *         description="when should the link expire? Must be a string describing how long in words basically. If this file type has security features then it will default to 1 minute.",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ * )
+ */

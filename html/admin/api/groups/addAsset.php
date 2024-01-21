@@ -32,3 +32,70 @@ foreach ($bCMS->usersWatchingGroup($_POST['assetGroups_id']) as $user) {
 }
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/groups/addAsset.php", 
+ *     summary="Add Asset to Group", 
+ *     description="Add an asset to a group  
+Requires Instance Permission ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP
+", 
+ *     operationId="addAssetToGroup", 
+ *     @OA\Tag(name="groups"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A null Array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="A null array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assetGroups_id",
+ *         in="query",
+ *         description="The group id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assets_id",
+ *         in="query",
+ *         description="The asset id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ * )
+ */
