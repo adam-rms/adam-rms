@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../../../vendor/autoload.php'); //Composer
+require_once(__DIR__ . '/../../vendor/autoload.php'); //Composer
 require_once __DIR__ . '/libs/Config/Config.php';
 require_once __DIR__ . '/../api/notifications/notificationTypes.php';
 
@@ -10,8 +10,8 @@ use Aws\Exception\AwsException;
 use Twig\Extra\String\StringExtension;
 
 //TWIG
-$TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../admin/']);
-if ($CONFIG['DEV']) {
+$TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../']);
+if (getenv('ERRORS') == "true") {
     $TWIG = new \Twig\Environment($TWIGLOADER, array(
         'debug' => true,
         'auto_reload' => true,
@@ -48,19 +48,35 @@ if (!$CONFIG['DEV']) {
 }
 
 /* DATBASE CONNECTION */
-$DBLIB = new MysqliDb([
-    'host' => getenv('DB_HOSTNAME'),
-    'username' => getenv('DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
-    'password' => getenv('DB_PASSWORD'),
-    'db' => getenv('DB_DATABASE'),
-    'port' => getenv('DB_PORT') ?: 3306,
-    //'prefix' => 'adamrms_',
-    'charset' => 'utf8'
-]);
+try {
+    $DBLIB = new MysqliDb([
+        'host' => getenv('DB_HOSTNAME'),
+        'username' => getenv('DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
+        'password' => getenv('DB_PASSWORD'),
+        'db' => getenv('DB_DATABASE'),
+        'port' => getenv('DB_PORT') ?: 3306,
+        //'prefix' => 'adamrms_',
+        'charset' => 'utf8'
+    ]);
+} catch (Exception $e) {
+    // TODO use twig for this
+    if (getenv('ERRORS') == "true") {
+        echo "Could not connect to database: " . $e->getMessage();
+        exit;
+    } else {
+        echo "Could not connect to database";
+        exit;
+    }
+}
+
+
 
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
-var_dump(count($CONFIGCLASS->CONFIG_MISSING_VALUES));
+if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
+    // Use twig for this
+    throw new Exception("Missing config values: " . implode(", ", $CONFIGCLASS->CONFIG_MISSING_VALUES));
+}
 
 /* FUNCTIONS */
 class bCMS
