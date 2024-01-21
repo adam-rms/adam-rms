@@ -30,3 +30,63 @@ $DBLIB->orderBy("manufacturers_name", "ASC");
 if (isset($_POST['term']) and $_POST['term']) $DBLIB->where("manufacturers_name","%" . $_POST['term'] . "%","LIKE");
 $manufacturers = $DBLIB->get('manufacturers', 15, ["manufacturers.manufacturers_id", "manufacturers.manufacturers_name"]);
 finish(true, null, $manufacturers);
+
+/** @OA\Post(
+ *     path="/manufacturer/search.php", 
+ *     summary="Search Manufacturers", 
+ *     description="Search for a manufacturer", 
+ *     operationId="searchManufacturers", 
+ *     @OA\Tag(name="manufacturers"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="Array of Manufacturers",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="Search Term",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="instance_id",
+ *         in="query",
+ *         description="Instance ID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

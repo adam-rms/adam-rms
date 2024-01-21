@@ -27,3 +27,63 @@ if (!$assets) finish(false, ["code" => "LIST-ASSETS-FAIL", "message"=> "Could no
 else {
     finish(true, null, $assets);
 }
+
+/** @OA\Post(
+ *     path="/maintenance/searchAsset.php", 
+ *     summary="Search Asset", 
+ *     description="Search for an asset to add to a maintenance job", 
+ *     operationId="searchAsset", 
+ *     @OA\Tag(name="maintenance"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="Array of Assets",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_id",
+ *         in="query",
+ *         description="Maintenance Job ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="Search Term",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

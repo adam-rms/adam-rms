@@ -21,3 +21,60 @@ if ($user['users_userid'] == null) {
     if ($user['users_userid'] != $AUTH->data['users_userid']) notify(15, $user['users_userid'], $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " assigned you to a Maintenance Job", false, "api/maintenance/job/changeJobAssigned-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "maintenanceJobs_id" => $bCMS->sanitizeString($_POST['maintenanceJobs_id'])]);
 }
 finish(true);
+
+/** @OA\Post(
+ *     path="/maintenance/job/changeJobAssigned.php", 
+ *     summary="Change Job Assigned", 
+ *     description="Change who a maintenance job is assigned to  
+Requires Instance Permission MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB
+", 
+ *     operationId="changeJobAssigned", 
+ *     @OA\Tag(name="maintenanceJobs"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_id",
+ *         in="query",
+ *         description="Maintenance Job ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="users_userid",
+ *         in="query",
+ *         description="Who the maintenance job is assigned to",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

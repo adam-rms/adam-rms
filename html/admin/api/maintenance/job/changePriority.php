@@ -17,3 +17,60 @@ $bCMS->auditLog("CHANGE-PRIORITY", "maintenanceJobs", "Change priority to " . $_
 
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/maintenance/job/changePriority.php", 
+ *     summary="Change Priority", 
+ *     description="Change the priority of a maintenance job  
+Requires Instance Permission MAINTENANCE_JOBS:EDIT:JOB_PRIORITY
+", 
+ *     operationId="changePriority", 
+ *     @OA\Tag(name="maintenanceJobs"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_id",
+ *         in="query",
+ *         description="Maintenance Job ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_priority",
+ *         in="query",
+ *         description="Maintenance Job Priority",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

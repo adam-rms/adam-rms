@@ -11,3 +11,52 @@ if (!$update) finish(false);
 
 $bCMS->auditLog("DELETE", "maintenanceJobs", null, $AUTH->data['users_userid'],null,null, $_POST['maintenanceJobs_id']);
 finish(true);
+
+/** @OA\Post(
+ *     path="/maintenance/job/deleteJob.php", 
+ *     summary="Delete Job", 
+ *     description="Delete a maintenance job  
+Requires Instance Permission MAINTENANCE_JOBS:DELETE
+", 
+ *     operationId="deleteJob", 
+ *     @OA\Tag(name="maintenanceJobs"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_id",
+ *         in="query",
+ *         description="Maintenance Job ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

@@ -26,3 +26,88 @@ if (!$update) finish(false);
 
 $bCMS->auditLog("UPDATE", "modules", json_encode($array), $AUTH->data['users_userid']);
 finish(true);
+
+/** @OA\Post(
+ *     path="/modules/edit.php", 
+ *     summary="Edit Module", 
+ *     description="Edit a module  
+Requires Instance Permission TRAINING:EDIT
+", 
+ *     operationId="editModule", 
+ *     @OA\Tag(name="modules"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="modules_id", 
+ *                 type="number", 
+ *                 description="Module ID",
+ *             ),
+ *             @OA\Property(
+ *                 property="modules_name", 
+ *                 type="string", 
+ *                 description="Module Name",
+ *             ),
+ *             @OA\Property(
+ *                 property="modules_description", 
+ *                 type="string", 
+ *                 description="Module Description",
+ *             ),
+ *             @OA\Property(
+ *                 property="modules_learningObjectives", 
+ *                 type="string", 
+ *                 description="LOs",
+ *             ),
+ *             @OA\Property(
+ *                 property="modules_show", 
+ *                 type="boolean", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="modules_thumbnail", 
+ *                 type="number", 
+ *                 description="Thumbnail ID",
+ *             ),
+ *             @OA\Property(
+ *                 property="modules_type", 
+ *                 type="number", 
+ *                 description="undefined",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */

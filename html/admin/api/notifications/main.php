@@ -34,3 +34,14 @@ function notify($typeID, $userid, $instanceID, $headline, $message = false, $ema
     }
     return true;
 }
+
+/** @OA\Get(
+ *     path="/notifications/main.php", 
+ *     summary="Notify function", 
+ *     description="This function is called by the notify function in the client-side code.  
+It returns a function to call rather than a response.
+", 
+ *     operationId="", 
+ *     @OA\Tag(name="notifications"), 
+ *     )
+ */

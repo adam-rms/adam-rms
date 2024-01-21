@@ -17,3 +17,52 @@ foreach ($_POST['order'] as $count=>$item) {
 
 }
 finish(true);
+
+/** @OA\Post(
+ *     path="/modules/steps/sortRank.php", 
+ *     summary="Sort Steps", 
+ *     description="Sort the steps of a module  
+Requires Instance Permission TRAINING:EDIT
+", 
+ *     operationId="sortSteps", 
+ *     @OA\Tag(name="module_steps"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="order",
+ *         in="query",
+ *         description="Order",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ * )
+ */
