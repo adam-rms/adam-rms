@@ -78,7 +78,9 @@
   * @OA\Tag(name="notifications", description="v1 notification endpoints - These endpoints are not accessible from the web, and are instead used internally."),
   * @OA\Tag(name="assetAssignmentStatus", description="Asset Assignment Statuses"),
   * @OA\Tag(name="projectTypes", description="Project Types"),
+  * @OA\Tag(name="projectStatus", description="Project Statuses"),
   * @OA\Tag(name="signupCodes", description="Signup Codes"),
   * @OA\Tag(name="s3files", description="S3 File Managment"),
-  * @OA\Tag(name="search", description="Global Search")
+  * @OA\Tag(name="search", description="Global Search"),
+  * @OA\Tag(name="icons", description="Internal Icon Library"),
   */

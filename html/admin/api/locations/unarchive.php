@@ -25,3 +25,31 @@ if (!$location) finish(false);
 $bCMS->auditLog("UNARCHIVE", "locations", "Moved the location from archive", $AUTH->data['users_userid'], null, $_POST['location_id']);
 
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/locations/unarchive.php",
+ *      summary="UnArchive Location",
+ *      description="Restore a location
+ Requires Instance permission LOCATIONS:EDIT",
+ *      operationId="archiveLocation",
+ *      tags={"locations"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="locations_id",
+ *          in="query",
+ *          description="Id of location to restore",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */

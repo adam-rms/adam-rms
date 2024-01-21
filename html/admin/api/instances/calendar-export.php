@@ -46,3 +46,41 @@ foreach ($iCalProjects as $event) {
 }
 
 echo $vCalendar->render();
+
+/**
+ *  @OA\Post(
+ *      path="/instances/calendar-export.php",
+ *      summary="List Icons",
+ *      description="Get a list of the first 20 available icons",
+ *      operationId="getIcons",
+ *      tags={"icons"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="text/calendar", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *             ),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="id",
+ *          in="query",
+ *          description="Id of Instance to get calendar",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="key",
+ *          in="query",
+ *          description="Identifying Hash for this calendar",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */

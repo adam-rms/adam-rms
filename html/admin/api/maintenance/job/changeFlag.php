@@ -21,3 +21,60 @@ if ($_POST['maintenanceJobs_flagAssets'] == 1) {
 
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/maintenance/job/changeFlag.php", 
+ *     summary="Change Flag", 
+ *     description="Change the flag of a maintenance job  
+Requires Instance Permission MAINTENANCE_JOBS:EDIT:ASSET_FLAGS
+", 
+ *     operationId="changeFlag", 
+ *     tags={"maintenanceJobs"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_id",
+ *         in="query",
+ *         description="Maintenance Job ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_flagAssets",
+ *         in="query",
+ *         description="Whether to flag maintenance job",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ * )
+ */

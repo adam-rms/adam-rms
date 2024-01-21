@@ -10,3 +10,30 @@ if($DBLIB->update('instances', ["instances_deleted" => 0], 1)) {
     finish(true);
 } else finish(false);
 
+/**
+ *  @OA\Post(
+ *      path="/instances/delete.php",
+ *      summary="Restore Instance",
+ *      description="Restore soft-deleted Instance
+ Requires Server permission INSTANCES:DELETE",
+ *      operationId="restoreInstance",
+ *      tags={"instances"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="instances_id",
+ *          in="query",
+ *          description="Id of instance to restore",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */

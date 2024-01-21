@@ -25,3 +25,31 @@ if (!$client) finish(false);
 $bCMS->auditLog("ARCHIVE", "clients", "Moved the client to archive", $AUTH->data['users_userid'], null, $_POST['client_id']);
 
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/clients/archive.php",
+ *      summary="Archive Client",
+ *      description="Archive (Soft Delete) a client
+Requires Instance Permission CLIENTS:EDIT",
+ *      operationId="archiveClient",
+ *      tags={"clients"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="clients_id",
+ *          in="query",
+ *          description="Id of the client to archive",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */
