@@ -173,23 +173,23 @@
                                     <thead>
                                     <tr>
                                         <th><button type="button" id="save-notification-settings" class="btn btn-success btn-sm">Save</button></th>
-                                        {% for method in CONFIG.NOTIFICATIONS.METHODS %}
+                                        {% for method in NOTIFICATIONTYPES.METHODS %}
                                             <th>{{method}}</th>
                                         {% endfor %}
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% set category = "" %}
-                                    {% for notification in CONFIG.NOTIFICATIONS.TYPES %}
+                                    {% for notification in NOTIFICATIONTYPES.TYPES %}
                                         {% if category != notification.group %}
                                             <tr>
-                                                <td colspan="{{ 1+CONFIG.NOTIFICATIONS.METHODS|length }}"><h3>{{ notification.group }}</h3></td>
+                                                <td colspan="{{ 1+NOTIFICATIONTYPES.METHODS|length }}"><h3>{{ notification.group }}</h3></td>
                                             </tr>
                                             {% set category = notification.group %}
                                         {% endif %}
                                         <tr>
                                             <td>{{ notification.name }}</td>
-                                            {% for methodid,method in CONFIG.NOTIFICATIONS.METHODS %}
+                                            {% for methodid,method in NOTIFICATIONTYPES.METHODS %}
                                                 <td>
                                                     {% if methodid in notification.methods %}
                                                         <input type="checkbox" class="notificationsetting" data-methodid="{{methodid}}" data-typeid="{{notification.id}}"

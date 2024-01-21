@@ -1,14 +1,26 @@
 <?php
-require_once __DIR__ . '/config.php';
+require_once(__DIR__ . '/../../vendor/autoload.php'); //Composer
+require_once __DIR__ . '/libs/Config/Config.php';
+require_once __DIR__ . '/../admin/api/notifications/notificationTypes.php';
 
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 use Aws\CloudFront\CloudFrontClient;
 use Aws\Exception\AwsException;
 
+if (getenv('ERRORS') == "true") {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ERROR | E_PARSE);
+} else {
+    ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
+    error_reporting(0);
+}
+
 if (!$CONFIG['DEV']) {
     Sentry\init([
-        'dsn' => $CONFIG['ERRORS']['SENTRY'],
+        'dsn' => $CONFIG['ERRORS_PROVIDERS_SENTRY'],
         'traces_sample_rate' => 0.1, //Capture 10% of pageloads for perforamnce monitoring
         'release' => $CONFIG['VERSION']['ENV'] ?: ($CONFIG['VERSION']['TAG'] . "." . $CONFIG['VERSION']['COMMIT']),
         'sample_rate' => 1.0,
@@ -17,14 +29,18 @@ if (!$CONFIG['DEV']) {
 
 /* DATBASE CONNECTION */
 $DBLIB = new MysqliDb ([
-                'host' => $CONFIG['DB_HOSTNAME'],
-                'username' => $CONFIG['DB_USERNAME'],
-                'password' => $CONFIG['DB_PASSWORD'],
-                'db'=> $CONFIG['DB_DATABASE'],
-                'port' => $CONFIG['DB_PORT'],
+                'host' => getenv('DB_HOSTNAME'),
+                'username' => getenv('DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
+                'password' => getenv('DB_PASSWORD'),
+                'db'=> getenv('DB_DATABASE'),
+                'port' => getenv('DB_PORT') ?: 3306,
                 //'prefix' => 'adamrms_',
                 'charset' => 'utf8'
         ]);
+
+$CONFIGCLASS = new Config;
+$CONFIG = $CONFIGCLASS->getConfigArray();
+var_dump(count($CONFIGCLASS->CONFIG_MISSING_VALUES));
 
 /* FUNCTIONS */
 class bCMS {
@@ -82,6 +98,9 @@ class bCMS {
             $_GET[$key] = $value;
         }
         return $_GET;
+    }
+    function getConfig() {
+        
     }
     function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null, $targetid = null) { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
         global $DBLIB;
@@ -301,14 +320,14 @@ class bCMS {
         return $id;
     }
     function notificationSettings($userid) {
-        global $DBLIB,$CONFIG;
+        global $DBLIB,$NOTIFICATIONTYPES;
         $DBLIB->where("users_userid", $userid);
         $user = $DBLIB->getone("users",["users_email", "users_userid", "users_name1", "users_name2","users_notificationSettings"]);
         if (!$user) return false;
         $user["users_notificationSettings"] = json_decode($user["users_notificationSettings"],true);
         if (!$user["users_notificationSettings"]) $user["users_notificationSettings"] = [];
         $configReturn = [];
-        foreach ($CONFIG['NOTIFICATIONS']['TYPES'] as $type) {
+        foreach ($NOTIFICATIONTYPES['TYPES'] as $type) {
             $type['methodsUser'] = [];
             foreach ($type['methods'] as $method) {
                 if ($type['canDisable']) {
