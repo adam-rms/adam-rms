@@ -1,7 +1,7 @@
 <?php
-require_once(__DIR__ . '/../../vendor/autoload.php'); //Composer
+require_once(__DIR__ . '/../../../vendor/autoload.php'); //Composer
 require_once __DIR__ . '/libs/Config/Config.php';
-require_once __DIR__ . '/../admin/api/notifications/notificationTypes.php';
+require_once __DIR__ . '/../api/notifications/notificationTypes.php';
 
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;

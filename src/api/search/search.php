@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../apiHead.php';
-require_once __DIR__ . '/../../../common/libs/Search/Search.php';
+require_once __DIR__ . '/../../common/libs/Search/Search.php';
 
 // Get the GET variables
 $term = $_GET['term'] ? $_GET['term'] : "";
