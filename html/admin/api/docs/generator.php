@@ -8,12 +8,8 @@ if ( 'cli' !== php_sapi_name() ) {
 
 require("vendor/autoload.php");
 
-$finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in(__DIR__ . '/../');
+$finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in(__DIR__ . '/../../');
 
-try {
-    $openapi = \OpenApi\Generator::scan($finder, ['logger' => new \Psr\Log\NullLogger()]);
-} catch (Exception $e) {
-
-}
+$openapi = \OpenApi\Generator::scan($finder, ['logger' => new \Psr\Log\NullLogger()]);
 
 echo $openapi->toYaml();

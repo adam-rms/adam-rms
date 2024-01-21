@@ -50,8 +50,8 @@ finish(true, null, $return);
 
 /** @OA\Get(
  *     path="/instances/users.php", 
- *     summary="", 
- *     operationId="", 
+ *     summary="List Users", 
+ *     operationId="Requires Instance permission BUSINESS:USERS:VIEW:LIST", 
  *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 

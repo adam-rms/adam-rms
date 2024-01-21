@@ -20,7 +20,7 @@ if (!$positionsGroups or $positionsGroups < 1) {
  *      response="200",
  *      description="OK",
  *      @OA\MediaType(
- *        mediaType="text/html", 
+ *        mediaType="text/plain", 
  *        @OA\Schema(
  *          type="string",
  *        ),
@@ -30,11 +30,11 @@ if (!$positionsGroups or $positionsGroups < 1) {
  *      response="500",
  *      description="ERROR",
  *      @OA\MediaType(
- *        mediaType="text/html", 
+ *        mediaType="text/plain", 
  *        @OA\Schema(
  *          type="string",
  *        ),
- *       ),
+ *      ),
  *    ),
  *  )
  */

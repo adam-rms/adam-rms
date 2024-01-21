@@ -50,10 +50,10 @@ echo $vCalendar->render();
 /**
  *  @OA\Post(
  *      path="/instances/calendar-export.php",
- *      summary="List Icons",
+ *      summary="Export instance Calendar",
  *      description="Get a list of the first 20 available icons",
- *      operationId="getIcons",
- *      tags={"icons"},
+ *      operationId="instanceCalendar",
+ *      tags={"instanceCalendarSettings"},
  *      @OA\Response(
  *          response="200",
  *          description="Success",
