@@ -7,6 +7,26 @@ use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 use Aws\CloudFront\CloudFrontClient;
 use Aws\Exception\AwsException;
+use Twig\Extra\String\StringExtension;
+
+//TWIG
+$TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../admin/']);
+if ($CONFIG['DEV']) {
+    $TWIG = new \Twig\Environment($TWIGLOADER, array(
+        'debug' => true,
+        'auto_reload' => true,
+        'charset' => 'utf-8'
+    ));
+    $TWIG->addExtension(new \Twig\Extension\DebugExtension());
+} else {
+    $TWIG = new \Twig\Environment($TWIGLOADER, array(
+        'debug' => false,
+        'auto_reload' => false,
+        'cache' => '/tmp/',
+        'charset' => 'utf-8'
+    ));
+}
+$TWIG->addExtension(new StringExtension());
 
 if (getenv('ERRORS') == "true") {
     ini_set('display_errors', 1);
@@ -28,35 +48,39 @@ if (!$CONFIG['DEV']) {
 }
 
 /* DATBASE CONNECTION */
-$DBLIB = new MysqliDb ([
-                'host' => getenv('DB_HOSTNAME'),
-                'username' => getenv('DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
-                'password' => getenv('DB_PASSWORD'),
-                'db'=> getenv('DB_DATABASE'),
-                'port' => getenv('DB_PORT') ?: 3306,
-                //'prefix' => 'adamrms_',
-                'charset' => 'utf8'
-        ]);
+$DBLIB = new MysqliDb([
+    'host' => getenv('DB_HOSTNAME'),
+    'username' => getenv('DB_USERNAME'), //CREATE INSERT SELECT UPDATE DELETE
+    'password' => getenv('DB_PASSWORD'),
+    'db' => getenv('DB_DATABASE'),
+    'port' => getenv('DB_PORT') ?: 3306,
+    //'prefix' => 'adamrms_',
+    'charset' => 'utf8'
+]);
 
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
 var_dump(count($CONFIGCLASS->CONFIG_MISSING_VALUES));
 
 /* FUNCTIONS */
-class bCMS {
-    function sanitizeString($var) {
+class bCMS
+{
+    function sanitizeString($var)
+    {
         global $DBLIB;
         //Setup Sanitize String Function
         //$var = strip_tags($var);
-        $var = htmlspecialchars($var,ENT_NOQUOTES);
+        $var = htmlspecialchars($var, ENT_NOQUOTES);
         //$var = stripslashes($var);
         return $var;
     }
-    function sanitizeStringMYSQL($var) {
+    function sanitizeStringMYSQL($var)
+    {
         global $DBLIB;
         return $DBLIB->escape($this->sanitizeString($var));
     }
-    function randomString($length = 10, $stringonly = false) { //Generate a random string
+    function randomString($length = 10, $stringonly = false)
+    { //Generate a random string
         $characters = 'abcdefghkmnopqrstuvwxyzABCDEFGHKMNOPQRSTUVWXYZ';
         if (!$stringonly) $characters .= '0123456789';
         $charactersLength = strlen($characters);
@@ -66,7 +90,8 @@ class bCMS {
         }
         return $randomString;
     }
-    function cleanString($var) {
+    function cleanString($var)
+    {
         //HTML Purification
         //$var = str_replace(array("\r", "\n"), '<br>', $var); //Replace newlines
 
@@ -76,7 +101,8 @@ class bCMS {
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($var); //NOTE THAT THIS REQUIRES THE USE OF PREPARED STATEMENTS AS IT'S NOT ESCAPED
     }
-    function formatSize($bytes) {
+    function formatSize($bytes)
+    {
         if ($bytes >= 1073741824) {
             $bytes = number_format($bytes / 1073741824, 1) . ' GB';
         } elseif ($bytes >= 100000) {
@@ -92,17 +118,19 @@ class bCMS {
         }
         return $bytes;
     }
-    function modifyGet($array) {
+    function modifyGet($array)
+    {
         //Used to setup links that don't affect search terms etc.
-        foreach ($array as $key=>$value) {
+        foreach ($array as $key => $value) {
             $_GET[$key] = $value;
         }
         return $_GET;
     }
-    function getConfig() {
-        
+    function getConfig()
+    {
     }
-    function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null, $targetid = null) { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
+    function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null, $targetid = null)
+    { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
         global $DBLIB;
         $data = [
             "auditLog_actionType" => $actionType,
@@ -118,16 +146,18 @@ class bCMS {
         if ($DBLIB->insert("auditLog", $data)) return true;
         else throw new Exception("Could not audit log - " . $DBLIB->getLastError());
     }
-    function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC', $limit = null) {
+    function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC', $limit = null)
+    {
         global $DBLIB, $CONFIG;
         $DBLIB->where("s3files_meta_type", $typeid);
         if ($subTypeid) $DBLIB->where("s3files_meta_subType", $subTypeid);
-        $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
-        $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
+        $DBLIB->where("(s3files_meta_deleteOn >= '" . date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
+        $DBLIB->where("s3files_meta_physicallyStored", 1); //If we've lost the file or deleted it we can't actually let them download it
         $DBLIB->orderBy($sort, $sortOrder);
-        return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name","s3files_meta_size", "s3files_meta_uploaded","s3files_shareKey"]);
+        return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name", "s3files_meta_size", "s3files_meta_uploaded", "s3files_shareKey"]);
     }
-    function s3DataUri($fileid) {
+    function s3DataUri($fileid)
+    {
         /**
          * Returns a data URI for the file, upto a limit of 10MB. 
          * The PDF library used to generate PDFs from HTML requires a data URI for images, so this is used to generate them. It can accept file URLs but misses the cors preflight when sending the request so fails CORS in the browser.
@@ -144,20 +174,21 @@ class bCMS {
         elseif ($file["type"] == "heif") $type = "image/heif";
         else return false; // Only supports images
 
-        return 'data: '.$type.';base64,'.base64_encode($file['data']);
+        return 'data: ' . $type . ';base64,' . base64_encode($file['data']);
     }
-    function s3Passthrough($fileid) {
+    function s3Passthrough($fileid)
+    {
         global $DBLIB;
         $DBLIB->where("s3files_id", intval($fileid));
-        $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
-        $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
+        $DBLIB->where("(s3files_meta_deleteOn >= '" . date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
+        $DBLIB->where("s3files_meta_physicallyStored", 1); //If we've lost the file or deleted it we can't actually let them download it
         $DBLIB->where("s3files_meta_size", 10485760, "<="); //Limit files to 10mb for this function
         $file = $DBLIB->getone("s3files", ["s3files_extension", "s3files_id"]);
         if (!$file) return false;
-        
+
         $url = $this->s3URL($file["s3files_id"], false);
         if (!$url) return false;
-        
+
         $data = file_get_contents($url);
         if (!$data) return false;
 
@@ -167,8 +198,9 @@ class bCMS {
             "url" => $url
         ];
     }
-    function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false) {
-        global $DBLIB, $CONFIG,$AUTH;
+    function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false)
+    {
+        global $DBLIB, $CONFIG, $AUTH;
         /*
          * File interface for Amazon AWS S3.
          *  Parameters
@@ -179,8 +211,8 @@ class bCMS {
         $fileid = $this->sanitizeString($fileid);
         if (strlen($fileid) < 1) return false;
         $DBLIB->where("s3files_id", $fileid);
-        $DBLIB->where("(s3files_meta_deleteOn >= '". date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
-        $DBLIB->where("s3files_meta_physicallyStored",1); //If we've lost the file or deleted it we can't actually let them download it
+        $DBLIB->where("(s3files_meta_deleteOn >= '" . date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
+        $DBLIB->where("s3files_meta_physicallyStored", 1); //If we've lost the file or deleted it we can't actually let them download it
         $file = $DBLIB->getone("s3files");
         if (!$file) return false;
         if ($expire == null or $expire === false) $expire = '+1 minute';
@@ -282,7 +314,8 @@ class bCMS {
             ]);
 
             $ResponseContentDisposition = "?response-content-disposition=" . rawurlencode(
-                ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension']));
+                ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'])
+            );
 
             $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
                 'url' => $file['s3files_cdn_endpoint'] . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
@@ -315,45 +348,48 @@ class bCMS {
             return $presignedUrl;
         }
     }
-    function aTag($id) {
+    function aTag($id)
+    {
         //This is an old function we no longer use - kept to save refactoring
         return $id;
     }
-    function notificationSettings($userid) {
-        global $DBLIB,$NOTIFICATIONTYPES;
+    function notificationSettings($userid)
+    {
+        global $DBLIB, $NOTIFICATIONTYPES;
         $DBLIB->where("users_userid", $userid);
-        $user = $DBLIB->getone("users",["users_email", "users_userid", "users_name1", "users_name2","users_notificationSettings"]);
+        $user = $DBLIB->getone("users", ["users_email", "users_userid", "users_name1", "users_name2", "users_notificationSettings"]);
         if (!$user) return false;
-        $user["users_notificationSettings"] = json_decode($user["users_notificationSettings"],true);
+        $user["users_notificationSettings"] = json_decode($user["users_notificationSettings"], true);
         if (!$user["users_notificationSettings"]) $user["users_notificationSettings"] = [];
         $configReturn = [];
         foreach ($NOTIFICATIONTYPES['TYPES'] as $type) {
             $type['methodsUser'] = [];
             foreach ($type['methods'] as $method) {
                 if ($type['canDisable']) {
-                     foreach($user["users_notificationSettings"] as $individualSetting) {
-                         if ($individualSetting['method'] == $method and $individualSetting['type'] == $type['id']) {
-                             $type['methodsUser'][$method] = ($individualSetting['setting'] == "true" ? true : false);
-                             break;
-                         }
-                     }
-                     if (!isset($type['methodsUser'][$method])) $type['methodsUser'][$method] = $type['default'];
+                    foreach ($user["users_notificationSettings"] as $individualSetting) {
+                        if ($individualSetting['method'] == $method and $individualSetting['type'] == $type['id']) {
+                            $type['methodsUser'][$method] = ($individualSetting['setting'] == "true" ? true : false);
+                            break;
+                        }
+                    }
+                    if (!isset($type['methodsUser'][$method])) $type['methodsUser'][$method] = $type['default'];
                 } else {
                     $type['methodsUser'][$method] = true;
                 }
             }
             $configReturn[$type['id']] = $type;
         }
-        return ["userData" => $user,"settings"=>$configReturn];
+        return ["userData" => $user, "settings" => $configReturn];
     }
-    function usersWatchingGroup($groupid) {
+    function usersWatchingGroup($groupid)
+    {
         global $DBLIB;
         if (!is_numeric($groupid)) return false;
-        $DBLIB->where("FIND_IN_SET(" . $groupid. ", users_assetGroupsWatching)");
-        $users = $DBLIB->get("users",null,["users_userid"]);
+        $DBLIB->where("FIND_IN_SET(" . $groupid . ", users_assetGroupsWatching)");
+        $users = $DBLIB->get("users", null, ["users_userid"]);
         $return = [];
         foreach ($users as $user) {
-            array_push($return,$user['users_userid']);
+            array_push($return, $user['users_userid']);
         }
         return $return;
     }
@@ -366,15 +402,16 @@ $GLOBALS['bCMS'] = new bCMS;
 
 
 
-function generateNewTag() {
+function generateNewTag()
+{
     global $DBLIB;
     //Get highest current tag
     $DBLIB->orderBy("assets_tag", "DESC");
-    $DBLIB->where ("assets_tag", 'A-%', 'like');
+    $DBLIB->where("assets_tag", 'A-%', 'like');
     $tag = $DBLIB->getone("assets", ["assets_tag"]);
     if ($tag) {
-        if (is_numeric(str_replace("A-","",$tag["assets_tag"]))) {
-            $value = intval(str_replace("A-","",$tag["assets_tag"]))+1;
+        if (is_numeric(str_replace("A-", "", $tag["assets_tag"]))) {
+            $value = intval(str_replace("A-", "", $tag["assets_tag"])) + 1;
             if ($value <= 9999) $value = sprintf('%04d', $value);
             return "A-" . $value;
         } else return "A-0001";
@@ -382,11 +419,11 @@ function generateNewTag() {
 }
 
 $GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
-    1 => ["class" => "danger","id" => 1,"text" => "Emergency"],
+    1 => ["class" => "danger", "id" => 1, "text" => "Emergency"],
     2 => ["class" => "danger", "id" => 2, "text" => "Business Critical"],
     3 => ["class" => "danger", "id" => 3, "text" => "Urgent"],
     4 => ["class" => "danger", "id" => 4, "text" => "Routine - High"],
-    5 => ["class" => "warning", "id" => 5, "text" => "Routine - Medium", "default"=>true],
+    5 => ["class" => "warning", "id" => 5, "text" => "Routine - Medium", "default" => true],
     6 => ["class" => "warning", "id" => 6, "text" => "Routine - Low"],
     7 => ["class" => "warning", "id" => 7, "text" => "Monthly-cycle Maintenance"],
     8 => ["class" => "success", "id" => 8, "text" => "Annual-cycle Maintenance"],
@@ -394,16 +431,17 @@ $GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
     10 => ["class" => "info", "id" => 10, "text" => "Log only"]
 ];
 
-function assetFlagsAndBlocks($assetid) {
+function assetFlagsAndBlocks($assetid)
+{
     global $DBLIB;
     $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
     $DBLIB->where("(maintenanceJobs.maintenanceJobs_blockAssets = 1 OR maintenanceJobs.maintenanceJobs_flagAssets = 1)");
-    $DBLIB->where("(FIND_IN_SET(" .$assetid . ", maintenanceJobs.maintenanceJobs_assets) > 0)");
+    $DBLIB->where("(FIND_IN_SET(" . $assetid . ", maintenanceJobs.maintenanceJobs_assets) > 0)");
     $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
     //$DBLIB->join("users AS userCreator", "userCreator.users_userid=maintenanceJobs.maintenanceJobs_user_creator", "LEFT");
     //$DBLIB->join("users AS userAssigned", "userAssigned.users_userid=maintenanceJobs.maintenanceJobs_user_assignedTo", "LEFT");
     $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_priority", "DESC");
-    $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.maintenanceJobs_id", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_title", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_flagAssets", "maintenanceJobs.maintenanceJobs_blockAssets","maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
+    $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.maintenanceJobs_id", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_title", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_flagAssets", "maintenanceJobs.maintenanceJobs_blockAssets", "maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
     $return = ["BLOCK" => [], "FLAG" => [], "COUNT" => ["BLOCK" => 0, "FLAG" => 0]];
     if (!$jobs) return $return;
     foreach ($jobs as $job) {
@@ -418,23 +456,25 @@ function assetFlagsAndBlocks($assetid) {
     }
     return $return;
 }
-function assetLatestScan($assetid) {
+function assetLatestScan($assetid)
+{
     if ($assetid == null) return false;
     global $DBLIB;
-    $DBLIB->orderBy("assetsBarcodesScans.assetsBarcodesScans_timestamp","DESC");
-    $DBLIB->where("assetsBarcodes.assets_id",$assetid);
-    $DBLIB->where("assetsBarcodes.assetsBarcodes_deleted",0);
-    $DBLIB->join("assetsBarcodes","assetsBarcodes.assetsBarcodes_id=assetsBarcodesScans.assetsBarcodes_id");
-    $DBLIB->join("locationsBarcodes","locationsBarcodes.locationsBarcodes_id=assetsBarcodesScans.locationsBarcodes_id","LEFT");
-    $DBLIB->join("assets","assets.assets_id=assetsBarcodesScans.location_assets_id","LEFT");
-    $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
-    $DBLIB->join("locations","locations.locations_id=locationsBarcodes.locations_id","LEFT");
-    $DBLIB->join("users","users.users_userid=assetsBarcodesScans.users_userid");
-    return $DBLIB->getone("assetsBarcodesScans",["assetsBarcodesScans.*","users.users_name1","users.users_name2","locations.locations_name","locations.locations_id","assets.assetTypes_id","assetTypes.assetTypes_name"]);
-
+    $DBLIB->orderBy("assetsBarcodesScans.assetsBarcodesScans_timestamp", "DESC");
+    $DBLIB->where("assetsBarcodes.assets_id", $assetid);
+    $DBLIB->where("assetsBarcodes.assetsBarcodes_deleted", 0);
+    $DBLIB->join("assetsBarcodes", "assetsBarcodes.assetsBarcodes_id=assetsBarcodesScans.assetsBarcodes_id");
+    $DBLIB->join("locationsBarcodes", "locationsBarcodes.locationsBarcodes_id=assetsBarcodesScans.locationsBarcodes_id", "LEFT");
+    $DBLIB->join("assets", "assets.assets_id=assetsBarcodesScans.location_assets_id", "LEFT");
+    $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+    $DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
+    $DBLIB->join("users", "users.users_userid=assetsBarcodesScans.users_userid");
+    return $DBLIB->getone("assetsBarcodesScans", ["assetsBarcodesScans.*", "users.users_name1", "users.users_name2", "locations.locations_name", "locations.locations_id", "assets.assetTypes_id", "assetTypes.assetTypes_name"]);
 }
-class projectFinance {
-    public function durationMaths($projects_dates_deliver_start,$projects_dates_deliver_end) {
+class projectFinance
+{
+    public function durationMaths($projects_dates_deliver_start, $projects_dates_deliver_end)
+    {
         //Calculate the default pricing for all assets
         $return = ["string" => "Calculated based on:", "days" => 0, "weeks" => 0];
         $start = strtotime(date("d F Y 00:00:00", strtotime($projects_dates_deliver_start)));
@@ -448,7 +488,7 @@ class projectFinance {
             $return['string'] .= "\nBegins on Sunday so first weekend charged as one week";
             $start = $start + 86400;
         }
-        if (($end-$start) > 259200) { //If it's just one weekend it doesn't count as two weeks
+        if (($end - $start) > 259200) { //If it's just one weekend it doesn't count as two weeks
             if (date("N", $end) == 6) {
                 $return['weeks'] += 1;
                 $return['string'] .= "\nEnds on Saturday so last weekend charged as one week";
@@ -480,7 +520,7 @@ class projectFinance {
             }
             if ($remaining > 0) {
                 $return['days'] += ceil($remaining);
-                if ($remaining == 1){
+                if ($remaining == 1) {
                     $return['string'] .= "\nAdd 1 day period";
                 } else {
                     $return['string'] .= "\nAdd " . ceil($remaining) . " day periods";
@@ -490,28 +530,33 @@ class projectFinance {
         return $return;
     }
 }
+
 use Money\Money;
 use Money\Currency;
-class projectFinanceCacher {
+
+class projectFinanceCacher
+{
     //This class assumes that the projectid has been validated as within the instance
-    private $data,$projectid;
+    private $data, $projectid;
     private $changesMade = false;
-    public function __construct($projectid) {
+    public function __construct($projectid)
+    {
         global $AUTH;
         //Reset the data
         $this->projectid = $projectid;
         $this->data = [
-            "projectsFinanceCache_equipmentSubTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
-            "projectsFinanceCache_equiptmentDiscounts" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
-            "projectsFinanceCache_salesTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
-            "projectsFinanceCache_staffTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
-            "projectsFinanceCache_externalHiresTotal" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
-            "projectsFinanceCache_paymentsReceived" =>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
-            "projectsFinanceCache_value"=>new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
-            "projectsFinanceCache_mass"=>0.0
+            "projectsFinanceCache_equipmentSubTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_equiptmentDiscounts" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_salesTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_staffTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_externalHiresTotal" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_paymentsReceived" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_value" => new Money(null, new Currency($AUTH->data['instance']['instances_config_currency'])),
+            "projectsFinanceCache_mass" => 0.0
         ];
     }
-    public function save() {
+    public function save()
+    {
         //Process the changes at the end of the script
         global $DBLIB;
         if ($this->changesMade) {
@@ -523,16 +568,17 @@ class projectFinanceCacher {
             }
             $dataToUpload['projectsFinanceCache_timestampUpdated'] = date("Y-m-d H:i:s");
             $dataToUpload['projectsFinanceCache_equiptmentTotal'] = $DBLIB->inc($this->data["projectsFinanceCache_equipmentSubTotal"]->subtract($this->data['projectsFinanceCache_equiptmentDiscounts'])->getAmount());
-            $dataToUpload['projectsFinanceCache_grandTotal'] = $DBLIB->inc((($this->data["projectsFinanceCache_equipmentSubTotal"]->subtract($this->data['projectsFinanceCache_equiptmentDiscounts']))->add($this->data['projectsFinanceCache_salesTotal'],$this->data['projectsFinanceCache_staffTotal'],$this->data["projectsFinanceCache_externalHiresTotal"])->subtract($this->data['projectsFinanceCache_paymentsReceived']))->getAmount());
+            $dataToUpload['projectsFinanceCache_grandTotal'] = $DBLIB->inc((($this->data["projectsFinanceCache_equipmentSubTotal"]->subtract($this->data['projectsFinanceCache_equiptmentDiscounts']))->add($this->data['projectsFinanceCache_salesTotal'], $this->data['projectsFinanceCache_staffTotal'], $this->data["projectsFinanceCache_externalHiresTotal"])->subtract($this->data['projectsFinanceCache_paymentsReceived']))->getAmount());
             $DBLIB->where("projects_id", $this->projectid);
             $DBLIB->orderBy("projectsFinanceCache_timestamp", "DESC");
             return $DBLIB->update("projectsFinanceCache", $dataToUpload, 1); //Update the most recent cache datapoint
         } else return true;
     }
-    public function adjust($key,$value,$subtract = false) {
+    public function adjust($key, $value, $subtract = false)
+    {
         if ($key == 'projectsFinanceCache_mass' and ($value !== 0 or $value !== null)) {
             $this->changesMade = true;
-            if ($subtract) $value = -1*$value;
+            if ($subtract) $value = -1 * $value;
             $this->data[$key] += $value;
         } else {
             $this->changesMade = true;
@@ -544,7 +590,8 @@ class projectFinanceCacher {
             }
         }
     }
-    public function adjustPayment($paymentType,$value,$subtract = false) {
+    public function adjustPayment($paymentType, $value, $subtract = false)
+    {
         switch ($paymentType) {
             case 1:
                 $key = 'projectsFinanceCache_paymentsReceived';
@@ -561,7 +608,7 @@ class projectFinanceCacher {
             default:
                 return false;
         }
-        return $this->adjust($key,$value,$subtract);
+        return $this->adjust($key, $value, $subtract);
     }
 }
 
@@ -569,5 +616,4 @@ class projectFinanceCacher {
 $PAGEDATA = array('CONFIG' => $CONFIG);
 $PAGEDATA['MAINTENANCEJOBPRIORITIES'] = $GLOBALS['MAINTENANCEJOBPRIORITIES'];
 
-
-require_once __DIR__ . '/libs/twig.php';
+require_once __DIR__ . '/libs/twigExtensions.php';

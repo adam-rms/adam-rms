@@ -4,25 +4,7 @@ use Money\Money;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\IntlMoneyFormatter;
 use Money\Formatter\DecimalMoneyFormatter;
-use Twig\Extra\String\StringExtension;
-//TWIG
-$TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../../admin/',__DIR__ . '/../templates/']);
-if ($CONFIG['DEV']) {
-    $TWIG = new \Twig\Environment($TWIGLOADER, array(
-        'debug' => true,
-        'auto_reload' => true,
-        'charset' => 'utf-8'
-    ));
-    $TWIG->addExtension(new \Twig\Extension\DebugExtension());
-} else {
-    $TWIG = new \Twig\Environment($TWIGLOADER, array(
-        'debug' => false,
-        'auto_reload' => false,
-        'cache' =>'/tmp/',
-        'charset' => 'utf-8'
-    ));
-}
-$TWIG->addExtension(new StringExtension());
+
 $TWIG->addFilter(new \Twig\TwigFilter('timeago', function ($datetime) {
     $time = time() - strtotime($datetime);
     $units = array (
