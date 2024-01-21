@@ -25,5 +25,5 @@ $DBLIB->insert("analyticsEvents", [
     "instances_id" => $AUTH->data['instance'] ?  $AUTH->data['instance']['instances_id'] : null,
     "analyticsEvents_path" => strtok($_SERVER["REQUEST_URI"], '?'),
     "analyticsEvents_action" => "API-CALL",
-    "analyticsEvents_payload" => json_encode($_POST),
+    "analyticsEvents_payload" =>  strlen(json_encode($_POST)) > 65535 ? null : json_encode($_POST),
 ]);
