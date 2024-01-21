@@ -19,3 +19,73 @@ foreach ($_POST['users'] as $user) {
    notify(2,$user, $AUTH->data['instance']['instances_id'], $AUTH->data['users_name1'] . " " . $AUTH->data['users_name2'] . " added you to " . $AUTH->data['instance']['instances_name'], false, "/api/instances/addUser-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "rolename"=>$bCMS->sanitizeString($_POST['rolename'])]);
 }
 finish(true);
+
+/** @OA\Post(
+ *     path="/instances/addUser.php", 
+ *     summary="Add User to Instance", 
+ *     description="Add a user to an instance  
+Requires Instance Permission BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL
+", 
+ *     operationId="addUserToInstance", 
+ *     @OA\Tag(name="instances"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A null Array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="rolegroup",
+ *         in="query",
+ *         description="The instance position id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="rolename",
+ *         in="query",
+ *         description="The role name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="users",
+ *         in="query",
+ *         description="The user ids",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ * )
+ */

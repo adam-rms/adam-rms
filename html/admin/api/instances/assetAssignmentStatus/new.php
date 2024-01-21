@@ -11,3 +11,65 @@ $assignmentsStatus = $DBLIB->insert("assetsAssignmentsStatus", [
 
 if (!$assignmentsStatus) finish(false, ["code" => "ADD-STATUS-FAIL", "message"=> "Could not create new assignment status"]);
 finish(true);
+
+/** @OA\Post(
+ *     path="/instances/assetAssignmentStatus/new.php", 
+ *     summary="Create Asset Assignment Status", 
+ *     description="Create an asset assignment status  
+Requires Instance Permission BUSINESS:BUSINESS_SETTINGS:EDIT
+", 
+ *     operationId="createAssetAssignmentStatus", 
+ *     @OA\Tag(name="assetAssignmentStatus"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A null Array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="statusName",
+ *         in="query",
+ *         description="The status name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="statusOrder",
+ *         in="query",
+ *         description="The status order",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ * )
+ */
