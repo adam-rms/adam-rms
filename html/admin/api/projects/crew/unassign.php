@@ -19,3 +19,41 @@ else {
     if ($DBLIB->update("crewAssignments", ["crewAssignments_deleted" => 1])) finish(true);
     else finish(false);
 }
+
+/** @OA\Post(
+ *     path="/projects/crew/unassign.php", 
+ *     summary="Unassign Crew", 
+ *     description="Unassign crew from a project  
+Requires Instance Permission PROJECTS:PROJECT_CREW:EDIT
+", 
+ *     operationId="unassignCrew", 
+ *     @OA\Tag(name="crew"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="crewAssignments_id",
+ *         in="query",
+ *         description="Crew Assignment ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

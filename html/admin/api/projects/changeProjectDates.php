@@ -11,3 +11,57 @@ if (!$project) finish(false);
 
 $bCMS->auditLog("CHANGE-DATE", "projects", "Set the start date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_use_start'])) . "\nSet the end date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_use_end'])), $AUTH->data['users_userid'],null, $_POST['projects_id']);
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/changeProjectDates.php", 
+ *     summary="Change Project Dates", 
+ *     description="Change the start and end dates of a project  
+Requires Instance Permission PROJECTS:EDIT:DATES
+", 
+ *     operationId="changeProjectDates", 
+ *     @OA\Tag(name="projects"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_dates_use_start",
+ *         in="query",
+ *         description="Start Date/Time",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_dates_use_end",
+ *         in="query",
+ *         description="End Date/Time",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

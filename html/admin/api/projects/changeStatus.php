@@ -75,3 +75,49 @@ foreach ($subProjects as $key => $value) {
 }
 
 finish(true, null, ["changed" => true]);
+
+/** @OA\Post(
+ *     path="/projects/changeStatus.php", 
+ *     summary="Change Status", 
+ *     description="Change the status of a project  
+Requires Instance Permission PROJECTS:EDIT:STATUS
+", 
+ *     operationId="changeStatus", 
+ *     @OA\Tag(name="projects"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_status",
+ *         in="query",
+ *         description="Project Status",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

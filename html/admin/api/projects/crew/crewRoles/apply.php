@@ -59,3 +59,47 @@ if ($role['projectsVacantRoles_firstComeFirstServed']) {
 
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/crew/crewRoles/apply.php", 
+ *     summary="Apply for Vacant Role", 
+ *     description="Apply for a vacant role  
+Requires Instance Permission PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES
+", 
+ *     operationId="applyForVacantRole", 
+ *     @OA\Tag(name="recruitment"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="Form Data",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="projectsVacantRoles_id", 
+ *                 type="number", 
+ *                 description="undefined",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */

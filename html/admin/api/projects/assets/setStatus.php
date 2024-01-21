@@ -19,3 +19,61 @@ $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" 
 
 if (!$assignment) finish(false);
 else finish(true);
+
+/** @OA\Post(
+ *     path="/projects/assets/setStatus.php", 
+ *     summary="Set Asset Assignment Status", 
+ *     description="Set the status for an asset assignment  
+Requires Instance Permission PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS
+", 
+ *     operationId="setAssetAssignmentStatus", 
+ *     @OA\Tag(name="project_assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments_status",
+ *         in="query",
+ *         description="Status",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments_id",
+ *         in="query",
+ *         description="Asset Assignment ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="status_is_order",
+ *         in="query",
+ *         description="Whether the status is an ordering rather than a status",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ * )
+ */

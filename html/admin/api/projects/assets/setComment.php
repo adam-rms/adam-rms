@@ -14,3 +14,49 @@ foreach ($_POST['assetsAssignments'] as $assignment) {
     }
 }
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/assets/setComment.php", 
+ *     summary="Set Asset Assignment Comment", 
+ *     description="Set the comment for an asset assignment  
+Requires Instance Permission PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT
+", 
+ *     operationId="setAssetAssignmentComment", 
+ *     @OA\Tag(name="project_assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments",
+ *         in="query",
+ *         description="Asset Assignment IDs",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments_comment",
+ *         in="query",
+ *         description="Comment",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

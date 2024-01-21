@@ -37,3 +37,41 @@ foreach ($applications as $application) {
 }
 
 finish(true, null, $formattedApplications);
+
+/** @OA\Post(
+ *     path="/projects/crew/crewRoles/applicationList.php", 
+ *     summary="Get Vacant Role Application List", 
+ *     description="Get the list of applications for a vacant role  
+Requires Instance Permission PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT
+", 
+ *     operationId="getVacantRoleApplicationList", 
+ *     @OA\Tag(name="recruitment"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projectsVacantRoles_id",
+ *         in="query",
+ *         description="Vacant Role ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

@@ -18,3 +18,49 @@ if (!$project) finish(false);
 
 $bCMS->auditLog("CHANGE-TYPE", "projects", "Set the project type to ". $type['projectsTypes_name'], $AUTH->data['users_userid'],null, $_POST['projects_id']);
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/changeProjectType.php", 
+ *     summary="Change Project Type", 
+ *     description="Change the project type of a project  
+Requires Instance Permission PROJECTS:EDIT:PROJECT_TYPE
+", 
+ *     operationId="changeProjectType", 
+ *     @OA\Tag(name="projects"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projectsTypes_id",
+ *         in="query",
+ *         description="Project Type id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

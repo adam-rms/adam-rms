@@ -76,3 +76,57 @@ foreach ($assignmentsRemove["assignments"] as $assignment) {
 }
 if ($projectFinanceCacher->save()) finish(true);
 else finish(false,["message"=>"Finance Cacher Save failed"]);
+
+/** @OA\Post(
+ *     path="/projects/assets/unassign.php", 
+ *     summary="Unassign Asset", 
+ *     description="Unassign an asset from a project  
+Requires Instance Permission PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN
+", 
+ *     operationId="unassignAsset", 
+ *     @OA\Tag(name="project_assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments",
+ *         in="query",
+ *         description="Asset Assignment IDs",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assets_id",
+ *         in="query",
+ *         description="Asset ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

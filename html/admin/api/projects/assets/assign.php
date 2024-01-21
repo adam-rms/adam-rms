@@ -123,3 +123,57 @@ foreach ($assetsToProcess as $asset) {
 }
 if ($projectFinanceCacher->save()) finish(true, null, ["failed" => $assetsFailed]);
 else finish(false,["message"=>"Finance Cacher Save failed"]);
+
+/** @OA\Post(
+ *     path="/projects/assets/assign.php", 
+ *     summary="Assign Asset to Project", 
+ *     description="Assign an asset to a project  
+Requires Instance Permission PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN
+", 
+ *     operationId="assignAssetToProject", 
+ *     @OA\Tag(name="project_assets"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assetGroups_id",
+ *         in="query",
+ *         description="Asset Group ID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assets_id",
+ *         in="query",
+ *         description="Asset ID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

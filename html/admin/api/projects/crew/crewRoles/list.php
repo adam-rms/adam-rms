@@ -32,3 +32,46 @@ foreach($roles as $role) {
 }
 
 finish(true, null, $formattedRole);
+
+/** @OA\Post(
+ *     path="/projects/crew/crewRoles/list.php", 
+ *     summary="Get Vacant Role List", 
+ *     description="Get the list of vacant roles for a project  
+Requires Instance Permission PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES
+", 
+ *     operationId="getVacantRoleList", 
+ *     @OA\Tag(name="recruitment"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="List of vacant roles",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

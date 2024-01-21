@@ -65,3 +65,65 @@ foreach ($_POST['users'] as $user) {
     }
 }
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/crew/assign.php", 
+ *     summary="Assign Crew", 
+ *     description="Assign crew to a project  
+Requires Instance Permission PROJECTS:PROJECT_CREW:CREATE
+", 
+ *     operationId="assignCrew", 
+ *     @OA\Tag(name="crew"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="Form Data",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="projects_id", 
+ *                 type="number", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="crewAssignments_comment", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="crewAssignments_role", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="users",
+ *         in="query",
+ *         description="Users",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ * )
+ */

@@ -20,3 +20,41 @@ $DBLIB->update("projectsVacantRolesApplications",["projectsVacantRolesApplicatio
 notify(41,$application['users_userid'], $AUTH->data['instance']['instances_id'], "Application unsuccessful for " . $application['projects_name'], "Unfortunately your application for the role of " . $application['projectsVacantRoles_name'] . " on " . $application['projects_name'] . " wasn't successful.<br/><br/>" . $bCMS->sanitizeString($_POST['message']) . "<br/><br/>If you have any queries please contact " . $AUTH->data['users_name1'] . " " .  $AUTH->data['users_name2'] . " (" . $AUTH->data['users_email'] . ")");
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/crew/crewRoles/reject.php", 
+ *     summary="Reject Vacant Role Application", 
+ *     description="Reject a vacant role application  
+Requires Instance Permission PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES
+", 
+ *     operationId="rejectVacantRoleApplication", 
+ *     @OA\Tag(name="recruitment"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projectsVacantRolesApplications_id",
+ *         in="query",
+ *         description="Vacant Role Application ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

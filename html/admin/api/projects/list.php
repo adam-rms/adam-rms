@@ -51,3 +51,33 @@ foreach ($projects as $project) {
     ];
 }
 finish(true, null, $return);
+
+/** @OA\Get(
+ *     path="/projects/list.php", 
+ *     summary="List", 
+ *     description="Get a list of projects  
+Requires Instance Permission PROJECTS:VIEW
+", 
+ *     operationId="list", 
+ *     @OA\Tag(name="projects"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     )
+ */

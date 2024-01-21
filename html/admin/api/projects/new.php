@@ -22,3 +22,65 @@ if (!$project) finish(false, ["code" => "CREATE-PROJECT-FAIL", "message"=> "Coul
 $bCMS->auditLog("INSERT", "projects",null, $AUTH->data['users_userid'],null, $project);
 $bCMS->auditLog("UPDATE-NAME", "projects", "Set the name to ". $_POST['projects_name'], $AUTH->data['users_userid'],null, $project);
 finish(true, null, ["projects_id" => $project]);
+
+/** @OA\Post(
+ *     path="/projects/new.php", 
+ *     summary="New", 
+ *     description="Create a new project  
+Requires Instance Permission PROJECTS:CREATE
+", 
+ *     operationId="new", 
+ *     @OA\Tag(name="projects"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_name",
+ *         in="query",
+ *         description="Project Name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_manager",
+ *         in="query",
+ *         description="Project Manager User ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projectsType_id",
+ *         in="query",
+ *         description="Project Type ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_parent_project_id",
+ *         in="query",
+ *         description="Parent Project ID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

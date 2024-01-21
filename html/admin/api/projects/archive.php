@@ -12,3 +12,41 @@ if (!$project) finish(false);
 $bCMS->auditLog("ARCHIVE", "projects", "Moved the project and its subprojects to archive", $AUTH->data['users_userid'],null, $_POST['projects_id']);
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/archive.php", 
+ *     summary="Archive Project", 
+ *     description="Archive a project  
+Requires Instance Permission PROJECTS:ARCHIVE
+", 
+ *     operationId="archiveProject", 
+ *     @OA\Tag(name="projects"), 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */
