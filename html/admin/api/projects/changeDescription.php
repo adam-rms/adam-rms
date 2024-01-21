@@ -19,7 +19,7 @@ finish(true);
 Requires Instance Permission PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS
 ", 
  *     operationId="changeDescription", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

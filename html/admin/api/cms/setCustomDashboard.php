@@ -19,7 +19,7 @@ finish(true);
  *     description="Set a custom dashboard  
 Requires Instance Permission CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS", 
  *     operationId="setCustomDashboard", 
- *     @OA\Tag(name="cms"), 
+ *     tags={"cms"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

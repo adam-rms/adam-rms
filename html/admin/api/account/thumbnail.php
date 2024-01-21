@@ -16,7 +16,7 @@ else finish(false);
  *     summary="Thumbnail", 
  *     description="Set the thumbnail for a user", 
  *     operationId="setThumbnail", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="OK",

@@ -30,7 +30,7 @@ finish(true);
 Requires Instance Permission TRAINING:EDIT
 ", 
  *     operationId="newStep", 
- *     @OA\Tag(name="module_steps"), 
+ *     tags={"module_steps"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

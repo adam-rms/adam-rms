@@ -23,7 +23,7 @@ else finish(true, null, $assets);
  *     description="Gets data for an asset type
 ", 
  *     operationId="getAssetTypeData", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

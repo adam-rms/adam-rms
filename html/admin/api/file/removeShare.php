@@ -19,7 +19,7 @@ finish(true);
 Requires Instance Permission FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS
 ", 
  *     operationId="removeFileShare", 
- *     @OA\Tag(name="file_uploads"), 
+ *     tags={"file_uploads"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

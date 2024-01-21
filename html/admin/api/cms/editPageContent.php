@@ -41,7 +41,7 @@ else finish(false);
  *     description="Edit a page content  
 Requires Instance Permission CMS:CMS_PAGES:EDIT", 
  *     operationId="editPageContent", 
- *     @OA\Tag(name="cms"), 
+ *     tags={"cms"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

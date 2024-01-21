@@ -16,7 +16,7 @@ else finish(false);
  *      summary="Change Password", 
  *      description="Change the password of the current user", 
  *      operationId="changePassword", 
- *      @OA\Tag(name="account"), 
+ *      tags={"account"}, 
  *      @OA\Response(
  *          response="200", 
  *          description="OK or Error",

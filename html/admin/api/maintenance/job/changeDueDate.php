@@ -19,7 +19,7 @@ finish(true);
 Requires Instance Permission MAINTENANCE_JOBS:EDIT:JOB_DUE_DATE
 ", 
  *     operationId="changeDueDate", 
- *     @OA\Tag(name="maintenanceJobs"), 
+ *     tags={"maintenanceJobs"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

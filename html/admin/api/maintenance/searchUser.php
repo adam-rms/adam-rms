@@ -30,7 +30,7 @@ else {
  *     summary="Search User", 
  *     description="Search for a user to tag to a maintenance job", 
  *     operationId="searchUser", 
- *     @OA\Tag(name="maintenance"), 
+ *     tags={"maintenance"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -29,7 +29,7 @@ else finish(true, null, ["id" => $id, "resize" => false,"url" => $CONFIG['ROOTUR
  *     description="Upload a file to S3
 ", 
  *     operationId="uploadSuccess", 
- *     @OA\Tag(name="s3files"), 
+ *     tags={"s3files"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

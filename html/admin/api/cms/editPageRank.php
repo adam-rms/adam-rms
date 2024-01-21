@@ -19,7 +19,7 @@ finish(true);
  *     description="Edit a page rank  
 Requires Instance Permission CMS:CMS_PAGES:EDIT", 
  *     operationId="editPageRank", 
- *     @OA\Tag(name="cms"), 
+ *     tags={"cms"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

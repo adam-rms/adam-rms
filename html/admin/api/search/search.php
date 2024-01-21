@@ -30,7 +30,7 @@ catch (Exception $e) {
  *     description="Search for a term across the whole RMS
 ", 
  *     operationId="search", 
- *     @OA\Tag(name="search"), 
+ *     tags={"search"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

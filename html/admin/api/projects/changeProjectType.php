@@ -26,7 +26,7 @@ finish(true);
 Requires Instance Permission PROJECTS:EDIT:PROJECT_TYPE
 ", 
  *     operationId="changeProjectType", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

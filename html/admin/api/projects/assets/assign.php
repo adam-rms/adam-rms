@@ -131,7 +131,7 @@ else finish(false,["message"=>"Finance Cacher Save failed"]);
 Requires Instance Permission PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN
 ", 
  *     operationId="assignAssetToProject", 
- *     @OA\Tag(name="project_assets"), 
+ *     tags={"project_assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

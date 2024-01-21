@@ -52,7 +52,7 @@ finish(true, null, $sortedAssets);
 Requires Instance Permission PROJECTS:VIEW
 ", 
  *     operationId="getAssetAssignmentStatusList", 
- *     @OA\Tag(name="project_assets"), 
+ *     tags={"project_assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

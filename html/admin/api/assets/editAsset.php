@@ -93,7 +93,7 @@ else {
 Requires Instance Permission ASSETS:EDIT
 ", 
  *     operationId="editAsset", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

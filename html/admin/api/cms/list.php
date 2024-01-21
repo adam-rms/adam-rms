@@ -30,7 +30,7 @@ finish(true,null,$NAVIGATIONCMSPages);
  *     summary="List CMS Pages", 
  *     description="List all pages", 
  *     operationId="listPages", 
- *     @OA\Tag(name="cms"), 
+ *     tags={"cms"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

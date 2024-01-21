@@ -22,7 +22,7 @@ if (isset($_POST['formInput'])) {
  *     summary="Forgot Password", 
  *     description="Send a password reset email to the user", 
  *     operationId="forgotPassword", 
- *     @OA\Tag(name="authentication"), 
+ *     tags={"authentication"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

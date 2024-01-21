@@ -37,7 +37,7 @@
  *     summary="Verify Email", 
  *     description="Verify an email address", 
  *     operationId="verifyEmail", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Error",

@@ -62,7 +62,7 @@ else {
 Requires Instance Permission ASSETS:DELETE
 ", 
  *     operationId="deleteAsset", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

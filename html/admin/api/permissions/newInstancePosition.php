@@ -17,7 +17,7 @@ else finish(false, ["code" => "CREATE-INSTANCE-POSITION-FAIL", "message"=> "Coul
 Requires Instance Permission BUSINESS:ROLES_AND_PERMISSIONS:CREATE
 ", 
  *     operationId="newInstancePermission", 
- *     @OA\Tag(name="permissions"), 
+ *     tags={"permissions"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

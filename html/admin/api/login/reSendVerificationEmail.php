@@ -14,7 +14,7 @@ if (isset($_POST['userid'])) {
  *     summary="Resend Verification Email", 
  *     description="Resend the verification email to the user", 
  *     operationId="resendVerificationEmail", 
- *     @OA\Tag(name="authentication"), 
+ *     tags={"authentication"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

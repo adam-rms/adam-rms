@@ -52,7 +52,7 @@ if(isset($_FILES['file'])) {
  *     description="Upload a file to S3
 ", 
  *     operationId="appUploader", 
- *     @OA\Tag(name="s3files"), 
+ *     tags={"s3files"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

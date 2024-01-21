@@ -38,7 +38,7 @@ finish(true);
 Requires Instance Permission TRAINING:CREATE
 ", 
  *     operationId="newModule", 
- *     @OA\Tag(name="modules"), 
+ *     tags={"modules"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

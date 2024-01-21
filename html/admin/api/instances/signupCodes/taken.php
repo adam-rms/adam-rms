@@ -15,7 +15,7 @@ else finish(true,null,["taken"=>true]);
 Requires Instance Permission BUSINESS:USER_SIGNUP_CODES:VIEW
 ", 
  *     operationId="checkSignupCodeTaken", 
- *     @OA\Tag(name="signupCodes"), 
+ *     tags={"signupCodes"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

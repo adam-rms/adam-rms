@@ -19,7 +19,7 @@ finish(true);
 Requires Instance Permission PROJECTS:DELETE
 ", 
  *     operationId="delete", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -30,7 +30,7 @@ else finish(true, null, $users);
 Requires Instance Permission BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL
 ", 
  *     operationId="searchUser", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

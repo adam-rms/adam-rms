@@ -20,7 +20,7 @@ finish(true);
  *     summary="Create Asset Category", 
  *     description="Create a category", 
  *     operationId="createCategory", 
- *     @OA\Tag(name="categories"), 
+ *     tags={"categories"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

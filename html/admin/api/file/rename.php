@@ -18,7 +18,7 @@ finish(true);
 Requires Instance Permission ASSETS:FILE_ATTACHMENTS:EDIT
 ", 
  *     operationId="renameFile", 
- *     @OA\Tag(name="file_uploads"), 
+ *     tags={"file_uploads"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

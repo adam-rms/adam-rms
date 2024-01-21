@@ -19,7 +19,7 @@ else die('2');
  *     summary="Suspend", 
  *     description="Suspend a user", 
  *     operationId="suspend", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="OK",

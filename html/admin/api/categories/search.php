@@ -39,7 +39,7 @@ finish(true, [], $categories);
  *     summary="Search Asset Categories", 
  *     description="Search for categories", 
  *     operationId="searchCategories", 
- *     @OA\Tag(name="categories"), 
+ *     tags={"categories"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

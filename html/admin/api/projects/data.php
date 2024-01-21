@@ -307,7 +307,7 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) finish(true, nu
 Requires Instance Permission PROJECTS:VIEW
 ", 
  *     operationId="data", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -33,7 +33,7 @@ finish(true);
 Requires Instance Permission MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB
 ", 
  *     operationId="untagUser", 
- *     @OA\Tag(name="maintenanceJobs"), 
+ *     tags={"maintenanceJobs"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

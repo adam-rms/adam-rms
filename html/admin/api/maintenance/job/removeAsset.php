@@ -29,7 +29,7 @@ finish(true);
 Requires Instance Permission MAINTENANCE_JOBS:EDIT
 ", 
  *     operationId="removeAsset", 
- *     @OA\Tag(name="maintenanceJobs"), 
+ *     tags={"maintenanceJobs"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -91,7 +91,7 @@ echo $generator->getBarcode($bCMS->sanitizeString($_POST['barcode']), $type, $wi
  *     description="Generate an image of a given barcode value
 ", 
  *     operationId="generateBarcode", 
- *     @OA\Tag(name="barcodes"), 
+ *     tags={"barcodes"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Barcode Image",

@@ -18,7 +18,7 @@ finish(true, null, ["clients_id" => $client]);
  *     description="Create a client  
 Requires Instance Permission CLIENTS:CREATE", 
  *     operationId="createClient", 
- *     @OA\Tag(name="clients"), 
+ *     tags={"clients"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

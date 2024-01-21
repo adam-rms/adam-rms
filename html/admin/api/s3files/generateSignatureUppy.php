@@ -46,7 +46,7 @@ echo json_encode([
  *     description="Generate a signature for uploading a file to S3
 ", 
  *     operationId="generateSignatureUppy", 
- *     @OA\Tag(name="s3files"), 
+ *     tags={"s3files"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -18,7 +18,7 @@ else die('2');
  *     summary="Force Password Change", 
  *     description="Force a user to change their password", 
  *     operationId="forcePasswordChange", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="OK",

@@ -30,7 +30,7 @@ finish(true, null, ["projects_id" => $project]);
 Requires Instance Permission PROJECTS:CREATE
 ", 
  *     operationId="new", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -39,7 +39,7 @@ if (!$progress) {
  *     description="Complete a training step
 ", 
  *     operationId="completeStep", 
- *     @OA\Tag(name="training"), 
+ *     tags={"training"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

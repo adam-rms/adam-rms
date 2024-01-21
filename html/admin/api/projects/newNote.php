@@ -22,7 +22,7 @@ finish(true);
 Requires Instance Permission PROJECTS:PROJECT_NOTES:CREATE:NOTES
 ", 
  *     operationId="newNote", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

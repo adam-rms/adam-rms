@@ -11,7 +11,7 @@ else finish(false);
  *     summary="Theme", 
  *     description="Set the theme for the current user", 
  *     operationId="setTheme", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="OK",

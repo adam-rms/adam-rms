@@ -18,7 +18,7 @@ else finish(true);
 Requires Instance Permission BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS
 ", 
  *     operationId="removeUser", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

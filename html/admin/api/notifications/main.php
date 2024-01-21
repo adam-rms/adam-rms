@@ -42,6 +42,6 @@ function notify($typeID, $userid, $instanceID, $headline, $message = false, $ema
 It returns a function to call rather than a response.
 ", 
  *     operationId="", 
- *     @OA\Tag(name="notifications"), 
+ *     tags={"notifications"}, 
  *     )
  */

@@ -40,7 +40,7 @@ else {
 Requires Instance Permission ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS
 ", 
  *     operationId="assignBarcode", 
- *     @OA\Tag(name="barcodes"), 
+ *     tags={"barcodes"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

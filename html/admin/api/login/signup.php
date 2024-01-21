@@ -27,7 +27,7 @@ if (isset($_POST['name1']) and isset($_POST['password']) and isset($_POST['usern
  *     summary="Signup", 
  *     description="Create a new user account", 
  *     operationId="signup", 
- *     @OA\Tag(name="authentication"), 
+ *     tags={"authentication"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

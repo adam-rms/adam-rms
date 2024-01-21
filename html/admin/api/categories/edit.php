@@ -24,7 +24,7 @@ finish(true);
  *     description="Edit a category
 ", 
  *     operationId="editCategory", 
- *     @OA\Tag(name="categories"), 
+ *     tags={"categories"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

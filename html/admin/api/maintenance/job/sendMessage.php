@@ -51,7 +51,7 @@ finish(true);
 Requires Instance Permission MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB
 ", 
  *     operationId="sendMessage", 
- *     @OA\Tag(name="maintenanceJobs"), 
+ *     tags={"maintenanceJobs"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -23,7 +23,7 @@ else {
  *     description="Get a file
 ", 
  *     operationId="getFile", 
- *     @OA\Tag(name="file_uploads"), 
+ *     tags={"file_uploads"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -45,7 +45,7 @@ else finish(false,["message"=>"Finance Cacher Save failed"]);
 Requires Instance Permission PROJECTS:PROJECT_PAYMENTS:CREATE
 ", 
  *     operationId="newPayment", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

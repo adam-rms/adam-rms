@@ -20,7 +20,7 @@ finish(true);
 Requires Instance Permission PROJECTS:ARCHIVE
 ", 
  *     operationId="archiveProject", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

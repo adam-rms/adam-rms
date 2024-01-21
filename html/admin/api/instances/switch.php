@@ -13,7 +13,7 @@ finish(false, ["code" => "PARAM-ERROR", "message" => "Provide an instance id"], 
  *     description="Switch the active instance for the user
 ", 
  *     operationId="switchInstance", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

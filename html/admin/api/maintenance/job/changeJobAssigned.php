@@ -29,7 +29,7 @@ finish(true);
 Requires Instance Permission MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB
 ", 
  *     operationId="changeJobAssigned", 
- *     @OA\Tag(name="maintenanceJobs"), 
+ *     tags={"maintenanceJobs"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

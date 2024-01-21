@@ -21,7 +21,7 @@ finish(true);
  *     description="Watch a group
 ", 
  *     operationId="watchGroup", 
- *     @OA\Tag(name="groups"), 
+ *     tags={"groups"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

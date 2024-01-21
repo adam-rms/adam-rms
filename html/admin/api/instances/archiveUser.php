@@ -27,7 +27,7 @@ else {
 Requires Instance Permission BUSINESS:USERS:EDIT:ARCHIVE
 ", 
  *     operationId="archiveUserFromInstance", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

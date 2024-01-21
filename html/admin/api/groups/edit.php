@@ -30,7 +30,7 @@ finish(true);
 Requires Instance Permission ASSETS:ASSET_GROUPS:EDIT
 ", 
  *     operationId="editGroup", 
- *     @OA\Tag(name="groups"), 
+ *     tags={"groups"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

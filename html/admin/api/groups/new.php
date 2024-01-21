@@ -27,7 +27,7 @@ finish(true);
 Requires Instance Permission ASSETS:ASSET_GROUPS:CREATE
 ", 
  *     operationId="createGroup", 
- *     @OA\Tag(name="groups"), 
+ *     tags={"groups"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

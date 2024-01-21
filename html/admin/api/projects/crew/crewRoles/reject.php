@@ -28,7 +28,7 @@ finish(true);
 Requires Instance Permission PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES
 ", 
  *     operationId="rejectVacantRoleApplication", 
- *     @OA\Tag(name="recruitment"), 
+ *     tags={"recruitment"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

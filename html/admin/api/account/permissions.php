@@ -41,7 +41,7 @@ if ($_POST['action'] == "DELETE") {
  *     description="Manage user pemissions
 Requires server permission PERMISSIONS:EDIT:USER_POSITION", 
  *     operationId="permissionManagement", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

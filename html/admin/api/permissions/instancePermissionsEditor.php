@@ -32,7 +32,7 @@ else die('2');
 Requires Instance Permission BUSINESS:ROLES_AND_PERMISSIONS:EDIT
 ", 
  *     operationId="instancePermissionEditor", 
- *     @OA\Tag(name="permissions"), 
+ *     tags={"permissions"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

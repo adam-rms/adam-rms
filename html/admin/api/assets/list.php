@@ -80,7 +80,7 @@ finish(true, null, ["assets" => $PAGEDATA['assets'], "pagination" => $PAGEDATA['
  *     summary="List Assets", 
  *     description="Lists assets", 
  *     operationId="listAssets", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

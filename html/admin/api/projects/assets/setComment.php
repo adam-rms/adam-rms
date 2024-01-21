@@ -22,7 +22,7 @@ finish(true);
 Requires Instance Permission PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT
 ", 
  *     operationId="setAssetAssignmentComment", 
- *     @OA\Tag(name="project_assets"), 
+ *     tags={"project_assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

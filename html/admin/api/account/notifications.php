@@ -14,7 +14,7 @@
  *     summary="Notifications", 
  *     description="Set the notification settings for a user", 
  *     operationId="setNotifications", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

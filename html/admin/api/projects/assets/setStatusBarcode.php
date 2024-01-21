@@ -40,7 +40,7 @@ if ($barcode and $barcode['assets_id'] != null) {
 Requires Instance Permission PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS
 ", 
  *     operationId="setAssetAssignmentStatusBarcode", 
- *     @OA\Tag(name="project_assets"), 
+ *     tags={"project_assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -14,7 +14,7 @@
  *     summary="Disconnect OAuth", 
  *     description="Disconnect an OAuth provider", 
  *     operationId="disconnectOAuth", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

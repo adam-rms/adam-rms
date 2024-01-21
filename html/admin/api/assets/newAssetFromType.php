@@ -36,7 +36,7 @@ else finish(true, null, ["assets_id" => $result, "assets_tag" => $array['assets_
 Requires Instance Permission 17 ASSETS:CREATE
 ", 
  *     operationId="createAssetFromType", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

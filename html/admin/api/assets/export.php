@@ -142,7 +142,7 @@ if (isset($_POST['csv'])) {
  *     description="Exports assets
 ", 
  *     operationId="exportAssets", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

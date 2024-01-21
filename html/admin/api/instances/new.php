@@ -144,7 +144,7 @@ finish(true, null, ["instanceid" => $instance]);
 Requires server permission INSTANCES:CREATE
 ", 
  *     operationId="createInstance", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

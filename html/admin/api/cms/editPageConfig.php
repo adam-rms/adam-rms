@@ -49,7 +49,7 @@ if ($array['cmsPages_id'] == "NEW") {
  *     description="Edit a page config  
 Requires Instance Permission CMS:CMS_PAGES:EDIT", 
  *     operationId="editPageConfig", 
- *     @OA\Tag(name="cms"), 
+ *     tags={"cms"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

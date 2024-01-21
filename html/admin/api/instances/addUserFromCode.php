@@ -48,7 +48,7 @@ finish(true);
  *     summary="Join Instance using Signup Code", 
  *     description="Add a user to an instance from a signup code", 
  *     operationId="addUserToInstanceFromCode", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

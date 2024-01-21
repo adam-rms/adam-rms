@@ -36,7 +36,7 @@ finish(true,null,$PAGE);
  *     summary="Get CMS Page", 
  *     description="Get a page", 
  *     operationId="getPage", 
- *     @OA\Tag(name="cms"), 
+ *     tags={"cms"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

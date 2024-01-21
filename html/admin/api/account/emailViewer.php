@@ -48,7 +48,7 @@ if (!$AUTH->serverPermissionCheck("USERS:VIEW:MAILINGS")) die("Sorry you don't h
  *     description="Get the HTML of an email  
 Requires server permission USERS:VIEW:MAILINGS", 
  *     operationId="getEmailViewer", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="OK",

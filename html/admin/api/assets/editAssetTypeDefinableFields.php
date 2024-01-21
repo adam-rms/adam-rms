@@ -40,7 +40,7 @@ else {
 Requires Instance Permission ASSETS:ASSET_TYPES:EDIT
 ", 
  *     operationId="editAssetTypeDefinableFields", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

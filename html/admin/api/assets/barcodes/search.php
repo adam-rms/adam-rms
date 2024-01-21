@@ -65,7 +65,7 @@ finish(true, null, ["asset" => $asset, "assetSuggest" => $assetSuggest, "barcode
  *     description="Search for an Asset using a barcode
 ", 
  *     operationId="barcodeSearch", 
- *     @OA\Tag(name="barcodes"), 
+ *     tags={"barcodes"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -40,7 +40,7 @@ else {
  *     summary="Update User Details", 
  *     description="Update basic user details", 
  *     operationId="updateBasicDetails", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="OK",

@@ -37,7 +37,7 @@ else finish(true, null, $assets);
  *     description="Searches for asset types by name or manufacturer
 ", 
  *     operationId="assetTypeSearch", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

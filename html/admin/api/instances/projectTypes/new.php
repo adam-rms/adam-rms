@@ -22,7 +22,7 @@ finish(true);
 Requires Instance Permission PROJECTS:PROJECT_TYPES:CREATE
 ", 
  *     operationId="createProjectType", 
- *     @OA\Tag(name="projectTypes"), 
+ *     tags={"projectTypes"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

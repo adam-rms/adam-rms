@@ -25,7 +25,7 @@ finish(true);
 Requires Instance Permission PROJECTS:EDIT:CLIENT
 ", 
  *     operationId="changeClient", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

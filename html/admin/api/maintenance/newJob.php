@@ -62,7 +62,7 @@ else {
 Requires Instance Permission ASSETS:ASSET_TYPES:CREATE
 ", 
  *     operationId="newJob", 
- *     @OA\Tag(name="maintenance"), 
+ *     tags={"maintenance"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

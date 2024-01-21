@@ -19,7 +19,7 @@ finish(true);
 Requires Instance Permission PROJECTS:EDIT:INVOICE_NOTES
 ", 
  *     operationId="changeInvoiceNotes", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

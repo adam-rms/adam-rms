@@ -33,7 +33,7 @@ finish(true, null, $assetsReturn);
 Deprecated, use /assets/deepSearch.php instead
 ", 
  *     operationId="simpleAssetSearch", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

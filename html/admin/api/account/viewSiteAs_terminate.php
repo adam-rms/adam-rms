@@ -11,7 +11,7 @@ if ($AUTH->generateToken($AUTH->data['viewSiteAs']['users_userid'], false, "Web"
  *     summary="View Site As Terminate", 
  *     description="Terminate the view site as session", 
  *     operationId="viewSiteAsTerminate", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="308", 
  *         description="Success",

@@ -27,7 +27,7 @@ finish(true);
 Requires Instance Permission BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL
 ", 
  *     operationId="addUserToInstance", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

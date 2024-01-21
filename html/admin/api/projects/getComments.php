@@ -35,7 +35,7 @@ finish(true, null, $auditLog);
 Requires Instance Permission PROJECTS:VIEW
 ", 
  *     operationId="getComments", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

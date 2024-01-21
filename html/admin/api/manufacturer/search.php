@@ -36,7 +36,7 @@ finish(true, null, $manufacturers);
  *     summary="Search Manufacturers", 
  *     description="Search for a manufacturer", 
  *     operationId="searchManufacturers", 
- *     @OA\Tag(name="manufacturers"), 
+ *     tags={"manufacturers"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

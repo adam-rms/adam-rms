@@ -11,6 +11,6 @@ require_once __DIR__ . '/../apiHead.php';
  *     path="/login/loginAjaxHead.php", 
  *     summary="Login Ajax Head", 
  *     operationId="loginAjaxHead", 
- *     @OA\Tag(name="authentication"), 
+ *     tags={"authentication"}, 
  *     )
  */

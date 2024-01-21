@@ -20,7 +20,7 @@ else finish(true);
 Requires instance permission TRAINING:EDIT:CERTIFY_USER
 ", 
  *     operationId="certify", 
- *     @OA\Tag(name="training"), 
+ *     tags={"training"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

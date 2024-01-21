@@ -42,7 +42,7 @@ else finish(false);
  *     description="Rollback a page content  
 Requires Instance Permission CMS:CMS_PAGES:EDIT", 
  *     operationId="rollbackPageContent", 
- *     @OA\Tag(name="cms"), 
+ *     tags={"cms"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

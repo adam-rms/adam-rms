@@ -59,7 +59,7 @@ finish(true, null, $return);
 Requires Instance Permission PROJECTS:VIEW
 ", 
  *     operationId="list", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

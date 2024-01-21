@@ -33,7 +33,7 @@ else {
  *     summary="Search Asset", 
  *     description="Search for an asset to add to a maintenance job", 
  *     operationId="searchAsset", 
- *     @OA\Tag(name="maintenance"), 
+ *     tags={"maintenance"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

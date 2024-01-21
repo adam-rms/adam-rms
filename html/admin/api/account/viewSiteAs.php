@@ -16,7 +16,7 @@ if ($AUTH->generateToken($bCMS->sanitizeString($_POST['userid']), $AUTH->data['u
 Requires server permission USERS:VIEW_SITE_AS
 ", 
  *     operationId="viewSiteAs", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Error",

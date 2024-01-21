@@ -62,7 +62,7 @@ echo $vCalendar->render();
  *     summary="Calendar Export", 
  *     description="Get calendar information for integrating with web calendars", 
  *     operationId="getCalendarExport", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="OK",

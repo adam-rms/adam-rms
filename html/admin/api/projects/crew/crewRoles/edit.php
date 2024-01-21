@@ -71,7 +71,7 @@ if ($array['projectsVacantRoles_id'] == "NEW") {
 Requires Instance Permission PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT
 ", 
  *     operationId="editVacantRole", 
- *     @OA\Tag(name="recruitment"), 
+ *     tags={"recruitment"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

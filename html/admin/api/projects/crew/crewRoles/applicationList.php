@@ -45,7 +45,7 @@ finish(true, null, $formattedApplications);
 Requires Instance Permission PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT
 ", 
  *     operationId="getVacantRoleApplicationList", 
- *     @OA\Tag(name="recruitment"), 
+ *     tags={"recruitment"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

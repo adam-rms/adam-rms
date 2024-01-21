@@ -35,7 +35,7 @@ if (isset($code) and $code['passwordResetCodes_valid'] == '1') {
  *     summary="Password Reset", 
  *     description="Act on a password reset code", 
  *     operationId="passwordReset", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Error",

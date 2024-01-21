@@ -19,7 +19,7 @@ finish(true, null, ["manufacturers_id" => $insert]);
 Requires Instance Permission ASSETS:MANUFACTURERS:CREATE
 ", 
  *     operationId="newManufacturer", 
- *     @OA\Tag(name="manufacturers"), 
+ *     tags={"manufacturers"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -48,7 +48,7 @@ finish(true);
  *     summary="Join Instance using Trusted Domain", 
  *     description="Add a user to an instance from a trusted domain", 
  *     operationId="addUserToInstanceFromTrustedDomain", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

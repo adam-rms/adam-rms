@@ -60,7 +60,7 @@ if (count($assignments) < 1 and $flagsBlocks['COUNT']['BLOCK'] < 1) {
 Requires Instance Permission PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN
 ", 
  *     operationId="swapAssetAssignment", 
- *     @OA\Tag(name="project_assets"), 
+ *     tags={"project_assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

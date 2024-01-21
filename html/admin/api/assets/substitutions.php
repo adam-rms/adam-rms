@@ -65,7 +65,7 @@ finish(true, ["code" => "NO-ASSETS", "message"=>"No Assets Available"]); //this 
  *     description="Gets a list of assets that can be swapped with the given asset assignment
 ", 
  *     operationId="getSwappableAssets", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

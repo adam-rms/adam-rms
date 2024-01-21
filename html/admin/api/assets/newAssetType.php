@@ -46,7 +46,7 @@ else finish(true, null, ["assetTypes_id" => $result]);
 Requires Instance Permission ASSETS:ASSET_TYPES:CREATE
 ", 
  *     operationId="createAssetType", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

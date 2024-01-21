@@ -84,7 +84,7 @@ if ($projectFinanceCacher->save()) {
 Requires Instance Permission PROJECTS:EDIT:DATES
 ", 
  *     operationId="changeProjectDeliverDates", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

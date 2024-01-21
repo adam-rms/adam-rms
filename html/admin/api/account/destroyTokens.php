@@ -16,7 +16,7 @@ if ($AUTH->destroyTokens($bCMS->sanitizeString($_POST['userid']))) {
  *     summary="Destroy Tokens", 
  *     description="Destroy all tokens for a user", 
  *     operationId="destroyTokens", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Parameter(
  *         name="userid",
  *         in="query",

@@ -14,7 +14,7 @@ if (isset($_POST['email'])) {
  *     summary="Username or Email Taken", 
  *     description="Check if a username or email is already taken", 
  *     operationId="usernameOrEmailTaken", 
- *     @OA\Tag(name="authentication"), 
+ *     tags={"authentication"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -25,7 +25,7 @@ else {
  *     summary="Search by Barcode", 
  *     description="A simpler barcode search", 
  *     operationId="barcodeAssetSearch", 
- *     @OA\Tag(name="barcodes"), 
+ *     tags={"barcodes"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

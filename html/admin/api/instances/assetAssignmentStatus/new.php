@@ -19,7 +19,7 @@ finish(true);
 Requires Instance Permission BUSINESS:BUSINESS_SETTINGS:EDIT
 ", 
  *     operationId="createAssetAssignmentStatus", 
- *     @OA\Tag(name="assetAssignmentStatus"), 
+ *     tags={"assetAssignmentStatus"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

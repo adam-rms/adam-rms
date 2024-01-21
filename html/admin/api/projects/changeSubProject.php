@@ -30,7 +30,7 @@ finish(true);
 Requires Instance Permission PROJECTS:CREATE
 ", 
  *     operationId="changeSubProject", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

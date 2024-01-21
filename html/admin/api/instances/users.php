@@ -52,7 +52,7 @@ finish(true, null, $return);
  *     path="/instances/users.php", 
  *     summary="", 
  *     operationId="", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

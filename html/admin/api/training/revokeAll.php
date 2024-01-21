@@ -19,7 +19,7 @@ else {
 Requires instance permission TRAINING:EDIT:REVOKE_USER_CERTIFICATION
 ", 
  *     operationId="revokeAll", 
- *     @OA\Tag(name="training"), 
+ *     tags={"training"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

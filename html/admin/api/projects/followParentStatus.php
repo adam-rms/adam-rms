@@ -55,7 +55,7 @@ if ($_POST['follow'] === 'true') {
 Requires Instance Permission PROJECTS:CREATE
 ", 
  *     operationId="followParentStatus", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

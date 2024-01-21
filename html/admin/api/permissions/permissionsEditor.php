@@ -32,7 +32,7 @@ else die('2');
 Requires server permission PERMISSIONS:EDIT
 ", 
  *     operationId="permissionEditor", 
- *     @OA\Tag(name="permissions"), 
+ *     tags={"permissions"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

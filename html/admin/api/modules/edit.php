@@ -34,7 +34,7 @@ finish(true);
 Requires Instance Permission TRAINING:EDIT
 ", 
  *     operationId="editModule", 
- *     @OA\Tag(name="modules"), 
+ *     tags={"modules"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

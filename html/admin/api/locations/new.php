@@ -24,7 +24,7 @@ finish(true);
 Requires Instance Permission LOCATION:CREATE
 ", 
  *     operationId="newLocation", 
- *     @OA\Tag(name="locations"), 
+ *     tags={"locations"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

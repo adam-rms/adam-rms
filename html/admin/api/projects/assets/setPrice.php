@@ -68,7 +68,7 @@ else finish(false,["message"=>"Finance Cacher Save failed"]);
 Requires Instance Permission PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE
 ", 
  *     operationId="setAssetAssignmentPrice", 
- *     @OA\Tag(name="project_assets"), 
+ *     tags={"project_assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

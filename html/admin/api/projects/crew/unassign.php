@@ -27,7 +27,7 @@ else {
 Requires Instance Permission PROJECTS:PROJECT_CREW:EDIT
 ", 
  *     operationId="unassignCrew", 
- *     @OA\Tag(name="crew"), 
+ *     tags={"crew"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

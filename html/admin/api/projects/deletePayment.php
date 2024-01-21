@@ -33,7 +33,7 @@ else finish(false,["message"=>"Finance Cacher Save failed"]);
 Requires Instance Permission PROJECTS:PROJECT_PAYMENTS:DELETE
 ", 
  *     operationId="deletePayment", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

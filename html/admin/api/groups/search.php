@@ -23,7 +23,7 @@ else finish(true, null, $groups);
  *     description="Search for groups
 ", 
  *     operationId="searchGroups", 
- *     @OA\Tag(name="groups"), 
+ *     tags={"groups"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

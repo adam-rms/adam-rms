@@ -24,7 +24,7 @@ finish(true);
  *     description="Edit a client  
 Requires Instance Permission CLIENTS:EDIT", 
  *     operationId="editClient", 
- *     @OA\Tag(name="clients"), 
+ *     tags={"clients"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

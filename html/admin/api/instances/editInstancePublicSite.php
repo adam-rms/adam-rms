@@ -27,7 +27,7 @@ else {
 Requires Instance Permission BUSINESS:BUSINESS_SETTINGS:EDIT
 ", 
  *     operationId="editInstancePublicData", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

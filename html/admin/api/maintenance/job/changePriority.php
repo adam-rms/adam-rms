@@ -25,7 +25,7 @@ finish(true);
 Requires Instance Permission MAINTENANCE_JOBS:EDIT:JOB_PRIORITY
 ", 
  *     operationId="changePriority", 
- *     @OA\Tag(name="maintenanceJobs"), 
+ *     tags={"maintenanceJobs"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

@@ -73,7 +73,7 @@ finish(true);
 Requires Instance Permission PROJECTS:PROJECT_CREW:CREATE
 ", 
  *     operationId="assignCrew", 
- *     @OA\Tag(name="crew"), 
+ *     tags={"crew"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

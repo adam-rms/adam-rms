@@ -15,7 +15,7 @@ finish(true, null, $return);
  *     summary="List User Instances", 
  *     description="List all instances a user is a member of", 
  *     operationId="listUserInstances", 
- *     @OA\Tag(name="instances"), 
+ *     tags={"instances"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

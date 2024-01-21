@@ -29,7 +29,7 @@ finish(true);
 Requires Instance Permission PROJECTS:EDIT:ADDRESS
 ", 
  *     operationId="changeVenue", 
- *     @OA\Tag(name="projects"), 
+ *     tags={"projects"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

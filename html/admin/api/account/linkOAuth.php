@@ -50,7 +50,7 @@ if (isset($_GET['google'])) {
  *     summary="Link OAuth", 
  *     description="Link an OAuth provider", 
  *     operationId="linkOAuth", 
- *     @OA\Tag(name="account"), 
+ *     tags={"account"}, 
  *     @OA\Response(
  *         response="308", 
  *         description="Redirect",

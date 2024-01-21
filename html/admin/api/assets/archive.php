@@ -32,7 +32,7 @@ else {
 Requires Instance Permission ASSETS:ARCHIVE
 ", 
  *     operationId="archiveAsset", 
- *     @OA\Tag(name="assets"), 
+ *     tags={"assets"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

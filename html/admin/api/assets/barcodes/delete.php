@@ -20,7 +20,7 @@ else finish(true);
 Requires Instance Permission ASSETS:ASSET_BARCODES:DELETE
 ", 
  *     operationId="deleteBarcode", 
- *     @OA\Tag(name="barcodes"), 
+ *     tags={"barcodes"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

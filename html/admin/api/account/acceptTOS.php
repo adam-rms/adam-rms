@@ -12,7 +12,7 @@ if ($DBLIB->update ('users', ["users_termsAccepted" => date("Y-m-d H:i:s")])) {
  *      summary="Accept Tos",
  *      description="Accepts the Terms of Service for the currently logged in user",
  *      operationId="getAcceptTos",
- *      @OA\Tag(name="account"),
+ *      tags={"account"},
  *      @OA\Response(
  *          response="200",
  *          description="OK or Error",

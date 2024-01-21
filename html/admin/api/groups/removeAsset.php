@@ -39,7 +39,7 @@ finish(true);
 Requires Instance Permission ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP
 ", 
  *     operationId="removeAssetFromGroup", 
- *     @OA\Tag(name="groups"), 
+ *     tags={"groups"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",

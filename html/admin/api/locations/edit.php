@@ -26,7 +26,7 @@ finish(true);
 Requires Instance Permission LOCATIONS:EDIT
 ", 
  *     operationId="editLocation", 
- *     @OA\Tag(name="locations"), 
+ *     tags={"locations"}, 
  *     @OA\Response(
  *         response="200", 
  *         description="Success",
