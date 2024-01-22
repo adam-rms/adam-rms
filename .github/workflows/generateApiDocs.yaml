@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   build:
+    name: Parse PHP files and generate OpenAPI docs as YAML file
     runs-on: ubuntu-latest
     steps:
       - uses: shivammathur/setup-php@v2
@@ -55,6 +56,7 @@ jobs:
 
   # Generate ReDocly static API docs
   generate:
+    name: Generate ReDocly static API docs using YAML file
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -91,6 +93,7 @@ jobs:
 
   # Deploy to GH Pages
   deploy:
+    name: Upload YAML file to GH Pages
     needs: [build, generate]
     if: github.event_name == 'push'
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
