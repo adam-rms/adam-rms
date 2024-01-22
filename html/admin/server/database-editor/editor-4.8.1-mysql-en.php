@@ -1,4 +1,5 @@
 <?php
+if(!defined('RUN_ADMINER')){ die(); }
 /** Adminer Editor - Compact database editor
 * @link https://www.adminer.org/
 * @author Jakub Vrana, https://www.vrana.cz/
