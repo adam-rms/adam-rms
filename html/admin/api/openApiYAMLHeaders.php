@@ -5,7 +5,7 @@
 /**
  * @OA\Info(
  *  title="AdamRMS API", 
- *  version="1.200.0",
+ *  version="APIVERSION",
  *  description="AdamRMS is a free, open source advanced Rental Management System for Theatre, AV & Broadcast. This is the API listing for the v1 API, which is currently in Production and active development. You can find out more about AdamRMS at [https://adam-rms.com](https://adam-rms.com).",
  *  termsOfService="https://adam-rms.com/legal",
  *  @OA\Contact(

@@ -47,6 +47,14 @@ jobs:
           $yaml = $openapi->toYaml();
           file_put_contents('apiDocs.yaml', $yaml);
 
+      - name: Set Version Number
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "APIVERSION"
+          replace: ${{ github.ref_name }}
+          regex: false
+          include: "apiDocs.yaml"
+
       - uses: actions/upload-artifact@v4
         with:
           name: "apiDocs.yaml"
