@@ -50,7 +50,7 @@ jobs:
   generate:
     needs: build
     runs-on: ubuntu-latest
-
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - uses: actions/setup-node@v4
         with:
@@ -66,9 +66,9 @@ jobs:
       - name: Build ReDocly
         run: npx @redocly/cli build-docs apiDocs-${{ github.ref }}.yaml --output ./dist/index.html
 
-      # Upload to Github Pages if not a PR
+      # Upload to Github Pages if a push to main
       - name: Upload GH Pages Artefact
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3
         with:
           path: "dist/"
@@ -84,7 +84,7 @@ jobs:
   # Deploy to GH Pages
   deploy:
     needs: [build, generate]
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
       pages: write # to deploy to Pages
