@@ -1,80 +1,94 @@
 name: Generate API Docs
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
-        extensions: zip, mysqli, intl, gd
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          extensions: zip, mysqli, intl, gd
+      - uses: actions/checkout@v3
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
-    - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+      - name: Generate OpenAPI docs
+        run: php html/admin/api/docs/generator.php > apiDocs.yaml
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-
-    - name: Generate OpenAPI docs
-      run: php html/admin/api/docs/generator.php > apiDocs.yaml
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: 'apiDocs.yaml'
-        path: 'apiDocs.yaml'
-        if-no-files-found: 'error'
-        overwrite: 'true'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "apiDocs-${{ github.ref }}.yaml"
+          path: "apiDocs.yaml"
+          if-no-files-found: "error"
+          overwrite: "true"
 
   # Generate ReDocly static API docs
   generate:
     needs: build
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-          
+
       - uses: actions/download-artifact@v4
         with:
-          name: 'apiDocs.yaml'
+          name: "apiDocs-${{ github.ref }}.yaml"
 
       - name: Install ReDocly
         run: npm i @redocly/cli
-      
-      - name: Build ReDocly
-        run: npx @redocly/cli build-docs apiDocs.yaml --output ./dist/index.html
 
+      - name: Build ReDocly
+        run: npx @redocly/cli build-docs apiDocs-${{ github.ref }}.yaml --output ./dist/index.html
+
+      # Upload to Github Pages if not a PR
       - name: Upload GH Pages Artefact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'dist/'
-          
+          path: "dist/"
+
+      # Just upload the artefact if a PR
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
+        with:
+          path: "dist/"
+          if-no-files-found: "error"
+          overwrite: "true"
+
   # Deploy to GH Pages
   deploy:
     needs: [build, generate]
-
+    if: github.event_name != 'pull_request'
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
 
     # Deploy to the github-pages environment
     environment:
@@ -82,7 +96,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
