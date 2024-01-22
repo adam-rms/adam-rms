@@ -18,3 +18,30 @@ if (!$status) finish(false);
 
 $bCMS->auditLog("INSERT", "projectsStatuses", json_encode($array), $AUTH->data['users_userid']);
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/instances/projectStatus/new.php",
+ *      summary="Create Project Status",
+ *      description="Create new Project Status",
+ *      operationId="createProjectStatus",
+ *      tags={"projectStatus"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="formData",
+ *          in="query",
+ *          description="Project Status Data",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="object",
+ *          ),
+ *      ),
+ *  )
+ */

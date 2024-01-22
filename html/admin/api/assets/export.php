@@ -135,3 +135,59 @@ if (isset($_POST['csv'])) {
     $writer = new Xlsx($spreadsheet);
     $writer->save('php://output');
 } else die("404");
+
+/** @OA\Post(
+ *     path="/assets/export.php", 
+ *     summary="Export Assets", 
+ *     description="Exports assets
+", 
+ *     operationId="exportAssets", 
+ *     tags={"assets"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/csv", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *                 ),
+ *         ),@OA\MediaType(
+ *             mediaType="application/xlsx", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *                 ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="string", 
+ *                     description="404",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="csv",
+ *         in="query",
+ *         description="Whether to export as a CSV file",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="any"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="xlsx",
+ *         in="query",
+ *         description="Whether to export as an XLSX file",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="any"), 
+ *         ), 
+ * )
+ */

@@ -163,3 +163,35 @@ for ($i = 1; $i < count($csv); $i++) {
 }
 
 return finish(true, null, ["createdTypes" => $createdAssetTypes,"successfulAssets" => $successfulAssets, "failedAssets" => $failedAssets]);
+
+/**
+ *  @OA\Post(
+ *      path="/server/assetImport.php",
+ *      summary="Bulk Asset Import",
+ *      description="Bulk import assets, using templated csv",
+ *      operationId="assetImport",
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="csvFile",
+ *          in="files",
+ *          description="CSV File with assets to import",
+ *          required="true",
+ *      ),
+ *      @OA\Parameter(
+ *          name="instances_id",
+ *          in="query",
+ *          description="Instance Id to import assets to",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */

@@ -41,4 +41,35 @@ if (!$AUTH->serverPermissionCheck("USERS:VIEW:MAILINGS")) die("Sorry you don't h
 	}
 
 	echo $output;
-?>
+
+/** @OA\Get(
+ *     path="/account/emailViewer.php", 
+ *     summary="Email Viewer", 
+ *     description="Get the HTML of an email  
+Requires server permission USERS:VIEW:MAILINGS", 
+ *     operationId="getEmailViewer", 
+ *     tags={"account"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="OK",
+ *         @OA\MediaType(
+ *             mediaType="text/html", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *                 ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Not Found",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="email",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

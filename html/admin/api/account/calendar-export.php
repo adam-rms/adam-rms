@@ -56,3 +56,42 @@ foreach ($iCalAssignments as $event) {
 }
 
 echo $vCalendar->render();
+
+/** @OA\Get(
+ *     path="/account/calendar-export.php", 
+ *     summary="Calendar Export", 
+ *     description="Get calendar information for integrating with web calendars", 
+ *     operationId="getCalendarExport", 
+ *     tags={"account"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="OK",
+ *         @OA\MediaType(
+ *             mediaType="text/calendar", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="uid",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="key",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

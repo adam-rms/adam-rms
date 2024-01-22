@@ -43,3 +43,60 @@ if (count($job['tagged']) > 0 and isset($data["maintenanceJobsMessages_text"])) 
 }
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/maintenance/job/sendMessage.php", 
+ *     summary="Send Message", 
+ *     description="Send a message to a maintenance job  
+Requires Instance Permission MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB
+", 
+ *     operationId="sendMessage", 
+ *     tags={"maintenanceJobs"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_id",
+ *         in="query",
+ *         description="Maintenance Job ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobsMessages_text",
+ *         in="query",
+ *         description="Message",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

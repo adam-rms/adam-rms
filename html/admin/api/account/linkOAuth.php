@@ -43,3 +43,25 @@ if (isset($_GET['google'])) {
     header("Location: " . $CONFIG['ROOTURL'] . "/user.php");
     exit;
 }
+
+
+/** @OA\Get(
+ *     path="/account/linkOAuth.php", 
+ *     summary="Link OAuth", 
+ *     description="Link an OAuth provider", 
+ *     operationId="linkOAuth", 
+ *     tags={"account"}, 
+ *     @OA\Response(
+ *         response="308", 
+ *         description="Redirect",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="google",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

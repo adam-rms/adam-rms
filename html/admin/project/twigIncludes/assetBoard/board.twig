@@ -8,7 +8,7 @@
                 </div>
                 <div class="card-body assetDispatchAssetList" data-statusid="{{ status['assetsAssignmentsStatus_id'] }}" data-instance="{{ instanceid }}">
                     {% for asset in status['assets'] %}
-                        <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2" data-currentstatus="{{ status['assetsAssignmentsStatus_id'] }}" data-assignment="{{ asset['assetsAssignments_id'] }}" data-instance="{{ instanceid }}">
+                        <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card" data-currentstatus="{{ status['assetsAssignmentsStatus_id'] }}" data-assignment="{{ asset['assetsAssignments_id'] }}" data-instance="{{ instanceid }}" data-asset="{{ asset['assets_id'] }}">
                             {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
                                 <button class="btn btn-outline-secondary assetDispatchAssetList-statusPrevButton col-1" data-nextstatus="" style="display: none;">«</button>
                             {% endif %}

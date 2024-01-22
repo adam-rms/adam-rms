@@ -24,4 +24,48 @@ if ($DBLIB->update ('positionsGroups', ['positionsGroups_actions' => implode(","
 	die('1');
 }
 else die('2');
-?>
+
+/** @OA\Post(
+ *     path="/permissions/permissionsEditor.php", 
+ *     summary="AdamRMS Permission Editor", 
+ *     description="Edit the permissions of an AdamRMS position  
+Requires server permission PERMISSIONS:EDIT
+", 
+ *     operationId="permissionEditor", 
+ *     tags={"permissions"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/text", 
+ *             @OA\Schema( 
+ *                 type="number", 
+ *                 ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="position",
+ *         in="query",
+ *         description="Position id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="removepermission",
+ *         in="query",
+ *         description="Permission id to remove",
+ *         required="undefined", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="addpermission",
+ *         in="query",
+ *         description="Permission id to add",
+ *         required="undefined", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

@@ -47,3 +47,58 @@ if(isset($_FILES['file'])) {
         else finish(true, null, ["id" => $id, "resize" => false,"url" => $CONFIG['ROOTURL'] . '/api/file/?r=true&f=' . $id]);
     } else finish(false, ["code" => null, "message" => "S3 Upload Error"]);
 }
+/** @OA\Post(
+ *     path="/s3files/uploadProjectInvoice.php", 
+ *     summary="Upload Project Invoice", 
+ *     description="Upload a project invoice  
+Requires Instance Permission PROJECTS:VIEW
+", 
+ *     operationId="uploadProjectInvoice", 
+ *     tags={"s3files"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="quote",
+ *         in="query",
+ *         description="Is Quote?",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="file",
+ *         in="files",
+ *         description="File",
+ *         required="true", 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="fileNumber",
+ *         in="query",
+ *         description="File Version Number",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

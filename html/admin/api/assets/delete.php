@@ -54,3 +54,50 @@ else {
     $bCMS->auditLog("DELETE", "assets", $asset['assets_id'], $AUTH->data['users_userid']);
     finish(true);
 }
+
+/** @OA\Post(
+ *     path="/assets/delete.php", 
+ *     summary="Delete an Asset", 
+ *     description="Deletes an asset  
+Requires Instance Permission ASSETS:DELETE
+", 
+ *     operationId="deleteAsset", 
+ *     tags={"assets"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message", 
+ *                     type="null", 
+ *                     description="an empty array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assets_id",
+ *         in="query",
+ *         description="The ID of the asset to delete",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ * )
+ */

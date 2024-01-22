@@ -85,3 +85,158 @@ else {
     $bCMS->auditLog("EDIT-ASSET", "assets", json_encode($array), $AUTH->data['users_userid'],null, $array['assets_id']);
     finish(true);
 }
+
+/** @OA\Post(
+ *     path="/assets/editAsset.php", 
+ *     summary="Edit an Asset", 
+ *     description="Edits an asset's data  
+Requires Instance Permission ASSETS:EDIT
+", 
+ *     operationId="editAsset", 
+ *     tags={"assets"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message", 
+ *                     type="null", 
+ *                     description="an empty array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="The data to update the asset with",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="assets_id", 
+ *                 type="integer", 
+ *                 description="The ID of the asset to update",
+ *             ),
+ *             @OA\Property(
+ *                 property="assets_value", 
+ *                 type="number", 
+ *                 description="The value of the asset",
+ *             ),
+ *             @OA\Property(
+ *                 property="assets_dayRate", 
+ *                 type="number", 
+ *                 description="The day rate of the asset",
+ *             ),
+ *             @OA\Property(
+ *                 property="assets_weekRate", 
+ *                 type="number", 
+ *                 description="The week rate of the asset",
+ *             ),
+ *             @OA\Property(
+ *                 property="assets_tag", 
+ *                 type="string", 
+ *                 description="The tag of the asset",
+ *             ),
+ *             @OA\Property(
+ *                 property="assets_mass", 
+ *                 type="number", 
+ *                 description="The weight of the asset",
+ *             ),
+ *             @OA\Property(
+ *                 property="assets_linkedTo", 
+ *                 type="integer", 
+ *                 description="The ID of the asset this asset is linked to",
+ *             ),
+ *             @OA\Property(
+ *                 property="assetTypes_id", 
+ *                 type="integer", 
+ *                 description="The ID of the asset type",
+ *             ),
+ *             @OA\Property(
+ *                 property="assets_notes", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_1", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_2", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_3", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_4", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_5", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_6", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_7", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_8", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_9", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="asset_definableFields_10", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */
