@@ -84,3 +84,55 @@ switch ($_POST['type']) {
 }
 
 echo $generator->getBarcode($bCMS->sanitizeString($_POST['barcode']), $type, $width, $height, [0,0,0]);
+
+/** @OA\Post(
+ *     path="/assets/barcodes/index.php", 
+ *     summary="Generate Barcode Image", 
+ *     description="Generate an image of a given barcode value
+", 
+ *     operationId="generateBarcode", 
+ *     tags={"barcodes"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Barcode Image",
+ *         @OA\MediaType(
+ *             mediaType="application/png", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *                 ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="type",
+ *         in="query",
+ *         description="The Barcode type",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="barcode",
+ *         in="query",
+ *         description="Value of the Barcode",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="size",
+ *         in="query",
+ *         description="Size of returned barcode",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="width",
+ *         in="query",
+ *         description="Width of the returned barcode",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

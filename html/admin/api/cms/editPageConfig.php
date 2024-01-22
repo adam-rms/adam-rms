@@ -42,3 +42,66 @@ if ($array['cmsPages_id'] == "NEW") {
     $bCMS->auditLog("UPDATE", "cmsPages_id", json_encode($array), $AUTH->data['users_userid'],null,null,$array['cmsPages_id']);
     finish(true);
 }
+
+/** @OA\Post(
+ *     path="/cms/editPageConfig.php", 
+ *     summary="Edit CMS Page Config", 
+ *     description="Edit a page config  
+Requires Instance Permission CMS:CMS_PAGES:EDIT", 
+ *     operationId="editPageConfig", 
+ *     tags={"cms"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A null Array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Error",
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="The page config data",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             ),
+ *     ), 
+ * )
+ */

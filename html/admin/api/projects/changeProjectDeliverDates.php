@@ -76,3 +76,57 @@ if ($projectFinanceCacher->save()) {
     $bCMS->auditLog("CHANGE-DATE", "projects", "Set the deliver start date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_deliver_start'])) . "\nSet the deliver end date to ". date ("D jS M Y h:i:sa", strtotime($_POST['projects_dates_deliver_end'])), $AUTH->data['users_userid'],null, $_POST['projects_id']);
     finish(true, null, ["changed" => true]);
 } else finish(false, ["message"=>"Cannot modify finances to change dates"]);
+
+/** @OA\Post(
+ *     path="/projects/changeProjectDeliverDates.php", 
+ *     summary="Change Project Deliver Dates", 
+ *     description="Change the start and end deliver dates of a project  
+Requires Instance Permission PROJECTS:EDIT:DATES
+", 
+ *     operationId="changeProjectDeliverDates", 
+ *     tags={"projects"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_dates_deliver_start",
+ *         in="query",
+ *         description="Start Date/Time",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_dates_deliver_end",
+ *         in="query",
+ *         description="End Date/Time",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

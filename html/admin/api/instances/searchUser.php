@@ -22,3 +22,34 @@ $DBLIB->where("users_email", strtolower($bCMS->sanitizeString($_POST['term'])));
 $users = $DBLIB->get("users", null, ["users_userid", "users_name1", "users_name2"]);
 if (!$users) finish(true, null, []);
 else finish(true, null, $users);
+
+/** @OA\Post(
+ *     path="/instances/searchUser.php", 
+ *     summary="Search Users", 
+ *     description="Search for users in an instance  
+Requires Instance Permission BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL
+", 
+ *     operationId="searchUser", 
+ *     tags={"instances"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="An array of users",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     )
+ */

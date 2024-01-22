@@ -54,3 +54,103 @@ else {
     
     finish(true, null, ["maintenanceJobs_id" => $result]);
 }
+
+/** @OA\Post(
+ *     path="/maintenance/newJob.php", 
+ *     summary="New Job", 
+ *     description="Create a new maintenance job  
+Requires Instance Permission ASSETS:ASSET_TYPES:CREATE
+", 
+ *     operationId="newJob", 
+ *     tags={"maintenance"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="Form Data",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="maintenanceJobs_title", 
+ *                 type="string", 
+ *                 description="Title",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_faultDescription", 
+ *                 type="string", 
+ *                 description="Description",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_priority", 
+ *                 type="number", 
+ *                 description="Priority",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_status", 
+ *                 type="number", 
+ *                 description="Status",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_assets", 
+ *                 type="json", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_timestamp_due", 
+ *                 type="timestamp", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_user_tagged", 
+ *                 type="number", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_user_creator", 
+ *                 type="number", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_flagAssets", 
+ *                 type="boolean", 
+ *                 description="undefined",
+ *             ),
+ *             @OA\Property(
+ *                 property="maintenanceJobs_blockAssets", 
+ *                 type="boolean", 
+ *                 description="undefined",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */

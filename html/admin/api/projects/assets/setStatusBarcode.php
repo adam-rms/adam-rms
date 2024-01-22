@@ -32,3 +32,69 @@ if ($barcode and $barcode['assets_id'] != null) {
         finish(true);
     }
 } else finish(false);
+
+/** @OA\Post(
+ *     path="/projects/assets/setStatusBarcode.php", 
+ *     summary="Set Asset Assignment Status using Barcode", 
+ *     description="Set the status for an asset assignment using a barcode  
+Requires Instance Permission PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS
+", 
+ *     operationId="setAssetAssignmentStatusBarcode", 
+ *     tags={"project_assets"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="text",
+ *         in="query",
+ *         description="barcode value",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="type",
+ *         in="query",
+ *         description="barcode type",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="locationType",
+ *         in="query",
+ *         description="location type",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="enum"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments_status",
+ *         in="query",
+ *         description="Status ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

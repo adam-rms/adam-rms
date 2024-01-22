@@ -12,3 +12,46 @@ if ($DBLIB->update ('users', ["users_password" => hash($CONFIG['nextHash'], $PAG
     die('1');
 }
 else die('2');
+
+/** @OA\Post(
+ *     path="/account/forcePasswordChange.php", 
+ *     summary="Force Password Change", 
+ *     description="Force a user to change their password", 
+ *     operationId="forcePasswordChange", 
+ *     tags={"account"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="OK",
+ *         @OA\MediaType(
+ *             mediaType="text/plain", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *                 ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="pass",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="users_userid",
+ *         in="body",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="users_changepass",
+ *         in="body",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

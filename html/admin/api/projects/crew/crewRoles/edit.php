@@ -63,3 +63,47 @@ if ($array['projectsVacantRoles_id'] == "NEW") {
     $bCMS->auditLog("UPDATE", "projectsVacantRoles", json_encode($array), $AUTH->data['users_userid']);
     finish(true);
 }
+
+/** @OA\Post(
+ *     path="/projects/crew/crewRoles/edit.php", 
+ *     summary="Edit Vacant Role", 
+ *     description="Edit a vacant role  
+Requires Instance Permission PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT
+", 
+ *     operationId="editVacantRole", 
+ *     tags={"recruitment"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="Form Data",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             @OA\Property(
+ *                 property="projectsVacantRoles_id", 
+ *                 type="number", 
+ *                 description="undefined",
+ *             ),
+ *         ),
+ *     ), 
+ * )
+ */

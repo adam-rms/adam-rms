@@ -23,3 +23,52 @@ catch (ValueError $e) {
 catch (Exception $e) {
     throw $e;
 }
+
+/** @OA\Get(
+ *     path="/search/search.php", 
+ *     summary="Global Search", 
+ *     description="Search for a term across the whole RMS
+", 
+ *     operationId="search", 
+ *     tags={"search"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="Search Term",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="offset",
+ *         in="query",
+ *         description="Offset",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="limit",
+ *         in="query",
+ *         description="Limit",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

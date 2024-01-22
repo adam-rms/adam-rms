@@ -27,3 +27,41 @@ $DBLIB->orderBy("auditLog.auditLog_id", "DESC");
 $auditLog = $DBLIB->get("auditLog",null, ["auditLog.*", "users.users_name1", "users.users_name2", "users.users_email"]);
 
 finish(true, null, $auditLog);
+
+/** @OA\Post(
+ *     path="/projects/getComments.php", 
+ *     summary="Get Comments", 
+ *     description="Get the comments of a project  
+Requires Instance Permission PROJECTS:VIEW
+", 
+ *     operationId="getComments", 
+ *     tags={"projects"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

@@ -6,4 +6,3 @@
  * Time: 10:19 AM
  */
 require_once __DIR__ . '/../apiHead.php';
-?>

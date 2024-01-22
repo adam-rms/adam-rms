@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
+if (!isset($_POST['assets_id']) or !isset($_POST['new_instances_id'])) die("404");
+
 //Check user has permission to transfer assets in this instance 
 if (!$AUTH->instancePermissionCheck("ASSETS:TRANSFER")) die("404");
 //Check other instance exists for this user
 if (array_search($_POST['new_instances_id'], array_column($AUTH->data['instances'], 'instances_id')) === false) die("404");
 //check user has permission in other instance 
 if (!in_array("ASSETS:TRANSFER", $AUTH->data['instances'][array_search($_POST['new_instances_id'], array_column($AUTH->data['instances'], 'instances_id'))]['permissions'])) die("403");
-
-if (!isset($_POST['assets_id']) or !isset($_POST['new_instances_id'])) die("404");
 
 //Get asset from this instance
 $DBLIB->where("assets_id", $_POST['assets_id']);
@@ -103,3 +103,68 @@ if (!$result) finish(false, ["code" => "ARCHIVE-FAIL", "message"=> "Could not ar
 else $bCMS->auditLog("ARCHIVE", "assets", $_POST['assets_id'], $AUTH->data['users_userid']);
 
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/assets/transfer.php",
+ *      summary="Transfer Asset to Instance",
+ *      description="Transfer an Asset to another Instance
+ Requires Instance permission ASSETS:TRANSFER",
+ *      operationId="transferAsset",
+ *      tags={"assets"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="new_instances_id",
+ *          in="query",
+ *          description="id of the instance to transfer the asset to"
+ *          required="true",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="assets_id",
+ *          in="query",
+ *          description="id of the asset to transfer"
+ *          required="true",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="assetTypes_id",
+ *          in="query",
+ *          description="assetType Id in the new instance to map the asset to"
+ *          required="false",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="manufacturers_id",
+ *          in="query",
+ *          description="manufacturer Id in the new instance to map the asset to"
+ *          required="false",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="assetCategories_id",
+ *          in="query",
+ *          description="asset category Id in the new instance to map the asset to"
+ *          required="false",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ * 
+ *  )
+ */
