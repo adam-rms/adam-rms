@@ -16,6 +16,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  experimentalBuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          extensions: zip, mysqli, intl, gd
+      - uses: actions/checkout@v3
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Generate OpenAPI docs
+        shell: php {0}
+        run: |
+          <?php
+          require("vendor/autoload.php");
+          $finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in('html/admin/api/');
+          $openapi = \OpenApi\Generator::scan($finder, ['logger' => new \Psr\Log\NullLogger()]);
+          $yaml = $openapi->toYaml();
+          file_put_contents('apiDocs.yaml', $yaml);
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "experimentalApiDocs-${{ github.ref }}.yaml"
+          path: "apiDocs.yaml"
+          if-no-files-found: "error"
+          overwrite: "true"
   build:
     runs-on: ubuntu-latest
     steps:
