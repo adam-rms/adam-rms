@@ -48,7 +48,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "experimentalApiDocs-${{ github.ref_name }}.yaml"
+          name: "experimentalApiDocs.yaml"
           path: "apiDocs.yaml"
           if-no-files-found: "error"
           overwrite: "true"
@@ -77,7 +77,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "apiDocs-${{ github.ref_name }}.yaml"
+          name: "apiDocs.yaml"
           path: "apiDocs.yaml"
           if-no-files-found: "error"
           overwrite: "true"
@@ -94,13 +94,13 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: "apiDocs-${{ github.ref_name }}.yaml"
+          name: "apiDocs.yaml"
 
       - name: Install ReDocly
         run: npm i @redocly/cli
 
       - name: Build ReDocly
-        run: npx @redocly/cli build-docs apiDocs-${{ github.ref_name }}.yaml --output ./dist/index.html
+        run: npx @redocly/cli build-docs apiDocs.yaml --output ./dist/index.html
 
       # Upload to Github Pages if a push to main
       - name: Upload GH Pages Artefact
