@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
+      - name: Install OpenAPI Generator
+        run: composer global require "zircote/swagger-php" "^3.3.7"
+
       - name: Generate OpenAPI docs
         shell: php {0}
         run: |
@@ -80,7 +83,7 @@ jobs:
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "dist/index.html"
+          path: "dist/"
 
       # Just upload the artefact if a PR
       - uses: actions/upload-artifact@v4
@@ -93,7 +96,7 @@ jobs:
 
   # Deploy to GH Pages
   deploy:
-    name: Upload YAML file to GH Pages
+    name: Upload ReDocly file to GH Pages
     needs: [build, generate]
     if: github.event_name == 'push'
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
