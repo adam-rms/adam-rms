@@ -34,6 +34,7 @@ services:
       - bCMS__DB_PASSWORD=pass
       - bCMS__ROOTURL=
       - bCMS__ERRORS=true
+      - RUNNING_IN_DEVCONTAINER=devcontainer
       - bCMS__DB_PORT=3306
   db:
     image: index.docker.io/mysql/mysql-server:8.0
