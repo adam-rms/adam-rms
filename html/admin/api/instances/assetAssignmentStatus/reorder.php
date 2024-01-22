@@ -12,3 +12,57 @@ foreach ($_POST['order'] as $count=>$item) {
 }
 $bCMS->auditLog("RANK-ASSETSTATUS", "assetStatuses", "Set the order of statuses", $AUTH->data['users_userid']);
 finish(true);
+
+/** @OA\Post(
+ *     path="/instances/assetAssignmentStatus/reorder.php", 
+ *     summary="Reorder Asset Assignment Status", 
+ *     description="Reorder asset assignment statuses  
+Requires Instance Permission BUSINESS:BUSINESS_SETTINGS:EDIT
+", 
+ *     operationId="reorderAssetAssignmentStatus", 
+ *     tags={"assetAssignmentStatus"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A null Array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="order",
+ *         in="query",
+ *         description="The order of the statuses",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ * )
+ */

@@ -25,3 +25,41 @@ $bCMS->auditLog("DELETE", "payments", $_POST['payments_id'], $AUTH->data['users_
 
 if ($projectFinanceCacher->save()) finish(true);
 else finish(false,["message"=>"Finance Cacher Save failed"]);
+
+/** @OA\Post(
+ *     path="/projects/deletePayment.php", 
+ *     summary="Delete Payment", 
+ *     description="Delete a payment  
+Requires Instance Permission PROJECTS:PROJECT_PAYMENTS:DELETE
+", 
+ *     operationId="deletePayment", 
+ *     tags={"projects"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="payments_id",
+ *         in="query",
+ *         description="Payment ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

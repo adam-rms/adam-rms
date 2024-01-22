@@ -25,3 +25,31 @@ if (!$client) finish(false);
 $bCMS->auditLog("ARCHIVE", "locations", "Moved the location to archive", $AUTH->data['users_userid'], null, $_POST['location_id']);
 
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/locations/archive.php",
+ *      summary="Archives Location",
+ *      description="Archives a location
+ Requires Instance permission LOCATIONS:EDIT",
+ *      operationId="archiveLocation",
+ *      tags={"locations"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="locations_id",
+ *          in="query",
+ *          description="Id of location to archive",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */

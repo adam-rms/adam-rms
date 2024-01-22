@@ -22,3 +22,30 @@ if (!$status) finish(false);
 
 $bCMS->auditLog("EDIT", "projectsStatuses", json_encode($array), $AUTH->data['users_userid']);
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/instances/projectStatus/edit.php",
+ *      summary="Edit Project Status",
+ *      description="Edit Project Status details",
+ *      operationId="editProjectStatus",
+ *      tags={"projectStatus"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="formData",
+ *          in="query",
+ *          description="Project Status Data",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="object",
+ *          ),
+ *      ),
+ *  )
+ */

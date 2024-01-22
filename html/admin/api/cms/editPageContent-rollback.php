@@ -35,3 +35,73 @@ $insert = $DBLIB->insert("cmsPagesDrafts",[
 ]);
 if ($insert) finish(true);
 else finish(false);
+
+/** @OA\Post(
+ *     path="/cms/editPageContent-rollback.php", 
+ *     summary="Rollback CMS Page Content", 
+ *     description="Rollback a page content  
+Requires Instance Permission CMS:CMS_PAGES:EDIT", 
+ *     operationId="rollbackPageContent", 
+ *     tags={"cms"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A null Array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Error",
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="cmsPages_id",
+ *         in="query",
+ *         description="The ID of the page",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="change",
+ *         in="query",
+ *         description="The description of the change",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

@@ -29,3 +29,34 @@ if (isset($code) and $code['passwordResetCodes_valid'] == '1') {
 	header('Location: ' . $CONFIG['ROOTURL']); //If it fails we may as well just assume they have tried to click it a second time.
 	exit;
 }
+
+/** @OA\Post(
+ *     path="/account/passwordReset.php", 
+ *     summary="Password Reset", 
+ *     description="Act on a password reset code", 
+ *     operationId="passwordReset", 
+ *     tags={"account"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="text/plain", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *                 ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="308", 
+ *         description="Success",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="code",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

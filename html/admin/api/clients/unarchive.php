@@ -25,3 +25,31 @@ if (!$client) finish(false);
 $bCMS->auditLog("UNARCHIVE", "clients", "Moved the client from archive", $AUTH->data['users_userid'], null, $_POST['client_id']);
 
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/clients/unarchive.php",
+ *      summary="UnArchive Client",
+ *      description="Unarchive (Restore) a client
+Requires Instance Permission CLIENTS:EDIT",
+ *      operationId="unarchiveClient",
+ *      tags={"clients"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="clients_id",
+ *          in="query",
+ *          description="Id of the client to unarchive",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */

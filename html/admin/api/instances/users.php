@@ -47,3 +47,47 @@ foreach ($users as $user) {
 }
 
 finish(true, null, $return);
+
+/** @OA\Get(
+ *     path="/instances/users.php", 
+ *     summary="List Users", 
+ *     operationId="Requires Instance permission BUSINESS:USERS:VIEW:LIST", 
+ *     tags={"instances"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="undefined",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="q",
+ *         in="query",
+ *         description="Search by users' names, usernames, or emails",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="page",
+ *         in="query",
+ *         description="Paginate the results, starting from 1.",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

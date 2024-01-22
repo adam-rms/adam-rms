@@ -21,3 +21,60 @@ if ($_POST['maintenanceJobs_blockAssets'] == 1) {
 
 
 finish(true);
+
+/** @OA\Post(
+ *     path="/maintenance/job/changeBlock.php", 
+ *     summary="Change Block", 
+ *     description="Change the block status of a maintenance job  
+Requires Instance Permission MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS
+", 
+ *     operationId="changeBlock", 
+ *     tags={"maintenanceJobs"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_id",
+ *         in="query",
+ *         description="Maintenance Job ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="maintenanceJobs_blockAssets",
+ *         in="query",
+ *         description="Maintenance Job Block",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ * )
+ */

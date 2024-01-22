@@ -26,3 +26,39 @@ else {
     $bCMS->auditLog("EDIT-STATUS", "assetsAssignments", $assignment['assetsAssignments_id'] . " set from " . $assignment['assetsAssignmentsStatus_id'] . " to " . $status['assetsAssignmentsStatus_id'] . " by direct tag entry", $AUTH->data['users_userid'],null, $_POST['projects_id']);
     finish(true, null, ["assets_id" => $assignment['assets_id']]);
 }
+
+/**
+ *  @OA\Post(
+ *      path="/projects/assets/setStatusByTag.php",
+ *      summary="Set Asset Status by Tag",
+ *      description="Set asset status for a project by the asset's tag",
+ *      operationId="setStatusByTag",
+ *      tags={"project_assets"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="text",
+ *          in="query",
+ *          description="Value of the asset tag",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="assetsAssignments_status",
+ *          in="query",
+ *          description="Status Id to set asset to",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="number",
+ *          ),
+ *      ),
+ *  )
+ */

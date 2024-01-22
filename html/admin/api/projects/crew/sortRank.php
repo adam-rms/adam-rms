@@ -16,3 +16,49 @@ foreach ($_POST['order'] as $count=>$item) {
 }
 $bCMS->auditLog("RANK-CREW", "crewAssignments", null, $AUTH->data['users_userid'],null, $project['projects_id']);
 finish(true);
+
+/** @OA\Post(
+ *     path="/projects/crew/sortRank.php", 
+ *     summary="Sort Crew", 
+ *     description="Sort the crew of a project  
+Requires Instance Permission PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS
+", 
+ *     operationId="sortCrew", 
+ *     tags={"crew"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="order",
+ *         in="query",
+ *         description="Order",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ * )
+ */

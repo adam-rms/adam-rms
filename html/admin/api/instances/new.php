@@ -136,3 +136,93 @@ foreach (["Pending pick","Picked","Prepping","Tested","Packed","Dispatched","Awa
 
 
 finish(true, null, ["instanceid" => $instance]);
+
+/** @OA\Post(
+ *     path="/instances/new.php", 
+ *     summary="Create Instance", 
+ *     description="Create a new instance  
+Requires server permission INSTANCES:CREATE
+", 
+ *     operationId="createInstance", 
+ *     tags={"instances"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="instanceid", 
+ *                     type="number", 
+ *                     description="The instance id",
+ *                 ),
+ *         ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Auth Fail",
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="instances_name",
+ *         in="query",
+ *         description="The instance name",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="instances_website",
+ *         in="query",
+ *         description="The instance website",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="instances_email",
+ *         in="query",
+ *         description="The instance email",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="instances_phone",
+ *         in="query",
+ *         description="The instance phone number",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="role",
+ *         in="query",
+ *         description="The user's role id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

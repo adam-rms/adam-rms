@@ -51,3 +51,50 @@ else {
     }
     finish(true, null, $userOutput);
 }
+
+/** @OA\Post(
+ *     path="/projects/crew/searchUser.php", 
+ *     summary="Search Users", 
+ *     description="Search for users to assign to a project  
+Requires Instance Permission PROJECTS:PROJECT_CREW:CREATE
+", 
+ *     operationId="searchUsers", 
+ *     tags={"crew"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="List of users",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="Search Term",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

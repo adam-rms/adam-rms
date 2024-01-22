@@ -51,4 +51,39 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         }
 	}
 } else finish(false, ["code" => null, "message" => "Unknown error"]);
-?>
+
+/**
+ *  @OA\Post(
+ *      path="/login/login.php",
+ *      summary="Login",
+ *      description="User Login",
+ *      operationId="login",
+ *      tags={"authentication"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="formInput",
+ *          in="query",
+ *          description="Email Address of user",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="password",
+ *          in="query",
+ *          description="Password of user",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="string",
+ *          ),
+ *      ),
+ *  )
+ */

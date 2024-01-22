@@ -299,3 +299,50 @@ $DATA = [
 
 
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) finish(true, null, $DATA);
+
+/** @OA\Post(
+ *     path="/projects/data.php", 
+ *     summary="Data", 
+ *     description="Get the data of a project  
+Requires Instance Permission PROJECTS:VIEW
+", 
+ *     operationId="data", 
+ *     tags={"projects"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="Form Data",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="object", 
+ *             ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

@@ -32,3 +32,54 @@ else {
     $bCMS->auditLog("ASSOCIATE", "assetsBarcodes", $_POST['barcodeid'] . " set to " . $asset['assets_id'], $AUTH->data['users_userid'],null);
     finish(true,null,$asset);
 }
+
+/** @OA\Post(
+ *     path="/assets/barcodes/assign.php", 
+ *     summary="Assign Barcode", 
+ *     description="Assign a barcode to an asset  
+Requires Instance Permission ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS
+", 
+ *     operationId="assignBarcode", 
+ *     tags={"barcodes"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ),  
+ *     @OA\Parameter(
+ *         name="tag",
+ *         in="query",
+ *         description="The tag of the Asset to assign a barcode to",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="barcodeid",
+ *         in="query",
+ *         description="An ID of an existing barcode or false",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="undefined"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="text",
+ *         in="query",
+ *         description="the value of a new barcode",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="type",
+ *         in="query",
+ *         description="The Barcode type",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */
