@@ -1,5 +1,5 @@
 <?php
-
+if (getenv('RUNNING_IN_DEVCONTAINER') !== "devcontainer") die("Sorry this feature is only available in a devcontainer");
 function adminer_object()
 {
 
@@ -24,7 +24,7 @@ function adminer_object()
 
     function login($login, $password)
     {
-      if (getenv('bCMS__DEV_MODE_DB_EDITOR') == true) return true;
+      if (getenv('RUNNING_IN_DEVCONTAINER') === "devcontainer") return true;
       else return false;
     }
     function loginForm()
