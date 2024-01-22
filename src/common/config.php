@@ -22,6 +22,7 @@ $CONFIG = array(
             "KEYPAIRID" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID')
         ]
     ],
+    'ENABLE_DEV_DB_EDITOR' => (getenv('RUNNING_IN_DEVCONTAINER') == "devcontainer" ? true : false),
     'AUTH-PROVIDERS' => [
         "GOOGLE" => [
             'keys' => [
