@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  experimentalBuild:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: shivammathur/setup-php@v2
@@ -45,35 +45,6 @@ jobs:
           $openapi = \OpenApi\Generator::scan($finder, ['logger' => new \Psr\Log\NullLogger()]);
           $yaml = $openapi->toYaml();
           file_put_contents('apiDocs.yaml', $yaml);
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: "experimentalApiDocs.yaml"
-          path: "apiDocs.yaml"
-          if-no-files-found: "error"
-          overwrite: "true"
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.1"
-          extensions: zip, mysqli, intl, gd
-      - uses: actions/checkout@v3
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-
-      - name: Generate OpenAPI docs
-        run: php html/admin/api/docs/generator.php > apiDocs.yaml
 
       - uses: actions/upload-artifact@v4
         with:
@@ -107,13 +78,14 @@ jobs:
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "dist/"
+          path: "dist/index.html"
 
       # Just upload the artefact if a PR
       - uses: actions/upload-artifact@v4
         if: github.event_name == 'pull_request'
         with:
-          path: "dist/"
+          name: "ReDocly.html"
+          path: "dist/index.html"
           if-no-files-found: "error"
           overwrite: "true"
 
