@@ -129,6 +129,18 @@ if (count($PAGEDATA['assets']) == 1) {
         $DBLIB->where("assetGroups_id IN (" . $PAGEDATA['assets'][0]['assets_assetGroups'] . ")");
         $PAGEDATA['assets'][0]['groups'] = $DBLIB->get("assetGroups",null,["assetGroups_id","assetGroups_name"]);
     } else $PAGEDATA['assets'][0]['groups'] = [];
+
+    //Asset Location
+    //Current asset location
+    $latestScan = assetLatestScan($asset['assets_id']);
+
+    if(isset($latestScan['locations_id'])) {
+        $PAGEDATA['assets'][0]['assets_storageLocationName'] = $latestScan['locations_name'];
+    } elseif (isset($latestScan['location_assets_id'])) {
+        $PAGEDATA['assets'][0]['assets_storageLocationName'] = 'Stored in ' . $latestScan['assetTypes_name'];
+    } elseif (isset($latestScan['assetsBarcodes_customLocation'])) {
+        $PAGEDATA['assets'][0]['assets_storageLocationName'] = $latestScan['assetsBarcodes_customLocation'];
+    }
 }
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");

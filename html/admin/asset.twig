@@ -55,9 +55,11 @@
                             <li class="list-group-item">
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
+                            <li class="list-group-item">
+                                <b>Current Location</b> <a class="float-right">{{ (assets[0]['assets_storageLocationName'] ?: '<i>Unknown</i>')}}</a>
+                            </li>
                         </ul>
                         {% if "ASSETS:ARCHIVE"|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
-                            <hr/>
                             <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
                         {% if "ASSETS:DELETE"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
