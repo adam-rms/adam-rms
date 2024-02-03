@@ -2,6 +2,15 @@
 
 {% block content %}
     <div class="row">
+        {% if ("BUSINESS:USERS:VIEW:LIST"|instancePermissions or "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions or "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions or "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions) %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">User Management</h2>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
         <div class="col-lg-3 col-6">
             <div class="small-box bg-primary">
@@ -59,6 +68,13 @@
         </div>
         {% endif %}
         {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Business Settings</h2>
+                </div>
+            </div>
+        </div>
         <div class="col-lg-3 col-6">
             <div class="small-box bg-primary">
                 <div class="inner">
@@ -98,30 +114,6 @@
         <div class="col-lg-3 col-6">
             <div class="small-box bg-primary">
                 <div class="inner">
-                    <h3>Invoices</h3>
-                    <p>Configure invoice exports from projects.</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-receipt"></i>
-                </div>
-                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/invoices.php" class="small-box-footer">Manage Invoices <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <div class="col-lg-3 col-6">
-            <div class="small-box bg-primary">
-                <div class="inner">
-                    <h3>Barcodes</h3>
-                    <p>Configure barcode exports.</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-barcode"></i>
-                </div>
-                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/barcodes.php" class="small-box-footer">Manage Barcodes <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <div class="col-lg-3 col-6">
-            <div class="small-box bg-primary">
-                <div class="inner">
                     <h3>Calendar Settings</h3>
                     <p>&nbsp;</p>
                 </div>
@@ -129,6 +121,15 @@
                     <i class="far fa-calendar-alt"></i>
                 </div>
                 <a href="{{ CONFIG.ROOTURL }}/instances/calendarSettings.php" class="small-box-footer">Manage Calendar Settings <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if ("BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions) %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Project Settings</h2>
+                </div>
             </div>
         </div>
         {% endif %}
@@ -173,6 +174,27 @@
                 <a href="{{ CONFIG.ROOTURL }}/instances/configuration/asset-status.php" class="small-box-footer">Manage Asset Statuses <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Invoices</h3>
+                    <p>Configure invoice exports from projects.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/invoices.php" class="small-box-footer">Manage Invoices <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if ("BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions) %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Asset Settings</h2>
+                </div>
+            </div>
+        </div>
         {% endif %}
         {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
         <div class="col-lg-3 col-6">
@@ -185,6 +207,20 @@
                    
                 </div>  
                 <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="small-box-footer">Manage Custom Categories <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Barcodes</h3>
+                    <p>Configure barcode exports.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/barcodes.php" class="small-box-footer">Manage Barcodes <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         {% endif %}
