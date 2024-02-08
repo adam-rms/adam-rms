@@ -1,6 +1,6 @@
 <?php
 require_once 'head.php';
-if (!isset($PAGEDATA['INSTANCE']['publicData']['enableAssets']) or !$PAGEDATA['INSTANCE']['publicData']['enableVacancies']) die("Disabled by your AdamRMS administrator");
+if (!isset($PAGEDATA['INSTANCE']['publicData']['enableVacancies']) or !$PAGEDATA['INSTANCE']['publicData']['enableVacancies']) die("Disabled by your AdamRMS administrator");
 
 date_default_timezone_set('Europe/London'); //So deadlines show in right timezone
 $PAGEDATA['pageConfig'] = ["TITLE" => "Crew Role Vacancies", "BREADCRUMB" => false];
