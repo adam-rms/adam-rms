@@ -29,6 +29,9 @@
                 <tr>
                     <td>
                         {% if project != role.projects_id %}
+                            {% if role.parentProject %}
+                                {{role.parentProject.projects_name}} &rarr;
+                            {% endif %}
                             {{ role.projects_name }}
                         {% else %}
                             &#8627;
@@ -55,7 +58,13 @@
                     <td class="project-actions text-right">
                         <div class="btn-group">
                             <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#infoModal{{ role.projectsVacantRoles_id }}">More Info</button>
-                            <a type="button" class="btn btn-success btn-sm" target="_blank" href="{{CONFIG.ROOTURL}}/project/crew/vacancies.php">Login to Apply</a>
+                            <a type="button" class="btn btn-success btn-sm" target="_blank" href="{{CONFIG.ROOTURL}}/project/crew/vacancies.php">
+                                {% if role.projectsVacantRoles_firstComeFirstServed %}
+                                Login to Sign Up
+                                {% else %}
+                                Login to Apply
+                                {% endif %}
+                            </a>
                         </div>
                     </td>
                 </tr>

@@ -24,6 +24,15 @@ $roles = $DBLIB->get("projectsVacantRoles",null,["projectsVacantRoles.*","projec
 $PAGEDATA['roles'] = [];
 foreach($roles as $role) {
     $role['projectsVacantRoles_questions'] = json_decode($role['projectsVacantRoles_questions'],true);
+
+    //get parent project if set
+    if ($role['projects_parent_project_id']) {
+        $DBLIB->where("projects_id",$role['projects_parent_project_id']);
+        $DBLIB->where("projects_deleted",0);
+        $DBLIB->where("projects_archived",0);
+        $role['parentProject'] = $DBLIB->getOne("projects",["projects_id","projects_name"]);
+    }
+
     $PAGEDATA['roles'][] = $role;
 }
 echo $TWIG->render('public/embed/jobsPublic.twig', $PAGEDATA);
