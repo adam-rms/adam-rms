@@ -363,6 +363,22 @@
                             </p>
                         </a>
                     </li>
+                {% if "TRAINING:VIEW"|instancePermissions %}
+                    <li class="nav-item">
+                    <a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
+                        <i class="nav-icon fas fa-graduation-cap"></i>
+                        <p>Training</p>
+                    </a>
+                </li>
+                {% endif %}
+                {% if "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES"|instancePermissions %}
+                    <li class="nav-item">
+                        <a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
+                            <i class="nav-icon fas fa-notes-medical"></i>
+                            <p>Crew Vacancies</p>
+                        </a>
+                    </li>
+                {% endif %}
                 {% if USERDATA.instances|length > 0 %}
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
@@ -441,133 +457,19 @@
                                     </a>
                                 </li>
                             {% endif %}
-                            <li class="nav-header">USER MANAGEMENT</li>
-                            {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="nav-link">
-                                        <i class="nav-icon fas fa-users"></i>
-                                        <p>
-                                            Users
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="nav-link">
-                                        <i class="nav-icon fas fa-unlock-alt"></i>
-                                        <p>
-                                            Permissions
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/signupCodes.php" class="nav-link">
-                                        <i class="fas fa-key nav-icon"></i>
-                                        <p>
-                                            Signup Codes
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/trustedDomains.php" class="nav-link">
-                                        <i class="far fa-building nav-icon"></i>
-                                        <p>
-                                            Trusted Domains
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            <li class="nav-header">SETTINGS</li>
-                            {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="nav-link">
-                                        <i class="nav-icon fas fa-cog"></i>
-                                        <p>
-                                            Basic Settings
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/public.php" class="nav-link">
-                                        <i class="nav-icon fab fa-chrome"></i>
-                                        <p>
-                                            Public Site
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+                            {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions or "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions or "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions or "BUSINESS:USERS:VIEW:LIST"|instancePermissions or "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-list nav-icon"></i>
+                                <a href="{{ CONFIG.ROOTURL }}/instances/navigation.php" class="nav-link">
+                                    <i class="nav-icon fas fa-cog"></i>
                                     <p>
-                                    Advanced Settings
-                                        <i class="right fas fa-angle-left"></i>
+                                        Users &amp; Settings
                                     </p>
                                 </a>
-                                <ul class="nav nav-treeview">
-                                    {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
-                                    <li class="nav-item">
-                                        <a href="{{ CONFIG.ROOTURL }}/instances/calendarSettings.php" class="nav-link">
-                                            <p>
-                                                Calendar Settings
-                                            </p>
-                                        </a>
-                                    </li>
-                                    {% endif %}
-                                    {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
-                                        <li class="nav-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="nav-link">
-                                                <p>
-                                                    Project Types
-                                                </p>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    {% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
-                                        <li class="nav-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/instances/projectStatuses.php" class="nav-link">
-                                                <p>
-                                                    Project Statuses
-                                                </p>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
-                                        <li class="nav-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="nav-link">
-                                                <p>
-                                                    Custom Categories
-                                                </p>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                </ul>
                             </li>
                             {% endif %}
                         </ul>
                     </li>
-                    {% if "TRAINING:VIEW"|instancePermissions %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
-                            <i class="nav-icon fas fa-graduation-cap"></i>
-                            <p>Training</p>
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES"|instancePermissions %}
-                        <li class="nav-item">
-                            <a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
-                                <i class="nav-icon fas fa-notes-medical"></i>
-                                <p>Crew Vacancies</p>
-                            </a>
-                        </li>
-                    {% endif %}
+                    
                     {% if NAVIGATIONCMSPages %}
                         <li class="nav-header">PAGES</li>
                         {% for page in NAVIGATIONCMSPages %}
