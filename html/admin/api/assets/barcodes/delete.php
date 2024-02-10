@@ -12,3 +12,30 @@ $DBLIB->where("assetsBarcodes.assetsBarcodes_deleted", 0);
 $result = $DBLIB->update("assetsBarcodes", ["assetsBarcodes_deleted" => 1]);
 if (!$result) finish(false, ["code" => "DELETE-FAIL", "message"=> "Could not delete barcode"]);
 else finish(true);
+
+/** @OA\Post(
+ *     path="/assets/barcodes/delete.php", 
+ *     summary="Delete Barcode", 
+ *     description="Delete a barcode  
+Requires Instance Permission ASSETS:ASSET_BARCODES:DELETE
+", 
+ *     operationId="deleteBarcode", 
+ *     tags={"barcodes"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="barcodes_id",
+ *         in="query",
+ *         description="the ID to remove",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ * )
+ */

@@ -16,3 +16,50 @@ if (isset($_POST['formInput'])) {
         } else finish(true, null, false);
     }
 } else finish(false, ["code" => null, "message" => "Unknown error"]);
+
+/** @OA\Post(
+ *     path="/login/forgotPassword.php", 
+ *     summary="Forgot Password", 
+ *     description="Send a password reset email to the user", 
+ *     operationId="forgotPassword", 
+ *     tags={"authentication"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="formInput",
+ *         in="query",
+ *         description="Username",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

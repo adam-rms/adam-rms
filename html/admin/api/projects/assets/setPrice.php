@@ -60,3 +60,49 @@ foreach ($assignmentsSetDiscount["assignments"] as $assignment) {
 }
 if ($projectFinanceCacher->save()) finish(true);
 else finish(false,["message"=>"Finance Cacher Save failed"]);
+
+/** @OA\Post(
+ *     path="/projects/assets/setPrice.php", 
+ *     summary="Set Asset Assignment Price", 
+ *     description="Set the price for an asset assignment  
+Requires Instance Permission PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE
+", 
+ *     operationId="setAssetAssignmentPrice", 
+ *     tags={"project_assets"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments",
+ *         in="query",
+ *         description="Asset Assignment IDs",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="array"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assetsAssignments_customPrice",
+ *         in="query",
+ *         description="Price",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

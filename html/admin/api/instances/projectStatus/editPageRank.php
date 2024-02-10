@@ -11,3 +11,30 @@ foreach ($_POST['order'] as $count=>$item) {
 }
 $bCMS->auditLog("RANK-PROJECTSTATUSES", "projectsStatuses", "Set the order of project statuses", $AUTH->data['users_userid']);
 finish(true);
+
+/**
+ *  @OA\Post(
+ *      path="/instances/projectStatus/editPageRank.php",
+ *      summary="Edit Project Status Order",
+ *      description="Edit status flow order",
+ *      operationId="editProjectStatusOrder",
+ *      tags={"projectStatus"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *      ),
+ *      @OA\Parameter(
+ *          name="order",
+ *          in="query",
+ *          description="Array of Project Statuses",
+ *          required="true",
+ *          @OA\Schema(
+ *              type="array",
+ *          ),
+ *      ),
+ *  )
+ */

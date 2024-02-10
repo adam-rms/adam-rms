@@ -25,3 +25,62 @@ foreach ($assets as $asset) {
     $assetsReturn[] = $asset;
 }
 finish(true, null, $assetsReturn);
+
+/** @OA\Post(
+ *     path="/assets/searchAssets.php", 
+ *     summary="Simple Asset Search", 
+ *     description="Searches for assets by tag or name  
+Deprecated, use /assets/deepSearch.php instead
+", 
+ *     operationId="simpleAssetSearch", 
+ *     tags={"assets"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="An array of assets",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="The term to search for",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

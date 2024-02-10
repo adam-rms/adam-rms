@@ -58,3 +58,65 @@ if (!$asset) {
 } else $assetSuggest = false;
 
 finish(true, null, ["asset" => $asset, "assetSuggest" => $assetSuggest, "barcode" => ($barcode ? $barcode['assetsBarcodes_id'] : false),"location" => $location]);
+
+/** @OA\Post(
+ *     path="/assets/barcodes/search.php", 
+ *     summary="Barcode Asset Search", 
+ *     description="Search for an Asset using a barcode
+", 
+ *     operationId="barcodeSearch", 
+ *     tags={"barcodes"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema(ref="#/components/schemas/SimpleResponse"),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="error", 
+ *                     type="array", 
+ *                     description="An Array containing an error code and a message",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="text",
+ *         in="query",
+ *         description="The barcode value",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="type",
+ *         in="query",
+ *         description="The barcode type",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="locationType",
+ *         in="query",
+ *         description="What the location is",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ * )
+ */

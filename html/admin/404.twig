@@ -6,11 +6,24 @@
 
         <div class="error-content">
             <h3><i class="fas fa-exclamation-triangle text-warning"></i> Oops! Page not found.</h3>
-
             <p>
                 We could not find the page you were looking for.
-                <br/>Meanwhile, you might want to <a href="{{ CONFIG.ROOTURL }}">return to dashboard</a>, or try checking you are in the right business.
+                <br/>Meanwhile, you might want to <a href="{{ CONFIG.ROOTURL }}">return to dashboard</a>{% if USERDATA.instances|length > 1 %}, or try changing to a different business:{% endif %}
             </p>
+            {% if USERDATA.instances|length > 1 %}
+            <ul>
+                {% for instance in USERDATA.instances %}
+                    {% if USERDATA.instance.instances_id != instance.instances_id %}
+                        <li>
+                            <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}"  class="changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
+                                {{instance.instances_name}}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% endif  %}
         </div>
     </div>
+    
 {% endblock %}

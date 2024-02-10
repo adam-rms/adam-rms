@@ -143,4 +143,4 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
 		exit;
 	}
-} else echo $TWIG->render('login/index.twig', $PAGEDATA);
+} else echo $TWIG->render('login/login_index.twig', $PAGEDATA);

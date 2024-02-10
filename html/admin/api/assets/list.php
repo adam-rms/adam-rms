@@ -31,7 +31,7 @@ $PAGEDATA['assets'] = [];
 foreach ($assets as $asset) {
     $asset['thumbnails'] = [];
     foreach ($bCMS->s3List(2, $asset['assetTypes_id']) as $thumbnail) {
-        $thumbnail['url'] = $bCMS->s3URL($thumbnail['s3files_id'], ($_POST['imageComp'] ? $_POST['imageComp'] : false), false, '+1 hour');
+        $thumbnail['url'] = $bCMS->s3URL($thumbnail['s3files_id'], false, '+1 hour');
         $asset['thumbnails'][] = $thumbnail;
     }
 
@@ -74,4 +74,101 @@ foreach ($assets as $asset) {
     $PAGEDATA['assets'][] = $asset;
 }
 finish(true, null, ["assets" => $PAGEDATA['assets'], "pagination" => $PAGEDATA['pagination']]);
-?>
+
+/** @OA\Post(
+ *     path="/assets/list.php", 
+ *     summary="List Assets", 
+ *     description="Lists assets", 
+ *     operationId="listAssets", 
+ *     tags={"assets"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="assets", 
+ *                     type="array", 
+ *                     description="An array of asset objects",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="pagination", 
+ *                     type="number", 
+ *                     description="An object containing pagination data",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="A search term to filter the list by",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="page",
+ *         in="query",
+ *         description="The page number to get",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="pageLimit",
+ *         in="query",
+ *         description="The number of items to get per page",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="category",
+ *         in="query",
+ *         description="The ID of the asset category to filter by",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="manufacturer",
+ *         in="query",
+ *         description="The ID of the manufacturer to filter by",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="assetTypes_id",
+ *         in="query",
+ *         description="The ID of the asset type to filter by",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="all",
+ *         in="query",
+ *         description="Whether to get all linked assets",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="any"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="abridgedList",
+ *         in="query",
+ *         description="Whether to get file and flags & blocks",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ * )
+ */

@@ -45,3 +45,12 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
         return true;
     }
 }
+
+/** @OA\Get(
+ *     path="/notifications/email/email.php", 
+ *     summary="Email Notifications", 
+ *     description="Send an email to the user. This returns a function to call rather than a response.", 
+ *     operationId="emailNotifications", 
+ *     tags={"notifications"}, 
+ *     )
+ */

@@ -24,4 +24,48 @@ if ($DBLIB->update ('instancePositions', ['instancePositions_actions' => implode
 	die('1');
 }
 else die('2');
-?>
+
+/** @OA\Post(
+ *     path="/permissions/instancePermissionEditor.php", 
+ *     summary="Instance Permission Editor", 
+ *     description="Edit the permissions of a position  
+Requires Instance Permission BUSINESS:ROLES_AND_PERMISSIONS:EDIT
+", 
+ *     operationId="instancePermissionEditor", 
+ *     tags={"permissions"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/text", 
+ *             @OA\Schema( 
+ *                 type="number", 
+ *                 ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="position",
+ *         in="query",
+ *         description="Position id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="removepermission",
+ *         in="query",
+ *         description="Permission id to remove",
+ *         required="undefined", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="addpermission",
+ *         in="query",
+ *         description="Permission id to add",
+ *         required="undefined", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

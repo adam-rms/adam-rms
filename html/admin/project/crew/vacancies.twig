@@ -13,7 +13,10 @@
                 <th style="width: 15%; min-width:300px;">
                     Project
                 </th>
-                <th style="width: 15%; min-width:300px;">
+                <th style="width: 15%; min-width:150px;">
+                    Project Client
+                </th>
+                <th style="width: 10%; min-width:200px;">
                     Project Dates
                 </th>
                 <th style="min-width:150px;">
@@ -40,6 +43,11 @@
                             {{ role.projects_name }}
                         {% else %}
                             &#8627;
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if project != role.projects_id %}
+                        {{role.clients_name}}
                         {% endif %}
                     </td>
                     <td>
@@ -135,7 +143,13 @@
                                 {% if role.application %}
                                     <button type="button" class="btn btn-default btn-sm" disabled>Applied</button>
                                 {% else %}
-                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">Apply</a>
+                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">
+                                        {% if role.projectsVacantRoles_firstComeFirstServed %}
+                                        Sign Up
+                                        {% else %}
+                                        Apply
+                                        {% endif %}
+                                    </a>
                                 {% endif %}
                             </div>
                         </div>

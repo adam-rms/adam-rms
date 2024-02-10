@@ -63,8 +63,8 @@
         $.widget.bridge('uibutton', $.ui.button)
     </script>
     <!--Sweet Alert-->
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/sweetalert2.min.js"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ASSETCDNURL }}/css/sweetAlert2-bootstrap-4.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -406,7 +406,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-            </div>
+            </div>  
             <div class="modal-body">
                 <form id="newPaymentModal-form">
                     <input type="hidden" id="newPaymentModal-form-type" name="payments_type" value="1"/>

@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../common/libs/Auth/instanceActions.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Permissions", "BREADCRUMB" => false];
 
-if (!$AUTH->instancePermissionCheck("BUSINESS:ROLES_AND_PERMISSIONS:VIEW")) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("BUSINESS:ROLES_AND_PERMISSIONS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 
 $DBLIB->orderBy("instancePositions_rank", "ASC");

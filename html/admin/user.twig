@@ -1,9 +1,5 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <!--Password Strength-->
-    <link rel="stylesheet" href="{{ CONFIG.ASSETCDNURL }}/css/strength.css"/>
-    <script src="{{ CONFIG.ASSETCDNURL }}/js/libs/strength.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
             integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
@@ -18,7 +14,8 @@
                 <div class="card-body box-profile">
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
-                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ASSETCDNURL ~ '/img/default-profile-picture.jpg' }}"
+                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"
+                                 loading="lazy"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
                     <h3 class="profile-username text-center">{{ user.users_name1 }} {{ user.users_name2 }}</h3>
@@ -229,7 +226,7 @@
                             </div>
                             <div class="tab-pane table-responsive p-3" id="profilepicture">
                                 {% if user.users_thumbnail != null %}
-                                    <img src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
+                                    <img loading="lazy" src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
                                 {% endif %}
                                 {% if "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
                                     {% embed 'common/plugins/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
@@ -253,11 +250,6 @@
                                 <input type="password" placeholder="Current Password" class="form-control" id="current_pass" />
                             </div>
                             <div class="form-group">
-                                <style>
-                                    .button_strength {
-                                        display: none;
-                                    }
-                                </style>
                                 <label for="username">New Password</label>
                                 <input type="password" placeholder="New Password" class="form-control" id="passnew" /><br/>
                                 <input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
@@ -265,7 +257,6 @@
                             <button id="save-password-settings" class="btn btn-default">Change Password</button>
                             <script>
                                 $(document).ready(function() {
-                                    $("#passnew").strength();
                                     $('#save-password-settings').click(function() {
                                         if ($('#passnew').val() != $('#passconf').val()) {
                                             bootbox.alert("Sorry - Your new password's don't match!");
@@ -504,6 +495,7 @@
                                     var calendar = new Calendar(document.getElementById('calendar'), {
                                         nextDayThreshold: '05:00:00',
                                         themeSystem: 'bootstrap',
+                                        initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
                                         buttonText: {
                                             today: 'Today',
                                             month: 'Month',
@@ -523,7 +515,7 @@
                                             {% set latestEnd = false %}
                                             {% for project in user.crewAssignments %}
                                             {
-                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }} ({{ project.projectsStatuses_name|escape("js") }})",
+                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} ({{ project.projectsStatuses_name|escape("js") }}){% endif %}",
                                                 start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
                                                 end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
                                                 url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',
@@ -549,7 +541,7 @@
                                         },
                                         firstDay: 1,
                                         weekNumbers: true,
-                                        {% if USERDATA.instance['instances_weekStartDates'] %}
+                                        {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
                                         weekNumberContent : function(week) {
                                             var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
                                             for (const [date, label] of Object.entries(weekStartDates)) {

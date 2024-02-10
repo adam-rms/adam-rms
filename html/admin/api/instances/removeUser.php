@@ -10,3 +10,57 @@ $DBLIB->where("instancePositions.instances_id", $AUTH->data['instance']['instanc
 $updateQuery = $DBLIB->update("userInstances", ["userInstances_deleted" => 1]);
 if (!$updateQuery) finish(false, ["code" => "REMOVE-USER-TO-INSTANCE-FAIL", "message"=> "Could not remove user from Business"]);
 else finish(true);
+
+/** @OA\Post(
+ *     path="/instances/removeUser.php", 
+ *     summary="Remove User", 
+ *     description="Remove a user from an instance  
+Requires Instance Permission BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS
+", 
+ *     operationId="removeUser", 
+ *     tags={"instances"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A null Array",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="userid",
+ *         in="query",
+ *         description="The user id",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ * )
+ */

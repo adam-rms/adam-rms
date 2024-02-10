@@ -33,3 +33,63 @@ if (isset($_POST['term']) and $_POST['term']) $DBLIB->where("assetCategories_nam
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $categories = $DBLIB->get('assetCategories');
 finish(true, [], $categories);
+
+/** @OA\Post(
+ *     path="/categories/search.php", 
+ *     summary="Search Asset Categories", 
+ *     description="Search for categories", 
+ *     operationId="searchCategories", 
+ *     tags={"categories"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="response", 
+ *                     type="array", 
+ *                     description="A list of categories",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="default", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Parameter(
+ *         name="term",
+ *         in="query",
+ *         description="The search term",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="instance_id",
+ *         in="query",
+ *         description="the InstanceID",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="integer"), 
+ *         ), 
+ * )
+ */

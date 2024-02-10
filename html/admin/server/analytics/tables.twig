@@ -1,0 +1,36 @@
+    {% extends "assets/template.twig" %}
+
+    {% block content %}
+        <div class="row">
+            <div class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-sm-12">
+                <div class="card ">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Analytics - Tables (Total = {{ total|number_format }})
+                        </h3>
+                        <div class="card-tools pull-right">
+                            
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
+                            <thead>
+                            <tr>
+                                <th>Table Name</th>
+                                <th>Number of Rows</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for table in tables %}
+                                <tr>
+                                    <td>{{ table.name }}</td>
+                                    <td>{{ table.count|number_format }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    {% endblock %}

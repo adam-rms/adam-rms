@@ -47,3 +47,49 @@ if ($_POST['follow'] === 'true') {
 
     finish(true, null, ["changed" => true]);
 }
+
+/** @OA\Post(
+ *     path="/projects/followParentStatus.php", 
+ *     summary="Follow Parent Status", 
+ *     description="Change whether a project follows the status of its parent project  
+Requires Instance Permission PROJECTS:CREATE
+", 
+ *     operationId="followParentStatus", 
+ *     tags={"projects"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json", 
+ *             @OA\Schema( 
+ *                 type="object", 
+ *                 @OA\Property(
+ *                     property="result", 
+ *                     type="boolean", 
+ *                     description="Whether the request was successful",
+ *                 ),
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="404", 
+ *         description="Permission Error",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="projects_id",
+ *         in="query",
+ *         description="Project ID",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="number"), 
+ *         ), 
+ *     @OA\Parameter(
+ *         name="follow",
+ *         in="query",
+ *         description="Follow Parent Status",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ), 
+ * )
+ */

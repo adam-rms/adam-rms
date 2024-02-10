@@ -14,7 +14,7 @@
 		if (strtotime($code['emailVerificationCodes_timestamp']) < (time()-(60*60*48))) {
 			//Code has expired - send another
             if ($AUTH->verifyEmail()) die("Sorry - Your code has expired - we've sent you another one instead");
-            else die("Sorry - Your code has expired - please contact support");
+            else die("Sorry - Your code has expired - please try to create another code or contact the support team");
         }
 		$DBLIB->where ('users_userid', $code['users_userid']);
 		$DBLIB->update ('users', ["users_emailVerified" => "1"]); //Verify E-Mail
@@ -31,4 +31,35 @@
 		header('Location: ' . $CONFIG['ROOTURL']); //If it fails we may as well just assume they have tried to click it a second time.
         exit;
     }
-?>
+
+/** @OA\Post(
+ *     path="/account/verifyEmail.php", 
+ *     summary="Verify Email", 
+ *     description="Verify an email address", 
+ *     operationId="verifyEmail", 
+ *     tags={"account"}, 
+ *     @OA\Response(
+ *         response="200", 
+ *         description="Error",
+ *         @OA\MediaType(
+ *             mediaType="text/plain", 
+ *             @OA\Schema( 
+ *                 type="string", 
+ *             ),
+ *         ),
+ *     ), 
+ *     @OA\Response(
+ *         response="308", 
+ *         description="Success",
+ *     ), 
+ *     @OA\Parameter(
+ *         name="code",
+ *         in="query",
+ *         description="undefined",
+ *         required="true", 
+ *         @OA\Schema(
+ *             type="string"
+ * 		   ), 
+ *     ), 
+ * )
+ */
