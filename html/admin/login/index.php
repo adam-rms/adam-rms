@@ -4,6 +4,7 @@ require_once __DIR__ . '/../common/head.php';
 use \Firebase\JWT\JWT;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Login"];
+$PAGEDATA['googleAuthAvailable'] = $CONFIG['AUTH-PROVIDERS']['GOOGLE']['keys']['id'] != "" and $CONFIG['AUTH-PROVIDERS']['GOOGLE']['keys']['secret'] != "";
 
 if (isset($_GET['app-oauth'])) {
 	$_SESSION['return'] = false;
@@ -36,6 +37,11 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 	$PAGEDATA['MAGICLINKURL'] = $_GET['app-magiclink'];
 	echo $TWIG->render('login/magicLink.twig', $PAGEDATA);
 } elseif (isset($_GET['google'])) {
+	if (!$PAGEDATA['googleAuthAvailable']) {
+		//Display normal login page if Google isn't available
+		echo $TWIG->render('login/login_index.twig', $PAGEDATA);
+		exit;
+	}
 	//Similar setup can be found in the link provider api endpoint
 	$CONFIG['AUTH-PROVIDERS']['GOOGLE']['callback'] = $CONFIG['ROOTURL'] . '/login/index.php?google';
 
