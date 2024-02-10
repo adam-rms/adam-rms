@@ -24,10 +24,10 @@ jobs:
         with:
           php-version: "8.1"
           extensions: zip, mysqli, intl, gd
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
