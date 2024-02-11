@@ -35,5 +35,8 @@ foreach($roles as $role) {
 
     $PAGEDATA['roles'][] = $role;
 }
+
+$PAGEDATA['showClients'] = (isset($PAGEDATA['INSTANCE']['publicData']['showVacancyClients']) and $PAGEDATA['INSTANCE']['publicData']['showVacancyClients']);
+
 echo $TWIG->render('public/embed/jobsPublic.twig', $PAGEDATA);
 ?>

@@ -8,9 +8,11 @@
                 <th style="width: 15%;">
                     Project
                 </th>
+                {% if showClients %}
                 <th style="width: 15%; min-width:150px;">
                     Project Client
                 </th>
+                {% endif %}
                 <th style="width: 10%; min-width:200px;">
                     Project Dates
                 </th>
@@ -37,11 +39,13 @@
                             &#8627;
                         {% endif %}
                     </td>
+                    {% if showClients %}
                     <td>
                         {% if project != role.projects_id %}
                         {{role.clients_name}}
                         {% endif %}
                     </td>
+                    {% endif %}
                     <td>
                         {% if project != role.projects_id %}
                             {{role.projects_dates_use_start ? role.projects_dates_use_start|date("d M Y h:ia") }}<br/>
