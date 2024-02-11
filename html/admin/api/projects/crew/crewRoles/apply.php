@@ -46,7 +46,8 @@ if ($role['projectsVacantRoles_firstComeFirstServed']) {
     $insert = $DBLIB->insert("crewAssignments", [
         "projects_id" => $role["projects_id"],
         "users_userid" => $AUTH->data['users_userid'],
-        "crewAssignments_role" => $role['projectsVacantRoles_name']
+        "crewAssignments_role" => $role['projectsVacantRoles_name'],
+        "projectsVacantRoles_id" => $role['projectsVacantRoles_id'],
     ]);
     if (!$insert) finish(false, ["message"=>"Application received, but there was a problem assigning you to the project - please contact the project manager"]);
 

@@ -17,7 +17,8 @@ if (!$application) finish(false,["message"=>"Application not found"]);
 $insert = $DBLIB->insert("crewAssignments", [
     "projects_id" => $application["projects_id"],
     "users_userid" => $application['users_userid'],
-    "crewAssignments_role" => $application['projectsVacantRoles_name']
+    "crewAssignments_role" => $application['projectsVacantRoles_name'],
+    "projectsVacantRoles_id" => $application['projectsVacantRoles_id'],
 ]);
 if (!$insert) finish(false, ["message"=>"Could not assign this user to the role"]);
 

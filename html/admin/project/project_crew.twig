@@ -51,7 +51,7 @@
                                 {% if "PROJECTS:PROJECT_CREW:EDIT"|instancePermissions %}
                                     <i class="far fa-edit editCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" data-role="{{crew.crewAssignments_role|escape('html_attr')}}" data-comment="{{crew.crewAssignments_comment|escape('html_attr')}}" title="Edit"></i>
                                     <i class="far fa-comment editCrewAssignmentComment" data-assignment="{{ crew.crewAssignments_id }}" data-comment="{{crew.crewAssignments_comment|escape('html_attr')}}" title="Edit comment"></i>
-                                    <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
+                                    <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" data-vacancy="{{ crew.projectsVacantRoles_id }}" title="Delete crew"></i>
                                 {% endif %}
                             </div>
                         </li>
