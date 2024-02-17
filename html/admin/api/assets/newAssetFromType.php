@@ -31,14 +31,14 @@ if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not ins
 //Generate asset barcode
 
 $assetBarcodeData = [
-    "assetsBarcodes_value" => "A" . (is_numeric($asset['assets_tag']) ? $asset['assets_tag'] : $asset['assets_id']),
+    "assetsBarcodes_value" => $asset['assets_tag'],
     "assetsBarcodes_type" => "CODE_128",
     "assets_id" => $asset['assets_id'],
     "users_userid" => $AUTH->data['users_userid'],
     "assetsBarcodes_added" => date("Y-m-d H:i:s")
 ];
 while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"],$assetBarcodeData["assetsBarcodes_type"])) {
-    $assetBarcodeData["assetsBarcodes_value"] = mt_rand(1000,99999);
+    $assetBarcodeData["assetsBarcodes_value"] = mt_rand(1000,999999); //Duplicate, so generate a hopefully random number as a replacement
 }
 $insert = $DBLIB->insert("assetsBarcodes", $assetBarcodeData);
 //We don't really mind if the insert fails, we can always generate another one later...
