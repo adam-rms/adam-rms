@@ -56,7 +56,7 @@
                                 <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Current Location</b> <a class="float-right">{{ (assets[0]['assets_storageLocationName'] ?: '<i>Unknown</i>')}}</a>
+                                <b>Current Location</b> <a class="float-right">{{ (assets[0]['assets_latestScanLocationName'] ?: '<i>Unknown</i>')}}</a>
                             </li>
                         </ul>
                         {% if "LOCATIONS:VIEW"|instancePermissions and "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions and assets[0].barcodes[0] %}

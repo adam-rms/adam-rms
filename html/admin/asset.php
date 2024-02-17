@@ -135,11 +135,11 @@ if (count($PAGEDATA['assets']) == 1) {
     $latestScan = assetLatestScan($asset['assets_id']);
 
     if(isset($latestScan['locations_id'])) {
-        $PAGEDATA['assets'][0]['assets_storageLocationName'] = $latestScan['locations_name'];
+        $PAGEDATA['assets'][0]['assets_latestScanLocationName'] = $latestScan['locations_name'];
     } elseif (isset($latestScan['location_assets_id'])) {
-        $PAGEDATA['assets'][0]['assets_storageLocationName'] = 'Stored in ' . $latestScan['assetTypes_name'] . ' (' . $latestScan['assets_tag'] . ')';
+        $PAGEDATA['assets'][0]['assets_latestScanLocationName'] = 'Stored in ' . $latestScan['assetTypes_name'] . ' (' . $latestScan['assets_tag'] . ')';
     } elseif (isset($latestScan['assetsBarcodes_customLocation'])) {
-        $PAGEDATA['assets'][0]['assets_storageLocationName'] = $latestScan['assetsBarcodes_customLocation'];
+        $PAGEDATA['assets'][0]['assets_latestScanLocationName'] = $latestScan['assetsBarcodes_customLocation'];
     }
 
     //All Locations
