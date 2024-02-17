@@ -411,7 +411,7 @@ function assetLatestScan($assetid) {
     $DBLIB->join("assetTypes","assets.assetTypes_id=assetTypes.assetTypes_id","LEFT");
     $DBLIB->join("locations","locations.locations_id=locationsBarcodes.locations_id","LEFT");
     $DBLIB->join("users","users.users_userid=assetsBarcodesScans.users_userid");
-    return $DBLIB->getone("assetsBarcodesScans",["assetsBarcodesScans.*","users.users_name1","users.users_name2","locations.locations_name","locations.locations_id","assets.assetTypes_id","assetTypes.assetTypes_name"]);
+    return $DBLIB->getone("assetsBarcodesScans",["assetsBarcodesScans.*","users.users_name1","users.users_name2","locations.locations_name","locations.locations_id","assets.assetTypes_id","assetTypes.assetTypes_name", "assets.assets_tag"]);
 
 }
 class projectFinance {

@@ -137,9 +137,42 @@ if (count($PAGEDATA['assets']) == 1) {
     if(isset($latestScan['locations_id'])) {
         $PAGEDATA['assets'][0]['assets_storageLocationName'] = $latestScan['locations_name'];
     } elseif (isset($latestScan['location_assets_id'])) {
-        $PAGEDATA['assets'][0]['assets_storageLocationName'] = 'Stored in ' . $latestScan['assetTypes_name'];
+        $PAGEDATA['assets'][0]['assets_storageLocationName'] = 'Stored in ' . $latestScan['assetTypes_name'] . ' (' . $latestScan['assets_tag'] . ')';
     } elseif (isset($latestScan['assetsBarcodes_customLocation'])) {
         $PAGEDATA['assets'][0]['assets_storageLocationName'] = $latestScan['assetsBarcodes_customLocation'];
+    }
+
+    //All Locations
+    $DBLIB->where("locations_deleted", 0);
+    $DBLIB->where("locations_archived", 0);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("locations_subOf", NULL, 'IS');
+    $DBLIB->orderBy("locations_subOf", "ASC");
+    $DBLIB->orderBy("locations.locations_name", "ASC");
+    $DBLIB->join('locationsBarcodes', 'locationsBarcodes.locations_id=locations.locations_id');
+    $locations = $DBLIB->get("locations", null, ['locationsBarcodes.locationsBarcodes_id', 'locations.locations_name']);
+
+    function linkedLocations($locationId, $tier, $locationKey)
+    {
+        global $DBLIB, $PAGEDATA, $AUTH;
+        $DBLIB->where("locations_subOf", $locationId);
+        $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
+        $DBLIB->orderBy("locations.locations_name", "ASC");
+        $DBLIB->where("locations.locations_deleted", 0);
+        $DBLIB->where("locations.locations_archived", 0);
+        $DBLIB->join('locationsBarcodes', 'locationsBarcodes.locations_id=locations.locations_id');
+        $locations = $DBLIB->get("locations", null, ['locationsBarcodes.locationsBarcodes_id', 'locations.locations_name']);
+        $tier += 1;
+        foreach ($locations as $location) {
+            $location['tier'] = $tier;
+            $PAGEDATA['locations'][$locationKey]['linkedToThis'][] = $location;
+            linkedLocations($location['locations_id'], $tier, $locationKey);
+        }
+    }
+    foreach ($locations as $index => $location) {
+        $PAGEDATA['locations'][] = $location;
+        $PAGEDATA['locations'][$index]['linkedToThis'] = [];
+        linkedLocations($location['locations_id'], 0, $index);
     }
 }
 

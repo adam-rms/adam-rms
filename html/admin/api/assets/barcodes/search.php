@@ -113,8 +113,14 @@ finish(true, null, ["asset" => $asset, "assetSuggest" => $assetSuggest, "barcode
  *     @OA\Parameter(
  *         name="locationType",
  *         in="query",
- *         description="What the location is",
- *         required="false", 
+ *         description="What the location is - should be 'barcode', 'asset' or 'Custom' ",
+ *         @OA\Schema(
+ *             type="string"), 
+ *         ), 
+ *    @OA\Parameter(
+ *         name="location",
+ *         in="query",
+ *         description="a locationBarcodeId, assetBarcodeId or custom string",
  *         @OA\Schema(
  *             type="string"), 
  *         ), 

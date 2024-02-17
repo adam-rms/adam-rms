@@ -59,11 +59,23 @@
                                 <b>Current Location</b> <a class="float-right">{{ (assets[0]['assets_storageLocationName'] ?: '<i>Unknown</i>')}}</a>
                             </li>
                         </ul>
+                        {% if "LOCATIONS:VIEW"|instancePermissions and "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions and assets[0].barcodes[0] %}
+                        <div class="btn-group btn-block mb-1">
+                            <button class="btn btn-info btn-block" id="setAssetLocationButton">Set Location</button>
+                            <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                                <span class="sr-only">Toggle Dropdown</span>
+                                <div class="dropdown-menu" role="menu">
+                                    <a class="dropdown-item" id="setAssetLocationAssetButton">Set Location to another Asset</a>
+                                    <a class="dropdown-item" id="setCustomLocationButton">Set Custom Location</a>
+                                </div>
+                            </button>
+                        </div>
+                        {% endif %}
                         {% if "ASSETS:ARCHIVE"|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
-                            <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
+                        <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
                         {% if "ASSETS:DELETE"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
-                            <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
+                        <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                         {% endif %}
                     </div>
                 </div>
@@ -1335,6 +1347,32 @@
             </div>
         </div>
     </div>
+    {% if "LOCATIONS:VIEW"|instancePermissions and "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions and assets[0].barcodes[0] %}
+    <div class="modal fade" id="setAssetLocationAssetModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Set Asset Location to another Asset</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Set this asset's location to another asset - for example if it is stored within a flight case or storage box</p>
+                    <i>Only assets with assigned barcodes will appear in this list</i>
+                    <div class="input-group my-3">
+                        <select class="form-control" multiple="multiple" id="setAssetLocationAssetModal-assets" placeholder="Enter asset tags here"></select>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="setAssetLocationAssetModal-button">Set location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 
 
 
@@ -1958,6 +1996,97 @@
                     });
                 });
                 {% endif %}
+                {% if "LOCATIONS:VIEW"|instancePermissions and "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions and assets[0].barcodes[0] %}
+                $("#setAssetLocationButton").on("click", function () {
+                    bootbox.prompt({
+                        title: "Set Asset Location",
+                        inputType: "select",
+                        inputOptions: [
+                        {% for location in locations %}
+                            {
+                                text: '{{ location.locations_name }}',
+                                value: '{{ location.locationsBarcodes_id }}'
+                            },
+                        {% endfor %}
+                        ],
+                        callback: function (result) {
+                            if(result ){
+                                const args = {
+                                    "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
+                                    "type": "CODE_128",
+                                    "locationType": "barcode",
+                                    "location": result
+                                }
+                                ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
+                            }
+                        },
+                    })
+                });
+                $("#setCustomLocationButton").on("click", function () {
+                    bootbox.prompt({
+                        title: "Set Custom Location for Asset",
+                        callback: function (result) {
+                            if(result ){
+                                const args = {
+                                    "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
+                                    "type": "CODE_128",
+                                    "locationType": "Custom",
+                                    "location": result
+                                }
+                                ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
+                            }
+                        },
+                    })
+                })
+                $("#setAssetLocationAssetButton").on("click", function () {
+                    $('#setAssetLocationAssetModal').modal('show');
+                });
+                $("#setAssetLocationAssetModal-assets").select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    width: '100%',
+
+                    minimumResultsForSearch: 1,
+                    placeholder: "Enter asset numbers to search for assets",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                term: params.term,
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                            id: item.assets_id
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    }
+                });
+                $("#setAssetLocationAssetModal-button").on("click", function() {
+                    const args = {
+                        "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
+                        "type": "CODE_128",
+                        "locationType": "asset",
+                        "location": $("#setAssetLocationAssetModal-assets").val(),
+                    }
+                    console.log(args);
+                    ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
+                });
+                {% endif %} 
             });
         </script>
         {% embed 'common/plugins/fileBoxJS.twig' %}
