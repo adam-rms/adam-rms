@@ -18,9 +18,13 @@
                         <label class="form-check-label">Enabled</label>
                     </div>
                     <hr/>
-                    <div class="form-check">
+                    <div class="form-check py-1">
                         <input type="checkbox" class="form-check-input" name="enableVacancies" {{ publicData.enableVacancies ? 'checked' : '' }}>
                         <label class="form-check-label">Enable Crew Vacancies</label>
+                    </div>
+                    <div class="form-check py-1">
+                        <input type="checkbox" class="form-check-input" name="showVacancyClients" {{ publicData.showVacancyClients ? 'checked' : '' }}>
+                        <label class="form-check-label">Show project client names for Crew Vacancies</label>
                     </div>
                 </div>
                 {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
