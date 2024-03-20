@@ -22,6 +22,14 @@ if (!$assets) finish(false, ["code" => "LIST-ASSETS-FAIL", "message"=> "Could no
 $assetsReturn = [];
 foreach ($assets as $asset) {
     $asset['tag'] = $asset['assets_tag'];
+
+    if (isset($_POST['barcodes'])) {
+        $DBLIB->where('assets_id', $asset['assets_id']);
+        $DBLIB->where('assetsBarcodes_deleted', 0);
+        $barcodes = $DBLIB->get('assetsBarcodes', null, ['assetsBarcodes_value', 'assetsBarcodes_type']);
+        $asset['barcodes'] = $barcodes;
+    }
+
     $assetsReturn[] = $asset;
 }
 finish(true, null, $assetsReturn);
@@ -29,9 +37,7 @@ finish(true, null, $assetsReturn);
 /** @OA\Post(
  *     path="/assets/searchAssets.php", 
  *     summary="Simple Asset Search", 
- *     description="Searches for assets by tag or name  
-Deprecated, use /assets/deepSearch.php instead
-", 
+ *     description="Searches for assets by tag or name",
  *     operationId="simpleAssetSearch", 
  *     tags={"assets"}, 
  *     @OA\Response(
@@ -82,5 +88,14 @@ Deprecated, use /assets/deepSearch.php instead
  *         @OA\Schema(
  *             type="string"), 
  *         ), 
+ *     @OA\Parameter(
+ *         name="barcodes",
+ *         in="query",
+ *         description="whether to include asset barcodes",
+ *         required="false", 
+ *         @OA\Schema(
+ *             type="boolean"), 
+ *         ),
+ *     
  * )
  */
