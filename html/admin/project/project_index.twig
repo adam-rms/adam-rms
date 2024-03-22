@@ -257,10 +257,10 @@
                                                                 </div>
                                                                 {% if project.projects_dates_use_start %}
                                                                 <div style="width: 100%;text-align: right;">
-                                                                    {% if project.projects_dates_finances_days == null and project.projects_dates_finances_weeks == null %}
+                                                                    {% if project.projects_dates_finances_days is same as(null) and project.projects_dates_finances_weeks is same as (null) %}
                                                                         Project duration is currently based on project dates
                                                                     {% else %}
-                                                                     <a href="#" id="copyProjectDatesToFinanceDurationMaths">Set from Project Dates ({{ FINANCIALS['priceMaths']["calendarDays"] }} day{{ FINANCIALS['priceMaths']["calendarDays"] == 1 ? '' : 's' }})</a>
+                                                                     <a href="#" id="copyProjectDatesToFinanceDurationMaths">Sync to Project Dates ({{ FINANCIALS['priceMaths']["calendarDays"] }} day{{ FINANCIALS['priceMaths']["calendarDays"] == 1 ? '' : 's' }})</a>
                                                                     {% endif %}
                                                                 </div>
                                                                 {% endif %}
