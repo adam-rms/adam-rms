@@ -420,7 +420,7 @@ class projectFinance {
         $end = strtotime(date("d F Y 23:59:59", strtotime($end)));
         $diff = ceil(($end - $start) / 86400);
         if ($diff < 1) $diff = 1;
-        return ["string" => "Counted number of days between dates", "days" => $diff, "weeks" => 0];
+        return ["days" => $diff, "weeks" => 0, "calendarDays" => $diff];
     }
     public function durationMaths($projects_id) {
         global $DBLIB;
@@ -429,7 +429,8 @@ class projectFinance {
         if (!$project) return false;
 
         if ($project['projects_dates_finances_days'] !== NULL and $project['projects_dates_finances_weeks'] !== NULL) {
-            return ["string" => "Custom days & weeks set", "days" => $project['projects_dates_finances_days'], "weeks" => $project['projects_dates_finances_weeks']];
+            $rawDays = $this->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end']);
+            return ["days" => $project['projects_dates_finances_days'], "weeks" => $project['projects_dates_finances_weeks'], "calendarDays" => $rawDays['days']];
         } else {
             return $this->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end']);
         }

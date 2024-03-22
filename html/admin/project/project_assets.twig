@@ -67,12 +67,11 @@
                 <p style="font-style: italic;">To view assets assigned to this project, select a business above</p>
                 <p>{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})</p>
                 {% if project.projectsTypes_config_finance == 1 %}
-                    <h5>Hire Charges</h5>
-                    <p>
-                        Days: {{ FINANCIALS['priceMaths']["days"] }}<br/>
-                        Weeks: {{ FINANCIALS['priceMaths']["weeks"] }}
+                    <p>Project duration set as {{ FINANCIALS['priceMaths']["weeks"] }} week{{ FINANCIALS['priceMaths']["weeks"] != 1 ? 's' : '' }} and {{ FINANCIALS['priceMaths']["days"] }} day{{ FINANCIALS['priceMaths']["days"] != 1 ? 's' : ''}} for asset pricing purposes.
+                    {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
+                    <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">Change project duration</a>.
+                    {% endif %}
                     </p>
-                    <p>{{ FINANCIALS['priceMaths']["string"]|nl2br }}</p>
                 {% endif %}
             </div>
             <div class="tab-pane fade" id="asset-list-tabs-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
