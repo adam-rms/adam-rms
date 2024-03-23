@@ -188,7 +188,7 @@
                                     {% for email in mailings[user.users_userid] %}
                                         <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ email.emailSent_id }}"
                                            target="_blank" class="list-group-item"><span
-                                                    class="badge">{{ email.emailSent_sent|date("d/m/Y H:i:s", "Europe/London") }}</span> {{ email.emailSent_subject }}
+                                                    class="badge">{{ email.emailSent_sent|date("d/m/Y H:i:s") }}</span> {{ email.emailSent_subject }}
                                         </a>
                                     {% endfor %}
                                 </div>

@@ -1,10 +1,4 @@
 <?php
-if(file_exists(__DIR__ . '/.env')) {
-    //Load local env file
-    $dotEnvLib = Dotenv\Dotenv::createMutable(__DIR__);
-    $dotEnvLib->load();
-}
-
 return
 [
     'paths' => [
@@ -18,20 +12,20 @@ return
         'default_environment' => 'development',
         'production' => [
             'adapter' => 'mysql',
-            'host' => getenv('bCMS__DB_HOSTNAME'),
-            'name' => getenv('bCMS__DB_DATABASE'),
-            'user' => getenv('bCMS__DB_USERNAME'),
-            'pass' => getenv('bCMS__DB_PASSWORD'),
-            'port' => getenv('bCMS__DB_PORT') ?: 3306,
+            'host' => getenv('DB_HOSTNAME'),
+            'name' => getenv('DB_DATABASE'),
+            'user' => getenv('DB_USERNAME'),
+            'pass' => getenv('DB_PASSWORD'),
+            'port' => getenv('DB_PORT') ?: 3306,
             'charset' => 'utf8',
         ],
         'development' => [
             'adapter' => 'mysql',
-            'host' => getenv('bCMS__DB_HOSTNAME'),
-            'name' => getenv('bCMS__DB_DATABASE'),
-            'user' => getenv('bCMS__DB_USERNAME'),
-            'pass' => getenv('bCMS__DB_PASSWORD'),
-            'port' => getenv('bCMS__DB_PORT') ?: 3306,
+            'host' => getenv('DB_HOSTNAME'),
+            'name' => getenv('DB_DATABASE'),
+            'user' => getenv('DB_USERNAME'),
+            'pass' => getenv('DB_PASSWORD'),
+            'port' => getenv('DB_PORT') ?: 3306,
             'charset' => 'utf8',
         ]
     ],

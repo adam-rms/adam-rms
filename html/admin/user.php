@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/api/notifications/notificationTypes.php';
 
 if (!isset($_GET['id'])) $_GET['id'] = $AUTH->data['users_userid'];
 
@@ -77,6 +78,8 @@ $PAGEDATA['POSSIBLEPOSITIONS'] = $DBLIB->get("positions");
 $PAGEDATA['user']['notifications'] = $bCMS->notificationSettings($PAGEDATA['user']['users_userid']);
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['user']['users_name1'] . " " . $PAGEDATA['user']['users_name2'], "BREADCRUMB" => false];
+
+$PAGEDATA['NOTIFICATIONTYPES'] = $NOTIFICATIONTYPES;
 
 echo $TWIG->render('user.twig', $PAGEDATA);
 ?>

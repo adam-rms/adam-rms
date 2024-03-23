@@ -1,6 +1,6 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-require_once __DIR__ . '/../../../common/coreHead.php';
+require_once __DIR__ . '/../../common/coreHead.php';
 header('Access-Control-Allow-Origin: *');
 if ($_GET['i'] == null) exit;
 $DBLIB->where("instances_deleted",0);
