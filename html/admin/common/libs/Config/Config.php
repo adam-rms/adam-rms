@@ -36,9 +36,9 @@ class Config
     foreach ($downloadNow as $value) {
       if (!isset($this->DBCACHE[$value])) {
         try {
-          $this->_checkDefaults($value);
+          $this->DBCACHE[$value] = $this->_checkDefaults($value);
         } catch (ConfigValueNotSet) {
-          $this->CONFIG_MISSING_VALUES[] = $key;
+          $this->CONFIG_MISSING_VALUES[] = $value;
         }
       }
     }

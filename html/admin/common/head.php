@@ -180,10 +180,6 @@ function assetLatestScan($assetid)
     return $DBLIB->getone("assetsBarcodesScans", ["assetsBarcodesScans.*", "users.users_name1", "users.users_name2", "locations.locations_name", "locations.locations_id", "assets.assetTypes_id", "assetTypes.assetTypes_name"]);
 }
 
-
-
-require_once __DIR__ . '/libs/bCMS/projectFinance.php';
-
 // Setup the "PAGEDATA" array which is used by Twig
 $PAGEDATA = array('CONFIG' => $CONFIG);
 
