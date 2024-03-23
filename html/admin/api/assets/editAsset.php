@@ -45,10 +45,10 @@ else {
     $DBLIB->where("assets_id",$array['assets_id']);
     $DBLIB->where("assetsAssignments_deleted",0);
     $DBLIB->join("projects","assetsAssignments.projects_id=projects.projects_id","LEFT");
-    $assetAssignments = $DBLIB->get("assetsAssignments",null,['projects.projects_id','projects_dates_deliver_start','assetsAssignments_id','projects_dates_deliver_end','assetsAssignments_customPrice','assetsAssignments_discount']);
+    $assetAssignments = $DBLIB->get("assetsAssignments",null,['projects.projects_id','assetsAssignments_id','assetsAssignments_customPrice','assetsAssignments_discount']);
     foreach ($assetAssignments as $assignment) {
         $projectFinanceHelper = new projectFinance();
-        $priceMaths = $projectFinanceHelper->durationMaths($assignment['projects_dates_deliver_start'],$assignment['projects_dates_deliver_end']);
+        $priceMaths = $projectFinanceHelper->durationMaths($assignment['projects_id']);
         $projectFinanceCacher = new projectFinanceCacher($assignment['projects_id']);
 
         //Remove current mass and value

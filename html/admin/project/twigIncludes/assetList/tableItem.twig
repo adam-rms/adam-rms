@@ -69,7 +69,7 @@
     </td>
     <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>
     {% if project.projectsTypes_config_finance == 1 %}
-        <td>{{ assetAssignment.price|money }}</td>
+        <td>{{ assetAssignment.price|money }}{{ assetAssignment.assetsAssignments_customPrice > 0 ? '&nbsp;<span class="badge badge-info" title="Custom price set"><i class="fas fa-coins"></i></span>' :'' }}</td>
         <td>{{ assetAssignment.discountPrice|money }}{{  assetAssignment.assetsAssignments_discount > 0 ? " ("~assetAssignment.assetsAssignments_discount ~ "%)" : "" }}</td>
     {% endif %}
 </tr>

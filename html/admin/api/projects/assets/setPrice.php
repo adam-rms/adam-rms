@@ -17,11 +17,11 @@ if (!$assignmentsSetDiscount['projectid']) finish(false,["message"=>"Cannot find
 $DBLIB->where("projects.projects_id", $assignmentsSetDiscount["projectid"]);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("projects.projects_deleted", 0);
-$project = $DBLIB->getone("projects",["projects_id","projects_dates_deliver_start","projects_dates_deliver_end"]);
+$project = $DBLIB->getone("projects",["projects_id"]);
 if (!$project) finish(false,["message"=>"Cannot find project"]);
 
 $projectFinanceHelper = new projectFinance();
-$priceMaths = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
+$priceMaths = $projectFinanceHelper->durationMaths($project['projects_id']);
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 
 foreach ($assignmentsSetDiscount["assignments"] as $assignment) {
