@@ -3,10 +3,17 @@
 
     <div class="row">
         <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/project/?id={{project.projects_id}}#details-view"><i class="fas fa-arrow-left"></i> Back to <span style="font-weight:bold;">{{project.projects_name}}</span></a></li>
+                    </ul>
+                </div>
+            </div>
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">
-                        Advertised Roles for {{ project.projects_name }}
+                        Advertised Crew Role Vacancies
                     </h3>
                     <div class="card-tools pull-right">
                         <form class="input-group input-group-sm" method="GET">
@@ -147,18 +154,18 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Applications visible to Project Manager Only</span>
                                 </div>
-                                <input type="checkbox" class="form-control" name="projectsVacantRoles_privateToPM" {{ project.projects_manager != USERDATA.users_userid ? 'disabled' : '' }} {{ role.projectsVacantRoles_privateToPM == 1 ? 'checked' : (role.NEW ? 'checked')  }}  />
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_privateToPM" {{ project.projects_manager == USERDATA.users_userid or role.NEW ? '' : 'disabled' }} {{ role.projectsVacantRoles_privateToPM == 1 ? 'checked' : (role.NEW ? 'checked')  }}  />
                             </div>
                             <div class="form-group">
                                 <label>Limit visibility of applications to:</label>
-                                <select multiple class="form-control select2 select2bs4" {{ project.projects_manager != USERDATA.users_userid ? 'disabled' : '' }} name="projectsVacantRoles_applicationVisibleToUsers">
+                                <select multiple class="form-control select2 select2bs4" {{ project.projects_manager == USERDATA.users_userid or role.NEW ? '' : 'disabled' }} name="projectsVacantRoles_applicationVisibleToUsers">
                                     {% for user in users %}
                                         <option value="{{ user.users_userid }}" {% if user.users_userid in role.projectsVacantRoles_applicationVisibleToUsers|split(',') %}selected{% endif %}>{{ user.users_name1 ~ " " ~ user.users_name2 }}</option>
                                     {% endfor %}
                                 </select>
                                 <small class="form-text text-muted">This list is ignored if the project manager only checkbox above is checked. Leave the checkbox unchecked and the limit visibility of applications box blank to allow everyone to view applications</small>
                             </div>
-                            <small class="form-text text-muted">These settings can only be changed by the project manager</small>
+                            <small class="form-text text-muted">Once a vacancy is created, these settings can only be changed by the project manager</small>
                             <hr/>
                             <h3>Role Visibility</h3>
                             <div class="input-group" style="margin-bottom: 5px;">

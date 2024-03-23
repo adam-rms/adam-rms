@@ -21,15 +21,6 @@ function notify($typeID, $userid, $instanceID, $headline, $message = false, $ema
                 case 1:
                     sendEmail($user, $instanceID, $headline, $message, $emailTemplate, $array);
                     break;
-                case 2:
-                    //SMS
-                    break;
-                case 3:
-                    //Mobile Push
-                    break;
-                case 4:
-                    //Slack
-                    break;
             }
         }
     }
