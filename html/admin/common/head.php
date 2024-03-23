@@ -112,8 +112,11 @@ $OLDENDDAYSCONFIGSSS = array(
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
 if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
+    if (form submittd) {
+        //TODO save the form
+    }
     // Use twig for this
-    throw new Exception("Missing config values: " . implode(", ", $CONFIGCLASS->CONFIG_MISSING_VALUES));
+    die($TWIG->render('common/libs/Config/configForm.twig', ["form" => $CONFIGCLASS->formArrayBuild()]));
 }
 
 // Set the timezone

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -25,15 +25,15 @@ services:
     depends_on:
       - db
 
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
-    environment: 
+    environment:
       - DB_HOSTNAME=127.0.0.1
       - DB_DATABASE=db
       - DB_USERNAME=user
       - DB_PASSWORD=pass
       - bCMS__ROOTURL=
-      - bCMS__ERRORS=true
+      - ERRORS=true
       - RUNNING_IN_DEVCONTAINER=devcontainer
       - bCMS__DB_PORT=3306
   db:

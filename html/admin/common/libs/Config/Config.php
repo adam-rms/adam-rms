@@ -17,7 +17,10 @@ class Config
     $this->DBLIB = $DBLIB;
     $this->CONFIG_STRUCTURE = $configStructureArray;
     $this->CONFIG_MISSING_VALUES = [];
-
+    $this->_setupCache();
+  }
+  protected function _setupCache()
+  {
     /**
      * Download all the config values that are not special requests, and cache them to improve performance by consolidating to one query
      */
@@ -55,11 +58,7 @@ class Config
     $this->DBLIB->where("config_key", $key);
     $value = $this->DBLIB->getValue("config", "config_value");
     if ($value === false or $value === null) {
-      try {
-        $value = $this->_checkDefaults($key);
-      } catch (ConfigValueNotSet) {
-        throw new Exception("No value set for $key");
-      }
+      $value = $this->_checkDefaults($key);
       if ($this->CONFIG_STRUCTURE[$key]["default"] === false) return false;
       else return $this->CONFIG_STRUCTURE[$key]["default"];
     } else {
@@ -80,5 +79,54 @@ class Config
       return getenv($this->CONFIG_STRUCTURE[$key]['envFallback']); // Use the environment variable if it's set and not empty
     else if ($this->CONFIG_STRUCTURE[$key]['default'] !== false) return $this->CONFIG_STRUCTURE[$key]['default'];
     else throw new ConfigValueNotSet("No value set for required config key $key");
+  }
+
+  public function formArrayBuild()
+  {
+    $formArray = [];
+    foreach ($this->CONFIG_STRUCTURE as $key => $value) {
+      $formArray[$key] = [
+        "form" => $value['form'],
+      ];
+      $formArray[$key]['form']['default'] = $value['form']['default']();
+      try {
+        $formArray[$key]['value'] = $this->get($key);
+      } catch (ConfigValueNotSet) {
+        $formArray[$key]['value'] = null;
+      }
+    }
+    return $formArray;
+  }
+  public function formArrayProcess($formInput)
+  {
+    $changesToMake = [];
+    $errors = [];
+    foreach ($this->CONFIG_STRUCTURE as $key => $value) {
+      if (isset($formInput[$key])) {
+        if ($formInput[$key] !== $this->get($key)) {
+          if (strlen($formInput[$key]) < $value['form']['minlength']) {
+            $errors[$key] = "Value too short";
+            continue;
+          } else if (strlen($formInput[$key]) > $value['form']['maxlength']) {
+            $errors[$key] = "Value too long";
+            continue;
+          }
+          $matchVerify = $value['form']['verifyMatch']($formInput['key'], $value['form']['options']);
+          if (!$matchVerify['valid']) {
+            $errors[$key] = $matchVerify['error'];
+            continue;
+          }
+          $changesToMake[$key] = $matchVerify['value'];
+        }
+      } else if ($value['form']['required']) {
+        $errors[$key] = "Value required";
+      }
+    }
+    if (count($errors) > 0) return $errors;
+
+    $updates = $this->DBLIB->update("config", $changesToMake);
+    $this->_setupCache();
+    if (!$updates) return "Error updating database";
+    else return true;
   }
 }
