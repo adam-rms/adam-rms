@@ -2,13 +2,11 @@
 /**
  * This file contains the notification types and methods defined throughout the codebase
  */
-$NOTIFICATIONTYPES = [
+$NOTIFICATIONTYPES =
+[
   "METHODS" => [
     0 => "Post",
-    1 => "EMail",
-    2 => "SMS",
-    3 => "Mobile Push",
-    4 => "Slack",
+    1 => "EMail"
   ],
   "TYPES" =>  [ //These need to be inorder and inorder of group
     [
@@ -47,7 +45,7 @@ $NOTIFICATIONTYPES = [
       "id" => 11,
       "group" => "Crewing",
       "name" => "Added to Project Crew",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -55,7 +53,7 @@ $NOTIFICATIONTYPES = [
       "id" => 10,
       "group" => "Crewing",
       "name" => "Removed from Project Crew",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -63,7 +61,7 @@ $NOTIFICATIONTYPES = [
       "id" => 20,
       "group" => "Crewing",
       "name" => "Crew Role Name Changed",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -71,7 +69,7 @@ $NOTIFICATIONTYPES = [
       "id" => 12,
       "group" => "Maintenance",
       "name" => "Tagged in new Maintenance Job",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -79,7 +77,7 @@ $NOTIFICATIONTYPES = [
       "id" => 13,
       "group" => "Maintenance",
       "name" => "Sent message in Maintenance Job",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -87,7 +85,7 @@ $NOTIFICATIONTYPES = [
       "id" => 14,
       "group" => "Maintenance",
       "name" => "Maintenance Job changed Status",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -95,7 +93,7 @@ $NOTIFICATIONTYPES = [
       "id" => 15,
       "group" => "Maintenance",
       "name" => "Assigned Maintenance Job",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -103,7 +101,7 @@ $NOTIFICATIONTYPES = [
       "id" => 16,
       "group" => "Asset Groups Watching",
       "name" => "Asset added to Group",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => false,
       "canDisable" => true
     ],
@@ -111,7 +109,7 @@ $NOTIFICATIONTYPES = [
       "id" => 17,
       "group" => "Asset Groups Watching",
       "name" => "Asset removed from Group",
-      "methods" => [1, 2, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -119,7 +117,7 @@ $NOTIFICATIONTYPES = [
       "id" => 18,
       "group" => "Asset Groups Watching",
       "name" => "Asset assigned to Project",
-      "methods" => [1, 2, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -127,7 +125,7 @@ $NOTIFICATIONTYPES = [
       "id" => 19,
       "group" => "Asset Groups Watching",
       "name" => "Asset removed from Project",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => true
     ],
@@ -135,7 +133,7 @@ $NOTIFICATIONTYPES = [
       "id" => 30,
       "group" => "Business - Users",
       "name" => "User added to Business using a signup code",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => false,
       "canDisable" => true
     ],
@@ -143,7 +141,7 @@ $NOTIFICATIONTYPES = [
       "id" => 40,
       "group" => "Project",
       "name" => "Application made for a crew vacancy on a project you manage",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => false
     ],
@@ -151,7 +149,7 @@ $NOTIFICATIONTYPES = [
       "id" => 41,
       "group" => "Project",
       "name" => "Application updates for a crew vacancy you applied to",
-      "methods" => [1, 3, 4],
+      "methods" => [1],
       "default" => true,
       "canDisable" => false
     ],
