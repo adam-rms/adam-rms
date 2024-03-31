@@ -27,9 +27,9 @@ RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
 
 COPY . /var/www/
 
-RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/html/common/version/COMMIT.txt
-RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/html/common/version/COMMITFULL.txt
-#RUN git describe --tags --abbrev=0 > /var/www/html/common/version/TAG.txt
+RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/src/version/COMMIT.txt
+RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/src/version/COMMITFULL.txt
+#RUN git describe --tags --abbrev=0 > /var/www/src/version/TAG.txt
 
 RUN chmod +x /var/www/migrate.sh
 
