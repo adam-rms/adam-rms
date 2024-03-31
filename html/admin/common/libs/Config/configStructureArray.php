@@ -4,10 +4,10 @@ $configStructureArray = [
     "form" => [
       "type" => "url", // The type of field this is (secret, text, number, url, select)
       "default" => function () { // Default value for the text box
-        return "https://adam-rms.com";
+        return 'http://' . $_SERVER['HTTP_HOST'];
       },
       "name" => "Root URL", // The name of the field to be shown to the user
-      "description" => "The root URL of the site, this is used for redirects and links in emails", // A description of the field to be shown to the user
+      "description" => "The URL of the site that is used as a point of reference for all links and emails. This is an important URL, because if it is misconfigured it will prevent you from logging in. It is probably https://yourdomain.com or https://yourdomain.com/adamrms or http://localhost:8080. It must not end in a trailing slash.", // A description of the field to be shown to the user
       "group" => "General", // The group this field belongs to
       "required" => true, // Is this value required? Or can it be left blank
       "maxlength" => 255, // This is the maximum length of the string (if of string type)
@@ -15,7 +15,7 @@ $configStructureArray = [
       "options" => [], // An array of options that can be selected for a select dropdown
       "verifyMatch" => function ($value, $options) { // A filter which takes the value provided by the user, the options array in the config, and returns an array with the following keys: valid, value, error
         $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
-        if ($checkedValue !== false) return ["valid" => true, "value" => $checkedValue, "error" => null];
+        if ($checkedValue !== false) return ["valid" => true, "value" => rtrim($checkedValue, '/'), "error" => null];
         else return ["valid" => false, "value" => null, "error" => "Invalid URL"];
       },
     ],
