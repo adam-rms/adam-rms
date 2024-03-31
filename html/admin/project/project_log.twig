@@ -5,7 +5,7 @@
             <div class="timeline">
                 {% set currentDate = '' %}
                 {% for event in project.auditLog %}
-                    {% if event.auditLog_actionType in ['QUICKCOMMENT', 'INSERT', 'ARCHIVE','UNARCHIVE','CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-DATE','UPDATE-DESCRIPTION','CHANGE-CLIENT'] %}
+                    {% if event.auditLog_actionType in ['QUICKCOMMENT', 'INSERT', 'ARCHIVE','UNARCHIVE','CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-DATE','CHANGE-DATE-FINANCE','UPDATE-DESCRIPTION','CHANGE-CLIENT'] %}
                         {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
                             <div class="time-label">
                                 <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
