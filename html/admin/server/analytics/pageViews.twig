@@ -53,7 +53,7 @@
                         {% for page in viewsByPage %}
                             {% if page.count > 10 %}
                             <tr>
-                                <td>{{ page.analyticsEvents_path|replace({'/html/admin': ""}) }}</td>
+                                <td>{{ page.analyticsEvents_path|replace({'/src': ""}) }}</td>
                                 <td>{{ page.count|number_format }}</td>
                             </tr>
                             {% endif %}
