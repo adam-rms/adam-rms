@@ -9,7 +9,7 @@
  * - Global functions ("bCMS" class)
  * - Config Variables 
  */
-require_once(__DIR__ . '/../../vendor/autoload.php'); //Composer
+require_once(__DIR__ . '/../../../vendor/autoload.php'); //Composer
 require_once __DIR__ . '/libs/Config/Config.php';
 
 use Aws\S3\S3Client;
@@ -112,11 +112,15 @@ $OLDENDDAYSCONFIGSSS = array(
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
 if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
-    if (form submittd) {
-        //TODO save the form
+    $update = false;
+    if (isset($_POST['settingUpConfigUsingConfigFormTwig']) and $_POST['settingUpConfigUsingConfigFormTwig'] == "true") {
+        $update = $CONFIGCLASS->formArrayProcess($_POST);
     }
-    // Use twig for this
-    die($TWIG->render('common/libs/Config/configForm.twig', ["form" => $CONFIGCLASS->formArrayBuild()]));
+    if ($update !== true) die($TWIG->render('common/libs/Config/configForm.twig', ["form" => $CONFIGCLASS->formArrayBuild(), "errors" => is_array($update) ? $update : []]));
+    else {
+        header("Location: " . $CONFIG['ROOTURL'] . "?");
+        exit;
+    }
 }
 
 // Set the timezone

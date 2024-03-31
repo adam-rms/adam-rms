@@ -15,7 +15,7 @@ $configStructureArray = [
       "options" => [], // An array of options that can be selected for a select dropdown
       "verifyMatch" => function ($value, $options) { // A filter which takes the value provided by the user, the options array in the config, and returns an array with the following keys: valid, value, error
         $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
+        if ($checkedValue !== false) return ["valid" => true, "value" => $checkedValue, "error" => null];
         else return ["valid" => false, "value" => null, "error" => "Invalid URL"];
       },
     ],
@@ -54,7 +54,7 @@ $configStructureArray = [
       },
       "name" => "Email sending",
       "group" => "Email",
-      "description" => "Should AdamRMS send emails to users?",
+      "description" => "Should AdamRMS send emails to users? If this is enabled then a provider must be setup below.",
       "required" => true,
       "maxlength" => 255,
       "minlength" => 5,
@@ -232,7 +232,7 @@ $configStructureArray = [
       },
       "name" => "Terms of service URL",
       "group" => "Customisation",
-      "description" => "The URL to the terms of service page",
+      "description" => "The URL to the terms of service page. This is linked to from the login page. If this is not set, the link will not be shown.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -261,7 +261,7 @@ $configStructureArray = [
       },
       "name" => "JWT Key",
       "group" => "Security & Login",
-      "description" => "The JWT key to use for signing JWTs",
+      "description" => "The JWT key to use for signing JWTs. This should be a random value that you keep secret of 64 characters. If you are setting up AdamRMS for the first time, then the default generated value will be fine. Changing this later will invalidate all existing JWTs.",
       "required" => true,
       "maxlength" => 64,
       "minlength" => 64,
@@ -284,7 +284,7 @@ $configStructureArray = [
       },
       "name" => "Timezone",
       "group" => "General",
-      "description" => "The timezone to use for the site",
+      "description" => "The timezone to use for AdamRMS",
       "required" => true,
       "maxlength" => 1000,
       "minlength" => 1,

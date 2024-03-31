@@ -103,30 +103,41 @@ class Config
     $errors = [];
     foreach ($this->CONFIG_STRUCTURE as $key => $value) {
       if (isset($formInput[$key])) {
-        if ($formInput[$key] !== $this->get($key)) {
-          if (strlen($formInput[$key]) < $value['form']['minlength']) {
-            $errors[$key] = "Value too short";
-            continue;
-          } else if (strlen($formInput[$key]) > $value['form']['maxlength']) {
-            $errors[$key] = "Value too long";
-            continue;
+        try {
+          $currentValue = $this->get($key);
+        } catch (ConfigValueNotSet) {
+          $currentValue = null;
+        }
+        if ($formInput[$key] !== $currentValue) {
+          unset($matchVerify);
+          if ($value['form']['required'] || strlen($formInput[$key]) > 0) {
+            // Only run validation if this is a required field
+            if (strlen($formInput[$key]) < $value['form']['minlength']) {
+              $errors[$key] = "Value too short";
+              continue;
+            } else if (strlen($formInput[$key]) > $value['form']['maxlength']) {
+              $errors[$key] = "Value too long";
+              continue;
+            }
+            $matchVerify = $value['form']['verifyMatch']($formInput[$key], $value['form']['options']);
+            if (!$matchVerify['valid']) {
+              $errors[$key] = $matchVerify['error'];
+              continue;
+            }
           }
-          $matchVerify = $value['form']['verifyMatch']($formInput['key'], $value['form']['options']);
-          if (!$matchVerify['valid']) {
-            $errors[$key] = $matchVerify['error'];
-            continue;
-          }
-          $changesToMake[$key] = $matchVerify['value'];
+          if (isset($matchVerify)) $changesToMake[] = ["config_key" => $key, "config_value" => $matchVerify['value']];
+          else $changesToMake[] = ["config_key" => $key, "config_value" => $formInput[$key]];
         }
       } else if ($value['form']['required']) {
         $errors[$key] = "Value required";
       }
     }
     if (count($errors) > 0) return $errors;
-
-    $updates = $this->DBLIB->update("config", $changesToMake);
+    foreach ($changesToMake as $key => $value) {
+      $update = $this->DBLIB->replace("config", $value);
+      if (!$update) throw new Exception("Failed to update config value in database");
+    }
     $this->_setupCache();
-    if (!$updates) return "Error updating database";
-    else return true;
+    return true;
   }
 }
