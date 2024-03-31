@@ -54,7 +54,7 @@
 							{% for page in viewsByPage %}
 								{% if page.count > 10 %}
 									<tr>
-										<td>{{ page.analyticsEvents_path|replace({'/src': ""}) }}</td>
+										<td>{{ page.analyticsEvents_path|replace({'/html/admin': ""}) }}</td>
 										<td>{{ page.count|number_format }}</td>
 									</tr>
 								{% endif %}
@@ -161,17 +161,14 @@ labels: [
 "22:00",
 "23:00"
 ],
-datasets: [{% for day,color in {'Monday': 'rgba(52, 58, 64, 0.8)', 'Tuesday': 'rgba(0, 123, 255, 0.8)', 'Wednesday': 'rgba(108, 117, 125, 0.8)', 'Thursday': 'rgba(40, 167, 69, 0.8)', 'Friday': 'rgba(220, 53, 69, 0.8)', 'Saturday': 'rgba(23, 162, 184, 0.8)', 'Sunday': 'rgba(255, 193, 7, 0.8)'} %}
-{
+datasets: [{% for day,color in {'Monday': 'rgba(52, 58, 64, 0.8)', 'Tuesday': 'rgba(0, 123, 255, 0.8)', 'Wednesday': 'rgba(108, 117, 125, 0.8)', 'Thursday': 'rgba(40, 167, 69, 0.8)', 'Friday': 'rgba(220, 53, 69, 0.8)', 'Saturday': 'rgba(23, 162, 184, 0.8)', 'Sunday': 'rgba(255, 193, 7, 0.8)'} %}{
 label: '{{ day }}',
 backgroundColor: '{{ color }}',
-data: [{% for hour in viewsByHour %}
-{% if day == hour.day %}
+data: [{% for hour in viewsByHour %}{% if day == hour.day %}
 {
 x: '{{ hour.hour ~ ':00' }}',
 y: {{ hour.count }}
-},{% endif %}
-{% endfor %}]
+},{% endif %}{% endfor %}]
 },{% endfor %}]
 },
 options: {

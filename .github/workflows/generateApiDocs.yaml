@@ -42,7 +42,7 @@ jobs:
         run: |
           <?php
           require("vendor/autoload.php");
-          $finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in('src/api/');
+          $finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in('html/admin/api/');
           $openapi = \OpenApi\Generator::scan($finder, ['logger' => new \Psr\Log\NullLogger()]);
           $yaml = $openapi->toYaml();
           file_put_contents('apiDocs.yaml', $yaml);
