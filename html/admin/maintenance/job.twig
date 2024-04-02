@@ -307,7 +307,8 @@
                         </div>
                     </form>
                     {% if "MAINTENANCE_JOBS:MAINTENANCE_JOBS_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
-                        {% embed 'common/plugins/uppy.twig' with {'type': 'JOB-FILE', 'paste': true, 'typeId': 8, 'subTypeId': job.maintenanceJobs_id, 'imagesOnly': false, 'disableMultiple': true } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'JOB-FILE', 'paste': true, 'typeId': 8, 'subTypeId': job.maintenanceJobs_id, 'imagesOnly': false, 'disableMultiple': true } %}
+
                             {% block success %}
                                 ajaxcall("maintenance/job/sendMessage.php", {
                                     "maintenanceJobsMessages_file": responseJson.id,

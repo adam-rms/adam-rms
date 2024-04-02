@@ -10,12 +10,16 @@
                 </h3>
             </div>
             <div class="card-body">
-                {% embed 'common/plugins/fileBox.twig' with {'files': LOCATION.files } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': LOCATION.files } %}
+
+
                 {% endembed %}
             </div>
             {% if "LOCATIONS:LOCATION_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
             <div class="card-footer">
-                {% embed 'common/plugins/uppy.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 11, 'subTypeId': LOCATION['locations_id'], 'imagesOnly': false } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 11, 'subTypeId': LOCATION['locations_id'], 'imagesOnly': false } %}
+
+
                     {% block success %}
                         console.log(responseJson.id);
                     {% endblock %}
@@ -25,6 +29,7 @@
         </div>
     </div>
 </div>
-    {% embed 'common/plugins/fileBoxJS.twig' %}
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
     {% endembed %}
 {% endblock %}

@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/instanceActions.php';
 require_once __DIR__ . '/serverActions.php';
 date_default_timezone_set($CONFIG['TIMEZONE']);

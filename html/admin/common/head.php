@@ -20,7 +20,7 @@ use Twig\Extra\String\StringExtension;
 
 //TWIG
 $TWIGLOADER = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../']);
-if (getenv('ERRORS') == "true") {
+if (getenv('DEV_MODE') == "true") {
     $TWIG = new \Twig\Environment($TWIGLOADER, array(
         'debug' => true,
         'auto_reload' => true,
@@ -37,7 +37,7 @@ if (getenv('ERRORS') == "true") {
 }
 $TWIG->addExtension(new StringExtension());
 
-if (getenv('ERRORS') == "true") {
+if (getenv('DEV_MODE') == "true") {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ERROR | E_PARSE);
@@ -47,7 +47,7 @@ if (getenv('ERRORS') == "true") {
     error_reporting(0);
 }
 
-if (!$CONFIG['DEV']) {
+if (getenv('DEV_MODE') != "true") {
     Sentry\init([
         'dsn' => $CONFIG['ERRORS_PROVIDERS_SENTRY'],
         'traces_sample_rate' => 0.1, //Capture 10% of pageloads for perforamnce monitoring
@@ -69,7 +69,7 @@ try {
     ]);
 } catch (Exception $e) {
     // TODO use twig for this
-    if (getenv('ERRORS') == "true") {
+    if (getenv('DEV_MODE') == "true") {
         echo "Could not connect to database: " . $e->getMessage();
         exit;
     } else {
@@ -78,6 +78,7 @@ try {
     }
 }
 
+THis is the next batch of things to migrate, and also to write an editor for the config 
 $OLDENDDAYSCONFIGSSS = array(
     'VERSION' => ['ENV' => getenv('bCMS__VERSION') ? (strlen(getenv('bCMS__VERSION')) > 7 ? substr(getenv('bCMS__VERSION'), 0, 7) : getenv('bCMS__VERSION')) : false, 'COMMIT' => file_get_contents(__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents(__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents(__DIR__ . '/version/COMMITFULL.txt')], //Version number is the first 7 characters of the commit hash for certain deployments, and for others there's a nice numerical tag.
     'AWS' => [
@@ -95,7 +96,6 @@ $OLDENDDAYSCONFIGSSS = array(
             "KEYPAIRID" => getenv('bCMS__AWS_ACCOUNT_PRIVATE_KEY_ID')
         ]
     ],
-    'ENABLE_DEV_DB_EDITOR' => (getenv('RUNNING_IN_DEVCONTAINER') == "devcontainer" ? true : false),
     'AUTH-PROVIDERS' => [
         "GOOGLE" => [
             'keys' => [
@@ -105,7 +105,6 @@ $OLDENDDAYSCONFIGSSS = array(
             'scope' => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
         ]
     ],
-    'DEV' => (getenv('ERRORS') == "true" ? true : false),
 );
 
 
@@ -217,8 +216,88 @@ try {
     //Do Nothing
 }
 
+
 // Include the content security policy
-require_once __DIR__ . '/libs/csp.php';
+$CSP = [
+    "default-src" => [
+        ["value" => "'none'", "comment" => ""]
+    ],
+    "script-src" => [
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "'unsafe-inline'", "comment" => "We have loads of inline JS"],
+        ["value" => "'unsafe-eval'", "comment" => ""],
+        ["value" => "https://*.adam-rms.com", "comment" => ""],
+        ["value" => "https://cdnjs.cloudflare.com", "comment" => ""],
+        ["value" => "https://static.cloudflareinsights.com", "comment" => ""],
+        ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
+        ["value" => "https://*.ytimg.com", "comment" => "Training modules allow youtube embed"],
+        ["value" => "https://*.freshstatus.io", "comment" => ""]
+    ],
+    "style-src" => [
+        ["value" => "'unsafe-inline'", "comment" => "We have loads of inline CSS"],
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "https://*.adam-rms.com", "comment" => ""],
+        ["value" => "https://cdnjs.cloudflare.com", "comment" => ""],
+        ["value" => "https://fonts.googleapis.com", "comment" => "Google fonts is used extensivley"]
+    ],
+    "font-src" => [
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "data:", "comment" => ""],
+        ["value" => "https://*.adam-rms.com", "comment" => ""],
+        ["value" => "https://fonts.googleapis.com", "comment" => "Google fonts is used extensivley"],
+        ["value" => "https://fonts.gstatic.com", "comment" => "Google fonts is used extensivley"],
+        ["value" => "https://cdnjs.cloudflare.com", "comment" => "Libraries referenced in HTML"]
+    ],
+    "manifest-src" => [
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "https://*.adam-rms.com", "comment" => "Show images on mobile devices like favicons"]
+    ],
+    "img-src" => [
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "data:", "comment" => ""],
+        ["value" => "blob:", "comment" => ""],
+        ["value" => "https://*.adam-rms.com", "comment" => ""],
+        ["value" => "https://cdnjs.cloudflare.com", "comment" => "Libraries referenced in HTML"],
+        ["value" => "https://cloudflareinsights.com", "comment" => ""],
+        ["value" => "https://*.ytimg.com", "comment" => "Training modules allow youtube embed"]
+    ],
+    "connect-src" => [
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "https://*.adam-rms.com", "comment" => ""],
+        ["value" => "https://sentry.io", "comment" => ""],
+        ["value" => "https://cloudflareinsights.com", "comment" => ""],
+        ["value" => "https://*.amazonaws.com", "comment" => "To allow S3 uploads"],
+        ["value" => "https://*.freshstatus.io", "comment" => ""]
+    ],
+    "frame-src" => [
+        ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
+        ["value" => "https://*.freshstatus.io", "comment" => "Training modules allow youtube embed"]
+    ],
+    "object-src" => [
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "blob:", "comment" => "Inline PDFs generated by the system"]
+    ],
+    "worker-src" => [
+        ["value" => "'self'", "comment" => ""],
+        ["value" => "blob:", "comment" => "Use of camera"]
+    ],
+    "frame-ancestors" => [
+        ["value" => "'self'", "comment" => ""]
+    ],
+    "report-uri" => [
+        ["value" => "https://o83272.ingest.sentry.io/api/5204912/security/?sentry_key=3937ab95cc404dfa95b0e0cb91db5fc6", "comment" => "Report to sentry"]
+    ]
+];
+$CSPString = "Content-Security-Policy: ";
+foreach ($CONFIG['CSP'] as $key => $value) {
+    $CSPString .= $key;
+    foreach ($value as $subvalue) {
+        $CSPString .= " " . $subvalue['value'];
+    }
+    $CSPString .= ";";
+}
+header($CSPString);
+
 
 // Include the Auth class
 require_once __DIR__ . '/libs/Auth/main.php';

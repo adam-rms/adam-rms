@@ -39,7 +39,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 } elseif (isset($_GET['google'])) {
 	if (!$PAGEDATA['googleAuthAvailable']) {
 		//Display normal login page if Google isn't available
-		echo $TWIG->render('login/login_index.twig', $PAGEDATA);
+		echo $TWIG->render('login/login.twig', $PAGEDATA);
 		exit;
 	}
 	//Similar setup can be found in the link provider api endpoint
@@ -149,4 +149,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
 		exit;
 	}
-} else echo $TWIG->render('login/login_index.twig', $PAGEDATA);
+} else {
+	if ($PAGEDATA['googleAuthAvailable']) echo $TWIG->render('login/login_index.twig', $PAGEDATA);
+	else echo $TWIG->render('login/login.twig', $PAGEDATA);
+}

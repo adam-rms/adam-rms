@@ -417,14 +417,18 @@
                                     <div class="callout callout-default">
                                         Use this area to store files relevant to one asset such as an order confirmation or purchase invoice
                                     </div>
-                                    {% embed 'common/plugins/uppy.twig' with {'type': 'ASSET-FILE', 'paste': false, 'typeId': 4, 'subTypeId': assets[0]['assets_id'], 'imagesOnly': false } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'ASSET-FILE', 'paste': false, 'typeId': 4, 'subTypeId': assets[0]['assets_id'], 'imagesOnly': false } %}
+
+
                                         {% block success %}
                                             console.log(responseJson.id);
                                         {% endblock %}
                                     {% endembed %}
                                     <br/>
                                 {% endif %}
-                                {% embed 'common/plugins/fileBox.twig' with {'files': assets[0]['files'] } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': assets[0]['files'] } %}
+
+
                                 {% endembed %}
                             </div>
                         {% endif %}
@@ -1020,14 +1024,18 @@
                                         </div>
                                         <div class="tab-pane" style="padding: 1.25rem" id="thumbnail">
                                             {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
-                                                {% embed 'common/plugins/uppy.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': true, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': true, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
+
+
                                                     {% block success %}
                                                         console.log(responseJson.id);
                                                     {% endblock %}
                                                 {% endembed %}
                                                 <br/>
                                             {% endif %}
-                                            {% embed 'common/plugins/fileBox.twig' with {'files': asset.thumbnail, 'galleryOnly': true } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': asset.thumbnail, 'galleryOnly': true } %}
+
+
                                             {% endembed %}
                                         </div>
                                     </div>
@@ -1049,14 +1057,18 @@
                             <div class="callout callout-default">
                                 Use this area to store files relevant to all assets of this type such as instruction manuals
                             </div>
-                            {% embed 'common/plugins/uppy.twig' with {'type': 'ASSET-TYPE-FILE', 'paste': false, 'typeId': 3, 'subTypeId': asset.assetTypes_id, 'imagesOnly': false } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'ASSET-TYPE-FILE', 'paste': false, 'typeId': 3, 'subTypeId': asset.assetTypes_id, 'imagesOnly': false } %}
+
+
                                 {% block success %}
                                     console.log(responseJson.id);
                                 {% endblock %}
                             {% endembed %}
                             <br/>
                             {% endif %}
-                            {% embed 'common/plugins/fileBox.twig' with {'files': asset.files } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': asset.files } %}
+
+
                             {% endembed %}
                         </div>
                         {% endif %}
@@ -1958,6 +1970,7 @@
                 {% endif %}
             });
         </script>
-        {% embed 'common/plugins/fileBoxJS.twig' %}
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
         {% endembed %}
 {% endblock %}

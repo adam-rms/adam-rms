@@ -99,7 +99,9 @@
                                 <h3>{{ answer.name }}</h3>
                                 <p>{{ answer.value|nl2br }}</p>
                             {% endfor %}
-                            {% embed 'common/plugins/fileBox.twig' with {'files': app.files, 'readOnly': true } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': app.files, 'readOnly': true } %}
+
+
                             {% endembed %}
                         </div>
                         <div class="modal-footer justify-content-between">
@@ -150,7 +152,8 @@
             });
         });
     </script>
-    {% embed 'common/plugins/fileBoxJS.twig' %}
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
     {% endembed %}
 
 {% endblock %}

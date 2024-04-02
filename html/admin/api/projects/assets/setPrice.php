@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
-require_once __DIR__ . '/../../../libs/bCMS/projectFinance.php';
+require_once __DIR__ . '/../../../common/libs/bCMS/projectFinance.php';
 
 if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE") or !isset($_POST['assetsAssignments'])) die("404");
 use Money\Currency;

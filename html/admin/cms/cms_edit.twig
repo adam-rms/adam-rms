@@ -50,7 +50,8 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="index" value="" />
-                        {% embed 'common/plugins/uppy.twig' with {'type': 'CMS-IMAGE', 'paste': true, 'typeId': 19, 'subTypeId': PAGE.cmsPages_id, 'imagesOnly': true } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'CMS-IMAGE', 'paste': true, 'typeId': 19, 'subTypeId': PAGE.cmsPages_id, 'imagesOnly': true } %}
+
                             {% block success %}
                                 $('#summernote').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
                             {% endblock %}

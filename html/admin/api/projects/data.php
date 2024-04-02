@@ -1,6 +1,6 @@
 <?php
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) require_once __DIR__ . '/../apiHeadSecure.php'; //Only if it wasn't included from somewhere else
-require_once __DIR__ . '/../../libs/bCMS/projectFinance.php';
+require_once __DIR__ . '/../../common/libs/bCMS/projectFinance.php';
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 use Money\Money;

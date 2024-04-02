@@ -156,7 +156,8 @@
                         <hr />
                         <h4>Application File Attachments</h4>
                         <input type="hidden" name="projectsVacantRolesApplications_files" data-id="{{ role.projectsVacantRoles_id }}" value="" />
-                        {% embed 'common/plugins/uppy.twig' with {'type': 'VACANTROLEAPPLICATION-FILE', 'paste': true, 'typeId': 18, 'subTypeId':role.projectsVacantRoles_id, 'imagesOnly': false } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'VACANTROLEAPPLICATION-FILE', 'paste': true, 'typeId': 18, 'subTypeId':role.projectsVacantRoles_id, 'imagesOnly': false } %}
+
                             {% block success %}
                                 var filesArray = $('input[name="projectsVacantRolesApplications_files"][data-id="{{ role.projectsVacantRoles_id }}"]').val();
                                 if (filesArray) {

@@ -101,12 +101,16 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            {% embed 'common/plugins/fileBox.twig' with {'files': payment.files } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': payment.files } %}
+
+
                             {% endembed %}
                         </div>
                         {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
                             <div class="modal-footer">
-                                {% embed 'common/plugins/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+
+
                                     {% block success %}
                                         console.log(responseJson.id);
                                     {% endblock %}
@@ -117,7 +121,8 @@
                 </div>
             </div>
             {% endfor %}
-            {% embed 'common/plugins/fileBoxJS.twig' %}
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
             {% endembed %}
        {% endif %}
     </div>

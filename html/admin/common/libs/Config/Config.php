@@ -45,6 +45,7 @@ class Config
         }
       }
     }
+    $this->DBCACHE['DEV'] = (getenv('DEV_MODE') == "true" ? true : false); //This is a bit of a special case, as it will always pull from ENV
   }
   public function getConfigArray()
   {
