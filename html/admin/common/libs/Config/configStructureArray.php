@@ -46,6 +46,27 @@ $configStructureArray = [
     "default" => "AdamRMS",
     "envFallback" => false,
   ],
+  "TIMEZONE" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Europe/London";
+      },
+      "name" => "Timezone",
+      "group" => "General",
+      "description" => "The timezone to use for AdamRMS",
+      "required" => true,
+      "maxlength" => 1000,
+      "minlength" => 1,
+      "options" => DateTimeZone::listIdentifiers(DateTimeZone::ALL),
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid timezone"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "Europe/London",
+    "envFallback" => false,
+  ],
   "EMAILS_ENABLED" => [
     "form" => [
       "type" => "select",
@@ -157,97 +178,7 @@ $configStructureArray = [
     "default" => null,
     "envFallback" => "bCMS__SENTRYLOGIN",
   ],
-  "nextHash" => [
-    "form" => [
-      "type" => "select",
-      "default" => function () {
-        return "sha256";
-      },
-      "name" => "Next password hashing algorithm",
-      "group" => "Security & Login",
-      "description" => "The hashing algorithm to use for new passwords. Changing this will not require users to change their passwords, but it will change the hashing algorithm the next time a given user changes their password.",
-      "required" => true,
-      "maxlength" => 6,
-      "minlength" => 6,
-      "options" => ["sha256", "sha512"],
-      "verifyMatch" => function ($value, $options) {
-        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid hashing algorithm"];
-      }
-    ],
-    "specialRequest" => false,
-    "default" => "sha256",
-    "envFallback" => false,
-  ],
-  "USERGUIDEURL" => [
-    "form" => [
-      "type" => "url",
-      "default" => function () {
-        return "https://adam-rms.com/docs/v1/user-guide/";
-      },
-      "name" => "User guide URL",
-      "group" => "Customisation",
-      "description" => "The URL of the user guide, which is linked to from the help buttons",
-      "required" => true,
-      "maxlength" => 255,
-      "minlength" => 0,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
-        else return ["valid" => false, "value" => "", "error" => "Invalid URL"];
-      }
-    ],
-    "specialRequest" => false,
-    "default" => "https://adam-rms.com/docs/v1/user-guide/",
-    "envFallback" => false,
-  ],
-  "SUPPORTURL" => [
-    "form" => [
-      "type" => "url",
-      "default" => function () {
-        return "https://adam-rms.com/support/";
-      },
-      "name" => "Support URL",
-      "group" => "Customisation",
-      "description" => "The URL for links to the support page",
-      "required" => false,
-      "maxlength" => 255,
-      "minlength" => 0,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
-        else return ["valid" => false, "value" => "", "error" => "Invalid URL"];
-      }
-    ],
-    "specialRequest" => false,
-    "default" => "https://adam-rms.com/support/",
-    "envFallback" => false,
-  ],
-  "TermsOfServiceURL" => [
-    "form" => [
-      "type" => "url",
-      "default" => function () {
-        return null;
-      },
-      "name" => "Terms of service URL",
-      "group" => "Customisation",
-      "description" => "The URL to the terms of service page. This is linked to from the login page. If this is not set, the link will not be shown.",
-      "required" => false,
-      "maxlength" => 255,
-      "minlength" => 0,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
-        else return ["valid" => false, "value" => "", "error" => "Invalid URL"];
-      }
-    ],
-    "specialRequest" => false,
-    "default" => null,
-    "envFallback" => "bCMS__TOS_URL",
-  ],
-  "JWTKey" => [
+  "AUTH_JWTKey" => [
     "form" => [
       "type" => "secret",
       "default" => function () {
@@ -276,25 +207,160 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "bCMS__JWT",
   ],
-  "TIMEZONE" => [
+  "AUTH_NEXTHASH" => [
     "form" => [
       "type" => "select",
       "default" => function () {
-        return "Europe/London";
+        return "sha256";
       },
-      "name" => "Timezone",
-      "group" => "General",
-      "description" => "The timezone to use for AdamRMS",
+      "name" => "Next password hashing algorithm",
+      "group" => "Security & Login",
+      "description" => "The hashing algorithm to use for new passwords. Changing this will not require users to change their passwords, but it will change the hashing algorithm the next time a given user changes their password.",
       "required" => true,
-      "maxlength" => 1000,
-      "minlength" => 1,
-      "options" => DateTimeZone::listIdentifiers(DateTimeZone::ALL),
+      "maxlength" => 6,
+      "minlength" => 6,
+      "options" => ["sha256", "sha512"],
       "verifyMatch" => function ($value, $options) {
-        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid timezone"];
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid hashing algorithm"];
       }
     ],
     "specialRequest" => false,
-    "default" => "Europe/London",
+    "default" => "sha256",
     "envFallback" => false,
   ],
+  "AUTH_PROVIDERS_GOOGLE_KEYS_ID" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Google Auth Key",
+      "group" => "Authentication",
+      "description" => "The ID key for Google authentication.",
+      "required" => false,
+      "maxlength" => 100,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+
+  "AUTH_PROVIDERS_GOOGLE_KEYS_SECRET" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Google Auth Secret",
+      "group" => "Authentication",
+      "description" => "The secret key for Google authentication.",
+      "required" => false,
+      "maxlength" => 100,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+
+  "AUTH_PROVIDERS_GOOGLE_SCOPE" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+      },
+      "name" => "Google Auth Scope",
+      "group" => "Authentication",
+      "description" => "The scope for Google authentication.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+    "envFallback" => false,
+  ],
+
+  "LINKS_USERGUIDEURL" => [
+    "form" => [
+      "type" => "url",
+      "default" => function () {
+        return "https://adam-rms.com/docs/v1/user-guide/";
+      },
+      "name" => "User guide URL",
+      "group" => "Customisation",
+      "description" => "The URL of the user guide, which is linked to from the help buttons",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
+        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
+        else return ["valid" => false, "value" => "", "error" => "Invalid URL"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "https://adam-rms.com/docs/v1/user-guide/",
+    "envFallback" => false,
+  ],
+  "LINKS_SUPPORTURL" => [
+    "form" => [
+      "type" => "url",
+      "default" => function () {
+        return "https://adam-rms.com/support/";
+      },
+      "name" => "Support URL",
+      "group" => "Customisation",
+      "description" => "The URL for links to the support page",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
+        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
+        else return ["valid" => false, "value" => "", "error" => "Invalid URL"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "https://adam-rms.com/support/",
+    "envFallback" => false,
+  ],
+  "LINKS_TERMSOFSERVICEURL" => [
+    "form" => [
+      "type" => "url",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Terms of service URL",
+      "group" => "Customisation",
+      "description" => "The URL to the terms of service page. This is linked to from the login page. If this is not set, the link will not be shown.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        $checkedValue = filter_var($value, FILTER_VALIDATE_URL);
+        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
+        else return ["valid" => false, "value" => "", "error" => "Invalid URL"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => null,
+    "envFallback" => "bCMS__TOS_URL",
+  ]
 ];

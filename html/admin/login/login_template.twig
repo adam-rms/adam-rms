@@ -95,7 +95,10 @@
 					</div>
 					<div class="col-8" style="text-align: right;">
 						<a style="margin-right: 15px;" href="https://adam-rms.com">About</a>
-						{% if CONFIG.TermsOfServiceURL %}<a href="{{ CONFIG.TermsOfServiceURL }}" target="_blank">Terms &amp; Privacy</a>{% endif %}
+{% if CONFIG.LINKS_TERMSOFSERVICEURL %}
+	<a href="{{ CONFIG.LINKS_TERMSOFSERVICEURL }}" target="_blank">Terms &amp; Privacy</a>
+{% endif %}
+
 					</div>
 				</div>
 			</div>

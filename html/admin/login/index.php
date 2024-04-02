@@ -4,7 +4,7 @@ require_once __DIR__ . '/../common/head.php';
 use \Firebase\JWT\JWT;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Login"];
-$PAGEDATA['googleAuthAvailable'] = $CONFIG['AUTH-PROVIDERS']['GOOGLE']['keys']['id'] != "" and $CONFIG['AUTH-PROVIDERS']['GOOGLE']['keys']['secret'] != "";
+$PAGEDATA['googleAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_SECRET") != false;
 
 if (isset($_GET['app-oauth'])) {
 	$_SESSION['return'] = false;
@@ -43,9 +43,15 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		exit;
 	}
 	//Similar setup can be found in the link provider api endpoint
-	$CONFIG['AUTH-PROVIDERS']['GOOGLE']['callback'] = $CONFIG['ROOTURL'] . '/login/index.php?google';
-
-	$adapter = new Hybridauth\Provider\Google($CONFIG['AUTH-PROVIDERS']['GOOGLE']);
+	$configObject = [
+		"callback" => $CONFIG['ROOTURL'] . '/login/index.php?google',
+		"keys" => [
+			"id" => $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_ID"),
+			"secret" => $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_SECRET")
+		],
+		"scope" => $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_SCOPE"),
+	];
+	$adapter = new Hybridauth\Provider\Google($configObject);
 	/**
 	 * 3. Sign in a user with Google
 	 *
@@ -131,7 +137,7 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		'users_username' => $username,
 		'users_name1' => $userProfile->firstName,
 		'users_name2' => $userProfile->lastName,
-		'users_hash' => $CONFIG['nextHash']
+		'users_hash' => $CONFIG['AUTH_NEXTHASH']
 	);
 	$newUser = $DBLIB->insert("users", $data);
 	if (!$newUser) {

@@ -9,7 +9,7 @@ if (isset($_POST['name1']) and isset($_POST['password']) and isset($_POST['usern
         'users_name2' => $bCMS->sanitizeString($_POST['name2']),
         "users_salty1" => $bCMS->randomString(8),
         "users_salty2" => $bCMS->randomString(8),
-        "users_hash" => $CONFIG['nextHash'],
+        "users_hash" => $CONFIG['AUTH_NEXTHASH'],
     );
     $data["users_password"] = hash($data['users_hash'], $data['users_salty1'] . $_POST['password'] . $data['users_salty2']);
     $newUser = $DBLIB->insert("users", $data);

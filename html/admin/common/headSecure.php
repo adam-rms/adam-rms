@@ -50,7 +50,7 @@ if ($AUTH->data['users_emailVerified'] == 1) {
     }
 } else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'] = [];
 
-if ($CONFIG['TermsOfServiceURL'] and ($PAGEDATA['USERDATA']['users_termsAccepted'] == 0 or $PAGEDATA['USERDATA']['users_termsAccepted'] == null)) {
+if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAccepted'] == 0 or $PAGEDATA['USERDATA']['users_termsAccepted'] == null)) {
     $PAGEDATA['pageConfig'] = ["TITLE" => "Accept Terms", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_acceptTerms.twig', $PAGEDATA));
 } elseif ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
