@@ -1,17 +1,17 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-$bucket = $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'];
+$bucket = $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_BUCKET');
 // Directory to place uploaded files in.
 use Aws\S3\S3Client;
 // Create the S3 client.
 $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
-    'region' => $CONFIG['AWS']['DEFAULTUPLOADS']['REGION'],
-    'endpoint' => "https://" . $CONFIG['AWS']['DEFAULTUPLOADS']['ENDPOINT'],
+    'region' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_REGION'),
+    'endpoint' => "https://" . $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT'),
     'credentials' => array(
-        'key' => $CONFIG['AWS']['KEY'],
-        'secret' => $CONFIG['AWS']['SECRET'],
+        'key' => $CONFIGCLASS->get('AWS_KEY'),
+        'secret' => $CONFIGCLASS->get('AWS_SECRET'),
     )
 ]);
 

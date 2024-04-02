@@ -6,18 +6,18 @@ if(isset($_FILES['file'])) {
     $temp_file_location = $_FILES['file']['tmp_name'];
     $s3 = new Aws\S3\S3Client([
         'version' => 'latest',
-        'region' => $CONFIG['AWS']['DEFAULTUPLOADS']['REGION'],
-        'endpoint' => "https://" . $CONFIG['AWS']['DEFAULTUPLOADS']['ENDPOINT'],
+        'region' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_REGION'),
+        'endpoint' => "https://" . $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT'),
         'credentials' => array(
-            'key' => $CONFIG['AWS']['KEY'],
-            'secret' => $CONFIG['AWS']['SECRET'],
+            'key' => $CONFIGCLASS->get('AWS_KEY'),
+            'secret' => $CONFIGCLASS->get('AWS_SECRET'),
         )
     ]);
     $isQuote = $_POST['quote'] == "true";
     $filename = sprintf("%s-", $isQuote ? "quote" : "invoice") . time() . "-" . (floor(rand())) . "." . "pdf";
     $s3Path = $isQuote ? "uploads/PROJECT_QUOTES" : "uploads/PROJECT_INVOICES";
     $result = $s3->putObject([
-        'Bucket' => $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'],
+        'Bucket' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_BUCKET'),
         'Key'    => $s3Path . "/" . $filename,
         'SourceFile' => $temp_file_location
     ]);
@@ -27,9 +27,9 @@ if(isset($_FILES['file'])) {
         $fileData = [
             "s3files_extension" => "pdf",
             "s3files_path" => $s3Path,
-            "s3files_region" => $CONFIG['AWS']['DEFAULTUPLOADS']['REGION'],
-            "s3files_endpoint" => $CONFIG['AWS']['DEFAULTUPLOADS']['ENDPOINT'],
-            "s3files_bucket" => $CONFIG['AWS']['DEFAULTUPLOADS']['BUCKET'],
+            "s3files_region" => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_REGION'),
+            "s3files_endpoint" => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT'),
+            "s3files_bucket" => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_BUCKET'),
             "s3files_meta_size" => $_FILES['file']['size'],
             "s3files_meta_type" => $isQuote ? 21 : 20,
             "s3files_meta_subType" => $_POST['id'],
@@ -37,7 +37,7 @@ if(isset($_FILES['file'])) {
             "s3files_original_name" => $isQuote ? "quote.pdf" : "invoice.pdf",
             "s3files_filename" => pathinfo($filename, PATHINFO_FILENAME),
             "s3files_name" => "v" . $bCMS->sanitizeString($_POST['fileNumber']),
-            "s3files_cdn_endpoint" => $CONFIG['AWS']['DEFAULTUPLOADS']['CDNEndpoint'],
+            "s3files_cdn_endpoint" => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_CDNENDPOINT'),
             "s3files_meta_public" => 0,
             "instances_id" => $AUTH->data['instance']['instances_id']
         ];

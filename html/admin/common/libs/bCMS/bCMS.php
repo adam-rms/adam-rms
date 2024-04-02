@@ -136,7 +136,7 @@ class bCMS
   }
   function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false)
   {
-    global $DBLIB, $CONFIG, $AUTH;
+    global $DBLIB, $CONFIG, $AUTH, $CONFIGCLASS;
     /*
          * File interface for Amazon AWS S3.
          *  Parameters
@@ -241,7 +241,7 @@ class bCMS
 
     //Generate the url
 
-    if ($CONFIG['AWS']["CLOUDFRONT"]['ENABLED']) {
+    if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED')) {
       // Create a CloudFront Client to sign the string
       $CloudFrontClient = new Aws\CloudFront\CloudFrontClient([
         'profile' => 'default',
@@ -256,8 +256,8 @@ class bCMS
       $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
         'url' => $file['s3files_cdn_endpoint'] . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
         'expires' => strtotime($file['expiry']),
-        'private_key' => $CONFIG['AWS']["CLOUDFRONT"]["PRIVATEKEY"],
-        'key_pair_id' => $CONFIG['AWS']["CLOUDFRONT"]["KEYPAIRID"]
+        'private_key' => $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'),
+        'key_pair_id' => $CONFIGCLASS->get('AWS_CLOUDFRONT_KEYPAIRID')
       ]);
       return $signedUrlCannedPolicy;
     } else {
@@ -267,8 +267,8 @@ class bCMS
         'endpoint' => ($file['s3files_cdn_endpoint'] ? $file['s3files_cdn_endpoint'] : "https://" . $file["s3files_endpoint"]),
         'version' => 'latest',
         'credentials' => array(
-          'key' => $CONFIG['AWS']['KEY'],
-          'secret' => $CONFIG['AWS']['SECRET'],
+          'key' => $CONFIGCLASS->get('AWS_KEY'),
+          'secret' => $CONFIGCLASS->get('AWS_SECRET'),
         )
       ]);
 

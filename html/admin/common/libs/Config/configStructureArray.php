@@ -362,5 +362,201 @@ $configStructureArray = [
     "specialRequest" => false,
     "default" => null,
     "envFallback" => "bCMS__TOS_URL",
-  ]
+  ],
+  "AWS_KEY" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return getenv('bCMS__AWS_SERVER_KEY');
+      },
+      "name" => "AWS Server Key",
+      "group" => "AWS",
+      "description" => "The AWS server key.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => getenv('bCMS__AWS_SERVER_KEY'),
+    "envFallback" => false,
+  ],
+
+  "AWS_SECRET" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "AWS Server Secret Key",
+      "group" => "AWS",
+      "description" => "The AWS server secret key.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+
+  "AWS_DEFAULTUPLOADS_BUCKET" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "AWS S3 Bucket Name",
+      "group" => "AWS",
+      "description" => "The AWS S3 bucket name.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+
+  "AWS_DEFAULTUPLOADS_ENDPOINT" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "https://s3.us-east-1.amazonaws.com";
+      },
+      "name" => "AWS S3 Bucket Endpoint",
+      "group" => "AWS",
+      "description" => "The AWS S3 bucket endpoint.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "https://s3.us-east-1.amazonaws.com",
+    "envFallback" => false,
+  ],
+
+  "AWS_DEFAULTUPLOADS_REGION" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "us-east-1";
+      },
+      "name" => "AWS S3 Bucket Region",
+      "group" => "AWS",
+      "description" => "The AWS S3 bucket region.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "us-east-1",
+    "envFallback" => false,
+  ],
+
+  "AWS_DEFAULTUPLOADS_CDNENDPOINT" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "AWS S3 CDN Endpoint",
+      "group" => "AWS",
+      "description" => "The AWS S3 CDN endpoint.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "AWS_CLOUDFRONT_ENABLED" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Disabled";
+      },
+      "name" => "AWS CloudFront Enabled",
+      "group" => "AWS",
+      "description" => "Whether AWS CloudFront is enabled.",
+      "required" => true,
+      "maxlength" => 8,
+      "minlength" => 7,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "Disabled",
+    "envFallback" => false,
+  ],
+
+  "AWS_CLOUDFRONT_PRIVATEKEY" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "AWS CloudFront Private Key",
+      "group" => "AWS",
+      "description" => "The AWS CloudFront private key.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => str_replace('\n', "\n", str_replace('"', '', $value)), "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+
+  "AWS_CLOUDFRONT_KEYPAIRID" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "AWS CloudFront Key Pair ID",
+      "group" => "AWS",
+      "description" => "The AWS CloudFront key pair ID.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
 ];
