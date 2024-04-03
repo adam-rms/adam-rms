@@ -773,11 +773,7 @@ return(!this.href.endsWith("#") && this.href == url);
 				<!-- /.content-wrapper -->
 				<footer class="main-footer" id="main-footer">
 					<div class="float-right d-none d-sm-block">
-						{% if CONFIG.DEV %}
-							DEV BUILD
-						{% else %}
-							<a href="https://github.com/adam-rms/adam-rms/releases" target="_blank">{{ CONFIG.VERSION.ENV ?: CONFIG.VERSION.TAG }}</a>
-						{% endif %}
+						<a href="https://github.com/adam-rms/adam-rms/releases" target="_blank">{{ VERSION }}</a>
 					</div>
 					<strong>&copy;2018-{{ "now"|date("Y") }}
 						<a href="https://bithell.studio">Bithell Studios Ltd</a>.</strong>
@@ -890,7 +886,7 @@ location.reload();
 });
 });{% endif %}
 });
-console.log("Welcome to  {{ CONFIG.PROJECT_NAME|escape("js") }}version  {{ (CONFIG.VERSION.ENV ?: CONFIG.VERSION.TAG)|escape("js") }}");
+console.log("Welcome to  {{ CONFIG.PROJECT_NAME|escape("js") }}version  {{ VERSION|escape("js") }}");
 			</script>
 			{% include 'assets/templates/analytics.twig' %}
 		</body>

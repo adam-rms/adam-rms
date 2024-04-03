@@ -329,4 +329,17 @@ class bCMS
     }
     return $return;
   }
+  function getVersionNumber()
+  {
+    if (getenv('bCMS__VERSION')) {
+      if (strlen(getenv('bCMS__VERSION')) > 7) return substr(getenv('bCMS__VERSION'), 0, 7);
+      else return getenv('bCMS__VERSION');
+    } else if (file_exists(__DIR__ . '/../../version/TAG.txt')) {
+      return file_get_contents(__DIR__ . '/../../version/TAG.txt');
+    } else if (file_exists(__DIR__ . '/../../version/COMMIT.txt')) {
+      return file_get_contents(__DIR__ . '/../../version/COMMIT.txt');
+    } else {
+      return "Version Unknown";
+    }
+  }
 }

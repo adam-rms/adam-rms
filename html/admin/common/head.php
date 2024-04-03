@@ -51,7 +51,7 @@ if (getenv('DEV_MODE') != "true") {
     Sentry\init([
         'dsn' => $CONFIG['ERRORS_PROVIDERS_SENTRY'],
         'traces_sample_rate' => 0.1, //Capture 10% of pageloads for perforamnce monitoring
-        'release' => $CONFIG['VERSION']['ENV'] ?: ($CONFIG['VERSION']['TAG'] . "." . $CONFIG['VERSION']['COMMIT']),
+        //'release' => , bCMS isn't intalised here so we can't easily get the version
         'sample_rate' => 1.0,
     ]);
 }
@@ -77,12 +77,6 @@ try {
         exit;
     }
 }
-
-THis is the next batch of things to migrate, and also to write an editor for the config 
-$OLDENDDAYSCONFIGSSS = array(
-        'VERSION' => ['ENV' => getenv('bCMS__VERSION') ? (strlen(getenv('bCMS__VERSION')) > 7 ? substr(getenv('bCMS__VERSION'), 0, 7) : getenv('bCMS__VERSION')) : false, 'COMMIT' => file_get_contents(__DIR__ . '/version/COMMIT.txt'), 'TAG' => file_get_contents(__DIR__ . '/version/TAG.txt'), "COMMITFULL" => file_get_contents(__DIR__ . '/version/COMMITFULL.txt')], //Version number is the first 7 characters of the commit hash for certain deployments, and for others there's a nice numerical tag.
-);
-
 
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
@@ -163,7 +157,7 @@ function assetLatestScan($assetid)
 }
 
 // Setup the "PAGEDATA" array which is used by Twig
-$PAGEDATA = array('CONFIG' => $CONFIG);
+$PAGEDATA = array('CONFIG' => $CONFIG, 'VERSION' => $bCMS->getVersionNumber());
 
 // Setup the "MAINTENANCEJOBPRIORITIES" array which is used by Twig
 $GLOBALS['MAINTENANCEJOBPRIORITIES'] = [
