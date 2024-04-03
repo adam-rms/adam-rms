@@ -59,8 +59,12 @@ class Config
     $this->DBLIB->where("config_key", $key);
     $value = $this->DBLIB->getValue("config", "config_value");
     if ($value === false or $value === null) {
-      $value = $this->_checkDefaults($key);
-      if ($this->CONFIG_STRUCTURE[$key]["default"] === false) return false;
+      try {
+        $value = $this->_checkDefaults($key);
+      } catch (ConfigValueNotSet) {
+        $value = false;
+      }
+      if ($value !== false) return false;
       else return $this->CONFIG_STRUCTURE[$key]["default"];
     } else {
       $this->DBCACHE[$key] = $value;
