@@ -64,8 +64,7 @@ class Config
       } catch (ConfigValueNotSet) {
         $value = false;
       }
-      if ($value !== false) return false;
-      else return $this->CONFIG_STRUCTURE[$key]["default"];
+      return $this->CONFIG_STRUCTURE[$key]["default"];
     } else {
       $this->DBCACHE[$key] = $value;
       return $value;
