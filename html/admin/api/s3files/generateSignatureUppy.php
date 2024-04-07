@@ -1,18 +1,18 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-$bucket = $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_BUCKET');
+$bucket = $CONFIGCLASS->get('AWS_S3_BUCKET');
 // Directory to place uploaded files in.
 use Aws\S3\S3Client;
 // Create the S3 client.
 $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
-    'region' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_REGION'),
-    'endpoint' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT'),
-    'use_path_style_endpoint' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE') === 'Enabled',
+    'region' => $CONFIGCLASS->get('AWS_S3_REGION'),
+    'endpoint' => $CONFIGCLASS->get('AWS_S3_ENDPOINT'),
+    'use_path_style_endpoint' => $CONFIGCLASS->get('AWS_S3_ENDPOINT_PATHSTYLE') === 'Enabled',
     'credentials' => array(
-        'key' => $CONFIGCLASS->get('AWS_KEY'),
-        'secret' => $CONFIGCLASS->get('AWS_SECRET'),
+        'key' => $CONFIGCLASS->get('AWS_S3_KEY'),
+        'secret' => $CONFIGCLASS->get('AWS_S3_SECRET'),
     )
 ]);
 
@@ -33,7 +33,7 @@ header('content-type: application/json');
 echo json_encode([
     'method' => $request->getMethod(),
     'url' => (string)$request->getUri(),
-    'fields' => ['name','typeid','subtype'],
+    'fields' => ['name', 'typeid', 'subtype'],
     // Also set the content-type header on the request, to make sure that it is the same as the one we used to generate the signature.
     // Else, the browser picks a content-type as it sees fit.
     'headers' => [

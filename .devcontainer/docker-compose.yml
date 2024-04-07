@@ -34,13 +34,13 @@ services:
       - DB_PORT=3306
       - DEV_MODE=true
       - RUNNING_IN_DEVCONTAINER=devcontainer
-      - CONFIG_AWS_KEY=key-id-of-top-secret-key
-      - CONFIG_AWS_SECRET=topsecretkeydonottellanyone
-      - CONFIG_AWS_DEFAULTUPLOADS_BUCKET=localtestingbucket
-      - CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT=http://localhost:8081/localtestingbucket
-      - CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE=Enabled
-      - CONFIG_AWS_DEFAULTUPLOADS_REGION=devcontainer-east-1
-      - CONFIG_AWS_DEFAULTUPLOADS_CDNENDPOINT=http://localhost:8081/localtestingbucket
+      - CONFIG_AWS_S3_KEY=key-id-of-top-secret-key
+      - CONFIG_AWS_S3_SECRET=topsecretkeydonottellanyone
+      - CONFIG_AWS_S3_BUCKET=localtestingbucket
+      - CONFIG_AWS_S3_ENDPOINT=http://localhost:8081/localtestingbucket
+      - CONFIG_AWS_S3_ENDPOINT_PATHSTYLE=Enabled
+      - CONFIG_AWS_S3_REGION=devcontainer-east-1
+      - CONFIG_AWS_CLOUDFRONT_ENDPOINT=http://localhost:8081/localtestingbucket
   db:
     image: index.docker.io/mysql/mysql-server:8.0
     command: --default-authentication-plugin=mysql_native_password --innodb-thread-concurrency=0 --sort_buffer_size=512K

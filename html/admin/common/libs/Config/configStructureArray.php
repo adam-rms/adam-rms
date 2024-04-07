@@ -363,7 +363,7 @@ $configStructureArray = [
     "default" => null,
     "envFallback" => false,
   ],
-  "AWS_KEY" => [
+  "AWS_S3_KEY" => [
     "form" => [
       "type" => "text",
       "default" => function () {
@@ -382,10 +382,10 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => "CONFIG_AWS_KEY",
+    "envFallback" => "CONFIG_AWS_S3_KEY",
   ],
 
-  "AWS_SECRET" => [
+  "AWS_S3_SECRET" => [
     "form" => [
       "type" => "text",
       "default" => function () {
@@ -404,10 +404,10 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => "CONFIG_AWS_SECRET",
+    "envFallback" => "CONFIG_AWS_S3_SECRET",
   ],
 
-  "AWS_DEFAULTUPLOADS_BUCKET" => [
+  "AWS_S3_BUCKET" => [
     "form" => [
       "type" => "text",
       "default" => function () {
@@ -426,10 +426,10 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_BUCKET",
+    "envFallback" => "CONFIG_AWS_S3_BUCKET",
   ],
 
-  "AWS_DEFAULTUPLOADS_ENDPOINT" => [
+  "AWS_S3_ENDPOINT" => [
     "form" => [
       "type" => "text",
       "default" => function () {
@@ -448,9 +448,9 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => "https://s3.us-east-1.amazonaws.com",
-    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT",
+    "envFallback" => "CONFIG_AWS_S3_ENDPOINT",
   ],
-  "AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE" => [
+  "AWS_S3_ENDPOINT_PATHSTYLE" => [
     "form" => [
       "type" => "select",
       "default" => function () {
@@ -469,10 +469,10 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => "Disabled",
-    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE",
+    "envFallback" => "CONFIG_AWS_S3_ENDPOINT_PATHSTYLE",
   ],
 
-  "AWS_DEFAULTUPLOADS_REGION" => [
+  "AWS_S3_REGION" => [
     "form" => [
       "type" => "text",
       "default" => function () {
@@ -491,29 +491,7 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => "us-east-1",
-    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_REGION",
-  ],
-
-  "AWS_DEFAULTUPLOADS_CDNENDPOINT" => [
-    "form" => [
-      "type" => "text",
-      "default" => function () {
-        return null;
-      },
-      "name" => "AWS S3 CDN Endpoint",
-      "group" => "AWS",
-      "description" => "The AWS S3 CDN endpoint.",
-      "required" => false,
-      "maxlength" => 255,
-      "minlength" => 0,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        return ["valid" => true, "value" => $value, "error" => ''];
-      }
-    ],
-    "specialRequest" => true,
-    "default" => false,
-    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_CDNENDPOINT",
+    "envFallback" => "CONFIG_AWS_S3_REGION",
   ],
   "AWS_CLOUDFRONT_ENABLED" => [
     "form" => [
@@ -579,5 +557,27 @@ $configStructureArray = [
     "specialRequest" => true,
     "default" => false,
     "envFallback" => false,
+  ],
+
+  "AWS_CLOUDFRONT_ENDPOINT" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "AWS S3 CDN Endpoint",
+      "group" => "AWS",
+      "description" => "The AWS S3 CDN endpoint.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_AWS_CLOUDFRONT_ENDPOINT",
   ],
 ];

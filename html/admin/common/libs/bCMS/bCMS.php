@@ -253,7 +253,7 @@ class bCMS
       );
 
       $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
-        'url' => $file['s3files_cdn_endpoint'] . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
+        'url' => $CONFIGCLASS->get("AWS_CLOUDFRONT_ENDPOINT") . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
         'expires' => strtotime($file['expiry']),
         'private_key' => $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'),
         'key_pair_id' => $CONFIGCLASS->get('AWS_CLOUDFRONT_KEYPAIRID')
@@ -262,17 +262,18 @@ class bCMS
     } else {
       //Download direct from S3
       $s3Client = new Aws\S3\S3Client([
-        'region' => $file["s3files_region"],
-        'endpoint' => ($file['s3files_cdn_endpoint'] ? $file['s3files_cdn_endpoint'] : "https://" . $file["s3files_endpoint"]),
+        'region' => $CONFIGCLASS->get('AWS_S3_REGION'),
+        'endpoint' => $CONFIGCLASS->get('AWS_S3_ENDPOINT'),
+        'use_path_style_endpoint' => $CONFIGCLASS->get('AWS_S3_ENDPOINT_PATHSTYLE') === 'Enabled',
         'version' => 'latest',
         'credentials' => array(
-          'key' => $CONFIGCLASS->get('AWS_KEY'),
-          'secret' => $CONFIGCLASS->get('AWS_SECRET'),
+          'key' => $CONFIGCLASS->get('AWS_S3_KEY'),
+          'secret' => $CONFIGCLASS->get('AWS_S3_SECRET'),
         )
       ]);
 
       $parameters = [
-        'Bucket' => $file['s3files_bucket'],
+        'Bucket' => $CONFIGCLASS->get('AWS_S3_BUCKET'),
         'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
       ];
       $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
