@@ -21,7 +21,7 @@ $configStructureArray = [
     ],
     "specialRequest" => false, // Should this value by downloaded for every single pageload? True is reccomended for values that are used by every single page or are used by twig, and so should be taken from the database in a bulk call to improve performance
     "default" => false, // Default value if one is not in the database (false to fail if not in database)
-    "envFallback" => "bCMS__ROOTURL", // If the value isn't in the database, use this environment variable (false to not use one)
+    "envFallback" => "CONFIG_ROOTURL", // If the value isn't in the database, use this environment variable (false to not use one)
   ],
   "PROJECT_NAME" => [
     "form" => [
@@ -44,7 +44,7 @@ $configStructureArray = [
     ],
     "specialRequest" => false,
     "default" => "AdamRMS",
-    "envFallback" => false,
+    "envFallback" => "CONFIG_PROJECT_NAME",
   ],
   "TIMEZONE" => [
     "form" => [
@@ -205,7 +205,7 @@ $configStructureArray = [
     ],
     "specialRequest" => false,
     "default" => false,
-    "envFallback" => "bCMS__JWT",
+    "envFallback" => "CONFIG_AUTH_JWTKey",
   ],
   "AUTH_NEXTHASH" => [
     "form" => [
@@ -361,7 +361,7 @@ $configStructureArray = [
     ],
     "specialRequest" => false,
     "default" => null,
-    "envFallback" => "bCMS__TOS_URL",
+    "envFallback" => false,
   ],
   "AWS_KEY" => [
     "form" => [
@@ -382,7 +382,7 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => false,
+    "envFallback" => "CONFIG_AWS_KEY",
   ],
 
   "AWS_SECRET" => [
@@ -404,7 +404,7 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => false,
+    "envFallback" => "CONFIG_AWS_SECRET",
   ],
 
   "AWS_DEFAULTUPLOADS_BUCKET" => [
@@ -426,7 +426,7 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => false,
+    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_BUCKET",
   ],
 
   "AWS_DEFAULTUPLOADS_ENDPOINT" => [
@@ -448,7 +448,28 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => "https://s3.us-east-1.amazonaws.com",
-    "envFallback" => false,
+    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT",
+  ],
+  "AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Disabled";
+      },
+      "name" => "Should path-style requests be sent to the upload endpoint?",
+      "group" => "AWS",
+      "description" => "This should be disabled for almost all providers",
+      "required" => false,
+      "maxlength" => 8,
+      "minlength" => 7,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "Disabled",
+    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE",
   ],
 
   "AWS_DEFAULTUPLOADS_REGION" => [
@@ -470,7 +491,7 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => "us-east-1",
-    "envFallback" => false,
+    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_REGION",
   ],
 
   "AWS_DEFAULTUPLOADS_CDNENDPOINT" => [
@@ -492,7 +513,7 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => false,
+    "envFallback" => "CONFIG_AWS_DEFAULTUPLOADS_CDNENDPOINT",
   ],
   "AWS_CLOUDFRONT_ENABLED" => [
     "form" => [

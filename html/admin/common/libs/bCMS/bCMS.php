@@ -240,8 +240,7 @@ class bCMS
     elseif ($secure and !$instanceIgnore and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
 
     //Generate the url
-
-    if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED')) {
+    if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED') === 'Enabled') {
       // Create a CloudFront Client to sign the string
       $CloudFrontClient = new Aws\CloudFront\CloudFrontClient([
         'profile' => 'default',

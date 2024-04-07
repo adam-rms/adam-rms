@@ -1,45 +1,45 @@
 {
-	"name": "AdamRMS",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "app",
-	"workspaceFolder": "/workspace",
+  "name": "AdamRMS",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
 
-	// Configure tool-specific properties.
-	"customizations": {
-		// Configure properties specific to VS Code.
-		"vscode": {		
-			"settings": { 
-				"php.validate.executablePath": "/usr/local/bin/php",
-				"editor.formatOnSave": true,
-				"editor.formatOnPaste": true,
-				"editor.formatOnSaveMode": "modificationsIfAvailable",
-				"[php]": {
-					"editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
-					"editor.formatOnSave": true
-				},
-				"[twig]": {
-					"editor.defaultFormatter": "mblode.twig-language-2",
-					"editor.formatOnSave": true
-				},
-			},
-			"extensions": [
-				"xdebug.php-debug",
-				"bmewburn.vscode-intelephense-client",
-				"mrmlnc.vscode-apache",
-				"esbenp.prettier-vscode",
-				"mblode.twig-language-2",
-				"github.vscode-github-actions"
-			]
-		}
-	},
-	
-	"shutdownAction": "stopCompose",
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "settings": {
+        "php.validate.executablePath": "/usr/local/bin/php",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.formatOnSaveMode": "modificationsIfAvailable",
+        "[php]": {
+          "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+          "editor.formatOnSave": true
+        },
+        "[twig]": {
+          "editor.defaultFormatter": "mblode.twig-language-2",
+          "editor.formatOnSave": true
+        }
+      },
+      "extensions": [
+        "xdebug.php-debug",
+        "bmewburn.vscode-intelephense-client",
+        "mrmlnc.vscode-apache",
+        "esbenp.prettier-vscode",
+        "mblode.twig-language-2",
+        "github.vscode-github-actions"
+      ]
+    }
+  },
 
-	"forwardPorts": [8080, "db:3306"],
+  "shutdownAction": "stopCompose",
 
-	"postCreateCommand": "composer install",
-	
-	"postStartCommand": "php vendor/bin/phinx migrate",
+  "forwardPorts": [8080, "db:3306", "s3filestore:8081"],
 
-	"remoteUser": "vscode"
+  "postCreateCommand": "composer install",
+
+  "postStartCommand": "php vendor/bin/phinx migrate",
+
+  "remoteUser": "vscode"
 }

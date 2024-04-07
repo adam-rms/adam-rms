@@ -17,24 +17,30 @@ services:
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
-
-    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    network_mode: service:db
+    
     # Uncomment the next line to use a non-root user for all processes.
     # user: vscode
     depends_on:
       - db
+      - s3filestore
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
     environment:
-      - DB_HOSTNAME=127.0.0.1
+      - DB_HOSTNAME=db
       - DB_DATABASE=db
       - DB_USERNAME=user
       - DB_PASSWORD=pass
       - DB_PORT=3306
       - DEV_MODE=true
       - RUNNING_IN_DEVCONTAINER=devcontainer
+      - CONFIG_AWS_KEY=key-id-of-top-secret-key
+      - CONFIG_AWS_SECRET=topsecretkeydonottellanyone
+      - CONFIG_AWS_DEFAULTUPLOADS_BUCKET=localtestingbucket
+      - CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT=http://localhost:8081/localtestingbucket
+      - CONFIG_AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE=Enabled
+      - CONFIG_AWS_DEFAULTUPLOADS_REGION=devcontainer-east-1
+      - CONFIG_AWS_DEFAULTUPLOADS_CDNENDPOINT=http://localhost:8081/localtestingbucket
   db:
     image: index.docker.io/mysql/mysql-server:8.0
     command: --default-authentication-plugin=mysql_native_password --innodb-thread-concurrency=0 --sort_buffer_size=512K
@@ -51,5 +57,19 @@ services:
       - MYSQL_ROOT_PASSWORD=pass
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
+  s3filestore:
+    image: adobe/s3mock:3.5.2
+    restart: unless-stopped
+    ports:
+      - 8081:9090
+    volumes:
+      - ./../s3files:/s3files
+    environment:
+      - initialBuckets=localtestingbucket
+      - retainFilesOnExit=true
+      - root=/s3files
+      - trace=false
+      - debug=false
+      - validKmsKeys=arn:aws:kms:devcontainer-east-1:1234567890:topsecretkeydonottellanyone/key-id-of-top-secret-key
 volumes:
   db_data: null

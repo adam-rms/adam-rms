@@ -8,7 +8,8 @@ use Aws\S3\S3Client;
 $s3 = new Aws\S3\S3Client([
     'version' => 'latest',
     'region' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_REGION'),
-    'endpoint' => "https://" . $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT'),
+    'endpoint' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT'),
+    'use_path_style_endpoint' => $CONFIGCLASS->get('AWS_DEFAULTUPLOADS_ENDPOINT_PATHSTYLE') === 'Enabled',
     'credentials' => array(
         'key' => $CONFIGCLASS->get('AWS_KEY'),
         'secret' => $CONFIGCLASS->get('AWS_SECRET'),
