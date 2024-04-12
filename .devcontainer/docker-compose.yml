@@ -33,7 +33,6 @@ services:
       - DB_PASSWORD=pass
       - DB_PORT=3306
       - DEV_MODE=true
-      - RUNNING_IN_DEVCONTAINER=devcontainer
       - CONFIG_AWS_S3_KEY=key-id-of-top-secret-key
       - CONFIG_AWS_S3_SECRET=topsecretkeydonottellanyone
       - CONFIG_AWS_S3_BUCKET=localtestingbucket
@@ -71,5 +70,19 @@ services:
       - trace=false
       - debug=false
       - validKmsKeys=arn:aws:kms:devcontainer-east-1:1234567890:topsecretkeydonottellanyone/key-id-of-top-secret-key
+  phpmyadmin:
+    image: phpmyadmin:5-apache
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8082:80
+    environment:
+      - PMA_ARBITRARY=0
+      - PMA_HOST=db
+      - PMA_USER=user
+      - PMA_PASSWORD=pass
+      - PMA_PORT=3306
+
 volumes:
   db_data: null
