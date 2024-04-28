@@ -1,0 +1,52 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+{% endblock %}
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-danger alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the AdamRMS Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Server Configuration
+                    </h3>
+                </div>
+                <div class="card-body">
+                    
+                </div>
+                <div class="overlay" id="loadingoverlay">
+                    <i class="fas fa-sync fa-spin fa-3x"></i>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $(".suspenduser").click(function () {
+                    $("#loadingoverlay").show();
+                    $.ajax({
+                        url: "{{ CONFIG.ROOTURL }}/api/account/suspend.php?userid=" + $(this).data("userid") + '&suspendval=' + $(this).data("suspendval"),
+                        success: function (result) {
+                            if (result == '1') {
+                                bootbox.alert("Success", function () {
+                                    location.reload();
+                                });
+                            } else {
+                                bootbox.alert("Sorry - Operation could not be completed! Please reload the page", function () {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                $("#loadingoverlay").hide();
+            });
+        </script>
+    </div>
+{% endblock %}

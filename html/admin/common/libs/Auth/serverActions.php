@@ -262,4 +262,16 @@ $serverActions = [
     'LEGACY-ID' => 17,
     'LEGACY-Sort Rank' => 14,
   ],
+  'CONFIG:SET' => [
+    'Category' => 'General sys admin',
+    'Table' => 'config',
+    'Type' => '',
+    'Detail' => '',
+    'Dependencies' => null,
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+    'LEGACY-Description' => 'Set system configuration',
+    'LEGACY-ID' => null,
+    'LEGACY-Sort Rank' => null,
+  ],
 ];

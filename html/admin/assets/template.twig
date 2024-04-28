@@ -142,7 +142,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
                         var errorMessage = "";
                         }
                         bootbox.alert(
-                        "Sorry we couldn't complete this action - please try again!<br/><br/>" +
+                            "AdamRMS encountered an error.{% if CONFIG.LINKS_SUPPORTURL|length > 0 %}<a href='{{ CONFIG.LINKS_SUPPORTURL }}' target='_blank'>Support</a>{% endif %}<br/><br/>" +
                             errorMessage,
                         function () {
                             if (reloadIfError) {
@@ -395,6 +395,8 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 										</a>
 									</li>
 								{% endif %}
+{% if CONFIG.LINKS_SUPPORTURL|length > 0 %}
+
 								<li class="nav-item">
 									<a href="{{ CONFIG.LINKS_SUPPORTURL }}" target="_blank" class="nav-link">
 
@@ -404,6 +406,8 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 										</p>
 									</a>
 								</li>
+{% endif %}
+
 								{% if "TRAINING:VIEW"|instancePermissions %}
 									<li class="nav-item">
 										<a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
@@ -672,6 +676,17 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 									{% endif %}
 									{% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions or "VIEW-ANALYTICS"|serverPermissions or "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
 										<li class="nav-header">SERVER ADMIN</li>
+									{% endif %}
+									{% if "CONFIG:SET"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/config.php" class="nav-link">
+												<i class="nav-icon fas fa-cog"></i>
+												<p>
+													Configuration
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
 									{% endif %}
 									{% if "USERS:CREATE"|serverPermissions %}
 										<li class="nav-item">
