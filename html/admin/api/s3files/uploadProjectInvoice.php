@@ -7,7 +7,7 @@ if (isset($_FILES['file'])) {
     $s3 = new Aws\S3\S3Client([
         'version' => 'latest',
         'region' => $CONFIGCLASS->get('AWS_S3_REGION'),
-        'endpoint' => $CONFIGCLASS->get('AWS_S3_ENDPOINT'),
+        'endpoint' => $CONFIGCLASS->get('AWS_S3_SERVER_ENDPOINT'),
         'use_path_style_endpoint' => $CONFIGCLASS->get('AWS_S3_ENDPOINT_PATHSTYLE') === 'Enabled',
         'credentials' => array(
             'key' => $CONFIGCLASS->get('AWS_S3_KEY'),

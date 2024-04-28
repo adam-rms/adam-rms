@@ -36,7 +36,8 @@ services:
       - CONFIG_AWS_S3_KEY=key-id-of-top-secret-key
       - CONFIG_AWS_S3_SECRET=topsecretkeydonottellanyone
       - CONFIG_AWS_S3_BUCKET=localtestingbucket
-      - CONFIG_AWS_S3_ENDPOINT=http://localhost:8081/localtestingbucket
+      - CONFIG_AWS_S3_BROWSER_ENDPOINT=http://localhost:8081/localtestingbucket
+      - CONFIG_AWS_S3_SERVER_ENDPOINT=http://s3filestore:8081/localtestingbucket
       - CONFIG_AWS_S3_ENDPOINT_PATHSTYLE=Enabled
       - CONFIG_AWS_S3_REGION=devcontainer-east-1
       - CONFIG_AWS_CLOUDFRONT_ENDPOINT=http://localhost:8081/localtestingbucket

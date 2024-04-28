@@ -429,15 +429,15 @@ $configStructureArray = [
     "envFallback" => "CONFIG_AWS_S3_BUCKET",
   ],
 
-  "AWS_S3_ENDPOINT" => [
+  "AWS_S3_BROWSER_ENDPOINT" => [
     "form" => [
       "type" => "text",
       "default" => function () {
         return "https://s3.us-east-1.amazonaws.com";
       },
-      "name" => "AWS S3 Bucket Endpoint",
+      "name" => "AWS S3 Bucket Browser Endpoint",
       "group" => "AWS",
-      "description" => "The AWS S3 bucket endpoint.",
+      "description" => "The AWS S3 bucket endpoint, which must be accessible over the internet for user browsers to upload files",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -448,7 +448,28 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => "https://s3.us-east-1.amazonaws.com",
-    "envFallback" => "CONFIG_AWS_S3_ENDPOINT",
+    "envFallback" => "CONFIG_AWS_S3_BROWSER_ENDPOINT",
+  ],
+  "AWS_S3_SERVER_ENDPOINT" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "https://s3.us-east-1.amazonaws.com";
+      },
+      "name" => "AWS S3 Bucket Server Endpoint",
+      "group" => "AWS",
+      "description" => "The AWS S3 bucket endpoint for the server to use to upload files - this is almost certainly the same as the above, except in some very specific circumstances such as running in docker containers.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "https://s3.us-east-1.amazonaws.com",
+    "envFallback" => "CONFIG_AWS_S3_SERVER_ENDPOINT",
   ],
   "AWS_S3_ENDPOINT_PATHSTYLE" => [
     "form" => [
