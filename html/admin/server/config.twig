@@ -23,7 +23,7 @@
                         {% set currentgroup = "" %}
                         {% for key,field in form %}
                             {% if field.form.group != currentgroup %}
-                                <h4>{{ field.form.group }}</h4>
+                                <h2 style="margin: 0;">{{ field.form.group }}</h4>
                                 {% set currentgroup = field.form.group %}
                             {% endif %}
                             <label for="{{ key }}" style="margin-top: 5px; margin-bottom: 0;">{{ field.form.name }}</label><p style="margin:0;">{{ field.form.description }}</p>

@@ -23,29 +23,6 @@ $configStructureArray = [
     "default" => false, // Default value if one is not in the database (false to fail if not in database)
     "envFallback" => "CONFIG_ROOTURL", // If the value isn't in the database, use this environment variable (false to not use one)
   ],
-  "PROJECT_NAME" => [
-    "form" => [
-      "type" => "text",
-      "default" => function () {
-        return "AdamRMS";
-      },
-      "name" => "Whitelabel project name override",
-      "description" => "What do you call AdamRMS within your organisation?",
-      "group" => "General",
-      "required" => false,
-      "maxlength" => 20,
-      "minlength" => 2,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        $checkedValue = filter_var($value, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/^[a-zA-Z0-9_ ]+$/"]]);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
-        else return ["valid" => false, "value" => null, "error" => "Invalid name"];
-      }
-    ],
-    "specialRequest" => false,
-    "default" => "AdamRMS",
-    "envFallback" => "CONFIG_PROJECT_NAME",
-  ],
   "TIMEZONE" => [
     "form" => [
       "type" => "select",
@@ -293,7 +270,29 @@ $configStructureArray = [
     "default" => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
     "envFallback" => false,
   ],
-
+  "PROJECT_NAME" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "AdamRMS";
+      },
+      "name" => "Whitelabel project name override",
+      "description" => "What do you call AdamRMS within your organisation?",
+      "group" => "Customisation",
+      "required" => false,
+      "maxlength" => 20,
+      "minlength" => 2,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        $checkedValue = filter_var($value, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/^[a-zA-Z0-9_ ]+$/"]]);
+        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
+        else return ["valid" => false, "value" => null, "error" => "Invalid name"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "AdamRMS",
+    "envFallback" => "CONFIG_PROJECT_NAME",
+  ],
   "LINKS_USERGUIDEURL" => [
     "form" => [
       "type" => "url",
