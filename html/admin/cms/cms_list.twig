@@ -65,7 +65,7 @@
                                 </td>
                                 <td>
                                     {% if page.cmsPages_visibleToGroups %}
-                                        Only AdamRMS users with role
+                                        Only {{ CONFIG.PROJECT_NAME }} users with role
                                         {% set first = true %}
                                         {% for position in positions %}
                                             {% if position.instancePositions_id in page.cmsPages_visibleToGroups|split(',') %}
@@ -118,7 +118,7 @@
                                     </td>
                                     <td>
                                         {% if page.cmsPages_visibleToGroups %}
-                                            Only AdamRMS users with role
+                                            Only {{ CONFIG.PROJECT_NAME }} users with role
                                             {% set first = true %}
                                             {% for position in positions %}
                                                 {% if position.instancePositions_id in page.cmsPages_visibleToGroups|split(',') %}
@@ -206,7 +206,7 @@
                                         
                                     </div>
                                     <hr/>
-                                    <h3>AdamRMS Dashboard</h3>
+                                    <h3>{{ CONFIG.PROJECT_NAME }} Dashboard</h3>
                                     <div class="form-group">
                                         <label>Limit visibility to:</label>
                                         <select multiple class="form-control select2 select2bs4" name="cmsPages_visibleToGroups">

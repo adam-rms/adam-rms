@@ -31,7 +31,7 @@ $configStructureArray = [
       },
       "name" => "Whitelabel project name override",
       "description" => "What do you call AdamRMS within your organisation?",
-      "group" => "Customisation",
+      "group" => "General",
       "required" => false,
       "maxlength" => 20,
       "minlength" => 2,

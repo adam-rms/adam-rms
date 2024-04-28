@@ -89,7 +89,7 @@
                             <li class="nav-item"><a class="nav-link" href="#passwordsocial" data-toggle="tab">Password & Sign-in</a></li>
                         {% endif %}
                         {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
-                            <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">AdamRMS Positions</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">{{ CONFIG.PROJECT_NAME }} Positions</a></li>
                         {% endif %}
                         {% if user.crewAssignments|length > 0 %}<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Crew Roles</a></li>{% endif %}
                         {% if user.projectManagement|length > 0 %}<li class="nav-item"><a class="nav-link" href="#projects" data-toggle="tab">Projects Managed</a></li>{% endif %}
