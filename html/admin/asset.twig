@@ -47,13 +47,13 @@
                                 <b>Mass</b> <a class="float-right">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Value</b> <a class="float-right">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money }}</a>
+                                <b>Value</b> <a class="float-right">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Day Rate</b> <a class="float-right">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money }}</a>
+                                <b>Day Rate</b> <a class="float-right">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
                             </li>
                             <li class="list-group-item">
-                                <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money }}</a>
+                                <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
                             </li>
                         </ul>
                         {% if "ASSETS:ARCHIVE"|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
@@ -68,7 +68,7 @@
             {% endif %}
             <div class="card card-outline">
                 <div class="card-body box-profile">
-                    {% if asset.thumbnail %}
+                    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and asset.thumbnail %}
                     <div class="text-center {{ asset.thumbnail|length > 1 ? 'slick' : '' }}">
                         {% for thumb in asset.thumbnail %}
                             <div>
@@ -98,13 +98,13 @@
                             <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
                         </li>
                         <li class="list-group-item">
-                            <b>Value</b> <a class="float-right">{{ asset.assetTypes_value|money }}</a>
+                            <b>Value</b> <a class="float-right">{{ asset.assetTypes_value|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
                         </li>
                         <li class="list-group-item">
-                            <b>Day Rate</b> <a class="float-right">{{ asset.assetTypes_dayRate|money }}</a>
+                            <b>Day Rate</b> <a class="float-right">{{ asset.assetTypes_dayRate|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
                         </li>
                         <li class="list-group-item">
-                            <b>Week Rate</b> <a class="float-right">{{ asset.assetTypes_weekRate|money }}</a>
+                            <b>Week Rate</b> <a class="float-right">{{ asset.assetTypes_weekRate|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
                         </li>
                     </ul>
                     {% if asset.oneasset %}
@@ -184,7 +184,7 @@
                     <ul class="nav nav-pills">
                         <li class="nav-item"><a class="nav-link active" href="#calendarBoxAsset" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
                         {% if "ASSETS:EDIT"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit {{ assets[0].assets_tag|aTag }}</a></li>{% endif %}
-                        {% if "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
+                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
                         {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
                         {% if  "MAINTENANCE_JOBS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
                     </ul>
@@ -411,7 +411,7 @@
                             </div>
                         {% endif %}
 
-                        {% if "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
+                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
                             <div class="tab-pane" style="padding: 1.25rem"  id="files">
                                 {% if "ASSETS:ASSET_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                                     <div class="callout callout-default">
@@ -616,7 +616,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                            <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -625,8 +625,8 @@
                                                                     {% if job.userAssignedUserName1 != null %}
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
-                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -712,7 +712,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -721,8 +721,8 @@
                                                                     {% if job.userAssignedUserName1 != null %}
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
-                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -815,13 +815,13 @@
                                         {% endfor %}
                                         <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                         <td>
-                                            {{ (thisasset.assets_value ?: asset.assetTypes_value)|money }}
+                                            {{ (thisasset.assets_value ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>
-                                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money }}
+                                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>
-                                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money }}
+                                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>{{ thisasset.files|length > 0 ?: "" }}</td>
 
@@ -1023,7 +1023,8 @@
                                             <button class="btn btn-default float-right" id="saveTypeDefinableFieldButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
                                         </div>
                                         <div class="tab-pane" style="padding: 1.25rem" id="thumbnail">
-                                            {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
+{% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
+
 {% embed 'assets/templates/uppy.twig' with {'type': 'ASSET-THUMBNAIL', 'paste': true, 'typeId': 2, 'subTypeId': asset.assetTypes_id, 'imagesOnly': true } %}
 
 
@@ -1053,7 +1054,8 @@
                         </div>
                         {% endif %}
 
-                        {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+
                         <div class="tab-pane" style="padding: 1.25rem"  id="typeFiles">
                             {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
                             <div class="callout callout-default">
@@ -1193,7 +1195,7 @@
                                                                 <ul class="list-inline">
                                                                     <li class="list-inline-item">
                                                                         <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                            <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                            <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                         </a>
                                                                     </li>
                                                                 </ul>
@@ -1202,8 +1204,8 @@
                                                                 {% if job.userAssignedUserName1 != null %}
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
-                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1289,7 +1291,7 @@
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
                                                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1298,8 +1300,8 @@
                                                                     {% if job.userAssignedUserName1 != null %}
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
-                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>

@@ -105,6 +105,9 @@ x-amz-meta-size
                     return response.json()
                 }).then((data) => {
                     // Return an object in the correct shape.
+                    if (data.result === false) {
+                        throw new Error(data.error.message)
+                    }
                     return {
                         method: data.method,
                         url: data.url,

@@ -323,7 +323,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 											</a>
 											<div class="dropdown-divider"></div>
 										{% endfor %}
-									{% endif  %}
+									{% endif %}
 									{% for instance in instancesAvailableToJoinAsTrustedDomains %}
 										<a href="{{ CONFIG.ROOTURL }}/instances/join.php" class="dropdown-item">
 											{{instance.instances_name}}
@@ -365,7 +365,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 						<!-- Sidebar user (optional) -->
 						<div class="user-panel mt-3 pb-3 mb-3 d-flex">
 							<div class="image">
-								<img src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;" loading="lazy" fetchpriority="high">
+								<img src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;" loading="lazy" fetchpriority="high">
 							</div>
 							<a href="{{ CONFIG.ROOTURL }}/user.php" class="d-block">
 								<div class="info">
@@ -421,6 +421,14 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 										<a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
 											<i class="nav-icon fas fa-notes-medical"></i>
 											<p>Crew Vacancies</p>
+										</a>
+									</li>
+								{% endif %}
+								{% if USERDATA.instance.instances_billingUser == USERDATA.users_userid %}
+									<li class="nav-item">
+										<a href="{{ CONFIG.ROOTURL}}/instances/billing.php" class="nav-link">
+											<i class="nav-icon fas fa-money-check"></i>
+											<p>Billing</p>
 										</a>
 									</li>
 								{% endif %}
@@ -715,7 +723,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 											<a href="{{ CONFIG.ROOTURL }}/server/instances.php" class="nav-link">
 												<i class="nav-icon fas fa-city"></i>
 												<p>
-													Instances
+													Businesses
 													<span class="right badge badge-danger">Server-Wide</span>
 												</p>
 											</a>

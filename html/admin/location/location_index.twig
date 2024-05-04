@@ -78,7 +78,7 @@
                         <td class="project-actions text-right">
                             <div class="btn-group">
                                 {% if not(location.locations_archived) %}
-                                {% if "LOCATIONS:LOCATION_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
+                                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "LOCATIONS:LOCATION_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
                                     <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (location.files|length > 0 ? location.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
                                 {% endif %}
                                 {% if "LOCATIONS:LOCATION_BARCODES:VIEW"|instancePermissions %}
@@ -129,7 +129,7 @@
                                 </td>
                                 <td class="project-actions text-right">
                                     <div class="btn-group">
-                                        {% if "LOCATIONS:LOCATION_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
+                                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "LOCATIONS:LOCATION_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
                                             <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ subLocation.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (subLocation.files|length > 0 ? subLocation.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
                                         {% endif %}
                                         {% if "LOCATIONS:LOCATION_BARCODES:VIEW"|instancePermissions %}

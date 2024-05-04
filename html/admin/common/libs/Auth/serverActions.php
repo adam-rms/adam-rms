@@ -190,6 +190,18 @@ $serverActions = [
     'LEGACY-ID' => 24,
     'LEGACY-Sort Rank' => 21,
   ],
+  'INSTANCES:EDIT' => [
+    'Category' => 'Instances',
+    'Table' => 'Instances',
+    'Type' => 'Edit',
+    'Detail' => '',
+    'Dependencies' => ['INSTANCES:VIEW'],
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+    'LEGACY-Description' => null,
+    'LEGACY-ID' => null,
+    'LEGACY-Sort Rank' => null,
+  ],
   'PERMISSIONS:VIEW' => [
     'Category' => 'Permissions Management',
     'Table' => 'Permissions',

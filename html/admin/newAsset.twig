@@ -4,8 +4,23 @@
     <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 {% endblock %}
 {% block content %}
+{% if NOASSETCAPACITY %}
 <div class="row">
     <div class="col-md-12 col-lg-6 offset-lg-3">
+        <div class="card box-solid">
+            <div class="card-header">
+                <h3 class="card-title">Cannot create assets</h3>
+            </div>
+            <div class="card-body">
+                <p>Your current plan does not enable you to create any more assets. You have {{ NOASSETCAPACITY.USED }} assets, with a limit of {{ NOASSETCAPACITY.CAPACITY }}.</p>
+                <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12 col-lg-6 offset-lg-3"> 
         <div class="card box-solid">
             <div class="card-header">
                 <h3 class="card-title">Add new Asset</h3>
@@ -352,5 +367,5 @@
             });
         });
     </script>
-
+    {% endif %}
 {% endblock %}

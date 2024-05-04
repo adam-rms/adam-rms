@@ -134,7 +134,7 @@ class bID
         $DBLIB->where("userInstances_deleted", 0);
         $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
         $DBLIB->where("instances.instances_deleted", 0);
-        $instances = $DBLIB->get("userInstances");
+        $instances = $DBLIB->get("userInstances", null, ["instancePositions.*", "instances.*", "userInstances.*"]);
         $this->data['instances'] = [];
         $this->data['instance_ids'] = [];
         foreach ($instances as $instance) {

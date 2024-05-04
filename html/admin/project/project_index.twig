@@ -102,7 +102,7 @@
                                     <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab"><i class="fas fa-list"></i> Assets List</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab"><i class="fas fa-shipping-fast"></i> Asset Dispatch</a></li>
                                 {% endif %}
-                                <li class="nav-item"><a class="nav-link" href="#file-view" data-toggle="tab"><i class="fas fa-file-alt"></i> {%  if project.projectsTypes_config_files == 1 %}Files, {% endif %}{% if project.projectsTypes_config_notes == 1 %}Notes, {% endif %} Invoices & Quotes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#file-view" data-toggle="tab"><i class="fas fa-file-alt"></i> {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and project.projectsTypes_config_files == 1 %}Files, {% endif %}{% if project.projectsTypes_config_notes == 1 %}Notes, {% endif %} Invoices & Quotes</a></li>
                                 {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                                     <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab"><i class="fas fa-pound-sign"></i> Finance</a></li>
                                 {% endif %}
@@ -549,7 +549,7 @@
             </div>
         </div>
     {% endif %}
-    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
     {% for payment in []|merge(FINANCIALS.payments.received.ledger)|merge(FINANCIALS.payments.sales.ledger)|merge(FINANCIALS.payments.subHire.ledger)|merge(FINANCIALS.payments.staff.ledger) %}
         <div class="modal fade" id="filesModal{{ payment.payments_id }}">
             <div class="modal-dialog modal-lg">
@@ -582,7 +582,8 @@
         </div>
     {% endfor %}
     {% endif %}
-    {% if project.projectsTypes_config_files == 1 %}
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and project.projectsTypes_config_files == 1 %}
+
     <div class="modal fade" id="projectFilesModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

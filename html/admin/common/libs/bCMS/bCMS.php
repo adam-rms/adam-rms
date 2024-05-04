@@ -82,6 +82,14 @@ class bCMS
     if ($DBLIB->insert("auditLog", $data)) return true;
     else throw new Exception("Could not audit log - " . $DBLIB->getLastError());
   }
+  function s3StorageUsed($instancesid)
+  {
+    global $DBLIB;
+    $DBLIB->where("s3files.instances_id", $instancesid);
+    $DBLIB->where("(s3files_meta_deleteOn IS NULL)");
+    $DBLIB->where("s3files_meta_physicallyStored", 1);
+    return $DBLIB->getValue("s3files", "SUM(s3files_meta_size)");
+  }
   function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC', $limit = null)
   {
     global $DBLIB, $CONFIG;
@@ -341,5 +349,20 @@ class bCMS
     } else {
       return "Version Unknown";
     }
+  }
+  function instanceHasUserCapacity($instanceid)
+  {
+    global $DBLIB;
+    $DBLIB->where("instances_id", $instanceid);
+    $userCapacity = $DBLIB->getvalue("instances", "instances_userLimit");
+    $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid", "LEFT");
+    $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+    $DBLIB->where("instances_id", $instanceid);
+    $DBLIB->where("userInstances.userInstances_deleted",  0);
+    $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
+    $userUsed = $DBLIB->getValue("users", "COUNT(users.users_userid)");
+    if ($userCapacity > 0 and $userUsed > $userCapacity)
+      return false;
+    else return true;
   }
 }

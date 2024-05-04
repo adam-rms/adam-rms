@@ -1,0 +1,54 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-5 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    You cannot access {{ USERDATA.instance.instances_name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <p>The business {{ USERDATA.instances.instances_name }} does not have a valid billing plan for {{ CONFIG.PROJECT_NAME }}. This could be because payments have not been made, or because it has been suspended by the server administrator.</p>
+                {% if "INSTANCES:EDIT"|serverPermissions %}
+                    <a href="{{CONFIG.ROOTURL}}/server/instances.php" class="btn btn-success">Edit Instance Plan</a>
+                {% endif %}
+                {% if USERDATA.instance.instances_billingUser == USERDATA.users_userid %}
+                    <a href="{{CONFIG.ROOTURL}}/api/instances/billing/billingPortal.php" class="btn btn-success" target="_blank">Manage Billing</a>
+                {% endif %}
+                {% if CONFIG.LINKS_SUPPORTURL|length > 0 %}
+                    <a href="{{CONFIG.LINKS_SUPPORTURL}}" class="btn btn-default" target="_blank">Contact support</a>
+                {% endif %}
+                <hr/>
+                <p>If you have just created this business, it may take a few minutes for the billing system to update.</p>
+                <a href="javascript:window.location.href=window.location.href" class="btn btn-info">Check billing status again</a>
+            </div>
+        </div>
+    </div>
+    {% if USERDATA.instances|length > 1 %}
+    <div class="col-lg-3     col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Login to another business
+                </h3>
+            </div>
+            <div class="card-body">
+                    {% for instance in USERDATA.instances %}
+                        {% if USERDATA.instance.instances_id != instance.instances_id %}
+                        <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
+                            {{instance.instances_name}}
+                            <p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        {% include 'assets/templates/joinInstance.twig' %}
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,9 @@
 <?php
 //Very similar code in uploader for PDF invoices from projects
 require_once __DIR__ . '/../apiHeadSecure.php';
+if ($CONFIG['FILES_ENABLED'] !== "Enabled") {
+    finish(false, ["code" => null, "message" => "File uploads are disabled"]);
+}
 if(isset($_FILES['file'])) {
     $temp_file_location = $_FILES['file']['tmp_name'];
     $s3 = new Aws\S3\S3Client([

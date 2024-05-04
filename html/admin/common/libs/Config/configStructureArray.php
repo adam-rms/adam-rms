@@ -71,9 +71,9 @@ $configStructureArray = [
       "default" => function () {
         return "Sendgrid";
       },
-      "name" => "Enable email sending",
+      "name" => "Email provider",
       "group" => "Email",
-      "description" => "How should AdamRMS send emails to users? This option is ignored if email sending is disabled.",
+      "description" => "Which provider should AdamRMS use to send emails to users? This option is ignored if email sending is disabled.",
       "required" => true,
       "maxlength" => 255,
       "minlength" => 5,
@@ -113,7 +113,7 @@ $configStructureArray = [
     "form" => [
       "type" => "email",
       "default" => function () {
-        return "";
+        return "adamrms@example.com";
       },
       "name" => "From email address",
       "group" => "Email",
@@ -140,7 +140,7 @@ $configStructureArray = [
       },
       "name" => "Sentry.io API key",
       "group" => "Error Handling",
-      "description" => "The Sentry.io API key to use to send errors",
+      "description" => "The Sentry.io API key to use to send log errors to Sentry.io - this is normally only used if you are developing AdamRMS",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -257,7 +257,7 @@ $configStructureArray = [
       },
       "name" => "Google Auth Scope",
       "group" => "Authentication",
-      "description" => "The scope for Google authentication.",
+      "description" => "The scope for Google authentication. You would only usually change this if you are developing AdamRMS.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -362,6 +362,27 @@ $configStructureArray = [
     "default" => null,
     "envFallback" => false,
   ],
+  "FILES_ENABLED" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Disabled";
+      },
+      "name" => "File storage enabled",
+      "group" => "File Storage",
+      "description" => "Whether AWS S3 file storage is enabled or disabled. If disabled, AdamRMS will not allow users to upload files.",
+      "required" => true,
+      "maxlength" => 8,
+      "minlength" => 7,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "Disabled",
+    "envFallback" => false,
+  ],
   "AWS_S3_KEY" => [
     "form" => [
       "type" => "text",
@@ -369,7 +390,7 @@ $configStructureArray = [
         return getenv('bCMS__AWS_SERVER_KEY');
       },
       "name" => "AWS Server Key",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS server key.",
       "required" => false,
       "maxlength" => 255,
@@ -391,7 +412,7 @@ $configStructureArray = [
         return null;
       },
       "name" => "AWS Server Secret Key",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS server secret key.",
       "required" => false,
       "maxlength" => 255,
@@ -413,7 +434,7 @@ $configStructureArray = [
         return null;
       },
       "name" => "AWS S3 Bucket Name",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS S3 bucket name.",
       "required" => false,
       "maxlength" => 255,
@@ -435,7 +456,7 @@ $configStructureArray = [
         return "https://s3.us-east-1.amazonaws.com";
       },
       "name" => "AWS S3 Bucket Browser Endpoint",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS S3 bucket endpoint, which must be accessible over the internet for user browsers to upload files",
       "required" => false,
       "maxlength" => 255,
@@ -456,7 +477,7 @@ $configStructureArray = [
         return "https://s3.us-east-1.amazonaws.com";
       },
       "name" => "AWS S3 Bucket Server Endpoint",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS S3 bucket endpoint for the server to use to upload files - this is almost certainly the same as the above, except in some very specific circumstances such as running in docker containers.",
       "required" => false,
       "maxlength" => 255,
@@ -477,7 +498,7 @@ $configStructureArray = [
         return "Disabled";
       },
       "name" => "Should path-style requests be sent to the upload endpoint?",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "This should be disabled for almost all providers",
       "required" => false,
       "maxlength" => 8,
@@ -499,7 +520,7 @@ $configStructureArray = [
         return "us-east-1";
       },
       "name" => "AWS S3 Bucket Region",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS S3 bucket region.",
       "required" => false,
       "maxlength" => 255,
@@ -520,7 +541,7 @@ $configStructureArray = [
         return "Disabled";
       },
       "name" => "AWS CloudFront Enabled",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "Whether AWS CloudFront is enabled.",
       "required" => false,
       "maxlength" => 8,
@@ -542,7 +563,7 @@ $configStructureArray = [
         return null;
       },
       "name" => "AWS CloudFront Private Key",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS CloudFront private key.",
       "required" => false,
       "maxlength" => 255,
@@ -564,7 +585,7 @@ $configStructureArray = [
         return null;
       },
       "name" => "AWS CloudFront Key Pair ID",
-      "group" => "AWS",
+      "group" => "File Storage",
       "description" => "The AWS CloudFront key pair ID.",
       "required" => false,
       "maxlength" => 255,
@@ -586,8 +607,8 @@ $configStructureArray = [
         return null;
       },
       "name" => "AWS S3 CDN Endpoint",
-      "group" => "AWS",
-      "description" => "The AWS S3 CDN endpoint.",
+      "group" => "File Storage",
+      "description" => "The AWS S3 CDN endpoint. This is the URL that users will access the files from: it may be cloudfront, or it may be s3/an alternative.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -599,5 +620,47 @@ $configStructureArray = [
     "specialRequest" => true,
     "default" => false,
     "envFallback" => "CONFIG_AWS_CLOUDFRONT_ENDPOINT",
+  ],
+  "DEFAULT_PLAN" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Default Plan",
+      "group" => "Billing",
+      "description" => "The default plan to assign to new businesses created. This should be the name of the plan, not the ID. Leave blank to assign no plan",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "Unlimited",
+    "envFallback" => false,
+  ],
+  "STRIPE_KEY" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Stripe Key",
+      "group" => "Billing",
+      "description" => "The stripe key to use for stripe billing support. Leave blank to disable stripe billing.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
   ],
 ];

@@ -20,6 +20,8 @@ $DBLIB->where("instancePositions_id", $code['instancePositions_id']);
 $position = $DBLIB->getone("instancePositions", ["instancePositions_id"]);
 if (!$position) finish(false, ["code" => "ADD-USER-TO-INSTANCE-FAIL-NOPOSITION", "message"=> "Could not add user to Business"]);
 
+if (!$bCMS->instanceHasUserCapacity($code['instances_id'])) finish(false, ["code" => "AUTH-ERROR", "message" => "Could not add user to Business, business is full"]);
+
 if (!$DBLIB->insert("userInstances", [
     "users_userid" => $AUTH->data['users_userid'],
     "instancePositions_id" => $position["instancePositions_id"],

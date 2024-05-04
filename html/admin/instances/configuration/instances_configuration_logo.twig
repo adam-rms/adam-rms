@@ -1,6 +1,7 @@
 {% extends "assets/template.twig" %}
 {% block content %}
 <div class="row">
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
     <div class="col-12 col-md-6">
         <div class="card ">
             <div class="card-header">
@@ -16,7 +17,7 @@
             {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
             <div class="card-footer">
                 <b>Logos are publicly accessible</b>
-{% embed 'assets/templates/uppy.twig' with {'publicBool': true, 'type': 'INSTANCE-THUMBNAIL', 'paste': false, 'typeId': 5, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}
+                    {% embed 'assets/templates/uppy.twig' with {'publicBool': true, 'type': 'INSTANCE-THUMBNAIL', 'paste': false, 'typeId': 5, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}
 
                     {% block success %}
                         ajaxcall("instances/editInstance.php", {
@@ -30,6 +31,8 @@
             {% endif %}
         </div>
     </div>
+    {% endif %}
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
     <div class="col-12 col-md-6">
         <div class="card ">
             <div class="card-header">
@@ -59,5 +62,6 @@
             {% endif %}
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

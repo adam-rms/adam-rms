@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
-if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW") or !isset($_POST['id'])) finish(false);
+if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW") or !isset($_POST['id']) or $CONFIG['FILES_ENABLED'] !== "Enabled") finish(false);
 
 if (isset($_FILES['file'])) {
     $temp_file_location = $_FILES['file']['tmp_name'];

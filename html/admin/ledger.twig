@@ -48,9 +48,9 @@
                                     <td><a href="{{ CONFIG.ROOTURL }}/clients.php?q={{ payment.clients_name }}">{{ payment.clients_name }}</a></td>
                                     <td>{{ payment.payments_method }}</td>
                                     <td>{{ payment.payments_comment|nl2br }}</td>
-                                    <td>{{ payment.payments_amount|money }}</td>
+                                    <td>{{ payment.payments_amount|money(USERDATA.instance['instances_config_currency']) }}</td>
                                     <td><a href="{{ CONFIG.ROOTURL }}/project/?id={{ payment.projects_id }}">{{ payment.projects_name }}</a></td>
-                                    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+                                    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
                                         <td>
                                         <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
                                         </button>
@@ -107,6 +107,7 @@
                             {% endembed %}
                         </div>
                         {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
+
                             <div class="modal-footer">
 {% embed 'assets/templates/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
 

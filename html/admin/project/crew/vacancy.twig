@@ -152,7 +152,7 @@
                         {% endfor %}
                         </div>
                     {% endif %}
-                    {% if role.projectsVacantRoles_fileUploads == 1 %}
+                    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and role.projectsVacantRoles_fileUploads == 1 %}
                         <hr />
                         <h4>Application File Attachments</h4>
                         <input type="hidden" name="projectsVacantRolesApplications_files" data-id="{{ role.projectsVacantRoles_id }}" value="" />

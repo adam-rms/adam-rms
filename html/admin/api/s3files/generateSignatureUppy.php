@@ -1,5 +1,15 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
+if ($CONFIG['FILES_ENABLED'] !== "Enabled") {
+    finish(false, ["code" => null, "message" => "File uploads are disabled"]);
+}
+
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$storageCapacity = $DBLIB->getvalue("instances", "instances_storageLimit");
+$storageUsed = $bCMS->s3StorageUsed($AUTH->data['instance']['instances_id']);
+if ($storageCapacity > 0 and $storageCapacity < $storageUsed) {
+    finish(false, ["code" => null, "message" => "Storage limit reached"]);
+}
 
 $bucket = $CONFIGCLASS->get('AWS_S3_BUCKET');
 // Directory to place uploaded files in.
