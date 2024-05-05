@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 require_once __DIR__ . '/../../common/libs/Auth/instanceActions.php';
-if (!$AUTH->serverPermissionCheck("INSTANCES:CREATE") or !isset($_POST['instances_name'])) die("404");
+if (($CONFIG["NEW_INSTANCE_ENABLED"] !== "Enabled" and !$AUTH->serverPermissionCheck("INSTANCES:CREATE")) or !isset($_POST['instances_name'])) die("404");
 
 $instance = $DBLIB->insert("instances", [
     "instances_name" => $_POST['instances_name'],
@@ -15,7 +15,10 @@ $instance = $DBLIB->insert("instances", [
     "instances_storageEnabled" => 1,
     "instances_assetLimit" => 0,
     "instances_userLimit" => 0,
-    "instances_plan" => $CONFIGCLASS->get('DEFAULT_PLAN')
+    "instances_planName" => "",
+    "instances_suspended" => ($CONFIGCLASS->get('NEW_INSTANCE_SUSPENDED') == "Suspended") ? 1 : 0,
+    "instances_suspendedReasonType" => $CONFIGCLASS->get('NEW_INSTANCE_SUSPENDED_REASON_TYPE'),
+    "instances_suspendedReason" => $CONFIGCLASS->get('NEW_INSTANCE_SUSPENDED_REASON')
 ]);
 if (!$instance) finish(false, ["code" => "CREATE-INSTANCE-FAIL", "message" => "Could not create new business"]);
 
@@ -147,7 +150,7 @@ finish(true, null, ["instanceid" => $instance]);
  *     path="/instances/new.php", 
  *     summary="Create Instance", 
  *     description="Create a new instance  
-Requires server permission INSTANCES:CREATE
+Requires server permission INSTANCES:CREATE or NEW_INSTANCE_ENABLED to be set to enabled in the server config
 ", 
  *     operationId="createInstance", 
  *     tags={"instances"}, 

@@ -142,7 +142,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
                         var errorMessage = "";
                         }
                         bootbox.alert(
-                            "{{ CONFIG.PROJECT_NAME }} encountered an error.{% if CONFIG.LINKS_SUPPORTURL|length > 0 %}<a href='{{ CONFIG.LINKS_SUPPORTURL }}' target='_blank'>Support</a>{% endif %}<br/><br/>" +
+                            "{{ CONFIG.PROJECT_NAME }} encountered an error.{% if CONFIG.LINKS_SUPPORTURL|length > 0 %} <a href='{{ CONFIG.LINKS_SUPPORTURL }}' target='_blank'>Contact Support</a>{% endif %}<br/><br/>" +
                             errorMessage,
                         function () {
                             if (reloadIfError) {
@@ -332,7 +332,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 										<div class="dropdown-divider"></div>
 									{% endfor %}
 									<a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
-									{% if "INSTANCES:CREATE"|serverPermissions %}
+									{% if CONFIG["NEW_INSTANCE_ENABLED"] == "Enabled" or "INSTANCES:CREATE"|serverPermissions %}
 										<a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
 									{% else %}
 										<a href="#" class="dropdown-item dropdown-footer">

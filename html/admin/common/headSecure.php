@@ -57,8 +57,8 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
     $PAGEDATA['pageConfig'] = ["TITLE" => "Change Password", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_forceChangePassword.twig', $PAGEDATA));
 } elseif ($AUTH->data['instance']) {
-    if ($AUTH->data['instance']['instances_plan'] == "" and !str_ends_with(getcwd(), "server")) {
-        $PAGEDATA['pageConfig'] = ["TITLE" => "Business Plan Expired", "BREADCRUMB" => false, "NOMENU" => true];
+    if ($AUTH->data['instance']['instances_suspended'] == 1 and !str_ends_with(getcwd(), "server")) {
+        $PAGEDATA['pageConfig'] = ["TITLE" => "Business Suspended", "BREADCRUMB" => false, "NOMENU" => true];
         die($TWIG->render('index_instanceBillingIssue.twig', $PAGEDATA));
     }
     //Potential project types

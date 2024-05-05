@@ -621,17 +621,80 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "CONFIG_AWS_CLOUDFRONT_ENDPOINT",
   ],
-  "DEFAULT_PLAN" => [
+  "NEW_INSTANCE_ENABLED" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Enabled";
+      },
+      "name" => "Allow all users to create new instances",
+      "group" => "Billing",
+      "description" => "Controls whether users are allowed to create new instances themselves, or whether this must be done by an administrator. ",
+      "required" => false,
+      "maxlength" => 8,
+      "minlength" => 7,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "Enabled",
+    "envFallback" => false,
+  ],
+  "NEW_INSTANCE_SUSPENDED" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Do not suspend";
+      },
+      "name" => "Suspend new instances by default",
+      "group" => "Billing",
+      "description" => "When a new instance is created, whether it should be suspended by default. This can be used to prevent new instances from being created until they have been reviewed by an administrator, or have started a free trial",
+      "required" => false,
+      "maxlength" => 20,
+      "minlength" => 1,
+      "options" => ["Do not suspend", "Suspended"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "Do not suspend",
+    "envFallback" => false,
+  ],
+  "NEW_INSTANCE_SUSPENDED_REASON_TYPE" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "other";
+      },
+      "name" => "Reason for suspending new instances",
+      "group" => "Billing",
+      "description" => "When a new instance is suspended using the option above, what should AdamRMS prompt the user to do? It could prompt them to setup a plan, or to fix a billing issue using the stripe APIs, or to do something else using the text below.",
+      "required" => false,
+      "maxlength" => 20,
+      "minlength" => 1,
+      "options" => ["noplan", "billing", "other"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "other",
+    "envFallback" => false,
+  ],
+  "NEW_INSTANCE_SUSPENDED_REASON" => [
     "form" => [
       "type" => "text",
       "default" => function () {
-        return null;
+        return "as no subscription has been chosen.";
       },
-      "name" => "Default Plan",
+      "name" => "Suspension reason for new instances",
       "group" => "Billing",
-      "description" => "The default plan to assign to new businesses created. This should be the name of the plan, not the ID. Leave blank to assign no plan",
+      "description" => "When a new instance is suspended using the option above, what reason should be given to the user? This can be used to explain why their instance is suspended, and what they need to do to get it unsuspended.",
       "required" => false,
-      "maxlength" => 255,
+      "maxlength" => 180,
       "minlength" => 0,
       "options" => [],
       "verifyMatch" => function ($value, $options) {
@@ -639,7 +702,7 @@ $configStructureArray = [
       }
     ],
     "specialRequest" => true,
-    "default" => "Unlimited",
+    "default" => "",
     "envFallback" => false,
   ],
   "STRIPE_KEY" => [
@@ -651,6 +714,27 @@ $configStructureArray = [
       "name" => "Stripe Key",
       "group" => "Billing",
       "description" => "The stripe key to use for stripe billing support. Leave blank to disable stripe billing.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "STRIPE_WEBHOOK_SECRET"  => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Stripe Webhook secret",
+      "group" => "Billing",
+      "description" => "The secret key to use for stripe webhooks.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,

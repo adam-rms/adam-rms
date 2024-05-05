@@ -43,7 +43,8 @@
                                 <th>Assets</th>
                                 <th>Asset Value</th>
                                 <th>Asset Mass</th>
-                                {% for table in ['CMS Pages','Maintenance Jobs','Locations','Clients','Training Modules',  'Projects', 'Project Types'] %}
+                                <th>Projects</th>
+                                {% for table in ['CMS Pages','Maintenance Jobs','Locations','Clients','Training Modules', 'Project Types'] %}
                                     <th>{{ table }}</th>
                                 {% endfor %}
                                 <th>Last Project Activity</th>
@@ -90,8 +91,11 @@
                                         {% if instance.instances_deleted == '1' %}
                                         <br/><span class="badge badge-danger">SOFT-DELETED</span>
                                         {% endif %}
+                                        {% if instance.instances_suspended == '1' %}
+                                        <br/><span class="badge badge-warning">SUSPENDED</span>
+                                        {% endif %}
                                     </td>
-                                    <td>{{ instance.instances_plan }}</td>
+                                    <td>{{ instance.instances_planName }}</td>
                                     <td>
                                         {{ instance['STORAGEUSED']|formatsize }}
                                     </td>
@@ -108,7 +112,10 @@
                                     <td>
                                         {{ instance.assets.MASS|mass }}
                                     </td>
-                                    {% for table in ['cmsPages','maintenanceJobs','locations','clients','modules', 'projects', 'projectsTypes'] %}
+                                    <td>
+                                        {{ instance.PROJECTS > 0 ? instance.[PROJECTS]|number_format(0) : "" }}/{{instance.instances_projectLimit > 0 ? instance.instances_projectLimit : "&infin;"}}
+                                    </td>
+                                    {% for table in ['cmsPages','maintenanceJobs','locations','clients','modules', 'projectsTypes'] %}
                                     <td>
                                         {{ instance[table|upper] > 0 ? instance[table|upper]|number_format(0) : "" }}
                                     </td>
@@ -180,15 +187,24 @@
                                                         </div>
                                                         <div class="input-group" style="margin-bottom: 5px;">
                                                             <div class="input-group-prepend">
-                                                                <span class="input-group-text">Plan</span>
+                                                                <span class="input-group-text">Suspended</span>
                                                             </div>
-                                                            <input type="text" class="form-control" name="instances_plan" value="{{ instance.instances_plan }}">
+                                                            <select required class="form-control" name="instances_suspended">
+                                                                <option value="1" {% if instance.instances_suspended == 1 %}selected{% endif %}>Suspended</option>
+                                                                <option value="0" {% if instance.instances_suspended == 0 %}selected{% endif %}>Enabled</option>
+                                                            </select>
                                                         </div>
                                                         <div class="input-group" style="margin-bottom: 5px;">
                                                             <div class="input-group-prepend">
-                                                                <span class="input-group-text">Stripe Subscription ID</span>
+                                                                <span class="input-group-text">Reason for Suspension</span>
                                                             </div>
-                                                            <input type="text" class="form-control" name="instances_stripe_subscription" value="{{ instance.instances_stripe_subscription }}">
+                                                            <input type="text" class="form-control" name="instances_suspendedReason" value="{{ instance.instances_suspendedReason }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Plan</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" name="instances_planName" value="{{ instance.instances_planName }}">
                                                         </div>
                                                         <div class="input-group" style="margin-bottom: 5px;">
                                                             <div class="input-group-prepend">
@@ -210,10 +226,16 @@
                                                         </div>
                                                         <div class="input-group" style="margin-bottom: 5px;">
                                                             <div class="input-group-prepend">
+                                                                <span class="input-group-text">Project Limit (0 is unlimited)</span>
+                                                            </div>
+                                                            <input required type="number" min="0" class="form-control" name="instances_projectLimit" value="{{ instance.instances_projectLimit }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
                                                                 <span class="input-group-text">File storage functionality</span>
                                                             </div>
                                                             <select required class="form-control" name="instances_storageEnabled">
-                                                                <option value="1" {% if instance.instances_storageEnabled == 0 %}selected{% endif %}>Enabled</option>
+                                                                <option value="1" {% if instance.instances_storageEnabled == 1 %}selected{% endif %}>Enabled</option>
                                                                 <option value="0" {% if instance.instances_storageEnabled == 0 %}selected{% endif %}>Disabled</option>
                                                             </select>
                                                         </div>

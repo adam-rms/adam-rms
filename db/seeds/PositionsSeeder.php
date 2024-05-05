@@ -19,12 +19,7 @@ class PositionsSeeder extends AbstractSeed
             [
                 "positionsGroups_id"=> 1,
                 "positionsGroups_name"=> "Administrator",
-                "positionsGroups_actions"=> implode(",",array_keys($serverActions))
-            ],
-            [
-                "positionsGroups_id"=> 2,
-                "positionsGroups_name"=> "User",
-                "positionsGroups_actions"=> []
+                "positionsGroups_actions" => implode(",", array_keys($serverActions))
             ]
         ];
 
@@ -34,13 +29,7 @@ class PositionsSeeder extends AbstractSeed
                 "positions_displayName"=> "Super-admin",
                 "positions_positionsGroups"=> "1",
                 "positions_rank"=> 1
-            ],
-            [
-                "positions_id"=> 2,
-                "positions_displayName"=> "User",
-                "positions_positionsGroups"=> "2",
-                "positions_rank"=> 2
-            ],
+            ]
         ];
 
         $this->execute("DELETE FROM instances");

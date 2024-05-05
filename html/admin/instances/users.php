@@ -49,7 +49,7 @@ $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
 $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 $userUsed = $DBLIB->getValue("users", "COUNT(users.users_userid)");
-if ($userCapacity > 0 and $userUsed > $userCapacity) {
+if ($userCapacity > 0 and $userUsed >= $userCapacity) {
 	$PAGEDATA['NOCAPACITY'] = [
 		"CAPACITY" => $userCapacity,
 		"USED" => $userUsed

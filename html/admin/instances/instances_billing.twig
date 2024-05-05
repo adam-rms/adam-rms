@@ -18,11 +18,17 @@
                         <tbody>
                             <tr>
                                 <td>Nominated Billing Contact</td>
-                                <td><a href="{{ CONFIG.ROOTURL }}/user.php?id={{ billingUser.users_userid }}" title="{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}">{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}</a></td>
+                                <td>
+                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ billingUser.users_userid }}" title="{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}">{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}</a>
+                                    <br/>
+                                    {% if CONFIG.LINKS_SUPPORTURL|length > 0 %}
+                                        <a href="{{CONFIG.LINKS_SUPPORTURL}}" target="_blank">Contact support to change this</a>
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr>
                                 <td>Plan</td>
-                                <td>{{ USERDATA.instance.instances_plan }}</td>
+                                <td>{{ USERDATA.instance.instances_planName }}</td>
                             </tr>
                             <tr>
                                 <td>Storage Used</td>
@@ -34,6 +40,12 @@
                                 <td>Users</td>
                                 <td>
                                     {{ stats.USERS }}<br/>Limit: {{USERDATA.instance.instances_userLimit > 0 ?  USERDATA.instance.instances_userLimit : "&infin;"}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Projects</td>
+                                <td>
+                                    {{ stats.PROJECTS|number_format(0) }}<br/>Limit: {{USERDATA.instance.instances_projectLimit > 0 ? USERDATA.instance.instances_projectLimit : "&infin;"}}
                                 </td>
                             </tr>
                             <tr>
@@ -56,7 +68,7 @@
                                     {{ stats.assets.MASS|mass }}
                                 </td>
                             </tr>
-                            {% for table in ['CMS Pages','Maintenance Jobs','Locations','Clients','Modules', 'Projects', 'Projects Types'] %}
+                            {% for table in ['CMS Pages','Maintenance Jobs','Locations','Clients','Modules', 'Projects Types'] %}
                             <tr>
                                 <td>{{ table|capitalize }}</td>
                                 <td>

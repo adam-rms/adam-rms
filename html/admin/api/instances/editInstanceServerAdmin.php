@@ -76,9 +76,9 @@ finish(true);
  *                 description="The ID of the instance",
  *             ),
  *             @OA\Property(
- *                 property="instances_plan", 
+ *                 property="instances_planName", 
  *                 type="string", 
- *                 description="The instance plan",
+ *                 description="The instance plan name",
  *             ),
  *         ),
  *     ), 

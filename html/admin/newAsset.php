@@ -20,7 +20,7 @@ $assetCapacity = $DBLIB->getvalue("instances", "instances_assetLimit");
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("assets_deleted", 0);
 $assetUsed = $DBLIB->getValue("assets", "COUNT(assets_id)");
-if ($assetCapacity > 0 and $assetUsed > $assetCapacity) {
+if ($assetCapacity > 0 and $assetUsed >= $assetCapacity) {
     $PAGEDATA['NOASSETCAPACITY'] = [
         "CAPACITY" => $assetCapacity,
         "USED" => $assetUsed

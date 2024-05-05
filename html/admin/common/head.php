@@ -201,7 +201,8 @@ $CSP = [
         ["value" => "https://static.cloudflareinsights.com", "comment" => ""],
         ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
         ["value" => "https://*.ytimg.com", "comment" => "Training modules allow youtube embed"],
-        ["value" => "https://*.freshstatus.io", "comment" => ""]
+        ["value" => "https://*.freshstatus.io", "comment" => ""],
+        ["value" => "https://js.stripe.com", "comment" => "Stripe payment pricing table"]
     ],
     "style-src" => [
         ["value" => "'unsafe-inline'", "comment" => "We have loads of inline CSS"],
@@ -241,7 +242,8 @@ $CSP = [
     ],
     "frame-src" => [
         ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
-        ["value" => "https://*.freshstatus.io", "comment" => "Training modules allow youtube embed"]
+        ["value" => "https://*.freshstatus.io", "comment" => "Training modules allow youtube embed"],
+        ["value" => "https://js.stripe.com", "comment" => "Stripe payment pricing table"]
     ],
     "object-src" => [
         ["value" => "'self'", "comment" => ""],

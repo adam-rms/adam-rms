@@ -361,7 +361,7 @@ class bCMS
     $DBLIB->where("userInstances.userInstances_deleted",  0);
     $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
     $userUsed = $DBLIB->getValue("users", "COUNT(users.users_userid)");
-    if ($userCapacity > 0 and $userUsed > $userCapacity)
+    if ($userCapacity > 0 and $userUsed >= $userCapacity)
       return false;
     else return true;
   }

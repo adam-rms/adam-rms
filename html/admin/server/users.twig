@@ -90,7 +90,7 @@
                                             {% if instance.userInstances_archived != null and instance.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
                                                 <span class="badge bg-danger">Archived</span>
                                             {% endif %}
-                                            {{ instance.instances_name }} ({{ instance.instances_plan }}) - {{ instance.userInstances_label }} ({{ instance.instancePositions_displayName }})<br/>
+                                            {{ instance.instances_name }} ({{ instance.instances_planName }}) - {{ instance.userInstances_label }} ({{ instance.instancePositions_displayName }})<br/>
                                         {% endfor %}
                                     </td>
                                     <td data-order="{{ user.users_termsAccepted ? user.users_termsAccepted|date("U") : 0 }}">
