@@ -2,15 +2,23 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-lg-5 col-md-6 col-sm-12">
+    <div class="col-lg-10 offset-lg-1 col-md-12 col-sm-12">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
+                    {% if USERDATA.instance.instances_suspendedReasonType == "noplan" %}
+                    Choose a plan for {{ USERDATA.instance.instances_name }} to start a trial
+                    {% else %}
                     {{ USERDATA.instance.instances_name }} is suspended
+                    {% endif %}
                 </h3>
             </div>
             <div class="card-body">
-                <p>The business {{ USERDATA.instance.instances_name }} has been suspended on {{ CONFIG.PROJECT_NAME }}, {{ USERDATA.instance.instances_suspendedReason }}</p>
+                {% if USERDATA.instance.instances_suspendedReasonType != "noplan" %}
+                    <p>The business {{ USERDATA.instance.instances_name }} has been suspended on {{ CONFIG.PROJECT_NAME }}, {{ USERDATA.instance.instances_suspendedReason }}</p>
+                {% else %}
+                <div class="row" id="billingPlansList"></div>
+                {% endif %}
                 {% if USERDATA.instance.instances_billingUser != USERDATA.users_userid and (USERDATA.instance.instances_suspendedReasonType == "billing" or USERDATA.instance.instances_suspendedReasonType == "noplan") %}
                     <p>
                         As you are not the billing contact for this business, you will need to advise the billing contact to resolve this issue, or contact support.
@@ -33,8 +41,10 @@
             </div>
         </div>
     </div>
+</div>
+<div class="row">
     {% if USERDATA.instances|length > 1 %}
-    <div class="col-lg-3 col-md-6 col-sm-12">
+    <div class="col-lg-4 offset-lg-2  col-md-6 col-sm-12">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
@@ -59,24 +69,8 @@
     </div>
 </div>
 {% if USERDATA.instance.instances_billingUser == USERDATA.users_userid and USERDATA.instance.instances_suspendedReasonType == "noplan" %}
-<div class="row" id="billingPlansRow">
-    <div class="col-lg-10 offset-lg-1 col-md-12 col-sm-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    Billing Plans
-                </h3>
-            </div>
-            <div class="card-body">
-                <div class="row" id="billingPlansBody">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
 $(document).ready(function () {
-    $("#billingPlansRow").hide();
     ajaxcall("instances/billing/getPrices.php", {}, function (data) {
         console.log(data.response);
         for (var i = 0; i < data.response.length; i++) {
@@ -97,9 +91,8 @@ $(document).ready(function () {
             }
             string += "</div>" +
                 "</div></div>";
-            $("#billingPlansBody").append(string);
+            $("#billingPlansList").append(string);
         }
-        $("#billingPlansRow").show();
     });
 });
 </script>
