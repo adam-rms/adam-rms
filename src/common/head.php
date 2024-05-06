@@ -9,7 +9,7 @@
  * - Global functions ("bCMS" class)
  * - Config Variables 
  */
-require_once(__DIR__ . '/../../../vendor/autoload.php'); //Composer
+require_once(__DIR__ . '/../../vendor/autoload.php'); //Composer
 require_once __DIR__ . '/libs/Config/Config.php';
 
 use Aws\S3\S3Client;
