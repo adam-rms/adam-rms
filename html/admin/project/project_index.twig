@@ -242,6 +242,32 @@
                                                                 <b class="d-block">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa") ~ ' - ' ~ project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
                                                             {% endif %}
                                                             </p>
+                                                            <p class="text-sm">Project duration for asset pricing purposes
+                                                            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Weeks</span>
+                                                                    </div>
+                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["weeks"] }}" class="form-control float-right" required id="financeDurationMathsWeeks">
+                                                                    <span class="input-group-text">Days</span>
+                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["days"] }}" class="form-control float-right" required id="financeDurationMathsDays">
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-default" type="button" id="financeDurationMathsSave">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                                {% if project.projects_dates_use_start %}
+                                                                <div style="width: 100%;text-align: right;">
+                                                                    {% if project.projects_dates_finances_days is same as(null) and project.projects_dates_finances_weeks is same as (null) %}
+                                                                        Project duration is currently based on project dates
+                                                                    {% else %}
+                                                                     <a href="#" id="copyProjectDatesToFinanceDurationMaths">Sync to Project Dates ({{ FINANCIALS['priceMaths']["calendarDays"] }} day{{ FINANCIALS['priceMaths']["calendarDays"] == 1 ? '' : 's' }})</a>
+                                                                    {% endif %}
+                                                                </div>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <b class="d-block">{{ FINANCIALS['priceMaths']["weeks"] }} week{{ FINANCIALS['priceMaths']["weeks"] != 1 ? 's' : '' }} and {{ FINANCIALS['priceMaths']["days"] }} day{{ FINANCIALS['priceMaths']["days"] != 1 ? 's' : ''}}</b>
+                                                            {% endif %}
+                                                            </p>
                                                         {% endif %}
                                                     </div>
                                                     <br/>
@@ -1086,6 +1112,19 @@
                 changeProjectDeliverDates($("#datePickerInput").data('daterangepicker').startDate.format('DD MMM YYYY hh:mm A'),$("#datePickerInput").data('daterangepicker').endDate.format('DD MMM YYYY hh:mm A'));
             });
 
+            function setFinanceDurationMathsWeeks(weeks, days) {
+                ajaxcall("projects/changeProjectFinanceDurationMaths.php", {"projects_id": "{{ project.projects_id }}","projects_dates_finances_weeks":weeks,"projects_dates_finances_days":days}, function (data) {
+                    location.reload();
+                });
+            }
+            $("#financeDurationMathsSave").click(function () {
+                var days = $("#financeDurationMathsDays").val();
+                var weeks = $("#financeDurationMathsWeeks").val();
+                setFinanceDurationMathsWeeks(weeks, days);
+            });
+            $("#copyProjectDatesToFinanceDurationMaths").click(function () {
+                setFinanceDurationMathsWeeks("-1", "-1");
+            });
 
             {% endif %}
             {% if "PROJECTS:EDIT:NAME"|instancePermissions %}

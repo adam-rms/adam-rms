@@ -16,7 +16,7 @@ if ($project["projects_dates_deliver_start"] == null or $project["projects_dates
 
 $projectFinanceHelper = new projectFinance();
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
-$priceMaths = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
+$priceMaths = $projectFinanceHelper->durationMaths($project['projects_id']);
 
 $assetRequiredFields = ["assetTypes_name","assets_tag","assets_id","assets_dayRate","assets_weekRate","assetTypes_dayRate","assetTypes_weekRate","assetTypes_mass","assetTypes_value","assets_value","assets_mass","assets_assetGroups"];
 

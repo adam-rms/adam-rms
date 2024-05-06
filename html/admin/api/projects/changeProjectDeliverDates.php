@@ -10,13 +10,21 @@ $newDates = ["projects_dates_deliver_start" => date ("Y-m-d H:i:s", strtotime($_
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $_POST['projects_id']);
-$project = $DBLIB->getone("projects", ["projects_id","projects_dates_deliver_start","projects_dates_deliver_end"]);
+$project = $DBLIB->getone("projects", ["projects_id","projects_dates_deliver_start","projects_dates_deliver_end","projects_dates_finances_days", "projects_dates_finances_weeks"]);
 if (!$project) finish(false);
 
 $projectFinanceHelper = new projectFinance();
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
-$priceMathsOld = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'],$project['projects_dates_deliver_end']);
-$priceMathsNew = $projectFinanceHelper->durationMaths($newDates['projects_dates_deliver_start'],$newDates['projects_dates_deliver_end']);
+if ($project['projects_dates_finances_days'] !== NULL and $project['projects_dates_finances_weeks'] !== NULL) {
+    // Custom price maths is set, so changing the dates will have no impact on pricing anyway
+    $priceMathsOld = $projectFinanceHelper->durationMaths($project['projects_id']);
+    $priceMathsNew = $priceMathsOld;
+} else {
+    // We need to calculate the price maths because custom price maths is not set
+    $priceMathsOld = $projectFinanceHelper->durationMaths($project['projects_id']);
+    $priceMathsNew = $projectFinanceHelper->durationMathsByDates($newDates['projects_dates_deliver_start'],$newDates['projects_dates_deliver_end']);
+}
+
 
 //We're changing dates so we need to find clashes in the new dates
 $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);

@@ -34,11 +34,11 @@ if (!$assignmentsRemove['projectid']) finish(false, ["message" => "Cannot find p
 $DBLIB->where("projects.projects_id", $assignmentsRemove["projectid"]);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance_ids'], 'IN');
 $DBLIB->where("projects.projects_deleted", 0);
-$project = $DBLIB->getone("projects", ["projects_id", "projects_dates_deliver_start", "projects_dates_deliver_end", "projects_name"]);
+$project = $DBLIB->getone("projects", ["projects_id", "projects_name"]);
 if (!$project) finish(false, ["message" => "Cannot find project"]);
 
 $projectFinanceHelper = new projectFinance();
-$priceMaths = $projectFinanceHelper->durationMaths($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end']);
+$priceMaths = $projectFinanceHelper->durationMaths($project['projects_id']);
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 
 $assignmentsIDs = [];
