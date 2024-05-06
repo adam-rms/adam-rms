@@ -57,7 +57,7 @@ final class AddInstanceNotesAndStorageSetting extends AbstractMigration
             ])
             ->addColumn('instances_billingUser', 'integer', [
                 'null' => true,
-                'default' => 'null',
+                'default' => null,
                 'limit' => MysqlAdapter::INT_REGULAR
             ])
             ->addForeignKey('instances_billingUser', 'users', 'users_userid', [
