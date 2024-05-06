@@ -91,10 +91,11 @@ $(document).ready(function () {
             for (var j = 0; j < data.response[i].marketing_features.length; j++) {
                 string += "<li>" + data.response[i].marketing_features[j].name + "</li>";
             }
-            string += "</ul>" +
-                        "<p>Price: " + data.response[i].price.formatted_amount + "/" + data.response[i].price.time_period + "</p>" +
-                        "<a href=\"{{CONFIG.ROOTURL}}/api/instances/billing/subscribe.php?price_id=" + data.response[i].price.id + "\" class='btn btn-success'>Start 7 day trial</a>" +
-                    "</div>" +
+            string += "</ul>";
+            for (var j = 0; j < data.response[i].price.length; j++) {
+                string += "<a href=\"{{CONFIG.ROOTURL}}/api/instances/billing/subscribe.php?currency=" + data.response[i].price[j].currency + "&price_id=" + data.response[i].price_id + "\" class='btn btn-default m-1'>Start 7 day trial - " + data.response[i].price[j].formatted_amount + "/" + data.response[i].time_period + "</a><br/>";
+            }
+            string += "</div>" +
                 "</div></div>";
             $("#billingPlansBody").append(string);
         }

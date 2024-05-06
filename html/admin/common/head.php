@@ -70,7 +70,7 @@ try {
 } catch (Exception $e) {
     // TODO use twig for this
     if (getenv('DEV_MODE') == "true") {
-        echo "Could not connect to database: " . $e->getMessage();
+        echo "Could not connect to database: " . $e->getMessage() . "\n\n\nPlease doulbe check you have setup environment variables correctly for the database connection.";
         exit;
     } else {
         echo "Could not connect to database";

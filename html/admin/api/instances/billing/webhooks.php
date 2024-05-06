@@ -2,12 +2,11 @@
 require_once __DIR__ . '/../../apiHead.php';
 
 \Stripe\Stripe::setApiKey($CONFIGCLASS->get('STRIPE_KEY'));
-
+$stripe = new \Stripe\StripeClient($CONFIGCLASS->get('STRIPE_KEY'));
 
 function handleWebhook($subscription)  // contains a \Stripe\Subscription
 {
-  global $DBLIB;
-  // Send an email to the customer letting them know their trial is ending.
+  global $DBLIB, $stripe;  
   $status = $subscription->status;
   $instanceid = $subscription->metadata->instance_id;
   if (!$instanceid || !is_numeric($instanceid)) throw new Exception("Invalid instance_id recieved from subscription metadata.");
@@ -24,20 +23,29 @@ function handleWebhook($subscription)  // contains a \Stripe\Subscription
     $instanceUpdateData['instances_suspendedReason'] = "as payment is required for the subscription";
     $instanceUpdateData['instances_suspendedReasonType'] = "billing";
   } else if ($status === "trialing" || $status === "active") {
-    $instanceUpdateData['instances_planName'] = ??
-    $instanceUpdateData['instances_suspended'] = 0;
-    $instanceUpdateData['instances_suspendedReason'] = "";
-    $instanceUpdateData['instances_suspendedReasonType'] = "";
-    $instanceUpdateData['instances_storageLimit'] = ??;
-    $instanceUpdateData['instances_assetLimit'] = ??;
-    $instanceUpdateData['instances_userLimit'] = ??;
-    $instanceUpdateData['instances_projectLimit'] = ??;
+    // Find the relevant product in the subscription and update the instance with the limits.
+    foreach ($subscription->items->data as $item) {
+      $thisProduct = $stripe->products->retrieve($item->plan->product, []);
+      if ($thisProduct and count($thisProduct->metadata) > 0 and $thisProduct->metadata['product'] === 'AdamRMS' and $thisProduct->metadata['instances_storageLimit'] and $thisProduct->metadata['instances_assetLimit'] and $thisProduct->metadata['instances_userLimit'] and $thisProduct->metadata['instances_projectLimit']) {
+        $instanceUpdateData['instances_planName'] = $thisProduct->name;
+        $instanceUpdateData['instances_suspended'] = 0;
+        $instanceUpdateData['instances_suspendedReason'] = "";
+        $instanceUpdateData['instances_suspendedReasonType'] = "";
+        $instanceUpdateData['instances_storageLimit'] = $thisProduct->metadata['instances_storageLimit'];
+        $instanceUpdateData['instances_assetLimit'] = $thisProduct->metadata['instances_assetLimit'];
+        $instanceUpdateData['instances_userLimit'] =  $thisProduct->metadata['instances_userLimit'];
+        $instanceUpdateData['instances_projectLimit'] = $thisProduct->metadata['instances_projectLimit'];
+        $instanceUpdateData['instances_storageEnabled'] = $thisProduct->metadata['instances_storageEnabled'];
+        break;
+      }
+    }
   } else if ($status === "canceled") {
     $instanceUpdateData['instances_planName'] = "";
     $instanceUpdateData['instances_suspended'] = 1;
     $instanceUpdateData['instances_suspendedReason'] = "as the subscription has been canceled";
     $instanceUpdateData['instances_suspendedReasonType'] = "noplan";
     $instanceUpdateData['instances_storageLimit'] = 1;
+    $instanceUpdateData['instances_storageEnabled'] = 0;
     $instanceUpdateData['instances_assetLimit'] = 1;
     $instanceUpdateData['instances_userLimit'] = 1;
     $instanceUpdateData['instances_projectLimit'] = 1;
@@ -52,8 +60,7 @@ try {
   $event = \Stripe\Webhook::constructEvent(
     $payload,
     $sig_header,
-    //$CONFIGCLASS->get('STRIPE_WEBHOOK_SECRET')
-    "whsec_6f3b8905437e3eb607d347fa7391c53a074eb6506b2cd589d0c42a61fc94620d"
+    $CONFIGCLASS->get('STRIPE_WEBHOOK_SECRET')
   );
 } catch (\Stripe\Exception\SignatureVerificationException $e) {
   // Invalid signature

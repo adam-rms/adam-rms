@@ -113,7 +113,7 @@
                                         {{ instance.assets.MASS|mass }}
                                     </td>
                                     <td>
-                                        {{ instance.PROJECTS > 0 ? instance.[PROJECTS]|number_format(0) : "" }}/{{instance.instances_projectLimit > 0 ? instance.instances_projectLimit : "&infin;"}}
+                                        {{ instance.PROJECTS > 0 ? instance.PROJECTS|number_format(0) : "" }}/{{instance.instances_projectLimit > 0 ? instance.instances_projectLimit : "&infin;"}}
                                     </td>
                                     {% for table in ['cmsPages','maintenanceJobs','locations','clients','modules', 'projectsTypes'] %}
                                     <td>

@@ -16,29 +16,37 @@ use Money\Currencies\ISOCurrencies;
 use Money\Formatter\IntlMoneyFormatter;
 
 foreach ($products->data as $product) {
-  $price = $stripe->prices->retrieve($product->default_price, []);
-  $amount = new Money($price->unit_amount, new Currency(strtoupper($price->currency)));
-  $currencies = new ISOCurrencies();
-  $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
-  $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
-  $priceAmount = $moneyFormatter->format($amount);
+  if (!$product->default_price) continue;
+  $thisPrice = $stripe->prices->search([
+    'query' => 'active:\'true\' AND type:\'recurring\' AND product:\'' . $product->id . '\'',
+  ]);
+  if (!$thisPrice->data or count($thisPrice->data) < 1) continue;
+  $priceData = $stripe->prices->retrieve($thisPrice->data[0]->id, ["expand" => ['currency_options']]);
   $productReturn = [
     'id' => $product->id,
     'name' => $product->name,
     'description' => $product->description,
     'metadata' => $product->metadata,
     'marketing_features' => $product->marketing_features,
-    'price' => [
-      'id' => $price->id,
-      'formatted_amount' => $priceAmount,
-      'unit_amount' => $price->unit_amount,
-      'currency' => $price->currency,
-      'time_period' => $price->recurring->interval,
-    ]
+    'price_id' => $priceData->id,
+    'time_period' => $priceData->recurring->interval,
+    'price' => []
   ];
+  foreach (json_decode(json_encode($priceData->currency_options), true) as $currency => $amount) {
+    $moneyAmount = new Money($amount['unit_amount'], new Currency(strtoupper($currency)));
+    $currencies = new ISOCurrencies();
+    $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
+    $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
+    $priceAmount = $moneyFormatter->format($moneyAmount);
+    $productReturn['price'][] = [
+      'formatted_amount' => $priceAmount,
+      'unit_amount' => $amount['unit_amount'],
+      'currency' => $currency,
+    ];
+  }
   $productsReturn[] = $productReturn;
 }
 
-usort($productsReturn, fn ($a, $b) => $a['price']['unit_amount'] <=> $b['price']['unit_amount']);
+usort($productsReturn, fn ($a, $b) => $a['price'][0]['unit_amount'] <=> $b['price'][0]['unit_amount']);
 
 finish(true, null, $productsReturn);
