@@ -14,7 +14,7 @@
                 <div class="card-body box-profile">
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
-                                 src="{{ user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"
+                                 src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"
                                  loading="lazy"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
@@ -89,7 +89,7 @@
                             <li class="nav-item"><a class="nav-link" href="#passwordsocial" data-toggle="tab">Password & Sign-in</a></li>
                         {% endif %}
                         {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
-                            <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">AdamRMS Positions</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">{{ CONFIG.PROJECT_NAME }} Positions</a></li>
                         {% endif %}
                         {% if user.crewAssignments|length > 0 %}<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Crew Roles</a></li>{% endif %}
                         {% if user.projectManagement|length > 0 %}<li class="nav-item"><a class="nav-link" href="#projects" data-toggle="tab">Projects Managed</a></li>{% endif %}
@@ -173,23 +173,23 @@
                                     <thead>
                                     <tr>
                                         <th><button type="button" id="save-notification-settings" class="btn btn-success btn-sm">Save</button></th>
-                                        {% for method in CONFIG.NOTIFICATIONS.METHODS %}
+                                        {% for method in NOTIFICATIONTYPES.METHODS %}
                                             <th>{{method}}</th>
                                         {% endfor %}
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% set category = "" %}
-                                    {% for notification in CONFIG.NOTIFICATIONS.TYPES %}
+                                    {% for notification in NOTIFICATIONTYPES.TYPES %}
                                         {% if category != notification.group %}
                                             <tr>
-                                                <td colspan="{{ 1+CONFIG.NOTIFICATIONS.METHODS|length }}"><h3>{{ notification.group }}</h3></td>
+                                                <td colspan="{{ 1+NOTIFICATIONTYPES.METHODS|length }}"><h3>{{ notification.group }}</h3></td>
                                             </tr>
                                             {% set category = notification.group %}
                                         {% endif %}
                                         <tr>
                                             <td>{{ notification.name }}</td>
-                                            {% for methodid,method in CONFIG.NOTIFICATIONS.METHODS %}
+                                            {% for methodid,method in NOTIFICATIONTYPES.METHODS %}
                                                 <td>
                                                     {% if methodid in notification.methods %}
                                                         <input type="checkbox" class="notificationsetting" data-methodid="{{methodid}}" data-typeid="{{notification.id}}"
@@ -225,11 +225,13 @@
                                 </script>
                             </div>
                             <div class="tab-pane table-responsive p-3" id="profilepicture">
-                                {% if user.users_thumbnail != null %}
+                                {% if CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail != null %}
                                     <img loading="lazy" src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
                                 {% endif %}
-                                {% if "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
-                                    {% embed 'common/plugins/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
+                                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
+
+{% embed 'assets/templates/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
+
                                         {% block success %}
                                             ajaxcall("account/thumbnail.php", {
                                                 "users_userid": "{{ user.users_userid }}",

@@ -3,7 +3,7 @@
 use Twig\TwigFunction;
 
 require_once __DIR__ . '/common/headSecure.php';
-require_once __DIR__ . '/../common/libs/Search/Search.php';
+require_once __DIR__ . '/common/libs/Search/Search.php';
 
 // Get the optional variables
 $PAGEDATA['term'] = isset($_GET['term']) && is_string($_GET['term']) ? $_GET['term'] : "";

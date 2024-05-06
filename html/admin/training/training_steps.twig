@@ -181,7 +181,9 @@
                                     <hr/>
                                     {% if step.modulesSteps_type == 1 %}
                                             {# Plain Text #}
-                                            {% embed 'common/plugins/uppy.twig' with {'type': 'MODULE-STEP-IMAGE', 'paste': false, 'typeId': 13, 'subTypeId': step.modulesSteps_id, 'imagesOnly': true } %}
+                                                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+                                                    {% embed 'assets/templates/uppy.twig' with {'type': 'MODULE-STEP-IMAGE', 'paste': false, 'typeId': 13, 'subTypeId': step.modulesSteps_id, 'imagesOnly': true } %}
+                                                {% endif %}
                                                 {% block success %}
                                                     $('.summernote[data-id={{ step.modulesSteps_id }}]').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
                                                 {% endblock %}

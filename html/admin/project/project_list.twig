@@ -91,19 +91,19 @@
                             <ul class="list-inline">
                                 <li class="list-inline-item">
                                     <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                        <img loading="lazy" alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                        <img loading="lazy" alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                     </a>
                                 </li>
                             </ul>
                         </td>
                         <td>
                             {% if project.projectsTypes_config_finance == 1 %}
-                            {{ (project.finance.projectsFinanceCache_grandTotal|moneyPositive ? project.finance.projectsFinanceCache_grandTotal|money : '') }}
+                            {{ (project.finance.projectsFinanceCache_grandTotal|moneyPositive ? project.finance.projectsFinanceCache_grandTotal|money(USERDATA.instance['instances_config_currency']) : '') }}
                             {% endif %}
                         </td>
                         <td>
                             {% if project.projectsTypes_config_finance == 1 %}
-                            {{ project.finance.projectsFinanceCache_paymentsReceived|money }}
+                            {{ project.finance.projectsFinanceCache_paymentsReceived|money(USERDATA.instance['instances_config_currency']) }}
                             {% endif %}
                         </td>
                         <td class="project_progress">
@@ -147,19 +147,19 @@
                                     <ul class="list-inline">
                                         <li class="list-inline-item">
                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ subProject.users_email ~ ")" }}">
-                                                <img loading="lazy" alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                <img loading="lazy" alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
                                             </a>
                                         </li>
                                     </ul>
                                 </td>
                                 <td>
                                     {% if subProject.projectsTypes_config_finance == 1 %}
-                                        {{ (subProject.finance.projectsFinanceCache_grandTotal|moneyPositive ? subProject.finance.projectsFinanceCache_grandTotal|money : '') }}
+                                        {{ (subProject.finance.projectsFinanceCache_grandTotal|moneyPositive ? subProject.finance.projectsFinanceCache_grandTotal|money(USERDATA.instance['instances_config_currency']) : '') }}
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if subProject.projectsTypes_config_finance == 1 %}
-                                        {{ subProject.finance.projectsFinanceCache_paymentsReceived|money }}
+                                        {{ subProject.finance.projectsFinanceCache_paymentsReceived|money(USERDATA.instance['instances_config_currency']) }}
                                     {% endif %}
                                 </td>
                                 <td class="project_progress">

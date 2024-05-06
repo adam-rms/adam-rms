@@ -500,7 +500,7 @@
         };
         try {
             var pdf = pdfMake.createPdf(docDefinition);
-            {% if GET['draft'] %}
+            {% if GET['draft'] or CONFIG.FILES_ENABLED != "Enabled" or USERDATA.instance.instances_storageEnabled != 1 %}
             pdf.download("{{ project['projects_name']|escape("js") }} - Draft {{ GET['quote'] ? "Quote" : "Invoice" }}.pdf", function() {
                 window.close();
             });

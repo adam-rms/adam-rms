@@ -79,8 +79,8 @@
                                     <td>{{ client.clients_email }}</td>
                                     <td><a href="{{ client.clients_website }}" target="_blank">{{ client.clients_website }}</a></td>
                                     <td>{{ client.clients_notes|nl2br }}</td>
-                                    <td>{{ client['totalPayments']|money }}</td>
-                                    <td>{% if client['totalOutstanding']|moneyPositive %}{{ client['totalOutstanding']|money }}{% endif %}</td>
+                                    <td>{{ client['totalPayments']|money(USERDATA.instance['instances_config_currency']) }}</td>
+                                    <td>{% if client['totalOutstanding']|moneyPositive %}{{ client['totalOutstanding']|money(USERDATA.instance['instances_config_currency']) }}{% endif %}</td>
                                     {% if "CLIENTS:EDIT"|instancePermissions %}
                                     <td>
                                         <div class="btn-group">

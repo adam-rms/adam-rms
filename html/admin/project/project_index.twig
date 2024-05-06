@@ -102,7 +102,7 @@
                                     <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab"><i class="fas fa-list"></i> Assets List</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab"><i class="fas fa-shipping-fast"></i> Asset Dispatch</a></li>
                                 {% endif %}
-                                <li class="nav-item"><a class="nav-link" href="#file-view" data-toggle="tab"><i class="fas fa-file-alt"></i> {%  if project.projectsTypes_config_files == 1 %}Files, {% endif %}{% if project.projectsTypes_config_notes == 1 %}Notes, {% endif %} Invoices & Quotes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#file-view" data-toggle="tab"><i class="fas fa-file-alt"></i> {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and project.projectsTypes_config_files == 1 %}Files, {% endif %}{% if project.projectsTypes_config_notes == 1 %}Notes, {% endif %} Invoices & Quotes</a></li>
                                 {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
                                     <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab"><i class="fas fa-pound-sign"></i> Finance</a></li>
                                 {% endif %}
@@ -575,7 +575,7 @@
             </div>
         </div>
     {% endif %}
-    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
     {% for payment in []|merge(FINANCIALS.payments.received.ledger)|merge(FINANCIALS.payments.sales.ledger)|merge(FINANCIALS.payments.subHire.ledger)|merge(FINANCIALS.payments.staff.ledger) %}
         <div class="modal fade" id="filesModal{{ payment.payments_id }}">
             <div class="modal-dialog modal-lg">
@@ -587,12 +587,16 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        {% embed 'common/plugins/fileBox.twig' with {'files': payment.files } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': payment.files } %}
+
+
                         {% endembed %}
                     </div>
                     {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
                         <div class="modal-footer">
-                            {% embed 'common/plugins/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+
+
                                 {% block success %}
                                     console.log(responseJson.id);
                                 {% endblock %}
@@ -604,7 +608,8 @@
         </div>
     {% endfor %}
     {% endif %}
-    {% if project.projectsTypes_config_files == 1 %}
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and project.projectsTypes_config_files == 1 %}
+
     <div class="modal fade" id="projectFilesModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -615,12 +620,16 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {% embed 'common/plugins/fileBox.twig' with {'files': files } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': files } %}
+
+
                     {% endembed %}
                 </div>
                 {% if "PROJECTS:PROJECT_FLIE_ATTACHMENTS:CREATE"|instancePermissions %}
                     <div class="modal-footer">
-                        {% embed 'common/plugins/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
+{% embed 'assets/templates/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
+
+
                             {% block success %}
                                 console.log(responseJson.id);
                             {% endblock %}
@@ -641,7 +650,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {% embed 'common/plugins/fileBox.twig' with {'files': quotes } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': quotes } %}
+
+
                     {% endembed %}
                 </div>
             </div>
@@ -657,7 +668,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {% embed 'common/plugins/fileBox.twig' with {'files': invoices } %}
+{% embed 'assets/templates/fileBox.twig' with {'files': invoices } %}
+
+
                     {% endembed %}
                 </div>
             </div>
@@ -1479,7 +1492,7 @@
                 theme: "bootstrap4",
                 minimumInputLength: 0,
                 width: '100%',
-                placeholder: "Search for existing AdamRMS users to add to crew",
+                placeholder: "Search for existing {{ CONFIG.PROJECT_NAME }} users to add to crew",
                 ajax: {
                     url: "{{ CONFIG.ROOTURL }}/api/projects/crew/searchUser.php",
                     dataType: "json",
@@ -1636,6 +1649,7 @@
             })
         });
     </script>
-    {% embed 'common/plugins/fileBoxJS.twig' %}
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
     {% endembed %}
 {% endblock %}

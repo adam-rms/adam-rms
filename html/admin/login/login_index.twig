@@ -1,18 +1,12 @@
 {% extends "login/login_template.twig" %}
 {% block content %}
-    <div id="browser">
+<div>
 
     </div>
     {% if googleAuthAvailable %}
     <a href="?google"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/loginButtons/continueWithGoogle.png" alt="Login with Google" /></a><br/>
     {% endif %}
-    <a href="?login"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/loginButtons/continueWithAdamrms.png" alt="Login with AdamRMS"  style="width: 220px;" /></a>
-    
-	<script>
-        function isEmail(email) {
-            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-            return regex.test(email);
-        }
-        var initialData;
-	</script>
+<a href="?login"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/loginButtons/continueWithAdamrms.png" alt="Login with AdamRMS" style="width: 220px;"/></a>
+
+
 {% endblock %}

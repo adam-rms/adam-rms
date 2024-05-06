@@ -5,9 +5,8 @@ header('Content-Disposition: attachment; filename="cal.ics"');
 error_reporting(0);
 ini_set('display_errors', 0);
 
-$tz  = 'Europe/London';
-$dtz = new \DateTimeZone($tz); 
-date_default_timezone_set($tz);
+$dtz = new \DateTimeZone($CONFIG['TIMEZONE']); 
+date_default_timezone_set($CONFIG['TIMEZONE']);
 
 $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);

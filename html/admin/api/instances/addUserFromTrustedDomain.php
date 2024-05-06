@@ -21,6 +21,8 @@ $DBLIB->where("instancePositions_id", $instance['trustedDomains']['instancePosit
 $position = $DBLIB->getone("instancePositions", ["instancePositions_id"]);
 if (!$position) finish(false, ["code" => "ADD-USER-TO-INSTANCE-FAIL-NOPOSITION", "message"=> "Could not find position to add to Business"]);
 
+if (!$bCMS->instanceHasUserCapacity($instance['instances_id'])) finish(false, ["code" => "AUTH-ERROR", "message" => "Could not add user to Business, business is full"]);
+
 if (!$DBLIB->insert("userInstances", [
     "users_userid" => $AUTH->data['users_userid'],
     "instancePositions_id" => $position["instancePositions_id"],

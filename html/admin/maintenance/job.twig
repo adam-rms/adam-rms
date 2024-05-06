@@ -271,23 +271,23 @@
                                 <span class="direct-chat-name float-left">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
                                 <span class="direct-chat-timestamp float-right">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
                             </div>
-                            <img loading="lazy" class="direct-chat-img" src="{{ message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
                         {% else %}
                         <div class="direct-chat-msg right">
                             <div class="direct-chat-infos clearfix">
                                 <span class="direct-chat-name float-right">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
                                 <span class="direct-chat-timestamp float-left">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
                             </div>
-                            <img loading="lazy" class="direct-chat-img" src="{{ message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
                         {% endif %}
                             <div class="direct-chat-text">
                                 {% if message.maintenanceJobsMessages_text|length > 0 %}
                                     {{ message.maintenanceJobsMessages_text|nl2br }}
                                 {% elseif message.maintenanceJobsMessages_file != "" %}
                                     {% if message.s3files_extension|lower in ["gif", "jpeg", "jpg", "png"] %}
-                                        <img loading="lazy" src="{{ message.maintenanceJobsMessages_file|s3URL("medium") }}" alt="{{ message.s3files_name }}" style="width: 100%;">
+                                        <img loading="lazy" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and message.maintenanceJobsMessages_file|s3URL("medium") }}" alt="{{ message.s3files_name }}" style="width: 100%;">
                                     {% else %}
-                                        <a href="{{ message.maintenanceJobsMessages_file|s3URL }}" target="_blank" style="color:white;"><i class="fa {{ message.s3files_extension|fontAwesomeFile }}"></i> {{ message.s3files_name }}</a>
+                                        <a href="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and message.maintenanceJobsMessages_file|s3URL }}" target="_blank" style="color:white;"><i class="fa {{ message.s3files_extension|fontAwesomeFile }}"></i> {{ message.s3files_name }}</a>
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -306,8 +306,10 @@
                         </span>
                         </div>
                     </form>
-                    {% if "MAINTENANCE_JOBS:MAINTENANCE_JOBS_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
-                        {% embed 'common/plugins/uppy.twig' with {'type': 'JOB-FILE', 'paste': true, 'typeId': 8, 'subTypeId': job.maintenanceJobs_id, 'imagesOnly': false, 'disableMultiple': true } %}
+                    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "MAINTENANCE_JOBS:MAINTENANCE_JOBS_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
+
+{% embed 'assets/templates/uppy.twig' with {'type': 'JOB-FILE', 'paste': true, 'typeId': 8, 'subTypeId': job.maintenanceJobs_id, 'imagesOnly': false, 'disableMultiple': true } %}
+
                             {% block success %}
                                 ajaxcall("maintenance/job/sendMessage.php", {
                                     "maintenanceJobsMessages_file": responseJson.id,
@@ -482,7 +484,7 @@
                 width: '100%',
 
                 minimumResultsForSearch: 1,
-                placeholder: "Enter email addresses to search for existing AdamRMS users to add to job",
+                placeholder: "Enter email addresses to search for existing {{ CONFIG.PROJECT_NAME }} users to add to job",
                 ajax: {
                     url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchUser.php",
                     dataType: "json",

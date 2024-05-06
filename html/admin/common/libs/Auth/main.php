@@ -1,8 +1,7 @@
 <?php
-require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/instanceActions.php';
 require_once __DIR__ . '/serverActions.php';
-date_default_timezone_set("UTC");
+date_default_timezone_set($CONFIG['TIMEZONE']);
 use \Firebase\JWT\JWT;
 
 class AuthFail extends Exception {
@@ -30,7 +29,7 @@ class bID
         if (isset($_POST['jwt'])) {
             //JWTs come via POST from the mobile app
             try {
-                $decoded = JWT::decode($_POST['jwt'], $CONFIG['JWTKey'], array('HS256'));
+                $decoded = JWT::decode($_POST['jwt'], $CONFIG['AUTH_JWTKey'], array('HS256'));
                 $decoded_array = (array) $decoded;
                 if (!in_array($decoded_array['type'], ["app-v1", "app-v2-magic-email"])) throw new AuthFail('JWT type invalid for receipt via POST');
                 return ["token" => $decoded_array['token'], "type" => $decoded_array['type']];
@@ -135,7 +134,7 @@ class bID
         $DBLIB->where("userInstances_deleted", 0);
         $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
         $DBLIB->where("instances.instances_deleted", 0);
-        $instances = $DBLIB->get("userInstances");
+        $instances = $DBLIB->get("userInstances", null, ["instancePositions.*", "instances.*", "userInstances.*"]);
         $this->data['instances'] = [];
         $this->data['instance_ids'] = [];
         foreach ($instances as $instance) {
@@ -285,7 +284,7 @@ class bID
             "exp" => time()+12*60*60, //12 hours token expiry
             "iat" => time(),
             "type" => $type
-        ), $CONFIG['JWTKey']);
+        ), $CONFIG['AUTH_JWTKey']);
         return $jwt;
     }
 
@@ -340,7 +339,7 @@ class bID
             "emailVerificationCodes_code" => $code
         );
         if (!$DBLIB->insert('emailVerificationCodes', $data)) throw new Exception('Fatal Error verifiying E-Mail');
-        require_once __DIR__ . '/../../../admin/api/notifications/main.php';
+        require_once __DIR__ . '/../../../api/notifications/main.php';
         if (notify(3, $userid,  false,"Verify your E-Mail", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Verify your E-Mail address!</h1><p style="margin: 0;">Please <a href="' . $CONFIG['ROOTURL'] . '/api/account/verifyEmail.php?code=' . $code . '">verify your E-Mail address for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i>')) return true;
         else return false;
     }
@@ -361,7 +360,7 @@ class bID
             "passwordResetCodes_code" => $code
         );
         if (!$DBLIB->insert('passwordResetCodes', $data)) throw new Exception('Fatal Error sending a reset E-Mail');
-        require_once __DIR__ . '/../../../admin/api/notifications/main.php';
+        require_once __DIR__ . '/../../../api/notifications/main.php';
         if (notify(1,$userid,false,  "Reset your password", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Someone requested to reset your password</h1><p style="margin: 0;">If this was not you, please contact our support team urgently.<br /><br /><a href="' . $CONFIG['ROOTURL'] . '/api/account/passwordReset.php?code=' . $code . '">Reset account password for ' . $CONFIG['PROJECT_NAME'] . '</a></p><br/><i><b>N.B.</b>The link in this E-Mail will only last for 48 hours!</i>')) return true;
         else return false;
     }
@@ -392,7 +391,7 @@ class bID
         $token = $this->generateToken($userID, false, "App v2", "app-v2-magic-email");
         $jwt = $this->issueJWT($token, $userID, "app-v2-magic-email");
         if (!$token or !$jwt) return false;
-        require_once __DIR__ . '/../../../admin/api/notifications/main.php';
+        require_once __DIR__ . '/../../../api/notifications/main.php';
         if (notify(4, $userID,  false,"Login to AdamRMS App", '<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Login to the app</h1><p style="margin: 0;"><a href="' . $CONFIG['ROOTURL'] . "/login/?app-magiclink=" . $redirect . "&magic-token=" . $jwt . '">Click to login to the mobile app</a></p><br/><i><b>N.B.</b>If you did not request this code, please do not click the link, and contact our support team</i>')) return true;
         else return false;
     }

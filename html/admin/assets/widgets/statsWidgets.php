@@ -132,7 +132,7 @@ class statsWidgets
         return $return;
     }
     private function storageUsage($arguments = []) {
-        global $DBLIB;
+        global $DBLIB, $bCMS;
         if (!$arguments['instanceid']) return [];
 
         $return = ["USED" => 0.0, "CAPACITY" => 0];
@@ -140,10 +140,7 @@ class statsWidgets
         $DBLIB->where("instances_id", $arguments['instanceid']);
         $return['CAPACITY'] = $DBLIB->getvalue("instances", "instances_storageLimit");
 
-        $DBLIB->where("s3files.instances_id", $arguments['instanceid']);
-        $DBLIB->where("(s3files_meta_deleteOn IS NULL)");
-        $DBLIB->where("s3files_meta_physicallyStored", 1);
-        $return['USED'] = $DBLIB->getValue("s3files", "SUM(s3files_meta_size)");
+        $return['USED'] = $bCMS->s3StorageUsed($arguments['instanceid']);
         return $return;
     }
     private function maintenanceOutstanding($arguments = []) {

@@ -41,7 +41,20 @@ $DBLIB->orderBy("instancePositions_rank", "ASC");
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $PAGEDATA['positions'] = $DBLIB->get("instancePositions", null, ["instancePositions_id", "instancePositions_displayName"]);
 
-
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$userCapacity = $DBLIB->getvalue("instances", "instances_userLimit");
+$DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid", "LEFT");
+$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("userInstances.userInstances_deleted",  0);
+$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
+$userUsed = $DBLIB->getValue("users", "COUNT(users.users_userid)");
+if ($userCapacity > 0 and $userUsed >= $userCapacity) {
+	$PAGEDATA['NOCAPACITY'] = [
+		"CAPACITY" => $userCapacity,
+		"USED" => $userUsed
+	];
+}
 
 echo $TWIG->render('instances/instances_users.twig', $PAGEDATA);
 ?>

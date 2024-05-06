@@ -10,7 +10,8 @@
                 </h3>
                 <div class="card-tools pull-right">
                     <div class="btn-group">
-                        <a href="{{ CONFIG.USERGUIDEURL }}training/" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}training/" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+
                         {% if drafts %}
                             <a type="button" class="btn btn-default btn-sm" href="?">Published Modules</a>
                         {% elseif "TRAINING:VIEW:DRAFT_MODULES"|instancePermissions %}
@@ -62,7 +63,7 @@
                                 Draft - only visible to those with permission to view draft training modules
                             </div>
                         {% endif %}
-                        {% if module.modules_thumbnail %}
+                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and module.modules_thumbnail %}
                            <div>
                                {% if module.modules_type != 3 %}<a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{% else %}<a href="#">{% endif %}
                                     <img class="img-fluid" style="max-height: 340px;"
@@ -198,11 +199,14 @@
 
                             <h4>Thumbnail</h4>
                             <input type="hidden" name="modules_thumbnail" value="{{ module.modules_thumbnail }}" id="moduleThumbnail{{ module.modules_id }}" />
-                            {% embed 'common/plugins/uppy.twig' with {'type': 'MODULE-THUMBNAIL', 'paste': false, 'typeId': 12, 'imagesOnly': true, 'fileLimit': 1 } %}
+                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+                            {% embed 'assets/templates/uppy.twig' with {'type': 'MODULE-THUMBNAIL', 'paste': false, 'typeId': 12, 'imagesOnly': true, 'fileLimit': 1 } %}
+
                                 {% block success %}
                                     $("#moduleThumbnail{{ module.modules_id }}").val(responseJson.id);
                                 {% endblock %}
                             {% endembed %}
+                            {% endif %}
                         </form>
                     </div>
                     <div class="modal-footer justify-content-between">

@@ -3,9 +3,15 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (isset($_GET['google'])) {
     //Similar setup can be found in the link provider api endpoint
-    $CONFIG['AUTH-PROVIDERS']['GOOGLE']['callback'] = $CONFIG['ROOTURL'] . '/api/account/linkOAuth.php?google';
-
-    $adapter = new Hybridauth\Provider\Google($CONFIG['AUTH-PROVIDERS']['GOOGLE']);
+    $configObject = [
+        "callback" => $CONFIG['ROOTURL'] . '/api/account/linkOAuth.php?google',
+        "keys" => [
+            "id" => $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_ID"),
+            "secret" => $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_SECRET")
+        ],
+        "scope" => $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_SCOPE"),
+    ];
+    $adapter = new Hybridauth\Provider\Google($configObject);
     /**
      * 3. Sign in a user with Google
      *

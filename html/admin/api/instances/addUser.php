@@ -4,6 +4,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if (!$AUTH->instancePermissionCheck("BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL") or !isset($_POST['rolegroup'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
 
 if (count($_POST['users']) < 1) finish(true);
+if (!$bCMS->instanceHasUserCapacity($AUTH->data['instance']['instances_id'])) finish(false, ["code" => "AUTH-ERROR", "message" => "Could not add user to Business, business is full"]);
 
 foreach ($_POST['users'] as $user) {
     $DBLIB->where("instancePositions_id", $_POST['rolegroup']);

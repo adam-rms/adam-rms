@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
 
-$PAGEDATA['pageConfig'] = ["TITLE" => "Instances", "BREADCRUMB" => false];
+$PAGEDATA['pageConfig'] = ["TITLE" => "Businesses", "BREADCRUMB" => false];
 
 if (!$AUTH->serverPermissionCheck("INSTANCES:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
@@ -24,7 +24,7 @@ if (strlen($PAGEDATA['search']) > 0) {
 $instances = $DBLIB->arraybuilder()->paginate('instances', $page, ["instances.*"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 $PAGEDATA['instances'] = [];
-$PAGEDATA['totals'] = ["assets" => ["VALUE" => 0.0,"MASS" => 0.0, "COUNT" => 0], "STORAGEUSED" => 0, "STORAGEALLOWED" => 0];
+$PAGEDATA['totals'] = ["assets" => ["MASS" => 0.0, "COUNT" => 0], "STORAGEUSED" => 0, "STORAGEALLOWED" => 0];
 foreach ($instances as $instance) {
 	//Inventory
 	$DBLIB->where("assets.instances_id", $instance['instances_id']);
@@ -37,16 +37,12 @@ foreach ($instances as $instance) {
 		$instance['assets']['VALUE'] += $asset['assetTypes_value'];
 		$instance['assets']['MASS'] += $asset['assetTypes_mass'];
 		$instance['assets']['COUNT'] += 1;
-		$PAGEDATA['totals']['assets']['VALUE'] += $asset['assetTypes_value'];
 		$PAGEDATA['totals']['assets']['MASS'] += $asset['assetTypes_mass'];
 		$PAGEDATA['totals']['assets']['COUNT'] += 1;
 	}
 
 	//Storage
-	$DBLIB->where("s3files.instances_id", $instance['instances_id']);
-	$DBLIB->where("(s3files_meta_deleteOn IS NULL)");
-	$DBLIB->where("s3files_meta_physicallyStored", 1);
-	$instance['STORAGEUSED'] = $DBLIB->getValue("s3files", "SUM(s3files_meta_size)");
+	$instance['STORAGEUSED'] = $bCMS->s3StorageUsed($instance['instances_id']);
 	$PAGEDATA['totals']['STORAGEUSED'] += $instance['STORAGEUSED'];
 	$PAGEDATA['totals']['STORAGEALLOWED'] += $instance['instances_storageLimit'];
 	//USERS
@@ -63,7 +59,20 @@ foreach ($instances as $instance) {
 	$DBLIB->where("projects.instances_id", $instance['instances_id']);
 	$DBLIB->where ("auditLog.projects_id", NULL, 'IS NOT');
 	$instance['ACTIVITY']['projectAuditLog'] = $DBLIB->getValue("auditLog", "auditLog_timestamp");
+	// Other counts
+	foreach (['cmsPages', 'maintenanceJobs', 'locations', 'clients', 'modules', 'projects', 'projectsTypes'] as $table) {
+		$DBLIB->where("instances_id", $instance['instances_id']);
+		$DBLIB->where($table . "_deleted", 0);
+		$instance[strtoupper($table)] = $DBLIB->getValue($table, "COUNT(*)");
+	}
 
+	// For selecting a billing user
+	$DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid", "LEFT");
+	$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+	$DBLIB->where("instances_id", $instance['instances_id']);
+	$DBLIB->where("userInstances.userInstances_deleted",  0);
+	$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
+	$instance['usersForBillingUser'] = $DBLIB->get("users", null, ["users.users_userid", "users.users_name1", "users.users_name2"]);
 
 	$PAGEDATA['instances'][] = $instance;
 }
@@ -75,6 +84,8 @@ $PAGEDATA['totals']['users']['noInstances'] = $DBLIB->getValue("users", "count(*
 
 $DBLIB->orderBy("auditLog_timestamp", "DESC");
 $PAGEDATA['totals']['lastActivity']['auditLog'] = $DBLIB->getValue("auditLog", "auditLog_timestamp");
+
+
 
 echo $TWIG->render('server/instances.twig', $PAGEDATA);
 ?>

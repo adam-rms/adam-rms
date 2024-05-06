@@ -1,876 +1,932 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{ (pageConfig.TITLE != null ? pageConfig.TITLE  ~  " | " : "")  }}{{ CONFIG.PROJECT_NAME }} </title>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>{{ (pageConfig.TITLE != null ? pageConfig.TITLE  ~  " | " : "")  }}{{ CONFIG.PROJECT_NAME }}
+		</title>
 
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-    <!-- CSS SECTION-->
-        <!--Include fonts-->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<!-- CSS SECTION-->
+		<!--Include fonts-->
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> <link
+		rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/css/adminlte.min.css">
+		<!-- Theme style -->
+		<link
+		rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/css/adminlte.min.css">
 
-    <!-- JS Scripts/Plugins-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <!-- Bootstrap 3.3.5 -->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha256-OUFW7hFO0/r5aEGTQOz9F/aXQOt+TwqI1Z4fbVvww04=" crossorigin="anonymous"></script>
-    <!--Bootbox -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
-    <!--Scrollbars-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/js/OverlayScrollbars.min.js" integrity="sha512-q5PymqHsbnrSSku455zVV6Q4WJ5FegIKtgfQbugb5D7Gbl6tsGPkG4upZlMDT10MBARZyBtmsIPPd6HMPyH9sw==" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/css/OverlayScrollbars.min.css" integrity="sha512-fWgz39WeLATUXnAhIimPHnEUoSuZh5cgcOTteRFeVPW1opB0OPQ2/JwPAAWMDZtHy8IomUEOyaYJsOdCM9tcYg==" crossorigin="anonymous" />
-    <!--Pace Loader-->
-    <script>
-        window.paceOptions = {
-            startOnPageLoad: false,
-            document: false,
-            eventLag: false,
-            ajax: {
-                trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE'],
-                trackWebSockets: false,
-                ignoreURLs: ['searchUser.php'] //Ignore user searches
-            }
-        };
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/pace/pace.css">
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.2.1/jquery-migrate.min.js" integrity="sha512-fDGBclS3HUysEBIKooKWFDEWWORoA20n60OwY7OSYgxGEew9s7NgDaPkj7gqQcVXnASPvZAiFW8DiytstdlGtQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g==" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" />
-    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/select2-bootstrap4/select2-bootstrap4.min.css" />
-    <style>
-        .select2-selection--multiple {
-            max-height: 10rem;
-            overflow-y: auto
-        }
-    </style>
+		<!-- JS Scripts/Plugins-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		<!-- Bootstrap 3.3.5 -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha256-OUFW7hFO0/r5aEGTQOz9F/aXQOt+TwqI1Z4fbVvww04=" crossorigin="anonymous"></script>
+		<!--Bootbox -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
+		<!--Scrollbars-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/js/OverlayScrollbars.min.js" integrity="sha512-q5PymqHsbnrSSku455zVV6Q4WJ5FegIKtgfQbugb5D7Gbl6tsGPkG4upZlMDT10MBARZyBtmsIPPd6HMPyH9sw==" crossorigin="anonymous"></script>
+		<link
+		rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.12.0/css/OverlayScrollbars.min.css" integrity="sha512-fWgz39WeLATUXnAhIimPHnEUoSuZh5cgcOTteRFeVPW1opB0OPQ2/JwPAAWMDZtHy8IomUEOyaYJsOdCM9tcYg==" crossorigin="anonymous"/>
+		<!--Pace Loader-->
+		<script>
+			window.paceOptions = {
+startOnPageLoad: false,
+document: false,
+eventLag: false,
+ajax: {
+trackMethods: [
+'GET',
+'POST',
+'PUT',
+'DELETE',
+'REMOVE'
+],
+trackWebSockets: false,
+ignoreURLs: ['searchUser.php'] // Ignore user searches
+}
+};
+		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/pace/pace.css">
 
 
-    {% block htmlIncludes %}{% endblock %}
-            <!--Fastclick - increases speed of response-->
-        {#<script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js" integrity="sha256-t6SrqvTQmKoGgi5LOl0AUy+lBRtIvEJ+++pLAsfAjWs=" crossorigin="anonymous"></script>#}
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.2.1/jquery-migrate.min.js" integrity="sha512-fDGBclS3HUysEBIKooKWFDEWWORoA20n60OwY7OSYgxGEew9s7NgDaPkj7gqQcVXnASPvZAiFW8DiytstdlGtQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- AdminLTE App -->
-    <script src="{{ CONFIG.ROOTURL }}/static-assets/js/adminlte.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css"/>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g==" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous"/>
+		<link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/select2-bootstrap4/select2-bootstrap4.min.css"/>
+		<style>
+			.select2-selection--multiple {
+				max-height: 10rem;
+				overflow-y: auto
+			}
+		</style>
 
 
-    <script>
-        function pad(n, width, z) {
-            z = z || '0';
-            n = n + '';
-            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-        }
-        function aTag(number) {
-            return(number);
-        }
-        function insertURLQueryParam(key, value) {
-            //https://stackoverflow.com/questions/486896/adding-a-parameter-to-the-url-with-javascript
-            key = encodeURI(key);
-            value = encodeURI(value);
+		{% block htmlIncludes %}{% endblock %}
+		<!--Fastclick - increases speed of response-->
+		{#<script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js" integrity="sha256-t6SrqvTQmKoGgi5LOl0AUy+lBRtIvEJ+++pLAsfAjWs=" crossorigin="anonymous"></script>#}
 
-            var kvp = document.location.search.substr(1).split('&');
+		<!-- AdminLTE App --><script src="{{ CONFIG.ROOTURL }}/static-assets/js/adminlte.js"> </script>
 
-            var i = kvp.length;
-            var x;
-            while (i--) {
-                x = kvp[i].split('=');
-
-                if (x[0] == key) {
-                    x[1] = value;
-                    kvp[i] = x.join('=');
-                    break;
+		<!-- parse-ignore-start -->
+		<script>
+			function pad(n, width, z) {
+                z = z || "0";
+                n = n + "";
+                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
                 }
-            }
+                function aTag(number) {
+                return number;
+                }
+                function insertURLQueryParam(key, value) {
+                // https://stackoverflow.com/questions/486896/adding-a-parameter-to-the-url-with-javascript
+                key = encodeURI(key);
+                value = encodeURI(value);
 
-            if (i < 0) {
-                kvp[kvp.length] = [key, value].join('=');
-            }
+                var kvp = document.location.search.substr(1).split("&");
 
-            //this will reload the page, it's likely better to store this until finished
-            document.location.search = kvp.join('&');
-        }
-        $(document).ajaxStart(function() { Pace.restart(); });
-        function ajaxcall(path, data, callback, reloadIfError) {
-            if (data !== null) var senddata = data;
-            else var senddata = {};
-            if (reloadIfError == null){
-                reloadIfError = true;
-            }
-            $.ajax({
-                url: '{{ CONFIG.ROOTURL }}/api/' + path,
-                type: "POST",
-                data: senddata,
-                cache: false,
-                success: function (result, status, data) {
+                var i = kvp.length;
+                var x;
+                while (i--) {
+                    x = kvp[i].split("=");
+
+                    if (x[0] == key) {
+                    x[1] = value;
+                    kvp[i] = x.join("=");
+                    break;
+                    }
+                }
+
+                if (i < 0) {
+                    kvp[kvp.length] = [key, value].join("=");
+                }
+
+                // this will reload the page, it's likely better to store this until finished
+                document.location.search = kvp.join("&");
+                }
+                $(document).ajaxStart(function () {
+                Pace.restart();
+                });
+                function ajaxcall(path, data, callback, reloadIfError) {
+                if (data !== null) var senddata = data;
+                else var senddata = {};
+
+                if (reloadIfError == null) {
+                    reloadIfError = true;
+                }
+                $.ajax({
+                    url: "{{ CONFIG.ROOTURL }}/api/" + path,
+                    type: "POST",
+                    data: senddata,
+                    cache: false,
+                    success: function (result, status, data) {
                     if (result.result) {
                         if (typeof callback === "function") {
-                            callback(result);
+                        callback(result);
                         }
                     } else {
                         if (result.error && result.error.message) {
-                            var errorMessage = result.error.message; //Putting this inline breaks the function below
+                        var errorMessage = result.error.message; // Putting this inline breaks the function below
                         } else {
-                            var errorMessage = "";
+                        var errorMessage = "";
                         }
-                        bootbox.alert('Sorry we couldn\'t complete this action - please try again!<br/><br/>' + errorMessage, function () {
+                        bootbox.alert(
+                            "{{ CONFIG.PROJECT_NAME }} encountered an error.{% if CONFIG.LINKS_SUPPORTURL|length > 0 %} <a href='{{ CONFIG.LINKS_SUPPORTURL }}' target='_blank'>Contact Support</a>{% endif %}<br/><br/>" +
+                            errorMessage,
+                        function () {
                             if (reloadIfError) {
-                                location.reload();
+                            location.reload();
                             }
-                        });
+                        },
+                        );
                     }
                     return false;
-                }, error: function (jqXHR, textStatus, errorThrown) {
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR, textStatus, errorThrown);
                     console.log("Connection Error");
-                    bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection', function () {
+                    bootbox.alert(
+                        "Sorry we couldn't connect to the internet - please check your connection",
+                        function () {
                         if (reloadIfError) {
                             location.reload();
                         }
-                    });
+                        },
+                    );
+                    },
+                });
                 }
-            });
-        }
-        $( document ).ready(function() {
-            /** add active class and stay opened when selected */
-            var url = window.location.href;
+                $(document).ready(function () {
+                /** add active class and stay opened when selected */
+                var url = window.location.href;
 
-            // for sidebar menu entirely but not cover treeview
-            $('ul.nav-sidebar a').filter(function() {
-                return (!this.href.endsWith("#") && this.href == url);
-            }).addClass('active');
+                // for sidebar menu entirely but not cover treeview
+                $("ul.nav-sidebar a")
+                    .filter(function () {
+                    return !this.href.endsWith("#") && this.href == url;
+                    })
+                    .addClass("active");
 
-            // for treeview
-            $('ul.nav-treeview a').filter(function() {
-                return (!this.href.endsWith("#") && this.href == url);
-            }).parentsUntil(".nav-sidebar > .nav-treeview").addClass('menu-open').prev('a').addClass('active');
-        });
-    </script>
-    <style>
-        .nav-item {
-            /*
+                // for treeview
+                $("ul.nav-treeview a")
+                    .filter(function () {
+                    return !this.href.endsWith("#") && this.href == url;
+                    })
+                    .parentsUntil(".nav-sidebar > .nav-treeview")
+                    .addClass("menu-open")
+                    .prev("a")
+                    .addClass("active");
+                });
+
+		</script>
+        <!-- parse-ignore-end -->
+
+		<style>
+			.nav-item {
+				;
+				/*
                 Fix for an odd error where items in the navbar were not displaying in a helpful way
              */
-            /*max-width: 234px;*/
-        }
-        .todo-list > li .tools {
-            /*
+				/*max-width: 234px;*/
+			}
+			.todo-list > li .tools {
+				/*
                 Fix for crew roles list delete icon not displaying in a helpful way
              */
-            display: inline-block;
-            cursor: pointer;
-            margin-right: 5px;
-        }
+				display: inline-block;
+				cursor: pointer;
+				margin-right: 5px;
+			}
 
-        /*
+			/*
             Make the pink less hideous in the menu
         */
-        .sidebar-dark-pink .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-pink .nav-sidebar>.nav-item>.nav-link.active {
-            background-color: #f998b1;
-        }
+			.sidebar-dark-pink .nav-sidebar>.nav-item>.nav-link.active,
+			.sidebar-light-pink .nav-sidebar > .nav-item > .nav-link.active {
+				background-color: #f998b1;
+			}
 
-        /**
+			/**
             Styles for Full Calendar when in dark mode
          */
-        .dark-mode .fc-week-number, .dark-mode .fc-day-header {
-            background-color: #2C3E50 !important;
-        }
-        .dark-mode .fc-today {
-            background-color: #3f6791 !important;
-        }
+			.dark-mode .fc-week-number,
+			.dark-mode .fc-day-header {
+				background-color: #2C3E50 !important;
+			}
+			.dark-mode .fc-today {
+				background-color: #3f6791 !important;
+			}
 
-        /**
+			/**
             Styles for select2 dropdowns when in dark mode
          */
-        .dark-mode .select2-search, .dark-mode .select2-container--bootstrap4 .select2-selection, .dark-mode .select2-search input, .dark-mode .select2-results {
-            background-color: #343a40;
-        }
+			.dark-mode .select2-search,
+			.dark-mode .select2-container--bootstrap4 .select2-selection,
+			.dark-mode .select2-search input,
+			.dark-mode .select2-results {
+				background-color: #343a40;
+			}
 
-        /**
+			/**
             Temporary styles for daterange picker dropdowns when in dark mode to keep it usable
          */
-        .dark-mode .daterangepicker, .dark-mode .daterangepicker select {
-            color: #000000;
-        }
-    </style>
+			.dark-mode .daterangepicker,
+			.dark-mode .daterangepicker select {
+				color: #000000;
+			}
+		</style>
 
 
-    <!--Favicons-->
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-16x16.png">
+		<!--Favicons-->
+		<link rel="apple-touch-icon" sizes="57x57" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-16x16.png">
 
-</head>
-<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}{% if pageConfig.NOMENU %} sidebar-collapse{% endif %}">
-<div class="wrapper">
-    <nav class="main-header navbar navbar-expand {% if USERDATA.users_dark_mode %}navbar-dark{% else %}navbar-white navbar-light{% endif %}">
-        <ul class="navbar-nav">
-            {% if pageConfig.NOMENU != true %}
-            <li class="nav-item">
-                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-            </li>
-            {% endif %}
-            {% if USERDATA.viewSiteAs != false %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php" class="nav-link">Back to Admin</a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/login/?logout" class="nav-link">Logout</a>
-                </li>
-            {% endif %}
-        </ul>
-        {% if USERDATA.instances|length > 0 and pageConfig.NOMENU != true %}
-        <form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/search.php" method="GET">
-            <div class="input-group input-group-sm">
-                <input class="form-control form-control-navbar" name="term" type="search" placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-navbar" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
-        <ul class="navbar-nav ml-auto">
-            {% if USERDATA.instances|length > 0 %}
-                <li class="nav-item text-nowrap dropdown">
-                    <a class="nav-link"  data-toggle="dropdown" href="#">
-                        <div class="d-none d-sm-block">
-                            {{ USERDATA.instance.instances_name|u.truncate(25, '...') }}
-                        </div>
-                        <div class="d-block d-sm-none">
-                           <i class="fas fa-building"></i>
-                        </div>
+	</head>
+	<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}{% if pageConfig.NOMENU %} sidebar-collapse{% endif %}">
+		<div class="wrapper">
+			<nav class="main-header navbar navbar-expand {% if USERDATA.users_dark_mode %}navbar-dark{% else %}navbar-white navbar-light{% endif %}">
+				<ul class="navbar-nav">
+					{% if pageConfig.NOMENU != true %}
+						<li class="nav-item">
+							<a class="nav-link" data-widget="pushmenu" href="#">
+								<i class="fas fa-bars"></i>
+							</a>
+						</li>
+					{% endif %}
+					{% if USERDATA.viewSiteAs != false %}
+						<li class="nav-item">
+							<a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs_terminate.php" class="nav-link">Back to Admin</a>
+						</li>
+					{% else %}
+						<li class="nav-item">
+							<a href="{{ CONFIG.ROOTURL }}/login/?logout" class="nav-link">Logout</a>
+						</li>
+					{% endif %}
+				</ul>
+				{% if USERDATA.instances|length > 0 and pageConfig.NOMENU != true %}
+					<form class="form-inline ml-3 d-none d-sm-block" action="{{CONFIG.ROOTURL}}/search.php" method="GET">
+						<div class="input-group input-group-sm">
+							<input class="form-control form-control-navbar" name="term" type="search" placeholder="Search" aria-label="Search">
+							<div class="input-group-append">
+								<button class="btn btn-navbar" type="submit">
+									<i class="fas fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+					<ul class="navbar-nav ml-auto">
+						{% if USERDATA.instances|length > 0 %}
+							<li class="nav-item text-nowrap dropdown">
+								<a class="nav-link" data-toggle="dropdown" href="#">
+									<div class="d-none d-sm-block">
+										{{ USERDATA.instance.instances_name|u.truncate(25, '...') }}
+									</div>
+									<div class="d-block d-sm-none">
+										<i class="fas fa-building"></i>
+									</div>
 
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        {% if USERDATA.instances|length > 1 %}
-                            <span class="dropdown-header">Your Businesses</span>
-                            {% for instance in USERDATA.instances %}
-                                <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
-                                    {{instance.instances_name}}
-                                    <p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
-                                    {% if USERDATA.instance.instances_id == instance.instances_id %}
-                                    <div class="d-block d-sm-none">
-                                        <span class="float-right text-muted text-sm">Selected</span>
-                                    </div>
-                                    {% endif %}
-                                </a>
-                                <div class="dropdown-divider"></div>
-                            {% endfor %}
-                        {% endif  %}
-                        {% for instance in instancesAvailableToJoinAsTrustedDomains %}
-                            <a href="{{ CONFIG.ROOTURL }}/instances/join.php" class="dropdown-item">
-                                {{instance.instances_name}}
-                                <p class="text-sm text-muted">Available to join</p>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        {% endfor %}
-                        <a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
-                        {% if "INSTANCES:CREATE"|serverPermissions %}
-                            <a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
-                        {% else %}
-                            <a href="#" class="dropdown-item dropdown-footer"><i>Contact support to add new businesses</i></a>
-                        {% endif %}
-                    </div>
-                </li>
+								</a>
+								<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+									{% if USERDATA.instances|length > 1 %}
+										<span class="dropdown-header">Your Businesses</span>
+										{% for instance in USERDATA.instances %}
+											<a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
+												{{instance.instances_name}}
+												<p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
+												{% if USERDATA.instance.instances_id == instance.instances_id %}
+													<div class="d-block d-sm-none">
+														<span class="float-right text-muted text-sm">Selected</span>
+													</div>
+												{% endif %}
+											</a>
+											<div class="dropdown-divider"></div>
+										{% endfor %}
+									{% endif %}
+									{% for instance in instancesAvailableToJoinAsTrustedDomains %}
+										<a href="{{ CONFIG.ROOTURL }}/instances/join.php" class="dropdown-item">
+											{{instance.instances_name}}
+											<p class="text-sm text-muted">Available to join</p>
+										</a>
+										<div class="dropdown-divider"></div>
+									{% endfor %}
+									<a href="{{CONFIG.ROOTURL}}/instances/join.php" class="dropdown-item dropdown-footer">Join business</a>
+									{% if CONFIG["NEW_INSTANCE_ENABLED"] == "Enabled" or "INSTANCES:CREATE"|serverPermissions %}
+										<a href="{{CONFIG.ROOTURL}}/instances/new.php" class="dropdown-item dropdown-footer">Create new business</a>
+									{% else %}
+										<a href="#" class="dropdown-item dropdown-footer">
+											<i>Contact support to add new businesses</i>
+										</a>
+									{% endif %}
+								</div>
+							</li>
 
-            {% endif %}
-            <li class="nav-item">
-                <a href="#" class="nav-link" id="toggle-theme" title="Toggle Theme Color">
-                    <i class="fas {% if USERDATA.users_dark_mode %}fa-sun{%else%}fa-moon{% endif %}" id="theme-icon"></i>
-                </a>
-            </li>
-        </ul>
-        {% endif %}
-    </nav>
-    <!-- Left side column. contains the logo and sidebar -->
-    <aside class="main-sidebar {% if USERDATA.users_dark_mode or true %}{# Keep the sidebar dark, always (looks nicer) #}sidebar-dark-pink{% else%}sidebar-light-pink{% endif%} nav-compact elevation-4">
-        <a href="{{CONFIG.ROOTURL}}" class="brand-link {% if USERDATA.users_dark_mode %}navbar-dark{% else%}navbar-white{% endif%}" style="color: {% if USERDATA.users_dark_mode %}rgba(255,255,255,.8);{% else %}rgba(0,0,0,.8);{% endif %}">
-            <img src="{% if USERDATA.users_dark_mode %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png{% else %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png{% endif %}"
-                 alt="AdamRMS Logo"
-                 class="brand-image img-circle elevation-3"
-                 style="opacity: .8;">
-            <span class="brand-text font-weight-light">AdamRMS</span>
-        </a>
+						{% endif %}
+						<li class="nav-item">
+							<a href="#" class="nav-link" id="toggle-theme" title="Toggle Theme Color">
+								<i class="fas {% if USERDATA.users_dark_mode %}fa-sun{%else%}fa-moon{% endif %}" id="theme-icon"></i>
+							</a>
+						</li>
+					</ul>
+				{% endif %}
+			</nav>
+			<!-- Left side column. contains the logo and sidebar -->
+			<aside class="main-sidebar {% if USERDATA.users_dark_mode or true %}{# Keep the sidebar dark, always (looks nicer) #}sidebar-dark-pink{% else%}sidebar-light-pink{% endif%} nav-compact elevation-4">
+				<a href="{{CONFIG.ROOTURL}}" class="brand-link {% if USERDATA.users_dark_mode %}navbar-dark{% else%}navbar-white{% endif%}" style="color: {% if USERDATA.users_dark_mode %}rgba(255,255,255,.8);{% else %}rgba(0,0,0,.8);{% endif %}">
+					<img src="{% if USERDATA.users_dark_mode %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png{% else %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png{% endif %}" alt="{{ CONFIG.PROJECT_NAME }} Logo" class="brand-image img-circle elevation-3" style="opacity: .8;">
+					<span class="brand-text font-weight-light">{{ CONFIG.PROJECT_NAME }}</span>
+				</a>
 
-        <!-- Sidebar -->
-        {% if USERDATA.instances|length > 0 %}
-        <div class="sidebar">
-            <!-- Sidebar user (optional) -->
-            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                <div class="image">
-                    <img src="{{ USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;"  loading="lazy" fetchpriority="high">
-                </div>
-                <a href="{{ CONFIG.ROOTURL }}/user.php" class="d-block">
-                <div class="info">
-                    {{ USERDATA.users_name1 }} {{ USERDATA.users_name2 }}
-                </div>
-                <div class="info">
-                    <i class="fa fa-cog"></i>
-                </div>
-                </a>
-            </div>
+				<!-- Sidebar -->
+				{% if USERDATA.instances|length > 0 %}
+					<div
+						class="sidebar">
+						<!-- Sidebar user (optional) -->
+						<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+							<div class="image">
+								<img src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;" loading="lazy" fetchpriority="high">
+							</div>
+							<a href="{{ CONFIG.ROOTURL }}/user.php" class="d-block">
+								<div class="info">
+									{{ USERDATA.users_name1 }}
+									{{ USERDATA.users_name2 }}
+								</div>
+								<div class="info">
+									<i class="fa fa-cog"></i>
+								</div>
+							</a>
+						</div>
 
-            <!-- Sidebar Menu -->
-            <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    <!-- Add icons to the links using the .nav-icon class
-                         with font-awesome or any other icon font library -->
+						<!-- Sidebar Menu -->
+						<nav class="mt-2">
+							<ul
+								class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+								<!-- Add icons to the links using the .nav-icon class
+																								                         with font-awesome or any other icon font library -->
 
-                {% if USERDATA.instances|length > 0 %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>
-                                Dashboard
-                            </p>
-                        </a>
-                    </li>
-                {% endif %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.SUPPORTURL }}" target="_blank" class="nav-link">
-                            <i class="nav-icon fas fa-question-circle"></i>
-                            <p>
-                                Support
-                            </p>
-                        </a>
-                    </li>
-                {% if "TRAINING:VIEW"|instancePermissions %}
-                    <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
-                        <i class="nav-icon fas fa-graduation-cap"></i>
-                        <p>Training</p>
-                    </a>
-                </li>
-                {% endif %}
-                {% if "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES"|instancePermissions %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
-                            <i class="nav-icon fas fa-notes-medical"></i>
-                            <p>Crew Vacancies</p>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if USERDATA.instances|length > 0 %}
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-city"></i>
-                            <p>
-                                Business
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            {% if "BUSINESS:BUSINESS_STATS:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/instances/stats.php" class="nav-link">
-                                        <i class="nav-icon fas fa-chart-bar"></i>
-                                        <p>
-                                            Stats
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php" class="nav-link">
-                                    <i class="nav-icon far fa-calendar-alt"></i>
-                                    <p>
-                                        Calendar
-                                    </p>
-                                </a>
-                            </li>
+								{% if USERDATA.instances|length > 0 %}
+									<li class="nav-item">
+										<a href="{{ CONFIG.ROOTURL }}/" class="nav-link">
+											<i class="nav-icon fas fa-tachometer-alt"></i>
+											<p>
+												Dashboard
+											</p>
+										</a>
+									</li>
+								{% endif %}
+{% if CONFIG.LINKS_SUPPORTURL|length > 0 %}
 
-                            {% if "CLIENTS:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
-                                        <i class="nav-icon fas fa-briefcase"></i>
-                                        <p>
-                                            Clients
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "FINANCE:PAYMENTS_LEDGER:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
-                                        <i class="nav-icon fas fa-coins"></i>
-                                        <p>
-                                            Payments
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
+								<li class="nav-item">
+									<a href="{{ CONFIG.LINKS_SUPPORTURL }}" target="_blank" class="nav-link">
 
-                            {% if "LOCATIONS:VIEW"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
-                                        <i class="fa fa-map-marked-alt nav-icon"></i>
-                                        <p>
-                                            Locations
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a href="{{ CONFIG.ROOTURL }}/manufacturers.php" class="nav-link">
-                                    <i class="nav-icon fas fa-industry"></i>
-                                    <p>
-                                        Manufacturers
-                                    </p>
-                                </a>
-                            </li>
-                            {% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
-                                        <i class="far fa-newspaper nav-icon"></i>
-                                        <p>
-                                            CMS Pages
-                                        </p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions or "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions or "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions or "BUSINESS:USERS:VIEW:LIST"|instancePermissions or "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
-                            <li class="nav-item">
-                                <a href="{{ CONFIG.ROOTURL }}/instances/navigation.php" class="nav-link">
-                                    <i class="nav-icon fas fa-cog"></i>
-                                    <p>
-                                        Users &amp; Settings
-                                    </p>
-                                </a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    
-                    {% if NAVIGATIONCMSPages %}
-                        <li class="nav-header">PAGES</li>
-                        {% for page in NAVIGATIONCMSPages %}
-                            {% if page.SUBPAGES %}
-                                <li class="nav-item has-treeview">
-                                    <a href="#" class="nav-link">
-                                        <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
-                                        <p>
-                                            {{ page.cmsPages_name }}
-                                            <i class="fas fa-angle-left right"></i>
-                                        </p>
-                                    </a>
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
-                                                <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
-                                                <p>{{ page.cmsPages_name }}</p>
-                                            </a>
-                                        </li>
-                                        {% for page in page.SUBPAGES %}
-                                            <li class="nav-item">
-                                                <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
-                                                    <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
-                                                    <p>{{ page.cmsPages_name }}</p>
-                                                </a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </li>
-                            {% else %}
-                                <li class="nav-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
-                                        <i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
-                                        <p>{{ page.cmsPages_name }}</p>
-                                    </a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <li class="nav-header">ASSETS</li>
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
-                            <i class="nav-icon fas fa-warehouse"></i>
-                            <p>Assets</p>
-                        </a>
-                    </li>
-                    {% if "ASSETS:CREATE"|instancePermissions %}
-                        <li class="nav-item">
-                            <a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
-                                <i class="fas fa-plus nav-icon"></i>
-                                <p>New Asset</p>
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a href="{{ CONFIG.ROOTURL }}/instances/groups.php" class="nav-link">
-                            <i class="nav-icon fas fa-layer-group"></i>
-                            <p>
-                                Groups
-                            </p>
-                        </a>
-                    </li>                    
-                    {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
-                        <li class="nav-item">
-                            <a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
-                                <i class="nav-icon fas fa-paint-roller"></i>
-                                <p>
-                                    Maintenance
-                                </p>
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions %}
-                        <li class="nav-item">
-                            <a href="{{ CONFIG.ROOTURL}}/maintenance/barcode.php" class="nav-link">
-                                <i class="fas fa-barcode nav-icon"></i>
-                                <p>Barcodes</p>
-                            </a>
-                        </li>
-                    {% endif %}
-                {% if "PROJECTS:VIEW"|instancePermissions %}
-                    <li class="nav-header">PROJECTS</li>
-                    {% set archive = false %}
-                    {% for project in projects %}
-                        {% if project.subProjects %}
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon
-                                        {% if project.projectsStatuses_fontAwesome %}
-                                            {{ project.projectsStatuses_fontAwesome }}
-                                        {% elseif project.projects_manager == USERDATA.users_userid %}
-                                        fas fa-star
-                                        {% else %}
-                                        far fa-circle
-                                        {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}" title="{{ project.projectsStatuses_name }}"></i>
-                                    <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
-                                    <i class="fas fa-angle-left right"></i>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
-                                            <i class="nav-icon
-                                                {% if project.projects_manager == USERDATA.users_userid %}
-                                                fas fa-sun
-                                                {% else %}
-                                                far fa-sun
-                                                {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}"  title="{{ project.projectsStatuses_name }}"></i>
-                                            <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
-                                        </a>
-                                    </li>
-                                    {% for subProject in project.subProjects %}
-                                        <li class="nav-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}" class="nav-link">
-                                                <i class="nav-icon
-                                        {% if subProject.projectsStatuses_fontAwesome %}
-                                            {{ subProject.projectsStatuses_fontAwesome }}
-                                        {% elseif subProject.projects_manager == USERDATA.users_userid %}
-                                        fas fa-star
-                                        {% else %}
-                                        far fa-circle
-                                        {% endif %}" style="color: {{ subProject.projectsStatuses_backgroundColour }}"  title="{{ subProject.projectsStatuses_name }}"></i>
-                                                <p title="{{ subProject.projects_name }}">&#8627; {{ subProject.projects_name|u.truncate(19, '...') }}</p>
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
-                                    <i class="nav-icon
-                                        {% if project.projectsStatuses_fontAwesome %}
-                                            {{ project.projectsStatuses_fontAwesome }}
-                                        {% elseif project.projects_manager == USERDATA.users_userid %}
-                                        fas fa-star
-                                        {% else %}
-                                        far fa-circle
-                                        {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}" title="{{ project.projectsStatuses_name }}"></i>
-                                    <p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
-                                </a>
-                            </li>
-                            {% endif %}
-                    {% endfor %}
-                    <li class="nav-item">
-                        <a href="{{CONFIG.ROOTURL}}/project/list.php" class="nav-link">
-                            <i class="nav-icon fas fa-list-ol"></i>
-                            <p>List</p>
-                        </a>
-                    </li>
-                    {% if "PROJECTS:CREATE"|instancePermissions %}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link newProjectButton">
-                                <i class="nav-icon fas fa-plus"></i>
-                                <p>New Project</p>
-                            </a>
-                        </li>
-                    {% endif %}
-                {% endif %}
-                {% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions or "VIEW-ANALYTICS"|serverPermissions or "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
-                <li class="nav-header">SERVER ADMIN</li>
-                {% endif %}
-            {% if "USERS:CREATE"|serverPermissions %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/server/users.php" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            Users
-                            <span class="right badge badge-danger">Server-Wide</span>
-                        </p>
-                    </a>
-                </li>
-            {% endif %}
-            {% if "PERMISSIONS:VIEW"|serverPermissions %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/server/permissions.php" class="nav-link">
-                        <i class="nav-icon fas fa-unlock-alt"></i>
-                        <p>
-                            Permissions
-                            <span class="right badge badge-danger">Server-Wide</span>
-                        </p>
-                    </a>
-                </li>
-            {% endif %}
-            {% if "INSTANCES:VIEW"|serverPermissions %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/server/instances.php" class="nav-link">
-                        <i class="nav-icon fas fa-city"></i>
-                        <p>
-                            Instances
-                            <span class="right badge badge-danger">Server-Wide</span>
-                        </p>
-                    </a>
-                </li>
-            {% endif %}
-            {% if "VIEW-AUDIT-LOG"|serverPermissions %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/server/auditLog.php" class="nav-link">
-                        <i class="nav-icon fas fa-gavel"></i>
-                        <p>
-                            Audit Log
-                            <span class="right badge badge-danger">Server-Wide</span>
-                        </p>
-                    </a>
-                </li>
-            {% endif %}
-            {% if "VIEW-ANALYTICS"|serverPermissions %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/server/analytics/" class="nav-link">
-                        <i class="nav-icon far fa-chart-bar"></i>
-                        <p>
-                            Analytics
-                            <span class="right badge badge-danger">Server-Wide</span>
-                        </p>
-                    </a>
-                </li>
-            {% endif %}
-            {% if "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
-                <li class="nav-item">
-                    <a href="{{ CONFIG.ROOTURL }}/server/import.php" class="nav-link">
-                        <i class="nav-icon fas fa-upload"></i>
-                        <p>
-                            Import
-                            <span class="right badge badge-danger">Server-Wide</span>
-                        </p>
-                    </a>
-                </li>
-            {% endif %}
+										<i class="nav-icon fas fa-question-circle"></i>
+										<p>
+											Support
+										</p>
+									</a>
+								</li>
+{% endif %}
 
-                {% endif %}
-                </ul>
-            </nav>
-        </div>
-        {% endif %}
-    </aside>
+								{% if "TRAINING:VIEW"|instancePermissions %}
+									<li class="nav-item">
+										<a href="{{ CONFIG.ROOTURL}}/training/" class="nav-link">
+											<i class="nav-icon fas fa-graduation-cap"></i>
+											<p>Training</p>
+										</a>
+									</li>
+								{% endif %}
+								{% if "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES"|instancePermissions %}
+									<li class="nav-item">
+										<a href="{{ CONFIG.ROOTURL}}/project/crew/vacancies.php" class="nav-link">
+											<i class="nav-icon fas fa-notes-medical"></i>
+											<p>Crew Vacancies</p>
+										</a>
+									</li>
+								{% endif %}
+								{% if USERDATA.instance.instances_billingUser == USERDATA.users_userid %}
+									<li class="nav-item">
+										<a href="{{ CONFIG.ROOTURL}}/instances/billing.php" class="nav-link">
+											<i class="nav-icon fas fa-money-check"></i>
+											<p>Billing</p>
+										</a>
+									</li>
+								{% endif %}
+								{% if USERDATA.instances|length > 0 %}
+									<li class="nav-item has-treeview">
+										<a href="#" class="nav-link">
+											<i class="nav-icon fas fa-city"></i>
+											<p>
+												Business
+												<i class="fas fa-angle-left right"></i>
+											</p>
+										</a>
+										<ul class="nav nav-treeview">
+											{% if "BUSINESS:BUSINESS_STATS:VIEW"|instancePermissions %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/instances/stats.php" class="nav-link">
+														<i class="nav-icon fas fa-chart-bar"></i>
+														<p>
+															Stats
+														</p>
+													</a>
+												</li>
+											{% endif %}
+											<li class="nav-item">
+												<a href="{{ CONFIG.ROOTURL }}/instances/calendar.php" class="nav-link">
+													<i class="nav-icon far fa-calendar-alt"></i>
+													<p>
+														Calendar
+													</p>
+												</a>
+											</li>
+
+											{% if "CLIENTS:VIEW"|instancePermissions %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/clients.php" class="nav-link">
+														<i class="nav-icon fas fa-briefcase"></i>
+														<p>
+															Clients
+														</p>
+													</a>
+												</li>
+											{% endif %}
+											{% if "FINANCE:PAYMENTS_LEDGER:VIEW"|instancePermissions %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/ledger.php" class="nav-link">
+														<i class="nav-icon fas fa-coins"></i>
+														<p>
+															Payments
+														</p>
+													</a>
+												</li>
+											{% endif %}
+
+											{% if "LOCATIONS:VIEW"|instancePermissions %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/location/" class="nav-link">
+														<i class="fa fa-map-marked-alt nav-icon"></i>
+														<p>
+															Locations
+														</p>
+													</a>
+												</li>
+											{% endif %}
+											<li class="nav-item">
+												<a href="{{ CONFIG.ROOTURL }}/manufacturers.php" class="nav-link">
+													<i class="nav-icon fas fa-industry"></i>
+													<p>
+														Manufacturers
+													</p>
+												</a>
+											</li>
+											{% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/cms/list.php" class="nav-link">
+														<i class="far fa-newspaper nav-icon"></i>
+														<p>
+															CMS Pages
+														</p>
+													</a>
+												</li>
+											{% endif %}
+											{% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions or "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions or "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions or "BUSINESS:USERS:VIEW:LIST"|instancePermissions or "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/instances/navigation.php" class="nav-link">
+														<i class="nav-icon fas fa-cog"></i>
+														<p>
+															Users &amp; Settings
+														</p>
+													</a>
+												</li>
+											{% endif %}
+										</ul>
+									</li>
+
+									{% if NAVIGATIONCMSPages %}
+										<li class="nav-header">PAGES</li>
+										{% for page in NAVIGATIONCMSPages %}
+											{% if page.SUBPAGES %}
+												<li class="nav-item has-treeview">
+													<a href="#" class="nav-link">
+														<i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+														<p>
+															{{ page.cmsPages_name }}
+															<i class="fas fa-angle-left right"></i>
+														</p>
+													</a>
+													<ul class="nav nav-treeview">
+														<li class="nav-item">
+															<a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
+																<i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+																<p>{{ page.cmsPages_name }}</p>
+															</a>
+														</li>
+														{% for page in page.SUBPAGES %}
+															<li class="nav-item">
+																<a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
+																	<i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+																	<p>{{ page.cmsPages_name }}</p>
+																</a>
+															</li>
+														{% endfor %}
+													</ul>
+												</li>
+											{% else %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/cms/?p={{ page.cmsPages_id }}" class="nav-link">
+														<i class="nav-icon {{ page.cmsPages_fontAwesome }}"></i>
+														<p>{{ page.cmsPages_name }}</p>
+													</a>
+												</li>
+											{% endif %}
+										{% endfor %}
+									{% endif %}
+									<li class="nav-header">ASSETS</li>
+									<li class="nav-item">
+										<a href="{{ CONFIG.ROOTURL}}/assets.php" class="nav-link">
+											<i class="nav-icon fas fa-warehouse"></i>
+											<p>Assets</p>
+										</a>
+									</li>
+									{% if "ASSETS:CREATE"|instancePermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
+												<i class="fas fa-plus nav-icon"></i>
+												<p>New Asset</p>
+											</a>
+										</li>
+									{% endif %}
+									<li class="nav-item">
+										<a href="{{ CONFIG.ROOTURL }}/instances/groups.php" class="nav-link">
+											<i class="nav-icon fas fa-layer-group"></i>
+											<p>
+												Groups
+											</p>
+										</a>
+									</li>
+									{% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/maintenance/" class="nav-link">
+												<i class="nav-icon fas fa-paint-roller"></i>
+												<p>
+													Maintenance
+												</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL}}/maintenance/barcode.php" class="nav-link">
+												<i class="fas fa-barcode nav-icon"></i>
+												<p>Barcodes</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "PROJECTS:VIEW"|instancePermissions %}
+										<li class="nav-header">PROJECTS</li>
+										{% set archive = false %}
+										{% for project in projects %}
+											{% if project.subProjects %}
+												<li class="nav-item has-treeview">
+													<a href="#" class="nav-link">
+														<i class="nav-icon
+																														                                        {% if project.projectsStatuses_fontAwesome %}
+																														                                            {{ project.projectsStatuses_fontAwesome }}
+																														                                        {% elseif project.projects_manager == USERDATA.users_userid %}
+																														                                        fas fa-star
+																														                                        {% else %}
+																														                                        far fa-circle
+																														                                        {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}" title="{{ project.projectsStatuses_name }}"></i>
+														<p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
+														<i class="fas fa-angle-left right"></i>
+													</a>
+													<ul class="nav nav-treeview">
+														<li class="nav-item">
+															<a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
+																<i class="nav-icon
+																																		                                                {% if project.projects_manager == USERDATA.users_userid %}
+																																		                                                fas fa-sun
+																																		                                                {% else %}
+																																		                                                far fa-sun
+																																		                                                {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}" title="{{ project.projectsStatuses_name }}"></i>
+																<p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(19, '...') }}</p>
+															</a>
+														</li>
+														{% for subProject in project.subProjects %}
+															<li class="nav-item">
+																<a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}" class="nav-link">
+																	<i class="nav-icon
+																																				                                        {% if subProject.projectsStatuses_fontAwesome %}
+																																				                                            {{ subProject.projectsStatuses_fontAwesome }}
+																																				                                        {% elseif subProject.projects_manager == USERDATA.users_userid %}
+																																				                                        fas fa-star
+																																				                                        {% else %}
+																																				                                        far fa-circle
+																																				                                        {% endif %}" style="color: {{ subProject.projectsStatuses_backgroundColour }}" title="{{ subProject.projectsStatuses_name }}"></i>
+																	<p title="{{ subProject.projects_name }}">&#8627;
+																		{{ subProject.projects_name|u.truncate(19, '...') }}</p>
+																</a>
+															</li>
+														{% endfor %}
+													</ul>
+												</li>
+											{% else %}
+												<li class="nav-item">
+													<a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}" class="nav-link">
+														<i class="nav-icon
+																														                                        {% if project.projectsStatuses_fontAwesome %}
+																														                                            {{ project.projectsStatuses_fontAwesome }}
+																														                                        {% elseif project.projects_manager == USERDATA.users_userid %}
+																														                                        fas fa-star
+																														                                        {% else %}
+																														                                        far fa-circle
+																														                                        {% endif %}" style="color: {{ project.projectsStatuses_backgroundColour }}" title="{{ project.projectsStatuses_name }}"></i>
+														<p title="{{ project.projects_name }}">{{ project.projects_name|u.truncate(24, '...') }}</p>
+													</a>
+												</li>
+											{% endif %}
+										{% endfor %}
+										<li class="nav-item">
+											<a href="{{CONFIG.ROOTURL}}/project/list.php" class="nav-link">
+												<i class="nav-icon fas fa-list-ol"></i>
+												<p>List</p>
+											</a>
+										</li>
+										{% if "PROJECTS:CREATE"|instancePermissions %}
+											<li class="nav-item">
+												<a href="#" class="nav-link newProjectButton">
+													<i class="nav-icon fas fa-plus"></i>
+													<p>New Project</p>
+												</a>
+											</li>
+										{% endif %}
+									{% endif %}
+									{% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions or "VIEW-ANALYTICS"|serverPermissions or "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
+										<li class="nav-header">SERVER ADMIN</li>
+									{% endif %}
+									{% if "CONFIG:SET"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/config.php" class="nav-link">
+												<i class="nav-icon fas fa-cog"></i>
+												<p>
+													Configuration
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "USERS:CREATE"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/users.php" class="nav-link">
+												<i class="nav-icon fas fa-users"></i>
+												<p>
+													Users
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "PERMISSIONS:VIEW"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/permissions.php" class="nav-link">
+												<i class="nav-icon fas fa-unlock-alt"></i>
+												<p>
+													Permissions
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "INSTANCES:VIEW"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/instances.php" class="nav-link">
+												<i class="nav-icon fas fa-city"></i>
+												<p>
+													Businesses
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "VIEW-AUDIT-LOG"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/auditLog.php" class="nav-link">
+												<i class="nav-icon fas fa-gavel"></i>
+												<p>
+													Audit Log
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "VIEW-ANALYTICS"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/analytics/" class="nav-link">
+												<i class="nav-icon far fa-chart-bar"></i>
+												<p>
+													Analytics
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
+									{% endif %}
+									{% if "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
+										<li class="nav-item">
+											<a href="{{ CONFIG.ROOTURL }}/server/import.php" class="nav-link">
+												<i class="nav-icon fas fa-upload"></i>
+												<p>
+													Import
+													<span class="right badge badge-danger">Server-Wide</span>
+												</p>
+											</a>
+										</li>
+									{% endif %}
+
+								{% endif %}
+							</ul>
+						</nav>
+					</div>
+				{% endif %}
+			</aside>
 
 
-    <!-- Content Wrapper. Contains page content -->
-    <!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp hidden-lg hidden-md hidden-sm"></div>-->
-    <div class="content-wrapper" id="content-wrapper">
-        <div class="content-header">
-            <div class="container-fluid">
-                {%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>
-                            {{ pageConfig.TITLE }}
-                        </h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{CONFIG.ROOTURL}}">Home</a></li>
-                            <li class="breadcrumb-item active">{{ pageConfig.TITLE }}</li>
-                        </ol>
-                    </div>
+			<!-- Content Wrapper. Contains page content -->
+			<!--<div style="height: 0px; width: 10px; padding: 0px; margin: 0px;" class="paddingapp hidden-lg hidden-md hidden-sm"></div>-->
+			<div class="content-wrapper" id="content-wrapper">
+				<div class="content-header">
+					<div class="container-fluid">
+						{%  if pageConfig.BREADCRUMB == true and pageConfig.TITLE != null %}
+							<div class="row mb-2">
+								<div class="col-sm-6">
+									<h1>
+										{{ pageConfig.TITLE }}
+									</h1>
+								</div>
+								<div class="col-sm-6">
+									<ol class="breadcrumb float-sm-right">
+										<li class="breadcrumb-item">
+											<a href="{{CONFIG.ROOTURL}}">Home</a>
+										</li>
+										<li class="breadcrumb-item active">{{ pageConfig.TITLE }}</li>
+									</ol>
+								</div>
 
-                </div>
-                {% endif %}
-                {% if CONFIG.DEV %}
-                <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 0px;">
-                    <h4>
-                        <i class="fa fa-terminal"></i> AdamRMS is running in development mode, and should only be used for testing purposes
-                    </h4>
-                    {% if CONFIG.ENABLE_DEV_DB_EDITOR %} 
-                    <a type="button" href="{{ CONFIG.ROOTURL }}/server/database-editor/" class="btn btn-info btn-sm">Database Editor</a>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        <div class="content">
-            <div class="container-fluid">
-                {% block content %}
-                {% endblock %}
-            </div><!-- /.container-fluid -->
-        </div><!-- /.content -->
-    </div><!-- /.content-wrapper -->
-    <footer class="main-footer" id="main-footer">
-        <div class="float-right d-none d-sm-block">
-            {% if CONFIG.DEV %}
-                DEV BUILD
-            {% else %}
-                <a href="https://github.com/adam-rms/adam-rms/releases" target="_blank">{{ CONFIG.VERSION.ENV ?: CONFIG.VERSION.TAG }}</a>
-            {% endif %}
-        </div>
-        <strong>&copy;2018-{{ "now"|date("Y") }} <a href="https://bithell.studio">Bithell Studios Ltd</a>.</strong> All rights
-        reserved.
-    </footer>
-</div>
-<script>
-    $(document).ready(function () {
-        $('[data-toggle="popover"]').popover({
-            html: true,
-        });
+							</div>
+						{% endif %}
+						{% if CONFIG.DEV %}
+							<div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 0px;">
+								<h4>
+									<i class="fa fa-terminal"></i>
+									{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes
+								</h4>
+								<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+				<div class="content">
+					<div class="container-fluid"> {% block content %}{% endblock %}
+						</div>
+						<!-- /.container-fluid -->
+					</div>
+					<!-- /.content -->
+				</div>
+				<!-- /.content-wrapper -->
+				<footer class="main-footer" id="main-footer">
+					<div class="float-right d-none d-sm-block">
+						<a href="https://github.com/adam-rms/adam-rms/releases" target="_blank">{{ VERSION }}</a>
+					</div>
+					<strong>&copy;2018-{{ "now"|date("Y") }}
+						<a href="https://bithell.studio">Bithell Studios Ltd</a>.</strong>
+					All rights
+															        reserved.
+				</footer>
+			</div>
+			<script>
+				$(document).ready(function () {
+$('[data-toggle="popover"]').popover({html: true});
 
-        function changeTheme(isDark){
-            if(isDark){
-                $('body').addClass("dark-mode");
-                //Trigger the theme change in js so that other plugins can change their theme
-                $('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
-                $(document).trigger("themeChange", 'dark');
-                $('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
-                $(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png");
-                $('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
-                $('.brand-link').css("color","rgba(255,255,255,.8)");
-            } else {
-                $('body').removeClass("dark-mode");
-                //Trigger the theme change in js so that other plugins can change their theme
-                $(document).trigger("themeChange", 'light');
-                $('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
-                $('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
-                $(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png");
-                $('.brand-link').removeClass("navbar-dark").addClass("navbar-white");
-                $('.brand-link').css("color","rgba(0,0,0,.8)");
-            }
-        }
+function changeTheme(isDark) {
+if (isDark) {
+$('body').addClass("dark-mode");
+// Trigger the theme change in js so that other plugins can change their theme
+$('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
+$(document).trigger("themeChange", 'dark');
+$('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
+$(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png");
+$('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
+$('.brand-link').css("color", "rgba(255,255,255,.8)");
+} else {
+$('body').removeClass("dark-mode");
+// Trigger the theme change in js so that other plugins can change their theme
+$(document).trigger("themeChange", 'light');
+$('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
+$('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
+$(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png");
+$('.brand-link').removeClass("navbar-dark").addClass("navbar-white");
+$('.brand-link').css("color", "rgba(0,0,0,.8)");
+}
+}
 
-        $(document).on("click","#toggle-theme", function () {
-            const isDark = !$('body').hasClass('dark-mode');
-            ajaxcall("account/theme.php", isDark ? {'dark': 1} : {}, function (data) {
-                //Change Theme
-                changeTheme(isDark);
+$(document).on("click", "#toggle-theme", function () {
+const isDark = !$('body').hasClass('dark-mode');
+ajaxcall("account/theme.php", isDark ? {
+'dark': 1
+} : {}, function (data) { // Change Theme
+changeTheme(isDark);
 
-                //Used to trigger other adamRMS windows to change their theme
-                localStorage.setItem('theme', isDark ? "dark" : "light");
-                localStorage.removeItem('theme');
-            });
-        });
-        //Triggers when the storage is changed in other tabs. Used to see if the theme has been updated
-        $(window).on('storage', function (event) {
-            // ignore other keys
-            if (event.originalEvent.key!='theme') return;
+// Used to trigger other {{ CONFIG.PROJECT_NAME }} windows to change their theme
+localStorage.setItem('theme', isDark ? "dark" : "light");
+localStorage.removeItem('theme');
+});
+});
+// Triggers when the storage is changed in other tabs. Used to see if the theme has been updated
+$(window).on('storage', function (event) { // ignore other keys
+if (event.originalEvent.key != 'theme') 
+return;
 
-            // ignore empty messages or messages reset
-            var theme=event.originalEvent.newValue
-            if (!theme) return;
 
-            //Change Theme
-            changeTheme(theme == "dark");
-        });
 
-        {% if "PROJECTS:CREATE"|instancePermissions %}
-        $(".newProjectButton").click(function () {
-            bootbox.prompt({
-                title: "Select Project Type",
-                inputType: 'select',
-                inputOptions: [
-                    {% for type in potentialProjectTypes %}
-                    {
-                        text: '{{type.projectsTypes_name|escape('js')}}',
-                        value: '{{ type.projectsTypes_id }}',
-                    },
-                    {% endfor %}
-                ],
-                callback: function (result) {
-                    if (result) {
-                        var projectType = result;
-                        bootbox.prompt({
-                            title: "Select Project Manager",
-                            inputType: 'select',
-                            value: {{ USERDATA.users_userid }},
-                            inputOptions: [
-                                {% for user in potentialProjectManagers %}
-                                {
-                                    text: '{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}',
-                                    value: '{{ user.users_userid }}',
-                                },
-                                {% endfor %}
-                            ],
-                            callback: function (result) {
-                                if (result) {
-                                    var projectManager = result;
-                                    bootbox.prompt("Enter Project Name", function (result) {
-                                        if (result) {
-                                            ajaxcall("projects/new.php", {
-                                                "projects_name": result,
-                                                "projectsType_id": projectType,
-                                                "projects_manager": projectManager
-                                            }, function (data) {
-                                                window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
-                                            });
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        });
-        {% endif %}
-        {% if USERDATA.instances|length > 1 %}
-            $(".changeInstanceActionButton[data-newinstance]").click(function (event) {
-                event.preventDefault();
-                ajaxcall("instances/switch.php", {'instances_id': $(this).data("newinstance")}, function (data) {
-                    location.reload();
-                });
-            });
-        {% endif %}
-    });
-    console.log("Welcome to {{ CONFIG.PROJECT_NAME|escape("js") }} version {{ (CONFIG.VERSION.ENV ?: CONFIG.VERSION.TAG)|escape("js") }}");
-</script>
-{% include 'analytics.twig' %}
-</body>
-</html>
+// ignore empty messages or messages reset
+var theme = event.originalEvent.newValue
+if (! theme) 
+return;
+
+
+
+// Change Theme
+changeTheme(theme == "dark");
+});{% if "PROJECTS:CREATE"|instancePermissions %}$(".newProjectButton").click(function () {
+bootbox.prompt({
+title: "Select Project Type",
+inputType: 'select',
+inputOptions: [{% for type in potentialProjectTypes %}{
+text: '{{ type.projectsTypes_name|escape('js') }}',
+value: '{{ type.projectsTypes_id }}'
+},{% endfor %}],
+callback: function (result) {
+if (result) {
+var projectType = result;
+bootbox.prompt({
+title: "Select Project Manager",
+inputType: 'select',
+value: {{ USERDATA.users_userid }},
+inputOptions: [{% for user in potentialProjectManagers %}{
+text: '{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}',
+value: '{{ user.users_userid }}'
+},{% endfor %}],
+callback: function (result) {
+if (result) {
+var projectManager = result;
+bootbox.prompt("Enter Project Name", function (result) {
+if (result) {
+ajaxcall("projects/new.php", {
+"projects_name": result,
+"projectsType_id": projectType,
+"projects_manager": projectManager
+}, function (data) {
+window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+});
+}
+});
+}
+}
+});
+}
+}
+});
+});{% endif %}{% if USERDATA.instances|length > 1 %}$(".changeInstanceActionButton[data-newinstance]").click(function (event) {
+event.preventDefault();
+ajaxcall("instances/switch.php", {
+'instances_id': $(this).data("newinstance")
+}, function (data) {
+location.reload();
+});
+});{% endif %}
+});
+console.log("Welcome to    {{ CONFIG.PROJECT_NAME|escape("js") }}version    {{ VERSION|escape("js") }}");
+			</script>
+			{{ CONFIG.FOOTER_ANALYTICS|raw }}
+		</body>
+	</html>

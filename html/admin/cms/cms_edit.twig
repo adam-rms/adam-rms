@@ -50,11 +50,13 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="index" value="" />
-                        {% embed 'common/plugins/uppy.twig' with {'type': 'CMS-IMAGE', 'paste': true, 'typeId': 19, 'subTypeId': PAGE.cmsPages_id, 'imagesOnly': true } %}
-                            {% block success %}
-                                $('#summernote').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
-                            {% endblock %}
-                        {% endembed %}
+                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+                                {% embed 'assets/templates/uppy.twig' with {'type': 'CMS-IMAGE', 'paste': true, 'typeId': 19, 'subTypeId': PAGE.cmsPages_id, 'imagesOnly': true } %}
+                                    {% block success %}
+                                        $('#summernote').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                                    {% endblock %}
+                                {% endembed %}
+                        {% endif %}
                         <br/>
                         <div class="summernote" id="summernote"></div>
                     </div>
@@ -369,7 +371,7 @@
                         value: "inventoryTotal",
                     },
                     {
-                        text: "Stats: Number of Users on AdamRMS",
+                        text: "Stats: Number of Users on {{ CONFIG.PROJECT_NAME }}",
                         value: "userCount",
                     },
                     {
@@ -381,7 +383,7 @@
                         value: "myMaintenance",
                     },
                     {
-                        text: "Stats: Storage Usage on AdamRMS",
+                        text: "Stats: Storage Usage on {{ CONFIG.PROJECT_NAME }}",
                         value: "storageUsage",
                     }
                     ],
