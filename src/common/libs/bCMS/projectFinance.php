@@ -5,61 +5,27 @@ use Money\Currency;
 
 class projectFinance
 {
-  public function durationMaths($projects_dates_deliver_start, $projects_dates_deliver_end)
+  public function durationMathsByDates($start, $end)
   {
-    //Calculate the default pricing for all assets
-    $return = ["string" => "Calculated based on:", "days" => 0, "weeks" => 0];
-    $start = strtotime(date("d F Y 00:00:00", strtotime($projects_dates_deliver_start)));
-    $end = strtotime(date("d F Y 23:59:59", strtotime($projects_dates_deliver_end)));
-    if (date("N", $start) == 6) {
-      $return['weeks'] += 1;
-      $return['string'] .= "\nBegins on Saturday so first weekend charged as one week";
-      $start = $start + (86400 * 2);
-    } elseif (date("N", $start) == 7) {
-      $return['weeks'] += 1;
-      $return['string'] .= "\nBegins on Sunday so first weekend charged as one week";
-      $start = $start + 86400;
-    }
-    if (($end - $start) > 259200) { //If it's just one weekend it doesn't count as two weeks
-      if (date("N", $end) == 6) {
-        $return['weeks'] += 1;
-        $return['string'] .= "\nEnds on Saturday so last weekend charged as one week";
-        $end = $end - 86400;
-      } elseif (date("N", $end) == 7) {
-        $return['weeks'] += 1;
-        $return['string'] .= "\nEnds on Sunday so last weekend charged as one week";
-        $end = $end - (86400 * 2);
-      }
-    }
+    $start = strtotime(date("d F Y 00:00:00", strtotime($start)));
+    $end = strtotime(date("d F Y 23:59:59", strtotime($end)));
+    $diff = ceil(($end - $start) / 86400);
+    if ($diff < 1) $diff = 1;
+    return ["days" => $diff, "weeks" => 0, "calendarDays" => $diff];
+  }
+  public function durationMaths($projects_id)
+  {
+    global $DBLIB;
+    $DBLIB->where("projects_id", $projects_id);
+    $project = $DBLIB->getone("projects", ["projects_dates_finances_days", "projects_dates_finances_weeks", "projects_dates_deliver_start", "projects_dates_deliver_end"]);
+    if (!$project) return false;
 
-    $remaining = strtotime(date("d F Y 23:59:59", $end)) - strtotime(date("d F Y", $start));
-    if ($remaining > 0) {
-      $remaining = ceil($remaining / 86400); //Convert to days
-      $weeks = floor($remaining / 7); //Number of week periods
-      if ($weeks > 0) {
-        $return['weeks'] += $weeks;
-        if ($weeks == 1) {
-          $return['string'] .= "\nAdd 1 week period to reflect a period of more than 7 days";
-        } else {
-          $return['string'] .= "\nAdd " . $weeks . " week periods to reflect a period of more than 7 days";
-        }
-        $remaining = $remaining - ($weeks * 7);
-      }
-      if ($remaining > 2) {
-        $return['string'] .= "\nAdd a week to discount a period between 3 and 7 days";
-        $return['weeks'] += 1;
-        $remaining = $remaining - 7;
-      }
-      if ($remaining > 0) {
-        $return['days'] += ceil($remaining);
-        if ($remaining == 1) {
-          $return['string'] .= "\nAdd 1 day period";
-        } else {
-          $return['string'] .= "\nAdd " . ceil($remaining) . " day periods";
-        }
-      }
+    if ($project['projects_dates_finances_days'] !== NULL and $project['projects_dates_finances_weeks'] !== NULL) {
+      $rawDays = $this->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end']);
+      return ["days" => $project['projects_dates_finances_days'], "weeks" => $project['projects_dates_finances_weeks'], "calendarDays" => $rawDays['days']];
+    } else {
+      return $this->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end']);
     }
-    return $return;
   }
 }
 class projectFinanceCacher
