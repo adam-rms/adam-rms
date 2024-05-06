@@ -56,7 +56,7 @@ margin-bottom: 20px;
 	}
 </style>
 <div>
-	<h1>Welcome to {{ CONFIG.PROJECT_NAME }}</h1>
+	<h1>Welcome to AdamRMS</h1>
 	<p>If you can see this message, then you have setup the database correctly, but you need to set up some configuration settings before you can get started.
 	</p>
 </div>
@@ -80,8 +80,7 @@ margin-bottom: 20px;
 					{% endfor %}
 			</select>
 		{% else %}
-	<input type="{{ field.form.type }}" name="{{ key|escape('html_attr') }}" value="{{ null is same as(field.value) ? field.form.default|escape('html_attr') : field.value|escape('html_attr') }}" placeholder="{{ field.form.default|escape('html_attr') }}" {{ field.form.required ? "required" : ''}} {{ field.form.minlength ? ('minlength="' ~ field.form.minlength ~ '"')|raw : '' }} {{ field.form.maxlength ? ('maxlength="' ~ field.form.maxlength ~ '"')|raw : '' }}/>
-
+<input type="{{ field.form.type }}" name="{{ key|escape('html_attr') }}" value="{{ null is same as(field.value) or field.value is same as(false) ? field.form.default|escape('html_attr') : field.value|escape('html_attr') }}" placeholder="{{ field.form.default|escape('html_attr') }}" {{ field.form.required ? "required" : ''}} {{ field.form.minlength ? ('minlength="' ~ field.form.minlength ~ '"')|raw : '' }} {{ field.form.maxlength ? ('maxlength="' ~ field.form.maxlength ~ '"')|raw : '' }}/>
 		{% endif %}
 	{% endif %}
 {% endfor %}<input type="submit" value="Save"><input type="hidden" name="settingUpConfigUsingConfigFormTwig" value="true"/>

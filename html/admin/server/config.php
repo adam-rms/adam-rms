@@ -7,7 +7,9 @@ if (!$AUTH->serverPermissionCheck("CONFIG:SET")) die($TWIG->render('404.twig', $
 
 if (isset($_POST['changingConfigUsingConfigFormTwig']) and $_POST['changingConfigUsingConfigFormTwig'] == "true") {
 	$update = $CONFIGCLASS->formArrayProcess($_POST);
-	header("Location: " . "?");
+	if (!is_array($update)) {
+		header("Location: " . "?");
+	}
 }
 
 $PAGEDATA["form"] = $CONFIGCLASS->formArrayBuild();

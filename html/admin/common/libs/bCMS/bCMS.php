@@ -263,7 +263,7 @@ class bCMS
       $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
         'url' => $CONFIGCLASS->get("AWS_CLOUDFRONT_ENDPOINT") . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
         'expires' => strtotime($file['expiry']),
-        'private_key' => $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'),
+        'private_key' => str_replace(["BEGIN\nRSA\nPRIVATE\nKEY", "END\nRSA\nPRIVATE\nKEY"], ["BEGIN RSA PRIVATE KEY", "END RSA PRIVATE KEY"], str_replace(" ", "\n", $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'))),
         'key_pair_id' => $CONFIGCLASS->get('AWS_CLOUDFRONT_KEYPAIRID')
       ]);
       return $signedUrlCannedPolicy;
@@ -339,9 +339,9 @@ class bCMS
   }
   function getVersionNumber()
   {
-    if (getenv('bCMS__VERSION')) {
-      if (strlen(getenv('bCMS__VERSION')) > 7) return substr(getenv('bCMS__VERSION'), 0, 7);
-      else return getenv('bCMS__VERSION');
+    if (getenv('VERSION_NUMBER')) {
+      if (strlen(getenv('VERSION_NUMBER')) > 7) return substr(getenv('VERSION_NUMBER'), 0, 7);
+      else return getenv('VERSION_NUMBER');
     } else if (file_exists(__DIR__ . '/../../version/TAG.txt')) {
       return file_get_contents(__DIR__ . '/../../version/TAG.txt');
     } else if (file_exists(__DIR__ . '/../../version/COMMIT.txt')) {

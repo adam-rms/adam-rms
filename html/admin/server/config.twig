@@ -19,6 +19,9 @@
                     </h3>
                 </div>
                 <div class="card-body">
+                    {% if errors %}
+                    <p style="color: red;">Could not save - please check the details below</p>
+                    {% endif %}
 	                <form method="post">
                         {% set currentgroup = "" %}
                         {% for key,field in form %}

@@ -53,7 +53,7 @@ $configStructureArray = [
       "name" => "Email sending",
       "group" => "Email",
       "description" => "Should AdamRMS send emails to users? If this is enabled then a provider must be setup below.",
-      "required" => true,
+      "required" => false,
       "maxlength" => 255,
       "minlength" => 5,
       "options" => ["Enabled", "Disabled"],
@@ -74,7 +74,7 @@ $configStructureArray = [
       "name" => "Email provider",
       "group" => "Email",
       "description" => "Which provider should AdamRMS use to send emails to users? This option is ignored if email sending is disabled.",
-      "required" => true,
+      "required" => false,
       "maxlength" => 255,
       "minlength" => 5,
       "options" => ["Sendgrid"],
@@ -100,9 +100,7 @@ $configStructureArray = [
       "minlength" => 0,
       "options" => [],
       "verifyMatch" => function ($value, $options) {
-        $checkedValue = filter_var($value, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/^[a-zA-Z0-9_]+$/"]]);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
-        else return ["valid" => false, "value" => null, "error" => "Invalid SendGrid API key"];
+        return ["valid" => true, "value" => $value, "error" => null];
       }
     ],
     "specialRequest" => true,
@@ -146,9 +144,7 @@ $configStructureArray = [
       "minlength" => 0,
       "options" => [],
       "verifyMatch" => function ($value, $options) {
-        $checkedValue = filter_var($value, FILTER_VALIDATE_REGEXP, ["options" => ["regexp" => "/^[a-zA-Z0-9_]+$/"]]);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
-        else return ["valid" => false, "value" => null, "error" => "Invalid Sentry.io API key"];
+        return ["valid" => true, "value" => $value, "error" => null];
       }
     ],
     "specialRequest" => false,
@@ -193,7 +189,7 @@ $configStructureArray = [
       "name" => "Next password hashing algorithm",
       "group" => "Security & Login",
       "description" => "The hashing algorithm to use for new passwords. Changing this will not require users to change their passwords, but it will change the hashing algorithm the next time a given user changes their password.",
-      "required" => true,
+      "required" => false,
       "maxlength" => 6,
       "minlength" => 6,
       "options" => ["sha256", "sha512"],
@@ -392,7 +388,7 @@ $configStructureArray = [
       "name" => "File storage enabled",
       "group" => "File Storage",
       "description" => "Whether AWS S3 file storage is enabled or disabled. If disabled, AdamRMS will not allow users to upload files.",
-      "required" => true,
+      "required" => false,
       "maxlength" => 8,
       "minlength" => 7,
       "options" => ["Enabled", "Disabled"],
@@ -436,7 +432,7 @@ $configStructureArray = [
       "group" => "File Storage",
       "description" => "The AWS server secret key.",
       "required" => false,
-      "maxlength" => 255,
+      "maxlength" => 2000,
       "minlength" => 0,
       "options" => [],
       "verifyMatch" => function ($value, $options) {
@@ -587,7 +583,7 @@ $configStructureArray = [
       "group" => "File Storage",
       "description" => "The AWS CloudFront private key.",
       "required" => false,
-      "maxlength" => 255,
+      "maxlength" => 2000,
       "minlength" => 0,
       "options" => [],
       "verifyMatch" => function ($value, $options) {
@@ -734,7 +730,7 @@ $configStructureArray = [
       },
       "name" => "Stripe Key",
       "group" => "Billing",
-      "description" => "The stripe key to use for stripe billing support. Leave blank to disable stripe billing.",
+      "description" => "The stripe key to use for stripe billing support. Leave blank to disable stripe billing. Requires permissions for billing portal, prices, sessions and products.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
