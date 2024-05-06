@@ -342,10 +342,10 @@ class bCMS
     if (getenv('VERSION_NUMBER')) {
       if (strlen(getenv('VERSION_NUMBER')) > 7) return substr(getenv('VERSION_NUMBER'), 0, 7);
       else return getenv('VERSION_NUMBER');
-    } else if (file_exists(__DIR__ . '/../../version/TAG.txt')) {
-      return file_get_contents(__DIR__ . '/../../version/TAG.txt');
-    } else if (file_exists(__DIR__ . '/../../version/COMMIT.txt')) {
-      return file_get_contents(__DIR__ . '/../../version/COMMIT.txt');
+    } else if (file_exists(__DIR__ . '/../../../version/TAG.txt')) {
+      return file_get_contents(__DIR__ . '/../../../version/TAG.txt');
+    } else if (file_exists(__DIR__ . '/../../../version/COMMIT.txt')) {
+      return file_get_contents(__DIR__ . '/../../../version/COMMIT.txt');
     } else {
       return "Version Unknown";
     }
