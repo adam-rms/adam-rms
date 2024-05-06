@@ -47,15 +47,6 @@ if (getenv('DEV_MODE') == "true") {
     error_reporting(0);
 }
 
-if (getenv('DEV_MODE') != "true") {
-    Sentry\init([
-        'dsn' => $CONFIG['ERRORS_PROVIDERS_SENTRY'],
-        'traces_sample_rate' => 0.1, //Capture 10% of pageloads for perforamnce monitoring
-        //'release' => , bCMS isn't intalised here so we can't easily get the version
-        'sample_rate' => 1.0,
-    ]);
-}
-
 /* DATBASE CONNECTION */
 try {
     $DBLIB = new MysqliDb([
@@ -80,6 +71,13 @@ try {
 
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
+if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strlen($CONFIG['ERRORS_PROVIDERS_SENTRY']) > 0) {
+    Sentry\init([
+        'dsn' => $CONFIG['ERRORS_PROVIDERS_SENTRY'],
+        //'release' => , bCMS isn't intalised here so we can't easily get the version
+        'sample_rate' => 1.0,
+    ]);
+}
 if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
     $update = false;
     if (isset($_POST['settingUpConfigUsingConfigFormTwig']) and $_POST['settingUpConfigUsingConfigFormTwig'] == "true") {
