@@ -927,6 +927,6 @@ location.reload();
 });
 console.log("Welcome to    {{ CONFIG.PROJECT_NAME|escape("js") }}version    {{ VERSION|escape("js") }}");
 			</script>
-			{% include 'assets/templates/analytics.twig' %}
+			{{ CONFIG.FOOTER_ANALYTICS|raw }}
 		</body>
 	</html>

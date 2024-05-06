@@ -362,6 +362,27 @@ $configStructureArray = [
     "default" => null,
     "envFallback" => false,
   ],
+  "FOOTER_ANALYTICS" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Analytics Tracking Links",
+      "group" => "Customisation",
+      "description" => "Code to insert into the footer of all pages, such as a Google Analytics tracking link",
+      "required" => false,
+      "maxlength" => 2000,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => null,
+    "envFallback" => false,
+  ],
   "FILES_ENABLED" => [
     "form" => [
       "type" => "select",
