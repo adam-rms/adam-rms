@@ -71,13 +71,6 @@ try {
 
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
-if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strlen($CONFIG['ERRORS_PROVIDERS_SENTRY']) > 0) {
-    Sentry\init([
-        'dsn' => $CONFIG['ERRORS_PROVIDERS_SENTRY'],
-        //'release' => , bCMS isn't intalised here so we can't easily get the version
-        'sample_rate' => 1.0,
-    ]);
-}
 if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
     $update = false;
     if (isset($_POST['settingUpConfigUsingConfigFormTwig']) and $_POST['settingUpConfigUsingConfigFormTwig'] == "true") {
@@ -96,6 +89,14 @@ date_default_timezone_set($CONFIG['TIMEZONE']);
 // Include the bCMS class, which contains useful functions 
 require_once __DIR__ . '/libs/bCMS/bCMS.php';
 $GLOBALS['bCMS'] = new bCMS;
+
+if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strlen($CONFIG['ERRORS_PROVIDERS_SENTRY']) > 0) {
+    Sentry\init([
+        'dsn' => $CONFIG['ERRORS_PROVIDERS_SENTRY'],
+        'release' => $bCMS->getVersionNumber(),
+        'sample_rate' => 1.0,
+    ]);
+}
 
 // TODO move these functions to a class
 function generateNewTag()
