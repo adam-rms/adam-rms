@@ -25,8 +25,10 @@
                 <div class="card-body table-responsive p-0">
                     {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
                         {% if NOCAPACITY %}
+                        <div class="p-2">
                             <p>Your current plan does not enable you to add any more users. You have {{ NOCAPACITY.USED }} users, with a limit of {{ NOCAPACITY.CAPACITY }}.</p>
                             <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+                        </div>
                         {% else %}
                         <div class="input-group  mb-3" style="padding: 10px; padding-bottom: 0;">
                             <select class="form-control" multiple="multiple" id="addUserToInstance"></select>

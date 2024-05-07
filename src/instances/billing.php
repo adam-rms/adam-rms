@@ -52,4 +52,6 @@ $PAGEDATA['stats'] = $instance;
 $DBLIB->where("users_userid",  $AUTH->data['instance']['instances_billingUser']);
 $PAGEDATA['billingUser'] = $DBLIB->getOne("users", ["users.users_name1", "users.users_name2", "users.users_userid"]);
 
+$PAGEDATA['billingEnabled'] = $CONFIG['STRIPE_KEY'] !== null;
+
 echo $TWIG->render('instances/instances_billing.twig', $PAGEDATA);

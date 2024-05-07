@@ -46,6 +46,7 @@ if ($AUTH->data['users_emailVerified'] == 1) {
         $instance['trustedDomains'] = json_decode($instance['instances_trustedDomains'], true);
         if (!$instance['trustedDomains']['domains'] or count($instance['trustedDomains']['domains']) < 1 or !$instance['trustedDomains']['instancePositions_id']) continue;
         elseif (!in_array($userEmailDomain, $instance['trustedDomains']['domains'])) continue; // Not eligible to join
+        elseif (!$bCMS->instanceHasUserCapacity($instance['instances_id'])) continue; // No space in instance
         else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'][] = $instance;
     }
 } else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'] = [];
@@ -125,6 +126,12 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
         $page['SUBPAGES'] = $DBLIB->get("cmsPages");
         $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
     }
+
+    //Store availability of limited features
+    $PAGEDATA['instanceProjectsAvailable'] = $bCMS->instanceHasProjectCapacity($AUTH->data['instance']['instances_id']);
+    $PAGEDATA['instanceAssetsAvailable'] = $bCMS->instanceHasAssetCapacity($AUTH->data['instance']['instances_id']);
+    $PAGEDATA['instanceUsersAvailable'] = $bCMS->instanceHasUserCapacity($AUTH->data['instance']['instances_id']);
+
 } elseif ($AUTH->serverPermissionCheck("INSTANCES:VIEW") && $AUTH->serverPermissionCheck("INSTANCES:FULL_PERMISSIONS_IN_INSTANCE")) {
     // User is a server admin who has no instance - this is often caused by them deleting one. Select an instance for them to use at random.
     $DBLIB->where("instances_deleted", 0);

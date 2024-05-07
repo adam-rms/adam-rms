@@ -363,6 +363,35 @@ class bCMS
     $userUsed = $DBLIB->getValue("users", "COUNT(users.users_userid)");
     if ($userCapacity > 0 and $userUsed >= $userCapacity)
       return false;
-    else return true;
+    return true;
+  }
+  function instanceHasProjectCapacity($instanceid)
+  {
+    global $DBLIB;
+    $DBLIB->where("instances_id", $instanceid);
+    $projectCapacity = $DBLIB->getvalue("instances", "instances_projectLimit");
+
+    $DBLIB->where("projects.instances_id", $instanceid);
+    $DBLIB->where("projects.projects_deleted", 0);
+    $DBLIB->where("projects.projects_archived", 0);
+    $projectsUsed = $DBLIB->getValue("projects", "COUNT(projects.projects_id)");
+
+    if ($projectCapacity > 0 and $projectsUsed >= $projectCapacity)
+      return false;
+    return true;
+  }
+  function instanceHasAssetCapacity($instanceid)
+  {
+    global $DBLIB;
+    $DBLIB->where("instances_id", $instanceid);
+    $projectCapacity = $DBLIB->getvalue("instances", "instances_assetLimit");
+
+    $DBLIB->where("instances_id", $instanceid);
+    $DBLIB->where("assets_deleted", 0);
+    $assetUsed = $DBLIB->getValue("assets", "COUNT(assets_id)");
+
+    if ($projectCapacity > 0 and $assetUsed >= $projectCapacity)
+      return false;
+    return true;
   }
 }

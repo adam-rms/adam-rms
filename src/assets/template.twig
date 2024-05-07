@@ -569,7 +569,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 											<p>Assets</p>
 										</a>
 									</li>
-									{% if "ASSETS:CREATE"|instancePermissions %}
+									{% if "ASSETS:CREATE"|instancePermissions and instanceAssetsAvailable %}
 										<li class="nav-item">
 											<a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
 												<i class="fas fa-plus nav-icon"></i>
@@ -673,7 +673,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 												<p>List</p>
 											</a>
 										</li>
-										{% if "PROJECTS:CREATE"|instancePermissions %}
+										{% if "PROJECTS:CREATE"|instancePermissions and instanceProjectsAvailable %}
 											<li class="nav-item">
 												<a href="#" class="nav-link newProjectButton">
 													<i class="nav-icon fas fa-plus"></i>
