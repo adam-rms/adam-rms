@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../common/headSecure.php';
-require_once __DIR__ . '/../../common/libs/Auth/instanceActions.php';
+require_once __DIR__ . '/../common/libs/Auth/instanceActions.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Permissions", "BREADCRUMB" => false];
 
