@@ -24,7 +24,6 @@ if (strlen($PAGEDATA['search']) > 0) {
 $instances = $DBLIB->arraybuilder()->paginate('instances', $page, ["instances.*"]);
 $PAGEDATA['pagination'] = ["page" => $page, "total" => $DBLIB->totalPages];
 $PAGEDATA['instances'] = [];
-$PAGEDATA['totals'] = ["assets" => ["MASS" => 0.0, "COUNT" => 0], "STORAGEUSED" => 0, "STORAGEALLOWED" => 0];
 foreach ($instances as $instance) {
 	//Inventory
 	$DBLIB->where("assets.instances_id", $instance['instances_id']);
@@ -37,14 +36,10 @@ foreach ($instances as $instance) {
 		$instance['assets']['VALUE'] += $asset['assetTypes_value'];
 		$instance['assets']['MASS'] += $asset['assetTypes_mass'];
 		$instance['assets']['COUNT'] += 1;
-		$PAGEDATA['totals']['assets']['MASS'] += $asset['assetTypes_mass'];
-		$PAGEDATA['totals']['assets']['COUNT'] += 1;
 	}
 
 	//Storage
 	$instance['STORAGEUSED'] = $bCMS->s3StorageUsed($instance['instances_id']);
-	$PAGEDATA['totals']['STORAGEUSED'] += $instance['STORAGEUSED'];
-	$PAGEDATA['totals']['STORAGEALLOWED'] += $instance['instances_storageLimit'];
 	//USERS
 	$DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
 	$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
@@ -76,6 +71,17 @@ foreach ($instances as $instance) {
 
 	$PAGEDATA['instances'][] = $instance;
 }
+
+// Server Totals
+$DBLIB->where("assets_deleted", 0);
+$DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+$assetsTotals = $DBLIB->get("assets", null, ["COUNT(assets_id) as count", "SUM(assetTypes_value) as value", "SUM(assetTypes_mass) as mass"]);
+$PAGEDATA['totals'] = ["assets" => ["MASS" => $assetsTotals[0]['mass'], "COUNT" => $assetsTotals[0]['count'], "VALUE" => $assetsTotals[0]['value']]];
+
+$DBLIB->where("(s3files_meta_deleteOn IS NULL)");
+$DBLIB->where("s3files_meta_physicallyStored", 1);
+$PAGEDATA['totals']["STORAGEUSED"] = $DBLIB->getValue("s3files", "SUM(s3files_meta_size)");
+$PAGEDATA['totals']["STORAGEALLOWED"] = $DBLIB->getValue("instances", "SUM(instances_storageLimit)");
 
 $PAGEDATA['totals']['users'] = [];
 $PAGEDATA['totals']['users']['total'] = $DBLIB->getValue("users", "count(*)");

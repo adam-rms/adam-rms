@@ -36,6 +36,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Billing Contact</th>
                                 <th>Plan</th>
                                 <th>Storage Used</th>
                                 <th>Storage Limit</th>
@@ -51,11 +52,11 @@
                                 <th>Admin Actions</th>
                             </tr>
                             <tr>
-                                <td colspan="3"><b>Server Totals</b></td>
+                                <td colspan="4"><b>Server Totals</b></td>
                                 <td>
                                     {{ totals['STORAGEUSED']|formatsize }}
                                 </td>
-                                <td>{{ totals['STORAGEALLOWED']|formatsize }}+&infin;</td>
+                                <td>{{ totals['STORAGEALLOWED']|formatsize }}</td>
                                 <td>
                                     {{ totals.users.total|number_format(0) }}
                                 </td>
@@ -95,11 +96,25 @@
                                         <br/><span class="badge badge-warning">SUSPENDED</span>
                                         {% endif %}
                                     </td>
+                                    <td>
+                                        {% if instance.usersForBillingUser|length > 0 %}
+                                            {% for user in instance.usersForBillingUser %}
+                                                {% if instance.instances_billingUser == user.users_userid %}
+                                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}" target="_blank">{{ user.users_name1 ~ " " ~ user.users_name2 }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ instance.instances_planName }}</td>
                                     <td>
                                         {{ instance['STORAGEUSED']|formatsize }}
                                     </td>
-                                    <td>{{ (instance.instances_storageLimit > 0 ? instance.instances_storageLimit|formatsize : "&infin;") }}</td>
+                                    <td>
+                                    {{ (instance.instances_storageLimit > 0 ? instance.instances_storageLimit|formatsize : "&infin;") }}
+                                    {% if instance.instances_storageEnabled == 0 == '1' %}
+                                        <br/><span class="badge badge-info">FILES DISABLED</span>
+                                    {% endif %}
+                                    </td>
                                     <td>
                                         {{ instance.USERS }}/{{instance.instances_userLimit > 0 ?  instance.instances_userLimit : "&infin;"}}
                                     </td>
@@ -125,7 +140,9 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#notesModal{{ instance.instances_id }}">Notes</button>
+                                            {% if instance.instances_serverNotes %}
+                                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#notesModal{{ instance.instances_id }}">Notes</button>
+                                            {% endif %}
                                             {% if "INSTANCES:EDIT"|serverPermissions %}
                                                 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ instance.instances_id }}"><i class="fas fa-cog"></i></button>
                                             {% endif %}
@@ -243,6 +260,9 @@
                                                         <div class="form-group">
                                                             <label>Billing Contact</label>
                                                             <select class="form-control select2 select2bs4" name="instances_billingUser">
+                                                                {% if instance.instances_billingUser == null %}
+                                                                    <option value="" selected disabled></option>
+                                                                {% endif %}
                                                                 {% for user in instance.usersForBillingUser %}
                                                                     <option value="{{ user.users_userid }}" {% if instance.instances_billingUser == user.users_userid %}selected{% endif %}>{{ user.users_name1 }} {{ user.users_name2 }} {{ user.users_email }}</option>
                                                                 {% endfor %}
