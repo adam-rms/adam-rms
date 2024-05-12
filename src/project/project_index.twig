@@ -294,15 +294,15 @@
                                                             {% if project.subProjects == null %}
                                                                 <a class="dropdown-item" id="assignParentProject">Assign Parent Project</a>
                                                             {% endif %}
-                                                            {% if instanceProjectsAvailable %}
-                                                                {% if project.projects_parent_project_id == null %}
+                                                            {% if project.projects_parent_project_id == null %}
+                                                                {% if canCreateSubProjects %}
                                                                     <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if project.projects_status_follow_parent %}
+                                                                    <a class="dropdown-item" id="stopFollowParent">Stop Following Parent Status</a>
                                                                 {% else %}
-                                                                    {% if project.projects_status_follow_parent %}
-                                                                        <a class="dropdown-item" id="stopFollowParent">Stop Following Parent Status</a>
-                                                                    {% else %}
-                                                                        <a class="dropdown-item" id="followParent">Follow Parent Status</a>
-                                                                    {% endif %}
+                                                                    <a class="dropdown-item" id="followParent">Follow Parent Status</a>
                                                                 {% endif %}
                                                             {% endif %}
                                                             {% if project.projects_parent_project_id == null or project.subProjects == null %}
