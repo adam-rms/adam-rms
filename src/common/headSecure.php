@@ -126,12 +126,6 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
         $page['SUBPAGES'] = $DBLIB->get("cmsPages");
         $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
     }
-
-    //Store availability of limited features
-    $PAGEDATA['instanceProjectsAvailable'] = $bCMS->instanceHasProjectCapacity($AUTH->data['instance']['instances_id']);
-    $PAGEDATA['instanceAssetsAvailable'] = $bCMS->instanceHasAssetCapacity($AUTH->data['instance']['instances_id']);
-    $PAGEDATA['instanceUsersAvailable'] = $bCMS->instanceHasUserCapacity($AUTH->data['instance']['instances_id']);
-
 } elseif ($AUTH->serverPermissionCheck("INSTANCES:VIEW") && $AUTH->serverPermissionCheck("INSTANCES:FULL_PERMISSIONS_IN_INSTANCE")) {
     // User is a server admin who has no instance - this is often caused by them deleting one. Select an instance for them to use at random.
     $DBLIB->where("instances_deleted", 0);
