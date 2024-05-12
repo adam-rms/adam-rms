@@ -373,7 +373,6 @@ class bCMS
 
     $DBLIB->where("projects.instances_id", $instanceid);
     $DBLIB->where("projects.projects_deleted", 0);
-    $DBLIB->where("projects.projects_archived", 0);
     $projectsUsed = $DBLIB->getValue("projects", "COUNT(projects.projects_id)");
 
     if ($projectCapacity > 0 and $projectsUsed >= $projectCapacity)
