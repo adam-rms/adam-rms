@@ -7,7 +7,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Billing Statistics for {{USERDATA.instance.instances_name}}</h3>
                     <div class="card-tools">
-                    {% if USERDATA.instance.instances_billingUser == USERDATA.users_userid and billingEnabled %}
+                    {% if USERDATA.instance.instances_billingUser == USERDATA.users_userid and showStripeBillingLink %}
                         <a href="{{CONFIG.ROOTURL}}/api/instances/billing/billingPortal.php" class="btn btn-success btn-sm" target="_blank">Manage Billing</a>
                     {% endif %}
                     </div>
