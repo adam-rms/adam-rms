@@ -569,7 +569,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 											<p>Assets</p>
 										</a>
 									</li>
-									{% if "ASSETS:CREATE"|instancePermissions and instanceAssetsAvailable %}
+									{% if "ASSETS:CREATE"|instancePermissions %}
 										<li class="nav-item">
 											<a href="{{ CONFIG.ROOTURL}}/newAsset.php" class="nav-link">
 												<i class="fas fa-plus nav-icon"></i>
@@ -673,9 +673,9 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 												<p>List</p>
 											</a>
 										</li>
-										{% if "PROJECTS:CREATE"|instancePermissions and instanceProjectsAvailable %}
+										{% if "PROJECTS:CREATE"|instancePermissions %}
 											<li class="nav-item">
-												<a href="#" class="nav-link newProjectButton">
+												<a href="{{ CONFIG.ROOTURL }}/project/new.php" class="nav-link">
 													<i class="nav-icon fas fa-plus"></i>
 													<p>New Project</p>
 												</a>
@@ -877,46 +877,8 @@ return;
 
 // Change Theme
 changeTheme(theme == "dark");
-});{% if "PROJECTS:CREATE"|instancePermissions %}$(".newProjectButton").click(function () {
-bootbox.prompt({
-title: "Select Project Type",
-inputType: 'select',
-inputOptions: [{% for type in potentialProjectTypes %}{
-text: '{{ type.projectsTypes_name|escape('js') }}',
-value: '{{ type.projectsTypes_id }}'
-},{% endfor %}],
-callback: function (result) {
-if (result) {
-var projectType = result;
-bootbox.prompt({
-title: "Select Project Manager",
-inputType: 'select',
-value: {{ USERDATA.users_userid }},
-inputOptions: [{% for user in potentialProjectManagers %}{
-text: '{{ (user.users_name1 ~ " " ~ user.users_name2)|escape('js') }}',
-value: '{{ user.users_userid }}'
-},{% endfor %}],
-callback: function (result) {
-if (result) {
-var projectManager = result;
-bootbox.prompt("Enter Project Name", function (result) {
-if (result) {
-ajaxcall("projects/new.php", {
-"projects_name": result,
-"projectsType_id": projectType,
-"projects_manager": projectManager
-}, function (data) {
-window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
 });
-}
-});
-}
-}
-});
-}
-}
-});
-});{% endif %}{% if USERDATA.instances|length > 1 %}$(".changeInstanceActionButton[data-newinstance]").click(function (event) {
+{% if USERDATA.instances|length > 1 %}$(".changeInstanceActionButton[data-newinstance]").click(function (event) {
 event.preventDefault();
 ajaxcall("instances/switch.php", {
 'instances_id': $(this).data("newinstance")
