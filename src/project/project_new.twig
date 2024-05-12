@@ -27,10 +27,8 @@
             <div class="card-body">
                 <form id="addNewForm">
                     <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend"><span class="input-group-text">Name</span></div>
-                            <input type="text" class="form-control" id="projects_name" required minLength="1" />
-                        </div>
+                        <label>Project Name *</label>
+                        <input type="text" class="form-control" id="projects_name" required />
                     </div>
                     <div class="form-group">
                         <label>Project Manager</label>
@@ -47,6 +45,25 @@
                                 <option value="{{ type.projectsTypes_id }}">{{ type.projectsTypes_name }}</option>
                             {% endfor %}
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Dates</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                            </div>
+                            <input type="text" class="form-control float-right" id="datePickerInput">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Parent Project</label>
+                        <select class="form-control  select2bs4" id="parent" required aria-describedby="subprojectHelp">
+                            <option value="-1">No Parent</option>
+                            {% for project in projects %}
+                                <option value="{{ project.projects_id }}">{{ project.projects_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small id="subprojectHelp" class="form-text text-muted">Make this a sub-project of the given parent project</small>
                     </div>
                 </form>
             </div>
@@ -65,6 +82,9 @@
         }
     </style>
     <script>
+        let startDate = null;
+        let endDate = null;
+
         $(document).ready(function () {
             $(".overlay").hide();
             $("#manager").select2({
@@ -75,12 +95,46 @@
                 theme: "bootstrap4",
                 width: '100%'
             });
-            $('#saveButton').on('click', function() {
-                ajaxcall("projects/new.php", {
+            $("#parent").select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+             $('#datePickerInput').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 15,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                autoUpdateInput: false,
+            });
+
+            $('#datePickerInput').on('apply.daterangepicker', function(ev, picker) {
+                startDate = picker.startDate.format('DD MMM YYYY hh:mm A');
+                endDate = picker.endDate.format('DD MMM YYYY hh:mm A');
+
+                $(this).val(startDate + ' - ' + endDate);
+            });
+
+            $('#saveButton').on('click', function(event) {
+
+                if (!$('#projects_name').val()) {
+                    event.preventDefault();
+                    alert('Project Name is required')
+                    return
+                }
+
+                const data = {
                     "projects_name": $('#projects_name').val(),
                     "projectsType_id": $('#type').val(),
-                    "projects_manager": $('#manager').val()
-                }, function (data) {
+                    "projects_manager": $('#manager').val(),
+                    "projects_dates_use_start": startDate,
+                    "projects_dates_use_end": endDate
+                }
+
+                if ($('#parent').val() !== '-1')
+                    data['projects_parent_project_id'] = $('#parent').val();
+
+                ajaxcall("projects/new.php", data , function (data) {
                     window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
                 });
             });
