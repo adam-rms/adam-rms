@@ -14,7 +14,7 @@
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
-                        {% if "PROJECTS:CREATE"|instancePermissions %}<button type="button" class="btn btn-default newProjectButton"  title="Add new project"><i class="fa fa-plus"></i></button>{% endif %}
+                        {% if "PROJECTS:CREATE"|instancePermissions %}<a type="button" class="btn btn-default" href="{{ CONFIG.ROOTURL }}/project/new.php" title="Add new project"><i class="fa fa-plus"></i></a>{% endif %}
                     </div>
                 </form>
             </div>
@@ -29,11 +29,9 @@
                     <th>
                         Title
                     </th>
-                    {% if potentialProjectTypes|length > 1 %}
                     <th style="width: 10%">
                         Type
                     </th>
-                    {% endif %}
                     <th style="width: 24%">
                         Client
                     </th>
@@ -57,7 +55,7 @@
                     {% if archive == false and project.projects_archived == 1 %}
                         {% set archive = true %}
                         <tr style="background-color: #ffffff;">
-                            <td colspan="{{ potentialProjectTypes|length > 1 ? 8 : 7 }}">
+                            <td colspan="8">
                                 <b>Archived Projects</b>
                             </td>
                         </tr>
@@ -75,11 +73,9 @@
                                 {{project.projects_dates_use_start|date("d M Y h:ia")}} - {{project.projects_dates_use_end|date("d M Y h:ia")}}
                             </small>
                         </td>
-                        {% if potentialProjectTypes|length > 1 %}
-                            <td>
-                                {{ project.projectsTypes_name }}
-                            </td>
-                        {% endif %}
+                        <td>
+                            {{ project.projectsTypes_name }}
+                        </td>
                         <td>
                             {% if project.projectsTypes_config_client == 1 %}
                             <a href="?client={{ project.clients_id }}">
@@ -129,13 +125,11 @@
                                         {{subProject.projects_dates_use_start|date("d M Y h:ia")}} - {{subProject.projects_dates_use_end|date("d M Y h:ia")}}
                                     </small>
                                 </td>
-                                {% if potentialProjectTypes|length > 1 %}
-                                    <td>
-                                        {{ subProject.projectsTypes_name }}
-                                        <br>
-                                        (Subproject)
-                                    </td>
-                                {% endif %}
+                                <td>
+                                    {{ subProject.projectsTypes_name }}
+                                    <br>
+                                    (Subproject)
+                                </td>
                                 <td>
                                     {% if subProject.projectsTypes_config_client == 1 %}
                                         <a href="?client={{ subProject.clients_id }}">

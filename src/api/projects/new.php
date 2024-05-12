@@ -2,11 +2,7 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck("PROJECTS:CREATE") or !isset($_POST['projects_name'])) die("404");
-
-$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->where("projects_deleted", 0);
-$projects = $DBLIB->get("projects", null, "COUNT(*) as count");
-if ($projects[0]['count'] >= $AUTH->data['instance']['instances_projectLimit']) finish(false, ["code" => "PROJECT-LIMIT-REACHED", "message" => "You have reached the project limit for your business. Please upgrade your plan."]);
+if (!$bCMS->instanceHasProjectCapacity($AUTH->data['instance']['instances_id'])) finish(false, ["code" => "PROJECT-LIMIT-REACHED", "message" => "You have reached the project limit for your business. Please upgrade your plan."]);
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projectsStatuses_deleted", 0);

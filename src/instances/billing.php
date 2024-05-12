@@ -52,4 +52,8 @@ $PAGEDATA['stats'] = $instance;
 $DBLIB->where("users_userid",  $AUTH->data['instance']['instances_billingUser']);
 $PAGEDATA['billingUser'] = $DBLIB->getOne("users", ["users.users_name1", "users.users_name2", "users.users_userid"]);
 
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$customerId = $DBLIB->getValue("instances", "instances_planStripeCustomerId");
+$PAGEDATA['showStripeBillingLink'] = (strlen($CONFIGCLASS->get('STRIPE_KEY')) > 0 and strlen($customerId) > 0) ? true : false;
+
 echo $TWIG->render('instances/instances_billing.twig', $PAGEDATA);

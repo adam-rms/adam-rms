@@ -64,6 +64,7 @@ foreach ($instances as $instance) {
 	// For selecting a billing user
 	$DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid", "LEFT");
 	$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+	$DBLIB->orderBy("users.users_name1", "ASC");
 	$DBLIB->where("instances_id", $instance['instances_id']);
 	$DBLIB->where("userInstances.userInstances_deleted",  0);
 	$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");

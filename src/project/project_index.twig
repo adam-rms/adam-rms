@@ -295,7 +295,9 @@
                                                                 <a class="dropdown-item" id="assignParentProject">Assign Parent Project</a>
                                                             {% endif %}
                                                             {% if project.projects_parent_project_id == null %}
-                                                                <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
+                                                                {% if canCreateSubProjects %}
+                                                                    <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
+                                                                {% endif %}
                                                             {% else %}
                                                                 {% if project.projects_status_follow_parent %}
                                                                     <a class="dropdown-item" id="stopFollowParent">Stop Following Parent Status</a>

@@ -786,7 +786,9 @@
                         {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Edit Type</a></li>
                         {% endif %}
-                        {% if "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}<li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>{% endif %}
+                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
+                            <li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>
+                        {% endif %}
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body" style="padding: 0;">

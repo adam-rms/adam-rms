@@ -46,6 +46,7 @@ if ($AUTH->data['users_emailVerified'] == 1) {
         $instance['trustedDomains'] = json_decode($instance['instances_trustedDomains'], true);
         if (!$instance['trustedDomains']['domains'] or count($instance['trustedDomains']['domains']) < 1 or !$instance['trustedDomains']['instancePositions_id']) continue;
         elseif (!in_array($userEmailDomain, $instance['trustedDomains']['domains'])) continue; // Not eligible to join
+        elseif (!$bCMS->instanceHasUserCapacity($instance['instances_id'])) continue; // No space in instance
         else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'][] = $instance;
     }
 } else $PAGEDATA['instancesAvailableToJoinAsTrustedDomains'] = [];
@@ -61,23 +62,6 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
         $PAGEDATA['pageConfig'] = ["TITLE" => "Business Suspended", "BREADCRUMB" => false, "NOMENU" => true];
         die($TWIG->render('index_instanceBillingIssue.twig', $PAGEDATA));
     }
-    //Potential project types
-    $DBLIB->where("projectsTypes_deleted", 0);
-    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-    $DBLIB->orderBy("projectsTypes_name", "ASC");
-    $PAGEDATA['potentialProjectTypes'] = $DBLIB->get("projectsTypes");
-    //Potential project managers
-    $DBLIB->orderBy("users.users_name1", "ASC");
-    $DBLIB->orderBy("users.users_name2", "ASC");
-    $DBLIB->orderBy("users.users_created", "ASC");
-    $DBLIB->where("users_deleted", 0);
-    $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid", "LEFT");
-    $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
-    $DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
-    $DBLIB->where("userInstances.userInstances_deleted",  0);
-    $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
-    $PAGEDATA['potentialProjectManagers'] = $DBLIB->get('users', null, ["users.users_name1", "users.users_name2", "users.users_userid"]);
-
     //get all projects
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);

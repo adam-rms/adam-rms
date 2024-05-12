@@ -125,6 +125,28 @@ if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS")) {
     $PAGEDATA['POSSIBLEPROJECTSTATUSES'] = $DBLIB->get("projectsStatuses", null, ["projectsStatuses_id", "projectsStatuses_name", "projectsStatuses_description", "projectsStatuses_assetsReleased"]);
 }
 
+//Edit options - Potential project types for changing project type
+$DBLIB->where("projectsTypes_deleted", 0);
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->orderBy("projectsTypes_name", "ASC");
+$PAGEDATA['potentialProjectTypes'] = $DBLIB->get("projectsTypes");
+
+//Edit options - Potential project managers for changing manager
+$DBLIB->orderBy("users.users_name1", "ASC");
+$DBLIB->orderBy("users.users_name2", "ASC");
+$DBLIB->orderBy("users.users_created", "ASC");
+$DBLIB->where("users_deleted", 0);
+$DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid", "LEFT");
+$DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+$DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
+$DBLIB->where("userInstances.userInstances_deleted",  0);
+$DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
+$PAGEDATA['potentialProjectManagers'] = $DBLIB->get('users', null, ["users.users_name1", "users.users_name2", "users.users_userid"]);
+
+
+//Edit Options - can create sub projects?
+$PAGEDATA['canCreateSubProjects'] = $bCMS->instanceHasProjectCapacity($AUTH->data['instance']['instances_id']);
+
 if (isset($_GET['list']) and $PAGEDATA['project']['projectsTypes_config_assets'] == 1 and (count($PAGEDATA['FINANCIALS']['assetsAssigned'])>0 or count($PAGEDATA['FINANCIALS']['assetsAssignedSUB'])>0)) echo $TWIG->render('project/project_assetsPage.twig', $PAGEDATA);
 else echo $TWIG->render('project/project_index.twig', $PAGEDATA);
 ?>
