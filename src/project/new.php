@@ -12,7 +12,7 @@ $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->orderBy("projectsTypes_name", "ASC");
 $PAGEDATA['potentialProjectTypes'] = $DBLIB->get("projectsTypes");
 
-//Edit options - Potential project managers for changing manager
+//Potential project managers for new project
 $DBLIB->orderBy("users.users_name1", "ASC");
 $DBLIB->orderBy("users.users_name2", "ASC");
 $DBLIB->orderBy("users.users_created", "ASC");
@@ -23,6 +23,5 @@ $DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
 $DBLIB->where("userInstances.userInstances_deleted",  0);
 $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
 $PAGEDATA['potentialProjectManagers'] = $DBLIB->get('users', null, ["users.users_name1", "users.users_name2", "users.users_userid"]);
-
 
 echo $TWIG->render('project/project_new.twig', $PAGEDATA);
