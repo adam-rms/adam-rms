@@ -14,6 +14,7 @@ $hasProjectDates = isset($_POST['projects_dates_use_start']) and isset($_POST['p
 $project = $DBLIB->insert("projects", [
     "projects_name" => $_POST['projects_name'],
     "instances_id" => $AUTH->data['instance']['instances_id'],
+    "projects_description" => $_POST['projects_description'] ?? null,
     "projects_created" => date('Y-m-d H:i:s'),
     "projects_manager" => $_POST['projects_manager'],
     "projectsTypes_id" => $_POST['projectsType_id'],
