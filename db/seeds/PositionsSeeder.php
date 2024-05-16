@@ -14,21 +14,21 @@ class PositionsSeeder extends AbstractSeed
      */
     public function run()
     {
-        require_once __DIR__ . '/../../src/libs/Auth/serverActions.php';
+        require_once __DIR__ . '/../../src/common/libs/Auth/serverActions.php';
         $positionGroups = [
             [
-                "positionsGroups_id"=> 1,
-                "positionsGroups_name"=> "Administrator",
+                "positionsGroups_id" => 1,
+                "positionsGroups_name" => "Administrator",
                 "positionsGroups_actions" => implode(",", array_keys($serverActions))
             ]
         ];
 
         $positions = [
             [
-                "positions_id"=> 1,
-                "positions_displayName"=> "Super-admin",
-                "positions_positionsGroups"=> "1",
-                "positions_rank"=> 1
+                "positions_id" => 1,
+                "positions_displayName" => "Super-admin",
+                "positions_positionsGroups" => "1",
+                "positions_rank" => 1
             ]
         ];
 
