@@ -682,7 +682,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 											</li>
 										{% endif %}
 									{% endif %}
-									{% if "USERS:CREATE"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions or "VIEW-ANALYTICS"|serverPermissions or "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
+									{% if "USERS:VIEW"|serverPermissions or "PERMISSIONS:VIEW"|serverPermissions or "VIEW-AUDIT-LOG"|serverPermissions or "VIEW-ANALYTICS"|serverPermissions or "INSTANCES:IMPORT:ASSETS"|serverPermissions %}
 										<li class="nav-header">SERVER ADMIN</li>
 									{% endif %}
 									{% if "CONFIG:SET"|serverPermissions %}
@@ -696,7 +696,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 											</a>
 										</li>
 									{% endif %}
-									{% if "USERS:CREATE"|serverPermissions %}
+									{% if "USERS:VIEW"|serverPermissions %}
 										<li class="nav-item">
 											<a href="{{ CONFIG.ROOTURL }}/server/users.php" class="nav-link">
 												<i class="nav-icon fas fa-users"></i>

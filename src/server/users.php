@@ -3,7 +3,7 @@ require_once __DIR__ . '/../common/headSecure.php';
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Users", "BREADCRUMB" => false];
 
-if (!$AUTH->serverPermissionCheck("USERS:CREATE")) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$AUTH->serverPermissionCheck("USERS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA["mailings"] = [];
 
