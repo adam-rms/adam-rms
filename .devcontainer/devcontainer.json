@@ -19,7 +19,8 @@
         },
         "[twig]": {
           "editor.defaultFormatter": null,
-          "editor.formatOnSave": false
+          "editor.formatOnSave": false,
+          "editor.formatOnPaste": false
         },
         "emmet.includeLanguages": {
           "twig": "html"
@@ -44,5 +45,22 @@
 
   "postStartCommand": "php vendor/bin/phinx migrate",
 
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "portsAttributes": {
+    "8080": {
+      "label": "PHP Web Server",
+      "onAutoForward": "openBrowser",
+      "protocol": "http"
+    },
+    "8081": {
+      "label": "S3 Emulator (s3mock)"
+    },
+    "8082": {
+      "label": "phpMyAdmin",
+      "protocol": "https"
+    },
+    "3306": {
+      "label": "MySQL"
+    }
+  }
 }
