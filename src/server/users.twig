@@ -108,7 +108,7 @@
                                             <button type="button" title="View Mailings for user" class="btn btn-info"
                                                     data-toggle="modal"
                                                     data-target="#useremailmodal{{ user["users_userid"] }}"
-                                            {% if mailings[user.users_userid]|length < 1 %}disabled{% endif %}><i
+                                            {% if user.emails|length < 1 %}disabled{% endif %}><i
                                                         class="fa fa-envelope"></i></button>
                                         {% endif %}
                                         {% if user.users_userid != USERDATA.users_userid %}
@@ -159,6 +159,7 @@
                                 "info": true,
                                 "autoWidth": false,
                                 "responsive": true,
+                                "deferRender": true,
                             });
                         });
                         </script>
@@ -185,7 +186,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="list-group">
-                                    {% for email in mailings[user.users_userid] %}
+                                    {% for email in user.emails %}
                                         <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ email.emailSent_id }}"
                                            target="_blank" class="list-group-item"><span
                                                     class="badge">{{ email.emailSent_sent|date("d/m/Y H:i:s") }}</span> {{ email.emailSent_subject }}
@@ -194,7 +195,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ user.users_emails }}"
+                                <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ user.email_ids }}"
                                    class="btn btn-default">Output All</a>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             </div>
