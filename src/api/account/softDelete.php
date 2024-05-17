@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->serverPermissionCheck("USERS:DELETE") or !isset($_POST['userid'])) die("404");
+if (!$AUTH->serverPermissionCheck("USERS:DELETE") or !isset($_POST['users_userid'])) die("404");
 
-$AUTH->destroyTokens($bCMS->sanitizeString($_POST['userid']));
-$bCMS->auditLog("INVALIDATE ALL", "authTokens", null, $AUTH->data['users_userid'], $bCMS->sanitizeString($_POST["userid"]));
+$AUTH->destroyTokens($bCMS->sanitizeString($_POST['users_userid']));
+$bCMS->auditLog("INVALIDATE ALL", "authTokens", null, $AUTH->data['users_userid'], $bCMS->sanitizeString($_POST["users_userid"]));
 
-$DBLIB->where('users_userid', $bCMS->sanitizeString($_POST['userid']));
+$DBLIB->where('users_userid', $bCMS->sanitizeString($_POST['users_userid']));
 if ($DBLIB->update('users', ["users_deleted" => 1], 1)) {
-    $bCMS->auditLog("UPDATE", "users", "DELETE ", $AUTH->data['users_userid'], $bCMS->sanitizeString($_POST['userid']));
+    $bCMS->auditLog("UPDATE", "users", "DELETE ", $AUTH->data['users_userid'], $bCMS->sanitizeString($_POST['users_userid']));
     finish(true);
 } else finish(false, ["code" => "DB-ERROR", "message" => "Database error"]);
 
@@ -59,7 +59,7 @@ if ($DBLIB->update('users', ["users_deleted" => 1], 1)) {
  *         ),
  *     ), 
  *     @OA\Parameter(
- *         name="userid",
+ *         name="users_userid",
  *         in="query",
  *         description="undefined",
  *         required="true", 
