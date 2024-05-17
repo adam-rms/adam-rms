@@ -135,6 +135,13 @@
                                                         title="{{ user.users_suspended == '0' ? 'Suspend user' : 'Un-Suspend user' }}">
                                                     <i class="fa fa-times-circle"></i></button>
                                             {% endif %}
+                                            {% if "USERS:DELETE"|serverPermissions %}
+                                                <button type="button"
+                                                        class="btn btn-danger deleteuser"
+                                                        data-userid="{{ user.users_userid }}"
+                                                        title="Delete User">
+                                                    <i class="fa fa-trash"></i></button>
+                                            {% endif %}
                                             {% if "USERS:VIEW_SITE_AS"|serverPermissions %}
                                                 <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs.php?userid={{ user["users_userid"] }}"
                                                    title="Login as User">
@@ -263,6 +270,32 @@
                                 });
                             } else {
                                 bootbox.alert("Sorry - Operation could not be completed! Please reload the page", function () {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if "USERS:DELETE"|serverPermissions %}
+                $(".deleteuser").click(function () {
+                    var userid = $(this).data("userid");
+                    bootbox.confirm({
+                        message: "Are you sure you wish to delete this user?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $("#loadingoverlay").show();
+                                ajaxcall("account/softDelete.php", {"users_userid": userid}, function (data) {
                                     location.reload();
                                 });
                             }
