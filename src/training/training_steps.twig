@@ -181,13 +181,13 @@
                                     <hr/>
                                     {% if step.modulesSteps_type == 1 %}
                                             {# Plain Text #}
-                                                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
-                                                    {% embed 'assets/templates/uppy.twig' with {'type': 'MODULE-STEP-IMAGE', 'paste': false, 'typeId': 13, 'subTypeId': step.modulesSteps_id, 'imagesOnly': true } %}
-                                                {% endif %}
-                                                {% block success %}
-                                                    $('.summernote[data-id={{ step.modulesSteps_id }}]').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
-                                                {% endblock %}
-                                            {% endembed %}
+                                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+                                                {% embed 'assets/templates/uppy.twig' with {'type': 'MODULE-STEP-IMAGE', 'paste': false, 'typeId': 13, 'subTypeId': step.modulesSteps_id, 'imagesOnly': true } %}
+                                                    {% block success %}
+                                                        $('.summernote[data-id={{ step.modulesSteps_id }}]').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                                                    {% endblock %}
+                                                {% endembed %}
+                                            {% endif %}
                                             <br/>
                                             <div class="summernote" data-id="{{ step.modulesSteps_id }}">{{ step.modulesSteps_content|raw }}</div>
                                             <textarea type="text" style="display:none" class="form-control modulesStepsContent" name="modulesSteps_content" data-id="{{ step.modulesSteps_id }}" rows="1"></textarea>
