@@ -1,147 +1,128 @@
 {% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js" integrity="sha512-OQlawZneA7zzfI6B1n1tjUuo3C5mtYuAWpQdg+iI9mkDoo7iFzTqnQHf+K5ThOWNJ9AbXL4+ZDwH7ykySPQc+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
 {% block content %}
+    
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">
-                        {% if search|length > 0 %}
-                            Search results for users matching <b>{{ search }}</b>
-                        {% else %}
-                            Users
-                        {% endif %}
-                    </h3>
-                    <div class="card-tools pull-right">
-                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
-<a href="{{ CONFIG.LINKS_USERGUIDEURL }}business/user-management" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
-
-                            <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="card-body table-responsive p-0">
-                    {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
-                        {% if NOCAPACITY %}
-                        <div class="p-2">
-                            <p>Your current plan does not enable you to add any more users. You have {{ NOCAPACITY.USED }} users, with a limit of {{ NOCAPACITY.CAPACITY }}.</p>
-                            <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
-                        </div>
-                        {% else %}
-                        <div class="input-group  mb-3" style="padding: 10px; padding-bottom: 0;">
-                            <select class="form-control" multiple="multiple" id="addUserToInstance"></select>
-                            <button type="button" style="margin-top: 5px;" class="btn btn-default btn-sm" id="addUserToInstance-button">Add to business</button>
-                        </div>
-                        {% endif %}
-                    {% endif %}
-                        <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
-                            <thead>
-
-                            <tr>
-                                <th>Thumbnail</th>
-                                <th>Username</th>
-                                <th>Firstname</th>
-                                <th>Lastname</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Role Group</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            {% if users|length > 0 %}
-                            <tbody>
-                            {% for user in users %}
-                                <tr
-                                        {% if user.users_suspended == '1' %}
-                                        class="danger"
-                                        {% endif %}>
-                                    <td>
-                                        {% if user.users_thumbnail %}
-                                            <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
-                                            <span class="badge bg-danger">Archived</span>
-                                        {% endif %}
-                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
-                                            {% endif %}
-                                            {{ user.users_username }}
-                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                        </a>
-                                                {% endif %}
-
-                                            {% if user.users_suspended == '1' %}
-                                            <span class="label label-danger">Suspended</span><br/>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ user["users_name1"] }}</td>
-                                    <td>{{ user["users_name2"] }}</td>
-
-                                    <td>{{ user["users_email"] }} {{ user["users_emailVerified"] == 1 ? '<i class="fa fa-check-square-o">' : null }}</td>
-                                    <td>{{user.userInstances_label}}</td>
-                                    <td>{{ user.instancePositions_displayName }}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
-                                                <button title="Change Role" class="btn btn-default" data-toggle="modal" data-target="#userInstance{{ user.userInstances_id }}Modal"><i
-                                                            class="fa fa-pencil-alt"></i></button>
-                                            {% endif %}
-                                            {% if "BUSINESS:USERS:EDIT:ARCHIVE"|instancePermissions %}
-                                                {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
-                                                        <button type="button" title="Remove from Archive" data-userid="{{ user.users_userid }}" class="btn btn-success unArchiveFromInstance"><i class="fas fa-archive"></i></button>
-                                                    {% else %}
-                                                    <button
-                                                            type="button" title="Archive" data-userid="{{ user.users_userid }}" class="btn btn-warning archiveFromInstance"><i class="fas fa-archive"></i></button>
-
-
-                                                {% endif %}
-                                            {% endif %}
-                                            {% if "BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS"|instancePermissions %}
-                                                <button
-                                                   type="button" title="Remove" data-userid="{{ user.users_userid }}" class="btn btn-danger removeFromInstance"><i
-                                                            class="fa fa-trash"></i></button>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                            {% else %}
-                                <tr><td colspan="999" style="text-align: center"><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></td></tr>
-                            {% endif %}
-                        </table>
-
-
-
-                </div>
-                {% if pagination.total > 1 %}
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-right">
-                        {% if pagination.page > 1 %}
-                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
-                        {% endif %}
-
-                        {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
-                            <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
-                                    {% if pagination.page == i %}
-                                        <b>{{ i }}</b>
-                                    {% else %}
-                                        {{ i }}
-                                    {% endif %}
-                                </a></li>
-                        {% endfor %}
-
-                        {% if pagination.page < pagination.total %}
-                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
-                        {% endif %}
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to settings</span></a></li>
                     </ul>
                 </div>
-                {% endif %}
             </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Users</h3>
+                    <div class="card-tools pull-right">
+                        <a href="{{ CONFIG.LINKS_USERGUIDEURL }}business/user-management" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-head-fixed" id="userTable" border="0" style="overflow-x: scroll;">
+                        <thead>
+                        <tr>
+                            <th data-searchable="false" data-orderable="false">Thumbnail</th>
+                            <th>Username</th>
+                            <th>Firstname</th>
+                            <th data-searchable="false">Lastname</th>
+                            <th>Email</th>
+                            <th data-searchable="false">Role</th>
+                            <th data-searchable="false">Role Group</th>
+                            <th data-orderable="false"></th>
+                        </tr>
+                        </thead>
+                        {% if users|length > 0 %}
+                        <tbody>
+                        {% for user in users %}
+                            <tr
+                                    {% if user.users_suspended == '1' %}
+                                    class="danger"
+                                    {% endif %}>
+                                <td>
+                                    {% if user.users_thumbnail %}
+                                        <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                        <span class="badge bg-danger">Archived</span>
+                                    {% endif %}
+                                    {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
+                                        {% endif %}
+                                        {{ user.users_username }}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                    </a>
+                                            {% endif %}
+
+                                        {% if user.users_suspended == '1' %}
+                                        <span class="label label-danger">Suspended</span><br/>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user["users_name1"] }}</td>
+                                <td>{{ user["users_name2"] }}</td>
+
+                                <td>{{ user["users_email"] }} {{ user["users_emailVerified"] == 1 ? '<i class="fa fa-check-square-o">' : null }}</td>
+                                <td>{{user.userInstances_label}}</td>
+                                <td>{{ user.instancePositions_displayName }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
+                                            <button title="Change Role" class="btn btn-default" data-toggle="modal" data-target="#userInstance{{ user.userInstances_id }}Modal"><i
+                                                        class="fa fa-pencil-alt"></i></button>
+                                        {% endif %}
+                                        {% if "BUSINESS:USERS:EDIT:ARCHIVE"|instancePermissions %}
+                                            {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                                    <button type="button" title="Remove from Archive" data-userid="{{ user.users_userid }}" class="btn btn-success unArchiveFromInstance"><i class="fas fa-archive"></i></button>
+                                                {% else %}
+                                                <button
+                                                        type="button" title="Archive" data-userid="{{ user.users_userid }}" class="btn btn-warning archiveFromInstance"><i class="fas fa-archive"></i></button>
+
+
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if "BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS"|instancePermissions %}
+                                            <button
+                                                type="button" title="Remove" data-userid="{{ user.users_userid }}" class="btn btn-danger removeFromInstance"><i
+                                                        class="fa fa-trash"></i></button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        {% else %}
+                            <tr><td colspan="999" style="text-align: center"><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></td></tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+            {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Add Users</h3>
+                </div>
+                <div class="card-body">
+                    {% if NOCAPACITY %}
+                    <div class="p-2">
+                        <p>Your current plan does not enable you to add any more users. You have {{ NOCAPACITY.USED }} users, with a limit of {{ NOCAPACITY.CAPACITY }}.</p>
+                        <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+                    </div>
+                    {% else %}
+                    <div class="input-group  mb-3" style="padding: 10px; padding-bottom: 0;">
+                        <p>Enter email addresses to search for existing AdamRMS users to add to business</p>
+                        <select class="form-control" multiple="multiple" id="addUserToInstance"></select>
+                        <button type="button" style="margin-top: 5px;" class="btn btn-default btn-sm" id="addUserToInstance-button">Add to business</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
     {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
@@ -165,10 +146,12 @@
                         <select class="form-control instancePositionUserInstanceModal" data-userinstanceid="{{ user.userInstances_id }}">
                             {% for position in positions %}
                                 <option
-                                        {% if position.instancePositions_id == user.instancePositions_id %}
-                                        selected
-                                        {% endif %}
-                                        value="{{ position.instancePositions_id }}">{{position.instancePositions_displayName}}</option>>
+                                    {% if position.instancePositions_id == user.instancePositions_id %}
+                                    selected
+                                    {% endif %}
+                                    value="{{ position.instancePositions_id }}">
+                                    {{position.instancePositions_displayName}}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -187,6 +170,16 @@
     {% endif %}
     <script>
         $(document).ready(function() {
+            $('#userTable').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                "deferRender": true,
+            });
             {% if "BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS"|instancePermissions %}
             $('.removeFromInstance').on('click', function(e){
                 var userid = $(this).data("userid");
@@ -238,7 +231,7 @@
                 minimumInputLength: 1,
                 width: '100%',
                 minimumResultsForSearch: 1,
-                placeholder: "Enter an email addresses to search for existing AdamRMS users to add to business",
+                placeholder: "Email Addresses",
                 ajax: {
                     url: "{{ CONFIG.ROOTURL }}/api/instances/searchUser.php",
                     dataType: "json",
