@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/instanceActions.php';
 require_once __DIR__ . '/serverActions.php';
+require_once __DIR__ . '/../Telemetry/Telemetry.php';
 date_default_timezone_set($CONFIG['TIMEZONE']);
 use \Firebase\JWT\JWT;
 
@@ -18,6 +19,7 @@ class bID
     public $VALIDMAGICLINKREDIRECTS = ["com.bstudios.adamrms://magic-link"];
     public $login;
     private $token;
+    private $telemetry;
     public $data;
     public $debug = '';
     private $serverPermissions;
@@ -74,6 +76,7 @@ class bID
     function __construct()
     {
         global $DBLIB, $CONFIG, $instanceActions, $serverActions;
+        $this->telemetry = new Telemetry();
         try {
             //Get the token
             $this->token = $this->checkToken($this->getToken());
@@ -258,6 +261,8 @@ class bID
         $token = $DBLIB->insert('authTokens', $data);
 
         if (!$token) throw new Exception("Cannot insert a newly created token into DB");
+
+        $this->telemetry->logTelemetry();
 
         if ($tokenType == "web-session") $_SESSION['token'] = $tokenKey;
 
