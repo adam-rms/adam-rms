@@ -31,7 +31,6 @@
 "hideDuration": "1000"
 }
 		</script>
-		{%  set background = CONFIG.ROOTURL ~ "/static-assets/img/loginImages/" ~ random(["ahmed-hasan-Lvon5hPT818-unsplash.jpg","anthony-delanoix-hzgs56Ze49s-unsplash.jpg","danny-howe-74kShnX5zZI-unsplash.jpg","danny-howe-bn-D2bCvpik-unsplash.jpg","fabian-centeno-k4s5mTSYULI-unsplash.jpg","jessey-bijl-5Rt5KhbUp5g-unsplash.jpg","leon--eh7p_Ovgjo-unsplash.jpg","luis-morera-GsoirbS7-bA-unsplash.jpg","sam-moqadam-qLMPn_MApAo-unsplash.jpg","stone-hood-qbd-pqDX8f4-unsplash.jpg","yvette-de-wit-NYrVisodQ2M-unsplash.jpg"]) %}
 		<style>
 			html,
 			body,
@@ -41,20 +40,29 @@
 				font-size: 14px;
 			}
 			body {
-				background-image: url("{{ background }}");
-				background-position: center;
-				background-repeat: no-repeat;
-				background-size: cover;
+				background: black;
 			}
-			#masterBox {
-				box-shadow: 0 1px 5px #888888;
+			#masterBoxShadow {
+				box-shadow: 0 0 1em 10em whitesmoke;
 				background: whitesmoke;
 				text-align: center;
-				border-radius: 10px;
-				padding: 10px 20px;
+				border-radius: 50%;
+				border: 0;
+				padding: 0;
+				margin: 0;
+			}
+			#masterBox {
+				background: white;
+				text-align: center;
+				border-radius: 1em;
+				border-style: solid;
+  			border-width: 0.1px;
+				border-color: grey;
+				padding: 1em;
 				margin: 0;
 			}
 			.footer {
+				background-color: black;
 				color: white;
 				padding: 10px;
 			}
@@ -74,15 +82,17 @@
 						                            col-md-6 offset-md-3
 						                            col-sm-8 offset-sm-2
 						                            col-xs-10 offset-xs-1">
-					<div id="masterBox">
-						<a href="?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/logo.png" style="width:30%; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
-						{% if CONFIG.DEV %}
-							<div class="alert alert-warning" style="border: 0px; text-align: left;">
-								<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
-								<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
-							</div>
-							{% endif %}
-						{% block content %}{% endblock %}
+					<div id="masterBoxShadow">
+						<div id="masterBox">
+							<a href="?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
+							{% if CONFIG.DEV %}
+								<div class="alert alert-warning" style="border: 0px; text-align: left;">
+									<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
+									<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
+								</div>
+								{% endif %}
+							{% block content %}{% endblock %}
+						</div>
 					</div>
 				</div>
 			</div>
