@@ -12,8 +12,12 @@
 			<div class="card-header">
 				<ul class="nav nav-pills">
 					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+                    {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
 					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/customCategories.php">Asset Categories</a></li>
+                    {% endif %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
 					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/configuration/barcodes.php">Barcodes</a></li>
+                    {% endif %}
 				</ul>
 			</div>
 		</div>
