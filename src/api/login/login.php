@@ -36,7 +36,6 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         ]);
 
         if ($bruteforceattempt && !$successful) finish(false, ["code" => null, "message" => "Sorry - you've tried too many times to login - please try again in 5 minutes"]);
-        elseif ($user['users_emailVerified'] != 1) finish(false, ["code" => "VERIFYEMAIL", "message" => "Please verify your email address using the link we sent you to login","userid" => $user['users_userid']]);
         elseif (!$successful) finish(false, ["code" => null, "message" => "Username, email or password incorrect"]);
         elseif ($user['users_suspended'] != '0') finish(false, ["code" => null, "message" => "User account is suspended"]);
         else {

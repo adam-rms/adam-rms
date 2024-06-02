@@ -54,6 +54,9 @@ if ($AUTH->data['users_emailVerified'] == 1) {
 if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAccepted'] == 0 or $PAGEDATA['USERDATA']['users_termsAccepted'] == null)) {
     $PAGEDATA['pageConfig'] = ["TITLE" => "Accept Terms", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_acceptTerms.twig', $PAGEDATA));
+} elseif ($PAGEDATA['USERDATA']['users_emailVerified'] == 0) {
+    $PAGEDATA['pageConfig'] = ["TITLE" => "Verify Email Address", "BREADCRUMB" => false, "NOMENU" => true];
+    die($TWIG->render('index_emailVerified.twig', $PAGEDATA));
 } elseif ($PAGEDATA['USERDATA']['users_changepass'] == 1) {
     $PAGEDATA['pageConfig'] = ["TITLE" => "Change Password", "BREADCRUMB" => false, "NOMENU" => true];
     die($TWIG->render('index_forceChangePassword.twig', $PAGEDATA));
