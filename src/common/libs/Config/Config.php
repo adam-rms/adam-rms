@@ -53,9 +53,9 @@ class Config
   }
   public function get($key)
   {
-    if (!isset($this->CONFIG_STRUCTURE[$key])) throw new Exception("Unknown config key presented");
     if (isset($this->DBCACHE[$key])) return $this->DBCACHE[$key];
-
+    if (!isset($this->CONFIG_STRUCTURE[$key])) throw new Exception("Unknown config key presented");
+    
     $this->DBLIB->where("config_key", $key);
     $value = $this->DBLIB->getValue("config", "config_value");
     if ($value === false or $value === null) {
