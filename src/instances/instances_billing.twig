@@ -7,12 +7,14 @@
 				<ul class="nav nav-pills">
 					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
 					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/billing.php">Billing</a></li>
+                    {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
 					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/settings.php">Basic Settings</a></li>
 					{% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
 					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/logo.php">Logo</a></li>
                     {% endif %}
 					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/public.php">Public Site</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/calendarSettings.php">Calendar Settings</a></li>
+                    {% endif %}
 				</ul>
 			</div>
 		</div>

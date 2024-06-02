@@ -12,10 +12,18 @@
                 <div class="card-header">
                     <ul class="nav nav-pills">
                         <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+                        {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
                         <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/users.php">Users</a></li>
+                        {% endif %}
+                        {% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
                         <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/permissions.php">Permissions</a></li>
+                        {% endif %}
+                        {% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
                         <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/signupCodes.php">Signup Codes</a></li>
+                        {% endif %}
+                        {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
                         <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/trustedDomains.php">Trusted Domains</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
