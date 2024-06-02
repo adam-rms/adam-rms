@@ -19,6 +19,25 @@
                     </ul>
                 </div>
             </div>
+            {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Add Users</h3>
+                </div>
+                <div class="card-body">
+                    {% if NOCAPACITY %}
+                    <p>Your current plan does not enable you to add any more users. You have {{ NOCAPACITY.USED }} users, with a limit of {{ NOCAPACITY.CAPACITY }}.</p>
+                    <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+                    {% else %}
+                    <p>Enter email addresses to search for existing AdamRMS users to add to business</p>
+                     <div class="input-group">
+                        <select class="form-control" multiple="multiple" id="addUserToInstance"></select>
+                        <button type="button" style="margin-top: 5px;" class="btn btn-default" id="addUserToInstance-button">Add to business</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Users</h3>
@@ -106,27 +125,6 @@
                     </table>
                 </div>
             </div>
-            {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Add Users</h3>
-                </div>
-                <div class="card-body">
-                    {% if NOCAPACITY %}
-                    <div class="p-2">
-                        <p>Your current plan does not enable you to add any more users. You have {{ NOCAPACITY.USED }} users, with a limit of {{ NOCAPACITY.CAPACITY }}.</p>
-                        <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
-                    </div>
-                    {% else %}
-                    <div class="input-group  mb-3" style="padding: 10px; padding-bottom: 0;">
-                        <p>Enter email addresses to search for existing AdamRMS users to add to business</p>
-                        <select class="form-control" multiple="multiple" id="addUserToInstance"></select>
-                        <button type="button" style="margin-top: 5px;" class="btn btn-default btn-sm" id="addUserToInstance-button">Add to business</button>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
     {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
