@@ -52,39 +52,36 @@
                             <th data-searchable="false" data-orderable="false">Thumbnail</th>
                             <th>Username</th>
                             <th>Firstname</th>
-                            <th data-searchable="false">Lastname</th>
+                            <th>Lastname</th>
                             <th>Email</th>
                             <th data-searchable="false">Role</th>
                             <th data-searchable="false">Role Group</th>
-                            <th data-orderable="false"></th>
+                            <th data-searchable="false" data-orderable="false"></th>
                         </tr>
                         </thead>
-                        {% if users|length > 0 %}
+                        
                         <tbody>
                         {% for user in users %}
-                            <tr
-                                    {% if user.users_suspended == '1' %}
-                                    class="danger"
-                                    {% endif %}>
+                            <tr>
                                 <td>
-                                    {% if user.users_thumbnail %}
-                                        <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                    {% if CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail %}
+                                        <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail|s3URL("small") }}">
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
-                                        <span class="badge bg-danger">Archived</span>
-                                    {% endif %}
                                     {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                     <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
                                         {% endif %}
                                         {{ user.users_username }}
                                         {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
                                     </a>
-                                            {% endif %}
+                                    {% endif %}
 
-                                        {% if user.users_suspended == '1' %}
+                                    {% if user.users_suspended == '1' %}
                                         <span class="label label-danger">Suspended</span><br/>
+                                    {% endif %}
+                                    {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                        <span class="badge bg-danger">Archived</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ user["users_name1"] }}</td>
@@ -119,9 +116,6 @@
                             </tr>
                         {% endfor %}
                         </tbody>
-                        {% else %}
-                            <tr><td colspan="999" style="text-align: center"><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></td></tr>
-                        {% endif %}
                     </table>
                 </div>
             </div>
@@ -177,6 +171,10 @@
                 "lengthChange": true,
                 "searching": true,
                 "ordering": true,
+                "order": [
+                    [1, 'asc'],
+                    [4, 'asc']
+                ],
                 "info": true,
                 "autoWidth": false,
                 "responsive": true,
