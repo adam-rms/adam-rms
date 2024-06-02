@@ -16,21 +16,6 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous"/>
-
-
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha256-yNbKY1y6h2rbVcQtf0b8lq4a+xpktyFc3pSYoGAY1qQ=" crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" integrity="sha256-R91pD48xW+oHbpJYGn5xR0Q7tMhH4xOrWn1QqMRINtA=" crossorigin="anonymous"/>
-		<script>
-			toastr.options = {
-"closeButton": false,
-"debug": false,
-"progressBar": false,
-"preventDuplicates": true,
-"onclick": null,
-"showDuration": "300",
-"hideDuration": "1000"
-}
-		</script>
 		<style>
 			html,
 			body,
@@ -70,8 +55,13 @@
 				color: inherit; /* blue colors for links too */
 				text-decoration: inherit; /* no underline */
 			}
-			form {
+			#errorMessageBox {
 				display: none;
+				border: 0px;
+				text-align: left; 
+			}
+			#errorMessageBox p {
+				margin: 0;
 			}
 		</style>
 	</head>
@@ -90,7 +80,7 @@
 									<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
 									<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
 								</div>
-								{% endif %}
+							{% endif %}
 							{% block content %}{% endblock %}
 						</div>
 					</div>
