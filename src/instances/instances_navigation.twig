@@ -99,6 +99,7 @@
                 <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="small-box-footer">Manage Basic Settings <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
+        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}        
         <div class="col-lg-3 col-6">
             <div class="small-box bg-primary">
                 <div class="inner">
@@ -111,6 +112,7 @@
                 <a href="{{ CONFIG.ROOTURL }}/instances/configuration/logo.php" class="small-box-footer">Manage Logo <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
+        {% endif %}
         <div class="col-lg-3 col-6">
             <div class="small-box bg-primary">
                 <div class="inner">
