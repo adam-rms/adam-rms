@@ -147,6 +147,7 @@
             {% if "BUSINESS:USER_SIGNUP_CODES:CREATE"|instancePermissions %}
             $("#signupCodes_name").on('change', () => {
                 const result = $("#signupCodes_name").val().replace(/[^a-z0-9]/gi,'');
+                $("#signupCodes_name").val(result);
                 ajaxcall("instances/signupCodes/taken.php?signupCode=" + result, {}, (taken) => {
                     if (taken.response.taken) {
                         $("#signupCodes_name_invalid").text("Sorry - that code is taken")
