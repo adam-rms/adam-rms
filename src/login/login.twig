@@ -1,5 +1,8 @@
 {% extends "login/login_template.twig" %}
 {% block content %}
+    {% if googleAuthAvailable %}
+    <a href="?google" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/google.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login or Signup with Google</a><br/>
+    {% endif %}
     <a href="?signup" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/logoicon.png" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Create new {{ CONFIG.PROJECT_NAME }} account</a>
     <p>or</p>
     <div class="spinner-border" role="status" id="loadingOverlay" style="display: none;">

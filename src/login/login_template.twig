@@ -24,17 +24,77 @@
 				height: 99%;
 				font-size: 14px;
 			}
-			body {
-				background: black;
+			html {
+				background-color: black;
 			}
-			#masterBoxShadow {
-				box-shadow: 0 0 1em 10em whitesmoke;
-				background: whitesmoke;
-				text-align: center;
-				border-radius: 50%;
-				border: 0;
-				padding: 0;
-				margin: 0;
+			@property --innerShadow {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 41%;
+			}
+			@property --secondShadow {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 44%;
+			}
+			@property --chromaticAberration {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 44%;
+			}
+			@property --outerShadow {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 44%;
+			}
+			@property --chromaticAberrationOuterColor {
+				syntax: '<color>';
+				inherits: false;
+				initial-value: black;
+			}
+			@keyframes lightFocusAnimation {
+				 	0% {
+						--innerShadow:30%;
+						--chromaticAberration:0%;
+						--outerShadow:44%;
+						--chromaticAberrationOuterColor:black;
+					}
+					20% {
+						--innerShadow:41%;
+						--chromaticAberration:0%;
+						--chromaticAberrationOuterColor:black;
+					}
+					40% {
+						--innerShadow:43.5%;
+						--chromaticAberration:calc((var(--outerShadow) - var(--innerShadow))/3);
+						--chromaticAberrationOuterColor:#BF4222A0;
+					}
+					60% {
+						--innerShadow:42%;
+						--chromaticAberration:calc((var(--outerShadow) - var(--innerShadow))/3);
+					}
+					95% {
+						--innerShadow:43.5%;
+						--chromaticAberration:0%;
+					}
+					100% {
+						--innerShadow:var(--outerShadow);
+						--chromaticAberration:0%;
+						--outerShadow:44%;
+						--chromaticAberrationOuterColor:#BF4222A0;
+					}
+				/*from {background: radial-gradient(circle at center, whitesmoke 0%, whitesmoke 35%, black 37%, black 100%);}
+				to {background: radial-gradient(circle at center, whitesmoke 0%, whitesmoke 5%, black 45%, black 100%);}
+				calc((((var(--outerShadow) - var(--innerShadow))/2)) + var(--innerShadow))*/
+			}
+			body {
+				animation-name: lightFocusAnimation;
+  			animation-duration: {{ runLightFocusAnimation ? '4s' : '0s' }};	
+				animation-iteration-count: 1;
+				animation-fill-mode: forwards;
+				animation-delay: 0s;
+				animation-direction: alternate;
+				background: radial-gradient(circle at center, white 0%, #F5F5F5B7 30%, #D3D3D3B7 var(--innerShadow), #FBCE3EA0 calc(var(--innerShadow) + var(--chromaticAberration)), var(--chromaticAberrationOuterColor) calc(var(--innerShadow) + var(--chromaticAberration)*3), black var(--outerShadow), black 100%);
 			}
 			#masterBox {
 				background: white;
@@ -47,7 +107,6 @@
 				margin: 0;
 			}
 			.footer {
-				background-color: black;
 				color: white;
 				padding: 10px;
 			}
@@ -72,17 +131,15 @@
 						                            col-md-6 offset-md-3
 						                            col-sm-8 offset-sm-2
 						                            col-xs-10 offset-xs-1">
-					<div id="masterBoxShadow">
-						<div id="masterBox">
-							<a href="?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
-							{% if CONFIG.DEV %}
-								<div class="alert alert-warning" style="border: 0px; text-align: left;">
-									<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
-									<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
-								</div>
-							{% endif %}
-							{% block content %}{% endblock %}
-						</div>
+					<div id="masterBox">
+						<a href="?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
+						{% if CONFIG.DEV %}
+							<div class="alert alert-warning" style="border: 0px; text-align: left;">
+								<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
+								<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
+							</div>
+						{% endif %}
+						{% block content %}{% endblock %}
 					</div>
 				</div>
 			</div>
