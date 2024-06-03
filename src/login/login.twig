@@ -1,73 +1,82 @@
 {% extends "login/login_template.twig" %}
 {% block content %}
-    <div id="status">
-
+    {% if googleAuthAvailable %}
+    <a href="?google" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/google.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login or Signup with Google</a><br/>
+    {% endif %}
+    <a href="?signup" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/logoicon.png" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Create new {{ CONFIG.PROJECT_NAME }} account</a>
+    <p>or</p>
+    <div class="spinner-border" role="status" id="loadingOverlay" style="display: none;">
+        <span class="sr-only">Loading...</span>
     </div>
-    <form id="form1">
-		<input class="form-control form-control-lg" id="form1Input" autocomplete="username" placeholder="Username or Email" type="text" style="margin-top: 10px; margin-bottom: 10px;" autofocus>
-        <input class="form-control form-control-lg" id="form2Input" placeholder="Password" autocomplete="current-password" type="password" style="margin-top: 10px; margin-bottom: 10px;">
+    <form id="loginForm">
+        <div id="errorMessageBox" class="alert alert-danger"></div>
+		<input class="form-control form-control-lg" id="emailInput" autocomplete="username" placeholder="Login with Username or Email" type="text" required style="margin-top: 10px; margin-bottom: 10px;" autofocus>
+        <input class="form-control form-control-lg" id="passwordInput" placeholder="Password" autocomplete="current-password" type="password" required style="margin-top: 10px; margin-bottom: 10px;">
 		<div style="width: 100%; text-align:right;">
             <button type="button" class="btn btn-default" id="passwordResetButton">Reset my password</button>
-            <a href="?signup" class="btn btn-secondary">Create account</a>
-            <button class="btn btn-primary" type="submit" value="Submit">Login</button>
+            <button class="btn btn-secondary" type="submit" value="Submit">Login</button>
 		</div>
 	</form>
 	<script>
-        function isEmail(email) {
-            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-            return regex.test(email);
-        }
-        var initialData;
-		$( document ).ready(function() {
-		    $("#form1").fadeIn();
-		});
-        $("#form1").submit(function(){
-            loginStep2();
-            return false;
+        $("#loginForm").submit(function(e){
+            e.preventDefault();
+            $("#loginForm").hide();
+            $("#loadingOverlay").show();
+            $.ajax({
+                url: "../api/login/login.php",
+                type: "POST",
+                dataType: 'json',
+                data: {"formInput" : $("#emailInput").val(),"password": $("#passwordInput").val()},
+                success: function(result) {
+                    if (result.result) {
+                        window.location.href = result.response.redirect;
+                    } else {
+                        $("#loginForm").show();
+                        $("#loadingOverlay").hide();
+                        $("#errorMessageBox").html(result.error.message);
+                        $("#errorMessageBox").show();
+                    }
+                },
+                error: function(){
+                    $("#loginForm").show();
+                    $("#loadingOverlay").hide();
+                    $("#errorMessageBox").html("Please refresh the page and check your internet connection");
+                    $("#errorMessageBox").show();
+                }
+            });
         });
         $('#passwordResetButton').click(function(){
-            if ($("#form1Input").val().length <= 0) {
-                toastr.warning("Please enter something into the username/email box");
+            if ($("#emailInput").val().length <= 0) {
+                $("#errorMessageBox").html("Please enter your username/email into the address box to reset your password.");
+                $("#errorMessageBox").show();
                 return;
             }
+            $("#errorMessageBox").hide();
+            $("#loginForm").hide();
+            $("#loadingOverlay").show();
             $.ajax({
                 url: "../api/login/forgotPassword.php",
                 type: "POST",
                 dataType: 'json',
-                data: {"formInput" : $("#form1Input").val()},
+                data: {"formInput" : $("#emailInput").val()},
                 success: function(result) {
+                    $("#loginForm").show();
+                    $("#loadingOverlay").hide();
                     if (result.result) {
-                        toastr.success("Password reset link sent to your registered email address");
+                        $("#errorMessageBox").html("If an account exists with the email address you entered, a password reset link has been sent to that address. Please check your email and follow the instructions provided.");
+                        $("#errorMessageBox").show();
                     } else {
-                        toastr.warning("Please contact the support team for a new password");
+                        $("#errorMessageBox").html("Please contact the support team for a new password");
+                        $("#errorMessageBox").show();
                     }
                 }, error: function(){
-                    toastr.error("Please refresh the page and check your internet connection");
+                    $("#loginForm").show();
+                    $("#loadingOverlay").hide();
+                    $("#errorMessageBox").html("Please refresh the page and check your internet connection");
+                    $("#errorMessageBox").show();
                 }
             });
 
         });
-        function loginStep2() {
-            if ($("#form2Input").val().length <= 0) {
-                toastr.warning("Please enter something into the password box");
-            } else {
-                $.ajax({
-                    url: "../api/login/login.php",
-                    type: "POST",
-                    dataType: 'json',
-                    data: {"formInput" : $("#form1Input").val(),"password": $("#form2Input").val()},
-                    success: function(result) {
-                        if (result.result) {
-                            window.location.href = result.response.redirect;
-                    	} else {
-                            toastr.error(result.error.message);
-                        }
-                    },
-                    error: function(){
-                        toastr.error("Please refresh the page and check your internet connection");
-                    }
-                });
-            }
-        }
 	</script>
 {% endblock %}

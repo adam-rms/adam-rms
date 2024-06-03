@@ -27,7 +27,6 @@ if (isset($_GET['app-oauth'])) {
 } 
 
 if (isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
-elseif (isset($_GET['login'])) echo $TWIG->render('login/login.twig', $PAGEDATA);
 elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLOBALS['AUTH']->VALIDMAGICLINKREDIRECTS) or $CONFIG['DEV'])) {
 	if (isset($_GET['magic-token'])) {
 		$url = $_GET['app-magiclink'] . "?token=" . $_GET['magic-token'] . "&referer=" . urlencode($CONFIG['ROOTURL']);
@@ -156,6 +155,6 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 		exit;
 	}
 } else {
-	if ($PAGEDATA['googleAuthAvailable']) echo $TWIG->render('login/login_index.twig', $PAGEDATA);
-	else echo $TWIG->render('login/login.twig', $PAGEDATA);
+	$PAGEDATA['runLightFocusAnimation'] = true;
+	echo $TWIG->render('login/login.twig', $PAGEDATA);
 }

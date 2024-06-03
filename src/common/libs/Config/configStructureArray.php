@@ -52,7 +52,7 @@ $configStructureArray = [
       },
       "name" => "Email sending",
       "group" => "Email",
-      "description" => "Should AdamRMS send emails to users? If this is enabled then a provider must be setup below.",
+      "description" => "Should AdamRMS send emails to users? If this is enabled then a provider must be setup below. Enabling this option will also require users to verify their email addresses on signup.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 5,
