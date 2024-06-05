@@ -4,6 +4,9 @@ require_once __DIR__ . '/api/notifications/notificationTypes.php';
 
 if (!isset($_GET['id'])) $_GET['id'] = $AUTH->data['users_userid'];
 
+$PAGEDATA['googleAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_SECRET") != false;
+$PAGEDATA['microsoftAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_MICROSOFT_APP_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_MICROSOFT_KEYS_SECRET") != false;
+
 $DBLIB->where("users.users_deleted", 0);
 $DBLIB->where("users.users_suspended", 0);
 if ($AUTH->instancePermissionCheck("BUSINESS:USERS:VIEW:INDIVIDUAL_USER") or $AUTH->serverPermissionCheck("USERS:EDIT")) {

@@ -277,23 +277,45 @@
                             </script>
                             <hr/>
                             <h2>Authentication Providers</h2>
-                            <h4>Google</h4>
-                            {% if USER.users_oauth_googleid %}
-                                <button class="btn btn-danger" id="disconnectOAuthGoogle"><i class="fab fa-google"></i> Disconnect Google Account</button>
-                                <script>
-                                    $(document).ready(function() {
-                                        $('#disconnectOAuthGoogle').on('click', function() {
-                                            ajaxcall("account/disconnectOAuth.php", {
-                                                "users_userid": "{{ USER.users_userid }}",
-                                                'provider' : "google",
-                                            }, function (data) {
-                                                location.reload();
+                            {% if googleAuthAvailable %}
+                                <h4>Google</h4>
+                                {% if USER.users_oauth_googleid %}
+                                    <button class="btn btn-danger" id="disconnectOAuthGoogle"><i class="fab fa-google"></i> Disconnect Google Account</button>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#disconnectOAuthGoogle').on('click', function() {
+                                                ajaxcall("account/disconnectOAuth.php", {
+                                                    "users_userid": "{{ USER.users_userid }}",
+                                                    'provider' : "google",
+                                                }, function (data) {
+                                                    location.reload();
+                                                });
                                             });
                                         });
-                                    });
-                                </script>
-                            {% else %}
-                                <a href="{{ CONFIG.ROOTURL }}/api/account/linkOAuth.php?google" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                                    </script>
+                                {% else %}
+                                    <a href="{{ CONFIG.ROOTURL }}/api/account/linkOAuth.php?google" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                                {% endif %}
+                            {% endif %}
+                            {% if microsoftAuthAvailable %}
+                                <h4>Microsoft</h4>
+                                {% if USER.users_oauth_microsoftid %}
+                                    <button class="btn btn-danger" id="disconnectOAuthMicrosoft"><i class="fab fa-microsoft"></i> Disconnect Microsoft Account</button>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#disconnectOAuthMicrosoft').on('click', function() {
+                                                ajaxcall("account/disconnectOAuth.php", {
+                                                    "users_userid": "{{ USER.users_userid }}",
+                                                    'provider' : "microsoft",
+                                                }, function (data) {
+                                                    location.reload();
+                                                });
+                                            });
+                                        });
+                                    </script>
+                                {% else %}
+                                    <a href="{{ CONFIG.ROOTURL }}/api/account/oauth-link/microsoft.php" class="btn btn-default"><i class="fab fa-microsoft"></i> Link to Microsoft Account</a>
+                                {% endif %}
                             {% endif %}
                         </div>
                         {% endif %}

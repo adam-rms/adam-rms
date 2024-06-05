@@ -5,6 +5,8 @@ use \Firebase\JWT\JWT;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Login"];
 $PAGEDATA['googleAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_SECRET") != false;
+$PAGEDATA['microsoftAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_MICROSOFT_APP_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_MICROSOFT_KEYS_SECRET") != false;
+
 
 if (isset($_GET['app-oauth'])) {
 	$_SESSION['return'] = false;
