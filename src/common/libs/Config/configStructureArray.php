@@ -209,7 +209,7 @@ $configStructureArray = [
       },
       "name" => "Google Auth Key",
       "group" => "Authentication",
-      "description" => "The ID key for Google authentication. When configuring Google authentication, set the redirect URIs to https://YOURROOTURL/login/index.php?google and https://YOURROOTURL/api/account/linkOAuth.php?google",
+      "description" => "The ID key for Google authentication. When configuring Google authentication, set the redirect URIs to https://YOURROOTURL/login/oauth/google.php and https://YOURROOTURL/api/account/oauth-link/google.php",
       "required" => false,
       "maxlength" => 100,
       "minlength" => 0,
