@@ -28,11 +28,11 @@ $user = $DBLIB->getOne("users", ["users.users_userid"]);
 if ($user and $user['users_userid'] != $AUTH->data['users_userid']) {
     //If its linked to another account remove the link to link it to this one
     $DBLIB->where("users_userid", $user['users_userid']);
-    $DBLIB->update("users", ["users_oauth_googleid" => null]);
+    $DBLIB->update("users", ["users_oauth_microsoftid" => null]);
 }
 
 $DBLIB->where("users_userid", $AUTH->data['users_userid']);
-$DBLIB->update("users", ["users_oauth_googleid" => $userProfile->identifier]);
+$DBLIB->update("users", ["users_oauth_microsoftid" => $userProfile->identifier]);
 header("Location: " . $CONFIG['ROOTURL'] . "/user.php");
 exit;
 
@@ -46,14 +46,6 @@ exit;
  *     @OA\Response(
  *         response="308", 
  *         description="Redirect",
- *     ), 
- *     @OA\Parameter(
- *         name="google",
- *         in="query",
- *         description="undefined",
- *         required="true", 
- *         @OA\Schema(
- *             type="string"), 
- *         ), 
+ *     )
  * )
  */

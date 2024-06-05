@@ -59,13 +59,5 @@ exit;
  *         response="308", 
  *         description="Redirect",
  *     ), 
- *     @OA\Parameter(
- *         name="google",
- *         in="query",
- *         description="undefined",
- *         required="true", 
- *         @OA\Schema(
- *             type="string"), 
- *         ), 
  * )
  */
