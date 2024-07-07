@@ -2,63 +2,400 @@
 {% block htmlIncludes %}
     <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/zxing-js/v0.21.min.js"></script>
     <!--<script type="text/javascript" src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>-->
+    <script>
+        // Format conversion for the library - do not adjust this array or the order of the elements - it's a lookup table
+        const BARCODEFORMATS = [
+            /** Aztec 2D barcode format. */
+            'AZTEC',
+            /** CODABAR 1D format. */
+            'CODABAR',
+            /** Code 39 1D format. */
+            'CODE_39',
+            /** Code 93 1D format. */
+            'CODE_93',
+            /** Code 128 1D format. */
+            'CODE_128',
+            /** Data Matrix 2D barcode format. */
+            'DATA_MATRIX',
+            /** EAN-8 1D format. */
+            'EAN_8',
+            /** EAN-13 1D format. */
+            'EAN_13',
+            /** ITF (Interleaved Two of Five) 1D format. */
+            'ITF',
+            /** MaxiCode 2D barcode format. */
+            'MAXICODE',
+            /** PDF417 format. */
+            'PDF_417',
+            /** QR Code 2D barcode format. */
+            'QR_CODE',
+            /** RSS 14 */
+            'RSS_14',
+            /** RSS EXPANDED */
+            'RSS_EXPANDED',
+            /** UPC-A 1D format. */
+            'UPC_A',
+            /** UPC-E 1D format. */
+            'UPC_E',
+            /** UPC/EAN extension format. Not a stand-alone format. */
+            'UPC_EAN_EXTENSION'
+        ];
+    </script>
 {% endblock %}
 {% block content %}
     <div class="row">
-        <a class="btn btn-default" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
-
-        <a class="button" id="startButton">Start</a>
-        <a class="button" id="resetButton">Reset</a>
-        <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
-        <div id="sourceSelectPanel" style="display:none">
-        <label for="sourceSelect">Change video source:</label>
-        <select id="sourceSelect" style="max-width:400px">
-        </select>
-        <pre><code id="result"></code></pre>
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Barcode Scanner</h3>
+                    <div class="card-tools">
+                        <button class="btn btn-tool btn-danger" title="Stop Scanning" id="barcodeScanResetButton" style="display:none;">Stop Scanning</button>
+                    </div>
+                </div>
+                <div class="card-body" id="barcodeScanVideoCard">
+                    <button class="btn btn-success btn-lg" title="Start Scanning" id="barcodeScanStartButton">Start Scanning</button>
+                    <video id="barcodeScanVideo" width="1920" height="1080" style="border: 0;"></video>
+                </div>
+                <div class="card-footer">
+                    <div class="input-group my-2" id="barcodeScanSourceSelectPanel" style="display:none">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                Camera:
+                            </span>
+                        </div>
+                        <select class="form-control" id="barcodeScanSourceSelect"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card" id="currentLocationCard">
+                <div class="card-header">
+                    <h3 class="card-title" id="currentLocationText"></h3>
+                    <div class="card-tools">
+                        <button class="btn btn-tool btn-default" title="Change Location Set" id="changeLocationButton">Change location</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="setLocationCard">
+                <div class="card-header">
+                    <h3 class="card-title">Set Location to begin scanning</h3>
+                </div>
+                <div class="card-body">
+                    <p>Set your location by:</p>
+                    <ul>
+                        <li>Scanning a location barcode</li>
+                        <li>Scanning an asset barcode (to set that asset as your location)</li>
+                        <li>Manually entering a location below</li>
+                    </ul>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="customLocationText" placeholder="Enter Location">
+                        <div class="input-group-append">
+                            <button class="btn btn-default" id="setCustomLocationButton">Set Location</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Assets Scanned</h3>
+                    <div class="card-tools">
+                        <a class="btn btn-tool btn-info" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row d-flex align-items-stretch" id="assetsScannedList"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    <script type="text/javascript">
+    <script>
+        var barcodeScanLocation = {
+            value: null,
+            name: null,
+            type: false
+        }
+        var barcodeRequestInProgress = false
+        function barcodeScanned(result) {
+            if (barcodeRequestInProgress) {
+                console.log("Request already in progress")
+                return
+            }
+            var value = result.text
+            var format = BARCODEFORMATS[result.format]
+            if (barcodeScanLocation.type === false) {
+                scanParseLocation(value, format)
+            } else {
+                scanParseAsset(value, format)
+            }
+        }
+        function scanParseLocation(barcodeValue, barcodeType) {
+            barcodeRequestInProgress = true
+            ajaxcall("assets/barcodes/search.php", {
+                "text": barcodeValue,
+                "type": barcodeType,
+                "scanned": true,
+            }, function (data) {
+                if (data.response.location) {
+                    setScanLocation(data.response.location['barcode']["locationsBarcodes_id"], data.response.location['locations_name'], "barcode")
+                    bootbox.alert("Location set to " + data.response.location['locations_name'], function () {
+                        barcodeRequestInProgress = false
+                    });
+                } else if (data.response.asset) {
+                    setScanLocation(data.response.asset['assets_id'], data.response.asset['assets_tag'] + " " + data.response.asset['assetTypes_name'], "asset")
+                    bootbox.alert("Location set to asset " + data.response.asset['assets_tag'] + " " + data.response.asset['assetTypes_name'], function () {
+                        barcodeRequestInProgress = false
+                    });
+                } else {
+                    bootbox.alert("Sorry location not found");
+                    barcodeRequestInProgress = false
+                }
+            });
+        }
+        function scanParseAsset(barcodeValue, barcodeType) {
+            barcodeRequestInProgress = true
+            ajaxcall("assets/barcodes/search.php", {"text":barcodeValue,"type":barcodeType,"location":barcodeScanLocation.value,"locationType":barcodeScanLocation.type,"scanned": true}, function (assetResult) {
+                console.log(assetResult)
+                if (assetResult.response.asset === false && assetResult.response.location !== false) {
+                    bootbox.confirm({
+                        title: "Location Barcode Scanned",
+                        message: 'Would you like to change your location to ' + assetResult.response.location['locations_name'] + '?',
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-default'
+                            }
+                        
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            setScanLocation(assetResult.response.location['barcode']["locationsBarcodes_id"], assetResult.response.location['locations_name'], "barcode")
+                            bootbox.alert("Location set to " + assetResult.response.location['locations_name']);
+                        }
+                        barcodeRequestInProgress = false
+                    }});
+                } else if (assetResult.response.asset === false) {
+                    if (assetResult.response.barcode !== false) {
+                        //Barcode exists but asset doesn't - you can create blank barcodes on the RMS that then get associated manually
+                        var barcodeid = assetResult.response.barcode;
+                    } else {
+                        //This is a totally random new barcode
+                        var barcodeid = false;
+                    }
+                    {% if "ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS"|instancePermissions %}
+                        bootbox.confirm({
+                            title: "Unassociated Barcode",
+                            message: `Would you like to associate the barcode ${barcodeValue} (type ${barcodeType}) with an asset in {{ USERDATA.instance.instances_name }}?`,
+                            buttons: {
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-success'
+                                },
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-default'
+                                }
+                            },
+                            callback: function (result) {
+                                if (result) {
+                                    if (assetResult.response.assetSuggest != false) {
+                                        bootbox.confirm({
+                                            title: "Change Asset Tag",
+                                            message: 'Would you like to assciate this barcode with the asset that has the Tag ' + assetResult.response.assetSuggest['assets_tag'] + '? The asset is a ' + assetResult.response.assetSuggest['assetTypes_name'] + ' (' + assetResult.response.assetSuggest['manufacturers_name'] + ')',
+                                            buttons: {
+                                                confirm: {
+                                                    label: 'Yes',
+                                                    className: 'btn-default'
+                                                },
+                                                cancel: {
+                                                    label: 'No - pick a different asset',
+                                                    className: 'btn-default'
+                                                }
+                                            
+                                        },
+                                        callback: function (result) {
+                                            if (result) {
+                                                ajaxcall("assets/barcodes/assign.php", {
+                                                    "tag": assetResult.response.assetSuggest['assets_tag'],
+                                                    "barcodeid": barcodeid,
+                                                    "text": barcodeValue,
+                                                    "type": barcodeType
+                                                }, function (result) {
+                                                    appendAssetToList(assetResult.response.assetSuggest, result.response.barcodeId)
+                                                    barcodeRequestInProgress = false
+                                                });
+                                            } else {
+                                                console.log("No asset suggestion")
+                                                barcodeRequestInProgress = false
+                                                // TODO suggest a user selects an asset
+                                            }
+                                        }});
+                                    } else {
+                                        console.log("No asset suggestion")
+                                        barcodeRequestInProgress = false
+                                        // TODO suggest a user selects an asset
+                                    }
+                                } else {
+                                    barcodeRequestInProgress = false
+                                }
+                            }
+                        });
+                    {% else %}
+                        bootbox.alert("Sorry you don't have permission to associate barcodes with assets", function () {
+                            barcodeRequestInProgress = false
+                        });
+                    {% endif %}
+                } else if (assetResult.result) {
+                    appendAssetToList(assetResult.response.asset, assetResult.response.barcode)
+                    barcodeRequestInProgress = false
+                }
+            });
+        }
+        function appendAssetToList(asset, barcode) {
+            $("#assetsScannedList").prepend(`
+                <div class="col-auto d-flex align-items-stretch" style="padding: 10px;">
+                    <div class="card bg-light">
+                        <div class="card-body" style="max-width: 250px;">
+                            <h2 class="lead"><b>${asset.assets_tag}</b> ${asset.assetTypes_name}</h2>
+                            <p class="text-muted text-sm m-0">${asset.assetCategoriesGroups_name} - ${asset.assetCategories_name}<br/>${asset.manufacturers_name}<br/>${new Date().toLocaleTimeString()}</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-danger deleteBarcodeButton" data-barcode="${barcode}">
+                                        Delete Barcode
+                                    </button>
+                                    <a href="{{CONFIG.ROOTURL}}/asset.php?id=${asset.assetTypes_id}&asset=${asset.assets_id}" class="btn btn-sm btn-default" target="_blank">
+                                        View Asset
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`);
+        }
+        function deleteBarcode(barcodeId) {
+            bootbox.confirm({
+                title: "Delete Barcode",
+                message: 'Are you sure you wish to delete this barcode? All scan history for this barcode will be lost',
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-danger'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-success'
+                    }
+                
+            },
+            callback: function (result) {
+                if (result) {
+                    ajaxcall("assets/barcodes/delete.php", {
+                        "barcodes_id": barcodeId,
+                    }, function (result) {
+                        bootbox.alert("Barcode deleted");
+                        $("button.deleteBarcodeButton[data-barcode='" + barcodeId + "']").remove();
+                    });
+                }
+            }});
+        }
+        function setScanLocation(value, name, type) {
+            localStorage.setItem("adamrms-barcode-scan-location-value", value)
+            localStorage.setItem("adamrms-barcode-scan-location-name", name)
+            localStorage.setItem("adamrms-barcode-scan-location-type", type)
+            barcodeScanLocation = {
+                value: value,
+                name: name,
+                type: type
+            }
+            $("#setLocationCard").hide()
+            $("#currentLocationText").html("Current Location: " + name)
+            $("#assetsScannedList").parent().show()
+            $("#currentLocationCard").show()
+            $("#barcodeScanStartButton").html("Start Scanning Assets")
+        }
+        function clearScanLocation() {
+            localStorage.removeItem("adamrms-barcode-scan-location-value")
+            localStorage.removeItem("adamrms-barcode-scan-location-name")
+            localStorage.removeItem("adamrms-barcode-scan-location-type")
+            barcodeScanLocation = {
+                value: null,
+                name: null,
+                type: false
+            }
+            $("#barcodeScanStartButton").html("Start Scanning to Set Location")
+            $("#assetsScannedList").parent().hide()
+            $("#setLocationCard").show()
+            $("#currentLocationCard").hide()
+        }
         $(document).ready(function () {
+            if (localStorage.getItem("adamrms-barcode-scan-location-value") !== null && localStorage.getItem("adamrms-barcode-scan-location-name") !== null && localStorage.getItem("adamrms-barcode-scan-location-type") !== null) {
+                setScanLocation(localStorage.getItem("adamrms-barcode-scan-location-value"), localStorage.getItem("adamrms-barcode-scan-location-name"), localStorage.getItem("adamrms-barcode-scan-location-type"))
+            } else {
+                clearScanLocation()
+            }
+            $("#changeLocationButton").on('click', function() {
+                clearScanLocation()
+            })
+            $("#setCustomLocationButton").on('click', function() {
+                setScanLocation($("#customLocationText").val(), $("#customLocationText").val(), "custom")
+            })
+            $('body').on('click', ".deleteBarcodeButton[data-barcode]", function() {
+                deleteBarcode($(this).data("barcode"))
+            })
+
+            const barcodeScanVideoWidth = $("#barcodeScanVideoCard").width()
+            $("#barcodeScanVideo").attr("width", barcodeScanVideoWidth)
+            $("#barcodeScanVideo").attr("height", barcodeScanVideoWidth/1.7)
             let selectedDeviceId;
             const codeReader = new ZXing.BrowserMultiFormatReader()
             codeReader.listVideoInputDevices().then((videoInputDevices) => {
-                const sourceSelect = document.getElementById('sourceSelect')
+                const sourceSelect = document.getElementById('barcodeScanSourceSelect')
                 selectedDeviceId = videoInputDevices[0].deviceId
                 if (videoInputDevices.length >= 1) {
+                    // Allow user to select different camera source
                     videoInputDevices.forEach((element) => {
-                    const sourceOption = document.createElement('option')
-                    sourceOption.text = element.label
-                    sourceOption.value = element.deviceId
-                    sourceSelect.appendChild(sourceOption)
+                        const sourceOption = document.createElement('option')
+                        sourceOption.text = element.label
+                        sourceOption.value = element.deviceId
+                        sourceSelect.appendChild(sourceOption)
                     })
-
                     sourceSelect.onchange = () => {
-                    selectedDeviceId = sourceSelect.value;
+                        selectedDeviceId = sourceSelect.value;
                     };
-
-                    const sourceSelectPanel = document.getElementById('sourceSelectPanel')
-                    sourceSelectPanel.style.display = 'block'
+                    $("#barcodeScanSourceSelectPanel").show();
                 }
-                document.getElementById('startButton').addEventListener('click', () => {
-                    codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
+                document.getElementById('barcodeScanStartButton').addEventListener('click', () => {
+                    $("#barcodeScanResetButton").show()
+                    $("#barcodeScanStartButton").hide()
+                    codeReader.decodeFromVideoDevice(selectedDeviceId, 'barcodeScanVideo', (result, err) => {
                     if (result) {
-                        console.log(result)
-                        document.getElementById('result').textContent = result.text
+                        barcodeScanned(result)
                     }
                     if (err && !(err instanceof ZXing.NotFoundException)) {
                         console.error(err)
-                        document.getElementById('result').textContent = err
+                        bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function () {
+                            codeReader.reset()
+                        });
                     }
                     })
-                    console.log(`Started continous decode from camera with id ${selectedDeviceId}`)
                 })
-                document.getElementById('resetButton').addEventListener('click', () => {
+                document.getElementById('barcodeScanResetButton').addEventListener('click', () => {
+                    $("#barcodeScanResetButton").hide()
                     codeReader.reset()
-                    document.getElementById('result').textContent = '';
-                    console.log('Reset.')
+                    $("#barcodeScanStartButton").show()
                 })
             })
             .catch((err) => {
                 console.error(err)
+                bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function () {
+                    location.reload()
+                });
             })
         })
     </script>
