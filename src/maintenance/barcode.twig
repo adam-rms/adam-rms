@@ -109,6 +109,26 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="selectAnAssetToAssign">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Associate Barcode with Asset</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <select class="form-control" multiple="multiple" id="selectAnAssetToAssign-assets" placeholder="Enter asset tags here"></select>
+                    <input type="hidden" id="selectAnAssetToAssign-barcode" value="">
+                    <input type="hidden" id="selectAnAssetToAssign-barcodetype" value="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="selectAnAssetToAssign-button">Associate</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         var barcodeScanLocation = {
             value: null,
@@ -178,13 +198,6 @@
                         barcodeRequestInProgress = false
                     }});
                 } else if (assetResult.response.asset === false) {
-                    if (assetResult.response.barcode !== false) {
-                        //Barcode exists but asset doesn't - you can create blank barcodes on the RMS that then get associated manually
-                        var barcodeid = assetResult.response.barcode;
-                    } else {
-                        //This is a totally random new barcode
-                        var barcodeid = false;
-                    }
                     {% if "ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS"|instancePermissions %}
                         bootbox.confirm({
                             title: "Unassociated Barcode",
@@ -219,8 +232,7 @@
                                         callback: function (result) {
                                             if (result) {
                                                 ajaxcall("assets/barcodes/assign.php", {
-                                                    "tag": assetResult.response.assetSuggest['assets_tag'],
-                                                    "barcodeid": barcodeid,
+                                                    "id": assetResult.response.assetSuggest['assets_id'],
                                                     "text": barcodeValue,
                                                     "type": barcodeType
                                                 }, function (result) {
@@ -228,15 +240,17 @@
                                                     barcodeRequestInProgress = false
                                                 });
                                             } else {
-                                                console.log("No asset suggestion")
+                                                $("#selectAnAssetToAssign-barcode").val(barcodeValue);
+                                                $("#selectAnAssetToAssign-barcodetype").val(barcodeType);
+                                                $('#selectAnAssetToAssign').modal('show');
                                                 barcodeRequestInProgress = false
-                                                // TODO suggest a user selects an asset
                                             }
                                         }});
                                     } else {
-                                        console.log("No asset suggestion")
+                                        $("#selectAnAssetToAssign-barcode").val(barcodeValue);
+                                        $("#selectAnAssetToAssign-barcodetype").val(barcodeType);
+                                        $('#selectAnAssetToAssign').modal('show');
                                         barcodeRequestInProgress = false
-                                        // TODO suggest a user selects an asset
                                     }
                                 } else {
                                     barcodeRequestInProgress = false
@@ -347,6 +361,87 @@
             $('body').on('click', ".deleteBarcodeButton[data-barcode]", function() {
                 deleteBarcode($(this).data("barcode"))
             })
+            $("#selectAnAssetToAssign-assets").select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+
+                minimumResultsForSearch: 1,
+                placeholder: "Enter asset numbers to search for assets",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term,
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                        id: item.assets_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $("#selectAnAssetToAssign-button").on("click", function() {
+                ajaxcall("assets/barcodes/assign.php", {
+                    "id": $("#selectAnAssetToAssign-assets").val(),
+                    "text": $("#selectAnAssetToAssign-barcode").val(),
+                    "type": $("#selectAnAssetToAssign-barcodetype").val()
+                }, function (result) {
+                    $('#selectAnAssetToAssign').modal('hide');
+                    {% if "ASSETS:EDIT"|instancePermissions %}
+                    bootbox.confirm({
+                        title: "Change Asset Tag",
+                        message: 'Would you like to change the assets tag to ' + $("#selectAnAssetToAssign-barcode").val() + '?',
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-default'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-default'
+                            }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("assets/editAsset.php", {
+                                "assets_id": $("#selectAnAssetToAssign-assets").val(),
+                                "assets_tag": $("#selectAnAssetToAssign-barcode").val()
+                            }, function (result) {
+                                scanParseAsset($("#selectAnAssetToAssign-barcode").val(), $("#selectAnAssetToAssign-barcodetype").val())
+                                $("#selectAnAssetToAssign-barcode").val('');
+                                $("#selectAnAssetToAssign-barcodetype").val('');
+                                $("#selectAnAssetToAssign-assets").val('');
+                            });
+                        } else {
+                            scanParseAsset($("#selectAnAssetToAssign-barcode").val(), $("#selectAnAssetToAssign-barcodetype").val())
+                            $("#selectAnAssetToAssign-barcode").val('');
+                            $("#selectAnAssetToAssign-barcodetype").val('');
+                            $("#selectAnAssetToAssign-assets").val('');
+                        }
+                    }});
+                    {% else %}
+                    $("#selectAnAssetToAssign-barcode").val('');
+                    $("#selectAnAssetToAssign-barcodetype").val('');
+                    {% endif %}
+                    
+                });
+            });
 
             const barcodeScanVideoWidth = $("#barcodeScanVideoCard").width()
             $("#barcodeScanVideo").attr("width", barcodeScanVideoWidth)
