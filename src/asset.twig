@@ -438,6 +438,9 @@
                                         Location
                                     </th>
                                     <th>
+                                        Type
+                                    </th>
+                                    <th>
                                         User
                                     </th>
                                 </tr>
@@ -451,19 +454,15 @@
                                         <td>
                                             {% if scan.locations_name %}
                                                 {{ scan.locations_name }}
-                                                <br/>
-                                                <small>
-                                                    Location Barcode Scanned<i class="fas fa-map-marker-alt"></i>
-                                                </small>
                                             {% elseif scan.assetTypes_name %}
                                                 Inside asset {{  scan.assetTypes_name }} ({{ scan.assets_tag }})
                                             {% elseif scan.assetsBarcodes_customLocation %}
-                                                {{  scan.assetsBarcodes_customLocation }}<small>
-                                                    (location was entered manually as text)
-                                                </small>
-                                                
+                                                {{  scan.assetsBarcodes_customLocation }}
                                             {% endif %}
-                                            <br/>{{ scan.assetsBarcodesScans_validation }}
+                                            <br/><small>{{ scan.assetsBarcodesScans_validation }}</small>
+                                        </td>
+                                        <td>
+                                            {% if scan.assetsBarcodesScans_barcodeWasScanned == "1" %}Barcode scanned{% else %}Location set manually{% endif %}
                                         </td>
                                         <td>
                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ scan.users_userid }}">{{ scan.users_name1 ~ " " ~ scan.users_name2 }}</a>
@@ -477,9 +476,9 @@
                                 <p>Use the buttons below to set the location of this asset without scanning a barcode.</p>
                             </div>
                             <div class="btn-group">
-                                <button class="btn btn-info m-2" id="setAssetLocationButton">Manually set location without scanning barcode.</button>
-                                <button class="btn btn-info m-2" id="setAssetLocationAssetButton">Manuet Location to another Asset</button>
-                                <button class="btn btn-info m-2" id="setCustomLocationButton">Set Custom Location</button>
+                                <button class="btn btn-info m-2" id="setAssetLocationButton">Manually pick location from list</button>
+                                <button class="btn btn-info m-2" id="setAssetLocationAssetButton">Manually set location to be within another Asset</button>
+                                <button class="btn btn-info m-2" id="setCustomLocationButton">Manually set Custom Location</button>
                             </div>
                             {% endif %}
                         </div>
@@ -539,10 +538,6 @@
                                                 {% if barcode.latestScan %}
                                                     {% if barcode.latestScan.locations_name %}
                                                         {{ barcode.latestScan.locations_name }}
-                                                        <br/>
-                                                        <small>
-                                                            Location Barcode Scanned<i class="fas fa-map-marker-alt"></i>
-                                                        </small>
                                                     {% elseif barcode.latestScan.assetTypes_name %}
                                                         Inside asset {{  barcode.latestScan.assetTypes_name }} ({{ barcode.latestScan.assets_tag }})
                                                     {% elseif barcode.latestScan.assetsBarcodes_customLocation %}
@@ -554,7 +549,7 @@
                                                     {% endif %}
                                                     <br/>
                                                     <small>
-                                                        Scanned by <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.latestScan.users_userid }}">{{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}</a> {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
+                                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.latestScan.users_userid }}">{{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}</a> {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
                                                     </small>
                                                 {% else %}
                                                     <i>Never scanned</i>
@@ -2088,7 +2083,7 @@
                         {% for location in locations %}
                             {
                                 text: '{{ location.locations_name }}',
-                                value: '{{ location.locationsBarcodes_id }}'
+                                value: '{{ location.locations_name }}'
                             },
                         {% endfor %}
                         ],
@@ -2097,8 +2092,10 @@
                                 const args = {
                                     "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
                                     "type": "CODE_128",
-                                    "locationType": "barcode",
-                                    "location": result
+                                    "locationType": "Custom",
+                                    "location": result,
+                                    "scanned": false,
+                                    "validation": "Location selected from list"
                                 }
                                 ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
                             }
@@ -2114,7 +2111,9 @@
                                     "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
                                     "type": "CODE_128",
                                     "locationType": "Custom",
-                                    "location": result
+                                    "location": result,
+                                    "scanned": false,
+                                    "validation": "Location manually entered"
                                 }
                                 ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
                             }
@@ -2165,8 +2164,9 @@
                         "type": "CODE_128",
                         "locationType": "asset",
                         "location": $("#setAssetLocationAssetModal-assets").val(),
+                        "scanned": false,
+                        "validation": "Asset selected from list"
                     }
-                    console.log(args);
                     ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
                 });
                 {% endif %} 
