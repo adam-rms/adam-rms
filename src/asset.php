@@ -144,15 +144,16 @@ if (count($PAGEDATA['assets']) == 1) {
         $barcodeIDsForLocation[] = $barcode["assetsBarcodes_id"];
     }
     // 50 latest scans 
-    $DBLIB->orderBy("assetsBarcodesScans.assetsBarcodesScans_timestamp", "DESC");
-    $DBLIB->where("assetsBarcodesScans.assetsBarcodes_id", $barcodeIDsForLocation, "IN");
-    $DBLIB->join("locationsBarcodes", "locationsBarcodes.locationsBarcodes_id=assetsBarcodesScans.locationsBarcodes_id", "LEFT");
-    $DBLIB->join("assets", "assets.assets_id=assetsBarcodesScans.location_assets_id", "LEFT");
-    $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
-    $DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
-    $DBLIB->join("users", "users.users_userid=assetsBarcodesScans.users_userid");
-    $PAGEDATA['assets'][0]['locationScans'] = $DBLIB->get("assetsBarcodesScans", 50, ["assetsBarcodesScans.*", "users.users_name1", "users.users_name2", "locations.locations_name", "locations.locations_id", "assets.assetTypes_id", "assetTypes.assetTypes_name", "assets.assets_tag"]);
-
+    if (count($barcodeIDsForLocation) > 0) {
+        $DBLIB->orderBy("assetsBarcodesScans.assetsBarcodesScans_timestamp", "DESC");
+        $DBLIB->where("assetsBarcodesScans.assetsBarcodes_id", $barcodeIDsForLocation, "IN");
+        $DBLIB->join("locationsBarcodes", "locationsBarcodes.locationsBarcodes_id=assetsBarcodesScans.locationsBarcodes_id", "LEFT");
+        $DBLIB->join("assets", "assets.assets_id=assetsBarcodesScans.location_assets_id", "LEFT");
+        $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+        $DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
+        $DBLIB->join("users", "users.users_userid=assetsBarcodesScans.users_userid");
+        $PAGEDATA['assets'][0]['locationScans'] = $DBLIB->get("assetsBarcodesScans", 50, ["assetsBarcodesScans.*", "users.users_name1", "users.users_name2", "locations.locations_name", "locations.locations_id", "assets.assetTypes_id", "assetTypes.assetTypes_name", "assets.assets_tag"]);
+    } else $PAGEDATA['assets'][0]['locationScans'] = [];
     //Asset Location
     //Current asset location
     $latestScan = assetLatestScan($asset['assets_id']);
