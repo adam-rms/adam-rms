@@ -62,25 +62,22 @@ foreach ($ids as $id) {
     }
 }
 if ($_GET['blanks'] > 0) {
+    $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("assetsBarcodes_deleted", 0);
+    $DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
     $count = $DBLIB->getValue("assetsBarcodes", "COUNT(*)");
     $count += 1; //Add one to it for the new set
     foreach (range(1, $_GET['blanks'], 1) as $asset) {
         $assetBarcodeData = [
             "assetsBarcodes_value" => $count + $asset,
-            "assetsBarcodes_type" => isset($_GET['barcodeType']) ? $_GET['barcodeType'] : "CODE_128",
-            "assets_id" => null,
-            "users_userid" => $AUTH->data['users_userid'],
-            "assetsBarcodes_added" => date("Y-m-d H:i:s")
+            "assetsBarcodes_type" => isset($_GET['barcodeType']) ? $_GET['barcodeType'] : "CODE_128"
         ];
         while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"], $assetBarcodeData["assetsBarcodes_type"])) {
             $assetBarcodeData["assetsBarcodes_value"] = mt_rand(1000, 99999);
         }
         $asset = [];
-        $insert = $DBLIB->insert("assetsBarcodes", $assetBarcodeData);
-        if ($insert) {
-            $assetBarcodeData['assetsBarcodes_id'] = $insert;
-            $asset['barcode'] = $assetBarcodeData;
-        } else continue; //Don't handle this asset
+        $assetBarcodeData['assetsBarcodes_id'] = null;
+        $asset['barcode'] = $assetBarcodeData;
         $asset['isAsset'] = false;
         $PAGEDATA['assets'][] = $asset;
     }

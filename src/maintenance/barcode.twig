@@ -155,7 +155,6 @@
         function scanParseAsset(barcodeValue, barcodeType) {
             barcodeRequestInProgress = true
             ajaxcall("assets/barcodes/search.php", {"text":barcodeValue,"type":barcodeType,"location":barcodeScanLocation.value,"locationType":barcodeScanLocation.type,"scanned": true}, function (assetResult) {
-                console.log(assetResult)
                 if (assetResult.response.asset === false && assetResult.response.location !== false) {
                     bootbox.confirm({
                         title: "Location Barcode Scanned",
@@ -189,7 +188,7 @@
                     {% if "ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS"|instancePermissions %}
                         bootbox.confirm({
                             title: "Unassociated Barcode",
-                            message: `Would you like to associate the barcode ${barcodeValue} (type ${barcodeType}) with an asset in {{ USERDATA.instance.instances_name }}?`,
+                            message: `No asset found with this barcode in {{ USERDATA.instance.instances_name }}.<br/>Would you like to associate the barcode ${barcodeValue} (type ${barcodeType}) with an asset in {{ USERDATA.instance.instances_name }}?`,
                             buttons: {
                                 confirm: {
                                     label: 'Yes',
@@ -205,7 +204,7 @@
                                     if (assetResult.response.assetSuggest != false) {
                                         bootbox.confirm({
                                             title: "Change Asset Tag",
-                                            message: 'Would you like to assciate this barcode with the asset that has the Tag ' + assetResult.response.assetSuggest['assets_tag'] + '? The asset is a ' + assetResult.response.assetSuggest['assetTypes_name'] + ' (' + assetResult.response.assetSuggest['manufacturers_name'] + ')',
+                                            message: 'Would you like to assciate this barcode with the asset in {{ USERDATA.instance.instances_name }} that has the Tag ' + assetResult.response.assetSuggest['assets_tag'] + '? The asset is a ' + assetResult.response.assetSuggest['assetTypes_name'] + ' (' + assetResult.response.assetSuggest['manufacturers_name'] + ')',
                                             buttons: {
                                                 confirm: {
                                                     label: 'Yes',
@@ -245,11 +244,11 @@
                             }
                         });
                     {% else %}
-                        bootbox.alert("Sorry you don't have permission to associate barcodes with assets", function () {
+                        bootbox.alert("Sorry you don't have permission to associate barcodes with assets in {{ USERDATA.instance.instances_name }}", function () {
                             barcodeRequestInProgress = false
                         });
                     {% endif %}
-                } else if (assetResult.result) {
+                } else if (assetResult.result && assetResult.response.asset) {
                     appendAssetToList(assetResult.response.asset, assetResult.response.barcode)
                     barcodeRequestInProgress = false
                 }
