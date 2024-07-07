@@ -1,8 +1,12 @@
 {% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/zxing-js/v0.21.min.js"></script>
+    <!--<script type="text/javascript" src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>-->
+{% endblock %}
 {% block content %}
     <div class="row">
         <a class="btn btn-default" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
-        
+
         <a class="button" id="startButton">Start</a>
         <a class="button" id="resetButton">Reset</a>
         <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
@@ -12,7 +16,6 @@
         </select>
         <pre><code id="result"></code></pre>
     </div>
-    <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             let selectedDeviceId;
