@@ -82,7 +82,7 @@
                                     <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (location.files|length > 0 ? location.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
                                 {% endif %}
                                 {% if "LOCATIONS:LOCATION_BARCODES:VIEW"|instancePermissions %}
-                                    <a href="{{ CONFIG.ROOTURL }}/location/barcodeGenerator.php?location={{ location.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
+                                    <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ location.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                 {% endif %}
                                 <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ location.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
                                 {% endif %}
@@ -133,7 +133,7 @@
                                             <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ subLocation.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (subLocation.files|length > 0 ? subLocation.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
                                         {% endif %}
                                         {% if "LOCATIONS:LOCATION_BARCODES:VIEW"|instancePermissions %}
-                                            <a href="{{ CONFIG.ROOTURL }}/location/barcodeGenerator.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
+                                            <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                         {% endif %}
                                         <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
                                         {% if "LOCATIONS:EDIT"|instancePermissions %}
