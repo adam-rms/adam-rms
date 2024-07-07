@@ -1,0 +1,492 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <!--Summernote-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" integrity="sha256-CLMYHViXNCxDUd/ySLeJJjyLtteBZwjqZ4c5p6U7L78=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.min.js" integrity="sha256-jPK1ABk4CuFvSr31v4CLU7X7XCvixZSi8fTTCw/tsto=" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/gridstrap/jquery.gridstrap.min.css">
+    <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/gridstrap/jquery.gridstrap.min.js"></script>
+{% endblock %}
+{% block content %}
+    {% set possibleCardStyles = ["primary","secondary","success","danger","warning","info","light","dark"] %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                Edit {{ PAGE.cmsPages_name }}
+            </h3>
+            <div class="card-tools pull-right">
+                <div class="btn-group  btn-group-sm" role="group">
+                    <button type="button" class="btn btn-default btn-sm" id="addNewCard" title="Add new Card">Add Card</button>
+                    <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ PAGE.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
+                    <button type="button" class="btn btn-default btn-sm" title="Edit History" data-toggle="modal" data-target="#revisionHistoryModal"><i class="fas fa-history"></i></button>
+                    <button type="button" class="btn btn-success btn-sm" id="masterSave" title="Save"><i class="fas fa-save"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="resize-grid" class="row">
+        {% if PAGE.DRAFTS[0]['cmsPagesDrafts_dataARRAY'] %}
+            {% for card in PAGE.DRAFTS[0]['cmsPagesDrafts_dataARRAY']['cards'] %}
+                {% embed 'cms/cms_edit_card.twig' with {'card': card } %}{% endembed %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% for card in [ {'type': 'custom' }, {'type': 'calendar' }, {'type': 'inventoryTotal' }, {'type': 'storageUsage' }, {'type': 'userCount' }, {'type': 'maintenanceOutstanding' }, {'type': 'myMaintenance' } ] %}
+        {% set card = card|merge({"width": 4 , "title": "Untitled Card"}) %}
+        <div style="display:none;" class="templateCard" data-type="{{ card.type ?: "custom" }}">
+            {% embed 'cms/cms_edit_card.twig' with {'card': card } %}{% endembed %}
+        </div>
+    {% endfor %}
+    <div class="modal fade" id="editCardModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editCardForm">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Card Content</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="index" value="" />
+                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+                                {% embed 'assets/templates/uppy.twig' with {'type': 'CMS-IMAGE', 'paste': true, 'typeId': 19, 'subTypeId': PAGE.cmsPages_id, 'imagesOnly': true } %}
+                                    {% block success %}
+                                        $('#summernote').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                                    {% endblock %}
+                                {% endembed %}
+                        {% endif %}
+                        <br/>
+                        <div class="summernote" id="summernote"></div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editConfigModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editConfigForm">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Card Configuration</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="index" value="" />
+                        <div class="form-group">
+                            <label>Card Title</label>
+                            <input class="form-control" name="title" placeholder="Drum Revolve Key Entry Tips" />
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <select class="form-control select2bs4" name="style">
+                                <option>None</option>
+                                {% for style in possibleCardStyles %}
+                                    <option value="{{ style }}">{{ style|title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Style</label>
+                            <select class="form-control select2bs4" name="outline">
+                                <option value="true">Color as Card Accent</option>
+                                <option value="false">Color as Card Top Background</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="revisionHistoryModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editConfigForm">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Page Revision History</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        #
+                                    </th>
+                                    <th>
+                                        User
+                                    </th>
+                                    <th>
+                                        Timestamp
+                                    </th>
+                                    <th>
+                                        Comment
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="revisionTableBody">
+                            {% for draft in PAGE.DRAFTS %}
+                                <tr>
+                                    <td>
+                                        v{{ draft.cmsPagesDrafts_revisionID }}
+                                    </td>
+                                    <td>
+                                        {{ draft.users_name1 ~ " " ~ draft.users_name2 }}
+                                    </td>
+                                    <td>
+                                        {{ draft.cmsPagesDrafts_timestamp|date("d M Y h:ia") }}
+                                    </td>
+                                    <td>
+                                        {{ draft.cmsPagesDrafts_changelog }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}&r={{ draft.cmsPagesDrafts_id }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                            <button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="{{ draft.cmsPagesDrafts_id }}" title="Rollback to this change"><i class="fas fa-history"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        {% if PAGE.DRAFTS[0]['cmsPagesDrafts_data'] %}
+        var lastSaveData = JSON.parse("{{ PAGE.DRAFTS[0]['cmsPagesDrafts_data']|escape("js") }}");
+        {% else %}
+        var lastSaveData = JSON.parse('{}');
+        {% endif %}
+        $(document).ready(function () {
+            $('#resize-grid').gridstrap({
+                dragCellHandleSelector: ".card-title",
+                getHtmlOfSourceCell: function ($cell) { // function to return the html of a 'source' cell.
+                    return $cell[0].outerHTML;
+                }
+            });
+            var gs = $('#resize-grid').data('gridstrap');
+            $(document).on("click",".resize",function(event) {
+                var index = gs.getCellIndexOfElement(event.target);
+                var enlarge = $(this).data("type") == "expand" ? true : false;
+                gs.modifyCell(index, function ($getVisibleCell, $getHiddenCell) {
+                    var $hiddenCell = $getHiddenCell();
+                    var $visibleCell = $getVisibleCell();
+                    var classList = $hiddenCell.attr('class').split(/\s+/);
+                    var oldWidth;
+                    $.each(classList, function(index, item) {
+                        if (item.startsWith("col-md-")) {
+                            $hiddenCell.removeClass(item);
+                            $visibleCell.removeClass(item);
+                            oldWidth = item.replace("col-md-", "");
+                        }
+                        if (item.startsWith("col-lg-")) {
+                            $hiddenCell.removeClass(item);
+                            $visibleCell.removeClass(item);
+                        }
+                    });
+                    if (enlarge && oldWidth < 12) {
+                        var newWidth = parseInt(oldWidth)+1;
+                    } else if (!enlarge && oldWidth > 2) { //Make 3 a minimum
+                        var newWidth = parseInt(oldWidth)-1;
+                    } else var newWidth = oldWidth; //Keep it the same
+
+                    $hiddenCell.addClass('col-md-' + newWidth);
+                    $visibleCell.addClass('col-md-' + newWidth);
+                    $hiddenCell.addClass('col-lg-' + newWidth);
+                    $visibleCell.addClass('col-lg-' + newWidth);
+                });
+            });
+            $(document).on("click",".delete",function(event) {
+                var cell = gs.$getCellOfElement(event.target);
+                bootbox.confirm({
+                    message: "Are you sure you wish to delete this card?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            gs.removeCell(cell);
+                        }
+                    }
+                });
+
+            });
+            $('#summernote').summernote({
+                minHeight: 300,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true,
+                disableDragAndDrop: true, //We're using fineuploader for that
+                toolbar: [
+                    ['oops', ['undo', 'redo']],
+                    ['font', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link','hr']],
+                    ['view', ['codeview']]
+                ],
+                popover: {
+                    image: [
+                        ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
+                        ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                        ['remove', ['removeMedia']]
+                    ],
+                    link: [
+                        ['link', ['unlink']]
+                    ],
+                    table: [
+                        ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                        ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                    ]
+                }
+            });
+            $(document).on("click",".editCardButton",function(event) {
+                var index = gs.getCellIndexOfElement(event.target);
+                $("#editCardForm input[name='index']").val(index);
+                $("#summernote").summernote('code',gs.$getCellOfElement(event.target).find(".card-body").html());
+                $('#editCardModal').modal('show');
+            });
+            $( "#editCardForm" ).submit(function( event ) {
+                event.preventDefault();
+                $('#editCardModal').modal('hide');
+                gs.modifyCell($(this).find("input[name='index']").val(), function ($getVisibleCell, $getHiddenCell) {
+                    var $hiddenCell = $getHiddenCell();
+                    var $visibleCell = $getVisibleCell();
+                    $hiddenCell.find(".card-body").html($("#summernote").summernote('code'));
+                    $visibleCell.find(".card-body").html($("#summernote").summernote('code'));
+                });
+            });
+            $("#editConfigForm select[name='style']").select2({
+                theme: "bootstrap4",
+                width: '100%',
+                templateResult: function (value) {
+                    var $span = $('<span class="badge badge-' + value.id + '">' + value.text + '</span>');
+                    return $span;
+                }
+            });
+            $(document).on("click",".editConfigButton",function(event) {
+                var index = gs.getCellIndexOfElement(event.target);
+                $("#editConfigForm input[name='index']").val(index);
+                $("#editConfigForm input[name='title']").val($.trim(gs.$getCellOfElement(event.target).find(".card-title").html()));
+                var classList = gs.$getCellOfElement(event.target).find(".card").attr('class').split(/\s+/);
+                var outline = false;
+                var color = false;
+                $.each(classList, function(index, item) {
+                    {% for style in possibleCardStyles %}
+                    if (item == "card-{{ style }}") {
+                        color = "{{ style }}";
+                    }
+                    {% endfor %}
+                    if (item == "card-outline") {
+                        outline = true;
+                    }
+                });
+                console.log(color);
+                if (color) {
+                    $('#editConfigForm select[name="style"]').val(color);
+                    $('#editConfigForm select[name="style"]').trigger('change');
+                }
+                if (outline) {
+                    $('#editConfigForm select[name="outline"]').val("true");
+                }
+                $('#editConfigModal').modal('show');
+            });
+            $( "#editConfigForm" ).submit(function( event ) {
+                event.preventDefault();
+                $('#editConfigModal').modal('hide');
+                var title = $(this).find("input[name='title']").val();
+                var style = $('#editConfigForm select[name="style"]').val();
+                var outline = ($('#editConfigForm select[name="outline"]').val() == "true" ? true : false);
+                gs.modifyCell($(this).find("input[name='index']").val(), function ($getVisibleCell, $getHiddenCell) {
+                    var $hiddenCell = $getHiddenCell();
+                    var $visibleCell = $getVisibleCell();
+
+                    $hiddenCell.find(".card-title").text(title);
+                    $visibleCell.find(".card-title").text(title);
+
+                    var classList = $hiddenCell.find(".card").attr('class').split(/\s+/);
+                    $.each(classList, function(index, item) {
+                        {% for style in possibleCardStyles %}
+                        if (item == "card-{{ style }}") {
+                            $hiddenCell.find(".card").removeClass(item);
+                            $visibleCell.find(".card").removeClass(item);
+                        }
+                        {% endfor %}
+                        if (item == "card-outline") {
+                            $hiddenCell.find(".card").removeClass(item);
+                            $visibleCell.find(".card").removeClass(item);
+                        }
+                    });
+                    if (style) {
+                        $hiddenCell.find(".card").addClass("card-" + style);
+                        $visibleCell.find(".card").addClass("card-" + style);
+                    }
+                    if (outline) {
+                        $hiddenCell.find(".card").addClass("card-outline");
+                        $visibleCell.find(".card").addClass("card-outline");
+                    }
+                });
+            });
+            $(document).on("click","#addNewCard",function(event) {
+                bootbox.prompt({
+                    title: "Card Type",
+                    inputType: "select",
+                    inputOptions: [
+                    {
+                        text: "Custom Card",
+                        value: "custom",
+                    },
+                    {
+                        text: "Calendar",
+                        value: "calendar",
+                    },
+                    {
+                        text: "Stats: Assets Total Value",
+                        value: "inventoryTotal",
+                    },
+                    {
+                        text: "Stats: Number of Users on {{ CONFIG.PROJECT_NAME }}",
+                        value: "userCount",
+                    },
+                    {
+                        text: "Stats: Maintenance Jobs Outstanding",
+                        value: "maintenanceOutstanding",
+                    },
+                    {
+                        text: "Stats: My Maintenance Jobs",
+                        value: "myMaintenance",
+                    },
+                    {
+                        text: "Stats: Storage Usage on {{ CONFIG.PROJECT_NAME }}",
+                        value: "storageUsage",
+                    }
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            gs.insertCell($('.templateCard[data-type=' + result + ']').children(".cell").prop('outerHTML'),0);
+                        }
+                    }
+                });
+            });
+
+            $(document).on("click",".restoreRevisionButton[data-id]",function(event) {
+                var change = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you wish to restore the page to this point?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("cms/editPageContent-rollback.php", {"cmsPages_id":"{{ PAGE.cmsPages_id }}","change":change}, function (response) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            function uploadSave(data,changelog) {
+               console.log(data);
+                ajaxcall("cms/editPageContent.php", {"pageData": data,"cmsPages_id":"{{ PAGE.cmsPages_id }}","changelog":changelog}, function (response) {
+                    //Add to revision list
+                    lastSaveData = data;
+                    $("#revisionTableBody").prepend('<tr><td>v' + response.response.revision + '</td><td>{{ USERDATA.users_name1 ~ " " ~ USERDATA.users_name2 }}</td><td><i>Just now</i></td><td>' + changelog + '</td><td><div class="btn-group btn-group-sm" role="group"><a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}&r=' + response.response.revisionID + '" target="_blank"><i class="fas fa-external-link-alt"></i></a><button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="' + response.response.revisionID + '" title="Rollback to this change"><i class="fas fa-history"></i></button></div></td></tr>');
+                });
+            }
+            function generateSave() {
+                var saveData = {
+                    "cards":[]
+                };
+
+                var cells = gs.$getCells();
+                $.each(cells, function(index, item) {
+                    //Get size
+                    var classList = $(item).attr("class").split(/\s+/);
+                    var width = 4;
+                    $.each(classList, function(index, item) {
+                        if (item.startsWith("col-md-")) {
+                            width = item.replace("col-md-", "");
+                        }
+                    });
+                    //Get styling
+                    var classList = $(item).children(".card").attr('class').split(/\s+/);
+                    var outline = false;
+                    var color = false;
+                    $.each(classList, function(index, item) {
+                        {% for style in possibleCardStyles %}
+                            if (item == "card-{{ style }}") {
+                                color = "{{ style }}";
+                            }
+                        {% endfor %}
+                        if (item == "card-outline") {
+                            outline = true;
+                        }
+                    });
+                    //card-secondary
+                    var type = $.trim($(item).find(".card[data-type]").data("type"))
+                    var thisBox = {
+                        "width":width,
+                        "content":(type == "custom" ? $.trim($(item).find(".card-body").html()) : ""),
+                        "title":$.trim($(item).find(".card-title").first().text()),
+                        "type":type,
+                        "outline":outline,
+                        "color":color
+                    };
+                    saveData.cards.push(thisBox);
+                });
+                console.log(saveData);
+                return saveData;
+            }
+            window.addEventListener("beforeunload", function(event) {
+                if (JSON.stringify(lastSaveData) !== JSON.stringify(generateSave())) { //Quick and dirty object comparison
+                    event.preventDefault();
+                    event.returnValue = "You have unsaved changes - are you sure you wish to exit?";
+                } else {
+                    delete event['returnValue'];
+                }
+            });
+            $(document).on("click","#masterSave",function(event) {
+                var saveData = generateSave();
+                bootbox.prompt("Please enter a comment about this revision", function(result) {
+                    if (result && result.length > 0) {
+                        uploadSave(saveData,result);
+                    }
+                });
+
+            });
+        });
+    </script>
+{% endblock %}

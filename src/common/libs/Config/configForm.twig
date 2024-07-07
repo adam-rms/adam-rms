@@ -1,0 +1,89 @@
+<style>
+	input[type=text],
+	input[type="email"],
+	input[type="url"],
+	input[type="number"],
+	input[type="secret"],
+
+	select {
+		width: 100%;
+		padding: 12px 20px;
+		margin: 8px 0;
+		display: inline-block;
+
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-sizing: border-box;
+	}
+
+	input:required,
+	select:required {
+
+		border: 2px solid red;
+		border-radius: 4px;
+	}
+
+	p {
+		margin: 0;
+	}
+	p::first-line {
+		font-size: 1.2rem;
+		font-weight: bold;
+	}
+
+	input[type=submit] {
+		width: 100%;
+		background-color: #4CAF50;
+		color: white;
+		padding: 14px 20px;
+		margin: 8px 0;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	input[type=submit]:hover {
+		background-color: #45a049;
+	}
+
+	div {
+		border-radius: 5px;
+		background-color: #f2f2f2;
+		padding: 20px;
+margin-bottom: 20px;
+
+
+	}
+</style>
+<div>
+	<h1>Welcome to AdamRMS</h1>
+	<p>If you can see this message, then you have setup the database correctly, but you need to set up some configuration settings before you can get started.
+	</p>
+</div>
+
+
+<form method="post">
+<input type="submit" value="Save">
+
+
+	{% for key,field in form %}
+		{% if field.form.required %}
+	
+			<p for="{{ key }}">{{ field.form.name }}<br/>{{ field.form.description }}</p>
+			{% if errors[key] %}
+				<p style="color: red;">{{ errors[key] }}</p>
+			{% endif %}
+			{% if field.form.type == 'select' %}
+				<select name="{{ key }}" {{ field.form.required ? "required" : ''}}>
+					{% for option in field.form.options %}
+						<option value="{{ option|escape('html_attr') }}" {{ option == field.value ? 'selected' : '' }}>{{option}}</option>
+					{% endfor %}
+			</select>
+		{% else %}
+<input type="{{ field.form.type }}" name="{{ key|escape('html_attr') }}" value="{{ null is same as(field.value) or field.value is same as(false) ? field.form.default|escape('html_attr') : field.value|escape('html_attr') }}" placeholder="{{ field.form.default|escape('html_attr') }}" {{ field.form.required ? "required" : ''}} {{ field.form.minlength ? ('minlength="' ~ field.form.minlength ~ '"')|raw : '' }} {{ field.form.maxlength ? ('maxlength="' ~ field.form.maxlength ~ '"')|raw : '' }}/>
+		{% endif %}
+	{% endif %}
+{% endfor %}<input type="submit" value="Save"><input type="hidden" name="settingUpConfigUsingConfigFormTwig" value="true"/>
+</form>
+
+

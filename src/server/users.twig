@@ -1,0 +1,309 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js" integrity="sha512-OQlawZneA7zzfI6B1n1tjUuo3C5mtYuAWpQdg+iI9mkDoo7iFzTqnQHf+K5ThOWNJ9AbXL4+ZDwH7ykySPQc+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock %}
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the {{ CONFIG.PROJECT_NAME }} Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+            <div class="alert alert-warning alert-dismissible" style="border: 0px; margin-bottom: 15px;">
+                <h4><i class="fa fa-exclamation"></i> You have permission to view E-Mail addresses in this list</h4>
+                Please use caution and do not divulge these email addresses as per appropriate privacy policies
+            </div>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% if search|length > 0 %}
+                            Search results for users matching <b>{{ search }}</b>
+                        {% else %}
+                            Users
+                        {% endif %}
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <!--<form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                            <input type="text" name="q" class="form-control pull-right" placeholder="Search" value="{{ search }}" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </form>-->
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if users|length > 0 %}
+                        <table class="table table-head-fixed" id="userTable" border="0" style="overflow-x: scroll;">
+                            <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Firstname</th>
+                                <th data-searchable="false">Lastname</th>
+                                <th>Email</th>
+                                <th data-orderable="false">Roles</th>
+                                <th data-orderable="false">Instances</th>
+                                <th data-searchable="false">Accepted TOS</th>
+                                <th data-searchable="false">Last Login</th>
+                                <th data-searchable="false">Last Page View</th>
+                                <th data-orderable="false"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in users %}
+                                <tr
+                                        {% if user.users_suspended == '1' %}
+                                        class="danger"
+                                        {% endif %}>
+                                    <!--<td><img alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"></td>-->
+                                    <td>{{ user.users_username }}</td>
+                                    <td data-search="{{ (user["users_name1"] ~ " " ~ user["users_name2"])|escape("html_attr") }}">{{ user["users_name1"] }}</td>
+                                    <td>{{ user["users_name2"] }}</td>
+                                    <td>{{ user["users_email"] }} {{ user["users_emailVerified"] == 1 ? '<i class="fa fa-check-square-o">' : null }}</td>
+                                    <td>
+                                        {% if user.users_suspended == '1' %}
+                                            <span class="badge bg-danger">Suspended</span><br/>
+                                        {% endif %}
+                                        {% if user.currentPositions|length > 0 %}
+                                            {% for position in user.currentPositions %}
+                                                {% if position.userPositions_displayName != null %}
+                                                    {{ position.userPositions_displayName }}
+                                                {% else %}
+                                                    {{ position.positions_displayName }}
+                                                {% endif %}
+                                                <br/>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.instances|length < 1 %}
+                                            <span class="badge bg-warning">No instances</span><br/>
+                                        {% endif %}
+                                        {% for instance in user.instances %}
+                                            {% if instance.userInstances_archived != null and instance.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                                <span class="badge bg-danger">Archived</span>
+                                            {% endif %}
+                                            {{ instance.instances_name }} ({{ instance.instances_planName }}) - {{ instance.userInstances_label }} ({{ instance.instancePositions_displayName }})<br/>
+                                        {% endfor %}
+                                    </td>
+                                    <td data-order="{{ user.users_termsAccepted ? user.users_termsAccepted|date("U") : 0 }}">
+                                        {{ user.users_termsAccepted ? user.users_termsAccepted|date("d/M/Y G:i:s") : '' }}
+                                    </td>
+                                    <td data-order="{{ user.lastLogin.authTokens_created ? user.lastLogin.authTokens_created|date("U") : 0 }}">
+                                        {{ user.lastLogin.authTokens_created ? user.lastLogin.authTokens_created|date("d/M/Y G:i:s") : null }}
+                                    </td>
+                                    <td data-order="{{ user.lastAnalytics.analyticsEvents_timestamp ? user.lastAnalytics.analyticsEvents_timestamp|date("U") : 0 }}">
+                                        {{ user.lastAnalytics.analyticsEvents_timestamp ? user.lastAnalytics.analyticsEvents_timestamp|date("d/M/Y G:i:s") : null }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                        {% if "USERS:VIEW:MAILINGS"|serverPermissions %}
+                                            <button type="button" title="View Mailings for user" class="btn btn-info"
+                                                    data-toggle="modal"
+                                                    data-target="#useremailmodal{{ user["users_userid"] }}"
+                                            {% if user.emails|length < 1 %}disabled{% endif %}><i
+                                                        class="fa fa-envelope"></i></button>
+                                        {% endif %}
+                                        {% if user.users_userid != USERDATA.users_userid %}
+                                            {% if "USERS:EDIT"|serverPermissions %}
+                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user["users_userid"] }}"
+                                                   type="button" title="Edit user" class="btn btn-default"><i
+                                                            class="fa fa-pencil-alt"></i></a>
+                                            {% endif %}
+                                            {% if user.users_suspended == '0' %}
+                                                <!--Destroy all user tokens-->
+                                                {% if "VIEW-AUDIT-LOG"|serverPermissions %}
+                                                    <button type="button" title="Log User out on all devices"
+                                                            class="btn btn-danger logoutbutton"
+                                                            data-userid="{{ user.users_userid }}"><i
+                                                                class="fa fa-sign-out-alt"></i></button>
+                                                {% endif %}
+                                            {% endif %}
+
+                                            {% if "USERS:EDIT:SUSPEND"|serverPermissions %}
+                                                <button type="button"
+                                                        class="btn btn-{{ user.users_suspended == '1' ? 'success' : 'danger' }} suspenduser"
+                                                        data-suspendval="{{ user.users_suspended == '1' ? '0' : '1' }}"
+                                                        data-userid="{{ user.users_userid }}"
+                                                        title="{{ user.users_suspended == '0' ? 'Suspend user' : 'Un-Suspend user' }}">
+                                                    <i class="fa fa-times-circle"></i></button>
+                                            {% endif %}
+                                            {% if "USERS:DELETE"|serverPermissions %}
+                                                <button type="button"
+                                                        class="btn btn-danger deleteuser"
+                                                        data-userid="{{ user.users_userid }}"
+                                                        title="Delete User">
+                                                    <i class="fa fa-trash"></i></button>
+                                            {% endif %}
+                                            {% if "USERS:VIEW_SITE_AS"|serverPermissions %}
+                                                <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs.php?userid={{ user["users_userid"] }}"
+                                                   title="Login as User">
+                                                    <button type="button" class="btn btn-default"><i
+                                                                class="fa fa-sign-in-alt"></i></button>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <script>
+                        $(function () {
+                            $('#userTable').DataTable({
+                                "paging": true,
+                                "lengthChange": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false,
+                                "responsive": true,
+                                "deferRender": true,
+                            });
+                        });
+                        </script>
+                    {% else %}
+                        <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
+                    {% endif %}
+                </div>
+                <div class="overlay" id="loadingoverlay">
+                    <i class="fas fa-sync fa-spin fa-3x"></i>
+                </div>
+            </div>
+        </div>
+        {% for user in users %}
+            {% if "USERS:VIEW:MAILINGS"|serverPermissions %}
+                <div id="useremailmodal{{ user["users_userid"] }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title"> E-Mails
+                                    to {{ user["users_name1"] }} {{ user["users_name2"] }}</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="list-group">
+                                    {% for email in user.emails %}
+                                        <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ email.emailSent_id }}"
+                                           target="_blank" class="list-group-item"><span
+                                                    class="badge">{{ email.emailSent_sent|date("d/m/Y H:i:s") }}</span> {{ email.emailSent_subject }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ user.email_ids }}"
+                                   class="btn btn-default">Output All</a>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+
+        {% endfor %}
+        <script>
+            $(document).ready(function () {
+                function password() {
+                    var iteration = 0;
+                    var password = "";
+                    var randomNumber;
+                    var special = false; //Allow special characters
+                    while (iteration < 10) {
+                        randomNumber = (Math.floor((Math.random() * 100)) % 94) + 33;
+                        if (!special) {
+                            if ((randomNumber >= 33) && (randomNumber <= 47)) {
+                                continue;
+                            }
+                            if ((randomNumber >= 58) && (randomNumber <= 64)) {
+                                continue;
+                            }
+                            if ((randomNumber >= 91) && (randomNumber <= 96)) {
+                                continue;
+                            }
+                            if ((randomNumber >= 123) && (randomNumber <= 126)) {
+                                continue;
+                            }
+                        }
+                        iteration++;
+                        password += String.fromCharCode(randomNumber);
+                    }
+                    return password;
+                }
+
+                $("#loadingoverlay").hide();
+                {% if "VIEW-AUDIT-LOG"|serverPermissions %}
+                $(".logoutbutton").click(function () {
+                    $("#loadingoverlay").show();
+                    $.ajax({
+                        url: "{{ CONFIG.ROOTURL }}/api/account/destroyTokens.php?userid=" + $(this).data("userid"),
+                        success: function (result) {
+                            if (result == '1') {
+                                $("#loadingoverlay").hide();
+                            } else {
+                                bootbox.alert("Sorry - Operation could not be completed! Please reload the page")
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if "USERS:EDIT:SUSPEND"|serverPermissions %}
+                $(".suspenduser").click(function () {
+                    $("#loadingoverlay").show();
+                    $.ajax({
+                        url: "{{ CONFIG.ROOTURL }}/api/account/suspend.php?userid=" + $(this).data("userid") + '&suspendval=' + $(this).data("suspendval"),
+                        success: function (result) {
+                            if (result == '1') {
+                                bootbox.alert("Success", function () {
+                                    location.reload();
+                                });
+                            } else {
+                                bootbox.alert("Sorry - Operation could not be completed! Please reload the page", function () {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if "USERS:DELETE"|serverPermissions %}
+                $(".deleteuser").click(function () {
+                    var userid = $(this).data("userid");
+                    bootbox.confirm({
+                        message: "Are you sure you wish to delete this user?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $("#loadingoverlay").show();
+                                ajaxcall("account/softDelete.php", {"users_userid": userid}, function (data) {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+            });
+        </script>
+    </div>
+{% endblock %}

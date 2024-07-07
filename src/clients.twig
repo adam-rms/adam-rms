@@ -1,0 +1,258 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% if search|length > 0 %}
+                            Search results for clients matching <b>{{ search }}</b>
+                        {% else %}
+                            Clients
+                        {% endif %}
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <form class="input-group input-group-sm" method="GET">
+                            <div class="input-group-prepend">
+                                {% if includeFuture %}
+                                    <a href="?" type="button" class="btn btn-default">Hide future projects</a>
+                                {% else %}
+                                    <a href="?future" type="button" class="btn btn-default">Include future projects</a>
+                                {% endif %}
+                                {% if includeReleased %}
+                                    <a href="?" type="button" class="btn btn-default">Hide projects where assets are released</a>
+                                {% else %}
+                                    <a href="?released" type="button" class="btn btn-default">Include projects where assets are released</a>
+                                {% endif %}
+                                {% if showArchived %}
+                                    <a href="?" type="button" class="btn btn-default">Show active Clients</a>
+                                {% else %}
+                                    <a href="?archive" type="button" class="btn btn-default">Show archived Clients</a>
+                                {% endif %}
+                            </div>
+                            <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                {% if "CLIENTS:CREATE"|instancePermissions %}
+                                <button type="button" class="btn btn-default" id="newClientButton"><i class="fa fa-plus"></i></button>
+                                {% endif %}
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    {% if clients|length > 0 %}
+                        <table class="table table-head-fixed table-striped" border="0" style="overflow-x: scroll;">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Website</th>
+                                    <th>Notes</th>
+                                    <th>Total Paid</th>
+                                    <th>To Pay</th>
+                                    {% if "CLIENTS:EDIT"|instancePermissions %}<th></th>{% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for client in clients %}
+                                <tr>
+                                    <td>
+
+                                        <a {% if "PROJECTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?client={{ client.clients_id }}"{% endif %}>
+                                            {{ client.clients_name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if client.clients_address %}
+                                            <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ client.clients_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
+                                                <i class="fas fa-map-marked-alt"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ client.clients_phone }}</td>
+                                    <td>{{ client.clients_email }}</td>
+                                    <td><a href="{{ client.clients_website }}" target="_blank">{{ client.clients_website }}</a></td>
+                                    <td>{{ client.clients_notes|nl2br }}</td>
+                                    <td>{{ client['totalPayments']|money(USERDATA.instance['instances_config_currency']) }}</td>
+                                    <td>{% if client['totalOutstanding']|moneyPositive %}{{ client['totalOutstanding']|money(USERDATA.instance['instances_config_currency']) }}{% endif %}</td>
+                                    {% if "CLIENTS:EDIT"|instancePermissions %}
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#clientModal{{ client.clients_id }}"><i class="fas fa-edit"></i></button>
+                                            {% if not(showArchived) %}
+                                                <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ client.clients_id }}"><i class="fas fa-archive"></i></button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ client.clients_id }}"><i class="fas fa-archive"></i></button>
+                                            {% endif %}
+                                        </div>
+                                        <div class="modal fade" id="clientModal{{ client.clients_id }}">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Edit {{ client.clients_name }}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="clientEdit-form" data-clientid="{{ client.clients_id }}">
+                                                            <input type="hidden" name="clients_id" value="{{ client.clients_id }}"/>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Name</span>
+                                                                </div>
+                                                                <input type="text" class="form-control" name="clients_name" value="{{ client.clients_name }}">
+                                                            </div>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend"><span class="input-group-text">Address</span></div>
+                                                                <textarea class="form-control" rows="6" name="clients_address"  placeholder="">{{ client.clients_address }}</textarea>
+                                                            </div>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Website</span>
+                                                                </div>
+                                                                <input type="text" class="form-control" name="clients_website" value="{{ client.clients_website }}">
+                                                            </div>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Phone</span>
+                                                                </div>
+                                                                <input type="text" class="form-control" name="clients_phone" value="{{ client.clients_phone }}">
+                                                            </div>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Email</span>
+                                                                </div>
+                                                                <input type="text" class="form-control" name="clients_email" value="{{ client.clients_email }}">
+                                                            </div>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend"><span class="input-group-text">Notes</span></div>
+                                                                <textarea class="form-control" rows="3" name="clients_notes"  placeholder="">{{ client.clients_notes }}</textarea>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary saveClientEdit-button" data-clientid="{{ client.clients_id }}">Save changes</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
+                    {% endif %}
+                </div>
+                <div class="overlay" id="loadingoverlay">
+                    <i class="fas fa-sync fa-spin fa-3x"></i>
+                </div>
+                {% if pagination.total > 1 %}
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {% if pagination.page > 1 %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                        {% endif %}
+
+                        {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                                    {% if pagination.page == i %}
+                                        <b>{{ i }}</b>
+                                    {% else %}
+                                        {{ i }}
+                                    {% endif %}
+                                </a></li>
+                        {% endfor %}
+
+                        {% if pagination.page < pagination.total %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $("#loadingoverlay").hide();
+                {% if "CLIENTS:CREATE"|instancePermissions %}
+                $("#newClientButton").click(function () {
+                    bootbox.prompt("Enter Client Name", function (result) {
+                        if (result) {
+                            ajaxcall("clients/new.php", {"clients_name": result}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    });
+                });
+                {% endif %}
+                {% if "CLIENTS:EDIT"|instancePermissions %}
+                $(".saveClientEdit-button").click(function () {
+                    var formData = $(".clientEdit-form[data-clientid=" + $(this).data("clientid") + "]").serializeArray();
+                    ajaxcall("clients/edit.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                });
+                $(".archiveButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    title: "Are you sure you want to archive this client?",
+                    message: "This will not delete the client, but will prevent it from being used in new projects.",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("clients/archive.php", {"clients_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            $(".unarchiveButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to restore this client?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("clients/unarchive.php", {"clients_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+                {% endif %}
+
+            });
+        </script>
+    </div>
+{% endblock %}

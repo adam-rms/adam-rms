@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Write Version Number
         run: |
-            echo $TAG > html/common/version/TAG.txt
+            echo $TAG > src/version/TAG.txt
         shell: bash
         env:
           TAG : ${{ github.event.release.tag_name }}

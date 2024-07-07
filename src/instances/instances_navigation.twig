@@ -1,0 +1,242 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+    <div class="row">
+        {% if ("BUSINESS:USERS:VIEW:LIST"|instancePermissions or "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions or "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions or "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions) %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">User Management</h2>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Users</h3>
+                    <p>&nbsp;</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/users.php" class="small-box-footer">Manage Users <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Permissions</h3>
+                    <p>Configures which users can access features.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-unlock-alt"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/permissions.php" class="small-box-footer">Manage Permissions <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Signup Codes</h3>
+                    <p>Allows new users to join your businesses if they enter a code.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/signupCodes.php" class="small-box-footer">Manage Signup Codes <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Trusted Domains</h3>
+                    <p>Allows new users with verified email addresses to join your businesses if their email matches a domain you configure.</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-building"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/trustedDomains.php" class="small-box-footer">Manage Trusted Domains <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Business Settings</h2>
+                </div>
+            </div>
+        </div>
+         <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Billing</h3>
+                    <p>&nbsp;</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-money-check"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="small-box-footer">Manage Billing <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Basic Settings</h3>
+                    <p>&nbsp;</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/settings.php" class="small-box-footer">Manage Basic Settings <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}        
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Logo</h3>
+                    <p>Configure the logo and email branding.</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-images"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/logo.php" class="small-box-footer">Manage Logo <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Public Site</h3>
+                    <p>Embed parts of {{ CONFIG.PROJECT_NAME }} within your public-facing website.</p>
+                </div>
+                <div class="icon">
+                    <i class="fab fa-chrome"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/public.php" class="small-box-footer">Manage Public Site <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Calendar Settings</h3>
+                    <p>&nbsp;</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/calendarSettings.php" class="small-box-footer">Manage Calendar Settings <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if ("BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions or "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions) %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Project Settings</h2>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Project Types</h3>
+                    <p>Configure the attributes of projects.</p>
+                </div>
+                <div class="icon">
+                    
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/projectTypes.php" class="small-box-footer">Manage Project Types <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Project Statuses</h3>
+                    <p>Configure the statuses of projects.</p>
+                </div>
+                <div class="icon">
+                    
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/projectStatuses.php" class="small-box-footer">Manage Project Statuses <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Asset Statuses</h3>
+                    <p>Configure the possible status of an asset in a project.</p>
+                </div>
+                <div class="icon">
+                    
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/asset-status.php" class="small-box-footer">Manage Asset Statuses <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Invoices</h3>
+                    <p>Configure invoice exports from projects.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/invoices.php" class="small-box-footer">Manage Invoices <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if ("BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions) %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Asset Settings</h2>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Custom Categories</h3>
+                    <p>Put assets in customised categories.</p>
+                </div>
+                <div class="icon">
+                   
+                </div>  
+                <a href="{{ CONFIG.ROOTURL }}/instances/customCategories.php" class="small-box-footer">Manage Custom Categories <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Barcodes</h3>
+                    <p>Configure barcode exports.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/barcodes.php" class="small-box-footer">Manage Barcodes <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

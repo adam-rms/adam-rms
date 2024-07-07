@@ -1,0 +1,399 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the {{ CONFIG.PROJECT_NAME }} Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% if search|length > 0 %}
+                            Search results for businesses matching <b>{{ search }}</b>
+                        {% else %}
+                            Businesses
+                        {% endif %}
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                            <input type="text" name="q" class="form-control pull-right" placeholder="Search" value="{{ search }}" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    {% if instances|length > 0 %}
+                        <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Billing Contact</th>
+                                <th>Plan</th>
+                                <th>Storage Used</th>
+                                <th>Storage Limit</th>
+                                <th>Users</th>
+                                <th>Assets</th>
+                                <th>Asset Value</th>
+                                <th>Asset Mass</th>
+                                <th>Projects</th>
+                                {% for table in ['CMS Pages','Maintenance Jobs','Locations','Clients','Training Modules', 'Project Types'] %}
+                                    <th>{{ table }}</th>
+                                {% endfor %}
+                                <th>Last Project Activity</th>
+                                <th>Admin Actions</th>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><b>Server Totals</b></td>
+                                <td>
+                                    {{ totals['STORAGEUSED']|formatsize }}
+                                </td>
+                                <td>{{ totals['STORAGEALLOWED']|formatsize }}</td>
+                                <td>
+                                    {{ totals.users.total|number_format(0) }}
+                                </td>
+                                <td>
+                                    {{ totals.assets.COUNT|number_format(0) }}
+                                </td>
+                                <td></td>
+                                <td>
+                                    {{ totals.assets.MASS|mass }}
+                                </td>
+                                {% for table in ['cmsPages','maintenanceJobs','locations','clients','modules', 'projects', 'projectsTypes'] %}
+                                    <td></td>
+                                {% endfor %}
+                                <td>
+                                    {{ totals.lastActivity.auditLog|date("d M Y") }}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: right;">Users without Businesses</td>
+                                <td>
+                                    {{ totals.users.noInstances|number_format(0) }}
+                                </td>
+                                <td colspan="5"></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for instance in instances %}
+                                <tr>
+                                    <td>{{ instance.instances_id }}</td>
+                                    <td>
+                                        {{ instance.instances_name }}
+                                        {% if instance.instances_deleted == '1' %}
+                                        <br/><span class="badge badge-danger">SOFT-DELETED</span>
+                                        {% endif %}
+                                        {% if instance.instances_suspended == '1' %}
+                                        <br/><span class="badge badge-warning">SUSPENDED</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if instance.usersForBillingUser|length > 0 %}
+                                            {% for user in instance.usersForBillingUser %}
+                                                {% if instance.instances_billingUser == user.users_userid %}
+                                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}" target="_blank">{{ user.users_name1 ~ " " ~ user.users_name2 }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ instance.instances_planName }}</td>
+                                    <td>
+                                        {{ instance['STORAGEUSED']|formatsize }}
+                                    </td>
+                                    <td>
+                                    {{ (instance.instances_storageLimit > 0 ? instance.instances_storageLimit|formatsize : "&infin;") }}
+                                    {% if instance.instances_storageEnabled == 0 == '1' %}
+                                        <br/><span class="badge badge-info">FILES DISABLED</span>
+                                    {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ instance.USERS }}/{{instance.instances_userLimit > 0 ?  instance.instances_userLimit : "&infin;"}}
+                                    </td>
+                                    <td>
+                                        {{ instance.assets.COUNT|number_format(0) }}/{{instance.instances_assetLimit > 0 ? instance.instances_assetLimit : "&infin;"}}
+                                    </td>
+                                    <td>
+                                       {{ instance.assets.VALUE|money(instance['instances_config_currency']) }}
+                                    </td>
+                                    <td>
+                                        {{ instance.assets.MASS|mass }}
+                                    </td>
+                                    <td>
+                                        {{ instance.PROJECTS > 0 ? instance.PROJECTS|number_format(0) : "" }}/{{instance.instances_projectLimit > 0 ? instance.instances_projectLimit : "&infin;"}}
+                                    </td>
+                                    {% for table in ['cmsPages','maintenanceJobs','locations','clients','modules', 'projectsTypes'] %}
+                                    <td>
+                                        {{ instance[table|upper] > 0 ? instance[table|upper]|number_format(0) : "" }}
+                                    </td>
+                                {% endfor %}
+                                    <td>
+                                        {{ instance.ACTIVITY.projectAuditLog ? instance.ACTIVITY.projectAuditLog|date("d M Y") : "" }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            {% if instance.instances_serverNotes %}
+                                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#notesModal{{ instance.instances_id }}">Notes</button>
+                                            {% endif %}
+                                            {% if "INSTANCES:EDIT"|serverPermissions %}
+                                                <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ instance.instances_id }}"><i class="fas fa-cog"></i></button>
+                                            {% endif %}
+                                            {% if "INSTANCES:FULL_PERMISSIONS_IN_INSTANCE"|serverPermissions and instance.instances_deleted == 0 and USERDATA.instance.instances_id != instance.instances_id %}
+                                                <a href="{{ CONFIG.ROOTURL }}/?i={{ instance.instances_id }}"
+                                                title="Login to Instance">
+                                                    <button type="button" class="btn btn-warning">Login as Admin</button>
+                                                </a>
+                                            {% endif %}
+                                            {% if "INSTANCES:DELETE"|serverPermissions %}
+                                                {% if instance.instances_deleted == 0 %}
+                                                <button type="button" class="btn btn-danger deleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Delete</button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-success restoreInstanceButton" data-instanceid="{{ instance.instances_id }}">Undo Delete</button>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if "INSTANCES:PERMANENTLY_DELETE"|serverPermissions and instance.instances_deleted == 1 %}
+                                                <button type="button"class="btn btn-danger permanentlyDeleteInstanceButton" data-instanceid="{{ instance.instances_id }}">Permanently Delete</button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <div class="modal fade" id="notesModal{{ instance.instances_id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <p>{{ instance.instances_serverNotes|replace({ "\r\n":', ', "\n":', ', "\r":', '}) }}</p>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if "INSTANCES:EDIT"|serverPermissions %}
+                                    <div class="modal fade" id="editModal{{ instance.instances_id }}">
+                                        <div class="modal-dialog modal-lg">
+                                            <form class="editForm" data-id="{{ instance.instances_id }}">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Instance Configuration</h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="instances_id" value="{{ instance.instances_id }}"/>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Name</span>
+                                                            </div>
+                                                            <input required type="text" class="form-control" name="instances_name" value="{{ instance.instances_name }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Notes</span>
+                                                            </div>
+                                                            <textarea type="text" class="form-control" placeholder="Private notes visible only to other server administrators" name="instances_serverNotes" rows="2">{{ instance.instances_serverNotes }}</textarea>
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Suspended</span>
+                                                            </div>
+                                                            <select required class="form-control" name="instances_suspended">
+                                                                <option value="1" {% if instance.instances_suspended == 1 %}selected{% endif %}>Suspended</option>
+                                                                <option value="0" {% if instance.instances_suspended == 0 %}selected{% endif %}>Enabled</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Reason for Suspension</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" name="instances_suspendedReason" value="{{ instance.instances_suspendedReason }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Plan</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" name="instances_planName" value="{{ instance.instances_planName }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Storage limit (bytes, 0 is unlimited)</span>
+                                                            </div>
+                                                            <input required type="number" min="0" class="form-control" name="instances_storageLimit" value="{{ instance.instances_storageLimit }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">User Limit (0 is unlmited)</span>
+                                                            </div>
+                                                            <input required type="number" min="0" class="form-control" name="instances_userLimit" value="{{ instance.instances_userLimit }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Asset Limit (0 is unlimited)</span>
+                                                            </div>
+                                                            <input required type="number" min="0" class="form-control" name="instances_assetLimit" value="{{ instance.instances_assetLimit }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Project Limit (0 is unlimited)</span>
+                                                            </div>
+                                                            <input required type="number" min="0" class="form-control" name="instances_projectLimit" value="{{ instance.instances_projectLimit }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">File storage functionality</span>
+                                                            </div>
+                                                            <select required class="form-control" name="instances_storageEnabled">
+                                                                <option value="1" {% if instance.instances_storageEnabled == 1 %}selected{% endif %}>Enabled</option>
+                                                                <option value="0" {% if instance.instances_storageEnabled == 0 %}selected{% endif %}>Disabled</option>
+                                                            </select>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label>Billing Contact</label>
+                                                            <select class="form-control select2 select2bs4" name="instances_billingUser">
+                                                                {% if instance.instances_billingUser == null %}
+                                                                    <option value="" selected disabled></option>
+                                                                {% endif %}
+                                                                {% for user in instance.usersForBillingUser %}
+                                                                    <option value="{{ user.users_userid }}" {% if instance.instances_billingUser == user.users_userid %}selected{% endif %}>{{ user.users_name1 }} {{ user.users_name2 }} {{ user.users_email }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary saveEdit">Save</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
+                    {% endif %}
+                </div>
+                
+                <div class="overlay" id="loadingoverlay">
+                    <i class="fas fa-sync fa-spin fa-3x"></i>
+                </div>
+                {% if pagination.total > 1 %}
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {% if pagination.page > 1 %}
+                        <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                        {% endif %}
+
+                        {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                                    {% if pagination.page == i %}
+                                        <b>{{ i }}</b>
+                                    {% else %}
+                                        {{ i }}
+                                    {% endif %}
+                                </a></li>
+                        {% endfor %}
+
+                        {% if pagination.page < pagination.total %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div> 
+        <script>
+            $(document).ready(function () {
+                $("#loadingoverlay").hide();
+                {% if "INSTANCES:DELETE"|serverPermissions %}
+                $(".deleteInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    bootbox.confirm({
+                        message: "Are you sure you wish to soft-delete this instance? The instance can be restored.",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("instances/delete.php", {"instances_id":instanceId}, function (data) {
+                                    location.reload();
+                                });
+                            } else {
+                                $("#loadingoverlay").hide();
+                            }
+                        }
+                    });
+                });
+                $(".restoreInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    ajaxcall("instances/unDelete.php", {"instances_id":instanceId}, function (data) {
+                        location.reload();
+                    });
+                });
+                {% endif %}
+                {% if "INSTANCES:PERMANENTLY_DELETE"|serverPermissions %}
+                $(".permanentlyDeleteInstanceButton").click(function () {
+                    var instanceId = $(this).data("instanceid");
+                    $("#loadingoverlay").show();
+                    bootbox.confirm({
+                        message: "Are you sure you wish to hard-delete this instance? This is a permanent action and cannot be undone, there is no option to restore this instance.",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                ajaxcall("instances/permanentlyDelete.php", {"instances_id":instanceId}, function (data) {
+                                    location.reload();
+                                });
+                            } else {
+                                $("#loadingoverlay").hide();
+                            }
+                        }
+                    });
+                });
+                {% endif %}
+                {% if "INSTANCES:EDIT"|serverPermissions %}
+                $(".editForm").submit(function (event) {
+                    var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+                    event.preventDefault();
+                    ajaxcall("instances/editInstanceServerAdmin.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                });
+                $('.editForm .select2').select2({
+                    theme: "bootstrap4",
+                    width: '100%'
+                });
+                {% endif %}
+            });
+        </script>
+    </div>
+{% endblock %}

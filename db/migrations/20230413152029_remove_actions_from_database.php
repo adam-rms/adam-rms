@@ -24,7 +24,7 @@ final class RemoveActionsFromDatabase extends AbstractMigration
          * This migration removes the actions from the database, and replaces them with an array, but to do this change the database must be updated to change the numeric values to the new string values.
          */
         $legacyServerActionsLookupTable = [
-            2 => 'USERS:CREATE',
+            2 => 'USERS:VIEW',
             5 => 'USERS:EDIT',
             6 => 'USERS:VIEW:MAILINGS',
             7 => 'VIEW-AUDIT-LOG',

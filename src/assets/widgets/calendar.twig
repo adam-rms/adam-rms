@@ -1,0 +1,104 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div class="card card-primary">
+    {% set calendarId = random() %}
+    <div class="card-body p-0">
+        <div id="calendar{{ calendarId }}"></div>
+    </div>
+    <script>
+        $(function () {
+            /* initialize the calendar
+             -----------------------------------------------------------------*/
+            const Calendar = FullCalendar.Calendar;
+            
+            const calendar{{ calendarId }} = new Calendar(document.getElementById('calendar{{ calendarId }}'), {
+                editable  : false,
+                droppable : false,
+                themeSystem: 'bootstrap',
+                initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
+                nextDayThreshold: '05:00:00',
+                height: 800,
+                firstDay: 1,
+                buttonText:  {
+                    today:    'Today',
+                    month:    'Month',
+                    week:     'Week',
+                    day:      'Day',
+                    list:     'List'
+                },
+                headerToolbar: {
+                    left  : 'prev,next today',
+                    center: 'title',
+                    right : 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
+                },
+                titleFormat: function(date) {
+                    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"
+                    ]
+                    return "{{ LOCATION ? LOCATION.locations_name ~ ": " }}" + monthNames[date['date']['month']] + " " + date['date']['year'];
+                },
+                events : [
+                    {% set startDate = false %}
+                    {% for project in projects %}
+                        {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
+                        {
+                            title          : "{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ project.projectsStatuses_name|escape("js") }}] {% endif %}{{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
+                            start          : {{ project.projects_dates_use_start|date('U') }}*1000,
+                            end            : {{ project.projects_dates_use_end|date('U') }}*1000,
+                            url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
+                            backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
+                            textColor    : '{{ project.projectsStatuses_foregroundColour }}'
+                        },
+                            {% if startDate > project.projects_dates_use_start|date("c") or startDate == false %}
+                                {% set startDate = project.projects_dates_use_start|date("c") %}
+                            {% endif %}
+                        {% endif %}
+                        {% if USERDATA['instance']['calendarSettings'].showSubProjects %}
+                            {%  for subProject in project.subProjects %}
+                                {% if subProject.projects_dates_use_start != null and subProject.projects_dates_use_end != null %}
+                                    {
+                                        title          : "↳ {% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ subProject.projectsStatuses_name|escape("js") }}] {% endif %}{{ subProject.clients_name ? subProject.clients_name|escape("js") ~ " - " }}{{ subProject.projects_name|escape("js") }}",
+                                        start          : {{ subProject.projects_dates_use_start|date('U') }}*1000,
+                                        end            : {{ subProject.projects_dates_use_end|date('U') }}*1000,
+                                        url            : '{{CONFIG.ROOTURL}}/project/?id={{ subProject.projects_id }}',
+                                        backgroundColor: '{{ subProject.projectsStatuses_backgroundColour }}',
+                                        textColor    : '{{ subProject.projectsStatuses_foregroundColour }}'
+                                    },
+                                    {% if startDate > subProject.projects_dates_use_start|date("c") or startDate == false %}
+                                        {% set startDate = subProject.projects_dates_use_start|date("c") %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                ],
+                {% if useStartDate and startDate %}
+                initialDate: '{{ startDate|date("c") }}',
+                {% endif %}
+                weekNumbers: true,
+                {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
+                weekNumberContent : function(week) {
+                    var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
+                    for (const [date, label] of Object.entries(weekStartDates)) {
+                        if (moment(week.date).isSame(date, 'isoWeek')) {
+                            //This date is in this week so return the label
+                            if (label === " ") return null;
+                            else return label;
+                        }
+                    }
+                    //default to week number if it doesn't have a label
+                    return week.num;
+                    
+                },
+                {% else %}
+                weekNumberCalculation: "ISO",
+                {% endif %}
+            });
+
+            calendar{{ calendarId }}.render();
+        })
+    </script>
+</div>

@@ -1,0 +1,31 @@
+<div class="col-xs-12 col-sm-12 col-md-{{ card.width }} col-lg-{{ card.width }} cell">
+	<div class="card {% if card.outline == " true" %}card-outline{% endif %} {% if card.color %}card-{{ card.color}}{% endif %}" data-type="{{ card.type ?: "custom" }}">
+		<div class="card-header">
+			<h3 class="card-title">
+				{{ card.title }}
+			</h3>
+			<div class="card-tools pull-right">
+				<div class="btn-group btn-group-sm" role="group">
+					{% if card["type"] == "custom" or card["type"] == null %}
+						<button type="button" class="btn btn-default btn-sm editCardButton">
+							<i class="fas fa-edit"></i>
+						</button>
+					{% endif %}
+					<button type="button" class="btn btn-default btn-sm editConfigButton">
+						<i class="fas fa-cog"></i>
+					</button>
+					<button type="button" class="btn btn-default btn-sm delete">
+						<i class="fas fa-trash"></i>
+					</button>
+					<button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="shrink">
+						<i class="fas fa-compress-arrows-alt"></i>
+					</button>
+					<button type="button" class="d-none d-sm-block btn btn-default btn-sm resize" data-type="expand">
+						<i class="fas fa-expand-arrows-alt"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+		{% embed 'assets/templates/cmsPageContent.twig' with {'card': card } %}{% endembed %}
+	</div>
+</div>

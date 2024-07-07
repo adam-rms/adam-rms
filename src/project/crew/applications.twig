@@ -1,0 +1,159 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Applications for {{ role.projects_name }} - {{ role.projectsVacantRoles_name }} | {{ role.projectsVacantRoles_slotsFilled }}/{{ role.projectsVacantRoles_slots }} roles allocated
+                    </h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>
+                                Applicant
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Submitted
+                            </th>
+                            <th style="width: 20px">
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for app in applications %}
+                            <tr>
+                                <td>
+                                    {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                    <a style="color: inherit; text-decoration: inherit;" target="_blank" href="{{ CONFIG.ROOTURL }}/user.php?id={{ app.users_userid }}">
+                                        {% endif %}
+                                        {{app.users_name1 ~ " " ~ app.users_name2 ~ " (" ~ app.users_email ~ ")" }}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                    </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if app.projectsVacantRolesApplications_withdrawn == 1 %}
+                                    Withdrawn
+                                    {% elseif app.projectsVacantRolesApplications_status == 2 %}
+                                    Unsuccessful
+                                    {% elseif app.projectsVacantRolesApplications_status == 1 %}
+                                    Successful
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ app.projectsVacantRolesApplications_submitted|date("d M Y h:ia") }}
+                                </td>
+                                <td class="project-actions text-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#infoModal{{ app.projectsVacantRolesApplications_id }}">Read</button>
+                                        {% if app.projectsVacantRolesApplications_withdrawn != 1 and app.projectsVacantRolesApplications_status < 1 %}
+                                        <button type="button" class="btn btn-danger btn-sm rejectButton" data-id="{{ app.projectsVacantRolesApplications_id }}">Reject</button>
+                                        <button type="button" class="btn btn-success btn-sm acceptButton" data-id="{{ app.projectsVacantRolesApplications_id }}" title="Make candidate successful candidate and assign them to the role">Assign</button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% for app in applications %}
+            <div class="modal fade" id="infoModal{{ app.projectsVacantRolesApplications_id }}">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{app.users_name1 ~ " " ~ app.users_name2}} | {{ role.projects_name }} - {{ role.projectsVacantRoles_name }}</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Name</span>
+                                </div>
+                                <input type="text" disabled class="form-control" value="{{ app.users_name1 }} {{app.users_name2 }}">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Email</span>
+                                </div>
+                                <input type="email" disabled class="form-control" value="{{ app.users_email }}">
+                            </div>
+                            {% if role.projectsVacantRoles_collectPhone == 1 %}
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Phone</span>
+                                </div>
+                                <input type="tel" disabled class="form-control" value="{{ app.projectsVacantRolesApplications_phone }}">
+                            </div>
+                            {% endif %}
+                            <h3>Application Comments</h3>
+                            <p>{{ app.projectsVacantRolesApplications_applicantComment|nl2br }}</p>
+                            {% for answer in app.projectsVacantRolesApplications_questionAnswers %}
+                                <h3>{{ answer.name }}</h3>
+                                <p>{{ answer.value|nl2br }}</p>
+                            {% endfor %}
+{% embed 'assets/templates/fileBox.twig' with {'files': app.files, 'readOnly': true } %}
+
+
+                            {% endembed %}
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     {% endfor %}
+    <script>
+        $(document).ready(function () {
+            $(".acceptButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want accept this application and give this candidate the role?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/crew/crewRoles/accept.php", {"projectsVacantRolesApplications_id":id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            $(".rejectButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.prompt({
+                    title: "Rejection message to be emailed to candidate",
+                    inputType: 'textarea',
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/crew/crewRoles/reject.php", {"projectsVacantRolesApplications_id":id, "message":result}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
+    {% endembed %}
+
+{% endblock %}

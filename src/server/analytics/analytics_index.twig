@@ -1,0 +1,38 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are viewing analytics that affect the whole of the {{ CONFIG.PROJECT_NAME }} Server, including all businesses (instances) running on it.
+			</div>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-lg-3 offset-lg-3 col-md-6 col-sm-12">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{analyticsEventsCount|number_format}}</h3>
+                    <p>Page Views</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-chart-bar"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/server/analytics/pageViews.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>48</h3>
+                    <p>Tables</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/server/analytics/tables.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

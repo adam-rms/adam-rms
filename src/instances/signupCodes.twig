@@ -1,0 +1,294 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/users.php">Users</a></li>
+					{% endif %}
+					{% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/permissions.php">Permissions</a></li>
+					{% endif %}
+					{% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/signupCodes.php">Signup Codes</a></li>
+					{% endif %}
+					{% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/trustedDomains.php">Trusted Domains</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Signup Codes
+                </h3>
+                <div class="card-tools pull-right">
+                    <form class="input-group input-group-sm" method="GET">
+                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="width:15rem;">
+                            Code
+                        </th>
+                        <th style="width: 40rem;">
+                            Notes
+                        </th>
+                        <th style="width:8rem;">
+                            Used
+                        </th>
+                        <th>
+                            Role
+                        </th>
+                        <th>
+                            Role Group
+                        </th>
+                        <th>
+                            Enabled
+                        </th>
+                        <th style="width:70px;">
+
+                        </th>
+                    </tr>
+                    {% for code in codes %}
+                          <tr>
+                              <td>
+                                  {{ code.signupCodes_name }}
+                              </td>
+                              <td>
+                                  {{ code.signupCodes_notes }}
+                              </td>
+                              <td>
+                                  {{ (code.count > 1 ? code.count ~ ' times' : code.count == 1 ? 'Once' : '') }}
+                              </td>
+                              <td>
+                                  {{ code.signupCodes_role }}
+                              </td>
+                              <td>
+                                  <select class="form-control roleGroupSelect" data-codeid="{{ code.signupCodes_id }}" {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}{% else %}disabled{% endif %}>
+                                      {% if code.instancePositions_id == "" %}
+                                          <option value="" selected></option>
+                                      {% endif %}
+                                      {% for position in positions %}
+                                        <option {{ code.instancePositions_id == position.instancePositions_id ? 'selected' : '' }} value="{{ position.instancePositions_id }}">{{ position.instancePositions_displayName }}</option>
+                                      {% endfor %}
+                                  </select>
+                              </td>
+                              <td>
+                                  <input type="checkbox" data-codeid="{{ code.signupCodes_id }}" {{ (code.signupCodes_valid == 1 ? 'checked' : '') }} {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}{% else %}disabled{% endif %}>
+                              </td>
+                              <td>
+                                 <div class="btn-group">
+                                     {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}
+                                        <button type="button" class="btn btn-default btn-sm editButton" data-codeid="{{ code.signupCodes_id }}" data-role="{{ code.signupCodes_role }}" data-notes="{{ code.signupCodes_notes }}" data-value="{{code.signupCodes_name}}"><i class="fas fa-edit"></i></button>
+                                     {% endif %}
+                                     {% if "BUSINESS:USER_SIGNUP_CODES:DELETE"|instancePermissions and code.count < 1 %}
+                                         <button type="button" class="btn btn-danger btn-sm deleteButton" data-codeid="{{ code.signupCodes_id }}"><i class="fas fa-trash"></i></button>
+                                     {% endif %}
+                                 </div>
+                              </td>
+                          </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="overlay" id="loading">
+                <i class="fas fa-sync fa-spin fa-3x"></i>
+            </div>
+            <div class="card-footer">
+                Use signup codes to allow users to join your business on {{ CONFIG.PROJECT_NAME }}, but keep them a secret as they allow anyone to join without needing to be approved<br/>
+                You can turn on email notifications for users in your <a href="{{ CONFIG.ROOTURL }}/user.php">account settings</a>
+            </div>
+        </div>
+        {% if "BUSINESS:USER_SIGNUP_CODES:CREATE"|instancePermissions %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Create Signup Code
+                </h3>
+            </div>
+            <div class="card-body">
+                <form class="form-group" id="newCodeForm">
+                    <div class="form-group">
+                        <label for="signupCodes_name">Signup Code *</label>
+                        <input type="text" class="form-control" id="signupCodes_name" name="signupCodes_name" aria-describedby="code-help">
+                        <small id="code-help" class="form-text text-muted">Enter the code itself</small>
+                        <div class="valid-feedback">Code is available</div>
+                        <div class="invalid-feedback" id="signupCodes_name_invalid">Sorry - that code is taken</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupCodes_role">Role *</label>
+                        <input type="text" class="form-control" id="signupCodes_role" name="signupCodes_role">
+                        <div class="invalid-feedback">A role is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="instancePositions_id">Role Group *</label>
+                        <select class="form-control" id="instancePositions_id" name="instancePositions_id">
+                            {% for position in positions %}
+                            <option value="{{ position.instancePositions_id }}">{{ position.instancePositions_displayName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupCodes_notes">Notes</label>
+                        <textarea class="form-control" name="signupCodes_notes" id="signupCodes_notes"></textarea>
+                    </div>
+                    <button type="submit" id="codeSubmit" class="btn btn-primary">Create</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#loading").hide();
+            {% if "BUSINESS:USER_SIGNUP_CODES:CREATE"|instancePermissions %}
+            $("#signupCodes_name").on('change', () => {
+                const result = $("#signupCodes_name").val().replace(/[^a-z0-9]/gi,'');
+                $("#signupCodes_name").val(result);
+                ajaxcall("instances/signupCodes/taken.php?signupCode=" + result, {}, (taken) => {
+                    if (taken.response.taken) {
+                        $("#signupCodes_name_invalid").text("Sorry - that code is taken")
+                        $("#signupCodes_name").removeClass('is-valid')
+                        $("#signupCodes_name").addClass('is-invalid')
+                    } else {
+                        $("#signupCodes_name").removeClass('is-invalid')
+                        $("#signupCodes_name").addClass('is-valid')
+                    }
+                });
+            })
+
+            $("#newCodeForm").submit((event) => {
+                event.preventDefault();
+
+                if (!$('#signupCodes_name').val()) {
+                    event.preventDefault();
+                    $("#signupCodes_name_invalid").text("A role is required")
+                    $('#signupCodes_name').addClass('is-invalid')
+                    return
+                }
+
+                if (!$('#signupCodes_role').val()) {
+                    event.preventDefault();
+                    $('#signupCodes_role').addClass('is-invalid')
+                    return
+                }
+
+                const formData = $("#newCodeForm").serializeArray();
+                ajaxcall("instances/signupCodes/new.php", {formData}, function (data) {
+                    location.reload();
+                });
+            })
+            {% endif %}
+            {% if "BUSINESS:USER_SIGNUP_CODES:EDIT"|instancePermissions %}
+            $(':checkbox').change(function() {
+                $("#loading").show();
+                var id = $(this).data("codeid");
+                var formData = [{"name": "signupCodes_id", "value":id },{"name": "signupCodes_valid", "value":($(this).is(":checked") ? '1' : '0') }];
+                ajaxcall("instances/signupCodes/edit.php", {formData}, function (data) {
+                    $("#loading").hide();
+                });
+            });
+            $('.roleGroupSelect').change(function() {
+                if ($(this).val() != '') {
+                    $("#loading").show();
+                    var id = $(this).data("codeid");
+                    var formData = [{"name": "signupCodes_id", "value":id },{"name": "instancePositions_id", "value":$(this).val() }];
+                    ajaxcall("instances/signupCodes/edit.php", {formData}, function (data) {
+                        $("#loading").hide();
+                    });
+                }
+            });
+            $(".editButton").click(function () {
+                var id = $(this).data("codeid");
+                var notes = $(this).data("notes");
+                var role = $(this).data("role");
+                var currentValue= $(this).data("value");
+                bootbox.prompt({
+                    title: "Edit Signup Code",
+                    value: currentValue,
+                    callback: function (result) {
+                        if (result) {
+                            result = result.replace(/[^a-z0-9]/gi,'');
+                            ajaxcall("instances/signupCodes/taken.php?signupCode=" + result, {}, function (taken) {
+                                if (taken.response.taken && currentValue != result) {
+                                    bootbox.alert("Sorry - that code is taken");
+                                } else {
+                                    bootbox.prompt({
+                                        title: "Notes",
+                                        inputType: 'textarea',
+                                        value: notes,
+                                        callback: function (resultsNotes) {
+                                            bootbox.prompt({
+                                                title: "Role",
+                                                value: role,
+                                                callback: function (resultsRole) {
+                                                    if (resultsRole) {
+                                                        var formData = [{
+                                                            "name": "signupCodes_id",
+                                                            "value": id
+                                                        }, {
+                                                            "name": "signupCodes_name",
+                                                            "value": result
+                                                        }, {
+                                                            "name": "signupCodes_notes",
+                                                            "value": resultsNotes
+                                                        }, {"name": "signupCodes_role", "value": resultsRole}];
+                                                        ajaxcall("instances/signupCodes/edit.php", {formData}, function (data) {
+                                                            location.reload();
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "BUSINESS:USER_SIGNUP_CODES:DELETE"|instancePermissions %}
+            $(".deleteButton").click(function () {
+                var id = $(this).data("codeid");
+                bootbox.confirm({
+                    title:"Are you sure?",
+                    message: "Deleting the code cannot be undone",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "signupCodes_id", "value":id },{"name": "signupCodes_deleted", "value":"1" }];
+                            ajaxcall("instances/signupCodes/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+
+        });
+    </script>
+</div>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% if asset %}
+    {% if GET.numStickers == "8" %}
+        <div class="container">
+            <div class="container">
+                {% if GET.adamrmslogo == 1 %}
+                <div class="item">
+                    <img src="{{ CONFIG.ROOTURL}}/static-assets/img/logosmall.png" style="height: 60px;" />
+                </div>
+                {% endif %}
+                <div class="item">
+                    <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ asset.barcode.assetsBarcodes_value }}&size=60&width=1&type={{ asset.barcode.assetsBarcodes_type }}" alt="Barcode" style="margin-right: 3px;">
+                </div>
+                <div class="item">
+                    {% if GET.tags != 0 %}<b>{{ asset.assets_tag|aTag }}</b>{% endif %}
+                    {% if GET.mass == 1 %}{{ (asset['assets_mass'] ? ' - ' ~ asset['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? ' - ' ~ asset.assetTypes_mass|mass : '')) }}{% endif %}
+                    {% if GET.tags != 0 or GET.mass == 1%}<br/>{% endif %}
+                    {% if GET.typename == 1 %}{{ asset.assetTypes_name }}<br/>{% endif %}
+                    {% if GET.definableField1 == 1 and asset.assetTypes_definableFields[0] != "" %}{{ asset.assetTypes_definableFields[0] }}: {{ asset['asset_definableFields_1'] }}<br/> {% endif %}
+                    {% if GET.instanceName %}{{ USERDATA.instance.instances_name }}{% endif %}
+                </div>
+                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and GET.instancelogo == 1 %}
+                <div class="item">
+                    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="height:70px">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% elseif GET.numStickers == "8cable" %}
+
+        {# Calculate column count #}
+        {% set colcount = 1 %}
+        {% if GET.adamrmslogo == 1 %}
+            {% set colcount = colcount + 1 %}
+        {% endif %}
+        {% if GET.instancelogo == 1 %}
+            {% set colcount = colcount + 1 %}
+        {% endif %}
+
+        {# Calculate row height #}
+        {% set heightcount = 0 %}
+        {% if GET.tags != 0 %}
+            {% set heightcount = heightcount + 1 %}
+        {% endif %}
+        {% if GET.typename == 1 %}
+            {% set heightcount = heightcount + 1 %}
+        {% endif %}
+        {% if GET.definableField1 == 1 and asset.assetTypes_definableFields[0] != "" %}
+            {% set heightcount = heightcount + 1 %}
+        {% endif %}
+        {% if GET.instanceName %}
+            {% set heightcount = heightcount + 1 %}
+        {% endif %}
+
+        <table style="vertical-align:top;">
+            <tr>
+                {% if GET.lengthMode == 1 and asset['asset_definableFields_1'] != null and asset['asset_definableFields_1'] matches '/^\\d+$/' %}
+                <td style="
+                        background-color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],false) }};
+                        color:{{ USERDATA.instance['instances_cableColours']|cableColourParse(asset['asset_definableFields_1'],true) }};
+                        padding:5px; writing-mode: vertical-rl;">
+                    {% if asset['asset_definableFields_1'] < 1 %}
+                        {% set loopCount = 5 %}
+                    {% elseif asset['asset_definableFields_1'] < 10 %}
+                        {% set loopCount = 7 %}
+                    {% elseif asset['asset_definableFields_1'] < 100 %}
+                        {% set loopCount = 6 %}
+                    {% else %}
+                        {% set loopCount = 4 %}
+                    {% endif %}
+                    {% for i in range(1,loopCount) %}
+                        {{ asset['asset_definableFields_1'] }}m&nbsp;
+                    {% endfor %}
+                </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                <td>
+                    <table>
+                        <tr>
+                            {% if GET.adamrmslogo == 1 %}
+                                <td style="width:0.1px;">
+                                    <img src="{{ CONFIG.ROOTURL}}/static-assets/img/logosmall.png" style="height: {{ heightcount*10 }}px;" />
+                                </td>
+                            {% endif %}
+                            <td style="width: 0.1px; white-space:nowrap; vertical-align:top;">
+                                {% if GET.tags != 0 %}<b>{{ asset.assets_tag|aTag }}</b><br/>{% endif %}
+                                {% if GET.typename == 1 %}{{ asset.assetTypes_name }}<br/>{% endif %}
+                                {% if GET.definableField1 == 1 and asset.assetTypes_definableFields[0] != "" %}{{ asset.assetTypes_definableFields[0] }}: {{ asset['asset_definableFields_1'] }}<br/> {% endif %}
+                                {% if GET.instanceName %}{{ GET.instanceName }}{% endif %}
+                            </td>
+                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and GET.instancelogo == 1 %}
+                                <td>
+                                    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="height:{{ heightcount*10 }}px">
+                                </td>
+                            {% endif %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ colcount }}">
+                                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ asset.barcode.assetsBarcodes_value }}&size=140&width=2&type={{ asset.barcode.assetsBarcodes_type }}" alt="Barcode" style="margin-left: 25%;width:100px;">
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    {% endif %}
+{% endif %}

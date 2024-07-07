@@ -1,0 +1,83 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css" integrity="sha512-pDpLmYKym2pnF0DNYDKxRnOk1wkM9fISpSOjt8kWFKQeDmBTjSnBZhTd41tXwh8+bRMoSaFsRnznZUiH9i3pxA==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js" integrity="sha512-+cXPhsJzyjNGFm5zE+KPEX4Vr/1AbqCUuzAS8Cy5AfLEWm9+UI9OySleqLiSQOQ5Oa2UrzaeAOijhvV/M4apyQ==" crossorigin="anonymous"></script>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/billing.php">Billing</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/settings.php">Basic Settings</a></li>
+					{% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/logo.php">Logo</a></li>
+                    {% endif %}
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/public.php">Public Site</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/calendarSettings.php">Calendar Settings</a></li>
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="card">
+            <form id="basicSettings">
+                <div class="card-header">
+                    <h3 class="card-title">Configuration</h3>
+                </div>
+                <div class="card-body">
+                    <p>Public site allows you to embed parts of {{ CONFIG.PROJECT_NAME }} within your public-facing website, for example to share your crew vacancies.</p>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="enabled" {{ publicData.enabled ? 'checked' : '' }}>
+                        <label class="form-check-label">Enabled</label>
+                    </div>
+                    <hr/>
+                    <div class="form-check py-1">
+                        <input type="checkbox" class="form-check-input" name="enableVacancies" {{ publicData.enableVacancies ? 'checked' : '' }}>
+                        <label class="form-check-label">Enable Crew Vacancies</label>
+                    </div>
+                    <div class="form-check py-1">
+                        <input type="checkbox" class="form-check-input" name="showVacancyClients" {{ publicData.showVacancyClients ? 'checked' : '' }}>
+                        <label class="form-check-label">Show project client names for Crew Vacancies</label>
+                    </div>
+                </div>
+                {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-default save">Save</button>
+                </div>
+                {% endif %}
+            </form>
+            <script>
+                $(document).ready(function() {
+                    $("#basicSettings").on("submit", function(e){
+                        e.preventDefault();
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('.save').on('click', function() {
+                var formData = $("#basicSettings").serializeArray();
+                ajaxcall("instances/editInstancePublicSite.php", {formData});
+            });
+        });
+    </script>
+    <div class="col-12 col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Crew Vacancies</h3>
+            </div>
+            <div class="card-body">
+                <p>Paste the following into your website content management system to embed the crew vacancies.</p>
+                <pre style="white-space: pre-wrap;">{{ ('<iframe loading="eager" referrerpolicy="strict-origin-when-cross-origin" style="width: 100%; height: 100%; border:none;" src="' ~ CONFIG.ROOTURL ~ '/public/embed/jobs.php?i=' ~ AUTH.data.instance.instances_id ~ '" title="AdamRMS Asset List and Search"></iframe>')|e('html') }}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

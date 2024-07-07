@@ -1,0 +1,197 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ CLIENT['clients_name'] ?: '' }}{{ CLIENT['clients_name'] and LOCATION['locations_name'] ? ' & ' : '' }}{{ LOCATION['locations_name'] ?: '' }} Projects {{ search ? " matching " ~ search : "" }} {{ STATUS ? ' with status ' ~ STATUS.projectsStatuses_name : ''}}</h3>
+            {% if CLIENT['clients_archived'] %}
+            <span class="badge badge-warning ml-2">Client Archived</span>
+            {% endif %}
+            {% if LOCATION['locations_archived'] %}
+            <span class="badge badge-warning ml-2">Location Archived</span>
+            {% endif %}
+            <div class="card-tools">
+                <form class="input-group input-group-sm"  method="GET">
+                    <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
+                        {% if "PROJECTS:CREATE"|instancePermissions %}<a type="button" class="btn btn-default" href="{{ CONFIG.ROOTURL }}/project/new.php" title="Add new project"><i class="fa fa-plus"></i></a>{% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped projects">
+                <thead>
+                <tr>
+                    <th style="width: 1%">
+                        #
+                    </th>
+                    <th>
+                        Title
+                    </th>
+                    <th style="width: 10%">
+                        Type
+                    </th>
+                    <th style="width: 24%">
+                        Client
+                    </th>
+                    <th style="width: 6rem;">
+                        Manager
+                    </th>
+                    <th style="width: 8rem;">
+                        Outstanding
+                    </th>
+                    <th style="width: 11rem;">
+                        Payments Received
+                    </th>
+                    <th style="width: 15%">
+                        Status
+                    </th>
+                </tr>
+                </thead>
+                <tr>
+                {% set archive = false %}
+                {% for project in PROJECTSLIST %}
+                    {% if archive == false and project.projects_archived == 1 %}
+                        {% set archive = true %}
+                        <tr style="background-color: #ffffff;">
+                            <td colspan="8">
+                                <b>Archived Projects</b>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td>
+                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">#{{ project.projects_id }}</a>
+                        </td>
+                        <td>
+                            <a>
+                                {{ project.projects_name }}
+                            </a>
+                            <br/>
+                            <small>
+                                {{project.projects_dates_use_start|date("d M Y h:ia")}} - {{project.projects_dates_use_end|date("d M Y h:ia")}}
+                            </small>
+                        </td>
+                        <td>
+                            {{ project.projectsTypes_name }}
+                        </td>
+                        <td>
+                            {% if project.projectsTypes_config_client == 1 %}
+                            <a href="?client={{ project.clients_id }}">
+                                {{ project.clients_name }}
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
+                                        <img loading="lazy" alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                        <td>
+                            {% if project.projectsTypes_config_finance == 1 %}
+                            {{ (project.finance.projectsFinanceCache_grandTotal|moneyPositive ? project.finance.projectsFinanceCache_grandTotal|money(USERDATA.instance['instances_config_currency']) : '') }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if project.projectsTypes_config_finance == 1 %}
+                            {{ project.finance.projectsFinanceCache_paymentsReceived|money(USERDATA.instance['instances_config_currency']) }}
+                            {% endif %}
+                        </td>
+                        <td class="project_progress">
+                            {{ project.projectsStatuses_name }}<br/>
+                            <small>
+                                {{ project.projectsStatuses_description }}
+                            </small>
+                        </td>
+                    </tr>
+                    {% if project.subProjects %}
+                        <tr>
+                        {% for subProject in project.subProjects  %}
+                            <tr>
+                                <td>
+                                    ↳<a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}">#{{ subProject.projects_id }}</a>
+                                </td>
+                                <td>
+                                    <a>
+                                        {{ subProject.projects_name }}
+                                    </a>
+                                    <br/>
+                                    <small>
+                                        {{subProject.projects_dates_use_start|date("d M Y h:ia")}} - {{subProject.projects_dates_use_end|date("d M Y h:ia")}}
+                                    </small>
+                                </td>
+                                <td>
+                                    {{ subProject.projectsTypes_name }}
+                                    <br>
+                                    (Subproject)
+                                </td>
+                                <td>
+                                    {% if subProject.projectsTypes_config_client == 1 %}
+                                        <a href="?client={{ subProject.clients_id }}">
+                                            {{ subProject.clients_name }}
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item">
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ subProject.users_email ~ ")" }}">
+                                                <img loading="lazy" alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    {% if subProject.projectsTypes_config_finance == 1 %}
+                                        {{ (subProject.finance.projectsFinanceCache_grandTotal|moneyPositive ? subProject.finance.projectsFinanceCache_grandTotal|money(USERDATA.instance['instances_config_currency']) : '') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if subProject.projectsTypes_config_finance == 1 %}
+                                        {{ subProject.finance.projectsFinanceCache_paymentsReceived|money(USERDATA.instance['instances_config_currency']) }}
+                                    {% endif %}
+                                </td>
+                                <td class="project_progress">
+                                    {{ subProject.projectsStatuses_name }}<br/>
+                                    <small>
+                                        {{ subProject.projectsStatuses_description }}
+                                    </small>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer clearfix">
+            {% if pagination.total > 1 %}
+                <ul class="pagination pagination-sm m-0 float-right">
+                    {% if pagination.page > 1 %}
+                        <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                    {% endif %}
+
+                    {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                        <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                                {% if pagination.page == i %}
+                                    <b>{{ i }}</b>
+                                {% else %}
+                                    {{ i }}
+                                {% endif %}
+                            </a></li>
+                    {% endfor %}
+
+                    {% if pagination.page < pagination.total %}
+                        <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

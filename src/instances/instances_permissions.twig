@@ -1,0 +1,188 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+	<div class="row">
+	<div class="col-lg-12 col-md-12">
+		<div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/users.php">Users</a></li>
+					{% endif %}
+					{% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/permissions.php">Permissions</a></li>
+					{% endif %}
+					{% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/signupCodes.php">Signup Codes</a></li>
+					{% endif %}
+					{% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/trustedDomains.php">Trusted Domains</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-title">Business Permissions</h3>
+				{% if "BUSINESS:ROLES_AND_PERMISSIONS:CREATE"|instancePermissions %}
+				<div class="card-tools pull-right">
+					<button type="button" class="btn btn-tool" id="addNewInstancePosition"><i class="fa fa-plus"></i>
+					</button>
+				</div>
+				{% endif %}
+			</div>
+			<div class="card-body table-responsive p-0" style="overflow-x: auto; height: 800px;">
+				<table class="table table-head-fixed" >
+					<thead>
+						<tr>
+							<th style="font-weight: normal; width:30%">Code</th>
+							<th style="font-weight: normal;">Category</th>
+							<th style="font-weight: normal;">Table</th>
+							<th style="font-weight: normal;">Type</th>
+							<th style="font-weight: normal;">Element</th>
+							{% for position in positions %}
+							<th style="width: 1px;">{{position.instancePositions_displayName}}</th>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for action in actions %}
+							{% if action.Category != currentCategory %}
+							<tr style="border-top:2px solid black !important">
+							{% elseif action.Table != currentTable %}
+							<tr style="border-top:2px dashed black !important">
+							{% else %}
+							<tr>
+							{% endif %}
+								<td class="text-wrap" style="max-width: 200px;">
+									{{ action.key }}
+									{% if action.Comment %}<br/>{{ action.Comment }}{% endif %}
+									{% if action.Caution %}<br/><span class="badge badge-danger">{{ action.Caution }}</span>{% endif %}
+								</td>
+								{% if action.Category != currentCategory %} <td rowspan="{{ actionTypeCounts[action.Category]['Count'] }}">{{ action.Category }}</td> {% set currentCategory = action.Category %}{% set currentTable = null %}{% endif %}
+								{% if action.Table != currentTable %} <td rowspan="{{ actionTypeCounts[action.Category]['Tables'][action.Table]['Count'] }}">{{ action.Table }}</td> {% set currentTable = action.Table %}{% set currentType = null %}{% endif %}
+								{% if action.Type != currentType %} <td rowspan="{{ actionTypeCounts[action.Category]['Tables'][action.Table]['Types'][action.Type] }}">{{ action.Type }}</td> {% set currentType = action.Type %}{% endif %}
+								<td>{{ action.Detail }}</td>
+								{% for position in positions %}
+									{% set positioncannotbecausedep = "false" %}
+									<td>
+										{% for dependentactionid in action.Dependencies %}
+											{% if dependentactionid != "" and dependentactionid not in position.instancePositions_actions|split(',') %}
+												<span class="badge badge-warning" title="Requires {{ dependentactionid }} to be enabled first">*</span>
+												{% set positioncannotbecausedep = "true" %}
+											{% endif %}
+										{% endfor %}
+
+										{% if "BUSINESS:ROLES_AND_PERMISSIONS:EDIT"|instancePermissions %}
+											<input type="checkbox" data-permissionid="{{action.key}}" data-cautiontext="{{ action.Caution|escape("html_attr") }}" data-positionid="{{position.instancePositions_id}}" {% if action.key in position.instancePositions_actions|split(',') %}checked{% endif %}  {% if positioncannotbecausedep == "true" %}disabled{% endif %} />
+										{% else %}
+											{% if action.key in position.instancePositions_actions|split(',') %}
+												<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+													<input type="checkbox" checked disabled class="custom-control-input">
+													<label class="custom-control-label"></label>
+												</div>
+											{% else %}
+												<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+													<input type="checkbox" disabled class="custom-control-input">
+													<label class="custom-control-label"></label>
+												</div>
+											{% endif %}
+										{% endif %}
+									</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div class="overlay" id="loading">
+				<i class="fas fa-sync fa-spin fa-3x"></i>
+			</div>
+		</div>
+	</div>
+</div>
+{% if "BUSINESS:ROLES_AND_PERMISSIONS:EDIT"|instancePermissions %}
+<script>
+$(document).ready(function() {
+
+	function updatePermission(checkbox){
+		let permissionid = $(checkbox).data("permissionid");
+		$("#loading").show();
+		if($(checkbox).is(":checked")) {
+			var get = "addpermission=" + permissionid;
+		} else {
+			var get = "removepermission=" + permissionid;
+		}
+		$.ajax({
+			url: "{{CONFIG.ROOTURL}}/api/permissions/instancePermissionsEditor.php?" + get + "&position=" + $(checkbox).data("positionid"),
+			cache : false,
+			success: function(result){
+				if (result == '1') {
+					$("#loading").hide();
+                    location.reload();
+				} else {
+					bootbox.alert(result + "Sorry - Operation could not be completed! Please try again!", function() {
+						location.reload();
+					});
+				}
+			}
+		});
+	}
+
+	$("#loading").hide();
+	$(':checkbox').change(function() {
+		let checkbox = $(this);
+		let permissionid = checkbox.data("permissionid")
+		let cautionText = checkbox.data("cautiontext")
+		//show a popup if this is a signup code permission
+		if (checkbox.is(":checked") && cautionText !== null && cautionText.length > 0) {
+			bootbox.confirm({
+				title: "Warning - potential privilege escalation",
+				message: cautionText + "<br /><br />This permission is normally only enabled for administrators in a business. Are you sure you want to enable it?",
+				buttons: {
+					confirm: {
+						label: 'Yes',
+					},
+					cancel: {
+						label: 'No',
+					},
+				},
+				callback: function (result) {
+					if (result){
+						updatePermission(checkbox);
+					} else {
+						location.reload();
+					}
+				}
+			})
+		} else {
+			updatePermission(checkbox);
+		}	
+	});
+});
+</script>
+{% else %}
+<script>
+	$(document).ready(function() {
+		$("#loading").hide();
+	});
+</script>
+{% endif %}
+
+	{% if "BUSINESS:ROLES_AND_PERMISSIONS:CREATE"|instancePermissions %}
+	<script>
+		$(document).ready(function() {
+			$("#addNewInstancePosition").on("click", function () {
+				bootbox.prompt("Enter role group name", function(result){
+					if (result) {
+						ajaxcall("permissions/newInstancePosition.php", {"name": result}, function() {
+							location.reload();
+						}, true);
+					}
+				});
+			});
+		});
+	</script>
+	{% endif %}
+{% endblock %}

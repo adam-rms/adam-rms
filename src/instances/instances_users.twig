@@ -1,0 +1,313 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js" integrity="sha512-OQlawZneA7zzfI6B1n1tjUuo3C5mtYuAWpQdg+iI9mkDoo7iFzTqnQHf+K5ThOWNJ9AbXL4+ZDwH7ykySPQc+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+{% block content %}
+    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+                        {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
+                        <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/users.php">Users</a></li>
+                        {% endif %}
+                        {% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/permissions.php">Permissions</a></li>
+                        {% endif %}
+                        {% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/signupCodes.php">Signup Codes</a></li>
+                        {% endif %}
+                        {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/trustedDomains.php">Trusted Domains</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Add Users</h3>
+                </div>
+                <div class="card-body">
+                    {% if NOCAPACITY %}
+                    <p>Your current plan does not enable you to add any more users. You have {{ NOCAPACITY.USED }} users, with a limit of {{ NOCAPACITY.CAPACITY }}.</p>
+                    <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+                    {% else %}
+                    <p>Enter email addresses to search for existing AdamRMS users to add to business</p>
+                     <div class="input-group">
+                        <select class="form-control" multiple="multiple" id="addUserToInstance"></select>
+                        <button type="button" style="margin-top: 5px;" class="btn btn-default" id="addUserToInstance-button">Add to business</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Users</h3>
+                    <div class="card-tools pull-right">
+                        <a href="{{ CONFIG.LINKS_USERGUIDEURL }}business/user-management" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-head-fixed" id="userTable" border="0" style="overflow-x: scroll;">
+                        <thead>
+                        <tr>
+                            <th data-searchable="false" data-orderable="false">Thumbnail</th>
+                            <th>Username</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                            <th>Email</th>
+                            <th data-searchable="false">Role</th>
+                            <th data-searchable="false">Role Group</th>
+                            <th data-searchable="false" data-orderable="false"></th>
+                        </tr>
+                        </thead>
+                        
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>
+                                    {% if CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail %}
+                                        <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail|s3URL("small") }}">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
+                                        {% endif %}
+                                        {{ user.users_username }}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                    </a>
+                                    {% endif %}
+
+                                    {% if user.users_suspended == '1' %}
+                                        <span class="label label-danger">Suspended</span><br/>
+                                    {% endif %}
+                                    {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                        <span class="badge bg-danger">Archived</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user["users_name1"] }}</td>
+                                <td>{{ user["users_name2"] }}</td>
+
+                                <td>{{ user["users_email"] }} {{ user["users_emailVerified"] == 1 ? '<i class="fa fa-check-square-o">' : null }}</td>
+                                <td>{{user.userInstances_label}}</td>
+                                <td>{{ user.instancePositions_displayName }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
+                                            <button title="Change Role" class="btn btn-default" data-toggle="modal" data-target="#userInstance{{ user.userInstances_id }}Modal"><i
+                                                        class="fa fa-pencil-alt"></i></button>
+                                        {% endif %}
+                                        {% if "BUSINESS:USERS:EDIT:ARCHIVE"|instancePermissions %}
+                                            {% if user.userInstances_archived != null and user.userInstances_archived|date('Y-m-d H:i:s') <= "now"|date('Y-m-d H:i:s') %}
+                                                    <button type="button" title="Remove from Archive" data-userid="{{ user.users_userid }}" class="btn btn-success unArchiveFromInstance"><i class="fas fa-archive"></i></button>
+                                                {% else %}
+                                                <button
+                                                        type="button" title="Archive" data-userid="{{ user.users_userid }}" class="btn btn-warning archiveFromInstance"><i class="fas fa-archive"></i></button>
+
+
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if "BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS"|instancePermissions %}
+                                            <button
+                                                type="button" title="Remove" data-userid="{{ user.users_userid }}" class="btn btn-danger removeFromInstance"><i
+                                                        class="fa fa-trash"></i></button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
+    {% for user in users %}
+    <div class="modal fade" id="userInstance{{ user.userInstances_id }}Modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ user["users_name1"] }} {{ user["users_name2"] }} in {{ USERDATA.instance.instances_name }}</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                                    </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" class="form-control labelUserInstanceModal" data-userinstanceid="{{ user.userInstances_id }}" value="{{user.userInstances_label}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Role Group</label>
+                        <select class="form-control instancePositionUserInstanceModal" data-userinstanceid="{{ user.userInstances_id }}">
+                            {% for position in positions %}
+                                <option
+                                    {% if position.instancePositions_id == user.instancePositions_id %}
+                                    selected
+                                    {% endif %}
+                                    value="{{ position.instancePositions_id }}">
+                                    {{position.instancePositions_displayName}}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary saveUserInstanceModal" data-userinstanceid="{{ user.userInstances_id }}">Save</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    {% endfor %}
+    {% endif %}
+    <script>
+        $(document).ready(function() {
+            $('#userTable').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "order": [
+                    [1, 'asc'],
+                    [4, 'asc']
+                ],
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                "deferRender": true,
+            });
+            {% if "BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS"|instancePermissions %}
+            $('.removeFromInstance').on('click', function(e){
+                var userid = $(this).data("userid");
+                bootbox.confirm("Are you sure you wish to remove this user from the business?<br/><br/>If you're the last user in the business this will also remove access to the business forever, including all projects", function(result){
+                    if (result) {
+                        ajaxcall("instances/removeUser.php", {"userid": userid}, function() {
+                            location.reload();
+                        }, true);
+                    }
+                });
+            });
+            {% endif %}
+            {% if "BUSINESS:USERS:EDIT:ARCHIVE"|instancePermissions %}
+            $('.archiveFromInstance').on('click', function(e){
+                var userid = $(this).data("userid");
+                bootbox.confirm("Are you sure you wish to archive this user in the business?", function(result){
+                    if (result) {
+                        ajaxcall("instances/archiveUser.php", {"userid": userid}, function() {
+                            location.reload();
+                        }, true);
+                    }
+                });
+            });
+            $('.unArchiveFromInstance').on('click', function(e){
+                var userid = $(this).data("userid");
+                bootbox.confirm("Are you sure you wish to add this user back into the business?", function(result){
+                    if (result) {
+                        ajaxcall("instances/archiveUser.php", {"userid": userid}, function() {
+                            location.reload();
+                        }, true);
+                    }
+                });
+            });
+            {% endif %}
+
+            {% if "BUSINESS:USERS:EDIT:CHANGE_ROLE"|instancePermissions %}
+            $('.saveUserInstanceModal').on('click', function(e){
+                var userinstanceid = $(this).data("userinstanceid");
+                ajaxcall("instances/editUser.php", {"label": $(".labelUserInstanceModal[data-userinstanceid=" + userinstanceid + "]").val(), "position": $(".instancePositionUserInstanceModal[data-userinstanceid=" + userinstanceid + "]").val(),"userinstanceid": userinstanceid}, function() {
+                    location.reload();
+                }, true);
+            });
+            {% endif %}
+            {% if "BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL"|instancePermissions %}
+            $("#addUserToInstance").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Email Addresses",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/instances/searchUser.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.users_name1 + " " + item.users_name2,
+                                        id: item.users_userid
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $('#addUserToInstance-button').on('click', function(e){
+                if ($("#addUserToInstance").select2("val").length > 0) {
+                    bootbox.prompt({
+                        title: "Role group for new users",
+                        inputType: 'select',
+                        inputOptions: [
+                            {
+                                text: 'Choose one...',
+                                value: '',
+                            },
+                            {% for position in positions %}
+                            {
+                                text: '{{position.instancePositions_displayName}}',
+                                value: '{{ position.instancePositions_id }}',
+                            },
+                            {% endfor %}
+                        ],
+                        callback: function (result) {
+                            if (result && result.length > 0) {
+                                var rolegroup = result;
+                                bootbox.prompt({
+                                    title: "Role name for new users",
+                                    value: "User",
+                                    callback: function(result) {
+                                        if (result && result.length > 0) {
+                                            var rolename = result;
+                                            ajaxcall("instances/addUser.php", {
+                                                "rolegroup": rolegroup,
+                                                "rolename": rolename,
+                                                "users": $("#addUserToInstance").select2("val")
+                                            }, function () {
+                                                location.reload();
+                                            }, true);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            {% endif %}
+        });
+    </script>
+{% endblock %}

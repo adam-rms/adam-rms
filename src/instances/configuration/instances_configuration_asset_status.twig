@@ -1,0 +1,119 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectTypes.php">Project Types</a></li>
+                    {% endif %}
+					{% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectStatuses.php">Project Statuses</a></li>
+                    {% endif %}
+					{% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/invoices.php">Invoices</a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6 offset-md-3">
+        <div class="card">
+            <form id="asstStatuses">
+                <div class="card-header">
+                    <h3 class="card-title">Asset Status</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless" id="statusTable">
+                        {% for status in USERDATA.instance['assetStatus'] %}
+                            <tbody value="{{ status.assetsAssignmentsStatus_id }}">
+                                <tr class="row border">
+                                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                                    <td class="border-right">
+                                        <span class="handle">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </span>
+                                    </td>
+                                    {% endif %}
+                                    <td class="w-75">
+                                        <input type="text" class="assetStatusName form-control" name="{{ status.assetsAssignmentsStatus_id }}" value="{{ status.assetsAssignmentsStatus_name }}" />
+                                    </td>
+                                    <td class="text-right border-left">
+                                        <button type="button" class="btn btn-danger" onclick="removeStatus({{ status.assetsAssignmentsStatus_id }})"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="card-footer">
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                        <button type="button" class="btn btn-default" id="newStatus">Add Row</button>
+                    {% endif %}
+                </div>
+            </form>
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+            <script>
+                $(document).ready(function () {
+                    $("#statusTable").sortable({
+                        handle: ".handle",
+                        connectWith: "tr",
+                        update: function( event, ui ){
+                            ajaxcall("instances/assetAssignmentStatus/reorder.php", {
+                                "order": $("#statusTable").sortable('toArray', {attribute: 'value'})
+                            }, null, true);
+                        }
+                    });
+                    $("#newStatus").on("click", function () {
+                        bootbox.prompt({
+                            title: "Create New Asset Status",
+                            inputType: "text",
+                            callback: function (result) {
+                                ajaxcall(
+                                    "instances/assetAssignmentStatus/new.php",
+                                    {"statusName": result, "statusOrder": {{ (USERDATA.instance['assetStatus']|last).assetsAssignmentsStatus_order + 1 }}},
+                                    function (returned) {
+                                        if (returned['result']) {
+                                            window.location.reload();
+                                        }
+                                    },
+                                    true
+                                );
+                            }
+                        });
+                    });
+                    $(".assetStatusName").on("focusout", function () {
+                        ajaxcall(
+                            "instances/assetAssignmentStatus/edit.php",
+                            {"statusName": $(this)[0].value, "statusId": $(this)[0].name},
+                            null,
+                            true
+                        );
+                    });
+                });
+                function removeStatus(statusID){
+                    ajaxcall("instances/assetAssignmentStatus/delete.php",
+                        {"statusId": statusID},
+                        function (returned) {
+                            if (returned['result']) {
+                                window.location.reload();
+                            }
+                        },
+                        true
+                    );
+                }
+            </script>
+            {% endif %}
+        </div>
+   </div>
+</div>
+{% endblock %}

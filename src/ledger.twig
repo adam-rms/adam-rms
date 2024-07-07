@@ -1,0 +1,130 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% if search|length > 0 %}
+                            Search results for payments matching <b>{{ search }}</b>
+                        {% else %}
+                            Payments
+                        {% endif %}
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                            <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    {% if payments|length > 0 %}
+                        <table class="table table-head-fixed table-striped" border="0" style="overflow-x: scroll;">
+                            <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Date</th>
+                                <th>From</th>
+                                <th>Method</th>
+                                <th>Comment</th>
+                                <th>Amount</th>
+                                <th>Project</th>
+                                {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+                                <th></th>
+                                {% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for payment in payments %}
+                                <tr>
+                                    <td>{{ payment.payments_reference }}</td>
+                                    <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
+                                    <td><a href="{{ CONFIG.ROOTURL }}/clients.php?q={{ payment.clients_name }}">{{ payment.clients_name }}</a></td>
+                                    <td>{{ payment.payments_method }}</td>
+                                    <td>{{ payment.payments_comment|nl2br }}</td>
+                                    <td>{{ payment.payments_amount|money(USERDATA.instance['instances_config_currency']) }}</td>
+                                    <td><a href="{{ CONFIG.ROOTURL }}/project/?id={{ payment.projects_id }}">{{ payment.projects_name }}</a></td>
+                                    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+                                        <td>
+                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
+                                        </button>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
+                    {% endif %}
+                </div>
+                {% if pagination.total > 1 %}
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {% if pagination.page > 1 %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                        {% endif %}
+
+                        {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                                    {% if pagination.page == i %}
+                                        <b>{{ i }}</b>
+                                    {% else %}
+                                        {{ i }}
+                                    {% endif %}
+                                </a></li>
+                        {% endfor %}
+
+                        {% if pagination.page < pagination.total %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+            {% for payment in payments %}
+            <div class="modal fade" id="filesModal{{ payment.payments_id }}">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Payment Files</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+{% embed 'assets/templates/fileBox.twig' with {'files': payment.files } %}
+
+
+                            {% endembed %}
+                        </div>
+                        {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
+
+                            <div class="modal-footer">
+{% embed 'assets/templates/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+
+
+                                    {% block success %}
+                                        console.log(responseJson.id);
+                                    {% endblock %}
+                                {% endembed %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
+            {% endembed %}
+       {% endif %}
+    </div>
+{% endblock %}

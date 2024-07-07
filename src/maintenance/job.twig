@@ -1,0 +1,695 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
+    <style>
+        .color-palette {
+            height: 35px;
+            line-height: 35px;
+            text-align: right;
+            padding-right: .75rem;
+        }
+
+        .color-palette.disabled {
+            text-align: center;
+            padding-right: 0;
+            display: block;
+        }
+
+        .color-palette-set {
+            margin-bottom: 15px;
+        }
+
+        .color-palette span {
+            display: none;
+            font-size: 12px;
+        }
+
+        .color-palette:hover span {
+            display: block;
+        }
+
+        .color-palette.disabled span {
+            display: block;
+            text-align: left;
+            padding-left: .75rem;
+        }
+
+        .color-palette-box h4 {
+            position: absolute;
+            left: 1.25rem;
+            margin-top: .75rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            display: block;
+            z-index: 7;
+        }
+    </style>
+
+    <!--Summernote-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" integrity="sha256-CLMYHViXNCxDUd/ySLeJJjyLtteBZwjqZ4c5p6U7L78=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.min.js" integrity="sha256-jPK1ABk4CuFvSr31v4CLU7X7XCvixZSi8fTTCw/tsto=" crossorigin="anonymous"></script>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Job Detail - #{{ job.maintenanceJobs_id }}</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <style>
+                            #jobDetailBox p {
+                                margin-bottom: 6px;
+                                margin-top: 4px;
+                            }
+                        </style>
+                        <div class="col-12" id="jobDetailBox">
+                            <h3 class="text-primary">
+                                {% if job.status %}
+                                    <b>{{ job.status.maintenanceJobsStatuses_name }} - </b>
+                                {% endif %}
+                                {{job.maintenanceJobs_title}}</h3>
+                            <p class="text-muted"></p>
+                            <div class="text-muted">
+                                <p class="text-sm">Fault Report
+                                    <b class="d-block">
+                                        {{ job.maintenanceJobs_faultDescription|nl2br }}
+                                    </b>
+                                </p>
+                                <p class="text-sm">Creator
+                                    <b class="d-block">
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                        <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}">
+                                            {% endif %}
+                                            {{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                        </a>
+                                        {% endif %}
+                                    </b>
+                                </p>
+                                <p class="text-sm">Created
+                                    <b class="d-block">{{job.maintenanceJobs_timestamp_added|date("d M Y h:i:sa")}}</b>
+                                </p>
+                                {% if "MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB"|instancePermissions %}
+                                    <p class="text-sm">Assigned to</p>
+                                    <select class="form-control select2bs4" multiple id="editJobAssigned">
+                                        <option value="0" {{ job.userAssignedUserName1 == null ? 'selected' }}>Unassigned</option>
+                                        {% for user in potentialManagers %}
+                                            <option value="{{ user.users_userid }}" {{ job.userAssignedUserID == user.users_userid ? 'selected' }}>{{ (user.users_name1 ~ " " ~ user.users_name2) }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <p class="text-sm">Assigned to
+                                        <b class="d-block">
+                                            {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                            <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}">
+                                                {% endif %}
+                                                {{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}
+                                                {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                            </a>
+                                            {% endif %}
+                                        </b>
+                                    </p>
+                                {% endif %}
+                                <p class="text-sm">Flag
+                                    <b class="d-block">
+                                        <select class="form-control" id="maintenanceJobsflagAssets" {% if "MAINTENANCE_JOBS:EDIT:ASSET_FLAGS"|instancePermissions != true or job.maintenanceJobsStatuses_id == 2 %} disabled {% endif %}>
+                                            <option value="0" {% if job.maintenanceJobs_flagAssets == 0 %} selected {% endif %}>No Flag</option>
+                                            <option value="1" {% if job.maintenanceJobs_flagAssets == 1 %} selected {% endif %}>Flag on Assets</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Block
+                                    <b class="d-block">
+                                        <select class="form-control" id="maintenanceJobsblockAssets" {% if "MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS"|instancePermissions != true or job.maintenanceJobsStatuses_id == 2 %} disabled {% endif %}>
+                                            <option value="0" {% if job.maintenanceJobs_blockAssets == 0 %} selected {% endif %}>No Block</option>
+                                            <option value="1" {% if job.maintenanceJobs_blockAssets == 1 %} selected {% endif %}>Block assets from being assigned to Projects</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Priority
+                                    <b class="d-block">
+                                        <select class="form-control" id="jobPriority" {% if "MAINTENANCE_JOBS:EDIT:JOB_PRIORITY"|instancePermissions != true %} disabled {% endif %}>
+                                            {% for type in MAINTENANCEJOBPRIORITIES %}
+                                                <option value="{{ type.id }}" {% if job.maintenanceJobs_priority == type.id %} selected {% endif %}>{{ type.text }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </b>
+                                </p>
+
+                                <p class="text-sm">Due Date
+                                    {% if "MAINTENANCE_JOBS:EDIT:JOB_DUE_DATE"|instancePermissions %}
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control float-right" id="datePickerInputDue">
+                                        </div>
+                                     {% else %}
+                                    <b class="d-block">{{job.maintenanceJobs_timestamp_due|date("d M Y h:i:sa")}}</b>
+                                    {% endif %}
+                                </p>
+                                <p class="text-sm">Users Watching
+                                    <b class="d-block" style="padding-top: 10px;">
+                                        <select class="form-control" multiple="multiple" {% if "MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB"|instancePermissions != true %}disabled{% endif %} placeholder="Select users to be tagged for updates in the job" id="usersTagged">
+                                            {% for user in job.tagged %}
+                                                <option value="{{user.users_userid}}" selected="selected">{{user.users_name1 ~ " " ~ user.users_name2}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </b>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group float-right">
+                        {% if "MAINTENANCE_JOBS:EDIT:STATUS"|instancePermissions %}
+                            <button type="button" class="btn btn-info" id="editJobStatus">Change Status</button>
+                        {% endif %}
+                        {% if "MAINTENANCE_JOBS:EDIT:NAME"|instancePermissions or "MAINTENANCE_JOBS:DELETE"|instancePermissions %}
+                        <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                            <span class="sr-only">Toggle Dropdown</span>
+                            <div class="dropdown-menu" role="menu">
+                                {% if "MAINTENANCE_JOBS:EDIT:NAME"|instancePermissions %}<a class="dropdown-item" id="editJobName" href="#">Edit Name</a>{% endif %}
+                                <div class="dropdown-divider"></div>
+                                {% if "MAINTENANCE_JOBS:DELETE"|instancePermissions %}<a class="dropdown-item" id="deleteJob" href="#">Delete</a>{% endif %}
+                            </div>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">Assets</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="todo-list">
+                        {% for asset in job.assets %}
+                            <li class="assetlist" data-assetid="{{ asset.assets_id }}">
+                                <span class="text">
+                                    <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}&asset={{ asset.assets_id }}" target="_blank">
+                                        {{ asset.assets_tag|aTag }}
+                                    </a>
+                                    {% if asset.assetCategories_fontAwesome %}
+                                        <i class="{{ asset.assetCategories_fontAwesome }}"></i>
+                                    {% endif %}
+
+
+                                </span>
+                                 <div class="tools">
+                                     <i class="fas fa-info-circle" style="color:#495057;" data-toggle="popover" title="{{ asset.manufacturers_name|replace({'"':"'"}) }}" data-content="{{ asset.assetTypes_name|replace({'"':"'"}) }}"></i>
+                                     {% if "MAINTENANCE_JOBS:EDIT"|instancePermissions %}<i class="fas fa-trash deleteAssetJobAssignment" data-assetid="{{ asset.assets_id }}" title="Remove Asset"></i>{% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group float-right">
+                       {% if "MAINTENANCE_JOBS:EDIT:ADD_ASSETS"|instancePermissions %}
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addAssetModal">Add Assets</button>
+                               <div class="modal fade" id="addAssetModal">
+                                   <div class="modal-dialog">
+                                       <div class="modal-content">
+                                           <div class="modal-header">
+                                               <h4 class="modal-title">Add Assets to Job</h4>
+                                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                   <span aria-hidden="true">&times;</span>
+                                               </button>
+                                           </div>
+                                           <div class="modal-body">
+                                               <div class="input-group mb-3">
+                                                   <select class="form-control" multiple="multiple" id="addAssetModal-assets" placeholder="Enter asset tags here"></select>
+                                               </div>
+                                           </div>
+                                           <div class="modal-footer justify-content-between">
+                                               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                               <button type="button" class="btn btn-primary" id="addAssetModal-button">Add</button>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                       {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4">
+            <div class="card direct-chat direct-chat-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Thread</h3>
+
+                    <div class="card-tools">
+                        <span class="badge badge-info">{{job.messages|length}}</span>
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <!-- Conversations are loaded here -->
+                    <div class="direct-chat-messages" style="height: auto;">
+                        {% for message in job.messages %}
+                        {% if message.users_userid != USERDATA.users_userid %}
+                        <div class="direct-chat-msg">
+                            <div class="direct-chat-infos clearfix">
+                                <span class="direct-chat-name float-left">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
+                                <span class="direct-chat-timestamp float-right">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
+                            </div>
+                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                        {% else %}
+                        <div class="direct-chat-msg right">
+                            <div class="direct-chat-infos clearfix">
+                                <span class="direct-chat-name float-right">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
+                                <span class="direct-chat-timestamp float-left">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
+                            </div>
+                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                        {% endif %}
+                            <div class="direct-chat-text">
+                                {% if message.maintenanceJobsMessages_text|length > 0 %}
+                                    {{ message.maintenanceJobsMessages_text|nl2br }}
+                                {% elseif message.maintenanceJobsMessages_file != "" %}
+                                    {% if message.s3files_extension|lower in ["gif", "jpeg", "jpg", "png"] %}
+                                        <img loading="lazy" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and message.maintenanceJobsMessages_file|s3URL("medium") }}" alt="{{ message.s3files_name }}" style="width: 100%;">
+                                    {% else %}
+                                        <a href="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and message.maintenanceJobsMessages_file|s3URL }}" target="_blank" style="color:white;"><i class="fa {{ message.s3files_extension|fontAwesomeFile }}"></i> {{ message.s3files_name }}</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if "MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB"|instancePermissions %}
+                <div class="card-footer">
+                    <form id="sendMessage" style="margin-bottom: 5px;">
+                        <div class="input-group">
+                            <textarea id="sendMessageField" style="resize: none;" placeholder="Type Message ..." class="form-control" rows="1" autocomplete="off"></textarea>
+                            <span class="input-group-append">
+                          <button type="submit" class="btn btn-primary">Send</button>
+                        </span>
+                        </div>
+                    </form>
+                    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "MAINTENANCE_JOBS:MAINTENANCE_JOBS_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
+
+{% embed 'assets/templates/uppy.twig' with {'type': 'JOB-FILE', 'paste': true, 'typeId': 8, 'subTypeId': job.maintenanceJobs_id, 'imagesOnly': false, 'disableMultiple': true } %}
+
+                            {% block success %}
+                                ajaxcall("maintenance/job/sendMessage.php", {
+                                    "maintenanceJobsMessages_file": responseJson.id,
+                                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                                }, function (data) {
+                                    location.reload();
+                                });
+                            {% endblock %}
+                        {% endembed %}
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Timeline</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- The time line -->
+                            <div class="timeline">
+                                {% set currentDate = '' %}
+                                {% for event in job.auditLog %}
+                                    {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
+                                        <div class="time-label">
+                                            <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
+                                        </div>
+                                        {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
+                                    {% endif %}
+                                    <div>
+                                        {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                            <i class="far fa-comment bg-blue"></i>
+                                        {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                            <i class="fas fa-ban bg-red"></i>
+                                        {% else %}
+                                            <i class="fas fa-info bg-gray-light"></i>
+                                        {% endif %}
+                                        <div class="timeline-item">
+                                            <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
+                                            <h3 class="timeline-header">
+                                                {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ event.users_userid }}">
+                                                {% endif %}{{ event.users_name1 ~ " " ~ event.users_name2}}{% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}</a>{% endif %}
+                                                {% if event.auditLog_actionType == "INSERT" %}
+                                                    created the job
+                                                {% else %}
+                                                    edited the job
+                                                {% endif %}
+                                            </h3>
+                                            {% if event.auditLog_actionType == "INSERT" %}
+                                                {# Blank #}
+                                            {% elseif event.auditLog_actionType == "DELETE" %}
+                                                {# Blank #}
+                                            {% else %}
+                                                <div class="timeline-body" style="font-style: italic;">{{event.auditLog_actionData|nl2br }}</div>
+                                                {#<div class="timeline-footer">
+                                                    <a class="btn btn-primary btn-sm">Read more</a>
+                                                    <a class="btn btn-danger btn-sm">Delete</a>
+                                                </div>#}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div>
+                                    <i class="fas fa-clock bg-gray"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            {% if "MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB"|instancePermissions %}
+            $('#editJobAssigned').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1
+            });
+            $('#editJobAssigned').on("change", function (e) {
+                ajaxcall("maintenance/job//changeJobAssigned.php", {
+                    "users_userid": $(this).val(),
+                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                }, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:DELETE"|instancePermissions %}
+            $("#deleteJob").click(function () {
+                bootbox.confirm({
+                    message: "Are you sure you wish to delete the job - this should not be done unless it is a duplicate or was created by mistake?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("maintenance/job/deleteJob.php", {"maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"}, function (data) {
+                                window.location.href = "{{CONFIG.ROOTURL}}/maintenance/";
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:JOB_DUE_DATE"|instancePermissions %}
+            $('#datePickerInputDue').daterangepicker({
+                singleDatePicker: true,
+                timePicker: true,
+                timePickerIncrement: 15,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                {% if job.maintenanceJobs_timestamp_due %}
+                startDate: "{{ job.maintenanceJobs_timestamp_due|date("j M Y h:i:sa") }}",
+                {% endif %}
+            });
+            $('#datePickerInputDue').on('apply.daterangepicker', function(ev, picker) {
+                ajaxcall("maintenance/job/changeDueDate.php", {"maintenanceJobs_id": "{{ job.maintenanceJobs_id }}","maintenanceJobs_timestamp_due":picker.startDate.format('DD MMM YYYY hh:mm A')}, function (data) {
+                    location.reload();
+                });
+            });
+                {% if job.maintenanceJobs_timestamp_due == "" %}
+                $('#datePickerInputDue').val('');
+                {% endif %}
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:NAME"|instancePermissions %}
+            $("#editJobName").click(function () {
+                bootbox.prompt({
+                    title: "Change job Name",
+                    inputType: 'text',
+                    value: `{{ job.maintenanceJobs_title|escape("js") }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("maintenance/job/changeName.php", {
+                                "maintenanceJobs_title": result,
+                                "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB"|instancePermissions %}
+            $("#usersTagged").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+
+                minimumResultsForSearch: 1,
+                placeholder: "Enter email addresses to search for existing {{ CONFIG.PROJECT_NAME }} users to add to job",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchUser.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.users_name1 + " " + item.users_name2,
+                                        id: item.users_userid
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $('#usersTagged').on('select2:select', function (e) {
+                var id =e.params.data.id;
+                ajaxcall("maintenance/job/tagUser.php", {
+                    "users_userid": id,
+                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                });
+            });
+            $('#usersTagged').on('select2:unselect', function (e) {
+                var id =e.params.data.id;
+                ajaxcall("maintenance/job/unTagUser.php", {
+                    "users_userid": id,
+                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB"|instancePermissions %}
+            function sendMessage() {
+                var message = $("#sendMessageField").val();
+                if (message.length > 0) {
+                    ajaxcall("maintenance/job/sendMessage.php", {
+                        "maintenanceJobsMessages_text": message,
+                        "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                    }, function (data) {
+                        location.reload();
+                    });
+                }
+
+            }
+            $('#sendMessageField').keydown(function (event) {
+                if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
+                    sendMessage();
+                }
+            });
+            $("#sendMessage").submit(function(e){
+                sendMessage();
+                return false;
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:STATUS"|instancePermissions %}
+            $("#editJobStatus").click(function () {
+                bootbox.prompt({
+                    title: "Change job status",
+                    inputType: 'select',
+                    {% if job.maintenanceJobsStatuses_id != null %}
+                    value: {{ job.maintenanceJobsStatuses_id }},
+                    {% endif %}
+                    inputOptions: [
+                        {
+                            text: 'No Status Set',
+                            value: '',
+                        },
+                        {% for status in jobStatuses %}
+                        {
+                            text: '{{ status.maintenanceJobsStatuses_name }}',
+                            value: '{{ status.maintenanceJobsStatuses_id }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("maintenance/job/changeJobStatus.php", {
+                                "maintenanceJobsStatuses_id": result,
+                                "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT"|instancePermissions %}
+            $(".deleteAssetJobAssignment").click(function () {
+                var id = $(this).data("assetid");
+                bootbox.confirm({
+                    message: "Are you sure you wish to remove this asset from the job?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("maintenance/job/removeAsset.php", {
+                                "assets_id": id,
+                                "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                            }, function (data) {
+                                //Hide the file in the display
+                                $(".assetlist[data-assetid=" + id + "]").hide();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:ADD_ASSETS"|instancePermissions %}
+            $("#addAssetModal-assets").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+
+                minimumResultsForSearch: 1,
+                placeholder: "Enter asset numbers to search for assets",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchAsset.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term,
+                            "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                        id: item.assets_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $("#addAssetModal-button").click(function () {
+                var assets = $("#addAssetModal-assets").val();
+                if (assets.length > 0) {
+                    ajaxcall("maintenance/job/addAsset.php", {
+                        "maintenanceJobs_assets": assets,
+                        "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                    }, function (data) {
+                        location.reload();
+                    });
+                }
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:JOB_PRIORITY"|instancePermissions %}
+            $('#jobPriority').on('change', function() {
+                ajaxcall("maintenance/job/changePriority.php", {
+                    "maintenanceJobs_priority": this.value,
+                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                }, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:ASSET_FLAGS"|instancePermissions %}
+            $('#maintenanceJobsflagAssets').on('change', function() {
+                ajaxcall("maintenance/job/changeFlag.php", {
+                    "maintenanceJobs_flagAssets": this.value,
+                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                }, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS"|instancePermissions %}
+            $('#maintenanceJobsblockAssets').on('change', function() {
+                ajaxcall("maintenance/job/changeBlock.php", {
+                    "maintenanceJobs_blockAssets": this.value,
+                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                }, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+        });
+    </script>
+{% endblock %}

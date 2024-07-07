@@ -1,0 +1,371 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
+{% endblock %}
+{% block content %}
+{% if NOASSETCAPACITY %}
+<div class="row">
+    <div class="col-md-12 col-lg-6 offset-lg-3">
+        <div class="card box-solid">
+            <div class="card-header">
+                <h3 class="card-title">Cannot create assets</h3>
+            </div>
+            <div class="card-body">
+                <p>Your current plan does not enable you to create any more assets. You have {{ NOASSETCAPACITY.USED }} assets, with a limit of {{ NOASSETCAPACITY.CAPACITY }}.</p>
+                <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12 col-lg-6 offset-lg-3"> 
+        <div class="card box-solid">
+            <div class="card-header">
+                <h3 class="card-title">Add new Asset</h3>
+                <div class="card-tools pull-right">
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}assets/new-assets" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="addNewForm">
+                <div class="form-group">
+                    <label>Manufacturer</label>
+                    <select class="form-control  select2bs4" id="manufacturer">
+                        {% for manufacturer in manufacturers %}
+                            <option {%  if manufacturer.manufacturers_id == 1 %} selected {% endif %} value="{{ manufacturer.manufacturers_id }}">{{ manufacturer.manufacturers_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div style="text-align: right">
+                        
+                            <p></p>
+                        
+                        <p>
+                            {% if "ASSETS:MANUFACTURERS:CREATE"|instancePermissions %}
+                                <a href="/manufacturers.php">Add new manufacturer</a> |&nbsp;
+                            {% endif %}
+                            <a href="#" id="unknownManufacturerShortlink">Manufacturer unknown</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Asset Type</label>
+                    <select class="form-control  select2bs4" id="assetType" placeholder=""></select>
+                    {% if "ASSETS:ASSET_TYPES:CREATE"|instancePermissions %}
+                    <div style="text-align: right">
+                        <p><a href="#" id="addNewType">Add new type</a></p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div id="addNewTypeGroup" style="display: none;">
+                    <label>Details</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Name</span></div>
+                        <input type="text" class="form-control" name="assetTypes_name" id="addNewType-name" />
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Description</span></div>
+                        <textarea class="form-control" rows="3" name="assetTypes_description" id="addNewType-description"  placeholder=""></textarea>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Product Link</span></div>
+                        <input type="url" class="form-control" name="assetTypes_productLink" id="addNewType-productLink" maxlength="499" />
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Mass
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_mass" class="form-control" id="addNewType-mass" />
+                        <div class="input-group-append">
+                            <div class="input-group-text">kg</div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Value - £
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_value" class="form-control" id="addNewType-value" />
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Day Rate - £
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_dayRate" class="form-control" id="addNewType-dayRate" />
+                        <div class="input-group-append">
+                            <div class="input-group-text" id="addNewType-dayRate-guide">Guide 2% of value</div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                              Weekly Rate - £
+                            </span>
+                        </div>
+                        <input type="number" step="0.001" min="0" name="assetTypes_weekRate" class="form-control" id="addNewType-weekRate" />
+                        <div class="input-group-append">
+                            <div class="input-group-text" id="addNewType-weekRate-guide">Guide 6% of value</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="form-control  select2bs4" id="category" name="assetCategories_id">
+                            {% for category in categories %}
+                                <option value="{{ category.assetCategories_id }}">{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="callout callout-info">
+                        <p>Definable fields are specific attributes for assets of this type - for a lighting fixture this might be the lens fitted</p>
+                    </div>
+
+                </div>
+                    <div class="input-group" id="assetNotes" style="display:none;">
+                    <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
+                    <textarea class="form-control" rows="2" name="assets_notes" placeholder=""></textarea>
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="1">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="1"></span></div>
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_1" data-fieldcount="1" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="2">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="2"></span></div>
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_2"  data-fieldcount="2" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="3">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="3"></span></div>
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_3" data-fieldcount="3" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="4">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="4"></span></div>
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_4" data-fieldcount="4" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="5">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="5"></span></div>
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_5" data-fieldcount="5" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="6">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="6"></span></div>
+                     <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_6" data-fieldcount="6" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="7">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="7"></span></div>
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_7"  data-fieldcount="7" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="8">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="8"></span></div>
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_8" data-fieldcount="8" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="9">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="9"></span></div>
+                    <input type="text" class="definableFieldsInput form-control"  name="asset_definableFields_9" data-fieldcount="9" />
+                </div>
+                <div class="input-group definableFieldsGroup" data-fieldcount="10">
+                    <div class="input-group-prepend"><span class="input-group-text definableFieldsLabel" data-fieldcount="10"></span></div>
+                    <input type="text" class="definableFieldsInput form-control" name="asset_definableFields_10"  data-fieldcount="10" />
+                </div>
+                <div class="form-group" id="assetGroupsDiv">
+                    <label>Asset Groups</label>
+                    <select class="form-control" id="assetGroups" multiple></select>
+                </div>
+                <div class="form-group" id="assetTagDiv">
+                    <label>Asset Tag</label>
+                    <input type="text" class="form-control" id="assetTag" placeholder="Autogenerated by default" />
+                </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-default float-right" id="saveButton">Save</button>
+            </div>
+            <div class="overlay">
+                <i class="fas fa-2x fa-sync-alt"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    <style>
+        .input-group {
+            margin-bottom: 5px;
+        }
+    </style>
+    <script>
+        counter = 1;
+        $(document).ready(function () {
+            $(".overlay").hide();
+            $(".definableFieldsGroup").hide();
+            $("#assetGroupsDiv").hide();
+            $("#assetTagDiv").hide();
+
+            $("#manufacturer").select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            $("#category").select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            $("#assetType").select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Select a manufacturer then search for asset types",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/assets/searchType.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term,
+                            manufacturer: $("#manufacturer").val()
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.assetTypes_name,
+                                        id: item.assetTypes_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $('#assetType').on('change', function() {
+                $(".definableFieldsGroup").hide();
+                $("#addNewTypeGroup").hide();
+                $("#assetNotes").show();
+                $("#assetGroupsDiv").show();
+                $("#assetTagDiv").show();
+                $("#saveButton").text("Save");
+                counter = 1;
+                ajaxcall("assets/getAssetTypeData.php", {"term": this.value}, function (data) {
+                    $(".definableFieldsInput").val("");
+                    $(data.response.assetCategories_fields).each(function (count, value) {
+                        count = count+1;
+                        if (value != "") {
+                            $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
+                            $(".definableFieldsLabel[data-fieldcount='" + count + "']").text(value);
+                        }
+                    })
+                });
+            });
+            $('#unknownManufacturerShortlink').on('click', function() {
+                $('#manufacturer').val('1');
+                $('#manufacturer').trigger('change');
+            });
+            $('#addNewType').on('click', function() {
+                $('#assetType').val('');
+                $('#assetType').trigger('change');
+                $('#addNewTypeGroup').show();
+                $("#assetNotes").hide();
+                $("#assetGroupsDiv").hide();
+                $("#assetTagDiv").hide();
+                $(".definableFieldsInput").val("");
+                $([0,1,2,3,4,5,6,7,8,9]).each(function (count, value) {
+                    count = count+1;
+                    $(".definableFieldsGroup[data-fieldcount='" + count + "']").show();
+                    $(".definableFieldsLabel[data-fieldcount='" + count + "']").text("Definable field " + count);
+                })
+            });
+
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            $('#saveButton').on('click', function() {
+                var formData = $("#addNewForm").serializeArray();
+                formData.push({"name": "manufacturers_id", "value":$('#manufacturer').val()}, {"name": "assetTypes_id", "value": $('#assetType').val()},{"name":"assets_tag", "value":$('#assetTag').val()});
+                if ($('#assetType').val() != null) {
+                    //Existing asset type
+                    var assetGroups = $("#assetGroups").select2("val");
+                    formData.push({"name": "assets_assetGroups", "value":assetGroups.join(',')});
+                    ajaxcall("assets/newAssetFromType.php", {formData}, function (data) {
+                        $("#saveButton").text("Add Another");
+                        $('#assetTag').val("");
+                        Toast.fire({
+                            type: 'success',
+                            title: (counter + 'x Asset&nbsp;<a href="{{ CONFIG.ROOTURL }}/asset.php?id=' + data.response['assetTypes_id'] + '&asset=' + data.response['assets_id'] + '">' + aTag(data.response['assets_tag']) + ' added</a>'),
+                            timer: 30000
+                        });
+                        counter +=1;
+                    }, false);
+                } else {
+                    //New asset type
+                    ajaxcall("assets/newAssetType.php", {formData}, function (data) {
+                        $("#assetType").select2("trigger", "select", {
+                            data: { id: data.response['assetTypes_id'], text:$("#addNewType-name").val() }
+                        });
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Asset Type Created'
+                        });
+                    }, false);
+                }
+            });
+
+            $("#addNewType-value").change(function() {
+                $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
+                $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
+            });
+
+            $("#assetGroups").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Enter group name to search",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.assetGroups_name,
+                                        id: item.assetGroups_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}

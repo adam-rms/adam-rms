@@ -1,0 +1,105 @@
+{% extends 'public/embed/templatePublic.twig' %}
+{% block main %}
+<div class="card">
+    <div class="card-body table-responsive p-0">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th style="width: 15%;">
+                    Project
+                </th>
+                {% if showClients %}
+                <th style="width: 15%; min-width:150px;">
+                    Project Client
+                </th>
+                {% endif %}
+                <th style="width: 10%; min-width:200px;">
+                    Project Dates
+                </th>
+                <th>
+                    Role Name
+                </th>
+                <th style="width: 10%;">
+                    Deadline
+                </th>
+                <th style="width: 300px">
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for role in roles %}
+                <tr>
+                    <td>
+                        {% if project != role.projects_id %}
+                            {% if role.parentProject %}
+                                {{role.parentProject.projects_name}} &rarr;
+                            {% endif %}
+                            {{ role.projects_name }}
+                        {% else %}
+                            &#8627;
+                        {% endif %}
+                    </td>
+                    {% if showClients %}
+                    <td>
+                        {% if project != role.projects_id %}
+                        {{role.clients_name}}
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                    <td>
+                        {% if project != role.projects_id %}
+                            {{role.projects_dates_use_start ? role.projects_dates_use_start|date("d M Y h:ia") }}<br/>
+                            {{ role.projects_dates_use_end? role.projects_dates_use_end|date("d M Y h:ia") }}
+                        {% endif %}
+                        {% set project = role.projects_id %}
+                    </td>
+                    <td>
+                        {{ role.projectsVacantRoles_name }}
+                    </td>
+                    <td>
+                        {{ role.projectsVacantRoles_deadline ? role.projectsVacantRoles_deadline|date("d M Y h:ia") : '' }}
+                    </td>
+                    <td class="project-actions text-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#infoModal{{ role.projectsVacantRoles_id }}">More Info</button>
+                            <a type="button" class="btn btn-success btn-sm" target="_blank" href="{{CONFIG.ROOTURL}}/project/crew/vacancies.php">
+                                {% if role.projectsVacantRoles_firstComeFirstServed %}
+                                Login to Sign Up
+                                {% else %}
+                                Login to Apply
+                                {% endif %}
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% for role in roles %}
+<div class="modal fade" id="infoModal{{ role.projectsVacantRoles_id }}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ role.projects_name}} - {{ role.projectsVacantRoles_name }}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Project Manager</h4>
+                <p>{{role.users_name1 ~ " " ~ role.users_name2 }}</p>
+                <h4>Description</h4>
+               <p>{{ role.projectsVacantRoles_description|nl2br }}</p>
+                <h4>Person Specification</h4>
+                <p>{{ role.projectsVacantRoles_personSpecification|nl2br }}</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,121 @@
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Crew</h3>
+                    <div class="btn-group ml-auto">
+                    {% if "PROJECTS:PROJECT_CREW:CREATE"|instancePermissions %}
+                        <button type="button" class="btn btn-default btn-small" data-toggle="modal" data-target="#addCrewModal">Add Crew</button>
+                    {% endif %}
+                    {% if "PROJECTS:PROJECT_CREW:VIEW:EMAIL_CREW"|instancePermissions and project.crewAssignments|length > 0 %}
+                        <button type="button" class="btn btn-default btn-small" data-toggle="modal" data-target="#emailCrewModal">Email Crew</button>
+                    {% endif %}
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}projects/crew/" target="_blank" type="button" class="btn btn-info btn-small">Help</a>
+
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <ul id="crewList" class="todo-list">
+                    {% for crew in project.crewAssignments %}
+                        <li value="{{crew.crewAssignments_id}}"
+                            {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
+                            class="danger"
+                            {% elseif crew.users_email|length < 1 %}
+                            class="warning"
+                            {% endif %}>
+                            {% if "PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS"|instancePermissions %}
+                                <span class="handle">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </span>
+                            {% endif %}
+                                <span class="text">
+                                    {{crew.crewAssignments_role}} -
+                                    {% if crew.users_userid is null and crew.crewAssignments_personName is null %}
+                                        <i>Vacant</i>
+                                    {% elseif crew.users_name1 %}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ crew.users_userid }}">
+                                        {% endif %}
+                                        {{ crew.users_name1 ~ " " ~ crew.users_name2 }}
+                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        {{ crew.crewAssignments_personName }}
+                                    {% endif %}
+                                </span>
+                            {% if crew.crewAssignments_comment|length > 0 %}
+                                <i class="fas fa-info-circle" data-toggle="popover" title="{{crew.crewAssignments_role|escape('html_attr')}}" data-content="{{ crew.crewAssignments_comment|escape('html_attr') }}"></i>
+                            {% endif %}
+                            <div class="tools">
+                                {% if "PROJECTS:PROJECT_CREW:EDIT"|instancePermissions %}
+                                    <i class="far fa-edit editCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" data-role="{{crew.crewAssignments_role|escape('html_attr')}}" data-comment="{{crew.crewAssignments_comment|escape('html_attr')}}" title="Edit"></i>
+                                    <i class="far fa-comment editCrewAssignmentComment" data-assignment="{{ crew.crewAssignments_id }}" data-comment="{{crew.crewAssignments_comment|escape('html_attr')}}" title="Edit comment"></i>
+                                    <i class="fas fa-trash deleteCrewAssignment" data-assignment="{{ crew.crewAssignments_id }}" title="Delete crew"></i>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Crew Role Vacancies</h3>
+                {% if "PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT"|instancePermissions %}
+                <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary btn-sm ml-auto">Manage</a>
+                {% endif %}
+            </div>
+        </div>
+        {% if crewRecruitment|length < 1 %}
+            <div class="alert alert-info">
+                <p class="my-auto">
+                    <i class="fas fa-info-circle"></i> 
+                    There are currently no crew vacancies for this project.
+                </p>
+            </div>
+        {% endif %}
+        {% for role in crewRecruitment %}
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{ role.projectsVacantRoles_name }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>Description</h5>
+                            <p>{{ role.projectsVacantRoles_description }}</p>
+                            <h5>Person Specification</h5>
+                            <p>{{ role.projectsVacantRoles_personSpecification }}</p>
+                            {% if role.projectsVacantRoles_deadline %}
+                                <p>
+                                    <strong>Deadline: </strong>
+                                    {{ role.projectsVacantRoles_deadline|date("d M Y h:ia") }}
+                                </p>
+                            {% endif %}
+                            <p>
+                                <strong>Places Remaining: </strong>
+                                {{ role.projectsVacantRoles_slots - role.projectsVacantRoles_slotsFilled }}
+                            </p>
+                            <div class="project-actions text-center">
+                                <div class="btn-group">
+                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}&from=project">
+                                        More Info and
+                                        {% if role.projectsVacantRoles_firstComeFirstServed %}
+                                        Sign Up
+                                        {% else %}
+                                        Apply
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>      
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

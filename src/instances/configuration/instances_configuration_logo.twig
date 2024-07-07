@@ -1,0 +1,91 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/billing.php">Billing</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/settings.php">Basic Settings</a></li>
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/configuration/logo.php">Logo</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/public.php">Public Site</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/calendarSettings.php">Calendar Settings</a></li>
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+    <div class="col-12 col-md-6">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">Logo</h3>
+            </div>
+            <div class="card-body">
+                {% if USERDATA.instance.instances_logo != null %}
+                    <img loading="lazy" src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 100%;">
+                {% else %}
+                    <i>None currently set</i>
+                {% endif %}
+            </div>
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+            <div class="card-footer">
+                <b>Logos are publicly accessible</b>
+                    {% embed 'assets/templates/uppy.twig' with {'publicBool': true, 'type': 'INSTANCE-THUMBNAIL', 'paste': false, 'typeId': 5, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}
+
+                    {% block success %}
+                        ajaxcall("instances/editInstance.php", {
+                            'formData': [{ 'name': 'instances_logo','value':responseJson.id }]
+                        }, function (data) {
+                            location.reload();
+                        });
+                    {% endblock %}
+                {% endembed %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">Email Header</h3>
+            </div>
+            <div class="card-body">
+                {% if USERDATA.instance.instances_emailHeader != null %}
+                    <img loading="lazy" src="{{ USERDATA.instance.instances_emailHeader|s3URL("medium") }}" style="width: 100%;">
+                {% else %}
+                    <i>None currently set</i>
+                {% endif %}
+            </div>
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+            <div class="card-footer">
+                <b>Email Headers are publicly accessible</b>
+                {% embed 'assets/templates/uppy.twig' with {'publicBool': true, 'type': 'INSTANCE-EMAILHEADER', 'paste': false, 'typeId': 10, 'subTypeId': USERDATA.instance.instances_id, 'fileLimit': 1, 'imagesOnly': true } %}
+                    {% block success %}
+                        ajaxcall("instances/editInstance.php", {
+                        'formData': [{ 'name': 'instances_emailHeader','value':responseJson.id }]
+                        }, function (data) {
+                        location.reload();
+                        });
+                    {% endblock %}
+                {% endembed %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Files not available</h3>
+            </div>
+            <div class="card-body">
+                <p>Files are disabled for your Business, so you can't add a Business logo or email header</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

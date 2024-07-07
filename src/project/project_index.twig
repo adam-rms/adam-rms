@@ -1,0 +1,1657 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css" integrity="sha256-VVbO1uqtov1mU6f9qu/q+MfDmrqTfoba0rAE07szS20=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js" integrity="sha256-zI6VVO07NPmVW11q3RQE42YbRmJIkkunrcQ9LEYxJsQ=" crossorigin="anonymous"></script>
+    <style>
+        .color-palette {
+            height: 35px;
+            line-height: 35px;
+            text-align: right;
+            padding-right: .75rem;
+        }
+
+        .color-palette.disabled {
+            text-align: center;
+            padding-right: 0;
+            display: block;
+        }
+
+        .color-palette-set {
+            margin-bottom: 15px;
+        }
+
+        .color-palette span {
+            display: none;
+            font-size: 12px;
+        }
+
+        .color-palette:hover span {
+            display: block;
+        }
+
+        .color-palette.disabled span {
+            display: block;
+            text-align: left;
+            padding-left: .75rem;
+        }
+
+        .color-palette-box h4 {
+            position: absolute;
+            left: 1.25rem;
+            margin-top: .75rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            display: block;
+            z-index: 7;
+        }
+
+        /* Remove bottom margin from comment cards */
+        .timeline-body > p {
+            margin-bottom: 0;
+        }
+    </style>
+
+    <!--Summernote-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" integrity="sha256-CLMYHViXNCxDUd/ySLeJJjyLtteBZwjqZ4c5p6U7L78=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.min.js" integrity="sha256-jPK1ABk4CuFvSr31v4CLU7X7XCvixZSi8fTTCw/tsto=" crossorigin="anonymous"></script>
+
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!--Sweet Alert-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+            <div class="row">
+                {% if project.projectsTypes_config_assets == 1 %}
+                    {% for assetAssignment in FINANCIALS.assetsAssigned %}
+                        {% for flag in assetAssignment.flagsblocks.BLOCK %}
+                            <div class="alert alert-danger">
+                                <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                <h5> <i class="fas fa-ban"></i> {{ assetAssignment.assets_tag|aTag }}: {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}</h5>
+                                {{ flag.maintenanceJobs_title }} - {{ flag.maintenanceJobs_faultDescription }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% if project.projectsStatuses_assetsReleased == 1 %}
+                    <div class="col-12">
+                        <div class="alert alert-danger">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Assets not locked - assets are released</h5>
+                            Assets assigned to this project can be assigned to other projects that clash with this one, as the project is no longer active.
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                {# Nav Bar for page views #}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-pills" id="nav-bar">
+                                <li class="nav-item"><a class="nav-link active" href="#details-view" data-toggle="tab" style="font-weight:bold;">{{project.projects_name}}</a></li>
+                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/assets.php?project={{project.projects_id}}&project_referer={{project.projects_id}}"><i class="fas fa-plus"></i> Add Assets</a></li>
+                                {% endif %}
+                                {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#assets-view" data-toggle="tab"><i class="fas fa-list"></i> Assets List</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#assets-board" data-toggle="tab"><i class="fas fa-shipping-fast"></i> Asset Dispatch</a></li>
+                                {% endif %}
+                                <li class="nav-item"><a class="nav-link" href="#file-view" data-toggle="tab"><i class="fas fa-file-alt"></i> {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and project.projectsTypes_config_files == 1 %}Files, {% endif %}{% if project.projectsTypes_config_notes == 1 %}Notes, {% endif %} Invoices & Quotes</a></li>
+                                {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab"><i class="fas fa-pound-sign"></i> Finance</a></li>
+                                {% endif %}
+                                {% if "PROJECTS:PROJECT_CREW:VIEW"|instancePermissions and project.projectsTypes_config_crew == 1 %}
+                                    <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab"><i class="fas fa-users"></i> Crew</a></li>
+                                {% endif %}
+                                {% if project.subProjects %}
+                                    <li class="nav-item"><a class="nav-link" href="#calendar-view" data-toggle="tab"><i class="fas fa-calendar-alt"></i> Sub Projects</a></li>
+                                {% endif %}
+                                {% if project.auditLog|length > 0 %}
+                                <li class="nav-item"><a class="nav-link" href="#log-view" data-toggle="tab"><i class="fas fa-comments"></i> Comments & History</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="details-view">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">{{ project.projectsTypes_name }}</h3>
+                                            <div class="card-tools">
+                                                {% if project.projectsTypes_config_assets == 1 and project.projects_dates_deliver_start and project.projects_archived != 1 and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS"|instancePermissions %}
+                                                    <button type="button" class="btn btn-tool" title="Add all assets to Project" id="addAllAssetsToProject"><i class="fas fa-dolly"></i></button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <style>
+                                                    #projectDetailBox p {
+                                                        margin-bottom: 6px;
+                                                        margin-top: 4px;
+                                                    }
+                                                </style>
+                                                <div class="col-12" id="projectDetailBox">
+                                                    {% if project.projects_archived == 1 %}
+                                                        <div class="alert alert-danger">
+                                                            <h5><i class="icon fas fa-ban"></i> Archived</h5>
+                                                            This project has been moved to archive
+                                                        </div>
+                                                    {% endif %}
+                                                    <h3 class="text-primary">{{project.projects_name}}</h3>
+                                                    {% if project.projects_description %}
+                                                        <p class="text-muted">{{ project.projects_description|nl2br }}</p>
+                                                        <hr/>
+                                                    {% endif %}
+                                                    <div class="text-muted">
+                                                        {% if "PROJECTS:EDIT:CLIENT"|instancePermissions and project.projectsTypes_config_client == 1 %}
+                                                            <p class="text-sm">Client</p>
+                                                            <select class="form-control select2bs4" multiple id="editProjectClient">
+                                                                {% if project.clients_id == "" %}
+                                                                    <option value="" disabled selected>No Client Selected....</option>
+                                                                {% endif %}
+                                                                {% for client in clients %}
+                                                                    {% if client.clients_archived == 0 or ((client.clients_archived == 1) and (project.clients_id == client.clients_id) ) %}
+                                                                        <option value="{{ client.clients_id }}" {{ project.clients_id == client.clients_id ? 'selected' }} {{ client.clients_archived == 1 ? 'disabled' }}>{{ client.clients_archived == 1 ? '[Archived] ' }}{{ client.clients_name }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </select>
+                                                        {% elseif project.projectsTypes_config_client == 1  %}
+                                                            <p class="text-sm">Client
+                                                                <b class="d-block">
+                                                                    <a  style="color: inherit; text-decoration: inherit;"  {% if "CLIENTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/clients.php"{% endif %}>
+                                                                        {{ project.clients_name }}</a>
+                                                                </b>
+                                                            </p>
+                                                        {% endif %}
+                                                        {% if "PROJECTS:EDIT:LEAD"|instancePermissions %}
+                                                            <p class="text-sm">Project Manager</p>
+                                                            <select class="form-control select2bs4" multiple id="editProjectManager">
+                                                                {% for user in potentialProjectManagers %}
+                                                                    <option value="{{ user.users_userid }}" {{ project.users_userid == user.users_userid ? 'selected' }}>{{ (user.users_name1 ~ " " ~ user.users_name2) }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        {% else %}
+                                                            <p class="text-sm">Project Manager
+                                                                <b class="d-block">
+                                                                    {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                                                    <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}">
+                                                                        {% endif %}
+                                                                        {{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}
+                                                                        {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
+                                                                    </a>
+                                                                    {% endif %}
+                                                                </b>
+                                                            </p>
+                                                        {% endif %}
+                                                        {% if "PROJECTS:EDIT:ADDRESS"|instancePermissions and project.projectsTypes_config_venue == 1  %}
+                                                            <p class="text-sm">Venue</p>
+                                                            <select class="form-control select2bs4" multiple id="editProjectAddress">
+                                                                {% if project.locations_id == "" %}
+                                                                    <option value="" disabled selected>No Location Selected....</option>
+                                                                {% endif %}
+                                                                {% for location in locations %}
+                                                                    <option value="{{ location.locations_id }}" {{ project.locations_id == location.locations_id ? 'selected' }} {{ location.locations_archived == 1 ? 'disabled' }}>{{ location.locations_archived == 1 ? '[Archived] ' }}{{ location.locations_name }}</option>
+                                                                    {% for subLocation in location.linkedToThis %}
+                                                                        <option value="{{ subLocation.locations_id }}" {{ project.locations_id == subLocation.locations_id ? 'selected' }}  {{ subLocation.locations_archived == 1 ? 'disabled' }} title="{% for i in range(1, subLocation['tier']) %}{% if loop.last %}&#8627;{% else %}&nbsp;&nbsp;{% endif %}{% endfor %}">
+                                                                            {{ subLocation.locations_archived == 1 ? '[Archived] ' }}{{ subLocation.locations_name }}
+                                                                        </option>
+                                                                    {% endfor %}
+                                                                {% endfor %}
+                                                            </select>
+                                                        {% elseif project.projectsTypes_config_venue == 1 %}
+                                                            <p class="text-sm">Venue
+                                                                <b class="d-block"><a  style="color: inherit; text-decoration: inherit;"  {% if "LOCATIONS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/location/"{% endif %}>{{ project.locations_name }}</a></b>
+                                                            </p>
+                                                        {% endif %}
+                                                        <p class="text-sm">Dates
+                                                            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                                            </div>
+                                                            <input type="text" class="form-control float-right" id="datePickerInput">
+                                                        </div>
+                                                    {% else %}
+                                                        <b class="d-block">{{project.projects_dates_use_start ? project.projects_dates_use_start|date("Y-m-d h:i:sa")  ~ ' - ' ~  project.projects_dates_use_end|date("Y-m-d h:i:sa") }}</b>
+                                                        {% endif %}
+                                                        </p>
+                                                        {% if project.projectsTypes_config_assets == 1 %}
+                                                            <p class="text-sm">Dates assets in use
+                                                            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                                                    </div>
+                                                                    <input type="text" class="form-control float-right" id="datePickerInputDeliver">
+                                                                </div>
+                                                                {% if project.projects_dates_use_start %}
+                                                                    <div style="width: 100%;text-align: right;">
+                                                                        <a href="#" id="copyProjectDatesToDeliverDates">Copy from Project Dates</a>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <b class="d-block">{{project.projects_dates_deliver_start ? project.projects_dates_deliver_start|date("Y-m-d h:i:sa") ~ ' - ' ~ project.projects_dates_deliver_end|date("Y-m-d h:i:sa") }}</b>
+                                                            {% endif %}
+                                                            </p>
+                                                            <p class="text-sm">Project duration for asset pricing purposes
+                                                            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Weeks</span>
+                                                                    </div>
+                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["weeks"] }}" class="form-control float-right" required id="financeDurationMathsWeeks">
+                                                                    <span class="input-group-text">Days</span>
+                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["days"] }}" class="form-control float-right" required id="financeDurationMathsDays">
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-default" type="button" id="financeDurationMathsSave">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                                {% if project.projects_dates_use_start %}
+                                                                <div style="width: 100%;text-align: right;">
+                                                                    {% if project.projects_dates_finances_days is same as(null) and project.projects_dates_finances_weeks is same as (null) %}
+                                                                        Project duration is currently based on project dates
+                                                                    {% else %}
+                                                                     <a href="#" id="copyProjectDatesToFinanceDurationMaths">Sync to Project Dates ({{ FINANCIALS['priceMaths']["calendarDays"] }} day{{ FINANCIALS['priceMaths']["calendarDays"] == 1 ? '' : 's' }})</a>
+                                                                    {% endif %}
+                                                                </div>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <b class="d-block">{{ FINANCIALS['priceMaths']["weeks"] }} week{{ FINANCIALS['priceMaths']["weeks"] != 1 ? 's' : '' }} and {{ FINANCIALS['priceMaths']["days"] }} day{{ FINANCIALS['priceMaths']["days"] != 1 ? 's' : ''}}</b>
+                                                            {% endif %}
+                                                            </p>
+                                                        {% endif %}
+                                                    </div>
+                                                    <br/>
+                                                    {% if project.projects_parent_project_id and project.projects_status_follow_parent %}
+                                                    <div class="alert alert-info mb-1"><p>This sub-project is following the status of its parent project</p></div> 
+                                                    {% endif %}
+                                                    <div class="alert" style="background-color: {{ project.projectsStatuses_backgroundColour }}; color: {{ project.projectsStatuses_foregroundColour }};">
+                                                        <h5><b>Status: </b>{{ project.projectsStatuses_name }}</h5>
+                                                        {{ project.projectsStatuses_description }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="btn-group float-right">
+                                                <button type="button" class="btn btn-default quickAddCommentButton">New Comment</button>
+                                                {% if "PROJECTS:EDIT:STATUS"|instancePermissions and not( project.projects_parent_project_id and project.projects_status_follow_parent) %}
+                                                    <button type="button" class="btn btn-secondary" id="editProjectStatus">Change Status</button>
+                                                {% endif %}
+                                                <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                    <div class="dropdown-menu" role="menu">
+                                                        {% if "PROJECTS:CREATE"|instancePermissions %}
+                                                            {% if project.subProjects == null %}
+                                                                <a class="dropdown-item" id="assignParentProject">Assign Parent Project</a>
+                                                            {% endif %}
+                                                            {% if project.projects_parent_project_id == null %}
+                                                                {% if canCreateSubProjects %}
+                                                                    <a class="dropdown-item" id="newSubProject">New Sub-Project</a>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if project.projects_status_follow_parent %}
+                                                                    <a class="dropdown-item" id="stopFollowParent">Stop Following Parent Status</a>
+                                                                {% else %}
+                                                                    <a class="dropdown-item" id="followParent">Follow Parent Status</a>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            {% if project.projects_parent_project_id == null or project.subProjects == null %}
+                                                                <div class="dropdown-divider"></div>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% if "PROJECTS:EDIT:NAME"|instancePermissions %}
+                                                            <a class="dropdown-item" id="editProjectName" href="#">Edit Name</a>
+                                                        {% endif %}
+                                                        {% if "PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS"|instancePermissions %}
+                                                            <a class="dropdown-item" id="editProjectDescription" href="#">Edit Description</a>
+                                                        {% endif %}
+                                                        {% if "PROJECTS:EDIT:NAME"|instancePermissions or "PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS"|instancePermissions%}
+                                                            <div class="dropdown-divider"></div>
+                                                        {% endif %}
+                                                        {% if "PROJECTS:EDIT:PROJECT_TYPE"|instancePermissions and potentialProjectTypes|length > 1 %}
+                                                            <a class="dropdown-item" id="editProjectType" href="#">Change Project Type</a>
+                                                        {% endif %}
+                                                        {% if "PROJECTS:ARCHIVE"|instancePermissions %}
+                                                            {% if project.projects_archived == 1 %}
+                                                                <a class="dropdown-item" id="archiveProject" href="#">Remove from Archive</a>
+                                                            {% else %}
+                                                                <a class="dropdown-item" id="archiveProject" href="#">Archive</a>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% if "PROJECTS:DELETE"|instancePermissions %}<a class="dropdown-item" id="deleteProject" href="#">Delete</a>{% endif %}
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 hidden-md-down">
+                                    {% if project.auditLog|length > 0 %}
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Comments</h3>
+                                                <div class="card-tools">
+                                                    <button type="button" class="btn btn-tool quickAddCommentButton" title="New Project comment" >
+                                                        <i class="fas fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <!-- The time line -->
+                                                <div class="timeline">
+                                                    {% set currentDate = '' %}
+                                                    {% set comments = false %}
+                                                    {% for event in project.auditLog %}
+                                                        {% if event.auditLog_actionType in ['QUICKCOMMENT'] %}
+                                                            {% set comments = true %}
+                                                            {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
+                                                                <div class="time-label">
+                                                                    <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
+                                                                </div>
+                                                                {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
+                                                            {% endif %}
+                                                            <div>
+                                                                <i class="far fa-comment bg-blue"></i>
+                                                                <div class="timeline-item">
+                                                                    <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
+                                                                    <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a> commented
+                                                                    </h3>
+                                                                    <div class="timeline-body">{{ event.auditLog_actionData|raw }}</div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if comments %}
+                                                    <div>
+                                                        <i class="fas fa-clock bg-gray"></i>
+                                                    </div>
+                                                    {% else %}
+                                                        <i>Nobody has commented on this project</i>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="assets-view">
+                            {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
+                                {% embed 'project/project_assets.twig' %}{% endembed %}
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="assets-board">
+                            {% if (FINANCIALS['assetsAssigned'] or FINANCIALS['assetsAssignedSUB']) and project.projectsTypes_config_assets == 1 %}
+                                {% embed 'project/project_assetsBoard.twig' %}{% endembed %}
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="file-view">
+                            {% embed 'project/project_files.twig' %}{% endembed %}
+                        </div>
+                        <div class="tab-pane" id="payments-view">
+                            {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                                {% embed 'project/project_finance.twig' %}{% endembed %}
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="crew-view">
+                            {% if "PROJECTS:PROJECT_CREW:VIEW"|instancePermissions and project.projectsTypes_config_crew == 1 %}
+                                {% embed 'project/project_crew.twig' %}{% endembed %}
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="calendar-view">
+                            {% if project.subProjects %}
+                                    <div class="card">
+                                        <div class="card-body p-0">
+                                            {% embed 'assets/widgets/calendar.twig' with {"projects": project.subProjects, "useStartDate": true } %}
+                                            {% endembed %}
+                                        </div>
+                                    </div>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane" id="log-view">
+                            {% embed 'project/project_log.twig' %}{% endembed %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
+    <div class="modal fade" id="newPaymentModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="newPaymentModal-title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>  
+            <div class="modal-body">
+                <form id="newPaymentModal-form">
+                    <input type="hidden" id="newPaymentModal-form-type" name="payments_type" value="1"/>
+                    <input type="hidden" name="projects_id" value="{{ project.projects_id }}"/>
+                    <div class="input-group newPaymentModal-paymentOnly" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Date</span>
+                        </div>
+                        <input type="text" class="form-control" name="payments_date" id="newPaymentModal-form-date">
+                    </div>
+                    <div class="input-group newPaymentModal-paymentOnly" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Reference</span>
+                        </div>
+                        <input type="text" class="form-control" name="payments_reference">
+                    </div>
+                    <div class="input-group newPaymentModal-paymentOnly" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Payment Method</span>
+                        </div>
+                        <select class="form-control" name="payments_method">
+                            <option selected></option>
+                            <option>Credit Card</option>
+                            <option>Debit Card</option>
+                            <option>Bank Transfer</option>
+                            <option>Cash</option>
+                            <option>Cheque</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3 newPaymentModal-nonPaymentOnly">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Quantity</span>
+                        </div>
+                        <input class="form-control" type="number" step="1" min="0" value="1" name="payments_quantity">
+                    </div>
+                    <div class="input-group mb-3 newPaymentModal-nonPaymentOnly">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Supplier</span>
+                        </div>
+                        <input class="form-control" type="text" name="payments_supplier">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 5px;">
+                        <div class="input-group-prepend"><span class="input-group-text">Description</span></div>
+                        <textarea class="form-control" rows="3" name="payments_comment"  placeholder=""></textarea>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Amount &pound;</span>
+                        </div>
+                        <input class="form-control" type="number" step="0.01" min="0" value="0" name="payments_amount">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="newPaymentModal-button">Save changes</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% endif %}
+    {% if "PROJECTS:PROJECT_NOTES:EDIT:NOTES"|instancePermissions and project.projectsTypes_config_notes == 1 %}
+        {% for note in project.notes %}
+            <div class="modal fade" id="noteModal{{ note.projectsNotes_id }}">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Edit {{ note.projectsNotes_title }}</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <div class="summernote" data-noteid="{{ note.projectsNotes_id }}">{{ note.projectsNotes_text|raw }}</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="print"><i class="fas fa-print"></i> Save & Print</button>
+                            <button type="button" class="btn btn-default btn-sm noteModal-save" data-noteid="{{ note.projectsNotes_id }}" data-callback="none"><i class="far fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if "PROJECTS:PROJECT_CREW:CREATE"|instancePermissions %}
+        <div class="modal fade" id="addCrewModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Crew to {{ project.projects_name }}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addCrewModal-form">
+                            <input type="hidden" name="projects_id" value="{{ project.projects_id }}"/>
+                            <div class="input-group mb-3">
+                                <select class="form-control" multiple="multiple" id="addCrewModal-users" placeholder="Enter names here"></select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Role</span>
+                                </div>
+                                <input class="form-control" type="text" name="crewAssignments_role" minlength="2" required placeholder="Head Flyman">
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text">Comment</span></div>
+                                <textarea class="form-control" rows="3" name="crewAssignments_comment" placeholder="Making own way to venue - bringing key to operate drum revolve. Designated FirstAider"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="addCrewModal-button">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if "PROJECTS:PROJECT_CREW:VIEW:EMAIL_CREW"|instancePermissions %}
+        <div class="modal fade" id="emailCrewModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Crew Emails for {{ project.projects_name }}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <pre>{% for crew in project.crewAssignments  %}{% if crew.users_email != null %}{{ crew.users_name1 }} {{ crew.users_name2 }} &lt;{{ crew.users_email }}&gt;,{% endif %}{% endfor %}</pre>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="mailto:?subject={{ project.projects_name }}&bcc={% for crew in project.crewAssignments  %}{% if crew.users_email != null %}{{ crew.users_email }},{% endif %}{% endfor %}" type="button" class="btn btn-primary">Launch Email Client</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+    {% for payment in []|merge(FINANCIALS.payments.received.ledger)|merge(FINANCIALS.payments.sales.ledger)|merge(FINANCIALS.payments.subHire.ledger)|merge(FINANCIALS.payments.staff.ledger) %}
+        <div class="modal fade" id="filesModal{{ payment.payments_id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Payment Files</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+{% embed 'assets/templates/fileBox.twig' with {'files': payment.files } %}
+
+
+                        {% endembed %}
+                    </div>
+                    {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
+                        <div class="modal-footer">
+{% embed 'assets/templates/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
+
+
+                                {% block success %}
+                                    console.log(responseJson.id);
+                                {% endblock %}
+                            {% endembed %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and project.projectsTypes_config_files == 1 %}
+
+    <div class="modal fade" id="projectFilesModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Project Files</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+{% embed 'assets/templates/fileBox.twig' with {'files': files } %}
+
+
+                    {% endembed %}
+                </div>
+                {% if "PROJECTS:PROJECT_FLIE_ATTACHMENTS:CREATE"|instancePermissions %}
+                    <div class="modal-footer">
+{% embed 'assets/templates/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
+
+
+                            {% block success %}
+                                console.log(responseJson.id);
+                            {% endblock %}
+                        {% endembed %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="modal fade" id="projectQuotesModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Project Quotes</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+{% embed 'assets/templates/fileBox.twig' with {'files': quotes } %}
+
+
+                    {% endembed %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="projectInvoicesModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Project Invoices</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+{% embed 'assets/templates/fileBox.twig' with {'files': invoices } %}
+
+
+                    {% endembed %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="pdfGenerateModal">
+        <div class="modal-dialog">
+            <form id="pdfGenerate" method="GET" action="{{CONFIG.ROOTURL}}/project/projectInvoice.php" target="_blank">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="pdf" value="true">
+                        <input type="hidden" name="quote" value="">
+                        <input type="hidden" name="id" value="{{ project.projects_id }}">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="instancelogo" {% if USERDATA.instance.instances_logo %}checked{% else %}disabled{% endif %}>
+                                <label class="form-check-label">Business Logo</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="addresses" checked>
+                                <label class="form-check-label">Addresses</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="pmdetails" checked>
+                                <label class="form-check-label">Project Manager</label>
+                            </div>
+                            {% if project.projectsTypes_config_assets == 1 %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="totalmass" checked>
+                                    <label class="form-check-label">Total Mass</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="totalvalue" checked>
+                                    <label class="form-check-label">Total Value</label>
+                                </div>
+                            {% endif %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="venue" checked>
+                                <label class="form-check-label">Venue</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="invoiceNotes" checked>
+                                <label class="form-check-label">Invoice Notes</label>
+                            </div>
+                            {% if project.projectsTypes_config_assets == 1 %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="assets" checked>
+                                    <label class="form-check-label">Equipment List</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="showAll">
+                                    <label class="form-check-label">Individual Items in Equipment List</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="flagsBlocks" checked>
+                                    <label class="form-check-label">Flags &amp; Blocks in Equipment List</label>
+                                </div>
+
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="checkboxes">
+                                    <label class="form-check-label">Equipment Checkboxes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="comments">
+                                    <label class="form-check-label">Equipment Comments</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="masses" checked>
+                                    <label class="form-check-label">Equipment Masses</label>
+                                </div>
+                            {% endif %}
+                            {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1  %}
+                                <hr/>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="finance" checked>
+                                    <label class="form-check-label">Financial Totals</label>
+                                </div>
+                                {% if project.projectsTypes_config_assets == 1 %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="prices" checked>
+                                        <label class="form-check-label">Prices</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="discounts" checked>
+                                        <label class="form-check-label">Equipment Discounts</label>
+                                    </div>
+                                {% endif %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="subHires" checked>
+                                    <label class="form-check-label">Additional Hires</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="sales" checked>
+                                    <label class="form-check-label">Sales</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="staff" checked>
+                                    <label class="form-check-label">Staff</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="paymentTerms" checked>
+                                    <label class="form-check-label">Payment Terms</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="submit" name="draft" value="true" class="btn btn-default">Draft Printout</button>
+                        <button type="submit" name="upload" value="true" class="btn btn-success">Generate PDF</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#pdfGenerateModal').on('show.bs.modal', function (e) {
+                if ($(e.relatedTarget).data('quote')) {
+                    $("#pdfGenerateModal .modal-title").text("Create Quote");
+                    $('#pdfGenerateModal input[name="quote"]').val("true");
+                } else {
+                    $("#pdfGenerateModal .modal-title").text("Create Invoice");
+                    $('#pdfGenerateModal input[name="quote"]').val("false");
+                }
+            });
+            $("#assetAssignmentCheckboxAll").click(function () {
+                $(".assetAssignmentCheckbox").prop('checked', $(this).prop('checked'));
+            });
+            $(".quickAddCommentButton").click(function () {
+                bootbox.dialog({
+                    title: "Enter comment",
+                    size: 'large',
+                    message: '<div id="editor"></div>',
+                    buttons: {
+                        ok: {
+                            label: "Save",
+                            className: "btn btn-info",
+                            callback: function () {
+                                let content = $('#editor').summernote('code');
+                                if (content){
+                                    ajaxcall("projects/newQuickComment.php", {
+                                        "text": content,
+                                        "projects_id": "{{ project.projects_id }}"
+                                    }, function (data) {
+                                        location.reload();
+                                    });
+                                }
+                            }
+                        },
+                        cancel:{
+                            label: "Cancel",
+                            className: "btn btn-danger",
+                        }
+                    }
+                });
+
+                $('#editor').summernote({
+                    minHeight: 300,             // set minimum height of editor
+                    maxHeight: null,             // set maximum height of editor
+                    focus: true,
+                    disableDragAndDrop: true, //We're using fineuploader for that
+                    toolbar: [
+                        ['oops', ['undo', 'redo']],
+                        ['font', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['insert', ['link','hr']],
+                        ['view', ['codeview']]
+                    ],
+                    popover: {
+                        image: [
+                            ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
+                            ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                            ['remove', ['removeMedia']]
+                        ],
+                        link: [
+                            ['link', ['unlink']]
+                        ],
+                    }
+                });
+            });
+            {% if "PROJECTS:EDIT:CLIENT"|instancePermissions %}
+            $('#editProjectClient').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1
+            });
+            $('#editProjectClient').on("change", function (e) {
+                ajaxcall("projects/changeClient.php", {
+                    "clients_id": $(this).val(),
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:PROJECT_TYPE"|instancePermissions %}
+            $("#editProjectType").click(function () {
+                bootbox.prompt({
+                    title: "Change Project Type",
+                    inputType: 'select',
+                    value: {{ project.projectsTypes_id }},
+                    inputOptions: [
+                        {% for type in potentialProjectTypes %}
+                        {
+                            text: "{{type.projectsTypes_name|escape('js') }}",
+                            value: '{{ type.projectsTypes_id }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result && result !== "{{ project.projectsTypes_id }}") {
+                            ajaxcall("projects/changeProjectType.php", {
+                                "projectsTypes_id": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:LEAD"|instancePermissions %}
+            $('#editProjectManager').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1
+            });
+            $('#editProjectManager').on("change", function (e) {
+                ajaxcall("projects/changeProjectManager.php", {
+                    "users_userid": $(this).val(),
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS"|instancePermissions %}
+            $("#editProjectDescription").click(function () {
+                bootbox.prompt({
+                    title: "Edit Project Description",
+                    inputType: 'textarea',
+                    value: "{{ project.projects_description|escape("js") }}",
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeDescription.php", {
+                                "projects_description": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:INVOICE_NOTES"|instancePermissions %}
+            $(".editProjectInvoiceNotes").click(function () {
+                bootbox.prompt({
+                    title: "Edit Project Invoice Notes",
+                    inputType: 'textarea',
+                    value: `{{ project.projects_invoiceNotes|escape("js") }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeInvoiceNotes.php", {
+                                "projects_invoiceNotes": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:ARCHIVE"|instancePermissions %}
+            $("#archiveProject").click(function () {
+                {% if project.projects_archived != 1 %}
+                bootbox.confirm({
+                    message: "Are you sure you wish to archive the project?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/archive.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+                {% else %}
+                bootbox.confirm({
+                    message: "Are you sure you wish to remove this project from the archive?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/unArchive.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+                {% endif %}
+            });
+            {% endif %}
+            {% if "PROJECTS:DELETE"|instancePermissions %}
+            $("#deleteProject").click(function () {
+                bootbox.confirm({
+                    message: "Are you sure you wish to delete the project?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/delete.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
+                                window.location.href = "{{CONFIG.ROOTURL}}/";
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
+            $('#datePickerInput').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 15,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                {% if project.projects_dates_use_start %}
+                startDate: "{{ project.projects_dates_use_start|date("j M Y h:i:sa") }}",
+                endDate: "{{ project.projects_dates_use_end|date("j M Y h:i:sa") }}"
+                {% else %}
+                autoUpdateInput: false,
+                {% endif %}
+            });
+            $('#datePickerInput').on('apply.daterangepicker', function(ev, picker) {
+                ajaxcall("projects/changeProjectDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_use_start":picker.startDate.format('DD MMM YYYY hh:mm A'),"projects_dates_use_end":picker.endDate.format('DD MMM YYYY hh:mm A')}, function (data) {
+                    location.reload();
+                });
+            });
+            $('#datePickerInputDeliver').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 15,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+            {% if project.projects_dates_deliver_start %}
+                startDate: "{{ project.projects_dates_deliver_start|date("j M Y h:i:sa") }}",
+                endDate: "{{ project.projects_dates_deliver_end|date("j M Y h:i:sa") }}"
+            {% else %}
+                autoUpdateInput: false,
+            {% endif %}
+            });
+            function changeProjectDeliverDates(start, end) {
+                ajaxcall("projects/changeProjectDeliverDates.php", {"projects_id": "{{ project.projects_id }}","projects_dates_deliver_start":start,"projects_dates_deliver_end":end}, function (data) {
+                    if (data.response.changed) {
+                        location.reload();
+                    } else {
+                        var message = "The dates of this project can't be changed because assets assigned to it have been assigned to other projects that clash. <br/><br/> Would you like to automatically remove the following assets from this project? This will have billing implications<br/><br/><br/><table class='table table-bordered'><tr><th>Tag</th><th>Name</th><th>Project Clashing</th></tr>";
+                        $.each(data.response.assets, function( index, value ) {
+                            message += "<tr><td>" + value['assets_tag'] + "</td><td>" + value['assetTypes_name'] + "</td><td>" + value['projects_name'] + "</td></tr>";
+                        });
+                        bootbox.confirm({
+                            message: message + "</table>",
+                            buttons: {
+                                cancel: {
+                                    label: 'No - cancel date change',
+                                    className: 'btn-success'
+                                },
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                if (result) {
+                                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                                    var toRemove = [];
+                                    console.log(data.response.assets);
+                                    $.each(data.response.assets, function( index, value ) {
+                                        toRemove.push(value['old_assetsAssignments_id']);
+                                    });
+                                    ajaxcall("projects/assets/unassign.php", {
+                                        "assetsAssignments": toRemove
+                                    }, function (data) {
+                                        changeProjectDeliverDates(start, end);
+                                    });
+                                    {% else %}
+                                    bootbox.alert("Sorry - you don't have permission to remove these assets");
+                                    {% endif %}
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            $('#datePickerInputDeliver').on('apply.daterangepicker', function(ev, picker) {
+                changeProjectDeliverDates(picker.startDate.format('DD MMM YYYY hh:mm A'),picker.endDate.format('DD MMM YYYY hh:mm A'));
+            });
+            $("#copyProjectDatesToDeliverDates").click(function () {
+                changeProjectDeliverDates($("#datePickerInput").data('daterangepicker').startDate.format('DD MMM YYYY hh:mm A'),$("#datePickerInput").data('daterangepicker').endDate.format('DD MMM YYYY hh:mm A'));
+            });
+
+            function setFinanceDurationMathsWeeks(weeks, days) {
+                ajaxcall("projects/changeProjectFinanceDurationMaths.php", {"projects_id": "{{ project.projects_id }}","projects_dates_finances_weeks":weeks,"projects_dates_finances_days":days}, function (data) {
+                    location.reload();
+                });
+            }
+            $("#financeDurationMathsSave").click(function () {
+                var days = $("#financeDurationMathsDays").val();
+                var weeks = $("#financeDurationMathsWeeks").val();
+                setFinanceDurationMathsWeeks(weeks, days);
+            });
+            $("#copyProjectDatesToFinanceDurationMaths").click(function () {
+                setFinanceDurationMathsWeeks("-1", "-1");
+            });
+
+            {% endif %}
+            {% if "PROJECTS:EDIT:NAME"|instancePermissions %}
+            $("#editProjectName").click(function () {
+                bootbox.prompt({
+                    title: "Change Project Name",
+                    inputType: 'text',
+                    value: `{{ project.projects_name|escape("js") }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeName.php", {
+                                "projects_name": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:STATUS"|instancePermissions %}
+            function changeStatus(newStatus) {
+                ajaxcall("projects/changeStatus.php", {
+                    "projectsStatuses_id": newStatus,
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    if (data.response.changed) {
+                        location.reload();
+                    } else {
+                        var message = "The status of this project can't be changed because assets assigned to it have been assigned to other projects that clash. <br/><br/> Would you like to automatically remove the following assets from this project? This will have billing implications<br/><br/><br/><table class='table table-bordered'><tr><th>Tag</th><th>Name</th><th>Project Clashing</th></tr>";
+                        $.each(data.response.assets, function( index, value ) {
+                            message += "<tr><td>" + value['assets_tag'] + "</td><td>" + value['assetTypes_name'] + "</td><td>" + value['projects_name'] + "</td></tr>";
+                        });
+                        bootbox.confirm({
+                            message: message + "</table>",
+                            buttons: {
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-success'
+                                },
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                if (result) {
+                                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                                    var toRemove = [];
+                                    console.log(data.response.assets);
+                                    $.each(data.response.assets, function( index, value ) {
+                                        toRemove.push(value['old_assetsAssignments_id']);
+                                    });
+                                    ajaxcall("projects/assets/unassign.php", {
+                                        "assetsAssignments": toRemove
+                                        }, function (data) {
+                                            changeStatus(newStatus);
+                                        });
+                                    {% else %}
+                                    bootbox.alert("Sorry - you don't have permission to remove these assets");
+                                    {% endif %}
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            $("#editProjectStatus").click(function () {
+                bootbox.prompt({
+                    title: "Set project status",
+                    inputType: 'select',
+                    value: {{ project.projectsStatuses_id }},
+                    inputOptions: [
+                        {% set STATUSESAVAILABLE = [] %}
+                        {% for STATUS in POSSIBLEPROJECTSTATUSES %}
+                            {
+                                text: "{{ (STATUS.projectsStatuses_name ~ " (" ~ STATUS.projectsStatuses_description ~ ')')|escape('js') }}",
+                                value: '{{ STATUS.projectsStatuses_id }}',
+                            },
+                            {% if STATUS.projectsStatuses_assetsReleased == 1 %}
+                                {% set STATUSESAVAILABLE = STATUSESAVAILABLE|merge([STATUS.projectsStatuses_id]) %}
+                            {% endif %}
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            var newStatus = result;                            
+                            if ([{{ STATUSESAVAILABLE|join(",") }}].includes(parseInt(newStatus))) {
+                                bootbox.confirm({
+                                    message: "This will allow assets assigned to this project to be assigned to other clashing projects - are you sure you wish to continue?",
+                                    buttons: {
+                                        confirm: {
+                                            label: 'Yes',
+                                            className: 'btn-danger'
+                                        },
+                                        cancel: {
+                                            label: 'No',
+                                            className: 'btn-success'
+                                        }
+                                    },
+                                    callback: function (result) {
+                                        if (result) {
+                                            changeStatus(newStatus);
+                                        }
+                                    }
+                                });
+                            } else {
+                                changeStatus(newStatus);
+                            }
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:ADDRESS"|instancePermissions %}
+            $('#editProjectAddress').select2({
+                tags: false,
+                multiple: false,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                templateResult: function (input) {
+                    if (!input.id || !input.title) {
+                        return input.text;
+                    }
+                    var $result = $(
+                        '<span><b>' + input.title + ' </b>' + input.text + '</span>'
+                    );
+                    return $result;
+                }
+            });
+            $('#editProjectAddress').on("change", function (e) {
+                ajaxcall("projects/changeVenue.php", {
+                    "locations_id": $(this).val(),
+                    "projects_id": "{{ project.projects_id }}"
+                }, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS"|instancePermissions %}
+            $("#addAllAssetsToProject").click(function () {
+                bootbox.confirm({
+                    message: "Are you sure you wish to add all assets in the business that are available to the project?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/assign.php", {"projects_id": "{{ project.projects_id }}"}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
+            $('#newPaymentModal-form-date').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 1,
+                singleDatePicker: true,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                startDate: "{{ "now"|date("j M Y h:i:sa") }}",
+                maxDate:"{{ "now"|date("j M Y h:i:sa") }}",
+            });
+            $(".newPayment").click(function () {
+                var type = $(this).data("type");
+                $("#newPaymentModal-form-type").val(type);
+                $("#newPaymentModal").modal('show');
+                $(".newPaymentModal-paymentOnly").hide();
+                $(".newPaymentModal-nonPaymentOnly").show();
+                switch(type) {
+                    case 1:
+                        $("#newPaymentModal-title").html("Add payment received");
+                        $(".newPaymentModal-paymentOnly").show();
+                        $(".newPaymentModal-nonPaymentOnly").hide();
+                        break;
+                    case 2:
+                        $("#newPaymentModal-title").html("Add Sales Item");
+                        break;
+                    case 3:
+                        $("#newPaymentModal-title").html("Add Additional Hire Cost");
+                        break;
+                    case 4:
+                        $("#newPaymentModal-title").html("Add Staff cost");
+                        break;
+                }
+            });
+            $("#newPaymentModal-button").click(function () {
+                var formData = $("#newPaymentModal-form").serializeArray();
+                ajaxcall("projects/newPayment.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
+            $(".deletePaymentButton").click(function () {
+                var id = $(this).data("paymentid");
+                bootbox.confirm({
+                    message: "Are you sure you wish to delete this payment?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/deletePayment.php", {"payments_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_NOTES:EDIT:NOTES"|instancePermissions %}
+            $('.summernote').summernote({
+                minHeight: 500,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true,
+                disableDragAndDrop: true, //We're using fineuploader for that
+                placeholder: 'Your epic note goes here',
+                toolbar: [
+                    ['oops', ['undo', 'redo']],
+                    ['font', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['hr']]
+                ],
+                popover: {
+                    image: [
+                        ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
+                        ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                        ['remove', ['removeMedia']]
+                    ],
+                    link: [
+                        ['link', ['unlink']]
+                    ],
+                    table: [
+                        ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                        ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                    ]
+                }
+            });
+            $(".noteModal-save").click(function () {
+                var callback = $(this).data("callback");
+                var noteid = $(this).data("noteid")
+                ajaxcall("projects/editNote.php", {"projects_id": "{{ project.projects_id }}", "projectsNotes_id": noteid, "projectsNotes_text":$('.summernote[data-noteid=' + noteid + ']').summernote('code')}, function (data) {
+                    if (callback == "print") {
+                        window.location.href = "{{ CONFIG.ROOTURL }}/project/noteExport.php?id=" + noteid;
+                    } else {
+                        location.reload();
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_NOTES:CREATE:NOTES"|instancePermissions %}
+            $("#newProjectNote").click(function () {
+                bootbox.prompt({
+                    title: "Note Title",
+                    inputType: 'text',
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/newNote.php", {
+                                "projectsNotes_title": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_CREW:EDIT"|instancePermissions %}
+            $(".editCrewAssignment").click(function () {
+                var id = $(this).data("assignment");
+                var role = $(this).data("role");
+                bootbox.prompt({
+                    title: "Edit Role Name", 
+                    value: role,
+                    callback: function (roleResult) {
+                        if (roleResult && roleResult != null) {
+                            ajaxcall("projects/crew/edit.php", {"crewAssignments_id": id, "crewAssignments_role": roleResult}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            $(".editCrewAssignmentComment").click(function () {
+                var id = $(this).data("assignment");
+                var comment = $(this).data("comment");
+                bootbox.prompt({
+                    title: "Edit Role Comment", 
+                    value: comment,
+                    callback: function (commentResult) {
+                        console.log(commentResult);
+                        ajaxcall("projects/crew/edit.php", {"crewAssignments_id": id, "crewAssignments_comment": commentResult}, function (data) {
+                            location.reload();
+                        });
+                    }
+                });
+            });
+            $(".deleteCrewAssignment").click(function () {
+                var id = $(this).data("assignment");
+                bootbox.confirm({
+                    message: "Are you sure you wish to remove this crew member - they will be notified?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/crew/unassign.php", {"crewAssignments_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_CREW:CREATE"|instancePermissions %}
+            $("#addCrewModal-users").select2({
+                tags: true,
+                tokenSeparators: [','],
+                templateSelection: function(selection) {
+                    if (selection.email) {
+                        return $.parseHTML(selection.text + (selection.clashes.length > 0 ? ' [CLASHES]' : '') + '</span>');
+                    } else {
+                        return $.parseHTML('<span style="color:#ff9100;">Name: ' + selection.text + '</span>');
+                    }
+                },
+                templateResult: function(selection) {
+                    if (selection.email) {
+                        return $.parseHTML(selection.text + ' (' + selection.email + ') ' + (selection.clashes.length > 0 ? '<span class="badge badge-danger">Clash with ' + selection.clashes + '</span>' : ''));
+                    } else {
+                        return "Add name: " + selection.text;
+                    }
+                },
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                placeholder: "Search for existing {{ CONFIG.PROJECT_NAME }} users to add to crew",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/projects/crew/searchUser.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term,
+                            projects_id: "{{ project.projects_id }}"
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.users_name1 + " " + item.users_name2,
+                                        email: item.users_email,
+                                        id: item.users_userid,
+                                        clashes: item.clashes.join(",")
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $('#addCrewModal-button').on('click', function(e){
+                if ($("#addCrewModal-users").select2("val").length > 0) {
+                    if($("#addCrewModal-form")[0].checkValidity() === false) {
+                        return true;
+                    }
+                    var formData = $("#addCrewModal-form").serializeArray();
+                    ajaxcall("projects/crew/assign.php", {
+                        formData,
+                        "users": $("#addCrewModal-users").select2("val")
+                    }, function () {
+                        location.reload();
+                    }, true);
+                }
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS"|instancePermissions %}
+            $('#crewList').sortable({
+                placeholder         : 'sort-highlight',
+                handle              : '.handle',
+                forcePlaceholderSize: true,
+                zIndex              : 999999,
+                update: function( event, ui ) {
+                    ajaxcall("projects/crew/sortRank.php", {
+                        "order": $("#crewList").sortable('toArray', {attribute: 'value'}),
+                        "projects_id": "{{ project.projects_id }}"
+                    }, null, true);
+
+                }
+            });
+            {% endif %}
+            {% if "PROJECTS:CREATE"|instancePermissions %}
+            $("#newSubProject").click(function () {
+                bootbox.prompt({
+                    title: "Select Sub-Project Type",
+                    inputType: 'select',
+                    inputOptions: [
+                        {% for type in potentialProjectTypes %}
+                        {
+                            text: '{{type.projectsTypes_name|escape('js')}}',
+                            value: '{{ type.projectsTypes_id }}',
+                        },
+                        {% endfor %}
+                    ],
+                    callback: function (result){
+                        if (result) {
+                            var projectType = result;
+                            bootbox.prompt("Enter Sub-Project Name", function (result) {
+                                if (result) {
+                                    ajaxcall("projects/new.php", {
+                                        "projects_name": result,
+                                        "projectsType_id": projectType,
+                                        "projects_manager": "{{ project.projects_manager }}",
+                                        "projects_parent_project_id": "{{ project.projects_id }}",
+                                    }, function (data) {
+                                        window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+                                    });
+                                }
+                            });
+                        }
+                    }
+                })
+            });
+
+            $("#assignParentProject").click(function () {
+                bootbox.prompt({
+                    title: "Choose Parent Project",
+                    inputType: 'select',
+                    value: "{{ (project.projects_parent_project_id ?: '-1') }}",
+                    inputOptions: [
+                        {
+                            text: 'No Parent',
+                            value: -1,
+                        },
+                        {% for allProject in projects %}
+                            {% if allProject.projects_id != project.projects_id %}
+                                {
+                                    text: '{{ allProject.projects_name|escape("js") }}',
+                                    value: '{{ allProject.projects_id }}',
+                                },
+                            {% endif %}
+                        {% endfor %}
+                    ],
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeSubProject.php", {
+                                "projects_id": "{{ project.projects_id }}",
+                                "projects_parent_project_id": result,
+                            }, function (data) {
+                                window.location.reload();
+                            });
+                        }
+                    }
+                })
+            });
+
+            $("#followParent").click(function () {
+                ajaxcall("projects/followParentStatus.php", {
+                    "projects_id": "{{ project.projects_id }}",
+                    "follow": "true",
+                }, function (data) {
+                    window.location.reload();
+                });
+            });
+            $("#stopFollowParent").click(function () {
+                ajaxcall("projects/followParentStatus.php", {
+                    "projects_id": "{{ project.projects_id }}",
+                    "follow": "false",
+                }, function (data) {
+                    window.location.reload();
+                });
+            });
+            {% endif %}
+
+            // Show initial Tab
+            var hash = location.hash.replace(/^#/, '');
+            if (hash) {
+                $('#nav-bar .nav-item a[href="#' + hash + '"]').tab('show');
+            }
+
+            // Change hashtag on tab change for page-reload
+            $('#nav-bar .nav-item a').on('shown.bs.tab', function (e) {
+                window.location.hash = e.target.hash;
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            })
+        });
+    </script>
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
+    {% endembed %}
+{% endblock %}

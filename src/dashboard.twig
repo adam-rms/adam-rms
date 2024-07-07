@@ -1,0 +1,27 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+
+    <div class="card-columns">
+        {% set widgets = WIDGETS.getAllDashboard() %}
+        {% for widget in widgets %}
+            {% embed 'assets/widgets/' ~ widget ~ '.twig' %}
+            {% endembed %}
+        {% endfor %}
+        {% embed 'assets/widgets/statsWidgetsJS.twig' %}{% endembed %}
+    </div>
+    <div class="row">
+        <div class="col-md-4 offset-md-4 col-sm-6 offset-sm-3 col-xs-12" id="noWidgetsBox" {% if widgets|length > 0  %}style="display:none;"{% endif %}>
+            <div class="card">
+                <div class="card-body" style="text-align: center;">
+                    <i>No widgets added to dashboard</i>
+                    <br/><br/><a class="btn btn-default btn-sm" href="{{ CONFIG.ROOTURL }}/instances/stats.php">Add</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            {% embed 'assets/widgets/calendar.twig' %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock %}

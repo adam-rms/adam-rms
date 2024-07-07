@@ -1,0 +1,85 @@
+{% extends "login/login_template.twig" %}
+{% block content %}
+    {% if googleAuthAvailable %}
+    <a href="{{CONFIG.ROOTURL}}/login/oauth/google.php" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/google.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login or Signup with Google</a><br/>
+    {% endif %}
+    {% if microsoftAuthAvailable %}
+    <a href="{{CONFIG.ROOTURL}}/login/oauth/microsoft.php" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/microsoft.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login or Signup with Microsoft</a><br/>
+    {% endif %}
+    <a href="?signup" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/logoicon.png" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Create new {{ CONFIG.PROJECT_NAME }} account</a>
+    <p>or</p>
+    <div class="spinner-border" role="status" id="loadingOverlay" style="display: none;">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <form id="loginForm">
+        <div id="errorMessageBox" class="alert alert-danger"></div>
+		<input class="form-control form-control-lg" id="emailInput" autocomplete="username" placeholder="Login with Username or Email" type="text" required style="margin-top: 10px; margin-bottom: 10px;" autofocus>
+        <input class="form-control form-control-lg" id="passwordInput" placeholder="Password" autocomplete="current-password" type="password" required style="margin-top: 10px; margin-bottom: 10px;">
+		<div style="width: 100%; text-align:right;">
+            <button type="button" class="btn btn-default" id="passwordResetButton">Reset my password</button>
+            <button class="btn btn-secondary" type="submit" value="Submit">Login</button>
+		</div>
+	</form>
+	<script>
+        $("#loginForm").submit(function(e){
+            e.preventDefault();
+            $("#loginForm").hide();
+            $("#loadingOverlay").show();
+            $.ajax({
+                url: "../api/login/login.php",
+                type: "POST",
+                dataType: 'json',
+                data: {"formInput" : $("#emailInput").val(),"password": $("#passwordInput").val()},
+                success: function(result) {
+                    if (result.result) {
+                        window.location.href = result.response.redirect;
+                    } else {
+                        $("#loginForm").show();
+                        $("#loadingOverlay").hide();
+                        $("#errorMessageBox").html(result.error.message);
+                        $("#errorMessageBox").show();
+                    }
+                },
+                error: function(){
+                    $("#loginForm").show();
+                    $("#loadingOverlay").hide();
+                    $("#errorMessageBox").html("Please refresh the page and check your internet connection");
+                    $("#errorMessageBox").show();
+                }
+            });
+        });
+        $('#passwordResetButton').click(function(){
+            if ($("#emailInput").val().length <= 0) {
+                $("#errorMessageBox").html("Please enter your username/email into the address box to reset your password.");
+                $("#errorMessageBox").show();
+                return;
+            }
+            $("#errorMessageBox").hide();
+            $("#loginForm").hide();
+            $("#loadingOverlay").show();
+            $.ajax({
+                url: "../api/login/forgotPassword.php",
+                type: "POST",
+                dataType: 'json',
+                data: {"formInput" : $("#emailInput").val()},
+                success: function(result) {
+                    $("#loginForm").show();
+                    $("#loadingOverlay").hide();
+                    if (result.result) {
+                        $("#errorMessageBox").html("If an account exists with the email address you entered, a password reset link has been sent to that address. Please check your email and follow the instructions provided.");
+                        $("#errorMessageBox").show();
+                    } else {
+                        $("#errorMessageBox").html("Please contact the support team for a new password");
+                        $("#errorMessageBox").show();
+                    }
+                }, error: function(){
+                    $("#loginForm").show();
+                    $("#loadingOverlay").hide();
+                    $("#errorMessageBox").html("Please refresh the page and check your internet connection");
+                    $("#errorMessageBox").show();
+                }
+            });
+
+        });
+	</script>
+{% endblock %}

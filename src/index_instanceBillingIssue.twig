@@ -1,0 +1,101 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-md-12 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {% if USERDATA.instance.instances_suspendedReasonType == "noplan" %}
+                    Choose a plan for {{ USERDATA.instance.instances_name }} to start a trial
+                    {% else %}
+                    {{ USERDATA.instance.instances_name }} is suspended
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if USERDATA.instance.instances_suspendedReasonType != "noplan" %}
+                    <p>The business {{ USERDATA.instance.instances_name }} has been suspended on {{ CONFIG.PROJECT_NAME }}, {{ USERDATA.instance.instances_suspendedReason }}</p>
+                {% else %}
+                <div class="row" id="billingPlansList"></div>
+                {% endif %}
+                {% if USERDATA.instance.instances_billingUser != USERDATA.users_userid and (USERDATA.instance.instances_suspendedReasonType == "billing" or USERDATA.instance.instances_suspendedReasonType == "noplan") %}
+                    <p>
+                        As you are not the billing contact for this business, you will need to advise the billing contact to resolve this issue, or contact support.
+                    </p>
+                {% endif %}
+                {% if USERDATA.instance.instances_billingUser == USERDATA.users_userid and USERDATA.instance.instances_suspendedReasonType == "billing" %}
+                    <a href="{{CONFIG.ROOTURL}}/api/instances/billing/billingPortal.php" class="btn btn-success" target="_blank">Fix issue in Billing Portal</a>
+                {% endif %}
+                {% if "INSTANCES:EDIT"|serverPermissions %}
+                    <a href="{{CONFIG.ROOTURL}}/server/instances.php" class="btn btn-success">Edit Server Configuration to un-suspend business</a>
+                {% endif %}
+                {% if CONFIG.LINKS_SUPPORTURL|length > 0 %}
+                    <a href="{{CONFIG.LINKS_SUPPORTURL}}" class="btn btn-default" target="_blank">Contact support</a>
+                {% endif %}
+                {#
+                <hr/>
+                <p>If you have just created this business, it may be suspended whilst the billing system updates. Please try again in a moment.</p>
+                <a href="javascript:window.location.href=window.location.href" class="btn btn-info">Check billing status again</a>
+                #}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    {% if USERDATA.instances|length > 1 %}
+    <div class="col-lg-4 offset-lg-2  col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Login to another business
+                </h3>
+            </div>
+            <div class="card-body">
+                    {% for instance in USERDATA.instances %}
+                        {% if USERDATA.instance.instances_id != instance.instances_id %}
+                        <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
+                            {{instance.instances_name}}
+                            <p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        {% include 'assets/templates/joinInstance.twig' %}
+    </div>
+</div>
+{% if USERDATA.instance.instances_billingUser == USERDATA.users_userid and USERDATA.instance.instances_suspendedReasonType == "noplan" %}
+<script>
+$(document).ready(function () {
+    ajaxcall("instances/billing/getPrices.php", {}, function (data) {
+        console.log(data.response);
+        for (var i = 0; i < data.response.length; i++) {
+            var string = 
+                "<div class='col-lg-4 col-md-6 col-sm-12'><div class='card'>" +
+                    "<div class='card-header'>" +
+                        "<h3 class='card-title'>" + data.response[i].name + "</h3>" +
+                    "</div>" +
+                    "<div class='card-body'>" +
+                        "<p>" + data.response[i].description + "</p>" +
+                        "<ul>";
+            for (var j = 0; j < data.response[i].marketing_features.length; j++) {
+                string += "<li>" + data.response[i].marketing_features[j].name + "</li>";
+            }
+            string += "</ul>";
+            for (var j = 0; j < data.response[i].price.length; j++) {
+                string += "<a href=\"{{CONFIG.ROOTURL}}/api/instances/billing/subscribe.php?currency=" + data.response[i].price[j].currency + "&price_id=" + data.response[i].price_id + "\" class='btn btn-default m-1'>Start 7 day trial - " + data.response[i].price[j].formatted_amount + "/" + data.response[i].time_period + "</a><br/>";
+            }
+            string += "</div>" +
+                "</div></div>";
+            $("#billingPlansList").append(string);
+        }
+    });
+});
+</script>
+{% endif %}
+                
+{% endblock %}

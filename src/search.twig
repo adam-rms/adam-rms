@@ -1,0 +1,116 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+    <form action="{{ CONFIG.ROOTURL }}/search.php" method="get">
+        <input type="hidden" name="offset" value="0">
+        <input type="hidden" name="limit" value="25">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <div class="input-group input-group-lg">
+
+                        <input type="search" class="form-control form-control-lg" name="term" type="search" placeholder="Type your keywords here" value="{{ term }}">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-lg btn-default">
+                                <i class="fa fa-search"></i> Search
+                            </button>
+                            <a href="{{ CONFIG.ROOTURL }}/assets.php" type="button" class="btn btn-lg btn-default">
+                                Search Assets
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="margin-top: 0.4rem;">
+                            {% if term and results['total'] is defined and results['total'] > 0 %}
+                                Showing {{ offset >0 ? 'results ' ~ offset ~ '-' ~ (offset + limit) : results['results']|length }} of {{ results['total'] }} result{{ results['total'] == 1 ? '' : 's' }} found in {{ results['speed']|round(3) }} second{{ results['speed']|round(3) != 1 ? 's':'' }}.
+                            {% else %}
+                                No results found for {{ term }}.
+                            {% endif %}
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}search" target="_blank">Help</a>
+
+                        </h3>
+                        <div class="card-tools pull-right">
+                            
+                            {% if results['total'] > 0 and results['results'] > limit %}
+                                <ul class="pagination pagination-sm m-0">
+
+                                    {% set page = (offset/limit)|round(0, 'ceil') + 1  %}
+                                    {% set total_pages =  (results['total']/limit)|round(0, 'ceil') %}
+
+                                    {% if page > 1 %}
+                                        <li class="page-item"><a class="page-link" href="{{ CONFIG.ROOTURL }}/search.php?offset={{ (page-1) * limit }}&limit={{ limit }}&term={{ term }}">&laquo;</a></li>
+                                    {% endif %}
+                                    {% for i in range((page> 3 ? page-2 : 1), (total_pages > 5 and page +2 < total_pages ? page+2 : total_pages)) %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ CONFIG.ROOTURL }}/search.php?offset={{ (i - 1) * limit }}&limit={{ limit }}&term={{ term }}">
+                                                {% if page == i %}
+                                                    <b>{{ i }}</b>
+                                                {% else %}
+                                                    {{ i }}
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                    {% if page < total_pages %}
+                                        <li class="page-item"><a class="page-link" href="{{ CONFIG.ROOTURL }}/search.php?offset={{ (page+1) * limit }}&limit={{ limit }}&term={{ term }}">&raquo;</a></li>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% if term and results['total'] is defined and results['total'] > 0 %}
+                            {% for result in results.results %}
+                                <li class="list-group-item">
+                                    <div class="col px-2">
+                                        <div>
+                                            <h3>
+                                                {% set result_url = generate_result_url(result) %}
+                                                {% if result_url is not null %}
+                                                    <a href="{{ CONFIG.ROOTURL }}{{ result_url }}" class="stretched-link">{{ result.title }}</a>
+                                                {% else %}
+                                                    {{ result.title }}
+                                                {% endif %}
+
+                                                {% set tag = generate_result_tag(result) %}
+                                                {% if tag %}
+                                                    <small class="float-right"><span class="badge bg-{{ tag[0] }}">{{ tag[1] }}</span></small>
+                                                {% endif %}
+                                            </h3>
+
+
+                                            {% if result.except is defined %}
+                                                <p class="mb-0">{{ result.except }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                        <li class="list-group-item">
+                            <div class="col px-2">
+                                <div>
+                                    <h3>
+                                        No other results found
+                                    </h3>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+
+{% endblock %}

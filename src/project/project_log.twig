@@ -1,0 +1,58 @@
+{% if project.auditLog|length > 0 %}
+    <div class="card">
+        <div class="card-body">
+            <!-- The time line -->
+            <div class="timeline">
+                {% set currentDate = '' %}
+                {% for event in project.auditLog %}
+                    {% if event.auditLog_actionType in ['QUICKCOMMENT', 'INSERT', 'ARCHIVE','UNARCHIVE','CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-DATE','CHANGE-DATE-FINANCE','UPDATE-DESCRIPTION','CHANGE-CLIENT'] %}
+                        {% if event.auditLog_timestamp|date("Y-m-d") != currentDate %}
+                            <div class="time-label">
+                                <span class="bg-red">{{ event.auditLog_timestamp|date("D jS M Y") }}</span>
+                            </div>
+                            {% set currentDate = event.auditLog_timestamp|date("Y-m-d") %}
+                        {% endif %}
+                        <div>
+                            {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                <i class="far fa-comment bg-blue"></i>
+                            {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                <i class="fas fa-ban bg-red"></i>
+                            {% else %}
+                                <i class="fas fa-info bg-gray-light"></i>
+                            {% endif %}
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
+                                <h3 class="timeline-header"><a href="mailto:{{ event.users_email }}">{{ event.users_name1 ~ " " ~ event.users_name2}} </a>
+                                    {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                        added a comment
+                                    {% elseif event.auditLog_actionType == "INSERT" %}
+                                        created the project
+                                    {% elseif event.auditLog_actionType == "ARCHIVE" %}
+                                        archived the project
+                                    {% elseif event.auditLog_actionType == "UNARCHIVE" %}
+                                        removed the project from the archive
+                                    {% elseif event.auditLog_actionType in ['CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-CLIENT'] %}
+                                        {{ event.auditLog_actionData }}
+                                    {% else %}
+                                        edited the project
+                                    {% endif %}
+                                </h3>
+                                {% if event.auditLog_actionType == "QUICKCOMMENT" %}
+                                    <div class="timeline-body">{{ event.auditLog_actionData|raw }}</div>
+                                {% elseif event.auditLog_actionType in ['INSERT', 'ARCHIVE','UNARCHIVE','CHANGE-MANAGER','UPDATE-NAME','UPDATE-STATUS','CHANGE-CLIENT'] %}
+                                    {# Blank #}
+                                {% else %}
+                                    <div class="timeline-body" style="font-style: italic;">{{event.auditLog_actionData|nl2br }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div>
+                    <i class="fas fa-clock bg-gray"></i>
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+    </div>
+{% endif %}

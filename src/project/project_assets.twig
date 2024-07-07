@@ -1,0 +1,371 @@
+{% if project.projectsStatuses_assetsReleased %} 
+    <div class="alert alert-danger">
+        <h5>Assets not locked - assets are released</h5>
+        Assets assigned to this project are not exclusive (because of its status) and can be assigned to other projects that clash with this one. Update project status before confirming with client
+    </div>
+{% endif %}
+{% for assetAssignment in FINANCIALS.assetsAssigned %}
+    {% for flag in assetAssignment.flagsblocks.BLOCK %}
+        <div class="alert alert-danger">
+            <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+            <h5> <i class="fas fa-ban"></i> {{ assetAssignment.assets_tag|aTag }}: {{ assetAssignment.manufacturers_name }} - {{ assetAssignment.assetTypes_name }}</h5>
+            {{ flag.maintenanceJobs_title }} - {{ flag.maintenanceJobs_faultDescription }}
+        </div>
+    {% endfor %}
+{% endfor %}
+<div class="card card-primary card-outline card-outline-tabs">
+    <div class="card-header p-0 border-bottom-0 card-tabs">
+        <ul class="nav nav-tabs" id="asset-list-tabs-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="asset-list-tabs-home-tab" data-toggle="pill" href="#asset-list-tabs-home" role="tab" aria-controls="asset-list-tabs-home" aria-selected="true"><b>Total</b></a>
+            </li>
+            {% if FINANCIALS.assetsAssigned|length > 0 %}
+            <li class="nav-item">
+                <a class="nav-link" id="asset-list-tab-thisinstance" data-toggle="pill" href="#asset-list-tabs-thisinstance" role="tab" aria-controls="asset-list-tabs-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
+            </li>
+            {% endif %}
+            {% for instance in FINANCIALS.assetsAssignedSUB %}
+                <li class="nav-item">
+                    <a class="nav-link" id="asset-list-tab-instance{{ instance['instance'].instances_id }}" data-toggle="pill" href="#asset-list-tabs-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="asset-list-tabs-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }} Assets</a>
+                </li>
+            {% endfor %}
+            <li class="pt-2 px-3">
+                <div class="card-tools">
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
+                        <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
+                            <i class="far fa-comment"></i></button>
+                    {% endif %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT"|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                        <button type="button" class="btn btn-tool" title="Set discount" id="setAssetAssignmentDiscount">
+                            <i class="fas fa-percent"></i></button>
+                    {% endif %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions and project.projectsTypes_config_finance == 1 %}
+                        <button type="button" class="btn btn-tool" title="Set custom price" id="setAssetAssignmentPrice">
+                            <i class="fas fa-coins"></i></button>
+                    {% endif %}
+                    {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+                        <button type="button" class="btn btn-tool" title="Set status" id="setAllAssetStatus">
+                            <i class="fas fa-clipboard-check"></i></button>
+                    {% endif %}
+                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                        <button type="button" class="btn btn-tool" title="Swap Asset" id="swapAsset">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" title="Remove assets" id="setAssetAssignmentDelete">
+                            <i class="fas fa-trash"></i></button>
+                    {% endif %}
+                    <button type="button" class="btn btn-tool" title="Expand All" id="expandAll">
+                        <i class="fas fa-angle-down"></i> Expand</button>
+<a type="button" class="btn btn-tool" href="{{ CONFIG.LINKS_USERGUIDEURL }}projects/assets" target="_blank">Help</a>
+
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body p-0">
+        <div class="tab-content" id="asset-list-tabs-tabContent">
+            <div class="tab-pane fade show active p-3" id="asset-list-tabs-home" role="tabpanel" aria-labelledby="asset-list-tabs-home-tab">
+                <p style="font-style: italic;">To view assets assigned to this project, select a business above</p>
+                <p>{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})</p>
+                {% if project.projectsTypes_config_finance == 1 %}
+                    <p>Project duration set as {{ FINANCIALS['priceMaths']["weeks"] }} week{{ FINANCIALS['priceMaths']["weeks"] != 1 ? 's' : '' }} and {{ FINANCIALS['priceMaths']["days"] }} day{{ FINANCIALS['priceMaths']["days"] != 1 ? 's' : ''}} for asset pricing purposes.
+                    {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
+                    <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">Change project duration</a>.
+                    {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+            <div class="tab-pane fade" id="asset-list-tabs-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
+                {% embed 'project/twigIncludes/assetList/table.twig' with {"instanceid": USERDATA.instance.instances_id} %}
+                    {% block tableBody %}
+                        {% set currentCategory = "" %}
+                        {% for type in FINANCIALS.assetsAssigned %}
+                            {% if type['assets'][0].assetCategories_name != currentCategory %}
+                                {% set currentCategory = type['assets'][0].assetCategories_name %}
+                                {% set currentCategoryID = type['assets'][0].assetCategories_id %}
+                                <tr style="background-color: #F5F5F5;" class="showHideFilter" data-filter="categoryFilter{{ currentCategoryID }}" data-filterclose="categoryFilterClose{{ currentCategoryID }}">
+                                    <td colspan="999">
+                                        <i class="{{ type['assets'][0].assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ type['assets'][0].assetCategories_name }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% embed 'project/twigIncludes/assetList/tableItem.twig' with {"type": type,"all": FINANCIALS.assetsAssigned, "categoryid":currentCategoryID,"instanceid": USERDATA.instance.instances_id} %}{% endembed %}
+                        {% endfor %}
+                    {% endblock %}
+                {% endembed %}
+            </div>
+            {% for instance in FINANCIALS.assetsAssignedSUB %}
+                <div class="tab-pane fade" id="asset-list-tabs-instance{{ instance['instance'].instances_id }}" role="tabpanel" aria-labelledby="asset-list-tabs-messages-tab">
+                    {% embed 'project/twigIncludes/assetList/table.twig' with {"instanceid": instance['instance'].instances_id } %}
+                        {% block tableBody %}
+                            {% set currentCategory = "" %}
+                            {% for type in instance['assets'] %}
+                                {% if type['assets'][0].assetCategories_name != currentCategory %}
+                                    {% set currentCategory = type['assets'][0].assetCategories_name %}
+                                    {% set currentCategoryID = type['assets'][0].assetCategories_id %}
+                                    <tr style="background-color: #F5F5F5;" class="showHideFilter" data-filter="categoryFilter{{ currentCategoryID }}" data-filterclose="categoryFilterClose{{ currentCategoryID }}">
+                                        <td colspan="999">
+                                            <i class="{{ type['assets'][0].assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ type['assets'][0].assetCategories_name }}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                {% embed 'project/twigIncludes/assetList/tableItem.twig' with {"type": type,"all": instance, "categoryid":currentCategoryID,"instanceid": instance['instance'].instances_id} %}{% endembed %}
+                            {% endfor %}
+                        {% endblock %}
+                    {% endembed %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        function getSelected() {
+            var selected = [];
+            $('.assetAssignmentCheckbox:checkbox:checked').each(function() {
+                selected.push($(this).data('assetassignmentid'));
+            });
+            return selected;
+        }
+        $(".assetAssignmentCheckboxAll[data-instanceid]").click(function () {
+            var instance = $(this).data("instanceid");
+            $(".assetAssignmentCheckbox[data-instanceid=" + instance + "]").prop('checked', $(this).prop('checked'));
+            $(".assetAssignmentCheckboxType[data-instanceid=" + instance + "]").prop('checked', $(this).prop('checked'));
+        });
+        $(".assetAssignmentCheckboxType[data-typeid][data-instanceid]").click(function () {
+            var type = $(this).data("typeid");
+            var instance = $(this).data("instanceid");
+            $(".assetAssignmentCheckbox[data-typeid=" + type + "][data-instanceid=" + instance + "]").prop('checked', $(this).prop('checked'));
+        });
+        $(".assetAssignmentCheckbox[data-typeid][data-instanceid]").click(function () {
+            var type = $(this).data("typeid");
+            var instance = $(this).data("instanceid");
+            if ($(".assetAssignmentCheckbox[data-typeid=" + type + "][data-instanceid=" + instance + "]:checked").length == $(".assetAssignmentCheckbox[data-typeid=" + type + "][data-instanceid=" + instance + "]").length) {
+                $(".assetAssignmentCheckboxType[data-typeid=" + type + "][data-instanceid=" + instance + "]").prop('checked', true);
+            } else {
+                $(".assetAssignmentCheckboxType[data-typeid=" + type + "][data-instanceid=" + instance + "]").prop('checked', false);
+            }
+        });
+
+
+        $(".showHideFilter").click(function () {
+            $("." + $(this).data("filter")).toggle(500);
+            if ($(this).data("filterclose")) {
+                $("." + $(this).data("filterclose")).fadeOut(500);
+            }
+        });
+        $("#expandAll").click(function () {
+            if ($(".categoryFilter").is(":visible")) {
+                if ($(".typeFilter").is(":visible")) {
+                    $(".typeFilter").hide();
+                    $(".categoryFilter").hide();
+                } else {
+                    $(".typeFilter").show();
+                }
+            } else {
+                $(".categoryFilter").show();
+            }
+        });
+        $(".categoryFilter").hide();
+        $(".typeFilter").hide();
+
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
+        $("#setAssetAssignmentComment").click(function () {
+            var selected = getSelected();
+            if (selected.length > 0) {
+                bootbox.prompt({
+                    title: "Set Comment",
+                    message: "This will override any existing comments set in this project for the assets selected",
+                    inputType: 'text',
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/setComment.php", {
+                                "assetsAssignments": selected,
+                                "assetsAssignments_comment": result
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        {% endif %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions %}
+        $("#setAssetAssignmentPrice").click(function () {
+            var selected = getSelected();
+            if (selected.length > 0) {
+                bootbox.prompt({
+                    title: "Set Custom Price",
+                    message: "This will override the automatic calculation of the hire cost normally based on the length of the project and instead fix it to value set here<br/>Setting a custom price of 0 will remove any custom prices set<br/><br/>This will override any existing custom prices set in this project for the assets selected",
+                    inputType: 'number',
+                    min: 0,
+                    step: 0.01,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/setPrice.php", {
+                                "assetsAssignments": selected,
+                                "assetsAssignments_customPrice": result
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        {% endif %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT"|instancePermissions %}
+        $("#setAssetAssignmentDiscount").click(function () {
+            var selected = getSelected();
+            if (selected.length > 0) {
+                bootbox.prompt({
+                    title: "Set Discount",
+                    message: "Discounts the selected assets by a percentage.<br /><br />E.g. Inputting 20 would multiply the price by 0.8, inputting 100 would set the price to 0, or inputting 0 would be full price.<br />This will override any existing discounts set in this project for the assets selected.",
+                    inputType: 'number',
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/setDiscount.php", {
+                                "assetsAssignments": selected,
+                                "assetsAssignments_discount": result
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        {% endif %}
+        {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+        $("#setAssetAssignmentDelete").click(function () {
+            var selected = getSelected();
+            if (selected.length > 0) {
+                bootbox.confirm({
+                    message: "Are you sure you wish to remove these assets from the project? This will have billing implications",
+                    buttons: {
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        },
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/assets/unassign.php", {
+                                "assetsAssignments": selected
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        $("#swapAsset").click(function () {
+            let selected = getSelected();
+            if (selected.length < 1) {
+                Toast.fire({
+                    type: 'error',
+                    title: 'Please select an asset.'
+                });
+            } else if (selected.length > 1) {
+                Toast.fire({
+                    type: 'error',
+                    title: 'Please select just one asset.'
+                });
+            } else {
+                //we have some assets, lets swap them
+                let alternatives = [];
+                //get type of assigned asset
+                ajaxcall("assets/substitutions.php", {
+                    "assetsAssignments_id": selected[0]
+                }, function (returned) {
+                    if (returned.response) {
+                        //create array of alternative assets
+                        returned.response.forEach(
+                            element => alternatives.push({
+                                "text": element.assets_tag + ((element.asset_definableFields_1 !== "") ? " (" + element.asset_definableFields_1 + ")" : ""),
+                                "value": element.assets_id
+                            })
+                        )
+                        bootbox.prompt({
+                            title: "Swap Asset",
+                            message: "Replace asset with: ",
+                            inputType: 'select',
+                            inputOptions: alternatives,
+                            callback: function (result) {
+                                if (result) {
+                                    //swap asset in asset assignment
+                                    ajaxcall("projects/assets/swap.php",
+                                        {
+                                            "assetsAssignments_id": selected[0],
+                                            "assets_id": result
+                                        }, function () {
+                                            window.location.reload()
+                                        }
+                                    );
+                                }
+                            }
+                        });
+                    } else {
+                        //no assets exist, so let user know
+                        Toast.fire({
+                            type: 'info',
+                            title: ' No assets available to swap!'
+                        });
+                    }
+                });
+            }
+        });
+        {% endif %}
+        {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+        $("#setAllAssetStatus").click(function () {
+            let selected = getSelected();
+            if (selected.length > 0) {
+                popupTitle = "Set status of selected assets in {{ project.projects_name }}"
+            } else {
+                popupTitle = "Set status of all assets in {{ project.projects_name }}"
+            }
+            bootbox.prompt({
+                title: popupTitle,
+                inputType: 'select',
+                inputOptions: [
+                    {% for status in assetsAssignmentsStatus %}
+                    {
+                        text: '{{ status.assetsAssignmentsStatus_name|escape('js')}}',
+                        value: '{{ status.assetsAssignmentsStatus_id }}'
+                    },
+                    {% endfor %}
+                ],
+                callback: function (result) {
+                    if (result) {
+                        if (selected.length > 0) {
+                            ajaxcall("projects/assets/setStatus.php", {"assetsAssignments_id":selected, "assetsAssignments_status":result}, function (){
+                                window.location.reload();
+                            });
+                        } else {
+                            ajaxcall("projects/assets/setStatus.php", {"projects_id":{{ project.projects_id }}, "assetsAssignments_status":result}, function (result){
+                                window.location.reload();
+                            });
+                        }
+                    }
+                }
+            });
+        });
+        {% endif %}
+    });
+</script>

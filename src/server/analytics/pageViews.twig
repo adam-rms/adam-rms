@@ -1,0 +1,201 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" integrity="sha512-SIMGYRUjwY8+gKg7nn9EItdD8LCADSDfJNutF9TPrvEo86sQmFMh6MyralfIyhADlajSxqc7G0gs7+MwWF/ogQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+{% block content %}
+	<div class="row">
+		<div class="col-lg-4 offset-lg-2 col-md-6 col-sm-12">
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">
+						Analytics - User Views
+					</h3>
+				</div>
+				<div class="card-body table-responsive p-0">
+					<table class="table table-striped table-head-fixed" border="0" style="overflow-x: scroll;">
+						<thead>
+							<tr>
+								<th>User</th>
+								<th>Page Views</th>
+								<th>% API Calls</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for user in viewsByUser %}
+								{% if user.countSum > 0 %}
+									<tr>
+										<td>{{ user.users_name1 ~ " " ~ user.users_name2 }}</td>
+										<td>{{ (user.countSum)|number_format }}</td>
+										<td>{{ user.countSum > 0 ? ((user.countApi/user.countSum)*100)|number_format(2) ~ "%": '' }}</td>
+									</tr>
+								{% endif %}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-md-6 col-sm-12">
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">
+						Analytics - Page Views
+					</h3>
+				</div>
+				<div class="card-body table-responsive p-0">
+					<table class="table table-striped table-head-fixed" border="0" style="overflow-x: scroll;">
+						<thead>
+							<tr>
+								<th>User</th>
+								<th>Page Views</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for page in viewsByPage %}
+								{% if page.count > 10 %}
+									<tr>
+										<td>{{ page.analyticsEvents_path|replace({'/src': ""}) }}</td>
+										<td>{{ page.count|number_format }}</td>
+									</tr>
+								{% endif %}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-8 offset-lg-2 col-md-6 offset-md-3 col-sm-12">
+			<div class="card ">
+				<div class="card-header">
+					<h3 class="card-title">
+						Views by Hour of Day
+					</h3>
+				</div>
+				<div class="card-body">
+					<canvas class="chart" id="pageViewsByHourByDay" style="min-height: 500px; max-height: 1000px; max-width: 100%;"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function () {
+var graphChartOptions = {
+
+scales: {
+xAxes: [
+{
+ticks: {
+fontColor: '#efefef'
+},
+gridLines: {
+display: false,
+color: '#efefef',
+drawBorder: false
+}
+}
+],
+yAxes: [
+{
+ticks: {
+callback: function (value, index, values) {
+return '£' + value.toLocaleString();
+},
+fontColor: '#efefef',
+beginAtZero: true
+},
+gridLines: {
+display: true,
+color: '#efefef',
+drawBorder: false
+},
+position: "left",
+id: "y-axis-value"
+}, {
+ticks: {
+callback: function (value, index, values) {
+return value.toLocaleString() + "kg";
+},
+fontColor: '#efefef',
+beginAtZero: true
+},
+position: "right",
+gridLines: {
+display: false,
+color: '#efefef',
+drawBorder: false
+},
+id: "y-axis-mass"
+}
+]
+}
+}
+// This will get the first returned node in the jQuery collection.
+var graphChart = new Chart($('#pageViewsByHourByDay').get(0).getContext('2d'), {
+type: 'bar',
+data: {
+labels: [
+"0:00",
+"1:00",
+"2:00",
+"3:00",
+"4:00",
+"5:00",
+"6:00",
+"7:00",
+"8:00",
+"9:00",
+"10:00",
+"11:00",
+"12:00",
+"13:00",
+"14:00",
+"15:00",
+"16:00",
+"17:00",
+"18:00",
+"19:00",
+"20:00",
+"21:00",
+"22:00",
+"23:00"
+],
+datasets: [{% for day,color in {'Monday': 'rgba(52, 58, 64, 0.8)', 'Tuesday': 'rgba(0, 123, 255, 0.8)', 'Wednesday': 'rgba(108, 117, 125, 0.8)', 'Thursday': 'rgba(40, 167, 69, 0.8)', 'Friday': 'rgba(220, 53, 69, 0.8)', 'Saturday': 'rgba(23, 162, 184, 0.8)', 'Sunday': 'rgba(255, 193, 7, 0.8)'} %}{
+label: '{{ day }}',
+backgroundColor: '{{ color }}',
+data: [{% for hour in viewsByHour %}{% if day == hour.day %}
+{
+x: '{{ hour.hour ~ ':00' }}',
+y: {{ hour.count }}
+},{% endif %}{% endfor %}]
+},{% endfor %}]
+},
+options: {
+responsive: true,
+plugins: {
+tooltip: {
+enabled: false
+}
+},
+scales: {
+x: {
+stacked: true,
+title: {
+display: true,
+text: 'Hour of Day'
+}
+},
+y: {
+stacked: true,
+title: {
+display: true,
+text: 'Page Views'
+}
+}
+}
+}
+})
+});
+	</script>
+{% endblock %}

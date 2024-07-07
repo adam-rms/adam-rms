@@ -1,0 +1,270 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
+{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Groups
+                </h3>
+                <div class="card-tools pull-right">
+                    <form class="input-group input-group-sm" method="GET">
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}assets/asset-groups" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+
+                        <div class="input-group-prepend">
+                            <a href="{{ CONFIG.ROOTURL }}/user.php" type="button" class="btn btn-default">Notification Settings</a>
+                        </div>
+                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-striped">
+                    <tbody>
+                    {% for group in groups %}
+                    <tr>
+                        <td style="width: 10%;">
+                            {{ group.assetGroups_name }}
+                            {% if group.users_userid is not null %}
+                                <br/><span class="badge badge-secondary">Visible only to me</span>
+                            {% endif %}
+                        </td>
+                        <td style="width: 20%">
+                            {{ group.assetGroups_description|nl2br }}
+                        </td>
+                        <td style="width: 70%">
+                            <select class="form-control assetsMembershipSelector" data-id="{{ group.assetGroups_id }}" multiple>
+                                {% for asset in group.assets %}
+                                    <option value="{{ asset.assets_id }}" selected="selected">{{asset.assets_tag|aTag}} | {{ asset.assetTypes_name }} ({{asset.manufacturers_name}})</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td style="width:70px;">
+                            <div class="btn-group">
+                                <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?group%5B%5D={{ group.assetGroups_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
+                                <button type="button" title="Watch this group" class="btn btn-primary btn-sm watchButton" data-id="{{ group.assetGroups_id }}">
+                                    {% if group.assetGroups_id in watching %}
+                                        <i class="fas fa-eye-slash"></i>
+                                    {% else %}
+                                        <i class="fas fa-eye"></i>
+                                   {% endif %}
+                                </button>
+                                {% if "ASSETS:ASSET_GROUPS:EDIT"|instancePermissions %}
+                                    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ group.assetGroups_id }}"><i class="fas fa-edit"></i></button>
+                                {% endif %}
+                                {% if "ASSETS:ASSET_GROUPS:DELETE:ASSETS_WITHIN_GROUP"|instancePermissions %}
+                                    <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ group.assetGroups_id }}"><i class="fas fa-trash"></i></button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                        <div class="modal fade" id="editModal{{ group.assetGroups_id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Edit {{ group.assetGroups_name }}</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="edit-form" data-id="{{ group.assetGroups_id }}">
+                                            <input type="hidden" name="assetGroups_id" value="{{ group.assetGroups_id }}"/>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Name</span>
+                                                </div>
+                                                <input required type="text" class="form-control" name="assetGroups_name" value="{{ group.assetGroups_name }}">
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Description</span>
+                                                </div>
+                                                <textarea type="text" class="form-control" name="assetGroups_description" rows="4">{{ group.assetGroups_description }}</textarea>
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Visible to only me</span>
+                                                </div>
+                                                <input type="checkbox" class="form-control" name="personal" {% if group.users_userid != null %}checked{% endif%} />
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ group.assetGroups_id }}">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
+    <div class="modal fade" id="newModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New Group</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newForm">
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Name</span>
+                            </div>
+                            <input required type="text" class="form-control" name="assetGroups_name">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Description</span>
+                            </div>
+                            <textarea type="text" class="form-control" name="assetGroups_description" rows="4"></textarea>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Visible to only me</span>
+                            </div>
+                            <input type="checkbox" class="form-control" name="personal" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveNew">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            $(".watchButton").click(function () {
+                ajaxcall("groups/watch.php", {"assetGroups_id":$(this).data("id")}, function (data) {
+                    location.reload();
+                });
+            });
+            {% if "ASSETS:ASSET_GROUPS:CREATE"|instancePermissions %}
+            $("#saveNew").click(function () {
+                var formData = $("#newForm").serializeArray();
+                ajaxcall("groups/new.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "ASSETS:ASSET_GROUPS:EDIT"|instancePermissions %}
+            $(".saveEdit-button").click(function () {
+                var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
+                ajaxcall("groups/edit.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "ASSETS:ASSET_GROUPS:DELETE:ASSETS_WITHIN_GROUP"|instancePermissions %}
+            $(".deleteButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to delete this group?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "assetGroups_id", "value":id },{"name": "assetGroups_deleted", "value":"1" }];
+                            ajaxcall("groups/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            $(".assetsMembershipSelector").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions != true %}
+                disabled: true,
+                {% endif %}
+                minimumInputLength: 1,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Search for assets to add to group or visit an assets page to add them there",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                        id: item.assets_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            {% if "ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP"|instancePermissions %}
+            $('.assetsMembershipSelector').on('select2:select', function (e) {
+                var id =e.params.data.id;
+                ajaxcall("groups/addAsset.php", {
+                    "assetGroups_id": $(this).data("id"),
+                    "assets_id": id
+                });
+            });
+            $('.assetsMembershipSelector').on('select2:unselect', function (e) {
+                var id =e.params.data.id;
+                ajaxcall("groups/removeAsset.php", {
+                    "assetGroups_id": $(this).data("id"),
+                    "assets_id": id
+                });
+            });
+            {% endif %}
+        });
+    </script>
+</div>
+
+{% endblock %}

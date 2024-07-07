@@ -1,0 +1,637 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+            integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+
+            <div class="card card-primary card-outline">
+                <div class="card-body box-profile">
+                        <div class="text-center">
+                            <img class="profile-user-img img-fluid img-circle"
+                                 src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}"
+                                 loading="lazy"
+                                 alt="{{ user.users_name1 }} {{ user.users_name2 }}">
+                        </div>
+                    <h3 class="profile-username text-center">{{ user.users_name1 }} {{ user.users_name2 }}</h3>
+                    <p class="text-muted text-center">{{ user.users_email }}</p>
+
+                    <ul class="list-group list-group-unbordered mb-3">
+                        <li class="list-group-item">
+                            <b>Crew Roles</b> <a href="#roles" data-toggle="tab"
+                                    class="float-right">{{ user.crewAssignments|length }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Projects Managed</b> <a href="#projects" data-toggle="tab"
+                                    class="float-right">{{ user.projectManagement|length }}</a>
+                        </li>
+                        {% if user.users_social_facebook != "" %}
+                        <li class="list-group-item">
+                            <b>Facebook</b> <a href="https://www.facebook.com/{{ user.users_social_facebook }}"
+                                    class="float-right" target="_blank">{{ user.users_social_facebook }}</a>
+                        </li>
+                        {% endif %}
+                        {% if user.users_social_twitter != "" %}
+                            <li class="list-group-item">
+                                <b>Twitter</b> <a href="https://www.twitter.com/{{ user.users_social_twitter }}"
+                                                   class="float-right" target="_blank">@{{ user.users_social_twitter }}</a>
+                            </li>
+                        {% endif %}
+                        {% if user.users_social_linkedin != "" %}
+                            <li class="list-group-item">
+                                <b>LinkedIn</b> <a href="https://www.linkedin.com/in/{{ user.users_social_linkedin }}"
+                                                  class="float-right" target="_blank">{{ user.users_social_linkedin }}</a>
+                            </li>
+                        {% endif %}
+                        {% if user.users_social_instagram != "" %}
+                            <li class="list-group-item">
+                                <b>Instagram</b> <a href="https://www.instagram.com/{{ user.users_social_instagram }}"
+                                                  class="float-right" target="_blank">@{{ user.users_social_instagram }}</a>
+                            </li>
+                        {% endif %}
+                        {% if user.users_social_snapchat != "" %}
+                            <li class="list-group-item">
+                                <b>Snapchat</b> <a href="https://www.snapchat.com/add/{{ user.users_social_snapchat }}"
+                                                  class="float-right" target="_blank">{{ user.users_social_snapchat }}</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+        <script>
+            $(document).ready(function() {
+                //Hacky little function to fudge tab selection from the crew roles/projects managed links
+                $('a[data-toggle="tab"]:not(.nav-link)').on('click', function() {
+                    $('.nav-link[data-toggle="tab"]:not([href="' + $(this).attr('href') + '"])').removeClass("active");
+                    $('.nav-link[data-toggle="tab"][href="' + $(this).attr('href') + '"]').addClass("active");
+                });
+            });
+        </script>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header p-2">
+                    <ul class="nav nav-pills">
+                        {% if user.users_userid == USERDATA.users_userid or "USERS:EDIT"|serverPermissions %}
+                            <li class="nav-item"><a class="nav-link" href="#account" data-toggle="tab">Account Settings</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#notifications" data-toggle="tab">Notifications</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#profilepicture" data-toggle="tab">Profile Picture</a></li>
+                        {% endif %}
+                        {% if user.users_userid == USERDATA.users_userid %}
+                            <li class="nav-item"><a class="nav-link" href="#passwordsocial" data-toggle="tab">Password & Sign-in</a></li>
+                        {% endif %}
+                        {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
+                            <li class="nav-item"><a class="nav-link" href="#positions" data-toggle="tab">{{ CONFIG.PROJECT_NAME }} Positions</a></li>
+                        {% endif %}
+                        {% if user.crewAssignments|length > 0 %}<li class="nav-item"><a class="nav-link" href="#roles" data-toggle="tab">Crew Roles</a></li>{% endif %}
+                        {% if user.projectManagement|length > 0 %}<li class="nav-item"><a class="nav-link" href="#projects" data-toggle="tab">Projects Managed</a></li>{% endif %}
+                        {% if user.users_userid == USERDATA.users_userid %}
+                        <li class="nav-item"><a class="nav-link" href="#export" data-toggle="tab">Export Calendar</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link active" href="#calendar" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
+                    </ul>
+                </div><!-- /.card-header -->
+                <div class="card-body" style="padding: 0;">
+                    <div class="tab-content">
+                        {% if user.users_userid == USERDATA.users_userid or "USERS:EDIT"|serverPermissions %}
+                            <div class="tab-pane p-3" id="account">
+                                <form id="account-form">
+                                    <div class="form-group">
+                                        <label for="username">Username:</label>
+                                        <input type="username" class="form-control" name="users_username" required  value="{{user['users_username']}}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>First Name:</label>
+                                        <input type="text" class="form-control" name="users_name1" required value="{{user['users_name1']}}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name:</label>
+                                        <input type="text" class="form-control" name="users_name2" required  value="{{user['users_name2']}}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email address:</label>
+                                        <input type="email" class="form-control" name="users_email" required value="{{user['users_email']}}" />
+                                    </div>
+                                    <p>Share links to your social media profiles to be displayed on your user profile page</p>
+                                    <label>Facebook</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://facebook.com/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_facebook" value="{{ user.users_social_facebook }}">
+                                    </div>
+                                    <br/>
+                                    <label>Twitter</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://twitter.com/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_twitter" value="{{ user.users_social_twitter }}">
+                                    </div><br/>
+                                    <label>Instagram</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://instagram.com/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_instagram" value="{{ user.users_social_instagram }}">
+                                    </div><br/>
+                                    <label>Linkedin</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">https://linkedin.com/ln/</span>
+                                        </div>
+                                        <input type="text" class="form-control" name="users_social_linkedin" value="{{ user.users_social_linkedin }}">
+                                    </div><br/>
+                                    <label>Snapchat</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"><i class="fab fa-snapchat-ghost"></i></span></div>
+                                        <input type="text" class="form-control" name="users_social_snapchat" value="{{ user.users_social_snapchat }}">
+                                    </div><br/>
+                                    <input type="hidden" name="users_userid" value="{{ user.users_userid }}" />
+                                    <button type="submit" class="btn btn-default">Save</button>
+                                </form>
+                                <script>
+                                    $(document).ready(function() {
+                                        $("#account-form").on("submit", function(e){
+                                            e.preventDefault();
+                                            var formData = $(this).serializeArray();
+                                            ajaxcall("account/basicDetails.php", {formData});
+                                        });
+                                    });
+                                </script>
+                            </div>
+                            <div class="tab-pane p-0" id="notifications">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th><button type="button" id="save-notification-settings" class="btn btn-success btn-sm">Save</button></th>
+                                        {% for method in NOTIFICATIONTYPES.METHODS %}
+                                            <th>{{method}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set category = "" %}
+                                    {% for notification in NOTIFICATIONTYPES.TYPES %}
+                                        {% if category != notification.group %}
+                                            <tr>
+                                                <td colspan="{{ 1+NOTIFICATIONTYPES.METHODS|length }}"><h3>{{ notification.group }}</h3></td>
+                                            </tr>
+                                            {% set category = notification.group %}
+                                        {% endif %}
+                                        <tr>
+                                            <td>{{ notification.name }}</td>
+                                            {% for methodid,method in NOTIFICATIONTYPES.METHODS %}
+                                                <td>
+                                                    {% if methodid in notification.methods %}
+                                                        <input type="checkbox" class="notificationsetting" data-methodid="{{methodid}}" data-typeid="{{notification.id}}"
+                                                                {% if notification.canDisable != true %}
+                                                                    disabled
+                                                                {% endif %}
+                                                                {% if user['notifications']["settings"][notification.id]["methodsUser"][methodid] %}
+                                                                    checked
+                                                                {% endif %}
+                                                        />
+                                                    {% endif %}
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <script>
+                                    $(document).ready(function() {
+                                        $('#save-notification-settings').on('click', function() {
+                                            var config = [];
+                                            $(".notificationsetting").each(function( index ) {
+                                                if ($( this ).prop('disabled') !== true) {
+                                                    config.push({"method":$( this ).data("methodid"),"type":$( this ).data("typeid"),"setting":$( this ).prop('checked')})
+                                                }
+                                            });
+                                            ajaxcall("account/notifications.php", {
+                                                "users_userid": "{{ user.users_userid }}",
+                                                'settings' : config,
+                                            });
+                                        });
+                                    });
+                                </script>
+                            </div>
+                            <div class="tab-pane table-responsive p-3" id="profilepicture">
+                                {% if CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail != null %}
+                                    <img loading="lazy" src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
+                                {% endif %}
+                                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
+
+{% embed 'assets/templates/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
+
+                                        {% block success %}
+                                            ajaxcall("account/thumbnail.php", {
+                                                "users_userid": "{{ user.users_userid }}",
+                                                'thumbnail' : responseJson.id,
+                                            }, function (data) {
+                                                location.reload();
+                                            });
+                                        {% endblock %}
+                                    {% endembed %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        {% if user.users_userid == USERDATA.users_userid %}
+                        <div class="tab-pane p-3" id="passwordsocial">
+                            <h2>Password</h2>
+                            <div class="form-group">
+                                <label for="username">Current Password</label>
+                                <input type="password" placeholder="Current Password" class="form-control" id="current_pass" />
+                            </div>
+                            <div class="form-group">
+                                <label for="username">New Password</label>
+                                <input type="password" placeholder="New Password" class="form-control" id="passnew" /><br/>
+                                <input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
+                            </div>
+                            <button id="save-password-settings" class="btn btn-default">Change Password</button>
+                            <script>
+                                $(document).ready(function() {
+                                    $('#save-password-settings').on('click', function() {
+                                        if ($('#passnew').val() != $('#passconf').val()) {
+                                            bootbox.alert("Sorry - Your new password's don't match!");
+                                        } else if ($("#passnew").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
+                                        else {
+                                            ajaxcall("account/changePass.php", {
+                                                "users_userid": "{{ user.users_userid }}",
+                                                'newpass': $("#passnew").val(),
+                                                'oldpass': $("#current_pass").val()
+                                            }, function () {
+                                                location.reload();
+                                            });
+                                        }
+                                    });
+                                });
+                            </script>
+                            <hr/>
+                            <h2>Authentication Providers</h2>
+                            {% if googleAuthAvailable %}
+                                <h4>Google</h4>
+                                {% if user.users_oauth_googleid %}
+                                    <button class="btn btn-danger" id="disconnectOAuthGoogle"><i class="fab fa-google"></i> Disconnect Google Account</button>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#disconnectOAuthGoogle').on('click', function() {
+                                                ajaxcall("account/disconnectOAuth.php", {
+                                                    "users_userid": "{{ user.users_userid }}",
+                                                    'provider' : "google",
+                                                }, function (data) {
+                                                    location.reload();
+                                                });
+                                            });
+                                        });
+                                    </script>
+                                {% else %}
+                                    <a href="{{ CONFIG.ROOTURL }}/api/account/oauth-link/google.php" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                                {% endif %}
+                            {% endif %}
+                            {% if microsoftAuthAvailable %}
+                                <h4>Microsoft</h4>
+                                {% if user.users_oauth_microsoftid %}
+                                    <button class="btn btn-danger" id="disconnectOAuthMicrosoft"><i class="fab fa-microsoft"></i> Disconnect Microsoft Account</button>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#disconnectOAuthMicrosoft').on('click', function() {
+                                                ajaxcall("account/disconnectOAuth.php", {
+                                                    "users_userid": "{{ user.users_userid }}",
+                                                    'provider' : "microsoft",
+                                                }, function (data) {
+                                                    location.reload();
+                                                });
+                                            });
+                                        });
+                                    </script>
+                                {% else %}
+                                    <a href="{{ CONFIG.ROOTURL }}/api/account/oauth-link/microsoft.php" class="btn btn-default"><i class="fab fa-microsoft"></i> Link to Microsoft Account</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% if (16|serverPermissions and user.users_userid == USERDATA.users_userid) or "USERS:EDIT"|serverPermissions %}
+                        <div class="tab-pane table-responsive p-0" id="positions" style="height: 600px;">
+                            <table class="table" border="0" style="overflow-x: scroll;">
+                                <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    {% if user.users_userid != USERDATA.users_userid and "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
+                                        <th></th>
+                                    {% endif %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for position in user.POSITIONS %}
+                                    <tr>
+                                        {% if "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions and user.users_userid != USERDATA.users_userid %}
+                                            <td>
+                                                <div class="form-group">
+                                                    <select class="form-control positionID">
+                                                        {% for subposition in POSSIBLEPOSITIONS %}
+
+                                                            <option {{ subposition.positions_id == position.positions_id ? 'selected' : '' }} value="{{ subposition.positions_id }}">{{ subposition.positions_displayName }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type='datetime-local' value="{{ position.userPositions_start|date("Y-m-d\\TH:i") }}" class="form-control positionStart" id="position{{ position.userPositions_id }}Start" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type='datetime-local' value="{{ position.userPositions_end|date("Y-m-d\\TH:i") }}" class="form-control positionEnd" id="position{{ position.userPositions_id }}End" />
+                                                </div>
+                                            </td>
+                                            {# <td>
+                                                <div class="checkbox">
+                                                    <label><input type="checkbox" class="positionPublic" {{ (position.userPositions_show == 1 ? 'checked' : '') }} ></label>
+                                                </div>
+                                            </td>#}
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button type="button" title="Delete" data-positionid="{{ position.userPositions_id }}" class="btn btn-danger deletePermissionEdit"><i class="fa fa-trash"></i></button>
+                                                    <button type="button" title="Save" data-positionid="{{ position.userPositions_id }}" class="btn btn-default savePermissionEdit"><i class="fa fa-save"></i></button>
+                                                </div>
+                                            </td>
+                                        {% else %}
+                                            <td>
+                                                {% if position.userPositions_displayName != null %}
+                                                    {{ position.userPositions_displayName }}
+                                                {% else %}
+                                                    {{ position.positions_displayName }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ position.userPositions_start }}</td>
+                                            <td>{{ position.userPositions_end }}</td>
+                                            {# <td>{{ (position.userPositions_show == 1 ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>') }}</td> #}
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                {% if user.users_userid != USERDATA.users_userid and "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
+                                    <tr><td colspan="999" style="font-weight: bold;">Add position</td></tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                <select class="form-control positionID" id="newPositionID">
+                                                    {% for position in POSSIBLEPOSITIONS %}
+                                                        <option value="{{ position.positions_id }}">{{ position.positions_displayName }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type='datetime-local' class="form-control positionStart" id="newPositionStart" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type='datetime-local' class="form-control positionEnd" id="newPositionEnd" />
+                                            </div>
+                                        </td>
+                                        {# <td>
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" class="positionPublic" checked id="newPositionShow"></label>
+                                            </div>
+                                        </td> #}
+                                        <td>
+                                            <button type="button" title="Save" data-positionid="new" class="btn btn-default savePermissionEdit"><i class="fa fa-plus"></i></button>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                <script>
+                                    $(document).ready(function() {
+                                        {% if "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
+                                        $('.savePermissionEdit').on('click', function() {
+                                            ajaxcall("account/permissions.php", {
+                                                "users_userid":"{{ user.users_userid }}",
+                                                "userPositions_id":$(this).data("positionid"),
+                                                "positions_id":$(this).closest('tr').find('.positionID').val(),
+                                                "userPositions_start":$(this).closest('tr').find('.positionStart').val(),
+                                                "userPositions_end":$(this).closest('tr').find('.positionEnd').val(),
+                                                "userPositions_show":0, //($(this).closest('tr').find('.positionPublic').is(':checked') ? 1 : 0),
+                                                "action":"EDIT"
+                                            }, function (data) {
+                                                location.reload();
+                                            });
+                                        });
+                                        var thispositonid = "";
+                                        $('.deletePermissionEdit').on('click', function() {
+                                            thispositonid = $(this).data("positionid");
+                                            bootbox.confirm({
+                                                message: "Are you sure you wish to delete this position record? <br/> Positions should be normally kept as an important matter of record - if this user has now left the position please instead set the end date as appropriate",
+                                                buttons: {
+                                                    confirm: {
+                                                        label: 'Yes',
+                                                        className: 'btn-success'
+                                                    },
+                                                    cancel: {
+                                                        label: 'No',
+                                                        className: 'btn-danger'
+                                                    }
+                                                },
+                                                callback: function (result) {
+                                                    if (result) {
+                                                        ajaxcall("account/permissions.php", {
+                                                            "userPositions_id": thispositonid,
+                                                            "users_userid":"{{ user.users_userid }}",
+                                                            "action": "DELETE"
+                                                        }, function (data) {
+                                                            location.reload();
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        });
+                                        {% endif %}
+                                    });
+                                </script>
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                        <div class="tab-pane table-responsive p-0" id="roles" style="height: 600px;">
+                            <table class="table table-head-fixed">
+                                <tr>
+                                    <th>Project</th>
+                                    <th></th>
+                                    <th>Role</th>
+                                </tr>
+                                {% for project in user.crewAssignments %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">{{ project.clients_name ? project.clients_name ~ " - " }}{{ project.projects_name }}</a>
+                                        </td>
+                                        <td>
+                                            {{ project.projects_dates_use_start|date("M Y") }}
+                                        </td>
+                                        <td>
+                                            {{ project.crewAssignments_role }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="tab-pane table-responsive p-0" id="projects" style="height: 600px;">
+                            <table class="table table-head-fixed">
+                                <tr>
+                                    <th>Project</th>
+                                    <th></th>
+                                </tr>
+                                {% for project in user.projectManagement %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">{{ project.clients_name ? project.clients_name ~ " - " }}{{ project.projects_name }}</a>
+                                        </td>
+                                        <td>
+                                            {{ project.projects_dates_use_start|date("M Y") }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="active tab-pane" style="padding: 1.25rem" id="calendar">
+                            <div id="calendar"></div>
+                            <script>
+                                $(function () {
+                                    /* initialize the calendar
+                                     -----------------------------------------------------------------*/
+                                    var Calendar = FullCalendar.Calendar;
+
+                                    var calendar = new Calendar(document.getElementById('calendar'), {
+                                        nextDayThreshold: '05:00:00',
+                                        themeSystem: 'bootstrap',
+                                        initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
+                                        buttonText: {
+                                            today: 'Today',
+                                            month: 'Month',
+                                            week: 'Week',
+                                            day: 'Day',
+                                            list: 'List'
+                                        },
+                                        headerToolbar: {
+                                            left: 'prev,next today',
+                                            center: 'title',
+                                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
+                                        },
+
+                                        //Random default events
+                                        events: [
+                                            {% set earliestStart = false %}
+                                            {% set latestEnd = false %}
+                                            {% for project in user.crewAssignments %}
+                                            {
+                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} ({{ project.projectsStatuses_name|escape("js") }}){% endif %}",
+                                                start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
+                                                end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
+                                                url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',
+                                                backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
+                                                textColor: '{{ project.projectsStatuses_foregroundColour }}'
+                                            },
+                                            {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
+                                            {% set earliestStart = project.projects_dates_use_start|date("c") %}
+                                            {% endif %}
+                                            {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
+                                            {% set latestEnd = project.projects_dates_use_end|date("c") %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        ],
+                                        validRange: {
+                                            start: '{{ earliestStart|date("c") }}',
+                                            end: '{{ latestEnd|date("c") }}'
+                                        },
+                                        editable: false,
+                                        droppable: false, // this allows things to be dropped onto the calendar !!!
+                                        drop: function (info) {
+
+                                        },
+                                        firstDay: 1,
+                                        weekNumbers: true,
+                                        {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
+                                        weekNumberContent : function(week) {
+                                            var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
+                                            for (const [date, label] of Object.entries(weekStartDates)) {
+                                                if (moment(week.date).isSame(date, 'isoWeek')) {
+                                                    //This date is in this week so return the label
+                                                    if (label === " ") return null;
+                                                    else return label;
+                                                }
+                                            }
+                                            //default to week number if it doesn't have a label
+                                            return week.num;
+                                            
+                                        },
+                                        {% else %}
+                                        weekNumberCalculation: "ISO",
+                                        {% endif %}
+                                    });
+
+                                    calendar.render();
+                                })
+                            </script>
+                        </div>
+                        <!-- /.tab-pane -->
+                        {% if user.users_userid == USERDATA.users_userid %}
+                        <div class="tab-pane" style="padding: 1.25rem" id="export">
+                            <input type="url" class="form-control" disabled value="{{ CONFIG.ROOTURL }}/api/account/calendar-export.php?uid={{ user.users_userid }}&key={{ user.users_calendarHash }}" />
+                            <br/>
+                            <h2>Google Calendar</h2>
+                            <ol>
+                                <li>Copy the URL at the top.</li>
+                                <li><a href="https://calendar.google.com" target="_blank">Open Google Calendar</a>,
+                                    click the <em>+</em> above <em>My calendars</em> and choose <em>From URL</em>.
+                                </li>
+                                <li>Paste the URL into the field named <em>URL of calendar</em> that appears and click
+                                    <em>Add calendar</em>.
+                                </li>
+                                <li>After a few seconds, it should appear in your calendar. If it does not, try
+                                    reloading Google Calendar.
+                                </li>
+                            </ol>
+                            <h2>Apple Calendar</h2>
+                            <ol>
+                                <li>Copy the URL at the top.</li>
+                                <li>In Apple Calendar, click the <em>File</em> menu and choose <em>New Calendar
+                                        Subscription…</em>.
+                                </li>
+                                <li>Paste the URL into the dialog that appears and click <em>Subscribe</em>.</li>
+                                <li>A window with settings of the calendar subscription will appear. Set <em>Auto-refresh</em>
+                                    to <em>Every hour</em> to keep your calendar up to date and click <em>OK</em>.
+                                </li>
+                            </ol>
+                            <h2>Outlook</h2>
+                            <ol>
+                                <li>Copy the URL at the top.</li>
+                                <li>In Outlook, click <em>Open Calendar</em> and choose <em>From Internet…</em>.</li>
+                                <li>Paste the URL into the Outlook dialog that appears and click <em>OK</em>.</li>
+                                <li>After a few seconds, Outlook will ask if the internet calendar should be added.
+                                    Click <em>Yes</em>.
+                                </li>
+                            </ol>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

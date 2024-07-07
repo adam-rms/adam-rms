@@ -1,0 +1,106 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js" integrity="sha512-1aNp9qKP+hKU/VJwCtYqJP9tdZWbMDN5pEEXXoXT0pTAxZq1HHZhNBR/dtTNSrHO4U1FsFGGILbqG1O9nl8Mdg==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css" integrity="sha512-KuSX+43gVS5MEIJD2ewtrFPOHqC1PJnL8o2f5ciggPC0JUZ8XV0QXlfArO1mSzKkVFdRjsBDfrTU96C5SuRfqQ==" crossorigin="anonymous" />
+
+    <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/invert-color/invert.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+                    {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/customCategories.php">Asset Categories</a></li>
+                    {% endif %}
+                    {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/configuration/barcodes.php">Barcodes</a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <div class="card">
+            <form id="cableColours">
+                <div class="card-header">
+                    <h3 class="card-title">Cable Colours</h3>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    <table class="table" border="0">
+                        <tr>
+                            <th>
+                                Length
+                            </th>
+                            <th>
+                                Colour
+                            </th>
+                        </tr>
+                        {% for length,colour in USERDATA.instance['instances_cableColours']|jsonDecode %}
+                        <tr>
+                            <td>
+                                <input type="number" class="form-control" data-type="length" value="{{ length }}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control colorpicker" data-type="colour" value="{{ colour['background'] }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="card-footer">
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                    <button type="button" class="btn btn-default" id="addNewCableColourOption">Add Row</button>
+                    <button type="submit" class="btn btn-default">Save</button>
+                    {% endif %}
+                </div>
+            </form>
+            <script>
+                $(document).ready(function() {
+                    $(".colorpicker").spectrum({
+                        showInput: true,
+                        preferredFormat: "hex",
+                    });
+                    $("#addNewCableColourOption").on("click", function(){
+                        $("#cableColours > div > table").append(`<tr>
+                            <td>
+                                <input type="number" class="form-control" data-type="length">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control colorpicker" data-type="colour">
+                            </td>
+                        </tr>`);
+                        $(".colorpicker").spectrum({
+                            showInput: true,
+                            preferredFormat: "hex",
+                        });
+                    });
+                    $("#cableColours").on("submit", function(e){
+                        e.preventDefault();
+                        var lastLength;
+                        var formData = {};
+                        $('#cableColours *').filter(':input').each(function(){
+                            if ($(this).data("type") == "colour") {
+                                if (lastLength != "" && $(this).val()) {
+                                    formData[lastLength] = {
+                                        "background": $(this).val(),
+                                        "text":invert($(this).val(),true)
+                                    }
+                                }
+                            } else {
+                                lastLength = $(this).val();
+                            }
+                        });
+                        var formData = [{"name": "instances_cableColours", "value":JSON.stringify(formData) }];
+                        ajaxcall("instances/editInstance.php", {formData});
+                    });
+                });
+            </script>
+        </div>
+   </div>
+</div>
+{% endblock %}

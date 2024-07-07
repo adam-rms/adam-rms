@@ -1,0 +1,96 @@
+{% extends "login/login_template.twig" %}
+{% block content %}
+   <div class="spinner-border" role="status" id="loadingOverlay" style="display: none;">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <form id="signupForm">
+        <div id="errorMessageBox" class="alert alert-danger"></div>
+        <input class="form-control form-control-lg" id="signupForm_users_email" maxlength="100" required placeholder="Enter your email address" autocomplete="email" type="email" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_username" minlength="6" maxlength="100" required placeholder="Choose a username" autocomplete="username"  type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_password" minlength="10" maxlength="100" required placeholder="Choose a password" autocomplete="new-password"  type="password" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_name1" minlength="1" maxlength="100" required autocomplete="given-name" placeholder="First Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_name2" minlength="1" maxlength="100" required autocomplete="family-name" placeholder="Last Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <button class="btn btn-secondary" type="submit" value="Submit">Sign Up</button>
+    </form>
+	<script>
+		$( document ).ready(function() {
+            $("#signupForm").submit(function(e){
+                e.preventDefault();
+                $("#signupForm").hide();
+                $("#loadingOverlay").show();
+                $.ajax({
+                    url: "../api/login/signup.php",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        "name1": $("#signupForm_users_name1").val(),
+                        "name2": $("#signupForm_users_name2").val(),
+                        "password": $("#signupForm_users_password").val(),
+                        "username": $("#signupForm_users_username").val(),
+                        "email": $("#signupForm_users_email").val()
+                    }, success: function (result) {
+                        if (result.result) {
+                            $.ajax({
+                                url: "../api/login/login.php",
+                                type: "POST",
+                                dataType: 'json',
+                                data: {"formInput" : $("#signupForm_users_username").val(),"password": $("#signupForm_users_password").val()},
+                                success: function(result) {
+                                    if (result.result) {
+                                        window.location.href = result.response.redirect;
+                                    } else {
+                                        $("#signupForm").show();
+                                        $("#loadingOverlay").hide();
+                                        $("#errorMessageBox").html(result.error.message);
+                                        $("#errorMessageBox").show();
+                                    }
+                                },
+                                error: function(){
+                                    $("#signupForm").show();
+                                    $("#loadingOverlay").hide();
+                                    $("#errorMessageBox").html("Account created, but login unsuccessful: please refresh the page and check your internet connection");
+                                    $("#errorMessageBox").show();
+                                }
+                            });
+                        } else {
+                            $("#signupForm").show();
+                            $("#loadingOverlay").hide();
+                            $("#errorMessageBox").html(result.error.message);
+                            $("#errorMessageBox").show();
+                        }
+                    }, error: function () {
+                        $("#signupForm").show();
+                        $("#loadingOverlay").hide();
+                        $("#errorMessageBox").html("Please refresh the page and check your internet connection");
+                        $("#errorMessageBox").show();
+                    }
+                });
+            });
+            
+            function formVerifyEmail() {
+                //They want us to send out another verification email
+                if (initialData.hasOwnProperty("error") && initialData.error.hasOwnProperty("userid")) {
+                    var userid = initialData.error.userid;
+                } else {
+                    var userid = initialData.response.data.userid;
+                }
+                $.ajax({
+                    url: "../api/login/reSendVerificationEmail.php",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        "userid": userid
+                    }, success: function (result) {
+                        if (result.result) {
+                            toastr.success("E-Mail re-sent");
+                        } else {
+                            toastr.error("Error verifying email address - please contact support");
+                        }
+                    }, error: function () {
+                        toastr.error("Please refresh the page and check your internet connection");
+                    }
+                });
+            }
+        });
+	</script>
+{% endblock %}

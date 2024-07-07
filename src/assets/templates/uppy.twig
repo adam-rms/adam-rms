@@ -1,0 +1,188 @@
+{# TO GET THIS TO WORK YOU NEED TO MAKE SURE THE FOLLOWING IS ALLOWED IN THE CORS CONFIG ON S3
+
+Allowed Methods = PUT & POST
+ALlowed Headers = (ideally you want x-amz-meta-* but DigitalOcean don't allow that in the way aws does)
+Authorization
+ETAG
+authorization
+content-type
+origin
+x-amz-acl
+x-amz-content-sha256
+x-amz-date
+x-amz-meta-qqfilename
+x-amz-meta-typeid
+x-amz-meta-subtype
+x-amz-meta-size
+#}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uppy/1.24.0/uppy.min.css" integrity="sha512-AlgodRCmxN1sI0uUiPYxh6NeOiw5/V4hvGLuZQjZrWF0I+ek5CXi9JiyJy74YjIaXGQjKvRIRc9uXOWqCkUF5w==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uppy/1.24.0/uppy.min.js" integrity="sha512-zq6u0SjqBwEZJP4C6JwFW9ecWKNLFY1kv+fHk4E26eHTlDh2oQlXjusT5iCGKq4jPC7zVFmA5B7s+K+QNcnxBg==" crossorigin="anonymous"></script>
+    {% set thisElementID = ('uppy' ~ random()) %}
+    <div id="{{ thisElementID }}"></div>
+    <script>
+        function getExtension(fileName) {
+            var re = /(?:\.([^.]+))?$/;
+            var extension = re.exec(fileName)[1];
+            return extension.toLowerCase();
+        }
+        {{ thisElementID }} = new Uppy.Core({
+            debug: true,
+            allowMultipleUploads: true,
+            autoProceed: false,
+            restrictions: {
+                {% if fileLimit is defined %}
+                maxNumberOfFiles: {{  fileLimit }},
+                {% endif %}
+                {% if imagesOnly is defined and imagesOnly %}
+                allowedFileTypes: ['image/gif', 'image/jpeg', 'image/png','image/jpg']
+                {% endif %}
+            },
+            meta: {
+                "typeid": "{{ typeId }}",
+                "subtype": "{{ subTypeId }}"
+            },
+            onBeforeFileAdded: (currentFile, files) => {
+                var updatedFile = currentFile;
+                var safeFilename = currentFile.name.replace(/[^a-z0-9]/gi, '').toLowerCase() + "." + getExtension(currentFile.name);
+                updatedFile.name = "uploads/" + "{{ type }}" + "/" + Date.now() + "-" + (Math.floor(Math.random() * (99999999999999999999 - 9999999999 + 1)) + 9999999999) + "." + getExtension(currentFile.name);
+                return updatedFile;
+            },
+            onBeforeUpload: (files) => {
+                for (const [key, value] of Object.entries(files)) {
+                    {% if licenceCredit %}
+                    if (value.meta.credit !== undefined && value.meta.credit.length > 5) {
+                        //Checking on the form completed
+                        //value.name =
+                    } else {
+                        uppy.info(`Please specify an image credit`, 'error')
+                        return false;
+                    }
+                    {% endif %}
+                }
+            }
+        }).use(Uppy.Dashboard, {
+            inline: true,
+            target: '#{{ thisElementID }}',
+            note: '{% if imagesOnly is defined and imagesOnly %}Images only{% endif %}',
+            height: {% if licenceCredit != true and fileLimit < 2 %}300{% else %}500{% endif %},
+            browserBackButtonClose: false,
+            showLinkToFileUploadResult: false,
+            proudlyDisplayPoweredByUppy: false,
+            hideProgressAfterFinish: true,
+
+            theme: '{% if USERDATA.users_dark_mode %}dark{% else %}light{% endif %}',
+
+            {% if fileLimit is defined and fileLimit == 1 and imagesOnly is defined and imagesOnly %}
+            autoOpenFileEditor: true,
+            {% endif %}
+            showProgressDetails: true,
+            metaFields: [
+                {% if licenceCredit %}
+                { id: 'title', name: 'Title', placeholder: 'filetitle' },
+                { id: 'license', name: 'License', placeholder: 'specify license' },
+                { id: 'credit', name: 'Credit', placeholder: 'How should the image be credited? Don\'t include "Image:"' },
+                { id: 'ownwork', name: 'Photo from a member of the Nouse Team?', render: function({value, onChange}, h) {
+                        return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'off' })
+                    } }
+                {% endif %}
+            ]
+        }).use(Uppy.AwsS3, {
+            metaFields: ['name','typeid','subtype'],
+            getUploadParameters (file) {
+                // Send a request to our PHP signing endpoint.
+                return fetch('{{ CONFIG.ROOTURL }}/api/s3files/generateSignatureUppy.php', {
+                    method: 'POST',
+                    headers: {
+                        accept: 'application/json',
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        filename: file.name,
+                        contentType: file.type
+                    })
+                }).then((response) => {
+                    // Parse the JSON response.
+                    return response.json()
+                }).then((data) => {
+                    // Return an object in the correct shape.
+                    if (data.result === false) {
+                        throw new Error(data.error.message)
+                    }
+                    return {
+                        method: data.method,
+                        url: data.url,
+                        fields: data.fields,
+                        headers: data.headers
+                    }
+                })
+            }
+        /*}).use(Uppy.ImageEditor, {
+            quality: 0.8,
+            cropperOptions: {
+                aspectRatio:1
+            },
+            actions: {
+                revert: true,
+                rotate: true,
+                flip: false,
+                zoomIn: false,
+                zoomOut: false,
+                cropSquare: true,
+                cropWidescreen: false,
+                cropWidescreenVertical: false,
+            }*/
+        }).use(Uppy.Webcam, {
+            countdown: false,
+            target: Uppy.Dashboard,
+            mirror: true,
+            showVideoSourceDropdown: true,
+            preferredImageMimeType:'image/jpg',
+            preferredVideoMimeType: 'video/mp4',
+            showRecordingLength: true,
+            modes: [
+                'picture',
+                'video-audio'
+            ]
+        }).on('upload-success', (file, response) => {
+            $.ajax({
+                url: "{{ CONFIG.ROOTURL }}/api/s3files/uploadSuccess.php",
+                type: "JSON",
+                method: "POST",
+                data: {
+                    "name": file.name,
+                    "public": "{{ (publicBool ? 1 : 0) }}",
+                    "size": file.size,
+                    "typeid": file.meta.typeid,
+                    "subtype":  file.meta.subtype,
+                    "originalName": file.data.name
+                },
+                success: function (result) {
+                    if (!result.result) {
+                        bootbox.alert("Sorry - Upload encountered a problem", function () {
+                            location.reload();
+                        });
+                    } else {
+                        var responseJson = result.response;
+                        var url = responseJson.url;
+                        {% block success %}
+                        {% endblock %}
+                        {% if resetAfter is defined and resetAfter %}
+                            uppy.reset();
+                        {% endif %}
+                    }
+                },
+                error: function (error) {
+                    bootbox.alert("Sorry - Upload encountered a problem", function () {
+                        location.reload();
+                    });
+                }
+            });
+        })
+
+        //Update the theme when a themChange is triggered.
+        $(document).on('themeChange', function(event, theme) {
+            {{ thisElementID }}.getPlugin('Dashboard').setOptions({theme: theme});
+        });
+
+
+    </script>

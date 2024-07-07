@@ -1,0 +1,80 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+{% endblock %}
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-danger alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the {{ CONFIG.PROJECT_NAME }} Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Server Configuration
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if errors %}
+                    <p style="color: red;">Could not save - please check the details below</p>
+                    {% endif %}
+	                <form method="post">
+                        {% set currentgroup = "" %}
+                        {% for key,field in form %}
+                            {% if field.form.group != currentgroup %}
+                                <h2 style="margin: 0;">{{ field.form.group }}</h4>
+                                {% set currentgroup = field.form.group %}
+                            {% endif %}
+                            <label for="{{ key }}" style="margin-top: 5px; margin-bottom: 0;">{{ field.form.name }}</label><p style="margin:0;">{{ field.form.description }}</p>
+                            {% if errors[key] %}
+                                <p style="color: red;">{{ errors[key] }}</p>
+                            {% endif %}
+                            {% if field.form.type == 'select' %}
+                                <select name="{{ key }}" {{ field.form.required ? "required" : ''}} class="form-control">
+                                    {% for option in field.form.options %}
+                                        <option value="{{ option|escape('html_attr') }}" {{ option == field.value ? 'selected' : '' }}>
+                                        {{option}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <input type="{{ field.form.type }}" class="form-control" name="{{ key|escape('html_attr') }}" value="{{ null is same as(field.value) ? field.form.default|escape('html_attr') : field.value|escape('html_attr') }}" placeholder="{{ field.form.default|escape('html_attr') }}" {{ field.form.required ? "required" : ''}} {{ field.form.minlength ? ('minlength="' ~ field.form.minlength ~ '"')|raw : '' }} {{ field.form.maxlength ? ('maxlength="' ~ field.form.maxlength ~ '"')|raw : '' }}/>
+                            {% endif %}
+                        {% endfor %}
+                        <br/><br/>
+                        <input type="submit" value="Save" class="form-control btn btn-danger"><input type="hidden" name="changingConfigUsingConfigFormTwig" value="true"/>
+                    </form>
+                </div>
+                <div class="overlay" id="loadingoverlay">
+                    <i class="fas fa-sync fa-spin fa-3x"></i>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $(".suspenduser").click(function () {
+                    $("#loadingoverlay").show();
+                    $.ajax({
+                        url: "{{ CONFIG.ROOTURL }}/api/account/suspend.php?userid=" + $(this).data("userid") + '&suspendval=' + $(this).data("suspendval"),
+                        success: function (result) {
+                            if (result == '1') {
+                                bootbox.alert("Success", function () {
+                                    location.reload();
+                                });
+                            } else {
+                                bootbox.alert("Sorry - Operation could not be completed! Please reload the page", function () {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                $("#loadingoverlay").hide();
+            });
+        </script>
+    </div>
+{% endblock %}

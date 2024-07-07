@@ -1,0 +1,357 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/project/?id={{project.projects_id}}#details-view"><i class="fas fa-arrow-left"></i> Back to <span style="font-weight:bold;">{{project.projects_name}}</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Advertised Crew Role Vacancies
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <form class="input-group input-group-sm" method="GET">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editModalNEW"><i class="fa fa-plus"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 20%">
+                                Role Name
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Deadline
+                            </th>
+                            <th>
+                                Places Filled/Total Places
+                            </th>
+                            <th>
+                                Applications
+                            </th>
+                            <th style="width: 20px">
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for role in roles %}
+                            <tr>
+                                <td>
+                                    {{ role.projectsVacantRoles_name }}
+                                </td>
+                                <td>
+                                    {% if role.projectsVacantRoles_slotsFilled >= role.projectsVacantRoles_slots %}
+                                        FULL
+                                    {% elseif role.projectsVacantRoles_deadline and date(role.projectsVacantRoles_deadline) < date() %}
+                                        DEADLINE PASSED
+                                    {% elseif role.projectsVacantRoles_open == 1 %}
+                                        OPEN
+                                    {% else %}
+                                         HIDDEN
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ role.projectsVacantRoles_deadline ? role.projectsVacantRoles_deadline|date("d M Y h:ia") : '' }}
+                                </td>
+                                <td>
+                                    {{ role.projectsVacantRoles_slotsFilled }}/{{ role.projectsVacantRoles_slots }}
+                                </td>
+                                <td>
+                                    {{ role.applications }}
+                                </td>
+                                <td class="project-actions text-right">
+                                    <div class="btn-group">
+                                        {% if role.applications > 0 %}
+                                            <a class="btn btn-success btn-sm{% if role.canViewApplications != true %} disabled" href="#" title="You do not have permission to view applications"{% else %}" href="applications.php?id={{ role.projectsVacantRoles_id }}"{% endif %}>Applications</a>
+                                        {% endif %}
+                                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ role.projectsVacantRoles_id }}"><i class="fas fa-edit"></i></button>
+                                        {% if role.applications < 1 %}
+                                        <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ role.projectsVacantRoles_id }}"><i class="fas fa-trash"></i></button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% if roles %}
+            {% set  roles = roles|merge([{ "NEW": true, "projectsVacantRoles_id": "NEW" }]) %}
+        {% else %}
+            {% set roles = [{ "NEW": true, "projectsVacantRoles_id": "NEW" }] %}
+        {% endif %}
+        {% for role in roles %}
+        <div class="modal fade" id="editModal{{ role.projectsVacantRoles_id }}">
+            <div class="modal-dialog  modal-lg">
+                <form class="editForm" data-id="{{ role.projectsVacantRoles_id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Vacancy</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="projects_id" value="{{ project.projects_id }}"/>
+                            <input type="hidden" name="projectsVacantRoles_id" value="{{ role.projectsVacantRoles_id }}"/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Name</span>
+                                </div>
+                                <input required type="text" class="form-control" placeholder="Drum Revolve operator" name="projectsVacantRoles_name" value="{{ role.projectsVacantRoles_name }}">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Description</span>
+                                </div>
+                                <textarea type="text" required class="form-control" name="projectsVacantRoles_description" placeholder="Drum revolve operator will be on a 9am to 11pm crew call, with relevant BECTU breaks. You'll be client facing so uniform will be required." rows="6">{{ role.projectsVacantRoles_description }}</textarea>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Person Specification</span>
+                                </div>
+                                <textarea type="text" class="form-control" placeholder="Must have experience using drum revolves. Ideal candidate would hold NRC Level 2, but this is not essential" name="projectsVacantRoles_personSpecification" rows="6">{{ role.projectsVacantRoles_personSpecification }}</textarea>
+                            </div>
+                            <hr/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Deadline</span>
+                                </div>
+                                <input type="text" class="form-control float-right deadlineDatePicker" name="projectsVacantRoles_deadline" value="{{ (role.projectsVacantRoles_deadline ? role.projectsVacantRoles_deadline|date("j M Y h:i:sa") : '') }}">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Roles available</span>
+                                </div>
+                                <input type="number" class="form-control" required name="projectsVacantRoles_slots" min="1" value="{{ role.projectsVacantRoles_slots }}" />
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" data-toggle="tooltip" data-placement="bottom" title="Allow people to assign themselves to this role, and automatically close the role once it has been filled">
+                                        First Come First Served
+                                    </span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_firstComeFirstServed" {{ role.projectsVacantRoles_firstComeFirstServed == 1 ? 'checked' : ''  }}  />
+                            </div>
+                            <hr/>
+                            <h3>Application Security</h3>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Applications visible to Project Manager Only</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_privateToPM" {{ project.projects_manager == USERDATA.users_userid or role.NEW ? '' : 'disabled' }} {{ role.projectsVacantRoles_privateToPM == 1 ? 'checked' : (role.NEW ? 'checked')  }}  />
+                            </div>
+                            <div class="form-group">
+                                <label>Limit visibility of applications to:</label>
+                                <select multiple class="form-control select2 select2bs4" {{ project.projects_manager == USERDATA.users_userid or role.NEW ? '' : 'disabled' }} name="projectsVacantRoles_applicationVisibleToUsers">
+                                    {% for user in users %}
+                                        <option value="{{ user.users_userid }}" {% if user.users_userid in role.projectsVacantRoles_applicationVisibleToUsers|split(',') %}selected{% endif %}>{{ user.users_name1 ~ " " ~ user.users_name2 }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="form-text text-muted">This list is ignored if the project manager only checkbox above is checked. Leave the checkbox unchecked and the limit visibility of applications box blank to allow everyone to view applications</small>
+                            </div>
+                            <small class="form-text text-muted">Once a vacancy is created, these settings can only be changed by the project manager</small>
+                            <hr/>
+                            <h3>Role Visibility</h3>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Visible on Crew Vacancies List</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_open" {{ role.projectsVacantRoles_open == 1 or role.NEW ? 'checked' : ''  }}  />
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Visible on Public Site</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_showPublic" {% if publicData.enabled != true %}disabled title="Public Site is Disabled"{% elseif role.projectsVacantRoles_visibleToGroups != null %}disabled title="Role is only available to specified groups"{% elseif role.projectsVacantRoles_showPublic == 1 or role.NEW %}checked{% endif %} />
+                            </div>
+                            <div class="form-group">
+                                <label>Limit visibility to:</label>
+                                <select multiple class="form-control select2 select2bs4" name="projectsVacantRoles_visibleToGroups">
+                                    {% for position in positions %}
+                                        <option value="{{ position.instancePositions_id }}" {% if position.instancePositions_id in role.projectsVacantRoles_visibleToGroups|split(',') %}selected{% endif %}>{{ position.instancePositions_displayName }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <hr/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Collect Phone Numbers</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_collectPhone" {{ role. projectsVacantRoles_collectPhone == 1 or role.NEW ? 'checked' : ''  }}  />
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Allow File Uploads in Applications</span>
+                                </div>
+                                <input type="checkbox" class="form-control" name="projectsVacantRoles_fileUploads" {{ role.projectsVacantRoles_fileUploads == 1 or role.NEW ? 'checked' : ''  }}  />
+                            </div>
+                            <br/>
+                            <div class="applicationQuestions" data-id="{{ role.projectsVacantRoles_id }}">
+                                <button type="button" class="btn btn-secondary applicationQuestionsAddButton mb-2">Add Application Question</button>
+                                {% for question in role.projectsVacantRoles_questionsArray %}
+                                    <div class="applicationQuestions-group">
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Question Text</span>
+                                            </div>
+                                            <input type="text" class="form-control" data-name="name" value="{{ question.name }}" />
+                                        </div>
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Placeholder</span>
+                                            </div>
+                                            <input type="text" class="form-control" data-name="placeholder" value="{{ question.placeholder }}" />
+                                        </div>
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Notes</span>
+                                            </div>
+                                            <textarea class="form-control">{{ question.notes }}</textarea>
+                                        </div>
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Question Type</span>
+                                            </div>
+                                            <select class="form-control">
+                                                <option value="textarea" {{ question.type == "textarea" ? 'selected' }}>Long Text</option>
+                                                <option value="text" {{ question.type == "text" ? 'selected' }}>Short Text</option>
+                                            </select>
+                                        </div>
+                                    </div><hr/>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary saveEdit">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+    <script>
+        $(document).ready(function () {
+            $('input.deadlineDatePicker').daterangepicker({
+                singleDatePicker: true,
+                timePicker: true,
+                timePickerIncrement: 15,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A',
+                    cancelLabel: 'Clear'
+                },
+                autoUpdateInput: false
+            });
+            $('input.deadlineDatePicker').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD MMM YYYY hh:mm A'));
+            });
+
+            $('input.deadlineDatePicker').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
+            $('.editForm .select2').select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            $('[data-toggle="tooltip"]').tooltip()
+                
+            $(".applicationQuestionsAddButton").click(function () {
+                $(this).parent().append(`<div class="applicationQuestions-group">
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Question Text</span>
+                                            </div>
+                                            <input type="text" class="form-control" data-name="name" />
+                                        </div>
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Placeholder</span>
+                                            </div>
+                                            <input type="text" class="form-control" data-name="placeholder" />
+                                        </div>
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Notes</span>
+                                            </div>
+                                            <textarea class="form-control"></textarea>
+                                        </div>
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Question Type</span>
+                                            </div>
+                                            <select class="form-control">
+                                                <option value="textarea">Long Text</option>
+                                                <option value="text" selected>Short Text</option>
+                                            </select>
+                                        </div>
+                                    </div><hr/>`);
+            });
+
+
+            $(".editForm").submit(function (event) {
+                var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+
+                var questions = [];
+                $( '.applicationQuestions[data-id="'  + $(this).data("id") +  '"] > .applicationQuestions-group').each(function( index ) {
+                    if ($(this).find("input[data-name='name']").val() != "") {
+                        questions.push({
+                            "name": $(this).find("input[data-name='name']").val(),
+                            "notes": $(this).find("textarea").val(),
+                            "type": $(this).find("select").val(),
+                            "placeholder": $(this).find("input[data-name='placeholder']").val(),
+                        });
+                    }
+                });
+                formData.push({"name": "projectsVacantRoles_questions", "value":JSON.stringify(questions)});
+
+                event.preventDefault();
+                ajaxcall("projects/crew/crewRoles/edit.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            $(".deleteButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to delete this role?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "projects_id", "value":"{{ project.projects_id }}" },{"name": "projectsVacantRoles_id", "value":id },{"name": "projectsVacantRoles_deleted", "value":"1" }];
+                            ajaxcall("projects/crew/crewRoles/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    </div>
+
+{% endblock %}

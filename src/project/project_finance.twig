@@ -1,0 +1,303 @@
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Overview</h3>
+            </div>
+            <div class="card-body p-0">
+                <table class="table">
+                    <tr>
+                        <td style="width: 35%;">
+                            Equipment SubTotal
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {{ FINANCIALS.prices.subTotal|money }}
+                        </td>
+                        <td style="width: 35%;">
+                            Sales
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {{ FINANCIALS.payments.sales.total|money }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 35%;">
+                            {% if FINANCIALS.prices.discounts|moneyPositive %}Discounts{% else %}Adjustments{% endif %}
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {% if FINANCIALS.prices.discounts|moneyPositive %}&#8209;{{ FINANCIALS.prices.discounts|money }}{% else %}None{% endif %}
+                        </td>
+                        <td style="width: 35%;">
+                            Staffing
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {{ FINANCIALS.payments.staff.total|money }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 35%;">
+                            <b>Equipment Total</b>
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {{ FINANCIALS.prices.total|money }}
+                        </td>
+                        <td  style="width: 35%;">
+                            Additional Hires
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {{ FINANCIALS.payments.subHire.total|money }}
+                        </td>
+                    </tr>
+                    <tr style="background-color: rgba(0,0,0,.03);">
+                        <td style="width: 35%;">
+                            SubTotal
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {{ FINANCIALS.payments.subTotal|money }}
+                        </td>
+                        <td style="width: 35%;">
+                            Payments Received to Date
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            &#8209;{{ FINANCIALS.payments.received.total|money }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 35%;">
+
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+
+                        </td>
+                        <td style="width: 35%;">
+                            <b>Grand Total Outstanding</b>
+                        </td>
+                        <td style="width: 15%;text-align: right;">
+                            {{ FINANCIALS.payments.total|money }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group float-right">
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}projects/finance" target="_blank" type="button" class="btn btn-info">Help</a>
+
+                    {% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
+                        <button type="button" class="btn btn-default newPayment" data-type="1">Add Payment Received</button>
+                        <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                            <span class="sr-only">Toggle Dropdown</span>
+                            <div class="dropdown-menu" role="menu">
+                                <a class="dropdown-item newPayment" data-type="2" href="#">Add Sales Item</a>
+                                <a class="dropdown-item newPayment" data-type="3" href="#">Add Additional Hire</a>
+                                <a class="dropdown-item newPayment" data-type="4" href="#">Add Staff Cost</a>
+                            </div>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Invoice Notes</h3>
+            </div>
+            <div class="card-body">
+                {% if project.projects_invoiceNotes|nl2br %}
+                    {{ project.projects_invoiceNotes|nl2br }}
+                {% else %}
+                    <i>None Set</i>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="btn-group float-right">
+                    {% if "PROJECTS:EDIT:INVOICE_NOTES"|instancePermissions %}
+                        <button type="button" class="btn btn-default editProjectInvoiceNotes" title="Edit">Edit Invoice Notes</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if FINANCIALS.payments.received.ledger %}
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Payments Received</h3>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Date</th>
+                        <th>Method</th>
+                        <th>Comment</th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for payment in FINANCIALS.payments.received.ledger %}
+                        <tr>
+                            <td>{{ payment.payments_reference }}</td>
+                            <td>{{ payment.payments_date|date("d/M/Y G:i:s") }}</td>
+                            <td>{{ payment.payments_method }}</td>
+                            <td>{{ payment.payments_comment|nl2br }}</td>
+                            <td>{{ payment.payments_amount|money }}</td>
+                            <td style="min-width:140px;">
+                                {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+                                    <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                {% endif %}
+                                {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
+                                    <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if FINANCIALS.payments.sales.ledger %}
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Sales</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Quantity</th>
+                            <th style="width: 100%;">Comment</th>
+                            <th>Amount</th>
+                            <th>Total</th>
+                            <th style="min-width:140px;"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set currentSupplier = "" %}
+                        {% for payment in FINANCIALS.payments.sales.ledger %}
+                            {% if currentSupplier != payment.payments_supplier %}
+                                {% set currentSupplier = payment.payments_supplier %}
+                                {% if payment.payments_supplier != "" %}
+                                    <tr>
+                                        <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                            <tr>
+                                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                <td>{{ payment.payments_comment|nl2br }}</td>
+                                <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                <td>
+                                    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                    {% endif %}
+                                    {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
+                                        <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if FINANCIALS.payments.subHire.ledger %}
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Additional Hires</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Quantity</th>
+                            <th style="width: 100%;">Comment</th>
+                            <th>Amount</th>
+                            <th>Total</th>
+                            <th style="min-width:140px;"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set currentSupplier = "" %}
+                        {% for payment in FINANCIALS.payments.subHire.ledger %}
+                            {% if currentSupplier != payment.payments_supplier %}
+                                {% set currentSupplier = payment.payments_supplier %}
+                                {% if payment.payments_supplier != "" %}
+                                    <tr>
+                                        <td colspan="99" style="background-color: #F5F5F5;"><b>{{ payment.payments_supplier }}</b></td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                            <tr>
+                                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                <td>{{ payment.payments_comment|nl2br }}</td>
+                                <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                <td>
+                                    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                    {% endif %}
+                                    {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
+                                        <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if FINANCIALS.payments.staff.ledger %}
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Staff</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Quantity</th>
+                            <th>Supplier</th>
+                            <th style="width: 100%;">Comment</th>
+                            <th>Amount</th>
+                            <th>Total</th>
+                            <th style="min-width:140px;"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for payment in FINANCIALS.payments.staff.ledger %}
+                            <tr>
+                                <td style="width: 10px;">{{ payment.payments_quantity }}x</td>
+                                <td>{{ payment.payments_supplier|nbsp}}</td>
+                                <td>{{ payment.payments_comment|nl2br }}</td>
+                                <td style="width:100px;">{{ payment.payments_amount|money }}</td>
+                                <td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
+                                <td>
+                                    {% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+                                        <button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></button>
+                                    {% endif %}
+                                    {% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
+                                        <button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}"><i class="fa fa-trash"></i></button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

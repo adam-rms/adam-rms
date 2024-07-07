@@ -1,0 +1,301 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <!--Summernote-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" integrity="sha256-CLMYHViXNCxDUd/ySLeJJjyLtteBZwjqZ4c5p6U7L78=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.min.js" integrity="sha256-jPK1ABk4CuFvSr31v4CLU7X7XCvixZSi8fTTCw/tsto=" crossorigin="anonymous"></script>
+
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Module Steps
+                    </h3>
+                    <div class="card-tools pull-right">
+                       <button type="button" class="btn-sm btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width: 4em;">
+                            </th>
+                            <th style="width: 25em;">
+                                Name
+                            </th>
+                            <th>
+                                Notes
+                            </th>
+                            <th>
+                                Content
+                            </th>
+                            <th style="width: 15em;">
+                                Estimated Completion Time
+                            </th>
+                            <th style="width: 2em;">
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="stepsSort">
+                        {% for step in module.steps %}
+                            <tr data-id="{{ step.modulesSteps_id }}">
+                                <td>
+                                    {% if step.modulesSteps_locked != 1 %}
+                                    <span class="handle">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                   </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ step.modulesSteps_name }}
+                                    {% if step.modulesSteps_show == 0 %}
+                                    <br/><span class="badge badge-danger">Not Published</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ step.modulesSteps_internalNotes|nl2br }}
+                                </td>
+                                <td>
+                                    {% embed ('training/types/' ~ step.modulesSteps_type ~ '.twig') with {'content': step.modulesSteps_content, 'step': step } %}
+                                    {% endembed %}
+                                </td>
+                                <td>
+                                    {{ step.modulesSteps_completionTime }}m
+                                </td>
+                                <td class="project-actions text-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ step.modulesSteps_id }}"><i class="fas fa-edit"></i></button>
+                                        {% if step.modulesSteps_locked != 1 %}
+                                        <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ step.modulesSteps_id }}"><i class="fas fa-trash"></i></button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+            <div class="modal fade" id="newModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">New Step</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="newForm">
+                                <input type="hidden" name="modules_id" value="{{ module.modules_id }}" />
+                                <div class="input-group" style="margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Title</span>
+                                    </div>
+                                    <input required type="text" class="form-control" name="modulesSteps_name" required>
+                                </div>
+                                <div class="input-group" style="margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Internal Notes</span>
+                                    </div>
+                                    <textarea type="text" class="form-control" name="modulesSteps_internalNotes" rows="6"></textarea>
+                                </div>
+                                <div class="input-group" style="margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Estimated Completion Time (in minutes)</span>
+                                    </div>
+                                    <input type="number" class="form-control" name="modulesSteps_completionTime" min="1" max="180" value="2" required />
+                                </div>
+                                <div class="input-group" style="margin-bottom: 5px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Type</span>
+                                    </div>
+                                    <select class="form-control" name="modulesSteps_type">
+
+                                        <option value="1" selected>Text</option>
+                                        <option value="2" disabled>Custom HTML</option>
+                                        <option value="3">YouTube Video</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="saveNew">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                {% for step in module.steps %}
+                <div class="modal fade" id="editModal{{ step.modulesSteps_id }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Edit {{ step.modulesSteps_name }}</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="editForm" data-id="{{ step.modulesSteps_id }}">
+                                    <input type="hidden" name="modulesSteps_id" value="{{ step.modulesSteps_id }}"/>
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Title</span>
+                                        </div>
+                                        <input required type="text" class="form-control" name="modulesSteps_name" value="{{ step.modulesSteps_name }}" required>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Internal Notes</span>
+                                        </div>
+                                        <textarea type="text" class="form-control" name="modulesSteps_internalNotes" rows="6">{{ step.modulesSteps_internalNotes }}</textarea>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Estimated Completion Time (in minutes)</span>
+                                        </div>
+                                        <input type="number" class="form-control" name="modulesSteps_completionTime" value="{{ step.modulesSteps_completionTime }}" min="1" max="180" value="2" required />
+                                    </div>
+                                    {% if step.modulesSteps_locked != 1 %}
+                                    <div class="input-group" style="margin-bottom: 5px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Publish in the module to be completed by users</span>
+                                        </div>
+                                        <input required type="checkbox" class="form-control" name="modulesSteps_show" {{ step.modulesSteps_show == 1 ? 'checked' : ''}}>
+                                    </div>
+                                    {% else %}
+                                        <input required type="checkbox" style="display:none;" name="modulesSteps_show" {{ step.modulesSteps_show == 1 ? 'checked' : ''}}>
+                                    {% endif %}
+                                    <hr/>
+                                    {% if step.modulesSteps_type == 1 %}
+                                            {# Plain Text #}
+                                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+                                                {% embed 'assets/templates/uppy.twig' with {'type': 'MODULE-STEP-IMAGE', 'paste': false, 'typeId': 13, 'subTypeId': step.modulesSteps_id, 'imagesOnly': true } %}
+                                                    {% block success %}
+                                                        $('.summernote[data-id={{ step.modulesSteps_id }}]').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                                                    {% endblock %}
+                                                {% endembed %}
+                                            {% endif %}
+                                            <br/>
+                                            <div class="summernote" data-id="{{ step.modulesSteps_id }}">{{ step.modulesSteps_content|raw }}</div>
+                                            <textarea type="text" style="display:none" class="form-control modulesStepsContent" name="modulesSteps_content" data-id="{{ step.modulesSteps_id }}" rows="1"></textarea>
+
+                                    {% elseif step.modulesSteps_type == 2 %}
+                                            {# HTML #}
+                                    {% elseif step.modulesSteps_type == 3 %}
+                                        <div class="input-group" style="margin-bottom: 5px;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">YouTube video code</span>
+                                            </div>
+                                            <input type="text" class="form-control" name="modulesSteps_content" value="{{ step.modulesSteps_content }}" required />
+                                        </div>
+                                    {% endif %}
+                                </form>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary saveEdit" data-id="{{ step.modulesSteps_id }}">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        <script>
+            $(document).ready(function () {
+                $("#saveNew").click(function () {
+                    var formData = $("#newForm").serializeArray();
+                    ajaxcall("modules/steps/new.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                });
+                $(".saveEdit").click(function () {
+                    if ($(".summernote[data-id=" + $(this).data("id") + "]").length) {
+                        $(".modulesStepsContent[data-id=" + $(this).data("id") + "]").val($(".summernote[data-id=" + $(this).data("id") + "]").summernote('code'));
+                    }
+                    var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+                    ajaxcall("modules/steps/edit.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                });
+                $(".deleteButton").click(function () {
+                    var id = $(this).data("id");
+                    bootbox.confirm({
+                        message: "Are you sure you want to delete this step?",
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-success'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                var formData = [{"name": "modulesSteps_id", "value":id },{"name": "modulesSteps_deleted", "value":"1" }];
+                                ajaxcall("modules/steps/edit.php", {formData}, function (data) {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+                $('#stepsSort').sortable({
+                    placeholder         : 'sort-highlight',
+                    handle              : '.handle',
+                    forcePlaceholderSize: true,
+                    zIndex              : 999999,
+                    update: function( event, ui ) {
+                        ajaxcall("modules/steps/sortRank.php", {
+                            "order": $("#stepsSort").sortable('toArray', {attribute: 'data-id'}),
+                            "modules_id": "{{ module.modules_id }}"
+                        }, null, true);
+
+                    }
+                });
+                $('.summernote').summernote({
+                    minHeight: 300,             // set minimum height of editor
+                    maxHeight: null,             // set maximum height of editor
+                    focus: true,
+                    disableDragAndDrop: true, //We're using fineuploader for that
+                    toolbar: [
+                        ['oops', ['undo', 'redo']],
+                        ['font', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['hr']]
+                    ],
+                    popover: {
+                        image: [
+                            ['imagesize', ['imageSize100', 'imageSize50', 'imageSize25']],
+                            ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                            ['remove', ['removeMedia']]
+                        ],
+                        link: [
+                            ['link', ['unlink']]
+                        ],
+                        table: [
+                            ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                            ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                        ]
+                    }
+                });
+            });
+        </script>
+        {% embed ('training/types/youtubePageFooter.twig') %}{% endembed %}
+    </div>
+
+{% endblock %}

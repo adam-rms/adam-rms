@@ -1,0 +1,385 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {% if search|length > 0 %}
+                        Search results for locations matching <b>{{ search }}</b>. Archived locations not shown. 
+                    {% elseif showArchived %}
+                        Archived Locations
+                    {% else %}
+                        Locations
+                    {% endif %}
+                </h3>
+                <div class="card-tools pull-right">
+                    <form class="input-group input-group-sm" method="GET">
+                        <div class="input-group-prepend">
+                            {% if showArchived %}
+                                <a href="?" type="button" class="btn btn-default">Show Locations</a>
+                            {% else %}
+                                <a href="?archive" type="button" class="btn btn-default">Show Archived Locations</a>
+                            {% endif %}
+                        </div>
+                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            {% if "LOCATIONS:CREATE"|instancePermissions %}
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width: 20%">
+                            Name
+                        </th>
+                        <th>
+                            Notes
+                        </th>
+                        <th style="width: 15%">
+                            Address
+                        </th>
+                        <th style="width: 15%">
+                            Client
+                        </th>
+                        <th style="width: 20px">
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for location in locations %}
+                    <tr>
+                        <td>
+                            <a {% if "PROJECTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?location={{ location.locations_id }}"{% endif %}>{{ location.locations_name }}</a>
+                        </td>
+                        <td>
+                            {{ location.locations_notes|nl2br }}
+                        </td>
+                        <td>
+                            {% if location.locations_address %}
+                                <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ location.locations_name ~ "," ~ location.locations_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </a>
+                            {% endif %}
+                            {{ location.locations_address|nl2br }}
+                        </td>
+                        <td>
+                            <a {% if "PROJECTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?client={{ location.clients_id }}"{% endif %}>
+                                {{ location.clients_name }}
+                            </a>
+                        </td>
+                        <td class="project-actions text-right">
+                            <div class="btn-group">
+                                {% if not(location.locations_archived) %}
+                                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "LOCATIONS:LOCATION_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ location.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (location.files|length > 0 ? location.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
+                                {% endif %}
+                                {% if "LOCATIONS:LOCATION_BARCODES:VIEW"|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ location.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
+                                {% endif %}
+                                <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ location.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
+                                {% endif %}
+                                {% if "LOCATIONS:EDIT"|instancePermissions %}
+                                    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
+                                    {% if location.locations_archived %}
+                                    <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ location.locations_id }}"><i class="fas fa-archive"></i></button>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ location.locations_id }}"><i class="fas fa-archive"></i></button>
+                                    {% endif %}
+                                    <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ location.locations_id }}"><i class="fas fa-trash"></i></button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                        {% for subLocation in location.linkedToThis %}
+                            <tr>
+                                <td>
+                                    {% for i in range(1, subLocation['tier']) %}
+                                        {% if loop.last %}
+                                            &#8627;
+                                        {% else %}
+                                            &nbsp;&nbsp;
+                                        {% endif %}
+                                    {% endfor %}
+                                    &nbsp;
+                                    <a {% if "PROJECTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?location={{ subLocation.locations_id }}"{% endif %}>{{ subLocation.locations_name }}</a>
+                                </td>
+                                <td>
+                                    {{ subLocation.locations_notes|nl2br }}
+                                </td>
+                                <td>
+                                    {% if subLocation.locations_address %}
+                                        <a class="btn btn-default btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ subLocation.locations_name ~ "," ~ subLocation.locations_address|replace({ "\r\n":', ', "\n":', ', "\r":', '})|url_encode }}" target="_blank" title="Google Maps">
+                                            <i class="fas fa-map-marked-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                    {{ subLocation.locations_address|nl2br }}
+                                </td>
+                                <td>
+                                    <a {% if "PROJECTS:VIEW"|instancePermissions %}href="{{ CONFIG.ROOTURL }}/project/list.php?client={{ subLocation.clients_id }}"{% endif %}>
+                                        {{ subLocation.clients_name }}
+                                    </a>
+                                </td>
+                                <td class="project-actions text-right">
+                                    <div class="btn-group">
+                                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "LOCATIONS:LOCATION_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/location/?files&id={{ subLocation.locations_id }}" type="button" class="btn btn-primary btn-sm">{{ (subLocation.files|length > 0 ? subLocation.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i></a>
+                                        {% endif %}
+                                        {% if "LOCATIONS:LOCATION_BARCODES:VIEW"|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
+                                        {% endif %}
+                                        <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
+                                        {% if "LOCATIONS:EDIT"|instancePermissions %}
+                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ subLocation.locations_id }}"><i class="fas fa-edit"></i></button>
+                                            {% if showArchived != true %}
+                                                {% if subLocation.locations_archived %}
+                                                <button type="button" class="btn btn-success btn-sm unarchiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-warning btn-sm archiveButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-archive"></i></button>
+                                                {% endif %}
+                                            {% endif %}
+                                            <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ subLocation.locations_id }}"><i class="fas fa-trash"></i></button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% if "LOCATIONS:CREATE"|instancePermissions %}
+    <div class="modal fade" id="newModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New Location</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newForm">
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Name</span>
+                            </div>
+                            <input required type="text" class="form-control" name="locations_name">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Address</span>
+                            </div>
+                            <textarea type="text" class="form-control" name="locations_address" rows="6"></textarea>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Notes</span>
+                            </div>
+                            <textarea type="text" class="form-control" name="locations_notes" rows="3"></textarea>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Client</span>
+                            </div>
+                            <select class="form-control" name="clients_id">
+                                <option selected></option>
+                                {% for client in clients %}
+                                    <option value="{{ client.clients_id }}">{{ client.clients_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Sub Location of</span>
+                            </div>
+                            <select class="form-control" name="locations_subOf">
+                                <option selected></option>
+                                {% for location in allLocations %}
+                                <option value="{{ location.locations_id }}">{{ location.locations_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveNew">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if "LOCATIONS:EDIT"|instancePermissions %}
+        {% for location in allLocations %}
+        <div class="modal fade" id="editModal{{ location.locations_id }}">
+            <div class="modal-dialog">
+                <form class="editForm" data-id="{{ location.locations_id }}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Location</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                            <input type="hidden" name="locations_id" value="{{ location.locations_id }}"/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Name</span>
+                                </div>
+                                <input required type="text" class="form-control" name="locations_name" value="{{ location.locations_name }}">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Address</span>
+                                </div>
+                                <textarea type="text" class="form-control" name="locations_address" rows="6">{{ location.locations_address }}</textarea>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Notes</span>
+                                </div>
+                                <textarea type="text" class="form-control" name="locations_notes" rows="3">{{ location.locations_notes }}</textarea>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Client</span>
+                                </div>
+                                <select class="form-control" name="clients_id">
+                                    <option></option>
+                                    {% for client in clients %}
+                                        <option value="{{ client.clients_id }}" {%  if location.clients_id == client.clients_id %}selected{% endif %}>{{ client.clients_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Sub Location of</span>
+                                </div>
+                                <select class="form-control" name="locations_subOf">
+                                    <option></option>
+                                    {% for sublocation in allLocations %}
+                                        {% if sublocation.locations_id != location.locations_id %}
+                                            <option value="{{ sublocation.locations_id }}" {%  if location.locations_subOf == sublocation.locations_id %}selected{% endif %}>{{ sublocation.locations_name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary saveEdit" data-id="{{ location.locations_id }}">Save</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            {% if "LOCATIONS:CREATE"|instancePermissions %}
+            $("#saveNew").click(function () {
+                var formData = $("#newForm").serializeArray();
+                ajaxcall("locations/new.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "LOCATIONS:EDIT"|instancePermissions %}
+            $(".editForm").submit(function (event) {
+                var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+                event.preventDefault();
+                ajaxcall("locations/edit.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            $(".archiveButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to archive this location?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("locations/archive.php", {"locations_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            $(".unarchiveButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to restore this location?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("locations/unarchive.php", {"locations_id": id}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "LOCATIONS:LOCATION_FILE_ATTACHMENTS:VIEW"|instancePermissions %}
+            $(".deleteButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    message: "Are you sure you want to delete this location?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "locations_id", "value":id },{"name": "locations_deleted", "value":"1" }];
+                            ajaxcall("locations/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+        });
+    </script>
+</div>
+
+{% endblock %}

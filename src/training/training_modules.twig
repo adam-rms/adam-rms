@@ -1,0 +1,248 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Modules
+                </h3>
+                <div class="card-tools pull-right">
+                    <div class="btn-group">
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}training/" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+
+                        {% if drafts %}
+                            <a type="button" class="btn btn-default btn-sm" href="?">Published Modules</a>
+                        {% elseif "TRAINING:VIEW:DRAFT_MODULES"|instancePermissions %}
+                            <a type="button" class="btn btn-default btn-sm" href="?drafts">Draft Modules</a>
+                        {% endif %}
+                        {% if "TRAINING:CREATE"|instancePermissions %}
+                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModuleModal"><i class="fa fa-plus"></i></button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex align-items-stretch">
+        {% for module in modules %}
+            <div class="col-auto d-flex align-items-stretch">
+                <div class="card bg-light">
+                    <div class="card-header text-muted border-bottom-0">
+                        {% if module.modules_type != 1 %}
+                            {% if module.userModulesCertifications  %}
+                                <span class="badge badge-success">CERTIFIED</span>
+                            {% else %}
+                                <span class="badge badge-danger" title="Awaiting Certification">UNCERTIFIED</span>
+                            {% endif %}
+                        {% endif %}
+                        {% if module.modules_type != 3 %}
+                            {% if module.completed %}
+                                <span class="badge badge-success">COMPLETED</span>
+                            {% elseif module.allStepsCompleted|length > 0 %}
+                                <span class="badge badge-warning">IN PROGRESS</span>
+                            {% else %}
+                                <span class="badge badge-danger">NOT STARTED</span>
+                            {% endif %}
+                        {% endif %}
+                        {% if module.visibleToGroupsString %}
+                            <span class="badge badge-info" style="text-transform: uppercase;">
+                                Visible only to {{ module.visibleToGroupsString }}
+                            </span>
+                        {% endif %}
+                        <br/>
+                        {% if module.modules_type != 3 %}
+                            <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{{ module.modules_name }}</a>
+                        {% else %}
+                            {{ module.modules_name }}
+                        {% endif %}
+                    </div>
+                    <div class="card-body pt-0" style="max-width: 350px;">
+                        {% if module.modules_show == 0 %}
+                            <div class="alert alert-warning">
+                                Draft - only visible to those with permission to view draft training modules
+                            </div>
+                        {% endif %}
+                        {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and module.modules_thumbnail %}
+                           <div>
+                               {% if module.modules_type != 3 %}<a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{% else %}<a href="#">{% endif %}
+                                    <img class="img-fluid" style="max-height: 340px;"
+                                         loading="lazy" src="{{ module.modules_thumbnail|s3URL("small") }}"
+                                         alt="{{ module.modules_name }}"></a>
+                            </div>
+                            <br/>
+                        {% endif %}
+                        <p class="text-muted">{{ module.modules_description|nl2br }}</p>
+                        <p class="text-muted">{{ module.modules_learningObjectives|nl2br  }}</p>
+                        <hr />
+                        <ul class="ml-4 mb-0 fa-ul text-muted">
+                            {% if module.totalTime > 0 %}<li><i class="far fa-clock" title="Estimated completion time"></i> ~{{ module.totalTime }}m</li>{% endif %}
+                            {% if module.modules_type != 1 %}
+                                {% for certification in module.userModulesCertifications %}
+                                    <li><i title="Certified" class="fas fa-check"></i> {{ certification.users_name1 }} {{ certification.users_name2 }} ({{ certification.userModulesCertifications_timestamp|date("d M Y") }})
+                                    </li>
+                                {% endfor %}
+
+                            {% endif %}
+                            {% if module.modules_type != 3 and module.dates.start %}
+                            <li><i class="far fa-calendar-alt"></i> {{ module.dates.start|date("d M Y") }}{{ (module.dates.start|date("d M Y") != module.dates.updated|date("d M Y") ? " - " ~ module.dates.updated|date("d M Y") : "") }}</li>
+                            {% endif %}
+                            <li>
+                                {% if module.modules_type == 1 %}
+                                    You can complete this module online
+                                {% elseif module.modules_type == 2 %}
+                                    You can complete this module online, and then need to be certified by an administrator
+                                {% elseif module.modules_type == 3 %}
+                                    You can't complete this module online
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-right">
+                            <div class="btn-group">
+                                {% if "TRAINING:EDIT"|instancePermissions %}
+                                    <button data-toggle="modal" data-target="#editModuleModal{{ module.modules_id }}" class="btn btn-sm btn-default" title="Edit"><i class="fas fa-edit"></i></button>
+                                    {% if module.modules_type != 3 %}
+                                    <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&steps" class="btn btn-sm btn-default" title="Edit Module Steps">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if "TRAINING:VIEW:USER_PROGRESS_IN_MODULES"|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&users" class="btn btn-sm btn-default" title="User list">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </a>
+                                {% endif %}
+                                {% if module.modules_type != 3 and module.canComplete %}
+                                <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}" class="btn btn-sm btn-default" title="Work on Module">
+                                    {% if module.completed %}
+                                        <i class="fas fa-list-ol"></i>
+                                    {% else %}
+                                        <i class="far fa-check-square"></i>
+                                    {% endif %}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% if "TRAINING:EDIT"|instancePermissions %}
+        {% if "TRAINING:CREATE"|instancePermissions %}
+            {% if modules %}
+             {% set  modules = modules|merge([{ "NEW": true }]) %}
+            {% else %}
+             {% set modules = [{ "NEW": true }] %}
+            {% endif %}
+        {% endif %}
+        {% for module in modules %}
+        <div class="modal fade" id="editModuleModal{{ module.modules_id }}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ module.NEW ? 'New' : 'Edit' }} Module</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="editForm" data-id="{{ module.modules_id }}" id="{{ module.NEW ? 'editFormNew' }}">
+                            <input type="hidden" name="modules_id" value="{{ module.modules_id }}"/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Name</span>
+                                </div>
+                                <input required type="text" class="form-control" name="modules_name" value="{{ module.modules_name }}">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Description</span>
+                                </div>
+                                <textarea type="text" class="form-control" name="modules_description" rows="4">{{ module.modules_description }}</textarea>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Learning Objectives</span>
+                                </div>
+                                <textarea type="text" class="form-control" name="modules_learningObjectives" rows="8">{{ module.modules_learningObjectives }}</textarea>
+                            </div>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Type</span>
+                                </div>
+                                <select name="modules_type" class="form-control" value="{{ module.modules_type }}">
+                                    <option value="1" {{ module.modules_type == 1 ? 'selected' }}>Online: Users complete the module online, entirely by themselves</option>
+                                    <option value="2" {{ module.modules_type == 2 ? 'selected' }}>Hybrid: Users complete the module online, and are then certified by an administrator</option>
+                                    <option value="3" {{ module.modules_type == 3 ? 'selected' }}>Physical: Users cannot complete the module themselves - they are certified by an administrator</option>
+                                </select>
+                            </div>
+                            <hr/>
+                            <div class="input-group" style="margin-bottom: 5px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Publish in the module catalogue to be completed by users</span>
+                                </div>
+                                <input required type="checkbox" class="form-control" name="modules_show" {{ module.modules_show == 1 ? 'checked' : ''}}>
+                            </div>
+                            <div class="form-group">
+                                <label>Limit visibility to:</label>
+                                <select multiple class="form-control select2 select2bs4" name="modules_visibleToGroups">
+                                    {% for position in positions %}
+                                        <option value="{{ position.instancePositions_id }}" {% if position.instancePositions_id in module.modules_visibleToGroups|split(',') %}selected{% endif %}>{{ position.instancePositions_displayName }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <hr/>
+
+                            <h4>Thumbnail</h4>
+                            <input type="hidden" name="modules_thumbnail" value="{{ module.modules_thumbnail }}" id="moduleThumbnail{{ module.modules_id }}" />
+                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+                            {% embed 'assets/templates/uppy.twig' with {'type': 'MODULE-THUMBNAIL', 'paste': false, 'typeId': 12, 'imagesOnly': true, 'fileLimit': 1 } %}
+
+                                {% block success %}
+                                    $("#moduleThumbnail{{ module.modules_id }}").val(responseJson.id);
+                                {% endblock %}
+                            {% endembed %}
+                            {% endif %}
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary saveEditForm" data-id="{{ module.modules_id }}">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            {% if "TRAINING:EDIT"|instancePermissions %}
+            $(".saveEditForm").click(function () {
+                if ($(this).data("id")) {
+                    var formData = $(".editForm[data-id=" + $(this).data("id") + "]").serializeArray();
+                    ajaxcall("modules/edit.php", {formData}, function (data) {
+                        location.reload();
+                    });
+                } else {
+                    {% if "TRAINING:CREATE"|instancePermissions %}
+                    var formData = $("#editFormNew").serializeArray();
+                    ajaxcall("modules/new.php", {formData}, function (data) {
+                        window.location.href = "?drafts";
+                    });
+                    {% endif %}
+                }
+            });
+            {% endif %}
+        });
+    </script>
+</div>
+
+{% endblock %}

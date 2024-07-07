@@ -1,0 +1,15 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+	{% embed 'assets/templates/cmsPage.twig' with {'pageData': PAGE } %}{% endembed %}
+	<div class="row">
+		<div class="col-lg-12">
+			<div style="text-align: right; font-style: italic; padding-top: 20px;">
+				<p>This is a
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}cms/custom-dashboards">custom dashboard</a>
+
+					setup by your administrator</p>
+			</div>
+		</div>
+	</div>
+{% endblock %}

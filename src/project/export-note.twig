@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<style>
+			body {
+                font-size: 16px;
+                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+			}
+			table {
+			    width: 100%;
+			}
+			table td {
+                padding: 5px;
+                vertical-align: top;
+			}
+		</style>
+        <title>{{ note['projectsNotes_title'] }} - {{ project['projects_name'] }}</title>
+        <script>
+            window.onload = function () {
+                window.print();
+            }
+        </script>
+	</head>
+	<body>
+		<div align="center" style="width: 100%; text-align: center;">
+			<img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 200px; padding:20px;" />
+			<h2>{{ note['projectsNotes_title'] }}</h2>
+			<h3>{{ USERDATA['instance']['instances_name'] }} - {{ project['projects_name'] }}</h3>
+			<hr/>
+		</div>
+		{{ note.projectsNotes_text|raw }}
+        <hr/>
+        Exported {{ "now"|date("j M Y h:i:sa") }} from {{ CONFIG.PROJECT_NAME }}
+	</body>
+</html>

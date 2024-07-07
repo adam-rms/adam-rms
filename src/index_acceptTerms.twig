@@ -1,0 +1,32 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
+      <div class="card card-default">
+          <div class="card-body" style="text-align: center;">
+<p>Please confirm you have read and accept our
+	<a href="{{ CONFIG.LINKS_TERMSOFSERVICEURL }}" target="_blank">terms</a>
+</p>
+
+              <button id="submitButton" class="btn btn-default">I accept</button>
+
+          </div>
+          <div class="card-footer">
+<a href="{{ CONFIG.LINKS_SUPPORTURL }}">Contact Support</a>
+
+
+          </div>
+          <script>
+              $(document).ready(function () {
+                  $('#submitButton').click(function () {
+                    ajaxcall("account/acceptTOS.php", {}, function (data) {
+                        location.reload();
+                    });
+                  });
+              });
+          </script>
+      </div>
+  </div>
+</div>
+{% endblock %}

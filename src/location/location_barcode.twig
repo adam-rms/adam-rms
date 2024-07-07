@@ -1,0 +1,26 @@
+<style>
+    body {
+        text-align: center;
+    }
+    h1,h2,h3 {
+        margin-bottom: 2px;
+        margin-top:2px;
+    }
+</style>
+<script>
+    window.onload = function () {
+        window.print();
+    }
+</script>
+<body>
+    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and USERDATA.instance.instances_logo %}
+    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 40%;margin-bottom: 4px;">
+    {% endif %}
+    <!--<img src="{{ CONFIG.ROOTURL}}/static-assets/img/logosmall.png" style="width: 40%;" />-->
+    <h3>{{ USERDATA.instance.instances_name }}</h3>
+    <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ barcode.locationsBarcodes_value }}&size=200&width=4&type={{ barcode.locationsBarcodes_type }}" alt="Barcode" style="height: 40%;max-width:80%;margin:10px;">
+    <h1>{{ location.locations_name }}</h1>
+    {% if location.clients_name %}
+        <h2>{{ location.clients_name }}</h2>
+    {% endif %}
+</body>

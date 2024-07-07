@@ -1,0 +1,340 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectTypes.php">Project Types</a></li>
+                    {% endif %}
+					{% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/projectStatuses.php">Project Statuses</a></li>
+                    {% endif %}
+					{% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/invoices.php">Invoices</a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Project Statuses
+                </h3>
+                <div class="card-tools pull-right">
+                    {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
+                        <button type="button" class="btn btn-tool" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:60px;"></th>
+                            <th style="width:40px;">Icon</th>
+                            <th style="width:40px;">Projects</th>
+                            <th>Name &amp; Style</th>
+                            <th style="width:40px;">Assets Released</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="pageListSortable">
+                    {% for status in projectStatuses %}
+                        <tr value="{{ status.projectsStatuses_id }}" class="warning">
+                            <td>
+                                {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions and status.projectsStatuses_deleted != true %}
+                                    <span class="handle">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                   </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <i class="{{ status.projectsStatuses_fontAwesome }}"></i>
+                            </td>
+                            <td><a href="{{CONFIG.ROOTURL}}/project/list.php?status={{status.projectsStatuses_id}}">{{ status.project_count > 0 ? status.project_count : '' }}</a></td>
+                            <td style="background-color:{{ status.projectsStatuses_backgroundColour }}; color: {{ status.projectsStatuses_foregroundColour }}">
+                                {{status.projectsStatuses_name}}
+                                {% if status.projectsStatuses_description != '' %}
+                                    <br/><small>{{status.projectsStatuses_description}}</small>
+                                {% endif %}
+                                {% if status.projectsStatuses_deleted %}
+                                    <br/><span class="badge badge-info">Status deleted, but used by {{ status.project_count ~ " project" ~ (status.project_count != 1 ? 's': '') }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if status.projectsStatuses_assetsReleased %}
+                                    <i class="fas fa-check"></i>
+                                {% endif %}
+                            </td>
+                            <td style="width:70px;">
+                                <div class="btn-group">
+                                    {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions and status.projectsStatuses_deleted != true %}
+                                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ status.projectsStatuses_id }}"><i class="fas fa-edit"></i></button>
+                                    {% endif %}
+                                    {% if "PROJECTS:PROJECT_STATUSES:DELETE"|instancePermissions and status.projectsStatuses_deleted != true %}
+                                        <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ status.projectsStatuses_id }}"><i class="fas fa-trash"></i></button>
+                                    {% endif %}
+                                 </div>
+                                 {% if status.projectsStatuses_deleted %}
+                                    <span class="badge badge-danger">Deleted</span>
+                                 {% endif %}
+                              </td>
+                        </tr>
+                        <div class="modal fade" id="editModal{{ status.projectsStatuses_id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Edit {{status.projectsStatuses_name}}</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="edit-form" data-id="{{ status.projectsStatuses_id }}">
+                                            <input type="hidden" name="projectsStatuses_id" value="{{ status.projectsStatuses_id }}"/>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Name</span>
+                                                </div>
+                                                <input type="text" class="form-control" name="projectsStatuses_name" value="{{ status.projectsStatuses_name }}">
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Description</span>
+                                                </div>
+                                                <input type="text" class="form-control" name="projectsStatuses_description" value="{{ status.projectsStatuses_description }}">
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Icon</span>
+                                                </div>
+                                                <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome">
+                                                    {% if status.projectsStatuses_fontAwesome %}
+                                                        <option value="{{ status.projectsStatuses_fontAwesome }}"></option>
+                                                    {% endif %}
+                                                </select>
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Text Colour</span>
+                                                </div>
+                                                <input type="color" class="form-control" name="projectsStatuses_foregroundColour" value="{{ status.projectsStatuses_foregroundColour }}">
+                                            </div>
+                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Background Colour</span>
+                                                </div>
+                                                <input type="color" class="form-control" name="projectsStatuses_backgroundColour" value="{{ status.projectsStatuses_backgroundColour }}">
+                                            </div>
+                                            {% if status.projectsStatuses_assetsReleased != true and status.project_count < 1 %}
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Release Assets?</span>
+                                                    </div>
+                                                    <input type="checkbox" class="form-control" name="projectsStatuses_assetsReleased"  aria-describedby="assetsReleased" {{status.projectsStatuses_assetsReleased ? "checked": ""}}>
+                                                    <small class="form-text text-muted">If a project's status is "release assets", then assets assigned to those projects can be used by other projects, the project doesn't show in calendars, and crew are released from the project. This is intended for projects that are cancelled.</small>
+                                                </div>
+                                            {% else %}
+                                                <div class="input-group" style="margin-bottom: 5px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Release Assets?</span>
+                                                    </div>
+                                                    <input type="hidden" name="projectsStatuses_assetsReleased" value="{{status.projectsStatuses_assetsReleased ? "on": "off"}}">
+                                                    <input type="checkbox" class="form-control" aria-describedby="assetsReleased" {{status.projectsStatuses_assetsReleased ? "checked": ""}} disabled>
+                                                    <small class="form-text text-muted">Assets assigned to projects with this status can be used by other projects, the project doesn't show in calendars, and crew are released from the project. You can't modify this setting as the status has already been used by projects, or because assets have already been released.</small>
+                                                </div>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ status.projectsStatuses_id }}">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
+    <div class="modal fade" id="newModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New Project Status</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newCategoryForm">
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Name</span>
+                            </div>
+                            <input required type="text" class="form-control" name="projectsStatuses_name">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Description</span>
+                            </div>
+                            <input type="text" class="form-control" name="projectsStatuses_description" >
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Icon</span>
+                            </div>
+                            <select class="form-control rms-icon-picker" name="projectsStatuses_fontAwesome"></select>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Text Colour</span>
+                            </div>
+                            <input type="color" class="form-control" name="projectsStatuses_foregroundColour">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Background Colour</span>
+                            </div>
+                            <input type="color" class="form-control" name="projectsStatuses_backgroundColour" value="#F5F5F5">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Release Assets?</span>
+                            </div>
+                            <input type="checkbox" class="form-control" name="projectsStatuses_assetsReleased"  aria-describedby="assetsReleased">
+                            <small class="form-text text-muted">If a project's status is "release assets", then assets assigned to those projects can be used by other projects, the project doesn't show in calendars, and crew are released from the project. This is intended for projects that are cancelled.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveNewCategory">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('.rms-icon-picker').first().select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    minimumResultsForSearch: 1,
+                    placeholder: "Search for an Icon",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/icons/getIcons.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                search: params.term,
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: item.label,
+                                            id: "fas fa-" + item.code
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    },
+                    templateResult: input => $('<span><i class="' + input.id + '"></i>&nbsp;' + input.text + '</span>'),
+                    templateSelection: input => $('<span><i class="' + input.id + '"></i></span>')
+                });
+            });
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('.rms-icon-picker').first().select2('destroy');
+            });
+            {% if "PROJECTS:PROJECT_STATUSES:CREATE"|instancePermissions %}
+            $("#saveNewCategory").click(function () {
+                var formData = $("#newCategoryForm").serializeArray();
+                ajaxcall("instances/projectStatus/new.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_STATUSES:EDIT"|instancePermissions %}
+            $(".saveEdit-button").click(function () {
+                var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
+                ajaxcall("instances/projectStatus/edit.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            $('#pageListSortable').sortable({
+                placeholder         : 'sort-highlight',
+                handle              : '.handle',
+                forcePlaceholderSize: true,
+                zIndex              : 999999,
+                update: function( event, ui ) {
+                    console.log($("#pageListSortable").sortable('toArray', {attribute: 'value'}));
+                    ajaxcall("instances/projectStatus/editPageRank.php", {
+                        "order": $("#pageListSortable").sortable('toArray', {attribute: 'value'})
+                    }, null, true);
+
+                }
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_STATUSES:DELETE"|instancePermissions %}
+            $(".deleteButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    title:"Are you sure?",
+                    message: "Users will not be able to change the status of projects to this status if it is deleted. This will not affect projects that are already set to this status",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "projectsStatuses_id", "value":id },{"name": "projectsStatuses_deleted", "value":"1" }];
+                            ajaxcall("instances/projectStatus/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+
+        });
+    </script>
+</div>
+
+{% endblock %}

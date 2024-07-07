@@ -1,0 +1,97 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 offset-lg-4">
+            <form id="job-form">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">New Job</h3>
+                        <div class="card-tools pull-right">
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}assets/maintenance" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-sm">Title
+                            <input type="text" class="form-control" required name="maintenanceJobs_title" />
+                        </p>
+                        <input type="hidden" name="maintenanceJobs_user_creator" value="{{ USERDATA.users_userid }}"/>
+                        <p class="text-sm">Fault Description
+                            <textarea class="form-control" required name="maintenanceJobs_faultDescription"></textarea>
+                        </p>
+                        <p class="text-sm">Assets
+                            <select class="form-control" required multiple="multiple" id="addAssetModal-assets" placeholder="Enter asset tags here"></select>
+                        </p>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                  Priority
+                                                                </span>
+                            </div>
+                            <select class="form-control" name="maintenanceJobs_priority">
+                                {% for type in MAINTENANCEJOBPRIORITIES %}
+                                    <option value="{{ type.id }}" {% if type.default %}selected{% endif %}>{{ type.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group float-right">
+                            <button type="submit" class="btn btn-default">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $("#job-form").on("submit", function(e){
+                e.preventDefault();
+                var formData = $(this).serializeArray();
+                var assets = $("#addAssetModal-assets").select2("val");
+                formData.push({"name": "maintenanceJobs_assets", "value":assets.join(',')});
+                ajaxcall("maintenance/newJob.php", {formData}, function (data) {
+                    window.location.href = "{{ CONFIG.ROOTURL }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
+                });
+            });
+            $("#addAssetModal-assets").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 0,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Enter asset numbers to search for assets",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchAsset.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                        id: item.assets_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

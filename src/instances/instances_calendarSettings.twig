@@ -1,0 +1,170 @@
+{% extends "assets/template.twig" %}
+{% block htmlIncludes %}
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/billing.php">Billing</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/settings.php">Basic Settings</a></li>
+					{% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/logo.php">Logo</a></li>
+                    {% endif %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/public.php">Public Site</a></li>
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/calendarSettings.php">Calendar Settings</a></li>
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-4">
+        <div class="card">
+            <form id="calendarSettings">
+                <div class="card-header">
+                    <div class="card-title">Calendar Settings</div>
+                </div>
+                <div class="card-body">
+                    <p>These settings only apply to calendars across the dashboard. <br />
+                    <small>iCal calendars and those in the app are not affected by these settings.</small></p>
+                    <div class="form-check py-2">
+                        <input type="checkbox" class="form-check-input" name="showProjectStatus" {{ calendarSettings.showProjectStatus ? 'checked' : '' }}>
+                        <label class="form-check-label">Show Project Statuses with Project Name</label>
+                    </div>
+                    <div class="form-check py-2">
+                        <input type="checkbox" class="form-check-input" name="showSubProjects" {{ calendarSettings.showSubProjects ? 'checked' : '' }}>
+                        <label class="form-check-label">Show SubProjects on calendars</label>
+                    </div>
+                    <div class="form-check py-2">
+                        <input type="checkbox" class="form-check-input" name="useCustomWeekNumbers" {{ calendarSettings.useCustomWeekNumbers ? 'checked' : '' }} aria-describedby="useCustomWeekNumbersHelp">
+                        <label class="form-check-label">Use Custom Week Labels</label>
+                        <small id="useCustomWeekNumbersHelp" class="form-text text-muted">Does not apply to asset calendars</small>
+                    </div>
+                    <div class="form-group py-2">
+                        <label for="defaultView">Default Calendar View</label>
+                        <select class="form-control" id="defaultView" name="defaultView"  aria-describedby="defaultViewHelp">
+                            <option value="dayGridMonth" {{ (calendarSettings.defaultView == 'dayGridMonth') ? 'selected' : '' }}>Month View</option>
+                            <option value="timeGridWeek" {{ (calendarSettings.defaultView == 'timeGridWeek') ? 'selected' : '' }}>Week View</option>
+                            <option value="timeGridDay" {{ (calendarSettings.defaultView == 'timeGridDay') ? 'selected' : '' }}>Day View</option>
+                            <option value="listWeek" {{ (calendarSettings.defaultView == 'listWeek') ? 'selected' : '' }}>List View</option>
+                        </select>
+                        <small id="defaultViewHelp" class="form-text text-muted">Does not apply to asset calendars</small>
+                    </div>
+                </div>
+                {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-default save">Save</button>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+        <script>
+            $(document).ready(function() {
+                $("#calendarSettings").on("submit", function(e){
+                    e.preventDefault();
+                });
+                $('.save').on('click', function() {
+                    var formData = $("#calendarSettings").serializeArray();
+                    ajaxcall("instances/editCalendarSettings.php", {formData});
+                });
+            });
+        </script>
+    </div>
+    <div class="col-12 col-md-8">
+        <div class="card">
+            <form id="weekLabels">
+                <div class="card-header">
+                    <h3 class="card-title">Week Labels</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Week Start Date</th>
+                                <th>Week Label</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for weekdate, weekLabel in USERDATA.instance['instances_weekStartDates']|jsonDecode %}
+                                <tr class="border-bottom">
+                                    <td>
+                                        <input type="date" class="form-control" name="weekStartDate" value="{{ weekdate }}" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="weekLabel" value="{{ weekLabel }}" />
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>                    
+                </div>
+                <div class="card-footer">
+                    <p class="card-subtitle mb-2">Select 'Use Custom Week Labels' in general settings to enable</p>
+                    <p style="font-style: italic;">Add week dates to change week labelling on calendars across {{ CONFIG.PROJECT_NAME }}. This is normally used by schools and universities, and so in that instance they would put the week start dates as the day term starts for each term. Leave a space in the box to leave it blank.</p>
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                    <button type="button" class="btn btn-default" id="populate3months">Add next 3 months</button>
+                    <button type="button" class="btn btn-default" id="addNewWeekValueRow">Add Row</button>
+                    <button type="submit" class="btn btn-default">Save</button>
+                    {% endif %}
+                </div>
+            </form>
+            <script>
+                $(document).ready(function() {
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                    $("#weekLabels").on("submit", function(e){
+                        e.preventDefault();
+                        var lastDate;
+                        var formData = {};
+                        // Link the date and the string
+                        $('#weekLabels *').filter(':input[type=text],:input[type=date]').each(function(){
+                            if ($(this).is(':input[type=text]')) {
+                                if (lastDate != "" && $(this).val()) {
+                                    formData[lastDate] = $(this).val();
+                                }
+                            } else {
+                                lastDate = $(this).val();
+                            }
+                        });
+                        var formData = [{"name": "instances_weekStartDates", "value":JSON.stringify(formData) }];
+                        ajaxcall("instances/editInstance.php", {formData});
+                    });
+                
+                    $("#addNewWeekValueRow").on("click", function(){
+                        $("#weekLabels > div > table").append(`<tr class="border-bottom">
+                            <td>
+                                <input type="date" class="form-control" name="weekStartDate" value="{{ "now"|date("Y-m-d") }}" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="weekLabel" value=" " />
+                            </td>
+                        </tr>`);
+                    });
+                    $("#populate3months").on("click", function() {
+                        var date = $('#weekLabels *').filter(':input[type=date]').last().val();
+                        if (date) {
+                            var jsDate = new Date(Date.parse(date));
+                            for (let i = 1; i <= 13; i++) {
+                                jsDate.setDate(jsDate.getDate() + 7);
+                                $("#weekLabels > div > table").append(`<tr class="border-bottom">
+                                    <td>
+                                        <input type="date" class="form-control" name="weekStartDate" value="` + jsDate.toISOString().split('T')[0] + `" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="weekLabel" value="` + "Week " + i + `" />
+                                    </td>
+                                </tr>`);
+                            }
+                        }
+                    });
+                    {% endif %}
+                });
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock %}

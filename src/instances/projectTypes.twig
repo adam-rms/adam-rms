@@ -1,0 +1,163 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                    <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/projectTypes.php">Project Types</a></li>
+                    {% endif %}
+					{% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectStatuses.php">Project Statuses</a></li>
+                    {% endif %}
+					{% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/invoices.php">Invoices</a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Project Types
+                </h3>
+                <div class="card-tools pull-right">
+                    <form class="input-group input-group-sm" method="GET">
+                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            {% if "PROJECTS:PROJECT_TYPES:CREATE"|instancePermissions %}
+                                <button type="button" class="btn btn-default" id="addType"><i class="fa fa-plus"></i></button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="width:15rem;">
+                            Name
+                        </th>
+                        {% for id,name in options %}
+                        <th>
+                            {{ name }}
+                        </th>
+                        {% endfor %}
+                        <th style="width:70px;">
+
+                        </th>
+                    </tr>
+                    {% for type in types %}
+                          <tr>
+                              <td>
+                                  {{type.projectsTypes_name}}
+                              </td>
+                              {% for id,name in options %}
+                                  <td>
+                                      <input type="checkbox" data-typeid="{{ type.projectsTypes_id }}" {{ (type[id] == 1 ? 'checked' : '') }} {% if "PROJECTS:PROJECT_TYPES:EDIT"|instancePermissions %}{% else %}disabled{% endif %} data-option="{{ id }}">
+
+                                  </td>
+                              {% endfor %}
+                              <td>
+                                 <div class="btn-group">
+                                     {% if "PROJECTS:PROJECT_TYPES:EDIT"|instancePermissions %}
+                                        <button type="button" class="btn btn-default btn-sm editButton" data-typeid="{{ type.projectsTypes_id }}" data-value="{{type.projectsTypes_name}}"><i class="fas fa-edit"></i></button>
+                                     {% endif %}
+                                     {% if "PROJECTS:PROJECT_TYPES:DELETE"|instancePermissions and type.count < 1 %}
+                                         <button type="button" class="btn btn-danger btn-sm deleteButton" data-typeid="{{ type.projectsTypes_id }}"><i class="fas fa-trash"></i></button>
+                                     {% endif %}
+                                 </div>
+                              </td>
+                          </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="overlay" id="loading">
+                <i class="fas fa-sync fa-spin fa-3x"></i>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#loading").hide();
+            {% if "PROJECTS:PROJECT_TYPES:CREATE"|instancePermissions %}
+            $("#addType").click(function () {
+                bootbox.prompt({
+                    title: "Add Project Type",
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "projectsTypes_name", "value":result }];
+                            ajaxcall("instances/projectTypes/new.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_TYPES:EDIT"|instancePermissions %}
+            $(':checkbox').change(function() {
+                $("#loading").show();
+                var id = $(this).data("typeid");
+                var formData = [{"name": "projectsTypes_id", "value":id },{"name": $(this).data("option"), "value":($(this).is(":checked") ? '1' : '0') }];
+                ajaxcall("instances/projectTypes/edit.php", {formData}, function (data) {
+                    $("#loading").hide();
+                });
+            });
+            $(".editButton").click(function () {
+                var id = $(this).data("typeid");
+                bootbox.prompt({
+                    title: "Rename Project Type",
+                    value: $(this).data("value"),
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "projectsTypes_id", "value":id },{"name": "projectsTypes_name", "value":result }];
+                            ajaxcall("instances/projectTypes/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:PROJECT_TYPES:DELETE"|instancePermissions %}
+            $(".deleteButton").click(function () {
+                var id = $(this).data("typeid");
+                bootbox.confirm({
+                    title:"Are you sure?",
+                    message: "Deleting the type cannot be undone",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "projectsTypes_id", "value":id },{"name": "projectsTypes_deleted", "value":"1" }];
+                            ajaxcall("instances/projectTypes/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+
+        });
+    </script>
+</div>
+
+{% endblock %}

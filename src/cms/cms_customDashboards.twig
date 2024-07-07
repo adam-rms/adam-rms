@@ -1,0 +1,62 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Role Groups - Custom Dashboards
+                    </h3>
+                    <div class="card-tools pull-right">
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}cms/custom-dashboards" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Role Group</th>
+                                <th>Custom Dashboard</th>
+                            </tr>
+                        </thead>
+                        {% for position in positions %}
+                            <tbody>
+                            <tr>
+                                <td>
+                                    {{ position.instancePositions_displayName }}
+                                </td>
+                                <td>
+                                    <select class="form-control select2 select2bs4" data-position="{{ position.instancePositions_id }}">
+                                        <option value="">None</option>
+                                        {% for page in CMSPages %}
+                                            <option value="{{ page.cmsPages_id }}" {% if position.cmsPages_id == page.cmsPages_id %}selected{% endif %}>{{ page.cmsPages_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('.select2').select2({
+                    theme: "bootstrap4",
+                    width: '100%'
+                });
+                $('.select2[data-position]').on('select2:select', function (e) {
+                    var selected = e.params.data.id;
+                    var position = $(this).data("position");
+                    ajaxcall("cms/setCustomDashboard.php", {
+                        "cmsPages_id": selected,
+                        "instancePositions_id": position
+                    });
+                });
+            });
+        </script>
+    </div>
+
+{% endblock %}

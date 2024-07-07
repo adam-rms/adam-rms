@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml">
+	<head>
+		<title>{{ CONFIG.PROJECT_NAME }}</title>
+		<meta
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+
+		<!--Facebook Link Sharing Data-->
+		<meta property="og:title" content="{{ CONFIG.PROJECT_NAME }}"/>
+		<meta property="og:type" content="website"/>
+		<meta property="og:url" content="/login/"/>
+		<meta property="og:site_name" content="{{ CONFIG.PROJECT_NAME }}"/>
+		<meta property="og:description" content="{{ CONFIG.PROJECT_NAME }} admin login"/>
+
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous"/>
+		<style>
+			html,
+			body,
+			.container,
+			#masterRow {
+				height: 99%;
+				font-size: 14px;
+			}
+			html {
+				background-color: black;
+			}
+			@property --innerShadow {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 41%;
+			}
+			@property --secondShadow {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 44%;
+			}
+			@property --chromaticAberration {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 44%;
+			}
+			@property --outerShadow {
+				syntax: '<percentage>';
+				inherits: false;
+				initial-value: 44%;
+			}
+			@property --chromaticAberrationOuterColor {
+				syntax: '<color>';
+				inherits: false;
+				initial-value: black;
+			}
+			@keyframes lightFocusAnimation {
+				 	0% {
+						--innerShadow:30%;
+						--chromaticAberration:0%;
+						--outerShadow:44%;
+						--chromaticAberrationOuterColor:black;
+					}
+					20% {
+						--innerShadow:41%;
+						--chromaticAberration:0%;
+						--chromaticAberrationOuterColor:black;
+					}
+					40% {
+						--innerShadow:43.5%;
+						--chromaticAberration:calc((var(--outerShadow) - var(--innerShadow))/3);
+						--chromaticAberrationOuterColor:#BF4222A0;
+					}
+					60% {
+						--innerShadow:42%;
+						--chromaticAberration:calc((var(--outerShadow) - var(--innerShadow))/3);
+					}
+					95% {
+						--innerShadow:43.5%;
+						--chromaticAberration:0%;
+					}
+					100% {
+						--innerShadow:var(--outerShadow);
+						--chromaticAberration:0%;
+						--outerShadow:44%;
+						--chromaticAberrationOuterColor:#BF4222A0;
+					}
+				/*from {background: radial-gradient(circle at center, whitesmoke 0%, whitesmoke 35%, black 37%, black 100%);}
+				to {background: radial-gradient(circle at center, whitesmoke 0%, whitesmoke 5%, black 45%, black 100%);}
+				calc((((var(--outerShadow) - var(--innerShadow))/2)) + var(--innerShadow))*/
+			}
+			body {
+				animation-name: lightFocusAnimation;
+  			animation-duration: {{ runLightFocusAnimation ? '4s' : '0s' }};	
+				animation-iteration-count: 1;
+				animation-fill-mode: forwards;
+				animation-delay: 0s;
+				animation-direction: alternate;
+				background: radial-gradient(circle at center, white 0%, #F5F5F5B7 30%, #D3D3D3B7 var(--innerShadow), #FBCE3EA0 calc(var(--innerShadow) + var(--chromaticAberration)), var(--chromaticAberrationOuterColor) calc(var(--innerShadow) + var(--chromaticAberration)*3), black var(--outerShadow), black 100%);
+			}
+			#masterBox {
+				background: white;
+				text-align: center;
+				border-radius: 1em;
+				border-style: solid;
+  			border-width: 0.1px;
+				border-color: grey;
+				padding: 1em;
+				margin: 0;
+			}
+			.footer {
+				color: white;
+				padding: 10px;
+			}
+			a {
+				color: inherit; /* blue colors for links too */
+				text-decoration: inherit; /* no underline */
+			}
+			#errorMessageBox {
+				display: none;
+				border: 0px;
+				text-align: left; 
+			}
+			#errorMessageBox p {
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row align-items-center" id="masterRow">
+				<div class="col-lg-6 offset-lg-3
+						                            col-md-6 offset-md-3
+						                            col-sm-8 offset-sm-2
+						                            col-xs-10 offset-xs-1">
+					<div id="masterBox">
+						<a href="{{CONFIG.ROOTURL}}/login/?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
+						{% if CONFIG.DEV %}
+							<div class="alert alert-warning" style="border: 0px; text-align: left;">
+								<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
+								<a type="button" href="/" onclick="javascript:event.target.port=8082" target="_blank" class="btn btn-info btn-sm">Database Editor</a>
+							</div>
+						{% endif %}
+						{% block content %}{% endblock %}
+					</div>
+				</div>
+			</div>
+			<div class="footer fixed-bottom">
+				<div class="row">
+					<div class="col-4">
+						{{ VERSION }}
+					</div>
+					<div class="col-8" style="text-align: right;">
+						<a style="margin-right: 15px;" href="https://adam-rms.com">About</a>
+{% if CONFIG.LINKS_TERMSOFSERVICEURL %}
+	<a href="{{ CONFIG.LINKS_TERMSOFSERVICEURL }}" target="_blank">Terms &amp; Privacy</a>
+{% endif %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+		{{ CONFIG.FOOTER_ANALYTICS|raw }}
+	</body>
+</html>

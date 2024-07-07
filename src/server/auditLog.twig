@@ -1,0 +1,103 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-lg-6 offset-lg-3 col-md-12">
+			<div class="alert alert-warning alert-dismissible">
+				<h5><i class="icon fas fa-info"></i> Server-Wide Configuration</h5>
+				You are modifying settings and configuration that affect the whole of the {{ CONFIG.PROJECT_NAME }} Server, including all businesses (instances) running on it. Please be careful when making changes here.
+			</div>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% if search|length > 0 %}
+                            Search results for events matching <b>{{ search }}</b>
+                        {% elseif pageConfig.userby %}
+                            Events filtered by user (<a href="?">Clear</a>)
+                        {% elseif pageConfig.userto %}
+                            Events filtered by target user (<a href="?">Clear</a>)
+                        {% else %}
+                            {{ pagination.total|number_format }} Audit Log Events
+                        {% endif %}
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <form class="input-group input-group-sm" style="width: 150px;" method="GET">
+                            <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    {% if items|length > 0 %}
+                        <table class="table table-head-fixed" border="0" style="overflow-x: scroll;">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Table Affected</th>
+                                <th>Timestamp</th>
+                                <th>Action performed by</th>
+                                <th>Action performed against user</th>
+                                <th>Data</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td>{{ item.auditLog_id }}</td>
+                                    <td>{{ item.auditLog_actionType }}</td>
+                                    <td>{{ item.auditLog_actionTable }}</td>
+                                    <td>{{ item.auditLog_timestamp|date("d M Y H:i:s") }}</td>
+                                    <td>
+                                        {% if item.users_userid != null %}
+                                        <a href="?userby={{ item.users_userid }}">{{ item.users_name1 ~ ' ' ~ item.users_name2 }}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.userAction_userid != null %}
+                                            <a href="?userto={{ item.userAction_userid }}">{{ item.userAction_name1 ~ ' ' ~ item.userAction_name2 }}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td><pre>{% if item.auditLog_actionData is iterable %}{{ item.auditLog_actionData|json_encode()|raw }}{% else %}{{ item.auditLog_actionData|raw }}{% endif %}</pre></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <center><p style="margin: 10px;"><i>No results</i><br/><a href="?">Remove any filters</a></p></center>
+                    {% endif %}
+                </div>
+                {% if pagination.total > 1 %}
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {% if pagination.page > 1 %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: (pagination.page -1)}|modifyGet }}">&laquo;</a></li>
+                        {% endif %}
+
+                        {% for i in range((pagination.page > 3 ? pagination.page-2 : 1), (pagination.total > 5 and pagination.page+2 < pagination.total ? pagination.page+2 : pagination.total)) %}
+                            <li class="page-item"><a class="page-link" href="?{{ {page: i}|modifyGet }}">
+                                    {% if pagination.page == i %}
+                                        <b>{{ i }}</b>
+                                    {% else %}
+                                        {{ i }}
+                                    {% endif %}
+                                </a></li>
+                        {% endfor %}
+
+                        {% if pagination.page < pagination.total %}
+                            <li class="page-item"><a class="page-link"  href="?{{ {page: (pagination.page +1)}|modifyGet }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

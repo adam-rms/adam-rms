@@ -1,0 +1,33 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {{ LOCATION.locations_name }} Files
+                </h3>
+            </div>
+            <div class="card-body">
+{% embed 'assets/templates/fileBox.twig' with {'files': LOCATION.files } %}
+
+
+                {% endembed %}
+            </div>
+            {% if "LOCATIONS:LOCATION_FILE_ATTACHMENTS:CREATE"|instancePermissions %}
+            <div class="card-footer">
+                {% embed 'assets/templates/uppy.twig' with {'type': 'LOCATION-FILE', 'paste': true, 'typeId': 11, 'subTypeId': LOCATION['locations_id'], 'imagesOnly': false } %}
+                    {% block success %}
+                        console.log(responseJson.id);
+                    {% endblock %}
+                {% endembed %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% embed 'assets/templates/fileBoxJS.twig' %}
+
+    {% endembed %}
+{% endblock %}

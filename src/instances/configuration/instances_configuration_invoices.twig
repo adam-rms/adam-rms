@@ -1,0 +1,64 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectTypes.php">Project Types</a></li>
+                    {% endif %}
+					{% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectStatuses.php">Project Statuses</a></li>
+                    {% endif %}
+					{% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/configuration/invoices.php">Invoices</a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">Project Invoice Footer</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="instances_quoteTerms">Quotation Footer</label>
+                        <textarea class="form-control" id="instances_quoteTerms" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ USERDATA.instance.instances_quoteTerms }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="instances_termsAndPayment">Invoice Footer</label>
+                        <textarea class="form-control" id="instances_termsAndPayment" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ USERDATA.instance.instances_termsAndPayment }}</textarea>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                    <button id="saveTermsAndPayment" class="btn btn-default">Save</button>
+                    {% endif %}
+                </div>
+            <script>
+                $(document).ready(function() {
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                    $('#saveTermsAndPayment').on('click', function() {
+                        ajaxcall("instances/editInstance.php", {
+                            'formData': [
+                                { 'name': 'instances_termsAndPayment','value':$('#instances_termsAndPayment').val() },
+                                { 'name': 'instances_quoteTerms','value':$('#instances_quoteTerms').val() }
+                            ]
+                        }, function (data) {
+                            location.reload();
+                        }, false);
+                    });
+                    {% endif %}
+                });
+            </script>
+        </div>
+   </div>
+</div>
+{% endblock %}

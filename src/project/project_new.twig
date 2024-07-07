@@ -1,0 +1,150 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+{% if NOCAPACITY %}
+<div class="row">
+    <div class="col-md-12 col-lg-6 offset-lg-3">
+        <div class="card box-solid">
+            <div class="card-header">
+                <h3 class="card-title">Cannot create projects</h3>
+            </div>
+            <div class="card-body">
+                <p>Your current plan does not enable you to create any more projects as you have used your capacity.</p>
+                <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12 col-lg-6 offset-lg-3"> 
+        <div class="card box-solid">
+            <div class="card-header">
+                <h3 class="card-title">Add new Project</h3>
+                <div class="card-tools pull-right">
+                    <a href="{{ CONFIG.LINKS_USERGUIDEURL }}projects/" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="addNewForm">
+                    <div class="form-group">
+                        <label>Project Name *</label>
+                        <input type="text" class="form-control" id="projects_name" required />
+                        <p class="invalid-feedback">Project Name is required</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Description</label>
+                        <textarea type="text" class="form-control" id="projects_description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Manager *</label>
+                        <select class="form-control  select2bs4" id="manager" required>
+                            {% for user in potentialProjectManagers %}
+                                <option {{ user.users_userid == USERDATA.users_userid ? "selected" : "" }} value="{{ user.users_userid }}">{{ (user.users_name1 ~ " " ~ user.users_name2) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Type *</label>
+                        <select class="form-control  select2bs4" id="type" required>
+                            {% for type in potentialProjectTypes %}
+                                <option value="{{ type.projectsTypes_id }}">{{ type.projectsTypes_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Dates</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                            </div>
+                            <input type="text" class="form-control float-right" id="datePickerInput">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Parent Project</label>
+                        <select class="form-control  select2bs4" id="parent" required aria-describedby="subprojectHelp">
+                            <option value="-1">No Parent</option>
+                            {% for project in projects %}
+                                <option value="{{ project.projects_id }}">{{ project.projects_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small id="subprojectHelp" class="form-text text-muted">Make this a sub-project of the given parent project</small>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-default float-right" id="saveButton">Save</button>
+            </div>
+            <div class="overlay">
+                <i class="fas fa-2x fa-sync-alt"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    <style>
+        .input-group {
+            margin-bottom: 5px;
+        }
+    </style>
+    <script>
+        let startDate = null;
+        let endDate = null;
+
+        $(document).ready(function () {
+            $(".overlay").hide();
+            $("#manager").select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            $("#type").select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+            $("#parent").select2({
+                theme: "bootstrap4",
+                width: '100%'
+            });
+             $('#datePickerInput').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 15,
+                locale: {
+                    format: 'DD MMM YYYY hh:mm A'
+                },
+                autoUpdateInput: false,
+            });
+
+            $('#datePickerInput').on('apply.daterangepicker', function(ev, picker) {
+                startDate = picker.startDate.format('DD MMM YYYY hh:mm A');
+                endDate = picker.endDate.format('DD MMM YYYY hh:mm A');
+
+                $(this).val(startDate + ' - ' + endDate);
+            });
+
+            $('#saveButton').on('click', function(event) {
+
+                if (!$('#projects_name').val()) {
+                    event.preventDefault();
+                    $('#projects_name').addClass('is-invalid')
+                    return
+                }
+
+                const data = {
+                    "projects_name": $('#projects_name').val(),
+                    "projects_description": $('#projects_description').val(),
+                    "projectsType_id": $('#type').val(),
+                    "projects_manager": $('#manager').val(),
+                }
+
+                if (startDate) data['projects_dates_use_start'] = startDate
+                if (endDate) data['projects_dates_use_end'] = endDate
+                if ($('#parent').val() !== '-1')
+                    data['projects_parent_project_id'] = $('#parent').val();
+
+                ajaxcall("projects/new.php", data , function (data) {
+                    window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+                });
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}
