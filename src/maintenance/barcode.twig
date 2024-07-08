@@ -533,6 +533,8 @@
             function handleDeviceHasNoCamera(){
                 // This device doesn't have a camera, show a nicer message
                 $('#barcodeScanStartButton').prop("disabled",true); // Disable scanning button
+                $('#customLocationText').prop("disabled",true); // Disable Location text input
+                $('#setCustomLocationButton').prop("disabled",true); // Disable Location button
                 $('#errorCardContainer').show();
             }
 
