@@ -43,13 +43,32 @@
     </script>
 {% endblock %}
 {% block content %}
+    <div class="row" id="errorCardContainer" style="display: none;">
+        <div class="col-lg-6 offset-lg-3 col-md-12">
+            <div class="card">
+                <div class="card-header border-danger">
+                    <h3 class="card-title">⚠️ No Camera Found</h3>
+                </div>
+                <div class="card-body">
+                    <p>We couldn't find a camera attached to this device, so can't start scanning for barcodes.</p>
+                    <p>If you think you should have one available, try:</p>
+                    <ul>
+                        <li>Checking the camera is connected to the computer</li>
+                        <li>Checking this tab has access to the camera in your browser settings</li>
+                        <li>Checking your browser can access the camera in your computer settings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12 col-md-6">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Barcode Scanner</h3>
                     <div class="card-tools">
-                        <button class="btn btn-tool btn-danger" title="Stop Scanning" id="barcodeScanResetButton" style="display:none;">Stop Scanning</button>
+                        <button class="btn btn-sm btn-danger" title="Stop Scanning" id="barcodeScanResetButton" style="display: none;">Stop Scanning</button>
+                        <a class="btn btn-sm btn-info" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
                     </div>
                 </div>
                 <div class="card-body" id="barcodeScanVideoCard">
@@ -57,7 +76,7 @@
                     <video id="barcodeScanVideo" width="1920" height="1080" style="border: 0;"></video>
                 </div>
                 <div class="card-footer">
-                    <div class="input-group my-2" id="barcodeScanSourceSelectPanel" style="display:none">
+                    <div class="input-group my-2" id="barcodeScanSourceSelectPanel" style="display: none;">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
                                 Camera:
@@ -99,9 +118,6 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Assets Scanned</h3>
-                    <div class="card-tools">
-                        <a class="btn btn-tool btn-info" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
-                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row d-flex align-items-stretch" id="assetsScannedList"></div>
@@ -446,51 +462,80 @@
             const barcodeScanVideoWidth = $("#barcodeScanVideoCard").width()
             $("#barcodeScanVideo").attr("width", barcodeScanVideoWidth)
             $("#barcodeScanVideo").attr("height", barcodeScanVideoWidth/1.7)
+
+            const codeReader = new ZXing.BrowserMultiFormatReader();
+
             let selectedDeviceId;
-            const codeReader = new ZXing.BrowserMultiFormatReader()
-            codeReader.listVideoInputDevices().then((videoInputDevices) => {
-                const sourceSelect = document.getElementById('barcodeScanSourceSelect')
-                selectedDeviceId = videoInputDevices[0].deviceId
-                if (videoInputDevices.length >= 1) {
-                    // Allow user to select different camera source
-                    videoInputDevices.forEach((element) => {
-                        const sourceOption = document.createElement('option')
-                        sourceOption.text = element.label
-                        sourceOption.value = element.deviceId
-                        sourceSelect.appendChild(sourceOption)
+
+            // There are two things to check whether we can actually do barcode scanning:
+            // If we're able to check for devices, and whether we actually have any devices
+            //First, check whether we can check for devices
+
+            if (codeReader.canEnumerateDevices) {
+                // We're able to check for cameras, so lets get some
+                codeReader.listVideoInputDevices().then((videoInputDevices) => {
+                    if (videoInputDevices.length <1) {
+                        // We didn't find any cameras, so give up here
+                        throw new Error('NO-DEVICE')
+                    }
+                    const sourceSelect = document.getElementById('barcodeScanSourceSelect')
+                    selectedDeviceId = videoInputDevices[0].deviceId
+                    if (videoInputDevices.length >= 1) {
+                        // Allow user to select different camera source
+                        videoInputDevices.forEach((element) => {
+                            const sourceOption = document.createElement('option')
+                            sourceOption.text = element.label
+                            sourceOption.value = element.deviceId
+                            sourceSelect.appendChild(sourceOption)
+                        })
+                        sourceSelect.onchange = () => {
+                            selectedDeviceId = sourceSelect.value;
+                        };
+                        $("#barcodeScanSourceSelectPanel").show();
+                    }
+                    document.getElementById('barcodeScanStartButton').addEventListener('click', () => {
+                        $("#barcodeScanResetButton").show()
+                        $("#barcodeScanStartButton").hide()
+                        codeReader.decodeFromVideoDevice(selectedDeviceId, 'barcodeScanVideo', (result, err) => {
+                        if (result) {
+                            barcodeScanned(result)
+                        }
+                        if (err && !(err instanceof ZXing.NotFoundException)) {
+                            console.error(err)
+                            bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function () {
+                                codeReader.reset()
+                            });
+                        }
+                        })
                     })
-                    sourceSelect.onchange = () => {
-                        selectedDeviceId = sourceSelect.value;
-                    };
-                    $("#barcodeScanSourceSelectPanel").show();
-                }
-                document.getElementById('barcodeScanStartButton').addEventListener('click', () => {
-                    $("#barcodeScanResetButton").show()
-                    $("#barcodeScanStartButton").hide()
-                    codeReader.decodeFromVideoDevice(selectedDeviceId, 'barcodeScanVideo', (result, err) => {
-                    if (result) {
-                        barcodeScanned(result)
-                    }
-                    if (err && !(err instanceof ZXing.NotFoundException)) {
-                        console.error(err)
-                        bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function () {
-                            codeReader.reset()
-                        });
-                    }
+                    document.getElementById('barcodeScanResetButton').addEventListener('click', () => {
+                        $("#barcodeScanResetButton").hide()
+                        codeReader.reset()
+                        $("#barcodeScanStartButton").show()
                     })
                 })
-                document.getElementById('barcodeScanResetButton').addEventListener('click', () => {
-                    $("#barcodeScanResetButton").hide()
-                    codeReader.reset()
-                    $("#barcodeScanStartButton").show()
+                .catch((err) => {
+                    if (err.message == 'NO-DEVICE'){
+                        handleDeviceHasNoCamera();
+                        return;
+                    }
+                    // Catch all for other errors, Missing camera error should be handled elsewhere
+                    console.error(err)
+                    bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function () {
+                        location.reload()
+                    });
                 })
-            })
-            .catch((err) => {
-                console.error(err)
-                bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function () {
-                    location.reload()
-                });
-            })
+            } else {
+                handleDeviceHasNoCamera()
+            }
+            
+
+            function handleDeviceHasNoCamera(){
+                // This device doesn't have a camera, show a nicer message
+                $('#barcodeScanStartButton').prop("disabled",true); // Disable scanning button
+                $('#errorCardContainer').show();
+            }
+
         })
     </script>
 {% endblock %}
