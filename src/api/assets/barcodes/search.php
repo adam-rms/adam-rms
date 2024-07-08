@@ -7,23 +7,22 @@ if (!isset($_POST['text']) or !isset($_POST['type']) or strlen($_POST['text']) <
 $DBLIB->where("locationsBarcodes_value", $_POST['text']);
 $DBLIB->where("locationsBarcodes_type", $_POST['type']);
 $DBLIB->where("locationsBarcodes_deleted", 0);
-$locationBarcode = $DBLIB->getone("locationsBarcodes", ["locations_id", "locationsBarcodes_id"]);
-if ($locationBarcode) {
-    $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
-    $DBLIB->where("locations.locations_deleted", 0);
-    $DBLIB->where("locations.locations_id", $locationBarcode['locations_id']);
-    $location = $DBLIB->getOne("locations", ["locations_id", "locations_name"]);
-    if ($location) {
-        $location['barcode'] = $locationBarcode;
-        //Location has been found
-    } else $location = false;
+$DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("locations.locations_deleted", 0);
+$DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
+$location = $DBLIB->getone("locationsBarcodes", ["locationsBarcodes.locations_id", "locationsBarcodes.locationsBarcodes_id", "locations.locations_name"]);
+if ($location) {
+    $location['barcode'] = $location['locationsBarcodes_id'];
+    //Location has been found
 } else $location = false;
 
 //See if Barcode is in database
 $DBLIB->where("assetsBarcodes_value", $_POST['text']);
 $DBLIB->where("assetsBarcodes_type", $_POST['type']);
+$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']); // Restrict only to the current instance. This may need revisiting with asset dispatch (might be worth doing some seperate logic for that page)
+$DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
 $DBLIB->where("assetsBarcodes_deleted", 0);
-$barcode = $DBLIB->getone("assetsBarcodes", ["assets_id", "assetsBarcodes_id"]);
+$barcode = $DBLIB->getone("assetsBarcodes", ["assetsBarcodes.assets_id", "assetsBarcodes.assetsBarcodes_id"]);
 if ($barcode) {
     $scan = [
         "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
@@ -39,7 +38,7 @@ if ($barcode) {
 } else $barcode = false;
 
 //If it's in the database and has an asset, return that asset
-if ($barcode and $barcode['assets_id'] != null) {
+if ($barcode) {
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
     $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
@@ -57,7 +56,7 @@ if (!$asset) {
     $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
     $DBLIB->where("assets.assets_tag", $_POST['text']);
     $assetSuggest = $DBLIB->getone("assets", ["assets.assets_id", "assets.assets_tag", "assetTypes.assetTypes_name", "assetTypes.assetTypes_id", "assetCategories.assetCategories_name", "assetCategoriesGroups.assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);
-    if (!$assetSuggest) $assetSuggest = false; //Not sure why this is needed or happens
+    if (!$assetSuggest) $assetSuggest = false;
 } else $assetSuggest = false;
 
 finish(true, null, ["asset" => $asset, "assetSuggest" => $assetSuggest, "barcode" => ($barcode ? $barcode['assetsBarcodes_id'] : false), "location" => $location]);

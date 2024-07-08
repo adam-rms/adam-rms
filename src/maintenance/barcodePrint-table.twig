@@ -1,0 +1,37 @@
+<body>
+    <div class="container">
+        <table border="1">
+            <tr>
+                <th>
+                    Asset ID
+                </th>
+                <th>
+                    Asset Type
+                </th>
+                <th>
+                    Barcode
+                </th>
+                <th>
+                    Barcode Type
+                </th>   
+            </tr>
+
+        {% for i in range(0,(assets|length - 1)) %}
+            <tr>
+                <td>
+                    {{ assets[i].isAsset ? assets[i].assets_tag : '<i>Not yet associated with asset</i>' }}
+                </td>
+                <td>
+                     {{ assets[i].isAsset ? assets[i].assetTypes_name : '<i>Not yet associated with asset</i>' }}
+                </td>
+                <td>
+                    {{ assets[i].barcode.assetsBarcodes_value }}
+                </td>
+                <td>
+                    {{ assets[i].barcode.assetsBarcodes_type }}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+</body>

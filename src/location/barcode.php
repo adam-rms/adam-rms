@@ -16,7 +16,7 @@ $PAGEDATA['barcode'] = $DBLIB->getone("locationsBarcodes");
 if (!$PAGEDATA['barcode']) {
     $locationBarcodeData = [
         "locationsBarcodes_value" => "L" . $PAGEDATA['location']['locations_id'],
-        "locationsBarcodes_type" => "CODE_128",
+        "locationsBarcodes_type" => "QR_CODE",
         "locations_id" => $PAGEDATA['location']['locations_id'],
         "users_userid" => $AUTH->data['users_userid'],
         "locationsBarcodes_added" => date("Y-m-d H:i:s")

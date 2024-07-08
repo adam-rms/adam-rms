@@ -565,7 +565,7 @@
                                     </tbody>
                                 </table>
                                 {% if ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
-                                     <a class="btn btn-default btn-block" href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?id={{assets[0].assets_id}}">Generate/Export Barcodes</a>
+                                     <a class="btn btn-default btn-block" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?id={{assets[0].assets_id}}">Generate/Export Barcodes</a>
                                 {% endif %}
                             </div>
                         {% endif %}
@@ -862,7 +862,7 @@
                             <li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>
                         {% endif %}
                         {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
-                            <li class="nav-item"><a class="nav-link" href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}">Generate/Export Barcodes</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?type={{ asset.assetTypes_id }}">Generate/Export Barcodes</a></li>
                         {% endif %}
                     </ul>
                 </div><!-- /.card-header -->
@@ -1552,7 +1552,7 @@
                 $(".deleteBarcodeButton").click(function () {
                     var barcodeid = $(this).data("barcodeid");
                     bootbox.confirm({
-                        message: "Are you sure you wish to delete this barcode?",
+                        message: "Are you sure you wish to delete this barcode? All scan history for this barcode will be lost",
                         buttons: {
                             confirm: {
                                 label: 'Yes',
@@ -2091,7 +2091,7 @@
                             if(result ){
                                 const args = {
                                     "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
-                                    "type": "CODE_128",
+                                    "type": "{{ assets[0]['barcodes'][0]['assetsBarcodes_type'] }}",
                                     "locationType": "Custom",
                                     "location": result,
                                     "scanned": false,
@@ -2109,7 +2109,7 @@
                             if(result ){
                                 const args = {
                                     "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
-                                    "type": "CODE_128",
+                                    "type": "{{ assets[0]['barcodes'][0]['assetsBarcodes_type'] }}",
                                     "locationType": "Custom",
                                     "location": result,
                                     "scanned": false,
@@ -2161,7 +2161,7 @@
                 $("#setAssetLocationAssetModal-button").on("click", function() {
                     const args = {
                         "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
-                        "type": "CODE_128",
+                        "type": "{{ assets[0]['barcodes'][0]['assetsBarcodes_type'] }}",
                         "locationType": "asset",
                         "location": $("#setAssetLocationAssetModal-assets").val(),
                         "scanned": false,
