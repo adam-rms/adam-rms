@@ -85,14 +85,6 @@ if (isset($_POST['csv'])) {
         fputcsv($fp, $row, ",", "\"", "\\", "\r\n");
     }
     fclose($fp);
-    /*
-    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
-    $writer->setDelimiter(',');
-    $writer->setEnclosure('"');
-    $writer->setLineEnding("\r\n");
-    $writer->setSheetIndex(0);
-    $writer->save("php://output");
-    */
 } elseif (isset($_POST['xlsx'])) {
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $spreadsheet->getProperties()
