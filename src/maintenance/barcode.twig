@@ -75,8 +75,8 @@
                     <button class="btn btn-success btn-lg" title="Start Scanning" id="barcodeScanStartButton">Start Scanning</button>
                     <video id="barcodeScanVideo" width="1920" height="1080" style="border: 0;"></video>
                 </div>
-                <div class="card-footer">
-                    <div class="input-group my-2" id="barcodeScanSourceSelectPanel" style="display: none;">
+                <div class="card-footer" id="barcodeScanSourceSelectPanel" >
+                    <div class="input-group my-2" style="display: none;">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
                                 Camera:
@@ -461,7 +461,7 @@
 
             const barcodeScanVideoWidth = $("#barcodeScanVideoCard").width()
             $("#barcodeScanVideo").attr("width", barcodeScanVideoWidth)
-            $("#barcodeScanVideo").attr("height", barcodeScanVideoWidth/1.7)
+            $("#barcodeScanVideo").attr("height", barcodeScanVideoWidth*1.7)
 
             const codeReader = new ZXing.BrowserMultiFormatReader();
 
@@ -480,7 +480,7 @@
                     }
                     const sourceSelect = document.getElementById('barcodeScanSourceSelect')
                     selectedDeviceId = videoInputDevices[0].deviceId
-                    if (videoInputDevices.length >= 1) {
+                    if (videoInputDevices.length > 1) {
                         // Allow user to select different camera source
                         videoInputDevices.forEach((element) => {
                             const sourceOption = document.createElement('option')
