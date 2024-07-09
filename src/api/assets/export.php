@@ -85,13 +85,14 @@ if (isset($_POST['csv'])) {
         fputcsv($fp, $row, ",", "\"", "\\", "\r\n");
     }
     fclose($fp);
-    exit;
+    /*
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
     $writer->setDelimiter(',');
     $writer->setEnclosure('"');
     $writer->setLineEnding("\r\n");
     $writer->setSheetIndex(0);
     $writer->save("php://output");
+    */
 } elseif (isset($_POST['xlsx'])) {
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $spreadsheet->getProperties()
@@ -107,12 +108,14 @@ if (isset($_POST['csv'])) {
         $sheet->removeRow($x);
     }
 
-    $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
-    $sheet->fromArray($array, NULL, 'A2');
+    $spreadsheet->getActiveSheet()->insertNewRowBefore(1, count($assets)); // This is a memory intensive command 
+    foreach ($spreadsheetRows as $count => $row) {
+        $sheet->fromArray($row, NULL, 'A' . ($count + 2));
+    }
 
     //Header
     $sheet->fromArray($headerRow, NULL, 'A1');
-    $sheet->getStyle("A1:AC1")->getFont()->setBold(true);
+    $sheet->getStyle("A1:AD1")->getFont()->setBold(true);
     $sheet->freezePane('B2');
     //Number Formats
     $sheet->getStyle('E2:E' . (count($assets) + 1))
