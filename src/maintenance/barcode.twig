@@ -73,7 +73,7 @@
                 </div>
                 <div class="card-body" id="barcodeScanVideoCard">
                     <button class="btn btn-success btn-lg" title="Start Scanning" id="barcodeScanStartButton">Start Scanning</button>
-                    <video id="barcodeScanVideo" width="1920" height="1080" style="border: 0;"></video>
+                    <video id="barcodeScanVideo" width="1920" style="border: 0;"></video>
                 </div>
                 <div class="card-footer" id="barcodeScanSourceSelectPanel" >
                     <div class="input-group my-2" style="display: none;">
@@ -461,7 +461,6 @@
 
             const barcodeScanVideoWidth = $("#barcodeScanVideoCard").width()
             $("#barcodeScanVideo").attr("width", barcodeScanVideoWidth)
-            $("#barcodeScanVideo").attr("height", barcodeScanVideoWidth*1.7)
 
             const codeReader = new ZXing.BrowserMultiFormatReader();
 
