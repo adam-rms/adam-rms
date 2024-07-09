@@ -3,8 +3,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if (isset($_POST['csv'])) {
     header("Content-type: text/csv");
     header("Content-Disposition: attachment; filename=assets.csv");
-}
-elseif (isset($_POST['xlsx'])) {
+} elseif (isset($_POST['xlsx'])) {
     header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     header("Content-Disposition: attachment; filename=assets.xlsx");
 }
@@ -17,15 +16,15 @@ use Money\Currency;
 use Money\Money;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\IntlMoneyFormatter;
+
 $currencies = new ISOCurrencies();
 $numberFormatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
 $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
+$DBLIB->orderBy("assets.assets_tag", "ASC");
 $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("assets_deleted", 0);
 $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURRENT_TIMESTAMP())");
@@ -43,21 +42,8 @@ $DBLIB->where("(assets.assets_endDate IS NULL OR assets.assets_endDate >= CURREN
 $DBLIB->orderBy("assets.assets_inserted", "ASC");
 $created = $DBLIB->getValue("assets", "assets_inserted");
 
-$spreadsheet = new Spreadsheet();
-$spreadsheet->getProperties()
-    ->setCreator("Bithell Studios Ltd.")
-    ->setLastModifiedBy($AUTH->data['instance']['instances_name'])
-    ->setCompany($AUTH->data['instance']['instances_name'])
-    ->setCreated(strtotime($created))
-    ->setTitle("Asset Download from AdamRMS")
-    ->setSubject("All assets from " . $AUTH->data['instance']['instances_name']);
-$spreadsheet->getActiveSheet()->setTitle("Assets List");
-$sheet = $spreadsheet->getActiveSheet();
-for ($x = 1; $x < $sheet->getHighestRow(); $x++) {
-    $sheet->removeRow($x);
-}
-$finalData = [];
-
+// Gather the data for the rows.
+$spreadsheetRows = [];
 foreach ($assets as $asset) {
     $asset['definableFields'] = explode(",", $asset['assetTypes_definableFields']);
     if (count($asset['definableFields']) != 10) $asset['definableFields'] = ["", "", "", "", "", "", "", "", "", "", ""];
@@ -67,8 +53,6 @@ foreach ($assets as $asset) {
     if ($latestScan['locations_name']) $assetLocation = $latestScan['locations_name'];
     else if ($latestScan['assetTypes_name']) $assetLocation = "Inside asset " . $latestScan['assetTypes_name']; //TODO improve this to mean something a bit more
     else if ($latestScan['assetsBarcodes_customLocation']) $assetLocation = $latestScan['assetsBarcodes_customLocation'];
-
-    $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
 
     $array = [
         $asset['assets_tag'],
@@ -85,21 +69,49 @@ foreach ($assets as $asset) {
     for ($x = 1; $x <= 10; $x++) {
         array_push($array, $asset['definableFields'][$x - 1] . ($asset['definableFields'][$x - 1] != null ? ": " : ""), $asset['asset_definableFields_' . $x]);
     }
-    $sheet->fromArray($array, NULL, 'A2');
+    $spreadsheetRows[] = $array;
 }
+
+$headerRow = ["Asset Code", "Category", "Name", "Manufacturer", "Mass (kg)", "Day Rate", "Week Rate", "Value", "Location", "Notes"];
+for ($x = 1; $x <= 10; $x++) {
+    array_push($headerRow, "Definable Field " . $x . " Name", "Definable Field " . $x . " Value");
+}
+
+
 if (isset($_POST['csv'])) {
+    $fp = fopen('php://output', 'w');
+    fputcsv($fp, $headerRow, ",", "\"", "\\", "\r\n");
+    foreach ($spreadsheetRows as $row) {
+        fputcsv($fp, $row, ",", "\"", "\\", "\r\n");
+    }
+    fclose($fp);
+    exit;
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
     $writer->setDelimiter(',');
     $writer->setEnclosure('"');
     $writer->setLineEnding("\r\n");
     $writer->setSheetIndex(0);
     $writer->save("php://output");
-    $spreadsheet->disconnectWorksheets();
-    unset($spreadsheet);
 } elseif (isset($_POST['xlsx'])) {
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $spreadsheet->getProperties()
+        ->setCreator("Bithell Studios Ltd.")
+        ->setLastModifiedBy($AUTH->data['instance']['instances_name'])
+        ->setCompany($AUTH->data['instance']['instances_name'])
+        ->setCreated(strtotime($created))
+        ->setTitle("Asset Download from AdamRMS")
+        ->setSubject("All assets from " . $AUTH->data['instance']['instances_name']);
+    $spreadsheet->getActiveSheet()->setTitle("Assets List");
+    $sheet = $spreadsheet->getActiveSheet();
+    for ($x = 1; $x < $sheet->getHighestRow(); $x++) {
+        $sheet->removeRow($x);
+    }
+
+    $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
+    $sheet->fromArray($array, NULL, 'A2');
+
     //Header
-    $sheet->fromArray(["Asset Code", "Category", "Name", "Manufacturer", "Mass (kg)", "Day Rate", "Week Rate", "Value", "Location", "Notes", "Definable Fields"], NULL, 'A1');
-    $sheet->mergeCells('J1:AC1');
+    $sheet->fromArray($headerRow, NULL, 'A1');
     $sheet->getStyle("A1:AC1")->getFont()->setBold(true);
     $sheet->freezePane('B2');
     //Number Formats
@@ -128,7 +140,7 @@ if (isset($_POST['csv'])) {
         $sheet->calculateWorksheetDimension()
     );
 
-    $writer = new Xlsx($spreadsheet);
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
     $writer->save('php://output');
     $spreadsheet->disconnectWorksheets();
     unset($spreadsheet);
