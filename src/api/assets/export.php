@@ -137,8 +137,6 @@ if (isset($_POST['csv'])) {
 
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
     $writer->save('php://output');
-    $spreadsheet->disconnectWorksheets();
-    unset($spreadsheet);
 } else die("404");
 
 /** @OA\Post(
