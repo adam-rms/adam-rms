@@ -807,4 +807,89 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => false,
   ],
+  "TELEMETRY_MODE" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Standard";
+      },
+      "name" => "Reduce Telemetry collected",
+      "group" => "Telemetry",
+      "description" => "What level of telemetry should be collected? When set to limited, this will reduce the amount of information about the installation sent to the Bithell Studios telemetry server, such as the number of assets on the server. More details: https://telemetry.bithell.studio/privacy-and-security",
+      "required" => false,
+      "maxlength" => 10,
+      "minlength" => 5,
+      "options" => ["Standard", "Limited"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "Standard",
+    "envFallback" => false,
+  ],
+  "TELEMETRY_SHOW_URL" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Enabled";
+      },
+      "name" => "Show this installation url in list of installations",
+      "group" => "Telemetry",
+      "description" => "Should the URL of this installation be shown in a table of installations on the telemetry server? If disabled, the installation is still counted in the public statistics, but its url and notes (set below) are not shown in the list of installations.",
+      "required" => false,
+      "maxlength" => 10,
+      "minlength" => 5,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "Enabled",
+    "envFallback" => false,
+  ],
+  "TELEMETRY_NOTES"  => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Telemetry Installation Notes",
+      "group" => "Telemetry",
+      "description" => "A note to show on the public telemetry dashboard to associate with this installation. This could be the name of the main business. This is only shown publicly if the above option (show url) is enabled.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "TELEMETRY_NANOID"  => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        $client = new Hidehalo\Nanoid\Client();
+        return $client->generateId(21);
+      },
+      "name" => "Telemetry NanoID",
+      "group" => "Telemetry",
+      "description" => "ID to associate with this installation, used to identify this installation on the telemetry server. Changing this will create a new installation on the telemetry server. It is not expected that you'd need to change this. You can change the level of telemetry collected in the configuration menu under the \"Reduce Telemetry collected\" option. More details: https://telemetry.bithell.studio/privacy-and-security",
+      "required" => true,
+      "maxlength" => 21,
+      "minlength" => 21,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => false, // Has to be false as it's generated, otherwise it wont generate
+    "default" => false,
+    "envFallback" => false,
+  ],
 ];
