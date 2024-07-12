@@ -879,7 +879,7 @@ $configStructureArray = [
       },
       "name" => "Telemetry NanoID",
       "group" => "Telemetry",
-      "description" => "ID to associate with this installation, used to identify this installation on the telemetry server. Changing this will create a new installation on the telemetry server. It is not expected that you'd need to change this.",
+      "description" => "ID to associate with this installation, used to identify this installation on the telemetry server. Changing this will create a new installation on the telemetry server. It is not expected that you'd need to change this. You can change the level of telemetry collected in the configuration menu under the \"Reduce Telemetry collected\" option. More details: https://telemetry.bithell.studio/privacy-and-security",
       "required" => true,
       "maxlength" => 21,
       "minlength" => 21,
