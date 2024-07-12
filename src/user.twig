@@ -70,7 +70,7 @@
         <script>
             $(document).ready(function() {
                 //Hacky little function to fudge tab selection from the crew roles/projects managed links
-                $('a[data-toggle="tab"]:not(.nav-link)').click(function() {
+                $('a[data-toggle="tab"]:not(.nav-link)').on('click', function() {
                     $('.nav-link[data-toggle="tab"]:not([href="' + $(this).attr('href') + '"])').removeClass("active");
                     $('.nav-link[data-toggle="tab"][href="' + $(this).attr('href') + '"]').addClass("active");
                 });
@@ -209,7 +209,7 @@
                                 </table>
                                 <script>
                                     $(document).ready(function() {
-                                        $('#save-notification-settings').click(function() {
+                                        $('#save-notification-settings').on('click', function() {
                                             var config = [];
                                             $(".notificationsetting").each(function( index ) {
                                                 if ($( this ).prop('disabled') !== true) {
@@ -259,7 +259,7 @@
                             <button id="save-password-settings" class="btn btn-default">Change Password</button>
                             <script>
                                 $(document).ready(function() {
-                                    $('#save-password-settings').click(function() {
+                                    $('#save-password-settings').on('click', function() {
                                         if ($('#passnew').val() != $('#passconf').val()) {
                                             bootbox.alert("Sorry - Your new password's don't match!");
                                         } else if ($("#passnew").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
@@ -277,23 +277,45 @@
                             </script>
                             <hr/>
                             <h2>Authentication Providers</h2>
-                            <h4>Google</h4>
-                            {% if USER.users_oauth_googleid %}
-                                <button class="btn btn-danger" id="disconnectOAuthGoogle"><i class="fab fa-google"></i> Disconnect Google Account</button>
-                                <script>
-                                    $(document).ready(function() {
-                                        $('#disconnectOAuthGoogle').click(function() {
-                                            ajaxcall("account/disconnectOAuth.php", {
-                                                "users_userid": "{{ USER.users_userid }}",
-                                                'provider' : "google",
-                                            }, function (data) {
-                                                location.reload();
+                            {% if googleAuthAvailable %}
+                                <h4>Google</h4>
+                                {% if user.users_oauth_googleid %}
+                                    <button class="btn btn-danger" id="disconnectOAuthGoogle"><i class="fab fa-google"></i> Disconnect Google Account</button>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#disconnectOAuthGoogle').on('click', function() {
+                                                ajaxcall("account/disconnectOAuth.php", {
+                                                    "users_userid": "{{ user.users_userid }}",
+                                                    'provider' : "google",
+                                                }, function (data) {
+                                                    location.reload();
+                                                });
                                             });
                                         });
-                                    });
-                                </script>
-                            {% else %}
-                                <a href="{{ CONFIG.ROOTURL }}/api/account/linkOAuth.php?google" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                                    </script>
+                                {% else %}
+                                    <a href="{{ CONFIG.ROOTURL }}/api/account/oauth-link/google.php" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                                {% endif %}
+                            {% endif %}
+                            {% if microsoftAuthAvailable %}
+                                <h4>Microsoft</h4>
+                                {% if user.users_oauth_microsoftid %}
+                                    <button class="btn btn-danger" id="disconnectOAuthMicrosoft"><i class="fab fa-microsoft"></i> Disconnect Microsoft Account</button>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#disconnectOAuthMicrosoft').on('click', function() {
+                                                ajaxcall("account/disconnectOAuth.php", {
+                                                    "users_userid": "{{ user.users_userid }}",
+                                                    'provider' : "microsoft",
+                                                }, function (data) {
+                                                    location.reload();
+                                                });
+                                            });
+                                        });
+                                    </script>
+                                {% else %}
+                                    <a href="{{ CONFIG.ROOTURL }}/api/account/oauth-link/microsoft.php" class="btn btn-default"><i class="fab fa-microsoft"></i> Link to Microsoft Account</a>
+                                {% endif %}
                             {% endif %}
                         </div>
                         {% endif %}
@@ -397,7 +419,7 @@
                                 <script>
                                     $(document).ready(function() {
                                         {% if "PERMISSIONS:EDIT:USER_POSITION"|serverPermissions %}
-                                        $('.savePermissionEdit').click(function() {
+                                        $('.savePermissionEdit').on('click', function() {
                                             ajaxcall("account/permissions.php", {
                                                 "users_userid":"{{ user.users_userid }}",
                                                 "userPositions_id":$(this).data("positionid"),
@@ -411,7 +433,7 @@
                                             });
                                         });
                                         var thispositonid = "";
-                                        $('.deletePermissionEdit').click(function() {
+                                        $('.deletePermissionEdit').on('click', function() {
                                             thispositonid = $(this).data("positionid");
                                             bootbox.confirm({
                                                 message: "Are you sure you wish to delete this position record? <br/> Positions should be normally kept as an important matter of record - if this user has now left the position please instead set the end date as appropriate",

@@ -5,34 +5,18 @@ $PAGEDATA['pageConfig'] = ["TITLE" => "Users", "BREADCRUMB" => false];
 
 if (!$AUTH->serverPermissionCheck("USERS:VIEW")) die($TWIG->render('404.twig', $PAGEDATA));
 
-$PAGEDATA["mailings"] = [];
-
-if (isset($_GET['q'])) $PAGEDATA['search'] = $bCMS->sanitizeString($_GET['q']);
-else $PAGEDATA['search'] = null;
-
 $DBLIB->orderBy("users.users_name1", "ASC");
 $DBLIB->orderBy("users.users_name2", "ASC");
 $DBLIB->orderBy("users.users_created", "ASC");
 $DBLIB->where("users_deleted", 0);
-if (strlen($PAGEDATA['search']) > 0) {
-	//Search
-	$DBLIB->where("(
-		users_username LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
-		OR users_name1 LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
-		OR users_name2 LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
-		OR users_email LIKE '%" . $bCMS->sanitizeStringMYSQL($PAGEDATA['search']) . "%'
-    )");
-}
-//if (!isset($_GET['suspended'])) $DBLIB->where ("users.users_suspended", "0");
-$users = $DBLIB->get('users', null, ["users.*"]);
+$users = $DBLIB->get('users', null, ["users.users_email", "users.users_userid", "users.users_emailVerified", "users.users_name1", "users.users_name2", "users.users_suspended", "users.users_termsAccepted", "users.users_thumbnail", "users.users_username"]);
 foreach ($users as $user) {
 	$DBLIB->where('users_userid', $user['users_userid']);
-	$PAGEDATA["mailings"][$user['users_userid']] = $DBLIB->get('emailSent'); //Get user's E-Mails
-	$user['emails'] = [];
-	foreach ($PAGEDATA["mailings"][$user['users_userid']] as $email) {
-		$user['emails'][] = $email['emailSent_id'];
-	}
-	$user['users_emails'] = implode(",", $user['emails']);
+	$user['emails'] = $DBLIB->get('emailSent', null, ["emailSent_id", "emailSent_subject"]); //Get user's E-Mails
+	$user['email_ids'] = array_map(function ($a) {
+		return $a['emailSent_id'];
+	}, $user['emails']);
+	$user['email_ids'] = implode(",", $user['email_ids']);
 
 	$DBLIB->where("userInstances.users_userid", $user['users_userid']);
 	$DBLIB->where("userInstances.userInstances_deleted",  0);

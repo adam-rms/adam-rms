@@ -1,0 +1,248 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Assets</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <select class="form-control" multiple="multiple" placeholder="Select assets to print barcodes for" id="assetSearch" lines>
+                            {% for asset in preFetch %}
+                                <option value="{{asset.assets_id}}" selected="selected">{{ asset.assets_tag|aTag }} | {{ asset.assetTypes_name}} ({{ asset.manufacturers_name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Groups</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <select class="form-control" multiple="multiple" placeholder="Select groups of assets to print barcodes for" id="assetGroups" lines>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Blanks</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="callout callout-default">
+                            Use blank barcodes to label new assets, then associate them with {{ CONFIG.PROJECT_NAME }} assets later.
+                        </div>
+                        <input type="number" class="form-control" name="numStickers" id="blanksInput" min="0" value="0" max="500" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Settings</h3>
+                    <div class="card-tools pull-right">
+<a href="{{ CONFIG.LINKS_USERGUIDEURL }}assets/asset-barcodes" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                        <div class="text-muted">
+                            <form id="settings">
+                                <p class="text-sm">Barcode Type
+                                    <b class="d-block">
+                                        <select class="form-control" name="barcodeType">
+                                            <option value="EAN_8">EAN 8 (not recommended - numeric digits only)</option><!-- Cannot encode characters - numbers only -->
+                                            <option value="EAN_13">EAN 13 (not recommended - numeric digits only)</option><!-- Cannot encode characters - numbers only -->
+                                            <option value="CODE_39">Code 39</option>
+                                            <option value="CODE_93">Code 93</option>
+                                            <option value="CODE_128">Code 128</option>
+                                            <option value="UPC_E">UPC E (not recommended - numeric digits only)</option><!-- Cannot encode characters - numbers only -->
+                                            <option value="UPC_A">UPC A (not recommended - numeric digits only)</option><!-- Cannot encode characters- numbers only -->
+                                            <option value="QR_CODE" selected>QR Code</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <button type="button" class="btn btn-default generateButton" data-type="table">Generate Table of Barcodes</button>
+                                <button type="button" class="btn btn-default generateButton" data-type="printout">Generate Sticker Printout</button>
+                                <hr/>
+                                <p>Sticker Printout Settings</p>
+                                <p class="text-sm">Tag
+                                    <b class="d-block">
+                                        <select class="form-control" name="tags">
+                                            <option value="0">Hide</option>
+                                            <option value="1" selected>Show</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Type
+                                    <b class="d-block">
+                                        <select class="form-control" name="typename">
+                                            <option value="0" selected>Hide</option>
+                                            <option value="1">Show</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Mass
+                                    <b class="d-block">
+                                        <select class="form-control" name="mass">
+                                            <option value="0">Hide</option>
+                                            <option value="1" selected>Show</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">1<sup>st</sup> Definable Field
+                                    <b class="d-block">
+                                        <select class="form-control" name="definableField1">
+                                            <option value="0" selected>Hide</option>
+                                            <option value="1">Show</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Length Colours<sup>1st Definable Field must be length</sup>
+                                    <b class="d-block">
+                                        <select class="form-control" name="lengthMode">
+                                            <option value="0" selected>Disabled</option>
+                                            <option value="1">Enabled</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Show Business Name
+                                    <b class="d-block">
+                                        <input type="text" list="instanceNameOptionList" class="form-control" name="instanceName" />
+                                        <datalist id="instanceNameOptionList">
+                                            <option value="Hide">Hide</option>
+                                            <option selected>{{ USERDATA.instance.instances_name }}</option>
+                                        </datalist>
+                                    </b>
+                                </p>
+                                <hr/>
+                                <p class="text-sm">{{ USERDATA.instance.instances_name }} Logo
+                                    <b class="d-block">
+                                        <select class="form-control" name="instancelogo">
+                                            <option value="0">Hide</option>
+                                            <option value="1" selected>Show</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">{{ CONFIG.PROJECT_NAME }} Logo
+                                    <b class="d-block">
+                                        <select class="form-control" name="adamrmslogo">
+                                            <option value="0" selected>Hide</option>
+                                            <option value="1">Show</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Paper Size
+                                    <b class="d-block">
+                                        <select class="form-control" name="pagesize">
+                                            <option value="A4" selected>A4</option>
+                                        </select>
+                                    </b>
+                                </p>
+                                <p class="text-sm">Stickers Per Sheet
+                                    <b class="d-block">
+                                        <select class="form-control" name="numStickers">
+                                            <option value="8" selected>8 - Standard</option>
+                                            <option value="8cable">8 - Cable Style</option>
+                                        </select>
+                                    </b>
+                                </p>
+                            </form>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group float-right">
+                        <button type="button" class="btn btn-default generateButton" data-type="printout">Generate Sticker Printout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $(".generateButton").click(function () {
+                var assets = $("#assetSearch").val();
+                var groups = $("#assetGroups").val();
+                window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePrint.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&groups=" + groups.join() + "&type=" + $(this).data("type");
+            });
+
+            $("#assetSearch").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+
+                minimumResultsForSearch: 1,
+                placeholder: "Enter asset numbers to search for assets",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/barcodes/searchAsset.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                        id: item.assets_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+            $("#assetGroups").select2({
+                tags: false,
+                multiple: true,
+                theme: "bootstrap4",
+                minimumInputLength: 1,
+                width: '100%',
+                minimumResultsForSearch: 1,
+                placeholder: "Enter group name to search",
+                ajax: {
+                    url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if (data && data.result && data.response) {
+                            return {
+                                results: $.map(data.response, function (item) {
+                                    return {
+                                        text: item.assetGroups_name,
+                                        id: item.assetGroups_id
+                                    }
+                                })
+                            };
+                        } else return {
+                            results: []
+                        };
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
