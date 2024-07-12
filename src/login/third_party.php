@@ -75,10 +75,20 @@ function get_available_auth_providers()
 
     foreach ($hybridauth_providers as $provider_name) {
         $name_lower = strtolower($provider_name);
+
+        // add some logic to check if enabled for business?
+
+        // use logo if exists, otherwise chainlink icon
+        if (file_exists(__DIR__ . "../static-assets/img/login/{$name_lower}.svg")) {
+            $icon_html = "<img src='{$CONFIG['ROOTURL']}/static-assets/img/login/microsoft.svg' alt='' role='presentation' style='height: 1.2em; vertical-align: text-top;' />";
+        } else {
+            $icon_html = "<img src='{$CONFIG['ROOTURL']}/static-assets/img/login/link.svg' alt='' role='presentation' style='height: 1.2em; vertical-align: text-top;' />";
+        }
+
         $prov_details = [
             "short_name" => $provider_name,
-            "icon_html" => "",
-            "auth_path" => "/oauth?provider=$name_lower"
+            "icon_html" => $icon_html,
+            "auth_path" => $CONFIG['ROOTURL'] . "/oauth/?provider=$name_lower"
         ];
         $providers[] = $prov_details;
     }

@@ -26,7 +26,7 @@ if (isset($_GET['app-oauth'])) {
 	//If they're logged in, take them back to root - this fixes a loop redirect issue
 	header("Location: " . $CONFIG['ROOTURL'] . "/");
 	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
-} 
+}
 
 if (isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
 elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLOBALS['AUTH']->VALIDMAGICLINKREDIRECTS) or $CONFIG['DEV'])) {
@@ -38,6 +38,8 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 	$PAGEDATA['MAGICLINKURL'] = $_GET['app-magiclink'];
 	echo $TWIG->render('login/magicLink.twig', $PAGEDATA);
 } else {
+	require_once __DIR__ . 'third_party.php';
 	$PAGEDATA['runLightFocusAnimation'] = true;
+	$PAGEDATA['social_auth_providers'] = get_available_auth_providers();
 	echo $TWIG->render('login/login.twig', $PAGEDATA);
 }

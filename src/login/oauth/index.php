@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../third_party.php';
 require_once __DIR__ . 'providers.php';
 
-$provider = "Google";
+$provider = $_GET["provider"];
 
 try {
     $adapter = $hybridauth->authenticate($provider);
