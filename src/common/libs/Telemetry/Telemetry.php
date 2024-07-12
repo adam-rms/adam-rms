@@ -35,19 +35,21 @@ class Telemetry
             $data['metaData']['assetsMassKg'] = round($assetValues['mass'], 0);
         }
         try {
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, self::TELEMETRY_URL);
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-            curl_setopt($curl, CURLOPT_USERAGENT, 'api');
-            curl_setopt($curl, CURLOPT_HEADER, false);
-            curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
-            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 1);
-            curl_setopt($curl, CURLOPT_DNS_CACHE_TIMEOUT, 120);
-            curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($curl);
-            curl_close($curl);
+            if ($CONFIGCLASS->get("DEV") !== true) { // Skip telemetry in dev mode, but only at the last minute to ensure bugs are caught in dev with the above
+                $curl = curl_init();
+                curl_setopt($curl, CURLOPT_URL, self::TELEMETRY_URL);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($curl, CURLOPT_USERAGENT, 'api');
+                curl_setopt($curl, CURLOPT_HEADER, false);
+                curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+                curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 1);
+                curl_setopt($curl, CURLOPT_DNS_CACHE_TIMEOUT, 120);
+                curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($curl);
+                curl_close($curl);
+            }
         } catch (Exception $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
         }
