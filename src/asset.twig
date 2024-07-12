@@ -57,11 +57,10 @@
                             </li>
                         </ul>
                         {% if "ASSETS:ARCHIVE"|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
-                            <hr/>
-                            <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
+                        <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
                         {% endif %}
                         {% if "ASSETS:DELETE"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
-                            <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
+                        <button class="btn btn-danger btn-block deleteAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Delete</button>
                         {% endif %}
                     </div>
                 </div>
@@ -109,11 +108,6 @@
                     </ul>
                     {% if asset.oneasset %}
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
-                    {% endif %}
-                    {% if assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") >= "now"|date("U")  %}
-                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
-                            <a href="{{ CONFIG.ROOTURL }}/maintenance/barcode.php?type={{ asset.assetTypes_id }}" class="btn btn-default btn-block">Print Barcodes</a>
-                        {% endif %}
                     {% endif %}
                     <p>{{asset.assetTypes_description|nl2br}}</p>
                 </div>
@@ -185,6 +179,7 @@
                         <li class="nav-item"><a class="nav-link active" href="#calendarBoxAsset" data-toggle="tab"><i class="far fa-calendar-alt"></i></a></li>
                         {% if "ASSETS:EDIT"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#editAsset" data-toggle="tab">Edit {{ assets[0].assets_tag|aTag }}</a></li>{% endif %}
                         {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "ASSETS:ASSET_FILE_ATTACHMENTS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Asset Files</a></li>{% endif %}
+                        <li class="nav-item"><a class="nav-link" href="#location" data-toggle="tab">Location</a></li>
                         {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#barcodes" data-toggle="tab">Barcodes</a></li>{% endif %}
                         {% if  "MAINTENANCE_JOBS:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance" data-toggle="tab">Maintenance</a></li>{% endif %}
                     </ul>
@@ -432,6 +427,61 @@
                                 {% endembed %}
                             </div>
                         {% endif %}
+                        <div class="tab-pane" style="padding: 0" id="location">
+                            <table class="table table-striped projects">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        Timestamp
+                                    </th>
+                                    <th>
+                                        Location
+                                    </th>
+                                    <th>
+                                        Type
+                                    </th>
+                                    <th>
+                                        User
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for scan in assets[0].locationScans %}
+                                    <tr>
+                                        <td>
+                                             {{ scan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
+                                        </td>
+                                        <td>
+                                            {% if scan.locations_name %}
+                                                {{ scan.locations_name }}
+                                            {% elseif scan.assetTypes_name %}
+                                                Inside asset {{  scan.assetTypes_name }} ({{ scan.assets_tag }})
+                                            {% elseif scan.assetsBarcodes_customLocation %}
+                                                {{  scan.assetsBarcodes_customLocation }}
+                                            {% endif %}
+                                            <br/><small>{{ scan.assetsBarcodesScans_validation }}</small>
+                                        </td>
+                                        <td>
+                                            {% if scan.assetsBarcodesScans_barcodeWasScanned == "1" %}Barcode scanned{% else %}Location set manually{% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ scan.users_userid }}">{{ scan.users_name1 ~ " " ~ scan.users_name2 }}</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if "LOCATIONS:VIEW"|instancePermissions and assets[0].barcodes[0] %}
+                            <div class="callout callout-info m-2">
+                                <p>Use the buttons below to set the location of this asset without scanning a barcode.</p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-info m-2" id="setAssetLocationButton">Manually pick location from list</button>
+                                <button class="btn btn-info m-2" id="setAssetLocationAssetButton">Manually set location to be within another Asset</button>
+                                <button class="btn btn-info m-2" id="setCustomLocationButton">Manually set Custom Location</button>
+                            </div>
+                            {% endif %}
+                        </div>
                         {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  %}
                             <div class="tab-pane" style="padding: 0" id="barcodes">
                                 <table class="table table-striped projects">
@@ -439,6 +489,12 @@
                                     <tr>
                                         <th>
 
+                                        </th>
+                                        <th>
+                                            Barcode value
+                                        </th>
+                                        <th>
+                                            Type
                                         </th>
                                         <th>
                                             Notes
@@ -461,6 +517,12 @@
                                                 <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ barcode.assetsBarcodes_value }}&size=50&type={{ barcode.assetsBarcodes_type }}" alt="Barcode">
                                             </td>
                                             <td>
+                                                {{ barcode.assetsBarcodes_value }}
+                                            </td>
+                                            <td>
+                                                {{ barcode.assetsBarcodes_type }}
+                                            </td>
+                                            <td>
                                                 {{ barcode.assetsBarcodes_notes }}
                                             </td>
                                             <td>
@@ -475,13 +537,20 @@
                                             <td>
                                                 {% if barcode.latestScan %}
                                                     {% if barcode.latestScan.locations_name %}
-                                                        {{ barcode.latestScan.locations_name }} <span class="badge badge-default" title="GPS Not Verified, but location barcode scanned"><i class="fas fa-map-marker-alt"></i></span>
+                                                        {{ barcode.latestScan.locations_name }}
                                                     {% elseif barcode.latestScan.assetTypes_name %}
-                                                        {{  barcode.latestScan.assetTypes_name }} <span class="badge badge-info" title="Asset Scan was Verified"><i class="fas fa-check"></i></span>
+                                                        Inside asset {{  barcode.latestScan.assetTypes_name }} ({{ barcode.latestScan.assets_tag }})
                                                     {% elseif barcode.latestScan.assetsBarcodes_customLocation %}
-                                                        {{  barcode.latestScan.assetsBarcodes_customLocation }} <span class="badge badge-danger" title="Location was entered as text"><i class="fas fa-times"></i></span>
+                                                        {{  barcode.latestScan.assetsBarcodes_customLocation }}
+                                                        <br/>
+                                                        <small>
+                                                           Location was entered as text
+                                                        </small>
                                                     {% endif %}
-                                                    <span class="badge badge-secondary" title="Scanned by {{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}  {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}"><i class="fas fa-info"></i></span>
+                                                    <br/>
+                                                    <small>
+                                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.latestScan.users_userid }}">{{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}</a> {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
+                                                    </small>
                                                 {% else %}
                                                     <i>Never scanned</i>
                                                 {% endif %}
@@ -495,6 +564,9 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
+                                {% if ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
+                                     <a class="btn btn-default btn-block" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?id={{assets[0].assets_id}}">Generate/Export Barcodes</a>
+                                {% endif %}
                             </div>
                         {% endif %}
                         {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
@@ -788,6 +860,9 @@
                         {% endif %}
                         {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:VIEW"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                             <li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>
+                        {% endif %}
+                        {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
+                            <li class="nav-item"><a class="nav-link" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?type={{ asset.assetTypes_id }}">Generate/Export Barcodes</a></li>
                         {% endif %}
                     </ul>
                 </div><!-- /.card-header -->
@@ -1351,6 +1426,31 @@
             </div>
         </div>
     </div>
+    {% if "LOCATIONS:VIEW"|instancePermissions and "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions and assets[0].barcodes[0] %}
+    <div class="modal fade" id="setAssetLocationAssetModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Set Asset Location to another Asset</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Set this asset's location to another asset - for example if it is stored within a flight case or storage box</p>
+                    <div class="input-group my-3">
+                        <select class="form-control" multiple="multiple" id="setAssetLocationAssetModal-assets" placeholder="Enter asset tags here"></select>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="setAssetLocationAssetModal-button">Set location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 
 
 
@@ -1452,7 +1552,7 @@
                 $(".deleteBarcodeButton").click(function () {
                     var barcodeid = $(this).data("barcodeid");
                     bootbox.confirm({
-                        message: "Are you sure you wish to delete this barcode?",
+                        message: "Are you sure you wish to delete this barcode? All scan history for this barcode will be lost",
                         buttons: {
                             confirm: {
                                 label: 'Yes',
@@ -1974,6 +2074,102 @@
                     });
                 });
                 {% endif %}
+                {% if "LOCATIONS:VIEW"|instancePermissions and assets[0].barcodes[0] %}
+                $("#setAssetLocationButton").on("click", function () {
+                    bootbox.prompt({
+                        title: "Set Asset Location",
+                        inputType: "select",
+                        inputOptions: [
+                        {% for location in locations %}
+                            {
+                                text: '{{ location.locations_name }}',
+                                value: '{{ location.locations_name }}'
+                            },
+                        {% endfor %}
+                        ],
+                        callback: function (result) {
+                            if(result ){
+                                const args = {
+                                    "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
+                                    "type": "{{ assets[0]['barcodes'][0]['assetsBarcodes_type'] }}",
+                                    "locationType": "Custom",
+                                    "location": result,
+                                    "scanned": false,
+                                    "validation": "Location selected from list"
+                                }
+                                ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
+                            }
+                        },
+                    })
+                });
+                $("#setCustomLocationButton").on("click", function () {
+                    bootbox.prompt({
+                        title: "Set Custom Location for Asset",
+                        callback: function (result) {
+                            if(result ){
+                                const args = {
+                                    "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
+                                    "type": "{{ assets[0]['barcodes'][0]['assetsBarcodes_type'] }}",
+                                    "locationType": "Custom",
+                                    "location": result,
+                                    "scanned": false,
+                                    "validation": "Location manually entered"
+                                }
+                                ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
+                            }
+                        },
+                    })
+                })
+                $("#setAssetLocationAssetButton").on("click", function () {
+                    $('#setAssetLocationAssetModal').modal('show');
+                });
+                $("#setAssetLocationAssetModal-assets").select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 1,
+                    width: '100%',
+
+                    minimumResultsForSearch: 1,
+                    placeholder: "Enter asset numbers to search for assets",
+                    ajax: {
+                        url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                term: params.term,
+                            }
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if (data && data.result && data.response) {
+                                return {
+                                    results: $.map(data.response, function (item) {
+                                        return {
+                                            text: aTag(item.assets_tag) + " | " + item.assetTypes_name + " (" + item.manufacturers_name + ")",
+                                            id: item.assets_id
+                                        }
+                                    })
+                                };
+                            } else return {
+                                results: []
+                            };
+                        }
+                    }
+                });
+                $("#setAssetLocationAssetModal-button").on("click", function() {
+                    const args = {
+                        "text": "{{ assets[0]['barcodes'][0]['assetsBarcodes_value'] }}",
+                        "type": "{{ assets[0]['barcodes'][0]['assetsBarcodes_type'] }}",
+                        "locationType": "asset",
+                        "location": $("#setAssetLocationAssetModal-assets").val(),
+                        "scanned": false,
+                        "validation": "Asset selected from list"
+                    }
+                    ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
+                });
+                {% endif %} 
             });
         </script>
 {% embed 'assets/templates/fileBoxJS.twig' %}

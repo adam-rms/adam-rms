@@ -3,6 +3,7 @@
 	if ($_POST['users_userid'] != $AUTH->data["users_userid"]) finish(false);
 
 	if ($_POST['provider'] == "google") $column = "users_oauth_googleid";
+elseif ($_POST['provider'] == "microsoft") $column = "users_oauth_microsoftid";
 	else finish(false);
 
 	$DBLIB->where("users_userid",$_POST['users_userid']);

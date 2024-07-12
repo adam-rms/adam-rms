@@ -58,13 +58,13 @@
         {{ (assetAssignment.assetsAssignmentsStatus_name ? assetAssignment.assetsAssignmentsStatus_name ~ "/" : '') }}
         {% if assetAssignment.latestScan %}
             {% if assetAssignment.latestScan.locations_name %}
-                {{ assetAssignment.latestScan.locations_name }} <span class="badge badge-default" title="GPS Not Verified, but location barcode scanned"><i class="fas fa-map-marker-alt"></i></span>
+                {{ assetAssignment.latestScan.locations_name }}
             {% elseif assetAssignment.latestScan.assetTypes_name %}
-                {{  assetAssignment.latestScan.assetTypes_name }} <span class="badge badge-info" title="Asset Scan was Verified"><i class="fas fa-check"></i></span>
+                Inside {{  assetAssignment.latestScan.assetTypes_name }}
             {% elseif assetAssignment.latestScan.assetsBarcodes_customLocation %}
-                {{  assetAssignment.latestScan.assetsBarcodes_customLocation }} <span class="badge badge-danger" title="Location was entered as text"><i class="fas fa-times"></i></span>
+                {{  assetAssignment.latestScan.assetsBarcodes_customLocation }}
             {% endif %}
-            <span class="badge badge-secondary" title="Scanned by {{ assetAssignment.latestScan.users_name1 ~ " " ~ assetAssignment.latestScan.users_name2 }}  {{ assetAssignment.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}"><i class="fas fa-info"></i></span>
+            <span class="badge badge-secondary" title="{% if assetAssignment.latestScan.assetsBarcodesScans_barcodeWasScanned == "1" %}Barcode was scanned by{% else %}Barcode was not scanned, location set manually by{% endif %} {{ assetAssignment.latestScan.users_name1 ~ " " ~ assetAssignment.latestScan.users_name2 }}  {{ assetAssignment.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}. {{ assetAssignment.latestScan.assetsBarcodesScans_validation }}"><i class="fas fa-info"></i></span>
         {% endif %}
     </td>
     <td>{{ assetAssignment.assets_mass != null ? assetAssignment.assets_mass|mass : (assetAssignment.assetTypes_mass != null and assetAssignment.assetTypes_mass != 0 ? assetAssignment.assetTypes_mass|mass : "") }}</td>

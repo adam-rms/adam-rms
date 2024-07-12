@@ -1,0 +1,30 @@
+{% extends "assets/template.twig" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-6 offset-lg-3 col-md-12" style="padding: 5px;">
+      <div class="card card-default">
+          <div class="card-body" style="text-align: center;">
+                <h3>Verify Email</h3>
+                <p>Please check your email ({{USERDATA.users_email}}) for our verification email. Every now and again our E-Mails get sucked up by hungry spam filters - If you can't find our E-Mail please check your spam/junk folder for an email from {{ fromEmail }}, or click the button below to re-send it.</p>
+                <button id="submitButton" class="btn btn-default">Re-send verification email</button>
+                {% if "CONFIG:SET"|serverPermissions %}
+                    <a href="{{CONFIG.ROOTURL}}/server/config.php" class="btn btn-default">Edit Server Configuration to disable email verification</a>
+                {% endif %}
+          </div>
+          <div class="card-footer">
+            <a href="{{ CONFIG.LINKS_SUPPORTURL }}">Contact Support</a>
+          </div>
+          <script>
+              $(document).ready(function () {
+                  $('#submitButton').click(function () {
+                    ajaxcall("account/reSendVerificationEmail.php", {}, function (data) {
+                        location.reload();
+                    });
+                  });
+              });
+          </script>
+      </div>
+  </div>
+</div>
+{% endblock %}

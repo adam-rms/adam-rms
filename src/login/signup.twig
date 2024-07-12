@@ -1,196 +1,72 @@
 {% extends "login/login_template.twig" %}
 {% block content %}
-    <form id="form3aa">
-        <input class="form-control form-control-lg" id="form3aaInput" autocomplete="given-name" placeholder="First Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
-        <input class="form-control form-control-lg" id="form3aaInputLastName" autocomplete="family-name" placeholder="Last Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
-        <div style="width: 100%; text-align:right;">
-            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
-        </div>
-    </form>
-    <form id="form3a">
-        <input class="form-control form-control-lg" id="form3aInput" placeholder="Choose a password" autocomplete="new-password"  type="password" style="margin-top: 10px; margin-bottom: 10px;">
-        <input class="form-control form-control-lg" id="form3aInputConfirm" placeholder="Confirm your choice of password" autocomplete="new-password" type="password" style="margin-top: 0px; margin-bottom: 10px;">
-        <div style="width: 100%; text-align:right;">
-            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
-        </div>
-    </form>
-	<form id="form3b">
-        <input class="form-control form-control-lg" id="form3bInput" placeholder="Choose an email address" autocomplete="email" type="email" style="margin-top: 10px; margin-bottom: 10px;">
-        <div style="width: 100%; text-align:right;">
-            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
-        </div>
-    </form>
-    <form id="form3c">
-        <input class="form-control form-control-lg" id="form3cInput" placeholder="Choose a username" autocomplete="username"  type="text" style="margin-top: 10px; margin-bottom: 10px;">
-        <div style="width: 100%; text-align:right;">
-            <button class="btn btn-primary" type="submit" value="Submit">Next</button>
-        </div>
-    </form>
-    <form id="formVerifyEmail">
-        <p>Please check your email address for our verification email</p>
-        <p><i>Every now and again our E-Mails get sucked up by hungry spam filters - If you can't find our E-Mail please check your spam/junk folder</i></p>
-        <div style="width: 100%; text-align:right;">
-            <button class="btn btn-warning" type="submit" value="Submit">Send again</button>
-            <a href="?login" class="btn btn-primary" type="button">Continue to login</a>
-        </div>
-    </form>
-    <form id="form3e">
-        <p>Your account has been created - welcome to {{ CONFIG.PROJECT_NAME}}!</p>
-        <div style="width: 100%; text-align:right;">
-            <button class="btn btn-primary setToLoginButton"  type="button">Continue to login</button>
-        </div>
+   <div class="spinner-border" role="status" id="loadingOverlay" style="display: none;">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <form id="signupForm">
+        <div id="errorMessageBox" class="alert alert-danger"></div>
+        <input class="form-control form-control-lg" id="signupForm_users_email" maxlength="100" required placeholder="Enter your email address" autocomplete="email" type="email" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_username" minlength="6" maxlength="100" required placeholder="Choose a username" autocomplete="username"  type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_password" minlength="10" maxlength="100" required placeholder="Choose a password" autocomplete="new-password"  type="password" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_name1" minlength="1" maxlength="100" required autocomplete="given-name" placeholder="First Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <input class="form-control form-control-lg" id="signupForm_users_name2" minlength="1" maxlength="100" required autocomplete="family-name" placeholder="Last Name" type="text" style="margin-top: 10px; margin-bottom: 10px;">
+        <button class="btn btn-secondary" type="submit" value="Submit">Sign Up</button>
     </form>
 	<script>
-        function isEmail(email) {
-            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-            return regex.test(email);
-        }
-        var initialData;
-
-
 		$( document ).ready(function() {
-
-            $("#form3aa").show();
-            $("#form3aa").submit(function () {
-                loginStep3aa();
-                return false;
-            });
-
-            function loginStep3aa() {
-                if ($("#form3aaInput").val().length <= 1) {
-                    toastr.warning("Please enter a first name");
-                } else if ($("#form3aaInputLastName").val().length <= 1) {
-                    toastr.warning("Please enter a second name");
-                } else {
-                    $("#form3aa").fadeOut(function () {
-                        $("#form3a").fadeIn(function () { //Request an email
-                            $("#form3aInput").focus();
-                        });
-                    });
-
-                }
-            }
-
-            //Step 3 is a token sign up
-            $("#form3a").submit(function () {
-                loginStep3a();
-                return false;
-            });
-
-            function loginStep3a() {
-                if ($("#form3aInput").val().length <= 8) {
-                    toastr.warning("Please enter a longer password");
-                } else if ($("#form3aInput").val() != $("#form3aInputConfirm").val()) {
-                    toastr.warning("Please ensure that both password boxes match");
-                } else {
-                    $("#form3a").fadeOut(function () {
-                        $("#form3b").fadeIn(function () { //Request an email
-                            $("#form3bInput").focus();
-                        });
-                    });
-
-                }
-            }
-
-            $("#form3b").submit(function () {
-                loginStep3b();
-                return false;
-            });
-
-            function loginStep3b() {
-                if (!isEmail($("#form3bInput").val())) {
-                    toastr.warning("Please enter a valid email address");
-                } else {
-                    $.ajax({
-                        url: "../api/login/usernameOrEmailTaken.php",
-                        type: "POST",
-                        dataType: 'json',
-                        data: {
-                            "email": $("#form3bInput").val()
-                        }, success: function (result) {
-                            if (result.result) {
-                                if (result.response) {
-                                    toastr.warning("Sorry this email address is taken - please try choosing another");
-                                } else {
-                                    $("#form3b").fadeOut(function () {
-                                        $("#form3c").fadeIn(function () { //Request an email
-                                            $("#form3cInput").focus();
-                                        });
-                                    });
-                                }
-                            } else {
-                                toastr.error(result.error.message);
-                            }
-                        }, error: function () {
-                            toastr.error("Please refresh the page and check your internet connection");
-                        }
-                    });
-                }
-            }
-
-            $("#form3c").submit(function () {
-                loginStep3c();
-                return false;
-            });
-
-            function loginStep3c() {
-                if ($("#form3cInput").val().length < 5) {
-                    toastr.warning("Please enter a longer username");
-                } else {
-                    $.ajax({
-                        url: "../api/login/usernameOrEmailTaken.php",
-                        type: "POST",
-                        dataType: 'json',
-                        data: {
-                            "username": $("#form3cInput").val()
-                        }, success: function (result) {
-                            if (result.result) {
-                                if (result.response) {
-                                    toastr.warning("Sorry this username is taken - please try choosing another");
-                                } else {
-                                    $("#form3c").fadeOut(function () {
-                                        loginStep3d();
-                                    });
-                                }
-                            } else {
-                                toastr.error(result.error.message);
-                            }
-                        }, error: function () {
-                            toastr.error("Please refresh the page and check your internet connection");
-                        }
-                    });
-                }
-            }
-
-            function loginStep3d() {
-                //Terms and conditions now accepted
+            $("#signupForm").submit(function(e){
+                e.preventDefault();
+                $("#signupForm").hide();
+                $("#loadingOverlay").show();
                 $.ajax({
                     url: "../api/login/signup.php",
                     type: "POST",
                     dataType: 'json',
                     data: {
-                        "name1": $("#form3aaInput").val(),
-                        "name2": $("#form3aaInputLastName").val(),
-                        "password": $("#form3aInput").val(),
-                        "username": $("#form3cInput").val(),
-                        "email": $("#form3bInput").val()
+                        "name1": $("#signupForm_users_name1").val(),
+                        "name2": $("#signupForm_users_name2").val(),
+                        "password": $("#signupForm_users_password").val(),
+                        "username": $("#signupForm_users_username").val(),
+                        "email": $("#signupForm_users_email").val()
                     }, success: function (result) {
                         if (result.result) {
-                            $("#formVerifyEmail").fadeIn(); //Show them that they were supposed to verify email address
+                            $.ajax({
+                                url: "../api/login/login.php",
+                                type: "POST",
+                                dataType: 'json',
+                                data: {"formInput" : $("#signupForm_users_username").val(),"password": $("#signupForm_users_password").val()},
+                                success: function(result) {
+                                    if (result.result) {
+                                        window.location.href = result.response.redirect;
+                                    } else {
+                                        $("#signupForm").show();
+                                        $("#loadingOverlay").hide();
+                                        $("#errorMessageBox").html(result.error.message);
+                                        $("#errorMessageBox").show();
+                                    }
+                                },
+                                error: function(){
+                                    $("#signupForm").show();
+                                    $("#loadingOverlay").hide();
+                                    $("#errorMessageBox").html("Account created, but login unsuccessful: please refresh the page and check your internet connection");
+                                    $("#errorMessageBox").show();
+                                }
+                            });
                         } else {
-                            toastr.error(result.error.message);
+                            $("#signupForm").show();
+                            $("#loadingOverlay").hide();
+                            $("#errorMessageBox").html(result.error.message);
+                            $("#errorMessageBox").show();
                         }
                     }, error: function () {
-                        toastr.error("Please refresh the page and check your internet connection");
+                        $("#signupForm").show();
+                        $("#loadingOverlay").hide();
+                        $("#errorMessageBox").html("Please refresh the page and check your internet connection");
+                        $("#errorMessageBox").show();
                     }
                 });
-            }
-
-            $("#formVerifyEmail").submit(function () {
-                formVerifyEmail();
-                return false;
             });
-
+            
             function formVerifyEmail() {
                 //They want us to send out another verification email
                 if (initialData.hasOwnProperty("error") && initialData.error.hasOwnProperty("userid")) {

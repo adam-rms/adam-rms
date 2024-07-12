@@ -52,7 +52,7 @@ $configStructureArray = [
       },
       "name" => "Email sending",
       "group" => "Email",
-      "description" => "Should AdamRMS send emails to users? If this is enabled then a provider must be setup below.",
+      "description" => "Should AdamRMS send emails to users? If this is enabled then a provider must be setup below. Enabling this option will also require users to verify their email addresses on signup.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 5,
@@ -209,7 +209,7 @@ $configStructureArray = [
       },
       "name" => "Google Auth Key",
       "group" => "Authentication",
-      "description" => "The ID key for Google authentication.",
+      "description" => "The ID key for Google authentication. When configuring Google authentication, set the redirect URIs to https://YOURROOTURL/login/oauth/google.php and https://YOURROOTURL/api/account/oauth-link/google.php",
       "required" => false,
       "maxlength" => 100,
       "minlength" => 0,
@@ -264,6 +264,49 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+    "envFallback" => false,
+  ],
+  "AUTH_PROVIDERS_MICROSOFT_APP_ID" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Microsoft Auth App ID",
+      "group" => "Authentication",
+      "description" => "The App ID key for Microsoft authentication. When configuring Microsoft authentication, set the redirect URIs to https://YOURROOTURL/login/oauth/microsoft.php and https://YOURROOTURL/api/account/oauth-link/microsoft.php",
+      "required" => false,
+      "maxlength" => 100,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+
+  "AUTH_PROVIDERS_MICROSOFT_KEYS_SECRET" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Microsoft Auth Secret",
+      "group" => "Authentication",
+      "description" => "The secret key for Microsoft authentication.",
+      "required" => false,
+      "maxlength" => 100,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
     "envFallback" => false,
   ],
   "PROJECT_NAME" => [

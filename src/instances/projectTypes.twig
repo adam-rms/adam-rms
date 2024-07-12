@@ -1,12 +1,32 @@
 {% extends "assets/template.twig" %}
 {% block content %}
-
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                    <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/projectTypes.php">Project Types</a></li>
+                    {% endif %}
+					{% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectStatuses.php">Project Statuses</a></li>
+                    {% endif %}
+					{% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/invoices.php">Invoices</a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
 <div class="row">
     <div class="col-lg-12">
         <div class="card ">
             <div class="card-header">
                 <h3 class="card-title">
-                    Types
+                    Project Types
                 </h3>
                 <div class="card-tools pull-right">
                     <form class="input-group input-group-sm" method="GET">

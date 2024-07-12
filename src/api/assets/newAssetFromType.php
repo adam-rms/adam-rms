@@ -42,7 +42,7 @@ function checkDuplicate($value, $type)
 
 $assetBarcodeData = [
     "assetsBarcodes_value" => $array['assets_tag'],
-    "assetsBarcodes_type" => "CODE_128",
+    "assetsBarcodes_type" => "QR_CODE",
     "assets_id" => $result,
     "users_userid" => $AUTH->data['users_userid'],
     "assetsBarcodes_added" => date("Y-m-d H:i:s")
