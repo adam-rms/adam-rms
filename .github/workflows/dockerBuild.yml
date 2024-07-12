@@ -8,6 +8,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+      - name: Create Version Folder if not exists
+        run: |
+            test -d src/version || mkdir src/version
+        shell: bash
       - name: Write Version Number
         run: |
             echo $TAG > src/version/TAG.txt
