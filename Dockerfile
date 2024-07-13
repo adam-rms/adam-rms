@@ -1,40 +1,56 @@
-FROM php:8-fpm
+# syntax=docker/dockerfile:1
 
-COPY ./php.ini /var/www/php.ini
-RUN mv "/var/www/php.ini" "$PHP_INI_DIR/php.ini"
+################################################################################
+# Composer Deps Stage
+################################################################################
 
-RUN apt-get update
-RUN apt-get install -y \
-		libfreetype6-dev \
-		libjpeg62-turbo-dev \
-		libpng-dev \
-		libzip-dev \
-		libonig-dev \
-		zlib1g-dev \
-		libicu-dev \
-		unzip \
-		git \
-	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
-	&& docker-php-ext-install -j$(nproc) gd \
-	&& apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-RUN docker-php-ext-install zip
-RUN docker-php-ext-install mbstring
-RUN docker-php-ext-install mysqli
-RUN docker-php-ext-install intl
-RUN docker-php-ext-install gd
-RUN docker-php-ext-install -j "$(nproc)" opcache
-RUN docker-php-ext-install pdo pdo_mysql  # Required for Phyinx
+# Download dependencies as a separate step to take advantage of Docker's caching.
+# Leverage bind mounts to composer.json and composer.lock to avoid having to copy 
+# them into this layer. Also leverage a cache mount to /tmp/cache so that 
+# subsequent builds don't have to re-download packages. Ignore platform requirements, 
+# as we resolve those in the next stage
 
-COPY . /var/www/
+FROM composer:lts AS deps
 
-RUN git log --pretty=\"%h\" -n1 HEAD > /var/www/src/version/COMMIT.txt
-RUN git log --pretty=\"%H\" -n1 HEAD > /var/www/src/version/COMMITFULL.txt
-RUN git describe --tags --abbrev=0 > /var/www/src/version/TAG.txt
+WORKDIR /app
 
-RUN chmod +x /var/www/migrate.sh
+RUN --mount=type=bind,source=composer.json,target=composer.json \
+    --mount=type=bind,source=composer.lock,target=composer.lock \
+    --mount=type=cache,target=/tmp/cache \
+    composer install --no-dev --no-interaction --ignore-platform-reqs
 
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-WORKDIR /var/www
-RUN composer install --optimize-autoloader --no-dev
+################################################################################
+# PHP Build Stage
+################################################################################
 
-ENTRYPOINT ["/var/www/migrate.sh"]
+# A stage that contains the final, minimal running application, with full dependencies
+# installed. This is based on _PHP 8.3_ with the apache web server.
+
+# Useful documentation links:
+# - https://github.com/docker-library/docs/tree/master/php#php-core-extensions
+# - https://github.com/docker-library/docs/tree/master/php#how-to-install-more-php-extensions
+
+FROM php:8.3-apache AS final
+
+# Install PHP extensions
+RUN apt-get update && apt-get install -y \
+     libfreetype-dev \
+     libjpeg62-turbo-dev \
+     libpng-dev \
+     libicu-dev \
+ && rm -rf /var/lib/apt/lists/* \
+     && docker-php-ext-configure gd --with-freetype --with-jpeg \
+     && docker-php-ext-install -j$(nproc) gd mysqli intl
+
+# Copy our php.ini file
+COPY ./build-helpers/php.ini "$PHP_INI_DIR/php.ini"
+# Copy Apache config
+COPY ./build-helpers/apache.conf /etc/apache2/sites-available/000-default.conf
+
+# Copy the app dependencies from the previous install stage.
+COPY --from=deps app/vendor/ /var/www/html/vendor
+# Copy the app files from the app directory.
+COPY ./src /var/www/html/adam-rms
+
+# Switch to the base image non-privileged user that the app will run under.
+USER www-data
