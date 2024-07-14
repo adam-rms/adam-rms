@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -y \
      libicu-dev \
  && rm -rf /var/lib/apt/lists/* \
      && docker-php-ext-configure gd --with-freetype --with-jpeg \
-     && docker-php-ext-install -j$(nproc) gd mysqli intl
+     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mysqli intl 
 
 # Copy our php.ini file
 COPY ./build-helpers/php.ini "$PHP_INI_DIR/php.ini"
@@ -50,7 +50,15 @@ COPY ./build-helpers/apache.conf /etc/apache2/sites-available/000-default.conf
 # Copy the app dependencies from the previous install stage.
 COPY --from=deps app/vendor/ /var/www/html/vendor
 # Copy the app files from the app directory.
-COPY ./src /var/www/html/adam-rms
+COPY ./src /var/www/html/src
+
+# Copy the database related files
+COPY ./db /var/www/html/db
+COPY ./phinx.php /var/www/html
+COPY ./build-helpers/migrate.sh /var/www/html 
 
 # Switch to the base image non-privileged user that the app will run under.
 USER www-data
+
+SHELL ["sh"]
+ENTRYPOINT ["/var/www/html/migrate.sh"]
