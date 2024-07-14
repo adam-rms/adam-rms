@@ -2,6 +2,12 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Migrate & Seed Database",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Migrate Database", "Seed Database"],
+      "problemMatcher": []
+    },
+    {
       "label": "Migrate Database",
       "type": "shell",
       "command": "php vendor/bin/phinx migrate",

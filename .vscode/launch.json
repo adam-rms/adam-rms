@@ -19,6 +19,28 @@
         "uriFormat": "http://localhost:%s",
         "action": "openExternally"
       }
+    },
+    {
+      "name": "Launch AdamRMS with Profiler",
+      "type": "php",
+      "request": "launch",
+      "runtimeArgs": [
+        "-dxdebug.mode=profile",
+        "-dxdebug.start_with_request=yes",
+        "-S",
+        "127.0.0.1:8080"
+      ],
+      "cwd": "${workspaceRoot}/src/",
+      "noDebug": true,
+      "profile": true,
+      "env": {
+        "XDEBUG_CONFIG": "output_dir=${workspaceRoot}"
+      },
+      "serverReadyAction": {
+        "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+        "uriFormat": "http://localhost:%s",
+        "action": "openExternally"
+      }
     }
   ]
 }
