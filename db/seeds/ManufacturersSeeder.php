@@ -13,7 +13,7 @@ class ManufacturersSeeder extends AbstractSeed
      * More information on writing seeders is available here:
      * https://book.cakephp.org/phinx/0/en/seeding.html
      */
-    public function run()
+    public function run(): void
     {
         $data = [
             [
@@ -3634,8 +3634,11 @@ class ManufacturersSeeder extends AbstractSeed
             ]
         ];
 
-        $this->execute("DELETE FROM manufacturers");
-
+        $count = $this->fetchRow('SELECT COUNT(*) AS count FROM manufacturers');
+        if ($count['count'] > 0) {
+            return;
+        }
+        
         $table = $this->table('manufacturers');
         $table->insert($data)
             ->saveData();
