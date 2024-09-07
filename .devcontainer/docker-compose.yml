@@ -74,7 +74,7 @@ services:
       - validKmsKeys=arn:aws:kms:devcontainer-east-1:1234567890:topsecretkeydonottellanyone/key-id-of-top-secret-key
   phpmyadmin:
     image: phpmyadmin:5-apache
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
     ports:

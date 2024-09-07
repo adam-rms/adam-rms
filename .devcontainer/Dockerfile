@@ -2,7 +2,7 @@
 ARG VARIANT=8-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/php:0-${VARIANT}
 
-# Install MariaDB client
+# Install extensions - these should be the same as the ones in the main dockerfile
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y mariadb-client libicu-dev libzip-dev libpng-dev \ 
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
