@@ -34,13 +34,11 @@ FROM php:8.3-apache AS final
 
 # Install PHP extensions
 RUN apt-get update && apt-get install -y \
-     libfreetype-dev \
-     libjpeg62-turbo-dev \
-     libpng-dev \
-     libicu-dev \
-     && rm -rf /var/lib/apt/lists/* \
-     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mysqli intl 
+    libicu-dev \ 
+    libzip-dev \
+    libpng-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mysqli intl zip
 
 # Copy our php.ini file
 
@@ -59,12 +57,13 @@ COPY --from=deps app/vendor/ /var/www/html/vendor
 COPY ./src /var/www/html/src
 
 # Copy the database related files
-COPY ./db /var/www/db
-COPY ./phinx.php /var/www
-COPY ./migrate.sh /var
+COPY ./db /var/www/html/db
+COPY ./phinx.php /var/www/html
+COPY ./migrate.sh /var/www/html
+RUN chmod +x /var/www/html/migrate.sh
 
 # Switch to the base image non-privileged user that the app will run under.
 USER www-data
 
 SHELL ["sh"]
-ENTRYPOINT ["/var/migrate.sh"]
+ENTRYPOINT ["/var/www/html/migrate.sh"]

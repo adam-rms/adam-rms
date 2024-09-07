@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /var/www
+cd /var/www/html
 
 # Validate expected environment variables
 echo "AdamRMS - Checking for Environment Variables"
@@ -18,8 +18,6 @@ php vendor/bin/phinx seed:run -e production
 if [[ -v DEV_MODE ]] && [[ "${DEV_MODE}" == 'true' ]]; then
     echo "AdamRMS - Running in DEV MODE"
 fi
-
-cd html/
 
 # Start Server
 echo "AdamRMS - Starting Apache2"
