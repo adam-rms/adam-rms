@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This file is used by the docker container to build the database schema and seed the database with initial data
+
 cd /var/www/html
 
 # Validate expected environment variables
