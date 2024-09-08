@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . '/../../apiHeadSecure.php';
-
-if ($AUTH->data['users_userid'] !== $AUTH->data['instance']['instances_billingUser']) die("Sorry, you are not the billing contact for this business, please contact support.");
+require_once __DIR__ . '/../../apiHead.php';
 
 $stripe = new \Stripe\StripeClient($CONFIGCLASS->get('STRIPE_KEY'));
 $products = $stripe->products->search([
@@ -47,6 +45,6 @@ foreach ($products->data as $product) {
   $productsReturn[] = $productReturn;
 }
 
-usort($productsReturn, fn ($a, $b) => $a['price'][0]['unit_amount'] <=> $b['price'][0]['unit_amount']);
+usort($productsReturn, fn($a, $b) => $a['price'][0]['unit_amount'] <=> $b['price'][0]['unit_amount']);
 
 finish(true, null, $productsReturn);
