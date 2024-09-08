@@ -32,7 +32,18 @@ class Config
       }
     }
     $this->DBLIB->where("config_key", $downloadNow, "IN");
-    $downloadNowResults = $this->DBLIB->get("config", null, ["config_key", "config_value"]);
+    try {
+      $downloadNowResults = $this->DBLIB->get("config", null, ["config_key", "config_value"]);
+    } catch (Exception $e) {
+      // TODO use twig for this
+      if (getenv('DEV_MODE') == "true") {
+          echo "Could not connect to database: " . $e->getMessage() . "\n\n\nPlease doulbe check you have setup environment variables correctly for the database connection.";
+          exit;
+      } else {
+          echo "Could not connect to database";
+          exit;
+      }
+    }
     foreach ($downloadNowResults as $key => $value) {
       $this->DBCACHE[$value['config_key']] = $value['config_value'];
     }
