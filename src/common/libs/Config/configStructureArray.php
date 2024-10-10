@@ -77,7 +77,7 @@ $configStructureArray = [
       "required" => false,
       "maxlength" => 255,
       "minlength" => 5,
-      "options" => ["Sendgrid"],
+      "options" => ["Sendgrid", "Mailgun"],
       "verifyMatch" => function ($value, $options) {
         return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
       }
@@ -107,6 +107,48 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "bCMS__SendGridAPIKEY",
   ],
+  "EMAILS_PROVIDERS_MAILGUN_APIKEY" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return "";
+      },
+      "name" => "Mailgun API key",
+      "group" => "Email",
+      "description" => "If Mailgun is selected above, the Mailgun API key to use to send emails",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "EMAILS_PROVIDERS_MAILGUN_LOCATION" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "";
+      },
+      "name" => "Mailgun Server Location",
+      "group" => "Email",
+      "description" => "Whether to use the US or EU Mailgun servers",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => ["US", "EU"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
   "EMAILS_FROMEMAIL" => [
     "form" => [
       "type" => "email",
@@ -129,6 +171,27 @@ $configStructureArray = [
     "specialRequest" => true,
     "default" => false,
     "envFallback" => "bCMS__FROM_EMAIL",
+  ],
+  "EMAILS_FROMDOMAIN" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "example.com";
+      },
+      "name" => "From email domain",
+      "group" => "Email",
+      "description" => "The domain to use for the selected provider, required for Mailgun",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
   ],
   "ERRORS_PROVIDERS_SENTRY" => [
     "form" => [
