@@ -10,15 +10,15 @@ class MailgunEmailHandler extends EmailHandler
   {
     global $CONFIG, $bCMS, $CONFIGCLASS;
 
-    if ($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_APIKEY') == false) {
-      trigger_error("Email Provider is Mailgun, but Mailgun API Key not set", E_USER_WARNING);
+    if ($CONFIGCLASS->get('EMAILS_PROVIDERS_APIKEY') == false) {
+      trigger_error("Email Provider is Mailgun, but API Key not set", E_USER_WARNING);
       return true;
     }
 
     $emailFromDomain = parent::domainFromEmail($CONFIGCLASS->get('EMAILS_FROMEMAIL'));
 
     $mgServer = ($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_LOCATION')) == "EU" ? "https://api.eu.mailgun.net" : "https://api.mailgun.net";
-    $mgClient = \Mailgun\Mailgun::create($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_APIKEY'), $mgServer);
+    $mgClient = \Mailgun\Mailgun::create($CONFIGCLASS->get('EMAILS_PROVIDERS_APIKEY'), $mgServer);
     $userName = $bCMS->cleanString($user["userData"]["users_name1"] .  ' ' . $user["userData"]["users_name2"]);
     $params = array(
       "html" => $body,

@@ -77,7 +77,7 @@ $configStructureArray = [
       "required" => false,
       "maxlength" => 255,
       "minlength" => 4,
-      "options" => ["Sendgrid", "Mailgun", "SMTP"],
+      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP"],
       "verifyMatch" => function ($value, $options) {
         return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
       }
@@ -109,15 +109,15 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "bCMS__FROM_EMAIL",
   ],
-  "EMAILS_PROVIDERS_SENDGRID_APIKEY" => [
+  "EMAILS_PROVIDERS_APIKEY" => [
     "form" => [
       "type" => "secret",
       "default" => function () {
         return "";
       },
-      "name" => "SendGrid API key",
+      "name" => "Email Service API key",
       "group" => "Email",
-      "description" => "If Sengrid is selected above, the SendGrid API key to use to send emails",
+      "description" => "If Sengrid, Mailgun or Postmark is selected above, the API key to use to send emails",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -129,27 +129,6 @@ $configStructureArray = [
     "specialRequest" => true,
     "default" => false,
     "envFallback" => "bCMS__SendGridAPIKEY",
-  ],
-  "EMAILS_PROVIDERS_MAILGUN_APIKEY" => [
-    "form" => [
-      "type" => "secret",
-      "default" => function () {
-        return "";
-      },
-      "name" => "Mailgun API key",
-      "group" => "Email",
-      "description" => "If Mailgun is selected above, the Mailgun API key to use to send emails",
-      "required" => false,
-      "maxlength" => 255,
-      "minlength" => 0,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        return ["valid" => true, "value" => $value, "error" => null];
-      }
-    ],
-    "specialRequest" => true,
-    "default" => false,
-    "envFallback" => false,
   ],
   "EMAILS_PROVIDERS_MAILGUN_LOCATION" => [
     "form" => [

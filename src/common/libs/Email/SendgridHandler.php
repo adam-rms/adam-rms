@@ -10,8 +10,8 @@ class SendgridEmailHandler extends EmailHandler
   {
     global $CONFIG, $bCMS, $CONFIGCLASS;
 
-    if ($CONFIGCLASS->get('EMAILS_PROVIDERS_SENDGRID_APIKEY') == false) {
-      trigger_error("Email Provider is Sendgrid, but Sendgrid API Key not set", E_USER_WARNING);
+    if ($CONFIGCLASS->get('EMAILS_PROVIDERS_APIKEY') == false) {
+      trigger_error("Email Provider is Sendgrid, but API Key not set", E_USER_WARNING);
       return true;
     }
 
@@ -20,7 +20,7 @@ class SendgridEmailHandler extends EmailHandler
     $email->setSubject($bCMS->cleanString($subject));  //Subject should be escaped
     $email->addTo($user["userData"]["users_email"], $user["userData"]["users_name1"] .  ' ' . $user["userData"]["users_name2"]);
     $email->addContent("text/html", $body);
-    $sendgrid = new \SendGrid($CONFIGCLASS->get('EMAILS_PROVIDERS_SENDGRID_APIKEY'));
+    $sendgrid = new \SendGrid($CONFIGCLASS->get('EMAILS_PROVIDERS_APIKEY'));
     $response = $sendgrid->send($email);
     if ($response->statusCode() == 202) {
       return parent::logEmail($user, $subject, $body);
