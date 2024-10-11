@@ -13,14 +13,12 @@ class MailgunEmailHandler extends EmailHandler
     if ($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_APIKEY') == false) {
       trigger_error("Email Provider is Mailgun, but Mailgun API Key not set", E_USER_WARNING);
       return true;
-    } elseif ($CONFIGCLASS->get('EMAILS_FROMDOMAIN') == false) {
-      trigger_error("Email Provider is Mailgun, but From Domain not set", E_USER_WARNING);
-      return true;
     }
+
+    $emailFromDomain = substr($CONFIGCLASS->get('EMAILS_FROMEMAIL'), strpos($CONFIGCLASS->get('EMAILS_FROMEMAIL'), "@") + 1);
 
     $mgServer = ($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_LOCATION')) == "EU" ? "https://api.eu.mailgun.net" : "https://api.mailgun.net";
     $mgClient = \Mailgun\Mailgun::create($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_APIKEY'), $mgServer);
-    $domain = $CONFIGCLASS->get('EMAILS_FROMDOMAIN');
     $userName = $bCMS->cleanString($user["userData"]["users_name1"] .  ' ' . $user["userData"]["users_name2"]);
     $params = array(
       "html" => $body,
@@ -29,7 +27,7 @@ class MailgunEmailHandler extends EmailHandler
       "subject" => $bCMS->cleanString($subject),
     );
 
-    $response = $mgClient->messages()->send($domain, $params);
+    $response = $mgClient->messages()->send($emailFromDomain, $params);
 
     if ($response->getStatusCode() == 200) {
       return parent::logEmail($user, $subject, $body);

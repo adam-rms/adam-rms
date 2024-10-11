@@ -172,27 +172,6 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "bCMS__FROM_EMAIL",
   ],
-  "EMAILS_FROMDOMAIN" => [
-    "form" => [
-      "type" => "text",
-      "default" => function () {
-        return "example.com";
-      },
-      "name" => "From email domain",
-      "group" => "Email",
-      "description" => "The domain to use for the selected provider, required for Mailgun",
-      "required" => false,
-      "maxlength" => 255,
-      "minlength" => 0,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        return ["valid" => true, "value" => $value, "error" => null];
-      }
-    ],
-    "specialRequest" => true,
-    "default" => false,
-    "envFallback" => false,
-  ],
   "ERRORS_PROVIDERS_SENTRY" => [
     "form" => [
       "type" => "secret",
