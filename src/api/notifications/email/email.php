@@ -28,6 +28,9 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
         case 'Mailgun':
             require __DIR__ . '/../../../common/libs/Email/MailgunHandler.php';
             return MailgunEmailHandler::sendEmail($user, $subject, $outputHTML);
+        case 'SMTP':
+            require __DIR__ . '/../../../common/libs/Email/SMTPHandler.php';
+            return SMTPEmailHandler::sendEmail($user, $subject, $outputHTML);
         default:
             trigger_error("Unknown email provider set", E_USER_ERROR);
             return false;

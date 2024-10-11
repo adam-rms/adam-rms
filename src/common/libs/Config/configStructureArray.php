@@ -63,7 +63,7 @@ $configStructureArray = [
     ],
     "specialRequest" => false,
     "default" => "Disabled",
-    "envFallback" => false,
+    "envFallback" => "CONFIG_EMAILS_ENABLED",
   ],
   "EMAILS_PROVIDER" => [
     "form" => [
@@ -76,15 +76,38 @@ $configStructureArray = [
       "description" => "Which provider should AdamRMS use to send emails to users? This option is ignored if email sending is disabled.",
       "required" => false,
       "maxlength" => 255,
-      "minlength" => 5,
-      "options" => ["Sendgrid", "Mailgun"],
+      "minlength" => 4,
+      "options" => ["Sendgrid", "Mailgun", "SMTP"],
       "verifyMatch" => function ($value, $options) {
         return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
       }
     ],
     "specialRequest" => true,
     "default" => "Sendgrid",
-    "envFallback" => false,
+    "envFallback" => "CONFIG_EMAILS_PROVIDER",
+  ],
+  "EMAILS_FROMEMAIL" => [
+    "form" => [
+      "type" => "email",
+      "default" => function () {
+        return "adamrms@example.com";
+      },
+      "name" => "From email address",
+      "group" => "Email",
+      "description" => "The email address to send emails from",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        $checkedValue = filter_var($value, FILTER_VALIDATE_EMAIL);
+        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
+        else return ["valid" => false, "value" => "", "error" => "Invalid email address"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "bCMS__FROM_EMAIL",
   ],
   "EMAILS_PROVIDERS_SENDGRID_APIKEY" => [
     "form" => [
@@ -149,28 +172,89 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => false,
   ],
-  "EMAILS_FROMEMAIL" => [
+  "EMAILS_SMTP_SERVER" => [
     "form" => [
-      "type" => "email",
+      "type" => "text",
       "default" => function () {
-        return "adamrms@example.com";
+        return "smtp.example.com";
       },
-      "name" => "From email address",
+      "name" => "SMTP server address",
       "group" => "Email",
-      "description" => "The email address to send emails from",
+      "description" => "The SMTP server to send emails from",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
       "options" => [],
       "verifyMatch" => function ($value, $options) {
-        $checkedValue = filter_var($value, FILTER_VALIDATE_EMAIL);
-        if ($checkedValue) return ["valid" => true, "value" => $checkedValue, "error" => null];
-        else return ["valid" => false, "value" => "", "error" => "Invalid email address"];
+        return ["valid" => true, "value" => $value, "error" => null];
       }
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => "bCMS__FROM_EMAIL",
+    "envFallback" => "CONFIG_EMAILS_SMTP_SERVER",
+  ],
+  "EMAILS_SMTP_USERNAME" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "user@example.com";
+      },
+      "name" => "SMTP server username",
+      "group" => "Email",
+      "description" => "The username to connect to the SMTP server with",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "EMAILS_SMTP_PASSWORD" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return "password";
+      },
+      "name" => "SMTP server username",
+      "group" => "Email",
+      "description" => "The password to connect to the SMTP server with",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "EMAILS_SMTP_PORT" => [
+    "form" => [
+      "type" => "number",
+      "default" => function () {
+        return 465;
+      },
+      "name" => "SMTP server port",
+      "group" => "Email",
+      "description" => "The port to connect to the SMTP server on",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => 465,
+    "envFallback" => "CONFIG_EMAILS_SMTP_PORT",
   ],
   "ERRORS_PROVIDERS_SENTRY" => [
     "form" => [

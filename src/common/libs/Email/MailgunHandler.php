@@ -15,7 +15,7 @@ class MailgunEmailHandler extends EmailHandler
       return true;
     }
 
-    $emailFromDomain = substr($CONFIGCLASS->get('EMAILS_FROMEMAIL'), strpos($CONFIGCLASS->get('EMAILS_FROMEMAIL'), "@") + 1);
+    $emailFromDomain = parent::domainFromEmail($CONFIGCLASS->get('EMAILS_FROMEMAIL'));
 
     $mgServer = ($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_LOCATION')) == "EU" ? "https://api.eu.mailgun.net" : "https://api.mailgun.net";
     $mgClient = \Mailgun\Mailgun::create($CONFIGCLASS->get('EMAILS_PROVIDERS_MAILGUN_APIKEY'), $mgServer);

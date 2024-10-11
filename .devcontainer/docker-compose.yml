@@ -42,6 +42,11 @@ services:
       - CONFIG_AWS_S3_ENDPOINT_PATHSTYLE=Enabled
       - CONFIG_AWS_S3_REGION=devcontainer-east-1
       - CONFIG_AWS_CLOUDFRONT_ENDPOINT=http://localhost:8081/localtestingbucket
+      - CONFIG_EMAILS_ENABLED=true
+      - CONFIG_EMAILS_PROVIDER=SMTP
+      - bCMS__FROM_EMAIL=adamrms@devcontainer.local
+      - CONFIG_EMAILS_SMTP_SERVER=mailpit
+      - CONFIG_EMAILS_SMTP_PORT=1025
   db:
     image: index.docker.io/mysql/mysql-server:8.0
     command: --default-authentication-plugin=mysql_native_password --innodb-thread-concurrency=0 --sort_buffer_size=512K
@@ -85,6 +90,20 @@ services:
       - PMA_USER=user
       - PMA_PASSWORD=pass
       - PMA_PORT=3306
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    volumes:
+      - email_data:/data
+    ports:
+      - 1025:1025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
 volumes:
   db_data: null
+  email_data: null

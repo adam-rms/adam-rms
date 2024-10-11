@@ -26,7 +26,7 @@ class EmailHandler
    * @param mixed $body HTML body to send
    * @return bool True if successfully logged, False otherwise
    */
-  protected static function logEmail($user, $subject, $body)
+  protected static function logEmail($user, $subject, $body): bool
   {
     global $DBLIB, $CONFIG, $bCMS, $CONFIGCLASS;
     $sqldata = array(
@@ -42,5 +42,16 @@ class EmailHandler
     $emailid = $DBLIB->insert('emailSent', $sqldata);
     if (!$emailid) return false;
     else return true;
+  }
+
+  /**
+   * Get the domain of the given email address
+   * @param string $email
+   * @return string Domain
+   */
+  protected static function domainFromEmail(string $email): string
+  {
+    return
+      substr($email, strpos($email, "@") + 1);
   }
 }
