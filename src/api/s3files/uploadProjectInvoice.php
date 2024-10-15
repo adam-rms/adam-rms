@@ -44,6 +44,7 @@ if (isset($_FILES['file'])) {
         else finish(true, null, ["id" => $id, "resize" => false, "url" => $CONFIG['ROOTURL'] . '/api/file/?r=true&f=' . $id]);
     } else finish(false, ["code" => null, "message" => "S3 Upload Error"]);
 }
+finish(false, ["code" => null, "message" => "HTTP Upload Error"]);
 /** @OA\Post(
  *     path="/s3files/uploadProjectInvoice.php", 
  *     summary="Upload Project Invoice", 

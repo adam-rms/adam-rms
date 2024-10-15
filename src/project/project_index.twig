@@ -589,16 +589,12 @@
                         </button>
                     </div>
                     <div class="modal-body">
-{% embed 'assets/templates/fileBox.twig' with {'files': payment.files } %}
-
-
+                        {% embed 'assets/templates/fileBox.twig' with {'files': payment.files } %}
                         {% endembed %}
                     </div>
                     {% if "PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS"|instancePermissions %}
                         <div class="modal-footer">
-{% embed 'assets/templates/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
-
-
+                            {% embed 'assets/templates/uppy.twig' with {'type': 'PAYMENT-FILE', 'paste': true, 'typeId': 14, 'subTypeId': payment.payments_id, 'imagesOnly': false } %}
                                 {% block success %}
                                     console.log(responseJson.id);
                                 {% endblock %}
@@ -622,16 +618,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-{% embed 'assets/templates/fileBox.twig' with {'files': files } %}
-
-
+                    {% embed 'assets/templates/fileBox.twig' with {'files': files } %}
                     {% endembed %}
                 </div>
                 {% if "PROJECTS:PROJECT_FLIE_ATTACHMENTS:CREATE"|instancePermissions %}
                     <div class="modal-footer">
-{% embed 'assets/templates/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
-
-
+                        {% embed 'assets/templates/uppy.twig' with {'type': 'PROJECT-FILE', 'paste': true, 'typeId': 7, 'subTypeId': project.projects_id, 'imagesOnly': false } %}
                             {% block success %}
                                 console.log(responseJson.id);
                             {% endblock %}
@@ -652,7 +644,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-{% embed 'assets/templates/fileBox.twig' with {'files': quotes } %}
+                    {% embed 'assets/templates/fileBox.twig' with {'files': quotes } %}
 
 
                     {% endembed %}
@@ -670,9 +662,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-{% embed 'assets/templates/fileBox.twig' with {'files': invoices } %}
-
-
+                    {% embed 'assets/templates/fileBox.twig' with {'files': invoices } %}
                     {% endembed %}
                 </div>
             </div>

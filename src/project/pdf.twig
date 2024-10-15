@@ -502,7 +502,8 @@
             var pdf = pdfMake.createPdf(docDefinition);
             {% if GET['draft'] or CONFIG.FILES_ENABLED != "Enabled" or USERDATA.instance.instances_storageEnabled != 1 %}
             pdf.download("{{ project['projects_name']|escape("js") }} - Draft {{ GET['quote'] ? "Quote" : "Invoice" }}.pdf", function() {
-                window.close();
+                // Firefox takes a bit longer to do file actions, so delay closing this tab a little
+                setTimeout(() => {window.close()}, 100)
             });
             {% else %}
             pdf.getBlob((blob) => {
@@ -522,10 +523,9 @@
                     } else if (response.error && response.error.code) {
                         alert(response.error.message);
                     } else if (response.result && response.response && response.response.url) {
-                        //window.location = response.response.url;
-                        //pdf.open({}, window);
                         pdf.download("{{ project['projects_name']|escape("js") }} - {{ GET['quote'] ? "Quote" : "Invoice" }} v{{ fileNumber|escape("js") }}.pdf", function() {
-                            window.close();
+                            // Firefox takes a bit longer to do file actions, so delay closing this tab a little
+                            setTimeout(() => {window.close()}, 100)
                         });
                     } else {
                         alert("Error loading PDF");
