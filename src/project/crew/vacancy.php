@@ -14,6 +14,7 @@ $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_archived", 0);
+$DBLIB->where("(projects.projects_dates_use_end IS NULL OR projects.projects_dates_use_end >= '" . date("Y-m-d H:i:s") . "')");
 
 $role = $DBLIB->getone("projectsVacantRoles",["projectsVacantRoles.*","projects.*","users.users_userid", "users.users_name1", "users.users_name2", "users.users_email"]);
 if (!$role) die($TWIG->render('404.twig', $PAGEDATA));

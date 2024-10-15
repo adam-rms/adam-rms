@@ -11,7 +11,7 @@ $DBLIB->join("projects","projectsVacantRoles.projects_id=projects.projects_id","
 $DBLIB->join("users","projectsVacantRolesApplications.users_userid=users.users_userid","LEFT");
 $DBLIB->where("projectsVacantRolesApplications.projectsVacantRolesApplications_deleted",0);
 $DBLIB->where("projectsVacantRolesApplications_id",$_POST["projectsVacantRolesApplications_id"]);
-$application = $DBLIB->getOne("projectsVacantRolesApplications", null, ["projectsVacantRolesApplications_id","projects_name","projects.projects_id","projectsVacantRoles_name","users.users_userid","projectsVacantRoles_name"]);
+$application = $DBLIB->getOne("projectsVacantRolesApplications", ["projectsVacantRolesApplications_id","projects_name","projects.projects_id","projectsVacantRoles_name","users.users_userid","projectsVacantRoles_name"]);
 if (!$application) finish(false,["message"=>"Application not found"]);
 
 $DBLIB->where("projectsVacantRolesApplications_id",$application["projectsVacantRolesApplications_id"]);
