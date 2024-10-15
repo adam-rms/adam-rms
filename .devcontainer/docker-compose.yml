@@ -44,7 +44,7 @@ services:
       - CONFIG_AWS_CLOUDFRONT_ENDPOINT=http://localhost:8081/localtestingbucket
       - CONFIG_EMAILS_ENABLED=true
       - CONFIG_EMAILS_PROVIDER=SMTP
-      - bCMS__FROM_EMAIL=adamrms@devcontainer.local
+      - CONFIG_EMAILS_FROM_EMAIL=adamrms@devcontainer.local
       - CONFIG_EMAILS_SMTP_SERVER=mailpit
       - CONFIG_EMAILS_SMTP_PORT=1025
   db:
@@ -54,7 +54,7 @@ services:
       - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
-      - /etc/localtime:/etc/localtime:ro
+      - /etc/localtime:/etc/localtime
       - ./docker/mysql:/etc/mysql/conf.d
     restart: unless-stopped
     environment:
@@ -91,18 +91,20 @@ services:
       - PMA_PASSWORD=pass
       - PMA_PORT=3306
   mailpit:
-    image: axllent/mailpit
+    image: axllent/mailpit:v1.20
     container_name: mailpit
     restart: unless-stopped
     volumes:
       - email_data:/data
     ports:
       - 1025:1025
+      - 8083:8025
     environment:
       MP_MAX_MESSAGES: 5000
       MP_DATABASE: /data/mailpit.db
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
+      MP_LABEL: "AdamRMS Dev Mailpit"
 
 volumes:
   db_data: null

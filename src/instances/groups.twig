@@ -53,7 +53,7 @@
                         <td style="width:70px;">
                             <div class="btn-group">
                                 <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?group%5B%5D={{ group.assetGroups_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
-                                <button type="button" title="Watch this group" class="btn btn-primary btn-sm watchButton" data-id="{{ group.assetGroups_id }}">
+                                <button type="button" title="{% if group.assetGroups_id in watching %}Stop watching{% else %}Watch{% endif %} this group" class="btn btn-primary btn-sm watchButton" data-id="{{ group.assetGroups_id }}">
                                     {% if group.assetGroups_id in watching %}
                                         <i class="fas fa-eye-slash"></i>
                                     {% else %}
