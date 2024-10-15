@@ -41,7 +41,13 @@
 
   "shutdownAction": "stopCompose",
 
-  "forwardPorts": [8080, "db:3306", "s3filestore:8081", "phpmyadmin:8082"],
+  "forwardPorts": [
+    8080,
+    "db:3306",
+    "s3filestore:8081",
+    "phpmyadmin:8082",
+    "mailpit:8083"
+  ],
 
   "postCreateCommand": "composer install",
 
@@ -60,6 +66,10 @@
     "8082": {
       "label": "phpMyAdmin",
       "protocol": "https"
+    },
+    "8083": {
+      "label": "Mailpit (Emails)",
+      "protocol": "http"
     },
     "3306": {
       "label": "MySQL"

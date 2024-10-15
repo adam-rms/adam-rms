@@ -63,7 +63,7 @@ $configStructureArray = [
     ],
     "specialRequest" => false,
     "default" => "Disabled",
-    "envFallback" => false,
+    "envFallback" => "CONFIG_EMAILS_ENABLED",
   ],
   "EMAILS_PROVIDER" => [
     "form" => [
@@ -76,36 +76,15 @@ $configStructureArray = [
       "description" => "Which provider should AdamRMS use to send emails to users? This option is ignored if email sending is disabled.",
       "required" => false,
       "maxlength" => 255,
-      "minlength" => 5,
-      "options" => ["Sendgrid"],
+      "minlength" => 4,
+      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP"],
       "verifyMatch" => function ($value, $options) {
         return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
       }
     ],
     "specialRequest" => true,
     "default" => "Sendgrid",
-    "envFallback" => false,
-  ],
-  "EMAILS_PROVIDERS_SENDGRID_APIKEY" => [
-    "form" => [
-      "type" => "secret",
-      "default" => function () {
-        return "";
-      },
-      "name" => "SendGrid API key",
-      "group" => "Email",
-      "description" => "If Sengrid is selected above, the SendGrid API key to use to send emails",
-      "required" => false,
-      "maxlength" => 255,
-      "minlength" => 0,
-      "options" => [],
-      "verifyMatch" => function ($value, $options) {
-        return ["valid" => true, "value" => $value, "error" => null];
-      }
-    ],
-    "specialRequest" => true,
-    "default" => false,
-    "envFallback" => "bCMS__SendGridAPIKEY",
+    "envFallback" => "CONFIG_EMAILS_PROVIDER",
   ],
   "EMAILS_FROMEMAIL" => [
     "form" => [
@@ -128,7 +107,133 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => "bCMS__FROM_EMAIL",
+    "envFallback" => "CONFIG_EMAILS_FROM_EMAIL",
+  ],
+  "EMAILS_PROVIDERS_APIKEY" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return "";
+      },
+      "name" => "Email Service API key",
+      "group" => "Email",
+      "description" => "If Sengrid, Mailgun or Postmark is selected above, the API key to use to send emails",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "bCMS__SendGridAPIKEY",
+  ],
+  "EMAILS_PROVIDERS_MAILGUN_LOCATION" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "";
+      },
+      "name" => "Mailgun Server Location",
+      "group" => "Email",
+      "description" => "If Mailgun is selected above, whether to use the US or EU Mailgun servers",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => ["US", "EU"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "EMAILS_SMTP_SERVER" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "smtp.example.com";
+      },
+      "name" => "SMTP server address",
+      "group" => "Email",
+      "description" => "If SMTP is selected above, the SMTP server to send emails from",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_EMAILS_SMTP_SERVER",
+  ],
+  "EMAILS_SMTP_USERNAME" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "user@example.com";
+      },
+      "name" => "SMTP server username",
+      "group" => "Email",
+      "description" => "If SMTP is selected above, the username to connect to the SMTP server with",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "EMAILS_SMTP_PASSWORD" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return "password";
+      },
+      "name" => "SMTP server username",
+      "group" => "Email",
+      "description" => "If SMTP is selected above, the password to connect to the SMTP server with",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => false,
+  ],
+  "EMAILS_SMTP_PORT" => [
+    "form" => [
+      "type" => "number",
+      "default" => function () {
+        return 465;
+      },
+      "name" => "SMTP server port",
+      "group" => "Email",
+      "description" => "If SMTP is selected above, the port to connect to the SMTP server on",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => 465,
+    "envFallback" => "CONFIG_EMAILS_SMTP_PORT",
   ],
   "ERRORS_PROVIDERS_SENTRY" => [
     "form" => [
