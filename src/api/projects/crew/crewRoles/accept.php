@@ -6,12 +6,13 @@ if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_F
 $DBLIB->where("projectsVacantRoles.projectsVacantRoles_deleted",0);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("(projects.projects_dates_use_end IS NULL OR projects.projects_dates_use_end >= '" . date("Y-m-d H:i:s") . "')");
 $DBLIB->join("projectsVacantRoles","projectsVacantRolesApplications.projectsVacantRoles_id=projectsVacantRoles.projectsVacantRoles_id","LEFT");
 $DBLIB->join("projects","projectsVacantRoles.projects_id=projects.projects_id","LEFT");
 $DBLIB->join("users","projectsVacantRolesApplications.users_userid=users.users_userid","LEFT");
 $DBLIB->where("projectsVacantRolesApplications.projectsVacantRolesApplications_deleted",0);
 $DBLIB->where("projectsVacantRolesApplications_id",$_POST["projectsVacantRolesApplications_id"]);
-$application = $DBLIB->getOne("projectsVacantRolesApplications", null, ["projectsVacantRolesApplications_id","projects_name","projects.projects_id","projectsVacantRoles_name","users.users_userid","projectsVacantRoles_name","projectsVacantRoles_slotsFilled"]);
+$application = $DBLIB->getOne("projectsVacantRolesApplications", ["projectsVacantRolesApplications_id","projects_name","projects.projects_id","projectsVacantRoles_name","users.users_userid","projectsVacantRoles_name","projectsVacantRoles_slotsFilled"]);
 if (!$application) finish(false,["message"=>"Application not found"]);
 
 $insert = $DBLIB->insert("crewAssignments", [

@@ -11,10 +11,11 @@ $DBLIB->where("projects.projects_id", $_GET['id']);
 $PAGEDATA['project'] = $DBLIB->getone("projects", ["projects.*"]);
 if (!$PAGEDATA['project']) die($TWIG->render('404.twig', $PAGEDATA));
 
-$DBLIB->where("projectsVacantRoles_deleted",0);
-$DBLIB->where("projects_id",$PAGEDATA['project']['projects_id']);
-$DBLIB->orderBy("projectsVacantRoles_added","ASC");
-$roles = $DBLIB->get("projectsVacantRoles");
+$DBLIB->where("projectsVacantRoles.projectsVacantRoles_deleted",0);
+$DBLIB->where("projectsVacantRoles.projects_id",$PAGEDATA['project']['projects_id']);
+$DBLIB->join("projects", "projectsVacantRoles.projects_id=projects.projects_id", "LEFT");
+$DBLIB->orderBy("projectsVacantRoles.projectsVacantRoles_added","ASC");
+$roles = $DBLIB->get("projectsVacantRoles", null, ['projectsVacantRoles.*', 'projects.projects_dates_use_end']);
 $PAGEDATA['roles'] = [];
 foreach($roles as $role) {
     $DBLIB->where("projectsVacantRoles_id",$role['projectsVacantRoles_id']);
