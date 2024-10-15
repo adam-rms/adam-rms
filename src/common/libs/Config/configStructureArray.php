@@ -243,7 +243,7 @@ $configStructureArray = [
       },
       "name" => "Email Footer",
       "group" => "Email",
-      "description" => "Footer for emails being sent from AdamRMS",
+      "description" => "Footer for emails.",
       "required" => false,
       "maxlength" => 65535,
       "minlength" => 0,
