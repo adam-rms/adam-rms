@@ -235,6 +235,27 @@ $configStructureArray = [
     "default" => 465,
     "envFallback" => "CONFIG_EMAILS_SMTP_PORT",
   ],
+  "EMAILS_FOOTER" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Email Footer",
+      "group" => "Email",
+      "description" => "Footer for emails.",
+      "required" => false,
+      "maxlength" => 65535,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "<br/>AdamRMS is a fully-featured asset, project and rental management platform for Theatre, AV & Broadcast. To find out more about what it could do for your business, visit <a href=\"https://adam-rms.com\">adam-rms.com</a>.",
+    "envFallback" => false,
+  ],
   "ERRORS_PROVIDERS_SENTRY" => [
     "form" => [
       "type" => "secret",

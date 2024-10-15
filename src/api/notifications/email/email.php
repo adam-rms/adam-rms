@@ -19,7 +19,7 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
         $instance = $DBLIB->getone("userInstances", ["instances.instances_name", "instances.instances_address", "instances.instances_emailHeader"]);
     } else $instance = false;
 
-    $outputHTML = $TWIG->render('api/notifications/email/email_template.twig', ["SUBJECT" => $subject, "HTML"=> $bCMS->cleanString($html), "CONFIG" => $CONFIG, "DATA" => $emailData, "TEMPLATE" => $template, "INSTANCE" => $instance]); // Subject is escaped by twig, but the HTML is not.
+    $outputHTML = $TWIG->render('api/notifications/email/email_template.twig', ["SUBJECT" => $subject, "HTML"=> $bCMS->cleanString($html), "CONFIG" => $CONFIG, "DATA" => $emailData, "TEMPLATE" => $template, "INSTANCE" => $instance, "FOOTER" => $CONFIGCLASS->get('EMAILS_FOOTER')]); // Subject is escaped by twig, but the HTML is not.
 
     switch ($CONFIGCLASS->get('EMAILS_PROVIDER')) {
         case 'Sendgrid':
