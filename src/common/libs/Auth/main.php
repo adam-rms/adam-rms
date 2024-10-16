@@ -55,8 +55,7 @@ class bID
 
         if (!$tokenCheck) {
             throw new AuthFail('Token not found in DB');
-        } elseif ((strtotime($tokenCheck["authTokens_created"]) + (12 * 60 * 60)) < time()) {
-             // Tokens are valid for 12 hrs (this includes the mobile app), which matches the session timeout
+        } elseif ((strtotime($tokenCheck["authTokens_created"]) + $CONFIG['AUTH_SESSION_LENGTH']) < time()) {
             throw new AuthFail("Token expired at " . $tokenCheck["authTokens_created"] . " - server time is " . time());
         } elseif (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
             if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
@@ -286,7 +285,7 @@ class bID
             "iss" => $CONFIG['ROOTURL'],
             "uid" => $userID,
             "token" => $token,
-            "exp" => time()+12*60*60, //12 hours token expiry
+            "exp" => time() + $CONFIG['AUTH_SESSION_LENGTH'],
             "iat" => time(),
             "type" => $type
         ), $CONFIG['AUTH_JWTKey']);

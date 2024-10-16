@@ -327,6 +327,27 @@ $configStructureArray = [
     "default" => "sha256",
     "envFallback" => false,
   ],
+  "AUTH_SESSION_LENGTH" => [
+    "form" => [
+      "type" => "number",
+      "default" => function () {
+        return 43200;
+      },
+      "name" => "Login session length",
+      "group" => "Security & Login",
+      "description" => "How long a user's login session should last in seconds. Shorter sessions are more secure, but will require users to log in more often. Changing this will affect active and recently expired sessions - It is recommended to leave this at 43200 (12 Hours)",
+      "required" => false,
+      "maxlength" => 6,
+      "minlength" => 4,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => 43200,
+    "envFallback" => false,
+  ],
   "AUTH_PROVIDERS_GOOGLE_KEYS_ID" => [
     "form" => [
       "type" => "text",
