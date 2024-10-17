@@ -9,9 +9,12 @@ $DBLIB->where("(manufacturers.instances_id IS NULL OR manufacturers.instances_id
 $DBLIB->orderBy("manufacturers_name", "ASC");
 $PAGEDATA['manufacturers'] = $DBLIB->get('manufacturers', null, ["manufacturers.manufacturers_id", "manufacturers.manufacturers_name"]);
 
-$DBLIB->orderBy("assetCategories_rank", "ASC");
-$DBLIB->where("assetCategories_deleted",0);
-$DBLIB->where("(instances_id IS NULL OR instances_id = '" . $AUTH->data['instance']["instances_id"] . "')");
+$DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
+$DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
+$DBLIB->where("assetCategories.assetCategories_deleted", 0);
+$DBLIB->where("(assetCategories.instances_id IS NULL OR assetCategories.instances_id = '" . $AUTH->data['instance']["instances_id"] . "')");
+$DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_deleted", 0);
+$DBLIB->where("(assetCategoriesGroups.instances_id IS NULL OR assetCategoriesGroups.instances_id = '" . $AUTH->data['instance']["instances_id"] . "')");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $PAGEDATA['categories'] = $DBLIB->get('assetCategories');
 
