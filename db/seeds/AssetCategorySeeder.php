@@ -21,61 +21,81 @@ class AssetCategorySeeder extends AbstractSeed
                 "assetCategoriesGroups_id" => 1,
                 "assetCategoriesGroups_name" => "Lighting",
                 "assetCategoriesGroups_fontAwesome" => "far fa-lightbulb",
-                "assetCategoriesGroups_order" => 1
+                "assetCategoriesGroups_order" => 1,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 2,
                 "assetCategoriesGroups_name" => "Sound",
                 "assetCategoriesGroups_fontAwesome" => "fas fa-volume-up",
-                "assetCategoriesGroups_order" => 2
+                "assetCategoriesGroups_order" => 2,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 3,
                 "assetCategoriesGroups_name" => "Video",
                 "assetCategoriesGroups_fontAwesome" => "fas fa-tv",
-                "assetCategoriesGroups_order" => 3
+                "assetCategoriesGroups_order" => 3,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 4,
                 "assetCategoriesGroups_name" => "Rigging",
                 "assetCategoriesGroups_fontAwesome" => "fas fa-balance-scale-left",
-                "assetCategoriesGroups_order" => 4
+                "assetCategoriesGroups_order" => 4,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 5,
                 "assetCategoriesGroups_name" => "Computers & Networks",
                 "assetCategoriesGroups_fontAwesome" => "fas fa-server",
-                "assetCategoriesGroups_order" => 6
+                "assetCategoriesGroups_order" => 6,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 6,
                 "assetCategoriesGroups_name" => "Communication",
                 "assetCategoriesGroups_fontAwesome" => "fas fa-headset",
-                "assetCategoriesGroups_order" => 5
+                "assetCategoriesGroups_order" => 5,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 10,
                 "assetCategoriesGroups_name" => "Costume",
                 "assetCategoriesGroups_fontAwesome" => null,
-                "assetCategoriesGroups_order" => 10
+                "assetCategoriesGroups_order" => 10,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 11,
                 "assetCategoriesGroups_name" => "Props",
                 "assetCategoriesGroups_fontAwesome" => null,
-                "assetCategoriesGroups_order" => 11
+                "assetCategoriesGroups_order" => 11,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 12,
                 "assetCategoriesGroups_name" => "Scenery",
                 "assetCategoriesGroups_fontAwesome" => null,
-                "assetCategoriesGroups_order" => 12
+                "assetCategoriesGroups_order" => 12,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ],
             [
                 "assetCategoriesGroups_id" => 999,
                 "assetCategoriesGroups_name" => "Miscellaneous",
                 "assetCategoriesGroups_fontAwesome" => "fas fa-question",
-                "assetCategoriesGroups_order" => 999
+                "assetCategoriesGroups_order" => 999,
+                "instances_id" => null,
+                "assetCategoriesGroups_deleted" => 0
             ]
         ];
         $categoryData = [
