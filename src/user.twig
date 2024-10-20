@@ -509,84 +509,8 @@
                         </div>
                         <!-- /.tab-pane -->
                         <div class="active tab-pane" style="padding: 1.25rem" id="calendar">
-                            <div id="calendar"></div>
-                            <script>
-                                $(function () {
-                                    /* initialize the calendar
-                                     -----------------------------------------------------------------*/
-                                    var Calendar = FullCalendar.Calendar;
-
-                                    var calendar = new Calendar(document.getElementById('calendar'), {
-                                        nextDayThreshold: '05:00:00',
-                                        themeSystem: 'bootstrap',
-                                        initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
-                                        buttonText: {
-                                            today: 'Today',
-                                            month: 'Month',
-                                            week: 'Week',
-                                            day: 'Day',
-                                            list: 'List'
-                                        },
-                                        headerToolbar: {
-                                            left: 'prev,next today',
-                                            center: 'title',
-                                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
-                                        },
-
-                                        //Random default events
-                                        events: [
-                                            {% set earliestStart = false %}
-                                            {% set latestEnd = false %}
-                                            {% for project in user.crewAssignments %}
-                                            {
-                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} ({{ project.projectsStatuses_name|escape("js") }}){% endif %}",
-                                                start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
-                                                end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
-                                                url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',
-                                                backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
-                                                textColor: '{{ project.projectsStatuses_foregroundColour }}'
-                                            },
-                                            {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
-                                            {% set earliestStart = project.projects_dates_use_start|date("c") %}
-                                            {% endif %}
-                                            {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
-                                            {% set latestEnd = project.projects_dates_use_end|date("c") %}
-                                            {% endif %}
-                                            {% endfor %}
-                                        ],
-                                        validRange: {
-                                            start: '{{ earliestStart|date("c") }}',
-                                            end: '{{ latestEnd|date("c") }}'
-                                        },
-                                        editable: false,
-                                        droppable: false, // this allows things to be dropped onto the calendar !!!
-                                        drop: function (info) {
-
-                                        },
-                                        firstDay: 1,
-                                        weekNumbers: true,
-                                        {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
-                                        weekNumberContent : function(week) {
-                                            var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
-                                            for (const [date, label] of Object.entries(weekStartDates)) {
-                                                if (moment(week.date).isSame(date, 'isoWeek')) {
-                                                    //This date is in this week so return the label
-                                                    if (label === " ") return null;
-                                                    else return label;
-                                                }
-                                            }
-                                            //default to week number if it doesn't have a label
-                                            return week.num;
-                                            
-                                        },
-                                        {% else %}
-                                        weekNumberCalculation: "ISO",
-                                        {% endif %}
-                                    });
-
-                                    calendar.render();
-                                })
-                            </script>
+                            {% embed 'assets/widgets/calendar.twig' with {'USER': true, 'projects': user.crewAssignments} %}
+                            {% endembed %}
                         </div>
                         <!-- /.tab-pane -->
                         {% if user.users_userid == USERDATA.users_userid %}
