@@ -1,4 +1,4 @@
-{% if USERDATA and card["type"] in ["calendar","inventoryTotal","storageUsage","userCount","maintenanceOutstanding","myMaintenance"] %}
+{% if USERDATA and card["type"] in ["calendar","myCalendar","inventoryTotal","storageUsage","userCount","maintenanceOutstanding","myMaintenance"] %}
   <div class="card-body p-0" style="overflow-x:hidden;">
   {% embed 'assets/widgets/' ~ card["type"] ~ '.twig' %}{% endembed %}
     <style>

@@ -16,7 +16,7 @@ class statsWidgets
     protected $widgetsArray = [];
     protected $userWidgetsExcludeArray = [];
     protected $showAll = false;
-    protected $widgetsList = ["inventoryValueGraph","inventoryTotal","storageUsage","userCount","maintenanceOutstanding","myMaintenance"];
+    protected $widgetsList = ["inventoryValueGraph", "inventoryTotal", "storageUsage", "userCount", "maintenanceOutstanding", "myMaintenance", "myCalendar"];
     public function __construct($userWidgetsExcludeArray = [],$showAll=false) {
         $this->showAll = $showAll;
         foreach ($userWidgetsExcludeArray as $widgetName) {
@@ -179,5 +179,27 @@ class statsWidgets
         $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_added", "ASC");
         $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
         return $jobs;
+    }
+
+    private function myCalendar($arguments = [])
+    {
+        global $DBLIB;
+        if (!$arguments['instanceid']) return [];
+        if (!$arguments['userid']) return [];
+
+        $DBLIB->join("crewAssignments", "crewAssignments.projects_id=projects.projects_id", "LEFT");
+        $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
+        $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
+        $DBLIB->where("crewAssignments.users_userid", $arguments['userid']);
+        $DBLIB->where("crewAssignments.crewAssignments_deleted", 0);
+        $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
+        $DBLIB->where("projects.instances_id",  $arguments['instanceid']);
+        $DBLIB->orderBy("projects.projects_dates_use_start", "ASC");
+        $DBLIB->orderBy(
+            "projects.projects_dates_use_end",
+            "ASC"
+        );
+        $DBLIB->orderBy("projects.projects_name", "ASC");
+        return $DBLIB->get("projects", null, ["crewAssignments.*", "projects.projects_dates_use_start", "projects.projects_dates_use_end", "projects.projects_name", "clients.clients_name", "projects.projects_id", "projectsStatuses.projectsStatuses_name", "projectsStatuses.projectsStatuses_foregroundColour", "projectsStatuses.projectsStatuses_backgroundColour"]);
     }
 }
