@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<div class="card card-primary">
+<div>
     {% set calendarId = random() %}
     <div class="card-body p-0">
         <div id="calendar{{ calendarId }}"></div>
@@ -38,14 +38,16 @@
                     const monthNames = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"
                     ]
-                    return "{{ LOCATION ? LOCATION.locations_name ~ ": " }}" + monthNames[date['date']['month']] + " " + date['date']['year'];
+                    const prefix = "{{LOCATION ? LOCATION.locations_name ~ ': ' : USER ? 'Your Calendar: ' : '' }}"
+
+                    return prefix + monthNames[date['date']['month']] + " " + date['date']['year'];
                 },
                 events : [
                     {% set startDate = false %}
                     {% for project in projects %}
                         {% if project.projects_dates_use_start != null and project.projects_dates_use_end != null %}
                         {
-                            title          : "{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ project.projectsStatuses_name|escape("js") }}] {% endif %}{{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}",
+                            title          : "{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ project.projectsStatuses_name|escape("js") }}] {% endif %}{{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}{{ USER ? ' (' ~ project.crewAssignments_role ~ ')' : ''}}",
                             start          : {{ project.projects_dates_use_start|date('U') }}*1000,
                             end            : {{ project.projects_dates_use_end|date('U') }}*1000,
                             url            : '{{CONFIG.ROOTURL}}/project/?id={{ project.projects_id }}',
