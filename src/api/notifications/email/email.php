@@ -23,16 +23,16 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
 
     switch ($CONFIGCLASS->get('EMAILS_PROVIDER')) {
         case 'Sendgrid':
-            require __DIR__ . '/../../../common/libs/Email/SendgridHandler.php';
+            require_once __DIR__ . '/../../../common/libs/Email/SendgridHandler.php';
             return SendgridEmailHandler::sendEmail($user, $subject, $outputHTML);
         case 'Mailgun':
-            require __DIR__ . '/../../../common/libs/Email/MailgunHandler.php';
+            require_once __DIR__ . '/../../../common/libs/Email/MailgunHandler.php';
             return MailgunEmailHandler::sendEmail($user, $subject, $outputHTML);
         case 'Postmark':
-            require __DIR__ . '/../../../common/libs/Email/PostmarkHandler.php';
+            require_once __DIR__ . '/../../../common/libs/Email/PostmarkHandler.php';
             return PostmarkEmailHandler::sendEmail($user, $subject, $outputHTML);
         case 'SMTP':
-            require __DIR__ . '/../../../common/libs/Email/SMTPHandler.php';
+            require_once __DIR__ . '/../../../common/libs/Email/SMTPHandler.php';
             return SMTPEmailHandler::sendEmail($user, $subject, $outputHTML);
         default:
             trigger_error("Unknown email provider set", E_USER_ERROR);
