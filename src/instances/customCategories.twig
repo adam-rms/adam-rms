@@ -25,116 +25,153 @@
                     Categories
                 </h3>
                 <div class="card-tools pull-right">
-                    <form class="input-group input-group-sm" method="GET">
-                        <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
-                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i></button>
-                            {% endif %}
-                        </div>
-                    </form>
+                    <div class="btn-group">
+                        {% if "ASSETS:ASSET_CATEGORIES:CREATE"|instancePermissions %}
+                            <button type="button" aria-label="Create new Asset Category Group" class="btn btn-default btn-sm" data-toggle="modal" data-target="#newGroupModal"><i class="fa fa-plus"></i> Group</button>
+                            <button type="button" aria-label="Create new Asset Category" class="btn btn-default btn-sm" data-toggle="modal" data-target="#newModal"><i class="fa fa-plus"></i> Category</button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="card-body table-responsive p-0">
                 <table class="table table-bordered">
-                    {% set currentCategoryGroup = false %}
-                    {% for category in categories %}
-                        {% if currentCategoryGroup != category.assetCategoriesGroups_name %}
-                        {% if currentCategoryGroup %}
-                            {# Close the previous one for starting a new one #}
-                            </tbody>
-                    {% endif %}
-                        {% set currentCategoryGroup = category.assetCategoriesGroups_name %}
-                            <thead>
+                    {% for group in categoryGroups %}
+                        {% if group.categories|length > 0 %}
+                        <thead>
                             <tr>
-                                <td style="width:15px;"><i class="{{ category.assetCategoriesGroups_fontAwesome }}"></i></td>
-                                <td colspan="2">
-                                    <b>{{ category.assetCategoriesGroups_name }}</b>
+                                <td style="width:15px;"><i class="{{ group.assetCategoriesGroups_fontAwesome }}"></i></td>
+                                <td>
+                                    <b>{{ group.assetCategoriesGroups_name }}</b>
                                 </td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                    {% endif %}
-                          <tr>
-                              <td>
-                                  <i class="{{ category.assetCategories_fontAwesome }}"></i>
-                              </td>
-                              <td>
-                                  {{category.assetCategories_name}}
-                              </td>
-                              <td style="width:70px;">
-                                <div class="btn-group">
-                                    <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
-                                    {% if category.instances_id is not null %}
+                                <td>
+                                    <div class="btn-group">
+                                    {% if group.instances_id is not null %}
                                         {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
-                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
+                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ group.assetCategoriesGroups_id }}"><i class="fas fa-edit"></i></button>
                                         {% endif %}
                                         {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
-                                            <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm deleteGroupButton" data-id="{{ group.assetCategoriesGroups_id }}"><i class="fas fa-trash"></i></button>
                                         {% endif %}
                                     {% endif %}
-                                 </div>
-                              </td>
-                          </tr>
-                                {% if category.instances_id is not null %}
-                                <div class="modal fade" id="editModal{{ category.assetCategories_id }}">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Edit {{category.assetCategories_name}}</h4>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="edit-form" data-id="{{ category.assetCategories_id }}">
-                                                    <input type="hidden" name="assetCategories_id" value="{{ category.assetCategories_id }}"/>
-                                                    <div class="input-group" style="margin-bottom: 5px;">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Name</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% if group.instances_id is not null %}
+                                    <div class="modal fade" id="editModal{{ group.assetCategoriesGroups_id }}">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Edit {{group.assetCategoriesGroups_name}}</h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form class="editGroup-form" data-id="{{ group.assetCategoriesGroups_id }}">
+                                                        <input type="hidden" name="assetCategoriesGroups_id" value="{{ group.assetCategoriesGroups_id }}"/>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Name</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" name="assetCategoriesGroups_name" value="{{ group.assetCategoriesGroups_name }}">
                                                         </div>
-                                                        <input type="text" class="form-control" name="assetCategories_name" value="{{ category.assetCategories_name }}">
-                                                    </div>
-                                                    <div class="input-group" style="margin-bottom: 5px;">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Icon</span>
-                                                        </div>
-                                                        <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome">
-                                                            {% if category.assetCategories_fontAwesome %}
-                                                                <option value="{{ category.assetCategories_fontAwesome }}"></option>
-                                                            {% endif %}
-                                                        </select>
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Category Group</span>
-                                                        </div>
-                                                        <select class="form-control" name="assetCategoriesGroups_id">
-                                                            {% set currentCategoryGroupSub = false %}
-                                                            {% for categorySub in categories %}
-                                                                {% if currentCategoryGroupSub != categorySub.assetCategoriesGroups_name %}
-                                                                    {% set currentCategoryGroupSub = categorySub.assetCategoriesGroups_name %}
-                                                                    <option {% if category.assetCategoriesGroups_id == categorySub.assetCategoriesGroups_id %}selected{% endif %} value="{{ categorySub.assetCategoriesGroups_id }}">{{ categorySub.assetCategoriesGroups_name }}</option>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Icon</span>
+                                                            </div>
+                                                            <select class="form-control rms-icon-picker" name="assetCategoriesGroups_fontAwesome">
+                                                                {% if group.assetCategoriesGroups_fontAwesome %}
+                                                                    <option value="{{ group.assetCategoriesGroups_fontAwesome }}"></option>
                                                                 {% endif %}
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer justify-content-between">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ category.assetCategories_id }}">Save changes</button>
+                                                            </select>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary saveEditGroup-button" data-id="{{ group.assetCategoriesGroups_id }}">Save changes</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                {% endif %}
+                        </thead>
+                        <tbody>
+                            {% for category in group.categories %}
+                            <tr>
+                                <td>
+                                    <i class="{{ category.assetCategories_fontAwesome }}"></i>
+                                </td>
+                                <td>
+                                    {{category.assetCategories_name}}
+                                </td>
+                                <td style="width:70px;">
+                                    <div class="btn-group">
+                                        <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
+                                        {% if category.instances_id is not null %}
+                                            {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
+                                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
+                                            {% endif %}
+                                            {% if "ASSETS:ASSET_CATEGORIES:DELETE"|instancePermissions %}
+                                                <button type="button" class="btn btn-danger btn-sm deleteButton" data-id="{{ category.assetCategories_id }}"><i class="fas fa-trash"></i></button>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                                {% if category.instances_id is not null %}
+                                    <div class="modal fade" id="editModal{{ category.assetCategories_id }}">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Edit {{category.assetCategories_name}}</h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form class="edit-form" data-id="{{ category.assetCategories_id }}">
+                                                        <input type="hidden" name="assetCategories_id" value="{{ category.assetCategories_id }}"/>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Name</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" name="assetCategories_name" value="{{ category.assetCategories_name }}">
+                                                        </div>
+                                                        <div class="input-group" style="margin-bottom: 5px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Icon</span>
+                                                            </div>
+                                                            <select class="form-control rms-icon-picker" name="assetCategories_fontAwesome">
+                                                                {% if category.assetCategories_fontAwesome %}
+                                                                    <option value="{{ category.assetCategories_fontAwesome }}"></option>
+                                                                {% endif %}
+                                                            </select>
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Category Group</span>
+                                                            </div>
+                                                            <select class="form-control" name="assetCategoriesGroups_id">
+                                                                {% for localgroup in categoryGroups %}
+                                                                        <option {% if category.assetCategoriesGroups_id == localgroup.assetCategoriesGroups_id %}selected{% endif %} value="{{ localgroup.assetCategoriesGroups_id }}">{{ localgroup.assetCategoriesGroups_name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary saveEdit-button" data-id="{{ category.assetCategories_id }}">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 {% endif %}
                             {% endfor %}
-                            {% if currentCategoryGroup %}
-                            {# Close the previous category group if you had any #}
-                            </tbody>
-                    {% endif %}
+                        </tbody>
+                        {% endif %}
+                    {% endfor %}
                 </table>
             </div>
         </div>
@@ -144,7 +181,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">New Custom Category</h4>
+                    <h4 class="modal-title">New Asset Category</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -168,12 +205,8 @@
                                 <span class="input-group-text">Category Group</span>
                             </div>
                             <select required class="form-control" name="assetCategoriesGroups_id">
-                                {% set currentCategoryGroupSub = false %}
-                                {% for categorySub in categories %}
-                                    {% if currentCategoryGroupSub != categorySub.assetCategoriesGroups_name %}
-                                        {% set currentCategoryGroupSub = categorySub.assetCategoriesGroups_name %}
-                                        <option value="{{ categorySub.assetCategoriesGroups_id }}">{{ categorySub.assetCategoriesGroups_name }}</option>
-                                    {% endif %}
+                                {% for group in categoryGroups %}
+                                        <option value="{{ group.assetCategoriesGroups_id }}">{{ group.assetCategoriesGroups_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -181,7 +214,39 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveNewCategory">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="saveNewCategory">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="newGroupModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New Asset Category Group</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newCategoryGroupForm">
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Name</span>
+                            </div>
+                            <input required type="text" class="form-control" name="assetCategoriesGroups_name">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Icon</span>
+                            </div>
+                            <select class="form-control rms-icon-picker" name="assetCategoriesGroups_fontAwesome"></select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveNewCategoryGroup">Create</button>
                 </div>
             </div>
         </div>
@@ -236,12 +301,23 @@
                     location.reload();
                 });
             });
+            $("#saveNewCategoryGroup").click(function () {
+                var formData = $("#newCategoryGroupForm").serializeArray();
+                ajaxcall("categories/groups/new.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
             {% endif %}
             {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
             $(".saveEdit-button").click(function () {
                 var formData = $(".edit-form[data-id=" + $(this).data("id") + "]").serializeArray();
-                console.log(formData);
                 ajaxcall("categories/edit.php", {formData}, function (data) {
+                    location.reload();
+                });
+            });
+            $(".saveEditGroup-button").click(function () {
+                var formData = $(".editGroup-form[data-id=" + $(this).data("id") + "]").serializeArray();
+                ajaxcall("categories/groups/edit.php", {formData}, function (data) {
                     location.reload();
                 });
             });
@@ -266,6 +342,31 @@
                         if (result) {
                             var formData = [{"name": "assetCategories_id", "value":id },{"name": "assetCategories_deleted", "value":"1" }];
                             ajaxcall("categories/edit.php", {formData}, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            $(".deleteGroupButton").click(function () {
+                var id = $(this).data("id");
+                bootbox.confirm({
+                    title:"Are you sure?",
+                    message: "This will delete this group and any categories within it. Categories aren't fully deleted until all assets in the category are moved to other categories",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formData = [{"name": "assetCategoriesGroups_id", "value":id },{"name": "assetCategoriesGroups_deleted", "value":"1" }];
+                            ajaxcall("categories/groups/edit.php", {formData}, function (data) {
                                 location.reload();
                             });
                         }
