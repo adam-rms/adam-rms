@@ -1,5 +1,5 @@
 <?php
-require __dir__ . '/EmailHandler.php';
+require_once __dir__ . '/EmailHandler.php';
 
 /**
  * Email handler for Mailgun email service

@@ -1,5 +1,5 @@
 <?php
-require __dir__ . '/EmailHandler.php';
+require_once __DIR__ . '/EmailHandler.php';
 
 /**
  * Email handler for Postmark email service

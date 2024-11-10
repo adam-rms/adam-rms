@@ -4,7 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require __dir__ . '/EmailHandler.php';
+require_once __DIR__ . '/EmailHandler.php';
 
 class SMTPEmailHandler extends EmailHandler
 {
