@@ -68,7 +68,7 @@ $DBLIB->orderBy("manufacturers_name", "ASC");
 $PAGEDATA['manufacturers'] = $DBLIB->get('manufacturers', null, ["manufacturers.manufacturers_id", "manufacturers.manufacturers_name"]);
 
 $DBLIB->orderBy("assetCategories_rank", "ASC");
-$DBLIB->where("(instances_id IS NULL OR instances_id = '" . $PAGEDATA['ASSET_INSTANCE']["instances_id"] . "')");
+$DBLIB->where("(assetCategories.instances_id IS NULL OR assetCategories.instances_id = '" . $PAGEDATA['ASSET_INSTANCE']["instances_id"] . "')");
 $DBLIB->where("assetCategories_deleted", 0);
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $PAGEDATA['categories'] = $DBLIB->get('assetCategories');
