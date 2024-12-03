@@ -32,18 +32,26 @@
         "mrmlnc.vscode-apache",
         "esbenp.prettier-vscode",
         "mblode.twig-language-2",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "DEVSENSE.profiler-php-vscode",
+        "DEVSENSE.phptools-vscode"
       ]
     }
   },
 
   "shutdownAction": "stopCompose",
 
-  "forwardPorts": [8080, "db:3306", "s3filestore:8081", "phpmyadmin:8082"],
+  "forwardPorts": [
+    8080,
+    "db:3306",
+    "s3filestore:8081",
+    "phpmyadmin:8082",
+    "mailpit:8083"
+  ],
 
   "postCreateCommand": "composer install",
 
-  "postStartCommand": "php vendor/bin/phinx migrate",
+  "postStartCommand": "php vendor/bin/phinx migrate && php vendor/bin/phinx seed:run",
 
   "remoteUser": "vscode",
   "portsAttributes": {
@@ -58,6 +66,10 @@
     "8082": {
       "label": "phpMyAdmin",
       "protocol": "https"
+    },
+    "8083": {
+      "label": "Mailpit (Emails)",
+      "protocol": "http"
     },
     "3306": {
       "label": "MySQL"

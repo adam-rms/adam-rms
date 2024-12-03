@@ -2,9 +2,6 @@
 {% block htmlIncludes %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
             integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -229,9 +226,7 @@
                                     <img loading="lazy" src="{{ user.users_thumbnail|s3URL("small") }}" style="max-width: 100%; min-width: 150px; max-height: 400px;margin-bottom: 15px;" />
                                 {% endif %}
                                 {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and "USERS:EDIT:THUMBNAIL"|serverPermissions or user.users_userid == USERDATA.users_userid %}
-
-{% embed 'assets/templates/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
-
+                                    {% embed 'assets/templates/uppy.twig' with {'type': 'USER-THUMBNAIL', 'paste': false, 'typeId': 9, 'subTypeId': USER.users_userid, 'fileLimit': 1, 'imagesOnly': true } %}
                                         {% block success %}
                                             ajaxcall("account/thumbnail.php", {
                                                 "users_userid": "{{ user.users_userid }}",
@@ -509,84 +504,8 @@
                         </div>
                         <!-- /.tab-pane -->
                         <div class="active tab-pane" style="padding: 1.25rem" id="calendar">
-                            <div id="calendar"></div>
-                            <script>
-                                $(function () {
-                                    /* initialize the calendar
-                                     -----------------------------------------------------------------*/
-                                    var Calendar = FullCalendar.Calendar;
-
-                                    var calendar = new Calendar(document.getElementById('calendar'), {
-                                        nextDayThreshold: '05:00:00',
-                                        themeSystem: 'bootstrap',
-                                        initialView: '{{USERDATA['instance']['calendarSettings'].defaultView ?: "dayGridMonth"}}',
-                                        buttonText: {
-                                            today: 'Today',
-                                            month: 'Month',
-                                            week: 'Week',
-                                            day: 'Day',
-                                            list: 'List'
-                                        },
-                                        headerToolbar: {
-                                            left: 'prev,next today',
-                                            center: 'title',
-                                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
-                                        },
-
-                                        //Random default events
-                                        events: [
-                                            {% set earliestStart = false %}
-                                            {% set latestEnd = false %}
-                                            {% for project in user.crewAssignments %}
-                                            {
-                                                title: "[{{ project.crewAssignments_role }}] {{ project.clients_name ? project.clients_name|escape("js") ~ " - " }}{{ project.projects_name|escape("js") }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} ({{ project.projectsStatuses_name|escape("js") }}){% endif %}",
-                                                start: Date.parse("{{ project.projects_dates_use_start|date("c") }}"),
-                                                end: Date.parse("{{ project.projects_dates_use_end|date("c") }}"),
-                                                url: '{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}',
-                                                backgroundColor: '{{ project.projectsStatuses_backgroundColour }}',
-                                                textColor: '{{ project.projectsStatuses_foregroundColour }}'
-                                            },
-                                            {% if earliestStart > project.projects_dates_use_start|date("c") or earliestStart == false %}
-                                            {% set earliestStart = project.projects_dates_use_start|date("c") %}
-                                            {% endif %}
-                                            {% if latestEnd < project.projects_dates_use_end|date("c") or latestEnd == false %}
-                                            {% set latestEnd = project.projects_dates_use_end|date("c") %}
-                                            {% endif %}
-                                            {% endfor %}
-                                        ],
-                                        validRange: {
-                                            start: '{{ earliestStart|date("c") }}',
-                                            end: '{{ latestEnd|date("c") }}'
-                                        },
-                                        editable: false,
-                                        droppable: false, // this allows things to be dropped onto the calendar !!!
-                                        drop: function (info) {
-
-                                        },
-                                        firstDay: 1,
-                                        weekNumbers: true,
-                                        {% if USERDATA['instance']['calendarSettings'].useCustomWeekNumbers and USERDATA.instance['instances_weekStartDates'] %}
-                                        weekNumberContent : function(week) {
-                                            var weekStartDates =  {{USERDATA.instance['instances_weekStartDates']|raw}};
-                                            for (const [date, label] of Object.entries(weekStartDates)) {
-                                                if (moment(week.date).isSame(date, 'isoWeek')) {
-                                                    //This date is in this week so return the label
-                                                    if (label === " ") return null;
-                                                    else return label;
-                                                }
-                                            }
-                                            //default to week number if it doesn't have a label
-                                            return week.num;
-                                            
-                                        },
-                                        {% else %}
-                                        weekNumberCalculation: "ISO",
-                                        {% endif %}
-                                    });
-
-                                    calendar.render();
-                                })
-                            </script>
+                            {% embed 'assets/widgets/calendar.twig' with {'USER': true, 'projects': user.crewAssignments, 'useStartDate': true} %}
+                            {% endembed %}
                         </div>
                         <!-- /.tab-pane -->
                         {% if user.users_userid == USERDATA.users_userid %}

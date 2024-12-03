@@ -271,7 +271,7 @@ if (count($SEARCH['TERMS']['MANUFACTURER']) > 0) {
 if (count($SEARCH['TERMS']['CATEGORY']) > 0) {
   $DBLIB->where("assetCategories_id", $SEARCH['TERMS']['CATEGORY'], "IN");
   $DBLIB->where("assetCategories_deleted",0);
-  $DBLIB->where("(instances_id IS NULL OR instances_id = '" . intval($SEARCH['INSTANCE_ID']) . "')");
+  $DBLIB->where("(assetCategories.instances_id IS NULL OR assetCategories.instances_id = '" . intval($SEARCH['INSTANCE_ID']) . "')");
   $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
   $SEARCH['SELECTED_TERMS']['CATEGORY'] = $DBLIB->get('assetCategories', null, ["assetCategories_id", "assetCategories_name", "assetCategoriesGroups_name"]);
 } else $SEARCH['SELECTED_TERMS']['CATEGORY'] = [];

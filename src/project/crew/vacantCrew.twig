@@ -54,13 +54,15 @@
                                 </td>
                                 <td>
                                     {% if role.projectsVacantRoles_slotsFilled >= role.projectsVacantRoles_slots %}
-                                        FULL
+                                        <p class="badge badge-info" data-toggle="tooltip" data-placement="right" title="All vacancies are filled">Full</p>
+                                    {% elseif role.projects_dates_use_end and date(role.projects_dates_use_end) < date() %}
+                                        <p class="badge badge-warning" data-toggle="tooltip" data-placement="right" title="The project end date has passed">Project Finished</p>
                                     {% elseif role.projectsVacantRoles_deadline and date(role.projectsVacantRoles_deadline) < date() %}
-                                        DEADLINE PASSED
+                                        <p class="badge badge-warning" data-toggle="tooltip" data-placement="right" title="This vacancy's deadline has passed">Deadline Passed</p>
                                     {% elseif role.projectsVacantRoles_open == 1 %}
-                                        OPEN
+                                        <p class="badge badge-success" data-toggle="tooltip" data-placement="right" title="Visible and can be applied for">Open</p>
                                     {% else %}
-                                         HIDDEN
+                                        <p class="badge badge-secondary" data-toggle="tooltip" data-placement="right" title="Not visible to crew">Hidden</p>
                                     {% endif %}
                                 </td>
                                 <td>

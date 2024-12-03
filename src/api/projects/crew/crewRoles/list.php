@@ -15,6 +15,7 @@ $DBLIB->join("users", "projects.projects_manager=users.users_userid", "LEFT");
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_archived", 0);
+$DBLIB->where("(projects.projects_dates_use_end IS NULL OR projects.projects_dates_use_end >= '" . date("Y-m-d H:i:s") . "')");
 $DBLIB->orderBy("projects.projects_dates_use_start","ASC");
 $DBLIB->orderBy("projectsVacantRoles.projects_id","ASC");
 $DBLIB->orderBy("projectsVacantRoles.projectsVacantRoles_deadline","ASC");

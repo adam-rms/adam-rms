@@ -271,8 +271,10 @@
             <tr>
                 <td style="padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;">
                     <br/>
-                    {% if INSTANCE %}Delivered for {{ INSTANCE.instances_name }} by AdamRMS<br/>{% endif %}<span class="unstyle-auto-detected-links">AdamRMS is a Bithell Studios Ltd. Project<br/>160 Kemp House City Road<br/>London, EC1V 2NX<br/>United Kingdom<br/>Company &#8470;11918238</span>
-                    <br><br>If you don't want to receive emails like these you can disable them in your account settings
+                    {% if INSTANCE %}Delivered for {{ INSTANCE.instances_name }} by AdamRMS.<br/>{% endif %}
+                    If you don't want to receive emails like these you can disable them in your account settings.
+                    <br/>
+                    {{ FOOTER|raw }}
                 </td>
             </tr>
         </table>
@@ -284,35 +286,6 @@
         </table>
         <![endif]-->
     </div>
-
-    <!-- Full Bleed Background Section : BEGIN -->
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f87e9e;">
-        <tr>
-            <td>
-                <div align="center" style="max-width: 600px; margin: auto;" class="email-container">
-                    <!--[if mso]>
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center">
-                        <tr>
-                            <td>
-                    <![endif]-->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                        <tr>
-                            <td style="padding: 20px; text-align: left; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #ffffff;">
-                                <p style="margin: 0;">AdamRMS is a fully-featured asset, project and rental management platform for Theatre, AV & Broadcast. To find out more about what it could do for your business, get in touch at studios@jbithell.com</p>
-                            </td>
-                        </tr>
-                    </table>
-                    <!--[if mso]>
-                    </td>
-                    </tr>
-                    </table>
-                    <![endif]-->
-                </div>
-            </td>
-        </tr>
-    </table>
-    <!-- Full Bleed Background Section : END -->
-
     <!--[if mso | IE]>
     </td>
     </tr>

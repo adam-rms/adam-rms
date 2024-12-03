@@ -1,0 +1,7 @@
+{% set THISWIDGETNAME = 'myCalendar' %}
+{% set THISWIDGET = WIDGETS.widget('myCalendar',  {'instanceid': USERDATA.instance.instances_id,'userid':USERDATA.users_userid}) %}
+
+<div class="card card-primary">
+    {% embed 'assets/widgets/calendar.twig' with {'USER': true, 'projects': THISWIDGET} %}
+    {% endembed %}
+</div>
