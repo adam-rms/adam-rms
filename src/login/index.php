@@ -38,8 +38,8 @@ elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLO
 	$PAGEDATA['MAGICLINKURL'] = $_GET['app-magiclink'];
 	echo $TWIG->render('login/magicLink.twig', $PAGEDATA);
 } else {
-	require_once __DIR__ . 'third_party.php';
+	require_once __DIR__ . '/third_party.php';
 	$PAGEDATA['runLightFocusAnimation'] = true;
-	$PAGEDATA['social_auth_providers'] = get_available_auth_providers();
+	$PAGEDATA['social_auth_providers'] = get_available_auth_providers($CONFIGCLASS);
 	echo $TWIG->render('login/login.twig', $PAGEDATA);
 }

@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/../../common/head.php';
 
 $hybridauth_providers = [];
 
@@ -17,7 +16,7 @@ if ($PAGEDATA['microsoftAuthAvailable']) {
 }
 
 $PAGEDATA['googleAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_SECRET") != false;
-if (!$PAGEDATA['googleAuthAvailable']) {
+if ($PAGEDATA['googleAuthAvailable']) {
     $hybridauth_providers["Google"] = [
         "enabled" => true,
         "keys" => [
@@ -30,7 +29,7 @@ if (!$PAGEDATA['googleAuthAvailable']) {
 
 $hybridauth_configObject = [
     "callback" => $CONFIG['ROOTURL'] . '/login/oauth/',
-    "providers" => $providers
+    "providers" => $hybridauth_providers
 ];
 
-$hybridauth = new Hybridauth\Hybridauth($config);
+$hybridauth = new Hybridauth\Hybridauth($hybridauth_configObject);

@@ -66,7 +66,7 @@ function social_authenticate_user(string $provider, string $userId, string $firs
     }
 }
 
-function get_available_auth_providers()
+function get_available_auth_providers(Config $CONFIGCLASS)
 {
     require_once __DIR__ . '/oauth/providers.php';
     $hybridauth_providers = $hybridauth->getProviders();
@@ -79,8 +79,8 @@ function get_available_auth_providers()
         // add some logic to check if enabled for business?
 
         // use logo if exists, otherwise chainlink icon
-        if (file_exists(__DIR__ . "../static-assets/img/login/{$name_lower}.svg")) {
-            $icon_html = "<img src='{$CONFIG['ROOTURL']}/static-assets/img/login/microsoft.svg' alt='' role='presentation' style='height: 1.2em; vertical-align: text-top;' />";
+        if (file_exists(__DIR__ . "/../static-assets/img/login/{$name_lower}.svg")) {
+            $icon_html = "<img src='{$CONFIG['ROOTURL']}/static-assets/img/login/{$name_lower}.svg' alt='' role='presentation' style='height: 1.2em; vertical-align: text-top;' />";
         } else {
             $icon_html = "<img src='{$CONFIG['ROOTURL']}/static-assets/img/login/link.svg' alt='' role='presentation' style='height: 1.2em; vertical-align: text-top;' />";
         }
