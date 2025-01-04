@@ -71,7 +71,7 @@
                     <ul class="list-inline">
                         <li class="list-inline-item">
                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
                             </a>
                         </li>
                     </ul>
@@ -81,7 +81,7 @@
                         <ul class="list-inline">
                             <li class="list-inline-item">
                                 <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
                                 </a>
                             </li>
                         </ul>
