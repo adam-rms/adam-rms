@@ -365,7 +365,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 						<!-- Sidebar user (optional) -->
 						<div class="user-panel mt-3 pb-3 mb-3 d-flex">
 							<div class="image">
-								<img src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;" loading="lazy" fetchpriority="high">
+								<img src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.users_thumbnail ? USERDATA.users_thumbnail|s3URL("tiny") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ USERDATA.users_userid }}" class="img-circle elevation-2" alt="User Image" style="background-color: white;" loading="lazy" fetchpriority="high">
 							</div>
 							<a href="{{ CONFIG.ROOTURL }}/user.php" class="d-block">
 								<div class="info">

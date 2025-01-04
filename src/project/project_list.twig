@@ -87,7 +87,7 @@
                             <ul class="list-inline">
                                 <li class="list-inline-item">
                                     <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                        <img loading="lazy" alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                        <img loading="lazy" alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ project.projects_manager }}">
                                     </a>
                                 </li>
                             </ul>
@@ -141,7 +141,7 @@
                                     <ul class="list-inline">
                                         <li class="list-inline-item">
                                             <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ subProject.users_email ~ ")" }}">
-                                                <img loading="lazy" alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/static-assets/img/default-profile-picture.jpg' }}">
+                                                <img loading="lazy" alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ subProject.projects_manager }}">
                                             </a>
                                         </li>
                                     </ul>

@@ -72,9 +72,7 @@
                         {% for user in users %}
                             <tr>
                                 <td>
-                                    {% if CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail %}
-                                        <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ user.users_thumbnail|s3URL("small") }}">
-                                    {% endif %}
+                                    <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ user.users_userid }}">
                                 </td>
                                 <td>
                                     {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
