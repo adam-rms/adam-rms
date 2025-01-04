@@ -10,9 +10,8 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
         else $DBLIB->where ("users_username", $input);
         $DBLIB->where("users_password", NULL, "IS NOT"); //To cover oauth users
         $user = $DBLIB->getOne("users",["users.users_salty1", "users.users_suspended", "users.users_salty2", "users.users_password", "users.users_userid", "users.users_hash"]);
-        if (!$user) finish(false, ["code" => null, "message" => "Username, email or password incorrect"]);
-
-        if ($user['users_password'] != hash($user['users_hash'], $user['users_salty1'] . $password . $user['users_salty2'])) $successful = false;
+        if (!$user) $successful = false;
+        elseif ($user['users_password'] != hash($user['users_hash'], $user['users_salty1'] . $password . $user['users_salty2'])) $successful = false;
         else $successful = true;
 
         $DBLIB->where ("loginAttempts_timestamp >= '" . date('Y-m-d G:i:s', strtotime('-5 minutes')) . "'");
@@ -35,7 +34,7 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
             "loginAttempts_successful" => ($successful ? '1' : '0')
         ]);
 
-        if ($bruteforceattempt && !$successful) finish(false, ["code" => null, "message" => "Sorry - you've tried too many times to login - please try again in 5 minutes"]);
+        if ($bruteforceattempt) finish(false, ["code" => null, "message" => "Sorry - you've tried too many times to login - please try again in 5 minutes"]);
         elseif (!$successful) finish(false, ["code" => null, "message" => "Username, email or password incorrect"]);
         elseif ($user['users_suspended'] != '0') finish(false, ["code" => null, "message" => "User account is suspended"]);
         else {
