@@ -14,6 +14,15 @@ $array['instances_id'] = $AUTH->data['instance']['instances_id'];
 $location = $DBLIB->insert("locations", $array);
 if (!$location) finish(false);
 
+$locationBarcodeData = [
+    "locationsBarcodes_value" => "L" . $location,
+    "locationsBarcodes_type" => "QR_CODE",
+    "locations_id" => $location,
+    "users_userid" => $AUTH->data['users_userid'],
+    "locationsBarcodes_added" => date("Y-m-d H:i:s")
+];
+$locationBarcode = $DBLIB->insert("locationsBarcodes", $locationBarcodeData);
+
 $bCMS->auditLog("INSERT", "locations", json_encode($array), $AUTH->data['users_userid']);
 finish(true);
 
