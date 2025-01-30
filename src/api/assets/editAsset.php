@@ -40,7 +40,7 @@ if (isset($array['assets_tag']) and $array['assets_tag'] != $asset['assets_tag']
 
 $DBLIB->where("assets_id", $array['assets_id']);
 $DBLIB->where("assets.instances_id",$AUTH->data['instance']["instances_id"]);
-$result = $DBLIB->update("assets", array_intersect_key( $array, array_flip( ['assets_linkedTo','assetTypes_id','assets_notes','assets_tag','asset_definableFields_1','asset_definableFields_2','asset_definableFields_3','asset_definableFields_4','asset_definableFields_5','asset_definableFields_6','asset_definableFields_7','asset_definableFields_8','asset_definableFields_9','asset_definableFields_10','assets_value','assets_dayRate','assets_weekRate','assets_mass'] ) ));
+$result = $DBLIB->update("assets", array_intersect_key($array, array_flip(['assets_linkedTo', 'assetTypes_id', 'assets_notes', 'assets_tag', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_value', 'assets_dayRate', 'assets_weekRate', 'assets_mass', 'assets_storageLocation'])));
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update asset"]);
 else {
     $DBLIB->where("assets_id",$array['assets_id']);
@@ -234,6 +234,11 @@ Requires Instance Permission ASSETS:EDIT
  *             ),
  *             @OA\Property(
  *                 property="asset_definableFields_10", 
+ *                 type="string", 
+ *                 description="undefined",
+ *             ),
+ *              @OA\Property(
+ *                 property="assets_storageLocation", 
  *                 type="string", 
  *                 description="undefined",
  *             ),

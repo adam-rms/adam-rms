@@ -56,7 +56,16 @@ foreach ($assets as $asset) {
     $DBLIB->where("projects.projects_deleted", 0);
     $asset['assignments'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id", "projects.projects_name", "projects_dates_deliver_start", "projects_dates_deliver_end", "assetsAssignments.assetsAssignmentsStatus_id", "projectsStatuses.projectsStatuses_name", "projectsStatuses.projectsStatuses_foregroundColour", "projectsStatuses.projectsStatuses_backgroundColour"]);
 
+    //Files
     $asset['files'] = $bCMS->s3List(4, $asset['assets_id']);
+
+    //Storage Location
+    $DBLIB->where('locations_id', $asset['assets_storageLocation']);
+    $DBLIB->where('instances_id', $AUTH->data['instance']['instances_id']);
+    $DBLIB->where('locations_deleted', 0);
+    $DBLIB->where('locations_archived', 0);
+    $asset['storage_location'] = $DBLIB->get('locations', 1, ['locations_id', 'locations_name']);
+
 
     $PAGEDATA['assets'][] = $asset;
 }
@@ -174,7 +183,7 @@ if (count($PAGEDATA['assets']) == 1) {
     $DBLIB->orderBy("locations_subOf", "ASC");
     $DBLIB->orderBy("locations.locations_name", "ASC");
     $DBLIB->join('locationsBarcodes', 'locationsBarcodes.locations_id=locations.locations_id');
-    $locations = $DBLIB->get("locations", null, ['locationsBarcodes.locationsBarcodes_id', 'locations.locations_name']);
+    $locations = $DBLIB->get("locations", null, ['locationsBarcodes.locationsBarcodes_id', 'locations.locations_id', 'locations.locations_name']);
 
     function linkedLocations($locationId, $tier, $locationKey)
     {
@@ -185,7 +194,7 @@ if (count($PAGEDATA['assets']) == 1) {
         $DBLIB->where("locations.locations_deleted", 0);
         $DBLIB->where("locations.locations_archived", 0);
         $DBLIB->join('locationsBarcodes', 'locationsBarcodes.locations_id=locations.locations_id');
-        $locations = $DBLIB->get("locations", null, ['locationsBarcodes.locationsBarcodes_id', 'locations.locations_name']);
+        $locations = $DBLIB->get("locations", null, ['locationsBarcodes.locationsBarcodes_id', 'locations.locations_id', 'locations.locations_name']);
         $tier += 1;
         foreach ($locations as $location) {
             $location['tier'] = $tier;

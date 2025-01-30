@@ -39,22 +39,32 @@
                                 {% if field != "" %}
                                     {% set assetFieldsLength = assetFieldsLength +1 %}{# Build a count of the number of fields use to help editing an asset #}
                                     <li class="list-group-item">
-                                        <b>{{field}}</b> <a class="float-right">{{ assets[0]['asset_definableFields_' ~ loop.index] }}</a>
+                                        <b>{{field}}</b> <span class="float-right text-primary">{{ assets[0]['asset_definableFields_' ~ loop.index] }}</span>
                                     </li>
                                 {% endif %}
                             {% endfor %}
                             <li class="list-group-item">
-                                <b>Mass</b> <a class="float-right">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</a>
+                                <b>Mass</b> <span class="float-right text-primary">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>Value</b> <a class="float-right">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
+                                <b>Value</b> <span class="float-right text-primary">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>Day Rate</b> <a class="float-right">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
+                                <b>Day Rate</b> <span class="float-right text-primary">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>Week Rate</b> <a class="float-right">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
+                                <b>Week Rate</b> <span class="float-right text-primary">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                             </li>
+                            {% if assets[0]['storage_location'] %}
+                            <li class="list-group-item">
+                                <b>Storage Location</b>
+                                {% if "LOCATIONS:VIEW"|instancePermissions %}
+                                    <a class="float-right" href="{{ CONFIG.ROOTURL }}/location/">{{assets[0]['storage_location'][0]['locations_name']}}</a>
+                                {% else %}
+                                    <span class="float-right">{{assets[0]['storage_location'][0]['locations_name']}}</span
+                                {% endif %}
+                            </li>
+                            {% endif %}
                         </ul>
                         {% if "ASSETS:ARCHIVE"|instancePermissions and (assets[0].assets_endDate is null or assets[0].assets_endDate|date("U") > "now"|date("U"))  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id  %}
                         <button class="btn btn-warning btn-block archiveAssetButton" data-assetid="{{ assets[0]['assets_id'] }}" style="margin-bottom: 10px;">Archive</button>
@@ -65,7 +75,7 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="card card-outline">
+            <div class="card card-info card-outline">
                 <div class="card-body box-profile">
                     {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and asset.thumbnail %}
                     <div class="text-center {{ asset.thumbnail|length > 1 ? 'slick' : '' }}">
@@ -80,7 +90,7 @@
                     </div>
                     {% endif %}
                     <h3 class="profile-username text-center">{{asset.assetTypes_name}}</h3>
-
+                    <p>{{asset.assetTypes_description|nl2br}}</p>
                     <ul class="list-group list-group-unbordered mb-3">
                         {% if asset.assetTypes_productLink != null %}
                         <li class="list-group-item">
@@ -94,22 +104,22 @@
                             <b>Manufacturer</b> {{ asset.manufacturers_name }}
                         </li>
                         <li class="list-group-item">
-                            <b>Mass</b> <a class="float-right">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</a>
+                            <b>Mass</b> <span class="float-right text-primary">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</span>
                         </li>
                         <li class="list-group-item">
-                            <b>Value</b> <a class="float-right">{{ asset.assetTypes_value|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
+                            <b>Value</b> <span class="float-right text-primary">{{ asset.assetTypes_value|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                         </li>
                         <li class="list-group-item">
-                            <b>Day Rate</b> <a class="float-right">{{ asset.assetTypes_dayRate|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
+                            <b>Day Rate</b> <span class="float-right text-primary">{{ asset.assetTypes_dayRate|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                         </li>
                         <li class="list-group-item">
-                            <b>Week Rate</b> <a class="float-right">{{ asset.assetTypes_weekRate|money(ASSET_INSTANCE['instances_config_currency']) }}</a>
+                            <b>Week Rate</b> <span class="float-right text-primary">{{ asset.assetTypes_weekRate|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                         </li>
                     </ul>
                     {% if asset.oneasset %}
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
                     {% endif %}
-                    <p>{{asset.assetTypes_description|nl2br}}</p>
+                    
                 </div>
             </div>
         </div>
@@ -275,6 +285,24 @@
                                                     <div class="input-group">
                                                         <div class="input-group-prepend"><span class="input-group-text">Asset Notes</span></div>
                                                         <textarea class="form-control" rows="2" name="assets_notes" placeholder="">{{ assets[0]['assets_notes'] }}</textarea>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Storage Location</span>
+                                                        </div>
+                                                        <select class="form-control select2bs4" name="assets_storageLocation" id="editAssetStoredLocation">
+                                                            {% if assets[0]['storage_location'] == [] %}
+                                                                <option value="" disabled selected>No Location Selected....</option>
+                                                            {% endif %}
+                                                            {% for location in locations %}
+                                                                <option value="{{ location.locations_id }}" {{ assets[0]['storage_location'][0]['locations_id'] == location.locations_id ? 'selected' }} {{ location.locations_archived == 1 ? 'disabled' }}>{{ location.locations_archived == 1 ? '[Archived] ' }}{{ location.locations_name }}</option>
+                                                                {% for subLocation in location.linkedToThis %}
+                                                                    <option value="{{ subLocation.locations_id }}" {{ assets[0]['storage_location'][0]['locations_id'] == subLocation.locations_id ? 'selected' }}  {{ subLocation.locations_archived == 1 ? 'disabled' }} title="{% for i in range(1, subLocation['tier']) %}{% if loop.last %}&#8627;{% else %}&nbsp;&nbsp;{% endif %}{% endfor %}">
+                                                                        {{ subLocation.locations_archived == 1 ? '[Archived] ' }}{{ subLocation.locations_name }}
+                                                                    </option>
+                                                                {% endfor %}
+                                                            {% endfor %}
+                                                        </select>
                                                     </div>
                                                 </form>
                                                 <button class="btn btn-default float-right" id="saveAssetSettingsButton" style="margin-top:10px;margin-bottom:10px;">Save</button>
@@ -475,10 +503,10 @@
                             <div class="callout callout-info m-2">
                                 <p>Use the buttons below to set the location of this asset without scanning a barcode.</p>
                             </div>
-                            <div class="btn-group">
-                                <button class="btn btn-info m-2" id="setAssetLocationButton">Manually pick location from list</button>
-                                <button class="btn btn-info m-2" id="setAssetLocationAssetButton">Manually set location to be within another Asset</button>
-                                <button class="btn btn-info m-2" id="setCustomLocationButton">Manually set Custom Location</button>
+                            <div class="btn-group m-2">
+                                <button class="btn btn-info" id="setAssetLocationButton">Manually pick location from list</button>
+                                <button class="btn btn-info" id="setAssetLocationAssetButton">Manually set location to be within another Asset</button>
+                                <button class="btn btn-info" id="setCustomLocationButton">Manually set Custom Location</button>
                             </div>
                             {% endif %}
                         </div>
@@ -841,7 +869,7 @@
                 </div><!-- /.card-body -->
             </div>
             {% endif %}
-            <div class="card">
+            <div class="card card-info card-outline">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
                         {% if asset.oneasset %}
@@ -2170,6 +2198,24 @@
                     ajaxcall('assets/barcodes/search.php', args, () => {location.reload()});
                 });
                 {% endif %} 
+                {% if "LOCATIONS:VIEW"|instancePermissions %}
+                $('#editAssetStoredLocation').select2({
+                    tags: false,
+                    multiple: false,
+                    theme: "bootstrap4",
+                    minimumInputLength: 0,
+                    minimumResultsForSearch: 1,
+                    templateResult: function (input) {
+                        if (!input.id || !input.title) {
+                            return input.text;
+                        }
+                        var $result = $(
+                            '<span><b>' + input.title + ' </b>' + input.text + '</span>'
+                        );
+                        return $result;
+                    }
+                });
+                {% endif %}
             });
         </script>
 {% embed 'assets/templates/fileBoxJS.twig' %}
