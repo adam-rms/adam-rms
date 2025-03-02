@@ -213,6 +213,13 @@ $TWIG->addFilter(new \Twig\TwigFilter('moneyPositive', function ($variable) {
     if (!is_object($variable)) return ($variable > 0);
     return $variable->isPositive(); //False when 0
 }));
+$TWIG->addFunction(new \Twig\TwigFunction('moneySymbol', function ($currency = false) {
+    global $AUTH;
+    $currencyCode = $currency ?: $AUTH->data['instance']['instances_config_currency'];
+    $numberFormatter = new NumberFormatter('en_GB' . "@currency=$currencyCode", NumberFormatter::CURRENCY);
+    $symbol = $numberFormatter->getSymbol(NumberFormatter::CURRENCY_SYMBOL);
+    return $symbol;
+}));
 $TWIG->addFilter(new \Twig\TwigFilter('mass', function ($variable) {
     return number_format((float)$variable, 2, '.', '') . "kg";
 }));

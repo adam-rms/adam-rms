@@ -367,7 +367,7 @@
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                     <span class="input-group-text">
-                                                      Value - £
+                                                      Value - {{ moneySymbol() }}
                                                     </span>
                                                             </div>
                                                             <input type="number" step="0.001" min="0" name="assets_value" value="{{ assets[0].assets_value|moneyDecimal }}" class="form-control" />
@@ -376,7 +376,7 @@
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                     <span class="input-group-text">
-                                                      Day Rate - £
+                                                      Day Rate - {{ moneySymbol() }}
                                                     </span>
                                                             </div>
                                                             <input type="number" step="0.001" min="0" name="assets_dayRate" value="{{ assets[0].assets_dayRate|moneyDecimal }}" class="form-control"  />
@@ -384,7 +384,7 @@
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                              Weekly Rate - £
+                                                              Weekly Rate - {{ moneySymbol() }}
                                                             </span>
                                                             </div>
                                                             <input type="number" step="0.001" min="0" name="assets_weekRate" class="form-control" value="{{ assets[0].assets_weekRate|moneyDecimal }}" />
@@ -905,8 +905,8 @@
                                     {% endfor %}
                                     <th>Notes</th>
                                     <th>Value</th>
-                                    <th>&pound;/day</th>
-                                    <th>&pound;/week</th>
+                                    <th>Cost/day</th>
+                                    <th>Cost/week</th>
                                     <th title="File attachments"><i class="fas fa-paperclip"></i></th>
                                     <th style="width:1%"><i class="fas fa-flag"></i></th>
                                     <th style="width:1%"><i class="fas fa-ban"></i></th>
@@ -920,13 +920,13 @@
                                         {% endfor %}
                                         <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                         <td>
-                                            {{ (thisasset.assets_value ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}
+                                            {{ moneySymbol(ASSET_INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_value ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>
-                                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
+                                            {{ moneySymbol(ASSET_INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>
-                                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
+                                            {{ moneySymbol(ASSET_INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>{{ thisasset.files|length > 0 ?: "" }}</td>
 
@@ -1065,7 +1065,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">
-                                                      Value - £
+                                                      Value - {{ moneySymbol() }}
                                                     </span>
                                                 </div>
                                                 <input type="number" step="0.001" min="0" name="assetTypes_value" value="{{ asset.assetTypes_value|moneyDecimal }}" class="form-control" id="addNewType-value" />
@@ -1074,7 +1074,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">
-                                                      Day Rate - £
+                                                      Day Rate - {{ moneySymbol() }}
                                                     </span>
                                                 </div>
                                                 <input type="number" step="0.001" min="0" name="assetTypes_dayRate" value="{{ asset.assetTypes_dayRate|moneyDecimal }}" class="form-control" id="addNewType-dayRate" />
@@ -1085,7 +1085,7 @@
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">
-                                                      Weekly Rate - £
+                                                      Weekly Rate - {{ moneySymbol() }}
                                                     </span>
                                                 </div>
                                                 <input type="number" step="0.001" min="0" name="assetTypes_weekRate" class="form-control" value="{{ asset.assetTypes_weekRate|moneyDecimal }}" id="addNewType-weekRate" />
@@ -1604,8 +1604,8 @@
                 {% endif %}
                 {% if "ASSETS:ASSET_TYPES:EDIT"|instancePermissions %}
                 $("#addNewType-value").change(function() {
-                    $("#addNewType-dayRate-guide").html("2% = &pound;" + ($(this).val()*0.02).toFixed(2));
-                    $("#addNewType-weekRate-guide").html("6% = &pound;" + ($(this).val()*0.06).toFixed(2));
+                    $("#addNewType-dayRate-guide").html("2% = {{ moneySymbol() }}" + ($(this).val()*0.02).toFixed(2));
+                    $("#addNewType-weekRate-guide").html("6% = {{ moneySymbol() }}" + ($(this).val()*0.06).toFixed(2));
                 });
                 $('#saveSettingsButton').on('click', function() {
                     var formData = $("#addNewForm").serializeArray();

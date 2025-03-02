@@ -100,7 +100,7 @@ yAxes: [
 {
 ticks: {
 callback: function (value, index, values) {
-return '£' + value.toLocaleString();
+return '{{ moneySymbol() }}' + value.toLocaleString();
 },
 fontColor: '#efefef',
 beginAtZero: true
