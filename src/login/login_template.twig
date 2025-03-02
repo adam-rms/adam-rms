@@ -133,6 +133,10 @@
 						                            col-xs-10 offset-xs-1">
 					<div id="masterBox">
 						<a href="{{CONFIG.ROOTURL}}/login/?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
+						<div class="alert alert-danger" style="border: 0px; text-align: left; display: none;" id="defaultAccountEnabledWarning">
+							<h4>The default super administrator account for {{ CONFIG.PROJECT_NAME }} is enabled</h4>
+							<p>Login to this account and change the password. Default username is <strong>username</strong> and password is <strong>password!</strong></p>
+						</div>
 						{% if CONFIG.DEV %}
 							<div class="alert alert-warning" style="border: 0px; text-align: left;">
 								<h4>{{ CONFIG.PROJECT_NAME }} is running in development mode, and should only be used for testing purposes</h4>
@@ -160,6 +164,22 @@
 				</div>
 			</div>
 		</div>
+		<script>
+			$(document).ready(function () {
+				$.ajax({
+						url: "../api/account/isDefaultAccountEnabled.php",
+						type: "GET",
+						dataType: 'json',
+						success: function(result) {
+								if (result.result) {
+										if (result.response.enabled) {
+												$("#defaultAccountEnabledWarning").show();
+										}
+								}
+						}
+				});
+			});
+		</script>
 		{{ CONFIG.FOOTER_ANALYTICS|raw }}
 	</body>
 </html>
