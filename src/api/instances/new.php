@@ -18,7 +18,8 @@ $instance = $DBLIB->insert("instances", [
     "instances_planName" => "",
     "instances_suspended" => ($CONFIGCLASS->get('NEW_INSTANCE_SUSPENDED') == "Suspended") ? 1 : 0,
     "instances_suspendedReasonType" => $CONFIGCLASS->get('NEW_INSTANCE_SUSPENDED_REASON_TYPE'),
-    "instances_suspendedReason" => $CONFIGCLASS->get('NEW_INSTANCE_SUSPENDED_REASON')
+    "instances_suspendedReason" => $CONFIGCLASS->get('NEW_INSTANCE_SUSPENDED_REASON'),
+    "instances_calendarConfig" => '{"showProjectStatus":true,"showSubProjects":true,"useCustomWeekNumbers":true,"defaultView":"dayGridMonth"}',
 ]);
 if (!$instance) finish(false, ["code" => "CREATE-INSTANCE-FAIL", "message" => "Could not create new business"]);
 
