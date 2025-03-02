@@ -195,8 +195,8 @@
                                         '{# Definable Fields #} ',
                                         {% if GET['masses'] %}'Mass',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
-                                            {% if GET['prices'] %}'Price £',{% endif %}
-                                            {% if GET['discounts'] %}'Disc £',{% endif %}
+                                            {% if GET['prices'] %}'Price {{ moneySymbol() }}',{% endif %}
+                                            {% if GET['discounts'] %}'Disc {{ moneySymbol() }}',{% endif %}
                                         {% endif %}
                                     ],
                                 {% set currentCategory = "" %}
@@ -246,8 +246,8 @@
                                         '{# Definable Fields #} ',
                                         {% if GET['masses'] %}'Mass',{% endif %}
                                         {% if project.projectsTypes_config_finance == 1 %}
-                                            {% if GET['prices'] %}'Price £',{% endif %}
-                                            {% if GET['discounts'] %}'Disc £',{% endif %}
+                                            {% if GET['prices'] %}'Price {{ moneySymbol() }}',{% endif %}
+                                            {% if GET['discounts'] %}'Disc {{ moneySymbol() }}',{% endif %}
                                         {% endif %}
                                     ],
                                 {% set currentCategory = "" %}

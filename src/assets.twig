@@ -269,8 +269,8 @@
                                                                                 <th>{{ field }}</th>
                                                                             {% endfor %}
                                                                             <th>Notes</th>
-                                                                            <th>&pound;/day</th>
-                                                                            <th>&pound;/week</th>
+                                                                            <th>Cost/day</th>
+                                                                            <th>Cost/week</th>
                                                                             <th style="width:1%"><i class="fas fa-flag"></i></th>
                                                                             <th style="width:30px;">
                                                                                 <button class="btn btn-success addToBasketAssetTypeButton" {% if asset.countAvailable < 1 %} disabled {% endif %}" title "Add all of this asset type to the project" data-assetTypeId="{{ asset.assetTypes_id }}"><i class="fas fa-dolly"></i></button>
@@ -284,10 +284,10 @@
                                                                                 {% endfor %}
                                                                                 <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                                                                 <td>
-                                                                                    {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
-                                                                                    {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
                                                                                     {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
@@ -347,8 +347,8 @@
                                                                                 <th>{{ field }}</th>
                                                                             {% endfor %}
                                                                             <th>Notes</th>
-                                                                            <th>&pound;/day</th>
-                                                                            <th>&pound;/week</th>
+                                                                            <th>Cost/day</th>
+                                                                            <th>Cost/week</th>
                                                                             <th style="width:1%"><i class="fas fa-flag"></i></th>
                                                                             <th style="width:30px;"></th>
                                                                         </tr>
@@ -360,10 +360,10 @@
                                                                                 {% endfor %}
                                                                                 <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                                                                 <td>
-                                                                                    {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
-                                                                                    {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
                                                                                     {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
