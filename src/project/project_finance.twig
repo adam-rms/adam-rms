@@ -155,10 +155,10 @@
 						<thead>
 							<tr>
 								<th>Quantity</th>
-								<th style="width: 100%;">Comment</th>
+								<th style="width: 100%;">Description</th>
 								<th>Amount</th>
 								<th>Total</th>
-								<th style="min-width:140px;"></th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -180,7 +180,7 @@
 									<td style="width:100px;">{{ payment.payments_amount|money }}</td>
 									<td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
 									<td>
-										{% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+										{% if  CONFIG.FILES_ENABLED == "Enabled" and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
 											<button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
 											</button>
 										{% endif %}
@@ -207,10 +207,10 @@
 						<thead>
 							<tr>
 								<th>Quantity</th>
-								<th style="width: 100%;">Comment</th>
+								<th style="width: 100%;">Description</th>
 								<th>Amount</th>
 								<th>Total</th>
-								<th style="min-width:140px;"></th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -232,7 +232,7 @@
 									<td style="width:100px;">{{ payment.payments_amount|money }}</td>
 									<td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
 									<td>
-										{% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+										{% if CONFIG.FILES_ENABLED == "Enabled" and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
 											<button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
 											</button>
 										{% endif %}
@@ -260,10 +260,10 @@
 							<tr>
 								<th>Quantity</th>
 								<th>Supplier</th>
-								<th style="width: 100%;">Comment</th>
+								<th style="width: 100%;">Description</th>
 								<th>Amount</th>
 								<th>Total</th>
-								<th style="min-width:140px;"></th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -275,7 +275,7 @@
 									<td style="width:100px;">{{ payment.payments_amount|money }}</td>
 									<td style="width:100px;text-align: right;">{{ payment.payments_amountTotal|money }}</td>
 									<td>
-										{% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+										{% if CONFIG.FILES_ENABLED == "Enabled" and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
 											<button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
 											</button>
 										{% endif %}
@@ -319,8 +319,8 @@
 									<td>{{ payment.payments_method }}</td>
 									<td>{{ payment.payments_comment|nl2br }}</td>
 									<td>{{ payment.payments_amount|money }}</td>
-									<td style="min-width:140px;">
-										{% if "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
+									<td>
+										{% if  CONFIG.FILES_ENABLED == "Enabled" and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
 											<button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
 											</button>
 										{% endif %}

@@ -137,15 +137,21 @@
                             ],
                             {% if GET['type'] == "invoice" %}
                             [
-                                { text: "SubTotal" },
+                                { text: "" },
+                                { text: "" },
+                                { text: "SubTotal", style: { bold: true } },
                                 { text: "{{ FINANCIALS.payments.subTotal|money|escape("js") }}", style: { alignment: 'right' } },
+                            ],
+                            [
+                                { text: "" },
+                                { text: "" },
                                 { text: "Payments Received to Date" },
                                 { text: "-{{ FINANCIALS.payments.received.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                             {% endif %}
                             [
                                 { text: "" },
-                                { text: "", style: { alignment: 'right' } },
+                                { text: "" },
                                 { text: "{% if GET['type'] == 'quote' %}Grand Total{% else %}Grand Total Outstanding{% endif %}", style: { bold: true } },
                                 { text: "{{ FINANCIALS.payments.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
