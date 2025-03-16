@@ -6,11 +6,27 @@ require_once __DIR__ . '/../api/projects/data.php'; //Where most of the data com
 $PAGEDATA['GET'] = $_GET;
 $PAGEDATA['GET']['generate'] = true;
 
-$isQuote = $_GET['quote'] == "true";
+$isQuote = $_GET['type'] == "quote";
+$isDeliveryNote = $_GET['type'] == "deliveryNote";
 $PAGEDATA['GET']['quote'] = $isQuote;
-$typeId = $isQuote ? 21 : 20;
+$PAGEDATA['GET']['deliveryNote'] = $isDeliveryNote;
 
-$PAGEDATA['GET']['draft'] = $_GET['draft'] == "true";
+$typeId = 20;
+$PAGEDATA['GET']['fileType'] = 'Invoice';
+
+switch ($_GET['type']) {
+    case 'quote':
+        $typeId = 21;
+        $PAGEDATA['GET']['fileType'] = 'Quotation';
+        break;
+    case 'deliveryNote':
+        $typeId = 22;
+        $PAGEDATA['GET']['fileType'] = 'Delivery Note';
+        break;
+    default:
+        # code...
+        break;
+}
 
 $DBLIB->where("s3files_meta_type", $typeId);
 $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);
@@ -23,5 +39,7 @@ $PAGEDATA['fileNumber'] = $fileNumber;
 if ($PAGEDATA['USERDATA']['instance']['instances_logo'] and $PAGEDATA['GET']['instancelogo']) {
     $PAGEDATA['INSTANCELOGO'] = $bCMS->s3DataUri($PAGEDATA['USERDATA']['instance']['instances_logo']);
 } else $PAGEDATA['INSTANCELOGO'] = false;
+
+// die(print_r($PAGEDATA));
 
 echo $TWIG->render('project/pdf.twig', $PAGEDATA);

@@ -284,6 +284,7 @@ $PAGEDATA['files'] = $bCMS->s3List(7, $PAGEDATA['project']['projects_id']);
 
 $PAGEDATA['invoices'] = $bCMS->s3List(20, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 $PAGEDATA['quotes'] = $bCMS->s3List(21, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
+$PAGEDATA['deliveryNotes'] = $bCMS->s3List(22, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
 $DBLIB->where("assetsAssignmentsStatus_deleted", 0);

@@ -15,8 +15,29 @@ if (isset($_FILES['file'])) {
         )
     ]);
     $isQuote = $_POST['quote'] == "true";
-    $filename = sprintf("%s-", $isQuote ? "quote" : "invoice") . time() . "-" . (floor(rand())) . "." . "pdf";
-    $s3Path = $isQuote ? "uploads/PROJECT_QUOTES" : "uploads/PROJECT_INVOICES";
+    $filenamePrefix = "invoice";
+    $s3Path = "uploads/PROJECT_INVOICES";
+    $fileType = 20;
+    $originalName = "invoice.pdf";
+
+    switch ($_POST['type']) {
+        case 'quote':
+            $filenamePrefix = "quote";
+            $s3Path = "uploads/PROJECT_QUOTES";
+            $fileType = 21;
+            $originalName = "quote.pdf";
+            break;
+        case 'deliveryNote':
+            $filenamePrefix = "delivery-note";
+            $s3Path = "uploads/PROJECT_DELIVERY_NOTES";
+            $fileType = 22;
+            $originalName = "delivery-note.pdf";
+            break;
+        default:
+            break;
+    }
+
+    $filename = sprintf("%s-", $filenamePrefix) . time() . "-" . (floor(rand())) . "." . "pdf";
     $result = $s3->putObject([
         'Bucket' => $CONFIGCLASS->get('AWS_S3_BUCKET'),
         'Key'    => $s3Path . "/" . $filename,
@@ -29,10 +50,10 @@ if (isset($_FILES['file'])) {
             "s3files_extension" => "pdf",
             "s3files_path" => $s3Path,
             "s3files_meta_size" => $_FILES['file']['size'],
-            "s3files_meta_type" => $isQuote ? 21 : 20,
+            "s3files_meta_type" => $fileType,
             "s3files_meta_subType" => $_POST['id'],
             "users_userid" => $AUTH->data['users_userid'],
-            "s3files_original_name" => $isQuote ? "quote.pdf" : "invoice.pdf",
+            "s3files_original_name" => $originalName,
             "s3files_filename" => pathinfo($filename, PATHINFO_FILENAME),
             "s3files_name" => "v" . $bCMS->sanitizeString($_POST['fileNumber']),
             "s3files_meta_public" => 0,
@@ -77,12 +98,12 @@ Requires Instance Permission PROJECTS:VIEW
  *             type="number"), 
  *         ), 
  *     @OA\Parameter(
- *         name="quote",
+ *         name="type",
  *         in="query",
- *         description="Is Quote?",
+ *         description="What type of file is this - invoice, quote or delivery note?",
  *         required="true", 
  *         @OA\Schema(
- *             type="boolean"), 
+ *             type="string"), 
  *         ), 
  *     @OA\Parameter(
  *         name="file",
