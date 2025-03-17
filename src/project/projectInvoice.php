@@ -24,7 +24,6 @@ switch ($_GET['type']) {
         $PAGEDATA['GET']['fileType'] = 'Delivery Note';
         break;
     default:
-        # code...
         break;
 }
 
@@ -39,7 +38,5 @@ $PAGEDATA['fileNumber'] = $fileNumber;
 if ($PAGEDATA['USERDATA']['instance']['instances_logo'] and $PAGEDATA['GET']['instancelogo']) {
     $PAGEDATA['INSTANCELOGO'] = $bCMS->s3DataUri($PAGEDATA['USERDATA']['instance']['instances_logo']);
 } else $PAGEDATA['INSTANCELOGO'] = false;
-
-// die(print_r($PAGEDATA));
 
 echo $TWIG->render('project/pdf.twig', $PAGEDATA);

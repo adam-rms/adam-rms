@@ -790,15 +790,15 @@
                  if ($(e.relatedTarget).data('delivery-note')){
                     $("#pdfGenerateModal .modal-title").text("Create Delivery Note");
                     $('#pdfGenerateModal input[name="type"]').val("deliveryNote");
-                    $('#pdfGenerateModal input[name="finance"]').prop('disabled', true).prop('checked', false);
-                    $('#pdfGenerateModal input[name="prices"]').prop('disabled', true).prop('checked', false);
-                    $('#pdfGenerateModal input[name="discounts"]').prop('disabled', true).prop('checked', false);
-                    $('#pdfGenerateModal input[name="flagsBlocks"]').prop('disabled', true).prop('checked', false);
+                    $('#pdfGenerateModal input[name="finance"]').prop('checked', false).parent().hide();
+                    $('#pdfGenerateModal input[name="prices"]').prop('checked', false).parent().hide();
+                    $('#pdfGenerateModal input[name="discounts"]').prop('checked', false).parent().hide();
+                    $('#pdfGenerateModal input[name="flagsBlocks"]').prop('checked', false).parent().hide();
                 } else {
-                    $('#pdfGenerateModal input[name="finance"]').prop('disabled', false).prop('checked', true);
-                    $('#pdfGenerateModal input[name="prices"]').prop('disabled', false).prop('checked', true);
-                    $('#pdfGenerateModal input[name="discounts"]').prop('disabled', false).prop('checked', true);
-                    $('#pdfGenerateModal input[name="flagsBlocks"]').prop('disabled', false).prop('checked', false);
+                    $('#pdfGenerateModal input[name="finance"]').prop('checked', true).parent().show();
+                    $('#pdfGenerateModal input[name="prices"]').prop('checked', true).parent().show();
+                    $('#pdfGenerateModal input[name="discounts"]').prop('checked', true).parent().show();
+                    $('#pdfGenerateModal input[name="flagsBlocks"]').prop('checked', false).parent().show();
                     if ($(e.relatedTarget).data('quote')) {
                         $("#pdfGenerateModal .modal-title").text("Create Quote");
                         $('#pdfGenerateModal input[name="type"]').val("quote");
