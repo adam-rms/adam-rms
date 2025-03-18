@@ -1,13 +1,15 @@
 {% extends "login/login_template.twig" %}
 {% block content %}
     {% if googleAuthAvailable %}
-    <a href="{{CONFIG.ROOTURL}}/login/oauth/google.php" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/google.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login or Signup with Google</a><br/>
+    <a href="{{CONFIG.ROOTURL}}/login/oauth/google.php" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/google.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login{% if signupEnabled %} or Signup{% endif %} with Google</a><br/>
     {% endif %}
     {% if microsoftAuthAvailable %}
-    <a href="{{CONFIG.ROOTURL}}/login/oauth/microsoft.php" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/microsoft.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login or Signup with Microsoft</a><br/>
+    <a href="{{CONFIG.ROOTURL}}/login/oauth/microsoft.php" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/microsoft.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login{% if signupEnabled %} or Signup{% endif %} with Microsoft</a><br/>
     {% endif %}
+    {% if signupEnabled %}
     <a href="?signup" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/logoicon.png" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Create new {{ CONFIG.PROJECT_NAME }} account</a>
     <p>or</p>
+    {% endif %}
     <div class="spinner-border" role="status" id="loadingOverlay" style="display: none;">
         <span class="sr-only">Loading...</span>
     </div>

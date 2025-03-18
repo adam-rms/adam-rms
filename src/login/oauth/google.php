@@ -39,7 +39,6 @@ try {
 	//Issue with auth state, which is a problem with the user's browser. We can't do anything about this, so just show an error
 	$PAGEDATA['ERROR'] = "Sorry, something went wrong authenticating with Google.";
 	die($TWIG->render('login/error.twig', $PAGEDATA));
-	exit;
 }
 $accessToken = $adapter->getAccessToken(); //We don't actually use this - we could in theory just drop it?
 $userProfile = $adapter->getUserProfile();
@@ -94,7 +93,14 @@ if ($user) {
 	}
 }
 
-//Okay we can't find them, so lets sign them up to an account
+// They don't have an account already. Check whether we can create them an account.
+if ($CONFIGCLASS->get("AUTH_SIGNUP_ENABLED") !== 'Enabled') {
+	$PAGEDATA['ERROR'] = "We couldn't find an existing account and signups are disabled. Please contact your business administrator to sign up.";
+	echo $TWIG->render('login/error.twig', $PAGEDATA);
+	exit;
+}
+
+//Okay we can't find them, and signup is enabled so lets sign them up to an account.
 $username = preg_replace("/[^a-zA-Z0-9]+/", "", $userProfile->firstName . $userProfile->lastName);
 while ($AUTH->usernameTaken($username)) {
 	$username .= "1";

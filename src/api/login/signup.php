@@ -1,6 +1,10 @@
 <?php
 require_once 'loginAjaxHead.php';
 
+if ($CONFIGCLASS->get("AUTH_SIGNUP_ENABLED") !== 'Enabled') {
+    die("404");
+}
+
 if (isset($_POST['name1']) and isset($_POST['password']) and isset($_POST['username']) and isset($_POST['email']) and isset($_POST['name2'])) {
     if ($AUTH->usernameTaken($GLOBALS['bCMS']->sanitizeString(strtolower($_POST['username'])))) finish(false, ["code" => null, "message" => "Sorry that username is taken, please try another"]);
     if ($AUTH->emailTaken($GLOBALS['bCMS']->sanitizeString(strtolower($_POST['email'])))) finish(false, ["code" => null, "message" => "Sorry, you already have an account with that email address"]);
