@@ -173,7 +173,7 @@
                 "scanned": true,
             }, function (data) {
                 if (data.response.location) {
-                    setScanLocation(data.response.location['barcode']["locationsBarcodes_id"], data.response.location['locations_name'], "barcode")
+                    setScanLocation(data.response.location["locationsBarcodes_id"], data.response.location['locations_name'], "barcode")
                     bootbox.alert("Location set to " + data.response.location['locations_name'], function () {
                         barcodeRequestInProgress = false
                     });
