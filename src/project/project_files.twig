@@ -57,7 +57,7 @@
 									<span class="text">
 										{{ file.s3files_name }}
 									</span>
-									<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date(" d m y g:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
+									<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
 									<div class="tools">
 										<a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File">
 											<i class="fas fa-cloud-download-alt"></i>
@@ -96,7 +96,7 @@
 								-
 								{{ file.s3files_meta_uploaded|date("d M Y G:i") }}
 							</span>
-							<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date(" d m y g:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
+							<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
 							<div class="tools">
 								<a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File">
 									<i class="fas fa-cloud-download-alt"></i>
@@ -137,7 +137,7 @@
 								-
 								{{ file.s3files_meta_uploaded|date("d M Y G:i") }}
 							</span>
-							<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date(" d m y g:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
+							<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
 							<div class="tools">
 								<a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File">
 									<i class="fas fa-cloud-download-alt"></i>
@@ -160,7 +160,7 @@
 				<h3 class="card-title">Delivery Notes</h3>
 				{% if deliveryNotes %}
 					<div class="card-tools">
-						<a data-toggle="modal" data-target="#projectQuotesModal" type="button" class="btn btn-tool">
+						<a data-toggle="modal" data-target="#projectDeliveryNotesModal" type="button" class="btn btn-tool">
 							<i class="fas fa-external-link-alt"></i>
 						</a>
 					</div>
@@ -178,7 +178,7 @@
 								-
 								{{ file.s3files_meta_uploaded|date("d M Y G:i") }}
 							</span>
-							<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date(" d m y g:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
+							<i class="fas fa-info-circle" data-toggle="popover" title="File Details" data-content="Generated {{ file.s3files_meta_uploaded|date("d M Y G:i") }}. file size {{ file.s3files_meta_size|formatsize }}. file type {{ file.s3files_extension }}"></i>
 							<div class="tools">
 								<a href="{{ file.s3files_id|s3URL }}" style="color: #495057;" target="_blank" title="Download File">
 									<i class="fas fa-cloud-download-alt"></i>
