@@ -155,4 +155,24 @@ class Config
     $this->_setupCache();
     return true;
   }
+
+  public function updateSingleProperty($property_key, $property_value)
+  {
+    // Most properties should be set using the formArrayProcess function, these are special cases - usually to do with files/images
+    $validKeys = ['PROJECT_LOGO_CUSTOM'];
+    if (isset($property_key) and in_array($property_key, $validKeys)) {
+      try {
+        $currentValue = $this->get($property_key);
+      } catch (ConfigValueNotSet) {
+        $currentValue = null;
+      }
+      if (isset($property_value) and $property_value !== $currentValue) {
+        $this->DBLIB->where("config_key", $property_key);
+        $this->DBLIB->update('config', ["config_value" => $property_value]);
+      }
+      $this->_setupCache();
+      return true;
+    }
+    return false;
+  }
 }
