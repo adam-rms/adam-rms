@@ -634,6 +634,24 @@
         </div>
     </div>
     {% endif %}
+    <div class="modal fade" id="projectDeliveryNotesModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Project Delivery Notes</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% embed 'assets/templates/fileBox.twig' with {'files': deliveryNotes } %}
+
+
+                    {% endembed %}
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="projectQuotesModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -680,7 +698,7 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="pdf" value="true">
-                        <input type="hidden" name="quote" value="">
+                        <input type="hidden" name="type" value="">
                         <input type="hidden" name="id" value="{{ project.projects_id }}">
                         <div class="form-group">
                             <div class="form-check">
@@ -787,12 +805,25 @@
     <script>
         $(document).ready(function () {
             $('#pdfGenerateModal').on('show.bs.modal', function (e) {
-                if ($(e.relatedTarget).data('quote')) {
-                    $("#pdfGenerateModal .modal-title").text("Create Quote");
-                    $('#pdfGenerateModal input[name="quote"]').val("true");
+                 if ($(e.relatedTarget).data('delivery-note')){
+                    $("#pdfGenerateModal .modal-title").text("Create Delivery Note");
+                    $('#pdfGenerateModal input[name="type"]').val("deliveryNote");
+                    $('#pdfGenerateModal input[name="finance"]').prop('checked', false).parent().hide();
+                    $('#pdfGenerateModal input[name="prices"]').prop('checked', false).parent().hide();
+                    $('#pdfGenerateModal input[name="discounts"]').prop('checked', false).parent().hide();
+                    $('#pdfGenerateModal input[name="flagsBlocks"]').prop('checked', false).parent().hide();
                 } else {
-                    $("#pdfGenerateModal .modal-title").text("Create Invoice");
-                    $('#pdfGenerateModal input[name="quote"]').val("false");
+                    $('#pdfGenerateModal input[name="finance"]').prop('checked', true).parent().show();
+                    $('#pdfGenerateModal input[name="prices"]').prop('checked', true).parent().show();
+                    $('#pdfGenerateModal input[name="discounts"]').prop('checked', true).parent().show();
+                    $('#pdfGenerateModal input[name="flagsBlocks"]').prop('checked', false).parent().show();
+                    if ($(e.relatedTarget).data('quote')) {
+                        $("#pdfGenerateModal .modal-title").text("Create Quote");
+                        $('#pdfGenerateModal input[name="type"]').val("quote");
+                    } else {
+                        $("#pdfGenerateModal .modal-title").text("Create Invoice");
+                        $('#pdfGenerateModal input[name="type"]').val("invoice");
+                    }
                 }
             });
             $("#assetAssignmentCheckboxAll").click(function () {
@@ -942,6 +973,25 @@
                         if (result) {
                             ajaxcall("projects/changeInvoiceNotes.php", {
                                 "projects_invoiceNotes": result,
+                                "projects_id": "{{ project.projects_id }}"
+                            }, function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+            {% endif %}
+            {% if "PROJECTS:EDIT:DELIVERY_NOTES"|instancePermissions %}
+            $(".editProjectDeliveryNotes").click(function () {
+                bootbox.prompt({
+                    title: "Edit Project Delivery Notes",
+                    inputType: 'textarea',
+                    value: `{{ project.projects_deliveryNotes|escape("js") }}`,
+                    callback: function (result) {
+                        if (result) {
+                            ajaxcall("projects/changeDeliveryNotes.php", {
+                                "projects_deliveryNotes": result,
                                 "projects_id": "{{ project.projects_id }}"
                             }, function (data) {
                                 location.reload();

@@ -63,9 +63,7 @@
                 {% endif %}
                 " ",
                 { text: "{{ project.projects_name|escape("js") }}", style: { bold: true, fontSize: 25 } },
-                {% if GET['quote'] %}
-                    { text: "Quotation", style: { fontSize: 16 } },
-                {% endif %}
+                { text: "{{ GET['fileType']}}", style: { fontSize: 16 } },
                 {
                     table: {
                         widths: [ "50%", "50%"],
@@ -137,18 +135,24 @@
                                 { text: "Sub Hires" },
                                 { text: "{{ FINANCIALS.payments.subHire.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
-                            {% if not GET['quote'] %}
+                            {% if GET['type'] == "invoice" %}
                             [
-                                { text: "SubTotal" },
+                                { text: "" },
+                                { text: "" },
+                                { text: "SubTotal", style: { bold: true } },
                                 { text: "{{ FINANCIALS.payments.subTotal|money|escape("js") }}", style: { alignment: 'right' } },
+                            ],
+                            [
+                                { text: "" },
+                                { text: "" },
                                 { text: "Payments Received to Date" },
                                 { text: "-{{ FINANCIALS.payments.received.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                             {% endif %}
                             [
                                 { text: "" },
-                                { text: "", style: { alignment: 'right' } },
-                                { text: "{% if GET['quote'] %}Grand Total{% else %}Grand Total Outstanding{% endif %}", style: { bold: true } },
+                                { text: "" },
+                                { text: "{% if GET['type'] == 'quote' %}Grand Total{% else %}Grand Total Outstanding{% endif %}", style: { bold: true } },
                                 { text: "{{ FINANCIALS.payments.total|money|escape("js") }}", style: { alignment: 'right' } },
                             ],
                         ],
@@ -159,6 +163,10 @@
                 {% if project.projects_invoiceNotes|length > 0 and GET['invoiceNotes'] %}
                     { text: "Notes", style: { fontSize: 20, bold: true } },
                     "{{ project.projects_invoiceNotes|escape("js") }}",
+                {% endif %}
+                {% if project.projects_deliveryNotes|length > 0 and GET['type'] == 'deliveryNote' %}
+                    { text: "Delivery Notes", style: { fontSize: 20, bold: true }, margin: [ 0, 20, 0, 0 ] },
+                    "{{ project.projects_deliveryNotes|escape("js") }}",
                 {% endif %}
                 {% if GET['assets'] and project.projectsTypes_config_assets == 1 %}
                     { text: "Equipment", style: { fontSize: 20, bold: true }, pageBreak: 'before' },
@@ -451,12 +459,12 @@
                     },
                     {% endif %}
                 {% endif %}
-                {% if GET['paymentTerms'] %}
+                {% if GET['paymentTerms'] and GET['type'] != 'deliveryNote'  %}
                 {
                     table: {
                         widths: [ "100%"],
                         body: [[
-                            { text: "{{ GET['quote'] ? USERDATA.instance.instances_quoteTerms|striptags|escape("js") : USERDATA.instance.instances_termsAndPayment|replace({"</p>":"\n", "<br/>":"\n"})|striptags|escape("js") }}", margin: 5 }
+                            { text: "{{ GET['type'] == 'quote' ? USERDATA.instance.instances_quoteTerms|striptags|escape("js") : USERDATA.instance.instances_termsAndPayment|replace({"</p>":"\n", "<br/>":"\n"})|striptags|escape("js") }}", margin: 5 }
                         ]],
                     },
                     fillColor: '#F5F5F5',
@@ -470,7 +478,7 @@
                 return {
                     columns: [
                         {text: "{{ USERDATA['instance']['instances_name']|escape("js") }}", width: "40%"},
-                        {text: "{% if GET['quote'] %}Quotation{% endif %}", alignment: 'center', width: "20%"},
+                        {text: "{{ GET['fileType']}}", alignment: 'center', width: "20%"},
                         { text: "{% if project.projectsTypes_config_client == 1 and project['clients_name'] %}{{  project['clients_name']|escape("js") }} - {% endif %}{{ project['projects_name']|escape("js") }}", alignment: 'right', width: "40%"}
                     ]
                     , margin: [40, 20, 40, 20]
@@ -501,7 +509,7 @@
         try {
             var pdf = pdfMake.createPdf(docDefinition);
             {% if GET['draft'] or CONFIG.FILES_ENABLED != "Enabled" or USERDATA.instance.instances_storageEnabled != 1 %}
-            pdf.download("{{ project['projects_name']|escape("js") }} - Draft {{ GET['quote'] ? "Quote" : "Invoice" }}.pdf", function() {
+            pdf.download("{{ project['projects_name']|escape("js") }} - Draft {{ GET['fileType'] }}.pdf", function() {
                 // Firefox takes a bit longer to do file actions, so delay closing this tab a little
                 setTimeout(() => {window.close()}, 100)
             });
@@ -509,7 +517,7 @@
             pdf.getBlob((blob) => {
                 var formData = new FormData();
                 formData.append("file", blob, {type: "application/pdf"});
-                formData.append("quote","{{ GET['quote'] ? "true" : "false" }}");
+                formData.append("type","{{ GET['type'] }}");
                 formData.append("fileNumber", "{{ fileNumber|escape("js") }}");
                 formData.append("id", "{{ project['projects_id'] }}");
                 var oReq = new XMLHttpRequest();
@@ -523,7 +531,7 @@
                     } else if (response.error && response.error.code) {
                         alert(response.error.message);
                     } else if (response.result && response.response && response.response.url) {
-                        pdf.download("{{ project['projects_name']|escape("js") }} - {{ GET['quote'] ? "Quote" : "Invoice" }} v{{ fileNumber|escape("js") }}.pdf", function() {
+                        pdf.download("{{ project['projects_name']|escape("js") }} - {{ GET['fileType'] }} v{{ fileNumber|escape("js") }}.pdf", function() {
                             // Firefox takes a bit longer to do file actions, so delay closing this tab a little
                             setTimeout(() => {window.close()}, 100)
                         });
