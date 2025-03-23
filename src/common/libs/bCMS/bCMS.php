@@ -162,95 +162,24 @@ class bCMS
     if ($expire == null or $expire === false) $expire = '+1 minute';
     $file['expiry'] = $expire;
 
-    $instanceIgnore = false;
-    $secure = true;
 
+    // File visibility is based on their type (stored as s3files_meta_type).
+    // @see https://adam-rms.com/docs/v1/contributor/files for full file types 
     // This list is also used to populate the files deletion suggestor
-    // see https://adam-rms.com/docs/v1/contributor/files for full file types
-    switch ($file['s3files_meta_type']) {
-      case 2:
-        $instanceIgnore = true;
-        $secure = false; //Needs to be viewed on the public site
-        // Asset type thumbnail
-        break;
-      case 3:
-        // Asset type file
-        break;
-      case 4:
-        // Asset file
-        break;
-      case 5:
-        $instanceIgnore = true;
-        $secure = false;
-        // Instance thumbnail
-        break;
-      case 7:
-        //Project file
-        break;
-      case 8:
-        // Maintenance job file
-        break;
-      case 9:
-        $instanceIgnore = true;
-        // User thumbnail
-        break;
-      case 10:
-        $instanceIgnore = true;
-        $secure = false;
-        //Instance email thumbnail
-        break;
-      case 11:
-        // Location file
-        break;
-      case 12:
-        //Module thumbnail
-        break;
-      case 13:
-        //Module step image
-        break;
-      case 14:
-        //Payment file attachment
-        break;
-      case 15:
-        //Public file
-        $secure = false;
-        $instanceIgnore = true;
-        break;
-      case 16:
-        //Public homepage content image
-        $secure = false;
-        $instanceIgnore = true;
-        break;
-      case 17:
-        //Public homepage header image
-        $secure = false;
-        $instanceIgnore = true;
-        break;
-      case 18:
-        //Vacant role application attachment
-        break;
-      case 19:
-        //CMS image
-        $secure = true;
-        $instanceIgnore = false;
-        break;
-      case 20:
-        //Project invoice
-        break;
-      case 21:
-        //Project quote
-        break;
-      case 22:
-        // Project Delivery Note
-        break;
-      default:
-        //There are no specific requirements for this file so not to worry.
-        break;
-    }
-    if ($shareKey and ($shareKey == hash('sha256', $file['s3files_shareKey'] . "|" . $file['s3files_id']))) $secure = false; //File has been shared publicly, and the key matches
+    // A file that requiresInstance is one that requires the user to have the same instance as the file to view that file
+    // A file that is secure requires an authenticated user to view it.
+    // By default, a file is both secure and requiresInstance. Types listed below are **exceptions**.
+    // A file that requires an Instance implicitly means that file is secure.
+    // Eg file type 9 (User Thumbnails) are secure, but do not requireInstance
+
+    $requireInstance = !in_array($file['s3files_meta_type'], [2, 5, 9, 10, 15, 16, 17]);
+    $secure = !in_array($file['s3files_meta_type'], [2, 5, 10, 15, 16, 17]);
+
+    //File has been shared publicly, and the key matches?
+    if ($shareKey and ($shareKey == hash('sha256', $file['s3files_shareKey'] . "|" . $file['s3files_id']))) $secure = false; 
 
     if ($secure and !$GLOBALS['AUTH']->login) return false;
-    elseif ($secure and !$instanceIgnore and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
+    elseif ($secure and $requireInstance and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
 
     //Generate the url
     if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED') === 'Enabled') {
