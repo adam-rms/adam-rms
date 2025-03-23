@@ -12,6 +12,24 @@
 		<meta property="og:site_name" content="{{ CONFIG.PROJECT_NAME }}"/>
 		<meta property="og:description" content="{{ CONFIG.PROJECT_NAME }} admin login"/>
 
+		{% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+		<link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}">
+		{% else %}
+				<!--Favicons-->
+		<link rel="apple-touch-icon" sizes="57x57" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-16x16.png">
+		{% endif %}
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
@@ -132,7 +150,14 @@
 						                            col-sm-8 offset-sm-2
 						                            col-xs-10 offset-xs-1">
 					<div id="masterBox">
-						<a href="{{CONFIG.ROOTURL}}/login/?"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/></a>
+						<a href="{{CONFIG.ROOTURL}}/login/?" class="d-inline-flex p-2 align-items-center">
+						{% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+							<img src="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}" alt="{{ CONFIG.PROJECT_NAME }} Logo" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/>
+							<h1>{{ CONFIG.PROJECT_NAME }}</h1>
+						{% else %}
+							<img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/logo.svg" style="height:5em; margin-bottom: 15px; margin-top: 10px;" id="bCMSLogoHeader"/>
+						{% endif %}
+						</a>
 						<div class="alert alert-danger" style="border: 0px; text-align: left; display: none;" id="defaultAccountEnabledWarning">
 							<h4>The default super administrator account for {{ CONFIG.PROJECT_NAME }} is enabled</h4>
 							<p>Login to this account and change the password. Default username is <strong>username</strong> and password is <strong>password!</strong></p>

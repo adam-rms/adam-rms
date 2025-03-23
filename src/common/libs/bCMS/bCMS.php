@@ -172,8 +172,8 @@ class bCMS
     // A file that requires an Instance implicitly means that file is secure.
     // Eg file type 9 (User Thumbnails) are secure, but do not requireInstance
 
-    $requireInstance = !in_array($file['s3files_meta_type'], [2, 5, 9, 10, 15, 16, 17]);
-    $secure = !in_array($file['s3files_meta_type'], [2, 5, 10, 15, 16, 17]);
+    $requireInstance = !in_array($file['s3files_meta_type'], [1, 2, 5, 9, 10, 15, 16, 17]);
+    $secure = !in_array($file['s3files_meta_type'], [1, 2, 5, 10, 15, 16, 17]);
 
     //File has been shared publicly, and the key matches?
     if ($shareKey and ($shareKey == hash('sha256', $file['s3files_shareKey'] . "|" . $file['s3files_id']))) $secure = false; 

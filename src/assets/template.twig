@@ -248,6 +248,9 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 		</style>
 
 
+		{% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+				<link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}">
+		{% else %}
 		<!--Favicons-->
 		<link rel="apple-touch-icon" sizes="57x57" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-60x60.png">
@@ -262,6 +265,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 		<link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="96x96" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-16x16.png">
+		{% endif %}
 
 	</head>
 	<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}{% if pageConfig.NOMENU %} sidebar-collapse{% endif %}">
@@ -355,7 +359,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 			<aside class="main-sidebar {% if USERDATA.users_dark_mode or true %}{# Keep the sidebar dark, always (looks nicer) #}sidebar-dark-pink{% else%}sidebar-light-pink{% endif%} nav-compact elevation-4">
 				<a href="{{CONFIG.ROOTURL}}" class="brand-link {% if USERDATA.users_dark_mode %}navbar-dark{% else%}navbar-white{% endif%}" style="color: {% if USERDATA.users_dark_mode %}rgba(255,255,255,.8);{% else %}rgba(0,0,0,.8);{% endif %}">
 					{% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
-					<img src="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}" alt="{{ CONFIG.PROJECT_NAME }} Logo" class="brand-image img-circle elevation-3" />
+					<img src="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}" alt="{{ CONFIG.PROJECT_NAME }} Logo" class="brand-image img-circle" />
 					{% else %}
 					<img src="{% if USERDATA.users_dark_mode %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png{% else %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png{% endif %}" alt="{{ CONFIG.PROJECT_NAME }} Logo" class="brand-image img-circle elevation-3" style="opacity: .8;">
 					{% endif %}
