@@ -169,28 +169,79 @@ class bCMS
     // see https://adam-rms.com/docs/v1/contributor/files for full file types
     switch ($file['s3files_meta_type']) {
       case 2:
-        // Asset type thumbnail
-      case 5:
-        // Instance thumbnail
-      case 10:
-        //Instance email thumbnail
-      case 15:
-        //Public file
-      case 16:
-        //Public homepage content image
-      case 17:
-        //Public homepage header image
+        $instanceIgnore = true;
         $secure = false; //Needs to be viewed on the public site
-        $instanceIgnore = true; // Needs to be viewed in any instance
+        // Asset type thumbnail
+        break;
+      case 3:
+        // Asset type file
+        break;
+      case 4:
+        // Asset file
+        break;
+      case 5:
+        $instanceIgnore = true;
+        $secure = false;
+        // Instance thumbnail
+        break;
+      case 7:
+        //Project file
+        break;
+      case 8:
+        // Maintenance job file
         break;
       case 9:
+        $instanceIgnore = true;
         // User thumbnail
+        break;
+      case 10:
+        $instanceIgnore = true;
+        $secure = false;
+        //Instance email thumbnail
+        break;
+      case 11:
+        // Location file
+        break;
+      case 12:
+        //Module thumbnail
+        break;
+      case 13:
+        //Module step image
+        break;
+      case 14:
+        //Payment file attachment
+        break;
+      case 15:
+        //Public file
+        $secure = false;
         $instanceIgnore = true;
         break;
+      case 16:
+        //Public homepage content image
+        $secure = false;
+        $instanceIgnore = true;
+        break;
+      case 17:
+        //Public homepage header image
+        $secure = false;
+        $instanceIgnore = true;
+        break;
+      case 18:
+        //Vacant role application attachment
+        break;
       case 19:
-        // CMS image - assert these are secure
+        //CMS image
         $secure = true;
         $instanceIgnore = false;
+        break;
+      case 20:
+        //Project invoice
+        break;
+      case 21:
+        //Project quote
+        break;
+      case 22:
+        // Project Delivery Note
         break;
       default:
         //There are no specific requirements for this file so not to worry.
