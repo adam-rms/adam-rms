@@ -4,6 +4,7 @@ require_once __DIR__ . '/../common/head.php';
 use \Firebase\JWT\JWT;
 
 $PAGEDATA['pageConfig'] = ["TITLE" => "Login"];
+$PAGEDATA['signupEnabled'] = $CONFIGCLASS->get("AUTH_SIGNUP_ENABLED") == 'Enabled';
 $PAGEDATA['googleAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_GOOGLE_KEYS_SECRET") != false;
 $PAGEDATA['microsoftAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_MICROSOFT_APP_ID") != false and $CONFIGCLASS->get("AUTH_PROVIDERS_MICROSOFT_KEYS_SECRET") != false;
 
@@ -28,7 +29,7 @@ if (isset($_GET['app-oauth'])) {
 	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
 } 
 
-if (isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
+if ($PAGEDATA['signupEnabled'] && isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);
 elseif (isset($_GET['app-magiclink']) and (in_array($_GET['app-magiclink'], $GLOBALS['AUTH']->VALIDMAGICLINKREDIRECTS) or $CONFIG['DEV'])) {
 	if (isset($_GET['magic-token'])) {
 		$url = $_GET['app-magiclink'] . "?token=" . $_GET['magic-token'] . "&referer=" . urlencode($CONFIG['ROOTURL']);

@@ -277,6 +277,27 @@ $configStructureArray = [
     "default" => null,
     "envFallback" => "bCMS__SENTRYLOGIN",
   ],
+  "AUTH_SIGNUP_ENABLED" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Enabled";
+      },
+      "name" => "User Signup",
+      "group" => "Security & Login",
+      "description" => "Can new users create an account? Disabling this means new users can't sign up themselves.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 5,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "Enabled",
+    "envFallback" => "CONFIG_SIGNUP_ENABLED",
+  ],
   "AUTH_JWTKey" => [
     "form" => [
       "type" => "secret",

@@ -4,7 +4,9 @@
         <p>Enter your email address and we'll send you a link to log in to this app</p>
 		<input class="form-control form-control-lg" id="email" autocomplete="email" placeholder="Email" type="email" required style="margin-top: 10px; margin-bottom: 10px;" autofocus>
 		<div style="width: 100%; text-align:right;">
+            {% if signupEnabled %}
             <a href="?signup" class="btn btn-secondary">Create account</a>
+            {% endif %}
             <button class="btn btn-primary" type="submit" value="Submit">Generate Link</button>
 		</div>
 	</form>
