@@ -83,7 +83,7 @@
                             {% if type['assets'][0].assetCategories_name != currentCategory %}
                                 {% set currentCategory = type['assets'][0].assetCategories_name %}
                                 {% set currentCategoryID = type['assets'][0].assetCategories_id %}
-                                <tr style="background-color: #F5F5F5;" class="showHideFilter" data-filter="categoryFilter{{ currentCategoryID }}" data-filterclose="categoryFilterClose{{ currentCategoryID }}">
+                                <tr class="showHideFilter" data-filter="categoryFilter{{ currentCategoryID }}" data-filterclose="categoryFilterClose{{ currentCategoryID }}">
                                     <td colspan="999">
                                         <i class="{{ type['assets'][0].assetCategories_fontAwesome }}" style="margin-right:10px;"></i>{{ type['assets'][0].assetCategories_name }}
                                     </td>
