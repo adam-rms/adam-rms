@@ -183,7 +183,7 @@
                 <div class="row d-flex align-items-stretch">
                     {% for asset in searchResults.ASSETS %}
                         <div class="col-auto d-flex align-items-stretch" style="padding: 10px;">
-                            <div class="card bg-light">
+                            <div class="card">
                                 <div class="card-body" style="max-width: 250px;">
                                     <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
                                     {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and asset.thumbnail|length > 0 and searchResults.SEARCH.SETTINGS.HIDEIMAGES != true %}
