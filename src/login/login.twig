@@ -7,7 +7,14 @@
     <a href="{{CONFIG.ROOTURL}}/login/oauth/microsoft.php" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/login/microsoft.svg" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Login{% if signupEnabled %} or Signup{% endif %} with Microsoft</a><br/>
     {% endif %}
     {% if signupEnabled %}
-    <a href="?signup" class="btn btn-default btn-lg m-2 border shadow-sm"><img src="{{ CONFIG.ROOTURL}}/static-assets/img/logoicon.png" alt="" role="presentation" style="height: 1.2em; vertical-align: text-top;" /> Create new {{ CONFIG.PROJECT_NAME }} account</a>
+    <a href="?signup" class="btn btn-default btn-lg m-2 border shadow-sm">
+        {% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+        <img src="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}" alt="{{ CONFIG.PROJECT_NAME }} Logo" role="presentation" style="height: 1.2em; vertical-align: text-top;"/>			
+        {% else %}
+        <img src="{{ CONFIG.ROOTURL}}/static-assets/img/logoicon.png" alt="AdamRMS Logo" role="presentation" style="height: 1.2em; vertical-align: text-top;" />
+        {% endif %}
+        Create new {{ CONFIG.PROJECT_NAME }} account
+    </a>
     <p>or</p>
     {% endif %}
     <div class="spinner-border" role="status" id="loadingOverlay" style="display: none;">

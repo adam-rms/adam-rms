@@ -4,7 +4,11 @@
             <div class="container">
                 {% if GET.adamrmslogo == 1 %}
                 <div class="item">
+                    {% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+                    <img src="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}" style="height: 60px;" />
+                    {% else %}
                     <img src="{{ CONFIG.ROOTURL}}/static-assets/img/logosmall.png" style="height: 60px;" />
+                    {% endif %}
                 </div>
                 {% endif %}
                 <div class="item">
@@ -79,7 +83,11 @@
                         <tr>
                             {% if GET.adamrmslogo == 1 %}
                                 <td style="width:0.1px;">
+                                    {% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+                                    <img src="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}" style="height: {{ heightcount*10 }}px;" />
+                                    {% else %}
                                     <img src="{{ CONFIG.ROOTURL}}/static-assets/img/logosmall.png" style="height: {{ heightcount*10 }}px;" />
+                                    {% endif %}
                                 </td>
                             {% endif %}
                             <td style="width: 0.1px; white-space:nowrap; vertical-align:top;">
