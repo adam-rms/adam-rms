@@ -1,12 +1,18 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck("CLIENTS:CREATE") or !isset($_POST['clients_name'])) die("404");
+if (!$AUTH->instancePermissionCheck("CLIENTS:CREATE")) die(404);
 
-$client = $DBLIB->insert("clients", [
-    "clients_name" => $_POST['clients_name'],
-    "instances_id" => $AUTH->data['instance']['instances_id'],
-]);
+$array = [];
+foreach ($_POST['formData'] as $item) {
+    $array[$item['name']] = $item['value'];
+}
+
+if (!isset($array['clients_name'])) finish(false, ["code" => "INVALID-CLIENT", "message" => "No Client name provided"]);
+
+$array['instances_id'] = $AUTH->data['instance']['instances_id'];
+
+$client = $DBLIB->insert("clients", $array);
 if (!$client) finish(false, ["code" => "CREATE-CLIENT-FAIL", "message"=> "Could not create new client"]);
 
 $bCMS->auditLog("INSERT", "clients",null, $AUTH->data['users_userid'],null, $client);
@@ -59,12 +65,44 @@ Requires Instance Permission CLIENTS:CREATE",
  *         ),
  *     ), 
  *     @OA\Parameter(
- *         name="clients_name",
+ *         name="formData",
  *         in="query",
- *         description="The name of the client",
+ *         description="The client data",
  *         required="true", 
  *         @OA\Schema(
- *             type="string"), 
- *         ), 
+ *             type="object",
+ *             @OA\Property(
+ *                 property="clients_name", 
+ *                 type="string", 
+ *                 description="The name of the client",
+ *                 required="true",
+ *             ),
+ *             @OA\Property(
+ *                 property="clients_address", 
+ *                 type="string", 
+ *                 description="The address of the client",
+ *             ),
+ *             @OA\Property(
+ *                 property="clients_phone", 
+ *                 type="string", 
+ *                 description="The phone number of the client",
+ *             ),
+ *             @OA\Property(
+ *                 property="clients_email", 
+ *                 type="string", 
+ *                 description="The email of the client",
+ *             ),
+ *             @OA\Property(
+ *                 property="clients_website", 
+ *                 type="string", 
+ *                 description="The website of the client",
+ *             ),
+ *             @OA\Property(
+ *                 property="clients_notes", 
+ *                 type="string", 
+ *                 description="The notes of the client",
+ *             ),
+ *         ),
+ *     ), 
  * )
  */
