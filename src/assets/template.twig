@@ -248,6 +248,9 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 		</style>
 
 
+		{% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+				<link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}">
+		{% else %}
 		<!--Favicons-->
 		<link rel="apple-touch-icon" sizes="57x57" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/apple-icon-60x60.png">
@@ -262,6 +265,7 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 		<link rel="icon" type="image/png" sizes="32x32" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="96x96" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-96x96.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="{{ CONFIG.ROOTURL }}/static-assets/img/icons/favicon-16x16.png">
+		{% endif %}
 
 	</head>
 	<body class="hold-transition layout-fixed layout-navbar-fixed control-sidebar-push-slide{% if USERDATA.users_dark_mode %} dark-mode{% endif %}{% if pageConfig.NOMENU %} sidebar-collapse{% endif %}">
@@ -354,7 +358,11 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 			<!-- Left side column. contains the logo and sidebar -->
 			<aside class="main-sidebar {% if USERDATA.users_dark_mode or true %}{# Keep the sidebar dark, always (looks nicer) #}sidebar-dark-pink{% else%}sidebar-light-pink{% endif%} nav-compact elevation-4">
 				<a href="{{CONFIG.ROOTURL}}" class="brand-link {% if USERDATA.users_dark_mode %}navbar-dark{% else%}navbar-white{% endif%}" style="color: {% if USERDATA.users_dark_mode %}rgba(255,255,255,.8);{% else %}rgba(0,0,0,.8);{% endif %}">
+					{% if CONFIG.FILES_ENABLED == "Enabled" and CONFIG.PROJECT_LOGO == "Custom" %}
+					<img src="{{ CONFIG.PROJECT_LOGO_CUSTOM|s3URL("small") }}" alt="{{ CONFIG.PROJECT_NAME }} Logo" class="brand-image img-circle" />
+					{% else %}
 					<img src="{% if USERDATA.users_dark_mode %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png{% else %}{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png{% endif %}" alt="{{ CONFIG.PROJECT_NAME }} Logo" class="brand-image img-circle elevation-3" style="opacity: .8;">
+					{% endif %}
 					<span class="brand-text font-weight-light">{{ CONFIG.PROJECT_NAME }}</span>
 				</a>
 
@@ -820,75 +828,83 @@ ignoreURLs: ['searchUser.php'] // Ignore user searches
 					</div>
 					<strong>&copy;2018-{{ "now"|date("Y") }}
 						<a href="https://bithell.studio">Bithell Studios Ltd</a>.</strong>
-					All rights
-															        reserved.
+						All rights reserved.
 				</footer>
 			</div>
 			<script>
 				$(document).ready(function () {
-$('[data-toggle="popover"]').popover({html: true});
+					$('[data-toggle="popover"]').popover({html: true});
 
-function changeTheme(isDark) {
-if (isDark) {
-$('body').addClass("dark-mode");
-// Trigger the theme change in js so that other plugins can change their theme
-$('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
-$(document).trigger("themeChange", 'dark');
-$('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
-$(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png");
-$('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
-$('.brand-link').css("color", "rgba(255,255,255,.8)");
-} else {
-$('body').removeClass("dark-mode");
-// Trigger the theme change in js so that other plugins can change their theme
-$(document).trigger("themeChange", 'light');
-$('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
-$('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
-$(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png");
-$('.brand-link').removeClass("navbar-dark").addClass("navbar-white");
-$('.brand-link').css("color", "rgba(0,0,0,.8)");
-}
-}
+					function changeTheme(isDark) {
+						if (isDark) {
+							$('body').addClass("dark-mode");
+							// Trigger the theme change in js so that other plugins can change their theme
+							$('#theme-icon').removeClass("fa-moon").addClass("fa-sun");
+							$(document).trigger("themeChange", 'dark');
+							$('.main-header').removeClass("navbar-white").removeClass("navbar-light").addClass("navbar-dark");
+							{% if CONFIG.PROJECT_LOGO == "AdamRMS" %}
+							$(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon-white.png");
+							{% endif %}
+							$('.brand-link').removeClass("navbar-white").addClass("navbar-dark");
+							$('.brand-link').css("color", "rgba(255,255,255,.8)");
+						} else {
+							$('body').removeClass("dark-mode");
+							// Trigger the theme change in js so that other plugins can change their theme
+							$(document).trigger("themeChange", 'light');
+							$('#theme-icon').removeClass("fa-sun").addClass("fa-moon");
+							$('.main-header').addClass("navbar-white").addClass("navbar-light").removeClass("navbar-dark");
+							{% if CONFIG.PROJECT_LOGO == "AdamRMS" %}
+							$(".brand-link img").attr("src","{{ CONFIG.ROOTURL }}/static-assets/img/logoicon.png");
+							{% endif %}
+							$('.brand-link').removeClass("navbar-dark").addClass("navbar-white");
+							$('.brand-link').css("color", "rgba(0,0,0,.8)");
+						}
+					}
 
-$(document).on("click", "#toggle-theme", function () {
-const isDark = !$('body').hasClass('dark-mode');
-ajaxcall("account/theme.php", isDark ? {
-'dark': 1
-} : {}, function (data) { // Change Theme
-changeTheme(isDark);
+					$(document).on("click", "#toggle-theme", function () {
+						const isDark = !$('body').hasClass('dark-mode');
+						ajaxcall("account/theme.php", isDark ? {
+							'dark': 1
+							} : {}, 
+							function (data) { // Change Theme
+								changeTheme(isDark);
 
-// Used to trigger other {{ CONFIG.PROJECT_NAME }} windows to change their theme
-localStorage.setItem('theme', isDark ? "dark" : "light");
-localStorage.removeItem('theme');
-});
-});
-// Triggers when the storage is changed in other tabs. Used to see if the theme has been updated
-$(window).on('storage', function (event) { // ignore other keys
-if (event.originalEvent.key != 'theme') 
-return;
+								// Used to trigger other {{ CONFIG.PROJECT_NAME }} windows to change their theme
+								localStorage.setItem('theme', isDark ? "dark" : "light");
+								localStorage.removeItem('theme');
+							}
+						);
+					});
+
+					// Triggers when the storage is changed in other tabs. Used to see if the theme has been updated
+					$(window).on('storage', function (event) { // ignore other keys
+						if (event.originalEvent.key != 'theme') 
+						return;
+
+						// ignore empty messages or messages reset
+						var theme = event.originalEvent.newValue
+						if (! theme) 
+						return;
 
 
 
-// ignore empty messages or messages reset
-var theme = event.originalEvent.newValue
-if (! theme) 
-return;
-
-
-
-// Change Theme
-changeTheme(theme == "dark");
-});
-{% if USERDATA.instances|length > 1 %}$(".changeInstanceActionButton[data-newinstance]").click(function (event) {
-event.preventDefault();
-ajaxcall("instances/switch.php", {
-'instances_id': $(this).data("newinstance")
-}, function (data) {
-location.reload();
-});
-});{% endif %}
-});
-console.log("Welcome to    {{ CONFIG.PROJECT_NAME|escape("js") }}version    {{ VERSION|escape("js") }}");
+						// Change Theme
+						changeTheme(theme == "dark");
+					});
+					{% if USERDATA.instances|length > 1 %}
+					$(".changeInstanceActionButton[data-newinstance]").click(function (event) {
+						event.preventDefault();
+						ajaxcall("instances/switch.php", {
+							'instances_id': $(this).data("newinstance")
+							}, 
+							function (data) {
+								location.reload();
+							}
+							);
+					});
+					{% endif %}
+				});
+				console.log("Welcome to    {{ CONFIG.PROJECT_NAME|escape("js") }}version    {{ VERSION|escape("js") }}");
 			</script>
 			{{ CONFIG.FOOTER_ANALYTICS|raw }}
 		</body>
