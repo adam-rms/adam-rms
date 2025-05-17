@@ -1,7 +1,7 @@
 {% extends 'public/embed/templatePublic.twig' %}
 {% block main %}
 <div class="card">
-    <div class="card-body table-responsive p-0">
+    <div class="card-body table-responsive d-none d-lg-block p-0">
         <table class="table table-striped">
             <thead>
             <tr>
@@ -77,6 +77,7 @@
         </table>
     </div>
 </div>
+
 {% for role in roles %}
 <div class="modal fade" id="infoModal{{ role.projectsVacantRoles_id }}">
     <div class="modal-dialog">
@@ -102,4 +103,64 @@
     </div>
 </div>
 {% endfor %}
+
+<div class="d-lg-none">
+    {% for role in roles %}
+        {% if project != role.projects_id %}
+        {% if project != null %}
+            </div>    
+        </div>
+        {% endif %}
+ 
+        <div class="card my-4">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                        {% if role.parentProject %}
+                            {{role.parentProject.projects_name}} &rarr;
+                        {% endif %}
+                        {{ role.projects_name }}
+                </h3>
+            </div>
+            <div class="card-body">
+        {% set project = role.projects_id %}
+        {% endif %}
+                <div class="row">
+                    <div class="col-12">
+                        <h4>{{ role.projectsVacantRoles_name }}</h4>
+                        <p>
+                            {{ role.projectsVacantRoles_description }}
+                        </p>
+                        <p>
+                            <strong>Project Dates: </strong>
+                            {{role.projects_dates_use_start ? role.projects_dates_use_start|date("d M Y h:ia") }}
+                            {{role.projects_dates_use_start and role.projects_dates_use_end ? " - " }} 
+                            {{role.projects_dates_use_end ? role.projects_dates_use_end|date("d M Y h:ia") }}
+                        </p>
+                        {% if role.projectsVacantRoles_deadline %}
+                            <p>
+                                <strong>Deadline: </strong>
+                                {{ role.projectsVacantRoles_deadline|date("d M Y h:ia") }}
+                            </p>
+                        {% endif %}
+                        <p>
+                            <strong>Places Remaining: </strong>
+                            {{ role.projectsVacantRoles_slots - role.projectsVacantRoles_slotsFilled }}
+                        </p>
+                        <div class="project-actions text-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#infoModal{{ role.projectsVacantRoles_id }}">More Info</button>
+                                <a type="button" class="btn btn-success btn-sm" target="_blank" href="{{CONFIG.ROOTURL}}/project/crew/vacancies.php">
+                                    {% if role.projectsVacantRoles_firstComeFirstServed %}
+                                    Login to Sign Up
+                                    {% else %}
+                                    Login to Apply
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>      
+                </div>
+                <hr />
+    {% endfor %}
+</div>
 {% endblock %}
