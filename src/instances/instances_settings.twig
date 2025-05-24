@@ -59,10 +59,10 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="unit_system">Unit System</label>
-                        <select class="form-control" id="unit_system" name="unit_system">
-                            <option value="metric" {% if USERDATA.instance.unit_system == 'metric' %}selected{% endif %}>Metric (kilograms, meters, etc.)</option>
-                            <option value="imperial" {% if USERDATA.instance.unit_system == 'imperial' %}selected{% endif %}>Imperial (pounds, feet, etc.)</option>
+                        <label for="instances_unitSystem">Unit System</label>
+                        <select class="form-control" id="instances_unitSystem" name="instances_unitSystem">
+                            <option value="metric" {% if USERDATA.instance.instances_unitSystem == 'metric' %}selected{% endif %}>Metric (kilograms, meters, etc.)</option>
+                            <option value="imperial" {% if USERDATA.instance.instances_unitSystem == 'imperial' %}selected{% endif %}>Imperial (pounds, feet, etc.)</option>
                         </select>
                         <small class="form-text text-muted">Determines the default units for measurements like weight and distance.</small>
                     </div>
