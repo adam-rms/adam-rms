@@ -234,8 +234,8 @@ $TWIG->addFilter(new \Twig\TwigFilter('mass', function ($variable) {
     }
 
     $instanceUnitSystem = 'metric'; // Default
-    if (isset($AUTH) && isset($AUTH->data['instance']['unit_system'])) {
-        $instanceUnitSystem = $AUTH->data['instance']['unit_system'];
+    if (isset($AUTH) && isset($AUTH->data['instance']['instances_unitSystem'])) {
+        $instanceUnitSystem = $AUTH->data['instance']['instances_unitSystem'];
     }
     
     // UnitConverter class is in the App\Common\Libs namespace

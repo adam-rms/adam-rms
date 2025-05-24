@@ -24,7 +24,7 @@ $PAGEDATA['asset']['files'] = $bCMS->s3List(3, $PAGEDATA['asset']['assetTypes_id
 $PAGEDATA['asset']['fields'] = explode(",", $PAGEDATA['asset']['assetTypes_definableFields']);
 
 // Convert asset type mass for display
-$instanceUnitSystemForType = $AUTH->data['instance']['unit_system'] ?? 'metric';
+$instanceUnitSystemForType = $AUTH->data['instance']['instances_unitSystem'] ?? 'metric';
 if (isset($PAGEDATA['asset']['assetTypes_mass']) && is_numeric($PAGEDATA['asset']['assetTypes_mass'])) {
     $convertedTypeMass = UnitConverter::convertMass((float)$PAGEDATA['asset']['assetTypes_mass'], $instanceUnitSystemForType, 'metric');
     $PAGEDATA['asset']['assetTypes_mass_display'] = $convertedTypeMass['value'] !== null ? $convertedTypeMass['value'] . ' ' . $convertedTypeMass['unit'] : null;
@@ -79,7 +79,7 @@ foreach ($assets as $asset) {
     $asset['storage_location'] = $DBLIB->get('locations', 1, ['locations_id', 'locations_name']);
 
     // Convert mass for display
-    $instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
+    $instanceUnitSystem = $AUTH->data['instance']['instances_unitSystem'] ?? 'metric';
     // Assuming assets_mass is the specific mass for an individual asset,
     // and assetTypes_mass is the default mass for the asset type.
     // Prioritize individual asset's mass if available and numeric, otherwise fallback to type's mass.
@@ -101,7 +101,7 @@ foreach ($assets as $asset) {
 }
 
 // Prepare data for UI display, especially for the edit form if a single asset is viewed.
-$instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
+$instanceUnitSystem = $AUTH->data['instance']['instances_unitSystem'] ?? 'metric';
 $PAGEDATA['mass_unit_symbol'] = UnitConverter::getMassUnitSymbol($instanceUnitSystem);
 
 if (count($PAGEDATA['assets']) == 1) {

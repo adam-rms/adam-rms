@@ -239,7 +239,7 @@ foreach ($assets as $asset) {
     $asset['countAvailable'] = $asset['count'] - $asset['countBlocked'];
 
     // Convert mass for display
-    $instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
+    $instanceUnitSystem = $AUTH->data['instance']['instances_unitSystem'] ?? 'metric';
     $actualMassValue = $asset['assetTypes_mass'] ?? null; // assets.twig primarily deals with assetTypes_mass
 
     $displayMassWithUnit = '';
