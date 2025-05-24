@@ -13,7 +13,7 @@ if (isset($array['instances_termsAndPayment'])) $array['instances_termsAndPaymen
 if (isset($array['instances_quoteTerms'])) $array['instances_quoteTerms'] = $bCMS->cleanString($array['instances_quoteTerms']);
 
 $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
-$result = $DBLIB->update("instances", array_intersect_key( $array, array_flip( ["instances_name","instances_address","instances_phone","instances_email","instances_website","instances_weekStartDates","instances_logo","instances_emailHeader","instances_termsAndPayment", "instances_quoteTerms", "instances_cableColours"] ) ));
+$result = $DBLIB->update("instances", array_intersect_key($array, array_flip(["instances_name", "instances_address", "instances_phone", "instances_email", "instances_website", "instances_weekStartDates", "instances_logo", "instances_emailHeader", "instances_termsAndPayment", "instances_quoteTerms", "instances_cableColours", "unit_system"])));
 echo $DBLIB->getLastError();
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update instance"]);
 else {

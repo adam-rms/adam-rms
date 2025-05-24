@@ -20,7 +20,7 @@
 </div>
 <div class="row">
     <div class="col-12 col-md-8 offset-md-2">
-        <form id="instanceSettingsForm" method="POST"> {# Outer form for all settings #}
+        <form id="instanceSettingsForm"> {# Outer form for all settings #}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Basics</h3>
@@ -85,22 +85,7 @@
                 $("#instanceSettingsForm").on("submit", function(e){
                     e.preventDefault();
                     var formData = $("#instanceSettingsForm").serializeArray();
-                    // Ensure 'page' parameter is part of formData if settings.php relies on it for POST handling
-                    let hasPageParam = formData.some(item => item.name === "page");
-                    if (!hasPageParam) {
-                        formData.push({name: "page", value: "instances_settings"});
-                    }
-                    ajaxcall("instances/settings.php", {formData: formData}, function(response) {
-                        // The common ajaxcall should handle displaying success or error messages.
-                        // If specific actions are needed on success (e.g., reload or update UI elements),
-                        // they can be done here.
-                        if (response && response.status === "success") {
-                            // Optionally, update USERDATA.instance.unit_system if response provides it
-                            // For now, we assume the page will show messages or the user will see changes on reload.
-                            // A small visual feedback can be good:
-                            // For example, briefly disable the button and show a "Saved!" message
-                        }
-                    });
+                    ajaxcall("instances/editInstance.php", {formData});
                 });
             });
             {% endif %}
