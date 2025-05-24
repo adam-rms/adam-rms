@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 require_once __DIR__ . '/../../common/libs/bCMS/projectFinance.php';
+require_once __DIR__ . '/../../common/libs/UnitConverter.php';
+
+use App\Common\Libs\UnitConverter;
 use Money\Currency;
 use Money\Money;
 use Money\Currencies\ISOCurrencies;
@@ -24,6 +27,20 @@ $moneyParser = new DecimalMoneyParser($currencies);
 $array['assets_value'] = ($array['assets_value'] == null ? null : $moneyParser->parse($array['assets_value'], $AUTH->data['instance']['instances_config_currency'])->getAmount());
 $array['assets_dayRate'] = ($array['assets_dayRate'] == null ? null : $moneyParser->parse($array['assets_dayRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount());
 $array['assets_weekRate'] = ($array['assets_weekRate'] == null ? null : $moneyParser->parse($array['assets_weekRate'], $AUTH->data['instance']['instances_config_currency'])->getAmount());
+
+// Convert input mass if necessary
+if (isset($array['assets_mass']) && $array['assets_mass'] !== null) {
+    $instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
+    if ($instanceUnitSystem === 'imperial') {
+        // Input is in lbs, convert to kg for storage
+        $converted = UnitConverter::convertMass((float)$array['assets_mass'], 'metric', 'imperial');
+        $array['assets_mass'] = $converted['value'];
+    } else {
+        // Input is already in kg (or unit system is metric)
+        $array['assets_mass'] = (float)$array['assets_mass'];
+    }
+}
+
 
 $DBLIB->where("assets_id", $array['assets_id']);
 $DBLIB->where("assets.instances_id",$AUTH->data['instance']["instances_id"]);

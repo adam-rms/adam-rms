@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/common/libs/UnitConverter.php';
+
+use App\Common\Libs\UnitConverter;
 
 // Assets can be from another instance
 if (isset($_GET['instance']) and in_array($_GET['instance'], $AUTH->data['instance_ids']) and $_GET['instance'] != $AUTH->data['instance']['instances_id']) {
@@ -19,6 +22,15 @@ if (!$PAGEDATA['asset']) die($TWIG->render('404.twig', $PAGEDATA));
 $PAGEDATA['asset']['thumbnail'] = $bCMS->s3List(2, $PAGEDATA['asset']['assetTypes_id']);
 $PAGEDATA['asset']['files'] = $bCMS->s3List(3, $PAGEDATA['asset']['assetTypes_id']);
 $PAGEDATA['asset']['fields'] = explode(",", $PAGEDATA['asset']['assetTypes_definableFields']);
+
+// Convert asset type mass for display
+$instanceUnitSystemForType = $AUTH->data['instance']['unit_system'] ?? 'metric';
+if (isset($PAGEDATA['asset']['assetTypes_mass']) && is_numeric($PAGEDATA['asset']['assetTypes_mass'])) {
+    $convertedTypeMass = UnitConverter::convertMass((float)$PAGEDATA['asset']['assetTypes_mass'], $instanceUnitSystemForType, 'metric');
+    $PAGEDATA['asset']['assetTypes_mass_display'] = $convertedTypeMass['value'] !== null ? $convertedTypeMass['value'] . ' ' . $convertedTypeMass['unit'] : null;
+} else {
+    $PAGEDATA['asset']['assetTypes_mass_display'] = null;
+}
 
 $DBLIB->where("assets.instances_id", $PAGEDATA['ASSET_INSTANCE']['instances_id']);
 $DBLIB->where("assets.assetTypes_id", $PAGEDATA['asset']['assetTypes_id']);
@@ -66,9 +78,49 @@ foreach ($assets as $asset) {
     $DBLIB->where('locations_archived', 0);
     $asset['storage_location'] = $DBLIB->get('locations', 1, ['locations_id', 'locations_name']);
 
+    // Convert mass for display
+    $instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
+    // Assuming assets_mass is the specific mass for an individual asset,
+    // and assetTypes_mass is the default mass for the asset type.
+    // Prioritize individual asset's mass if available and numeric, otherwise fallback to type's mass.
+    $massToConvert = null;
+    if (isset($asset['assets_mass']) && is_numeric($asset['assets_mass'])) {
+        $massToConvert = (float)$asset['assets_mass'];
+    } elseif (isset($PAGEDATA['asset']['assetTypes_mass']) && is_numeric($PAGEDATA['asset']['assetTypes_mass'])) {
+        $massToConvert = (float)$PAGEDATA['asset']['assetTypes_mass'];
+    }
+
+    if ($massToConvert !== null) {
+        $converted = UnitConverter::convertMass($massToConvert, $instanceUnitSystem, 'metric'); // Assuming stored mass is always metric (kg)
+        $asset['assets_mass_display'] = $converted['value'] !== null ? $converted['value'] . ' ' . $converted['unit'] : null;
+    } else {
+        $asset['assets_mass_display'] = null; // Or some default like 'N/A'
+    }
 
     $PAGEDATA['assets'][] = $asset;
 }
+
+// Prepare data for UI display, especially for the edit form if a single asset is viewed.
+$instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
+$PAGEDATA['mass_unit_symbol'] = UnitConverter::getMassUnitSymbol($instanceUnitSystem);
+
+if (count($PAGEDATA['assets']) == 1) {
+    // Prepare assets_mass_editor_display for the single asset being potentially edited
+    // This value will be in the instance's preferred unit system for the input field
+    $storedMassKg = $PAGEDATA['assets'][0]['assets_mass'] ?? null; // Individual asset's mass override
+    if ($storedMassKg === null && isset($PAGEDATA['asset']['assetTypes_mass'])) {
+        // If no individual override, use the type's mass as a base for the editor display
+        $storedMassKg = $PAGEDATA['asset']['assetTypes_mass'];
+    }
+
+    if ($storedMassKg !== null) {
+        $convertedForEditor = UnitConverter::convertMass((float)$storedMassKg, $instanceUnitSystem, 'metric');
+        $PAGEDATA['assets'][0]['assets_mass_editor_display'] = $convertedForEditor['value'];
+    } else {
+        $PAGEDATA['assets'][0]['assets_mass_editor_display'] = null;
+    }
+}
+
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA['asset']['assetTypes_name'], "BREADCRUMB" => false];
 
 // For asset type editing

@@ -44,7 +44,7 @@
                                 {% endif %}
                             {% endfor %}
                             <li class="list-group-item">
-                                <b>Mass</b> <span class="float-right text-primary">{{ (assets[0]['assets_mass'] ? assets[0]['assets_mass']|mass : (asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : '?')) }}</span>
+                                <b>Mass</b> <span class="float-right text-primary">{{ assets[0].assets_mass_display ?: '?' }}</span>
                             </li>
                             <li class="list-group-item">
                                 <b>Value</b> <span class="float-right text-primary">{{ (assets[0]['assets_value'] ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
@@ -104,7 +104,7 @@
                             <b>Manufacturer</b> {{ asset.manufacturers_name }}
                         </li>
                         <li class="list-group-item">
-                            <b>Mass</b> <span class="float-right text-primary">{{asset.assetTypes_mass != "" and asset.assetTypes_mass != 0 ? asset.assetTypes_mass|mass : "?" }}</span>
+                            <b>Mass</b> <span class="float-right text-primary">{{ asset.assetTypes_mass_display ?: '?' }}</span>
                         </li>
                         <li class="list-group-item">
                             <b>Value</b> <span class="float-right text-primary">{{ asset.assetTypes_value|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
@@ -359,9 +359,9 @@
                                                       Mass
                                                     </span>
                                                             </div>
-                                                            <input type="number" step="0.001" min="0" name="assets_mass" value="{{ assets[0].assets_mass }}" class="form-control" />
+                                                            <input type="number" step="0.001" min="0" name="assets_mass" value="{{ assets[0].assets_mass_editor_display }}" class="form-control" />
                                                             <div class="input-group-append">
-                                                                <div class="input-group-text">kg</div>
+                                                                <div class="input-group-text">{{ mass_unit_symbol }}</div>
                                                             </div>
                                                         </div>
                                                         <div class="input-group">

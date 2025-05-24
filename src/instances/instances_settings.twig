@@ -20,8 +20,8 @@
 </div>
 <div class="row">
     <div class="col-12 col-md-8 offset-md-2">
-        <div class="card">
-            <form id="basicSettings">
+        <form id="instanceSettingsForm" method="POST"> {# Outer form for all settings #}
+            <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Basics</h3>
                     <div class="card-tools pull-right">
@@ -29,45 +29,82 @@
                     </div>
                 </div>
                 <div class="card-body">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" required class="form-control" value="{{ USERDATA.instance.instances_name }}" name="instances_name" placeholder="Your Busineses Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Street Address</label>
-                            <textarea required class="form-control" rows="6" name="instances_address">{{ USERDATA.instance.instances_address }}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Public Email address</label>
-                            <input type="email" class="form-control" value="{{ USERDATA.instance.instances_email }}" name="instances_email">
-                        </div>
-                        <div class="form-group">
-                            <label>Public Phone Number</label>
-                            <input type="phone" class="form-control" value="{{ USERDATA.instance.instances_phone }}" name="instances_phone">
-                        </div>
-                        <div class="form-group">
-                            <label>Website</label>
-                            <input required type="url" class="form-control" value="{{ USERDATA.instance.instances_website }}" name="instances_website">
-                        </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" required class="form-control" value="{{ USERDATA.instance.instances_name }}" name="instances_name" placeholder="Your Busineses Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Street Address</label>
+                        <textarea required class="form-control" rows="6" name="instances_address">{{ USERDATA.instance.instances_address }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Public Email address</label>
+                        <input type="email" class="form-control" value="{{ USERDATA.instance.instances_email }}" name="instances_email">
+                    </div>
+                    <div class="form-group">
+                        <label>Public Phone Number</label>
+                        <input type="phone" class="form-control" value="{{ USERDATA.instance.instances_phone }}" name="instances_phone">
+                    </div>
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input required type="url" class="form-control" value="{{ USERDATA.instance.instances_website }}" name="instances_website">
+                    </div>
                 </div>
-                <div class="card-footer">
+                {# Card footer for basic settings is removed here, will be added after all setting cards #}
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Localization</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="unit_system">Unit System</label>
+                        <select class="form-control" id="unit_system" name="unit_system">
+                            <option value="metric" {% if USERDATA.instance.unit_system == 'metric' %}selected{% endif %}>Metric (kilograms, meters, etc.)</option>
+                            <option value="imperial" {% if USERDATA.instance.unit_system == 'imperial' %}selected{% endif %}>Imperial (pounds, feet, etc.)</option>
+                        </select>
+                        <small class="form-text text-muted">Determines the default units for measurements like weight and distance.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card"> {# A separate card for the save button, or it can be part of the last settings card's footer #}
+                <div class="card-footer text-right">
                     {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
-                    <button type="submit" class="btn btn-default">Save</button>
+                    <button type="submit" class="btn btn-primary">Save Settings</button> {# Changed button style for emphasis #}
+                    {% else %}
+                    <p>You do not have permission to edit these settings.</p>
                     {% endif %}
                 </div>
-            </form>
-            <script>
-                {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
-                $(document).ready(function() {
-                    $("#basicSettings").on("submit", function(e){
-                        e.preventDefault();
-                        var formData = $("#basicSettings").serializeArray();
-                        ajaxcall("instances/editInstance.php", {formData});
+            </div>
+        </form>
+        <script>
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+            $(document).ready(function() {
+                $("#instanceSettingsForm").on("submit", function(e){
+                    e.preventDefault();
+                    var formData = $("#instanceSettingsForm").serializeArray();
+                    // Ensure 'page' parameter is part of formData if settings.php relies on it for POST handling
+                    let hasPageParam = formData.some(item => item.name === "page");
+                    if (!hasPageParam) {
+                        formData.push({name: "page", value: "instances_settings"});
+                    }
+                    ajaxcall("instances/settings.php", {formData: formData}, function(response) {
+                        // The common ajaxcall should handle displaying success or error messages.
+                        // If specific actions are needed on success (e.g., reload or update UI elements),
+                        // they can be done here.
+                        if (response && response.status === "success") {
+                            // Optionally, update USERDATA.instance.unit_system if response provides it
+                            // For now, we assume the page will show messages or the user will see changes on reload.
+                            // A small visual feedback can be good:
+                            // For example, briefly disable the button and show a "Saved!" message
+                        }
                     });
                 });
-                {% endif %}
-            </script>
-        </div>
+            });
+            {% endif %}
+        </script>
     </div>
 </div>
 {% endblock %}
