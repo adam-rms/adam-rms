@@ -241,7 +241,7 @@ $CSP = [
     ],
     "frame-src" => [
         ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
-        ["value" => "https://*.freshstatus.io", "comment" => "To show freshdesk status"],
+        ["value" => "https://*.freshstatus.io", "comment" => "Training modules allow youtube embed"],
         ["value" => "https://js.stripe.com", "comment" => "Stripe payment pricing table"]
     ],
     "object-src" => [

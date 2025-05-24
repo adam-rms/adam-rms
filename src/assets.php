@@ -1,5 +1,8 @@
 <?php 
 require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/common/libs/UnitConverter.php';
+
+use App\Common\Libs\UnitConverter;
 
 $scriptStartTime = microtime (true);
 
@@ -234,6 +237,31 @@ foreach ($assets as $asset) {
         $asset['tags'][] = $tag;
     }
     $asset['countAvailable'] = $asset['count'] - $asset['countBlocked'];
+
+    // Convert mass for display
+    $instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
+    $actualMassValue = $asset['assetTypes_mass'] ?? null; // assets.twig primarily deals with assetTypes_mass
+
+    $displayMassWithUnit = '';
+    if ($actualMassValue !== null && is_numeric($actualMassValue)) {
+        $converted = UnitConverter::convertMass((float)$actualMassValue, $instanceUnitSystem, 'metric'); // Assuming stored is always metric (kg)
+        $displayMassWithUnit = $converted['value'] . ' ' . $converted['unit'];
+    }
+    $asset['assets_mass_display_with_unit'] = $displayMassWithUnit;
+    
+    // For individual tags, if they are displayed with their own mass override
+    foreach ($asset['tags'] as $tagKey => $tag) {
+        $individualMassValue = $tag['assets_mass'] ?? null;
+        $displayIndividualMassWithUnit = '';
+        if ($individualMassValue !== null && is_numeric($individualMassValue)) {
+            $convertedIndividual = UnitConverter::convertMass((float)$individualMassValue, $instanceUnitSystem, 'metric');
+            $displayIndividualMassWithUnit = $convertedIndividual['value'] . ' ' . $convertedIndividual['unit'];
+        } elseif ($actualMassValue !== null && is_numeric($actualMassValue)) { // Fallback to type mass if individual is not set
+             $displayIndividualMassWithUnit = $displayMassWithUnit; // Use pre-calculated type display mass
+        }
+        $asset['tags'][$tagKey]['assets_mass_display_with_unit'] = $displayIndividualMassWithUnit;
+    }
+
     $RETURN['ASSETS'][] = $asset;
 }
 $RETURN['SPEED'] = microtime(true) - $scriptStartTime;

@@ -220,8 +220,32 @@ $TWIG->addFunction(new \Twig\TwigFunction('moneySymbol', function ($currency = f
     $symbol = $numberFormatter->getSymbol(NumberFormatter::CURRENCY_SYMBOL);
     return $symbol;
 }));
+
+// It's good practice to ensure UnitConverter is available.
+// If an autoloader is reliably configured, this might not be strictly necessary,
+// but it doesn't hurt to be explicit for critical shared libraries.
+require_once __DIR__ . '/UnitConverter.php';
+
 $TWIG->addFilter(new \Twig\TwigFilter('mass', function ($variable) {
-    return number_format((float)$variable, 2, '.', '') . "kg";
+    global $AUTH; // Make $AUTH global available
+    
+    if ($variable === null || !is_numeric($variable)) {
+        return ''; // Or 'N/A' or '?' depending on desired display for empty values
+    }
+
+    $instanceUnitSystem = 'metric'; // Default
+    if (isset($AUTH) && isset($AUTH->data['instance']['unit_system'])) {
+        $instanceUnitSystem = $AUTH->data['instance']['unit_system'];
+    }
+    
+    // UnitConverter class is in the App\Common\Libs namespace
+    // Ensure the 'use' statement is present at the top of the file if not already there,
+    // or call with fully qualified namespace: \App\Common\Libs\UnitConverter::convertMass(...)
+    // For this diff, assuming UnitConverter.php is included and class is available.
+    // Let's use the fully qualified name to be safe within this closure if no 'use' statement is at the top of twigExtensions.php
+    $converted = \App\Common\Libs\UnitConverter::convertMass((float)$variable, $instanceUnitSystem, 'metric');
+    
+    return $converted['value'] . ' ' . $converted['unit'];
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('nbsp', function ($string) {
     return str_replace(" ","&nbsp;", $string);

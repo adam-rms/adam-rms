@@ -30,7 +30,7 @@ $array['assets_weekRate'] = ($array['assets_weekRate'] == null ? null : $moneyPa
 
 // Convert input mass if necessary
 if (isset($array['assets_mass']) && $array['assets_mass'] !== null) {
-    $instanceUnitSystem = $AUTH->data['instance']['instances_unitSystem'] ?? 'metric';
+    $instanceUnitSystem = $AUTH->data['instance']['unit_system'] ?? 'metric';
     if ($instanceUnitSystem === 'imperial') {
         // Input is in lbs, convert to kg for storage
         $converted = UnitConverter::convertMass((float)$array['assets_mass'], 'metric', 'imperial');
