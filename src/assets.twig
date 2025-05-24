@@ -284,10 +284,10 @@
                                                                                 {% endfor %}
                                                                                 <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                                                                 <td>
-                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
-                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
                                                                                     {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
@@ -360,10 +360,10 @@
                                                                                 {% endfor %}
                                                                                 <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                                                                 <td>
-                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
-                                                                                    {{ moneySymbol(SEARCH.INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
+                                                                                    {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
                                                                                 <td>
                                                                                     {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
