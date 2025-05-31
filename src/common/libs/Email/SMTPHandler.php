@@ -27,9 +27,17 @@ class SMTPEmailHandler extends EmailHandler
         $mail->SMTPAuth = true;
         $mail->Username = $CONFIGCLASS->get('EMAILS_SMTP_USERNAME');
         $mail->Password = $CONFIGCLASS->get('EMAILS_SMTP_PASSWORD');
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
       } else {
         $mail->SMTPAuth = false;
+      }
+
+      $encryptionType = $CONFIGCLASS->get('EMAILS_SMTP_ENCRYPTION');
+      if ($encryptionType === 'None') {
+        $mail->SMTPSecure = false;
+      } elseif ($encryptionType === 'TLS') {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+      } else {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Default to SMTPS for backward compatibility
       }
 
       //Recipients
