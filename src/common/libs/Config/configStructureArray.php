@@ -77,7 +77,7 @@ $configStructureArray = [
       "required" => false,
       "maxlength" => 255,
       "minlength" => 4,
-      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP"],
+      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP", "AWS SES"],
       "verifyMatch" => function ($value, $options) {
         return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
       }
@@ -150,6 +150,79 @@ $configStructureArray = [
     "specialRequest" => true,
     "default" => false,
     "envFallback" => false,
+  ],
+  "EMAILS_PROVIDERS_AWSSES_KEY" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return "";
+      },
+      "name" => "AWS SES Access Key ID",
+      "group" => "Email",
+      "description" => "The Access Key ID for AWS Simple Email Service (SES). This is required if AWS SES is selected as the email provider.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 16,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        // Basic validation: not empty if AWS SES is the provider. More complex validation can be added.
+        // Actual requirement dependency handled by application logic/UI.
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_AWS_SES_KEY",
+  ],
+  "EMAILS_PROVIDERS_AWSSES_SECRET" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return "";
+      },
+      "name" => "AWS SES Secret Access Key",
+      "group" => "Email",
+      "description" => "The Secret Access Key for AWS Simple Email Service (SES). This is required if AWS SES is selected as the email provider.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 30,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_AWS_SES_SECRET",
+  ],
+  "EMAILS_PROVIDERS_AWSSES_REGION" => [
+    "form" => [
+      "type" => "text", // Could be 'select' with a predefined list of regions
+      "default" => function () {
+        return "us-east-1"; // A common default
+      },
+      "name" => "AWS SES Region",
+      "group" => "Email",
+      "description" => "The AWS region for SES (e.g., us-east-1, eu-west-2). This is required if AWS SES is selected as the email provider.",
+      "required" => false,
+      "maxlength" => 50,
+      "minlength" => 5, // e.g., 'us-east-1'
+      "options" => [], // Example for select: ['us-east-1', 'us-west-2', 'eu-west-1', ...]
+      "verifyMatch" => function ($value, $options) {
+        // Basic regex for AWS region format
+        if (preg_match('/^[a-z]{2}-[a-z]+-[0-9]$/', $value)) {
+            return ["valid" => true, "value" => $value, "error" => null];
+        }
+        // Allow empty if not required / AWS SES not selected
+        if (empty($value)) {
+             return ["valid" => true, "value" => $value, "error" => null];
+        }
+        return ["valid" => false, "value" => $value, "error" => "Invalid AWS region format (e.g., us-east-1)."];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "us-east-1",
+    "envFallback" => "CONFIG_AWS_SES_REGION",
   ],
   "EMAILS_SMTP_SERVER" => [
     "form" => [

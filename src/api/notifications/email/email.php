@@ -34,8 +34,44 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
         case 'SMTP':
             require_once __DIR__ . '/../../../common/libs/Email/SMTPHandler.php';
             return SMTPEmailHandler::sendEmail($user, $subject, $outputHTML);
+        case 'AWS SES':
+            require_once __DIR__ . '/../../../common/libs/Email/AWSSESHandler.php';
+            // Fetch AWS SES specific configuration
+            $awsConfig = [
+                'aws_access_key_id' => $CONFIGCLASS->get('EMAILS_PROVIDERS_AWSSES_KEY'),
+                'aws_secret_access_key' => $CONFIGCLASS->get('EMAILS_PROVIDERS_AWSSES_SECRET'),
+                'aws_region' => $CONFIGCLASS->get('EMAILS_PROVIDERS_AWSSES_REGION'),
+            ];
+            // Ensure all AWS config values are present
+            if (empty($awsConfig['aws_access_key_id']) || empty($awsConfig['aws_secret_access_key']) || empty($awsConfig['aws_region'])) {
+                trigger_error("AWS SES configuration is incomplete. Please check key, secret, and region settings.", E_USER_WARNING);
+                return false;
+            }
+
+            $fromEmail = $CONFIGCLASS->get('EMAILS_FROMEMAIL');
+            if (empty($fromEmail)) {
+                trigger_error("Sender email (EMAILS_FROMEMAIL) is not configured.", E_USER_WARNING);
+                return false;
+            }
+
+            try {
+                // Use the fully qualified namespace
+                $awsSesHandler = new \Common\Libs\Email\AWSSESEmailHandler($awsConfig);
+                return $awsSesHandler->sendEmail(
+                    $user["userData"]["users_email"],
+                    $subject,
+                    $outputHTML,
+                    $fromEmail
+                );
+            } catch (\InvalidArgumentException $e) {
+                trigger_error("Error initializing AWSSESEmailHandler: " . $e->getMessage(), E_USER_WARNING);
+                return false;
+            } catch (\Exception $e) {
+                trigger_error("Error sending email with AWS SES: " . $e->getMessage(), E_USER_WARNING);
+                return false;
+            }
         default:
-            trigger_error("Unknown email provider set", E_USER_ERROR);
+            trigger_error("Unknown email provider set: " . $CONFIGCLASS->get('EMAILS_PROVIDER'), E_USER_ERROR);
             return false;
     }
 }
