@@ -235,6 +235,27 @@ $configStructureArray = [
     "default" => 465,
     "envFallback" => "CONFIG_EMAILS_SMTP_PORT",
   ],
+  "EMAILS_SMTP_ENCRYPTION" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "SSL";
+      },
+      "name" => "SMTP encryption type",
+      "group" => "Email",
+      "description" => "If SMTP is selected above, the encryption type to use when connecting to the SMTP server",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => ["None", "SSL", "TLS"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => "SSL",
+    "envFallback" => false,
+  ],
   "EMAILS_FOOTER" => [
     "form" => [
       "type" => "text",
