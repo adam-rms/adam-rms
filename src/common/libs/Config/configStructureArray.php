@@ -500,6 +500,48 @@ $configStructureArray = [
     "default" => "AdamRMS",
     "envFallback" => "CONFIG_PROJECT_NAME",
   ],
+  "PROJECT_LOGO" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "AdamRMS";
+      },
+      "name" => "Whitelabel project logo",
+      "description" => "Whether to use the AdamRMS logo, or a custom one",
+      "group" => "Customisation",
+      "required" => false,
+      "maxlength" => 7,
+      "minlength" => 6,
+      "options" => ["AdamRMS", "Custom"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "AdamRMS",
+    "envFallback" => false,
+  ],
+  "PROJECT_LOGO_CUSTOM" => [
+    "form" => [
+      "type" => "image_upload",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Custom project logo",
+      "description" => "A custom logo to use when Whitelabel project logo is set to Custom",
+      "group" => "Customisation",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => null,
+    "envFallback" => false,
+  ],
   "LINKS_USERGUIDEURL" => [
     "form" => [
       "type" => "url",
