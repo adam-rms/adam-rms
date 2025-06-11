@@ -36,7 +36,7 @@
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 {% if "CLIENTS:CREATE"|instancePermissions %}
-                                <button type="button" class="btn btn-default" id="newClientButton"><i class="fa fa-plus"></i></button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#createClientModal"><i class="fa fa-plus" alt="Create new client"></i></button>
                                 {% endif %}
                             </div>
 
@@ -182,6 +182,9 @@
                 {% endif %}
             </div>
         </div>
+        {% if "CLIENTS:CREATE"|instancePermissions %}
+        {% embed 'assets/templates/modals/createClient.twig' %}{% endembed %}
+        {% endif %}
         <script>
             $(document).ready(function () {
                 $("#loadingoverlay").hide();
