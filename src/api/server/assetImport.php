@@ -42,6 +42,20 @@ $DBLIB->where("instances.instances_deleted", 0);
 $instance = $DBLIB->getOne("instances", ["instances.instances_id", "instances.instances_name"]);
 if (!$instance) finish(false, "Instance not found");
 
+// Function to remove issuses with dollar signs and other non-numeric characters from numeric strings
+function sanitizeNumericString(string $input): string
+{
+    $output = (string) '';
+    $length = strlen($input);
+    for ($i = 0; $i < $length; $i++) {
+        $char = $input[$i];
+        if (ctype_digit($char) || $char === '.') {
+            $output .= (string) $char;
+        }
+    }
+    return $output;
+}
+
 //Loop through the CSV file and import each row
 //From this point, finish() is not used to return errors, instead the script will 
 // continue and return a list of successfully added and failed assets
@@ -120,11 +134,11 @@ for ($i = 1; $i < count($csv); $i++) {
             "assetTypes_description" => $row[1],
             "assetTypes_productLink" => $row[2],
             "assetTypes_definableFields" => $definableFields,
-            "assetTypes_mass" => $row[3] ?: 0,
+            "assetTypes_mass" => floatval(sanitizeNumericString($row[3])),
             "assetTypes_inserted" => date('Y-m-d H:i:s'),
-            "assetTypes_dayRate" => $row[4] ?: 0,
-            "assetTypes_weekRate" => $row[5] ?: 0,
-            "assetTypes_value" => $row[6] ?: 0,   
+            "assetTypes_dayRate" => floatval(sanitizeNumericString($row[4])),
+            "assetTypes_weekRate" => floatval(sanitizeNumericString($row[5])),
+            "assetTypes_value" => floatval(sanitizeNumericString($row[6])),
         ];
         $assetType['assetTypes_id'] = $DBLIB->insert("assetTypes", $assetType);
         if ($assetType['assetTypes_id']) array_push($createdAssetTypes, $assetType);
@@ -148,18 +162,21 @@ for ($i = 1; $i < count($csv); $i++) {
         "asset_definableFields_8" => $row[33],
         "asset_definableFields_9" => $row[34],
         "asset_definableFields_10" => $row[35],
-        "assets_dayRate" => $row[12] ?: 0,
-        "assets_weekRate" => $row[13] ?: 0,
-        "assets_value" => $row[14] ?: 0,
-        "assets_mass" => $row[15] ?: 0,
+        "assets_dayRate" => floatval(sanitizeNumericString($row[12])),
+        "assets_weekRate" => floatval(sanitizeNumericString($row[13])),
+        "assets_value" => floatval(sanitizeNumericString($row[14])),
+        "assets_mass" => floatval(sanitizeNumericString($row[15])),
     ];
-    $asset['assets_id'] = $DBLIB->insert("assets", $asset);
 
-    //Add Row ID to asset array for logging output
-    $asset['row'] = $i;
-
-    if ($asset['assets_id']) array_push($successfulAssets, $asset);
-    else array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Unknown error"]);
+    try {
+        $asset['assets_id'] = $DBLIB->insert("assets", $asset);
+        $asset['row'] = $i; //Add Row ID to asset array for logging output
+        if ($asset['assets_id']) array_push($successfulAssets, $asset);
+        else array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Unknown error"]);
+    } catch (Exception $e) {
+        $asset['row'] = $i; //Add Row ID to asset array for logging output
+        array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Database error: " . $e->getMessage()]);
+    }
 }
 
 return finish(true, null, ["createdTypes" => $createdAssetTypes,"successfulAssets" => $successfulAssets, "failedAssets" => $failedAssets]);
