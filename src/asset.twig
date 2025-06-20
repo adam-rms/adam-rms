@@ -920,13 +920,13 @@
                                         {% endfor %}
                                         <td>{{ thisasset['assets_notes']|nl2br }}</td>
                                         <td>
-                                            {{ moneySymbol(ASSET_INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_value ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}
+                                            {{ (thisasset.assets_value ?: asset.assetTypes_value)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>
-                                            {{ moneySymbol(ASSET_INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
+                                            {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>
-                                            {{ moneySymbol(ASSET_INSTANCE['instances_config_currency']) }}{{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
+                                            {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
                                         <td>{{ thisasset.files|length > 0 ?: "" }}</td>
 
