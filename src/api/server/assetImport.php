@@ -176,10 +176,10 @@ for ($i = 1; $i < count($csv); $i++) {
         "asset_definableFields_8" => $row[33],
         "asset_definableFields_9" => $row[34],
         "asset_definableFields_10" => $row[35],
-        "assets_dayRate" => floatval(sanitizeNumericString($row[12])),
-        "assets_weekRate" => formatMoney(floatval(sanitizeNumericString($row[13]))),
-        "assets_value" => formatMoney(floatval(sanitizeNumericString($row[14]))),
-        "assets_mass" => formatMoney(floatval(sanitizeNumericString($row[15]))),
+        "assets_dayRate" => $row[12] != "" ? floatval(sanitizeNumericString($row[12])) : null,
+        "assets_weekRate" => $row[13] != "" ? floatval(sanitizeNumericString($row[13])) : null,
+        "assets_value" => $row[14] != "" ? floatval(sanitizeNumericString($row[14])) : null,
+        "assets_mass" => $row[15] != "" ? floatval(sanitizeNumericString($row[15])) : null,
     ];
 
     try {
