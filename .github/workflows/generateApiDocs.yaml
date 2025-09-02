@@ -24,7 +24,7 @@ jobs:
         with:
           php-version: "8.1"
           extensions: zip, mysqli, intl, gd
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v4
@@ -73,7 +73,7 @@ jobs:
         with:
           node-version: 18
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: "apiDocs.yaml"
 
@@ -86,7 +86,7 @@ jobs:
       # Upload to Github Pages if a push to main
       - name: Upload GH Pages Artefact
         if: github.event_name == 'push'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: "dist/"
 
