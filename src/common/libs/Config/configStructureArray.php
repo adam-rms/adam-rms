@@ -199,7 +199,7 @@ $configStructureArray = [
       "default" => function () {
         return "password";
       },
-      "name" => "SMTP server username",
+      "name" => "SMTP server password",
       "group" => "Email",
       "description" => "If SMTP is selected above, the password to connect to the SMTP server with",
       "required" => false,
