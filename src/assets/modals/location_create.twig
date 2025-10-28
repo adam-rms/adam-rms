@@ -1,0 +1,72 @@
+{% if "LOCATIONS:CREATE"|instancePermissions %}
+  <div class="modal fade" id="createLocationModal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">New Location</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form id="newForm">
+                      <div class="input-group" style="margin-bottom: 5px;">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">Name</span>
+                          </div>
+                          <input required type="text" class="form-control" name="locations_name">
+                      </div>
+                      <div class="input-group" style="margin-bottom: 5px;">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">Address</span>
+                          </div>
+                          <textarea type="text" class="form-control" name="locations_address" rows="6"></textarea>
+                      </div>
+                      <div class="input-group" style="margin-bottom: 5px;">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">Notes</span>
+                          </div>
+                          <textarea type="text" class="form-control" name="locations_notes" rows="3"></textarea>
+                      </div>
+                      <div class="input-group" style="margin-bottom: 5px;">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">Client</span>
+                          </div>
+                          <select class="form-control" name="clients_id">
+                              <option selected></option>
+                              {% for client in clients %}
+                                  <option value="{{ client.clients_id }}">{{ client.clients_name }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                      <div class="input-group" style="margin-bottom: 5px;">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">Sub Location of</span>
+                          </div>
+                          <select class="form-control" name="locations_subOf">
+                              <option selected></option>
+                              {% for location in allLocations %}
+                              <option value="{{ location.locations_id }}">{{ location.locations_name }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  </form>
+              </div>
+              <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="saveNew">Save</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $("#saveNew").click(function () {
+          var formData = $("#newForm").serializeArray();
+          ajaxcall("locations/new.php", {formData}, function (data) {
+              location.reload();
+          });
+      });
+    });
+  </script>
+{% endif %}
