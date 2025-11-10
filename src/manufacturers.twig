@@ -32,9 +32,56 @@
                             <tbody>
                             {% for manufacturer in manufacturers %}
                                 <tr>
-                                    <td><a href="{{CONFIG.ROOTURL}}/assets.php?manufacturer%5B%5D={{ manufacturer.manufacturers_id }}&showlinked=1&showarchived=1">{{ manufacturer.manufacturers_name }}</a></td>
+                                    <td>{{ manufacturer.manufacturers_name }}</td>
                                     <td><a href="{{ manufacturer.manufacturers_website }}" target="_blank">{{ manufacturer.manufacturers_website }}</a></td>
                                     <td>{{  manufacturer.manufacturers_notes|nl2br }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{CONFIG.ROOTURL}}/assets.php?manufacturer%5B%5D={{ manufacturer.manufacturers_id }}&showlinked=1&showarchived=1" class="btn btn-default btn-sm"><i class="fas fa-eye"></i></a>
+                                            {% if "ASSETS:MANUFACTURERS:EDIT"|instancePermissions %}
+                                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editManufacturer-{{ manufacturer.manufacturers_id }}"><i class="fas fa-edit"></i></button>
+                                            {% endif %}
+                                        </div>
+                                        {% if "ASSETS:MANUFACTURERS:EDIT"|instancePermissions %}
+                                        <div class="modal fade" id="editManufacturer-{{ manufacturer.manufacturers_id }}">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Edit {{ manufacturer.manufacturers_name }}</h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="manufacturerEdit-form" data-manufacturerid="{{ manufacturer.manufacturers_id }}">
+                                                            <input type="hidden" name="manufacturers_id" value="{{ manufacturer.manufacturers_id }}"/>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Name</span>
+                                                                </div>
+                                                                <input type="text" class="form-control" name="manufacturers_name" value="{{ manufacturer.manufacturers_name }}">
+                                                            </div>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Website</span>
+                                                                </div>
+                                                                <input type="text" class="form-control" name="manufacturers_website" value="{{ manufacturer.manufacturers_website }}">
+                                                            </div>
+                                                            <div class="input-group" style="margin-bottom: 5px;">
+                                                                <div class="input-group-prepend"><span class="input-group-text">Notes</span></div>
+                                                                <textarea class="form-control" rows="3" name="manufacturers_notes"  placeholder="">{{ manufacturer.manufacturers_notes }}</textarea>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary saveManufacturerEdit-button" data-manufacturerid="{{ manufacturer.manufacturers_id }}">Save changes</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -59,6 +106,14 @@
                                 location.reload();
                             });
                         }
+                    });
+                });
+                {% endif %}
+                {% if "ASSETS:MANUFACTURERS:EDIT"|instancePermissions %}
+                $(".saveManufacturerEdit-button").click(function () {
+                    var formData = $(".manufacturerEdit-form[data-manufacturerid=" + $(this).data("manufacturerid") + "]").serializeArray();
+                    ajaxcall("manufacturer/edit.php", {formData}, function (data) {
+                        location.reload();
                     });
                 });
                 {% endif %}
