@@ -85,6 +85,14 @@
                                     <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ location.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                 {% endif %}
                                 <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ location.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
+                                {% if "LOCATIONS:VIEW"|instancePermissions %}
+                                    <a href="{{ CONFIG.ROOTURL }}/location/assets.php?location={{ location.locations_id }}"
+                                       type="button"
+                                       class="btn btn-default btn-sm"
+                                       title="View assets at this location">
+                                        <i class="fas fa-box"></i>
+                                    </a>
+                                {% endif %}
                                 {% endif %}
                                 {% if "LOCATIONS:EDIT"|instancePermissions %}
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ location.locations_id }}"><i class="fas fa-edit"></i></button>
@@ -136,6 +144,14 @@
                                             <a href="{{ CONFIG.ROOTURL }}/location/barcode.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i></a>
                                         {% endif %}
                                         <a href="{{ CONFIG.ROOTURL }}/instances/calendar.php?location={{ subLocation.locations_id }}" type="button" class="btn btn-secondary btn-sm"><i class="far fa-calendar-alt" style="display:inline;"></i></a>
+                                        {% if "LOCATIONS:VIEW"|instancePermissions %}
+                                            <a href="{{ CONFIG.ROOTURL }}/location/assets.php?location={{ subLocation.locations_id }}"
+                                               type="button"
+                                               class="btn btn-default btn-sm"
+                                               title="View assets at this location">
+                                                <i class="fas fa-box"></i>
+                                            </a>
+                                        {% endif %}
                                         {% if "LOCATIONS:EDIT"|instancePermissions %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ subLocation.locations_id }}"><i class="fas fa-edit"></i></button>
                                             {% if showArchived != true %}

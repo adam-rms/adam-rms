@@ -5,14 +5,14 @@ if (!$AUTH->instancePermissionCheck("MAINTENANCE_JOBS:EDIT:STATUS") or !isset($_
 
 $DBLIB->where("maintenanceJobsStatuses_deleted", 0);
 $DBLIB->where("(instances_id IS NULL OR instances_id = '" . $AUTH->data['instance']["instances_id"] . "')");
-$DBLIB->where("maintenanceJobsStatuses_id",$_POST['maintenanceJobsStatuses_id']);
+$DBLIB->where("maintenanceJobsStatuses_id", $_POST['maintenanceJobsStatuses_id']);
 $status = $DBLIB->getone("maintenanceJobsStatuses", ["maintenanceJobsStatuses.maintenanceJobsStatuses_id", "maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
 if (!$status) finish(false);
 
 $DBLIB->where("maintenanceJobs.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
 $DBLIB->where("maintenanceJobs_id", $_POST['maintenanceJobs_id']);
-$job = $DBLIB->getOne("maintenanceJobs", ["maintenanceJobs_user_tagged", "maintenanceJobs_title",  "maintenanceJobs_id"]);
+$job = $DBLIB->getOne("maintenanceJobs", ["maintenanceJobs_user_tagged", "maintenanceJobs_title", "maintenanceJobs_id", "assetMaintenanceSchedules_id"]);
 if (!$job) die("404");
 
 $updateData = ["maintenanceJobsStatuses_id" => $status['maintenanceJobsStatuses_id']];
@@ -20,12 +20,39 @@ if ($status['maintenanceJobsStatuses_id'] == "2") {
     //Job being closed so remove flags and blocks
     $updateData['maintenanceJobs_flagAssets'] = 0;
     $updateData['maintenanceJobs_blockAssets'] = 0;
+
+    // If this job is linked to a scheduled maintenance, update the schedule's next due date
+    if ($job['assetMaintenanceSchedules_id']) {
+        $DBLIB->where("assetMaintenanceSchedules_id", $job['assetMaintenanceSchedules_id']);
+        $DBLIB->where("assetMaintenanceSchedules_deleted", 0);
+        $schedule = $DBLIB->getOne("assetMaintenanceSchedules", ["assetMaintenanceSchedules_intervalMonths", "assetMaintenanceSchedules_id"]);
+
+        if ($schedule && $schedule['assetMaintenanceSchedules_intervalMonths']) {
+            // Calculate new next due date based on interval
+            $newNextDue = date('Y-m-d H:i:s', strtotime('+' . $schedule['assetMaintenanceSchedules_intervalMonths'] . ' months'));
+
+            $DBLIB->where('assetMaintenanceSchedules_id', $schedule['assetMaintenanceSchedules_id']);
+            $DBLIB->update('assetMaintenanceSchedules', [
+                'assetMaintenanceSchedules_nextDue' => $newNextDue
+            ]);
+
+            $bCMS->auditLog(
+                "AUTO-UPDATE-MAINTENANCE-SCHEDULE",
+                "assetMaintenanceSchedules",
+                "Auto-updated next due to " . $newNextDue . " after completing job " . $job['maintenanceJobs_id'],
+                $AUTH->data['users_userid'],
+                null,
+                $AUTH->data['instance']['instances_id'],
+                $schedule['assetMaintenanceSchedules_id']
+            );
+        }
+    }
 }
 $DBLIB->where("maintenanceJobs_id", $job['maintenanceJobs_id']);
 $update = $DBLIB->update("maintenanceJobs", $updateData);
 if (!$update) finish(false);
 
-$bCMS->auditLog("CHANGE-STATUS", "maintenanceJobs", "Change status to " . $status['maintenanceJobsStatuses_name'], $AUTH->data['users_userid'],null,null, $_POST['maintenanceJobs_id']);
+$bCMS->auditLog("CHANGE-STATUS", "maintenanceJobs", "Change status to " . $status['maintenanceJobsStatuses_name'], $AUTH->data['users_userid'], null, null, $_POST['maintenanceJobs_id']);
 
 $job['tagged'] = [];
 if ($job['maintenanceJobs_user_tagged'] != "") {
@@ -34,8 +61,8 @@ if ($job['maintenanceJobs_user_tagged'] != "") {
     $DBLIB->orderBy("users.users_name2", "ASC");
     $DBLIB->orderBy("users.users_created", "ASC");
     $DBLIB->where("users_deleted", 0);
-    $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
-    $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");
+    $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid", "LEFT");
+    $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
     $DBLIB->where("instances_id",  $AUTH->data['instance']['instances_id']);
     $DBLIB->where("userInstances.userInstances_deleted",  0);
     $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
@@ -44,7 +71,7 @@ if ($job['maintenanceJobs_user_tagged'] != "") {
 if (count($job['tagged']) > 0) {
     foreach ($job['tagged'] as $user) {
         if ($user['users_userid'] == $AUTH->data['users_userid']) continue;
-            notify(14,$user['users_userid'], $AUTH->data['instance']['instances_id'], "Status of job: " . $job['maintenanceJobs_title'] . " has been set to " . $status['maintenanceJobsStatuses_name'], false, "api/maintenance/job/changeJobStatus-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2"=> $AUTH->data['users_name2'], "job" => $job]);
+        notify(14, $user['users_userid'], $AUTH->data['instance']['instances_id'], "Status of job: " . $job['maintenanceJobs_title'] . " has been set to " . $status['maintenanceJobsStatuses_name'], false, "api/maintenance/job/changeJobStatus-EmailTemplate.twig", ["users_name1" => $AUTH->data['users_name1'], "users_name2" => $AUTH->data['users_name2'], "job" => $job]);
     }
 }
 

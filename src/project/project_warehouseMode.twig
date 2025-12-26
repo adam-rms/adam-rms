@@ -1,0 +1,455 @@
+<div class="p-3">
+    {% if FINANCIALS.assetsAssigned|length > 0 %}
+        {% embed 'project/twigIncludes/warehouseMode/scanner.twig' with {"instanceid": USERDATA.instance.instances_id} %}
+        {% endembed %}
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> No assets assigned to this project yet.
+        </div>
+    {% endif %}
+</div>
+
+<script>
+$(document).ready(function() {
+    // Store scanned assets per instance
+    const scannedAssets = {};
+
+    // Toast notifications
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        width: '400px',
+        padding: '20px',
+        iconColor: 'white'
+    });
+
+    // Helper function to show colored toasts
+    function showToast(icon, title) {
+        const backgrounds = {
+            success: '#28a745',
+            error: '#dc3545',
+            warning: '#ffc107',
+            info: '#17a2b8'
+        };
+        const textColors = {
+            success: 'white',
+            error: 'white',
+            warning: '#212529',
+            info: 'white'
+        };
+
+        Toast.fire({
+            icon: icon,
+            title: title,
+            background: backgrounds[icon] || '#fff',
+            color: textColors[icon] || '#000',
+            iconColor: 'white'
+        });
+    }
+
+    // Initialize for each instance
+    $('.warehouse-scanner').each(function() {
+        const instanceId = $(this).data('instanceid');
+        scannedAssets[instanceId] = [];
+    });
+
+    // Initialize location autocomplete
+    $('.warehouse-location-input').autocomplete({
+        minLength: 1,
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ CONFIG.ROOTURL }}/api/locations/search.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    term: request.term
+                },
+                success: function(data) {
+                    if (data.result && data.response) {
+                        response(data.response);
+                    } else {
+                        response([]);
+                    }
+                },
+                error: function() {
+                    response([]);
+                }
+            });
+        },
+        select: function(event, ui) {
+            // When user selects a location, set the value
+            $(this).val(ui.item.value);
+            return false;
+        },
+        open: function() {
+            // Match dropdown width to input width
+            $(this).autocomplete('widget').css('width', $(this).outerWidth() + 'px');
+        }
+    });
+
+    // Handle barcode input (Enter key)
+    $('.warehouse-barcode-input').on('keydown', function(e) {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+
+        const instanceId = $(this).data('instanceid');
+        const barcode = $(this).val().trim();
+
+        if (barcode.length === 0) return;
+
+        handleBarcodeScan(instanceId, barcode, $(this));
+    });
+
+    // Handle scan button click
+    $('.warehouse-scan-button').on('click', function() {
+        const instanceId = $(this).closest('.warehouse-scanner').data('instanceid');
+        const input = $(`.warehouse-barcode-input[data-instanceid="${instanceId}"]`);
+        const barcode = input.val().trim();
+
+        if (barcode.length === 0) return;
+
+        handleBarcodeScan(instanceId, barcode, input);
+    });
+
+    // Main scan handler
+    function handleBarcodeScan(instanceId, barcode, inputElement) {
+        const location = $(`.warehouse-location-input[data-instanceid="${instanceId}"]`).val();
+
+        // Check for duplicates
+        const existing = scannedAssets[instanceId].find(a =>
+            a.asset && a.asset.assets_tag === barcode
+        );
+        if (existing) {
+            showToast('warning', 'Asset already scanned');
+            inputElement.val('');
+            inputElement.focus();
+            return;
+        }
+
+        // Show loading state
+        inputElement.prop('disabled', true);
+
+        // Call validation API
+        $.ajax({
+            url: "{{ CONFIG.ROOTURL }}/api/projects/assets/warehouseScan.php",
+            type: "POST",
+            data: {
+                projects_id: {{ project.projects_id }},
+                scans: [{
+                    barcode: barcode,
+                    location: location,
+                    locationType: location ? 'custom' : null
+                }]
+            },
+            success: function(response) {
+                if (response.result && response.response.scans.length > 0) {
+                    const scanResult = response.response.scans[0];
+
+                    if (scanResult.errors.length > 0) {
+                        // Show error
+                        showToast('error', scanResult.errors.join(', '));
+                    } else if (scanResult.needsAssignment) {
+                        // Show assignment modal
+                        handleUnassignedAsset(instanceId, scanResult, location);
+                    } else {
+                        // Add to table with scan timestamp
+                        scanResult.scannedAt = new Date().toISOString();
+                        scannedAssets[instanceId].push(scanResult);
+                        addAssetToTable(instanceId, scanResult);
+                        updateSummary(instanceId);
+
+                        showToast('success', 'Asset scanned: ' + scanResult.asset.assets_tag);
+                    }
+                } else {
+                    showToast('error', 'Failed to validate asset');
+                }
+
+                inputElement.val('');
+                inputElement.prop('disabled', false);
+                inputElement.focus();
+            },
+            error: function() {
+                showToast('error', 'Connection error');
+                inputElement.prop('disabled', false);
+            }
+        });
+    }
+
+    // Add asset row to table
+    function addAssetToTable(instanceId, scanResult) {
+        const asset = scanResult.asset;
+        const assignment = scanResult.assignment;
+        const warnings = scanResult.warnings;
+
+        // Remove placeholder row if it exists
+        const tbody = $(`.warehouse-assets-tbody[data-instanceid="${instanceId}"]`);
+        if (tbody.find('tr.text-muted').length > 0) {
+            tbody.empty();
+        }
+
+        // Determine row class
+        let rowClass = 'warehouse-asset-row-valid';
+        if (warnings.length > 0) rowClass = 'warehouse-asset-row-warning';
+        if (scanResult.errors.length > 0) rowClass = 'warehouse-asset-row-error';
+
+        // Build warnings badges
+        let warningHtml = '';
+        if (warnings.length > 0) {
+            warningHtml = `<span class="badge badge-warning warehouse-warning-badge"
+                                 title="${warnings.join('; ')}"
+                                 data-toggle="tooltip">
+                             ${warnings.length} warning${warnings.length > 1 ? 's' : ''}
+                           </span>`;
+        }
+
+        // Get current status
+        const BOARDSTATUSES = JSON.parse('{{ BOARDSTATUSES|json_encode|raw }}');
+        const currentStatus = assignment && BOARDSTATUSES[instanceId] ?
+            (BOARDSTATUSES[instanceId].find(s => s.assetsAssignmentsStatus_id == assignment.assetsAssignmentsStatus_id)?.assetsAssignmentsStatus_name || 'Unknown') :
+            'Not Assigned';
+
+        const row = `
+            <tr class="${rowClass}" data-asset-id="${asset.assets_id}">
+                <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id=${asset.assetTypes_id}&asset=${asset.assets_id}" target="_blank">
+                    ${asset.assets_tag}
+                </a></td>
+                <td>${asset.manufacturers_name || ''} ${asset.assetTypes_name}</td>
+                <td>${asset.assetCategories_name || 'N/A'}</td>
+                <td>${asset.currentLocation || 'Unknown'}</td>
+                <td>${currentStatus}</td>
+                <td>${warningHtml}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger warehouse-remove-btn"
+                            data-instance-id="${instanceId}"
+                            data-asset-id="${asset.assets_id}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+
+        tbody.append(row);
+
+        // Enable tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    // Handle unassigned asset
+    function handleUnassignedAsset(instanceId, scanResult, location) {
+        const modal = $(`#warehouseUnassignedModal-${instanceId}`);
+        modal.find('.warehouse-modal-asset-tag').text(scanResult.asset.assets_tag);
+        modal.find('.warehouse-modal-asset-name').text(scanResult.asset.assetTypes_name);
+
+        // Set up add button
+        modal.find('.warehouse-modal-add-btn').off('click').on('click', function() {
+            assignAssetToProject(instanceId, scanResult, location, modal);
+        });
+
+        modal.modal('show');
+    }
+
+    // Assign asset to project
+    function assignAssetToProject(instanceId, scanResult, location, modal) {
+        const btn = modal.find('.warehouse-modal-add-btn');
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Adding...');
+
+        $.ajax({
+            url: "{{ CONFIG.ROOTURL }}/api/projects/assets/assign.php",
+            type: "POST",
+            data: {
+                projects_id: {{ project.projects_id }},
+                assets_id: scanResult.asset.assets_id
+            },
+            success: function(response) {
+                if (response.result) {
+                    modal.modal('hide');
+                    showToast('success', 'Asset added to project');
+
+                    // Re-scan to get assignment info
+                    const input = $(`.warehouse-barcode-input[data-instanceid="${instanceId}"]`);
+                    handleBarcodeScan(instanceId, scanResult.asset.assets_tag, input);
+                } else {
+                    showToast('error', response.error.message || 'Failed to add asset');
+                    btn.prop('disabled', false).html('Add to Project');
+                }
+            },
+            error: function() {
+                showToast('error', 'Connection error');
+                btn.prop('disabled', false).html('Add to Project');
+            }
+        });
+    }
+
+    // Remove asset from scan list
+    $(document).on('click', '.warehouse-remove-btn', function() {
+        const instanceId = $(this).data('instance-id');
+        const assetId = $(this).data('asset-id');
+
+        // Remove from array
+        scannedAssets[instanceId] = scannedAssets[instanceId].filter(a =>
+            a.asset.assets_id != assetId
+        );
+
+        // Remove row
+        $(this).closest('tr').remove();
+
+        updateSummary(instanceId);
+    });
+
+    // Clear all scanned assets
+    $('.warehouse-clear-btn').on('click', function() {
+        const instanceId = $(this).data('instanceid');
+
+        bootbox.confirm({
+            message: "Are you sure you want to clear all scanned assets?",
+            buttons: {
+                confirm: { label: 'Yes', className: 'btn-danger' },
+                cancel: { label: 'No', className: 'btn-secondary' }
+            },
+            callback: function(result) {
+                if (result) {
+                    scannedAssets[instanceId] = [];
+                    $(`.warehouse-assets-tbody[data-instanceid="${instanceId}"]`).empty();
+                    updateSummary(instanceId);
+
+                    showToast('info', 'Scan list cleared');
+                }
+            }
+        });
+    });
+
+    // Finalize scans
+    $('.warehouse-finalize-btn').on('click', function() {
+        const instanceId = $(this).data('instanceid');
+        const targetStatus = $(`.warehouse-status-select[data-instanceid="${instanceId}"]`).val();
+        const location = $(`.warehouse-location-input[data-instanceid="${instanceId}"]`).val();
+
+        const validAssets = scannedAssets[instanceId].filter(s => s.valid && !s.needsAssignment);
+
+        if (validAssets.length === 0) {
+            showToast('warning', 'No valid assets to process');
+            return;
+        }
+
+        const BOARDSTATUSES = JSON.parse('{{ BOARDSTATUSES|json_encode|raw }}');
+        const statusName = BOARDSTATUSES[instanceId].find(s =>
+            s.assetsAssignmentsStatus_id == targetStatus
+        ).assetsAssignmentsStatus_name;
+
+        bootbox.confirm({
+            message: `Apply status "${statusName}" to ${validAssets.length} asset${validAssets.length > 1 ? 's' : ''}?`,
+            buttons: {
+                confirm: { label: 'Yes, Apply', className: 'btn-success' },
+                cancel: { label: 'Cancel', className: 'btn-secondary' }
+            },
+            callback: function(result) {
+                if (result) {
+                    finalizeScans(instanceId, validAssets, targetStatus, location);
+                }
+            }
+        });
+    });
+
+    // Process finalization
+    function finalizeScans(instanceId, assets, targetStatus, location) {
+        const btn = $(`.warehouse-finalize-btn[data-instanceid="${instanceId}"]`);
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+
+        const assetsData = assets.map(a => ({
+            assets_id: a.asset.assets_id,
+            location: location,
+            locationType: location ? 'custom' : null,
+            scannedAt: a.scannedAt
+        }));
+
+        $.ajax({
+            url: "{{ CONFIG.ROOTURL }}/api/projects/assets/warehouseFinalize.php",
+            type: "POST",
+            data: {
+                projects_id: {{ project.projects_id }},
+                targetStatus: targetStatus,
+                assets: assetsData
+            },
+            success: function(response) {
+                if (response.result) {
+                    const successCount = response.response.success.length;
+                    const failedCount = response.response.failed.length;
+
+                    if (failedCount > 0) {
+                        bootbox.alert({
+                            title: 'Partial Success',
+                            message: `${successCount} asset${successCount > 1 ? 's' : ''} updated successfully.<br>
+                                     ${failedCount} asset${failedCount > 1 ? 's' : ''} failed to update.`
+                        });
+                    } else {
+                        showToast('success', `${successCount} asset${successCount > 1 ? 's' : ''} updated`);
+                    }
+
+                    // Clear successful assets and update asset board
+                    response.response.success.forEach(s => {
+                        scannedAssets[instanceId] = scannedAssets[instanceId].filter(a =>
+                            a.asset.assets_id != s.assets_id
+                        );
+                        $(`.warehouse-assets-tbody[data-instanceid="${instanceId}"] tr[data-asset-id="${s.assets_id}"]`).remove();
+
+                        // Update asset board - move asset card to new status column
+                        const assetCard = $(`.assetDispatchAssetList[data-instance="${instanceId}"] .assetDispatchAssetList-card[data-asset="${s.assets_id}"]`);
+                        if (assetCard.length > 0) {
+                            assetCard.detach().appendTo(`.assetDispatchAssetList[data-statusid="${targetStatus}"][data-instance="${instanceId}"]`);
+                            assetCard.attr('data-currentstatus', targetStatus);
+                        }
+                    });
+
+                    updateSummary(instanceId);
+
+                    // Add placeholder row if table is now empty
+                    const tbody = $(`.warehouse-assets-tbody[data-instanceid="${instanceId}"]`);
+                    if (tbody.find('tr').length === 0) {
+                        tbody.html('<tr class="text-muted"><td colspan="7" class="text-center">No assets scanned yet. Start scanning to add assets to the list.</td></tr>');
+                    }
+
+                    // Re-focus on barcode input for continued scanning
+                    $(`.warehouse-barcode-input[data-instanceid="${instanceId}"]`).focus();
+                } else {
+                    showToast('error', response.error.message || 'Failed to process scans');
+                }
+
+                btn.prop('disabled', false).html('<i class="fas fa-check"></i> Finalize Scan & Apply Changes');
+            },
+            error: function() {
+                showToast('error', 'Connection error');
+                btn.prop('disabled', false).html('<i class="fas fa-check"></i> Finalize Scan & Apply Changes');
+            }
+        });
+    }
+
+    // Update summary and button states
+    function updateSummary(instanceId) {
+        const assets = scannedAssets[instanceId];
+        const validCount = assets.filter(a => a.valid && !a.needsAssignment).length;
+        const warningCount = assets.filter(a => a.warnings.length > 0).length;
+        const errorCount = assets.filter(a => a.errors.length > 0 || a.needsAssignment).length;
+
+        $(`.warehouse-scanner[data-instanceid="${instanceId}"] .warehouse-asset-count`).text(assets.length);
+        $(`.warehouse-scanner[data-instanceid="${instanceId}"] .warehouse-valid-count`).text(validCount);
+        $(`.warehouse-scanner[data-instanceid="${instanceId}"] .warehouse-warning-count`).text(warningCount);
+        $(`.warehouse-scanner[data-instanceid="${instanceId}"] .warehouse-error-count`).text(errorCount);
+
+        // Show/hide summary
+        if (assets.length > 0) {
+            $(`.warehouse-scanner[data-instanceid="${instanceId}"] .warehouse-summary`).show();
+        } else {
+            $(`.warehouse-scanner[data-instanceid="${instanceId}"] .warehouse-summary`).hide();
+        }
+
+        // Enable/disable finalize button
+        if (validCount > 0) {
+            $(`.warehouse-finalize-btn[data-instanceid="${instanceId}"]`).prop('disabled', false);
+        } else {
+            $(`.warehouse-finalize-btn[data-instanceid="${instanceId}"]`).prop('disabled', true);
+        }
+    }
+});
+</script>

@@ -477,7 +477,7 @@
                                 {% for scan in assets[0].locationScans %}
                                     <tr>
                                         <td>
-                                             {{ scan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
+                                             {{ scan.assetsBarcodesScans_timestamp|date("d M Y h:i:sa") }}
                                         </td>
                                         <td>
                                             {% if scan.locations_name %}
@@ -564,20 +564,19 @@
                                             </td>
                                             <td>
                                                 {% if barcode.latestScan %}
-                                                    {% if barcode.latestScan.locations_name %}
-                                                        {{ barcode.latestScan.locations_name }}
-                                                    {% elseif barcode.latestScan.assetTypes_name %}
-                                                        Inside asset {{  barcode.latestScan.assetTypes_name }} ({{ barcode.latestScan.assets_tag }})
-                                                    {% elseif barcode.latestScan.assetsBarcodes_customLocation %}
-                                                        {{  barcode.latestScan.assetsBarcodes_customLocation }}
-                                                        <br/>
-                                                        <small>
-                                                           Location was entered as text
-                                                        </small>
-                                                    {% endif %}
+                                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.latestScan.users_userid }}">
+                                                        {{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}
+                                                    </a>
                                                     <br/>
                                                     <small>
-                                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.latestScan.users_userid }}">{{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}</a> {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
+                                                        {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d M Y h:i:sa") }}
+                                                        {% if barcode.latestScan.locations_name %}
+                                                            at {{ barcode.latestScan.locations_name }}
+                                                        {% elseif barcode.latestScan.assetTypes_name %}
+                                                            at asset {{ barcode.latestScan.assetTypes_name }} ({{ barcode.latestScan.assets_tag }})
+                                                        {% elseif barcode.latestScan.assetsBarcodes_customLocation %}
+                                                            at {{ barcode.latestScan.assetsBarcodes_customLocation }}
+                                                        {% endif %}
                                                     </small>
                                                 {% else %}
                                                     <i>Never scanned</i>
@@ -593,9 +592,70 @@
                                     </tbody>
                                 </table>
                                 {% if ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
-                                     <a class="btn btn-default btn-block" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?id={{assets[0].assets_id}}">Generate/Export Barcodes</a>
+                                    <div class="row mx-0">
+                                        <div class="col-6 px-1">
+                                            <a class="btn btn-default btn-block" style="margin-bottom: 4px" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?id={{assets[0].assets_id}}">Generate/Export Barcodes</a>
+                                        </div>
+                                        {% if "ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS"|instancePermissions %}
+                                        <div class="col-6 px-1">
+                                            <button class="btn btn-primary btn-block" style="margin-bottom: 4px" id="manuallyAssignBarcodeButton">Manually Assign Barcode</button>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% if "ASSETS:LABEL_PRINTERS:PRINT"|instancePermissions and labelPrinters|length > 0 %}
+                                    <div class="row mx-0 mt-2">
+                                        <div class="col-12 px-1">
+                                            <button class="btn btn-success btn-block" id="printLabelBtn">
+                                                <i class="fas fa-print"></i> Print Label
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 {% endif %}
                             </div>
+                        {% endif %}
+                        {% if "ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
+                        <div class="modal fade" id="manuallyAssignBarcodeModal">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Manually Assign Barcode</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Assign a barcode to this asset by selecting the barcode type and entering the barcode value.</p>
+                                        <form id="manuallyAssignBarcodeForm">
+                                            <div class="form-group">
+                                                <label for="barcodeType">Barcode Type</label>
+                                                <select class="form-control select2-barcode" id="barcodeType" name="barcodeType" required style="width: 100%;">
+                                                    <option value="">Select barcode type...</option>
+                                                    <option value="EAN_8" data-desc="8-digit linear barcode">EAN-8</option>
+                                                    <option value="EAN_13" data-desc="13-digit linear barcode">EAN-13</option>
+                                                    <option value="CODE_39" data-desc="Alphanumeric linear barcode">CODE-39</option>
+                                                    <option value="CODE_93" data-desc="Compact linear barcode">CODE-93</option>
+                                                    <option value="CODE_128" data-desc="High-density linear barcode">CODE-128</option>
+                                                    <option value="UPC_A" data-desc="12-digit product barcode">UPC-A</option>
+                                                    <option value="UPC_E" data-desc="Compact UPC barcode">UPC-E</option>
+                                                    <option value="QR_CODE" data-desc="2D matrix barcode">QR Code</option>
+                                                </select>
+                                                <small class="form-text text-muted">Select the format of the barcode</small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="barcodeValue">Barcode Value</label>
+                                                <input type="text" class="form-control" id="barcodeValue" name="barcodeValue" placeholder="e.g., 100001" required>
+                                                <small class="form-text text-muted" id="barcodeValueHint">Enter the barcode number/text</small>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-primary" id="manuallyAssignBarcodeSubmit">Assign Barcode</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {% endif %}
                         {% if "MAINTENANCE_JOBS:VIEW"|instancePermissions %}
                             <div class="tab-pane" style="padding:0"  id="maintenance">
@@ -606,6 +666,7 @@
                                             <li class="nav-item"><a class="nav-link active" href="#maintenance-flags" data-toggle="tab">Blocks &amp; Flags</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsOutstanding" data-toggle="tab">Jobs Outstanding</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#maintenance-jobsCompleted" data-toggle="tab">Jobs Completed</a></li>
+                                            {% if "MAINTENANCE_JOBS:SCHEDULES:VIEW"|instancePermissions %}<li class="nav-item"><a class="nav-link" href="#maintenance-schedules" data-toggle="tab">Scheduled Maintenance</a></li>{% endif %}
                                         </ul>
                                     </div><!-- /.card-header -->
                                     <div class="card-body" style="padding: 0;">
@@ -858,6 +919,150 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            {% if "MAINTENANCE_JOBS:SCHEDULES:VIEW"|instancePermissions %}
+                                            <div class="tab-pane" style="padding: 1.25rem" id="maintenance-schedules">
+                                                <h5>Scheduled Maintenance</h5>
+                                                <p class="text-muted">Automatically create maintenance jobs when assets are due for periodic maintenance (e.g., test and tag, PAT testing).</p>
+
+                                                {% if "MAINTENANCE_JOBS:SCHEDULES:CREATE"|instancePermissions %}
+                                                <button class="btn btn-success mb-3" id="addScheduleButton"><i class="fas fa-plus"></i> Add Schedule</button>
+
+                                                <div id="scheduleForm" style="display: none; margin-bottom: 20px;">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h5 class="card-title mb-0" id="scheduleFormTitle">Add Scheduled Maintenance</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <form id="scheduleFormElement">
+                                                                <input type="hidden" id="schedule_id" value="">
+
+                                                                <div class="form-group">
+                                                                    <label for="schedule_type">Maintenance Type <span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" id="schedule_type" placeholder="e.g., Test and Tag, PAT Testing, Service" required>
+                                                                    <small class="form-text text-muted">Type of maintenance (e.g., "Test and Tag", "PAT Testing")</small>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="schedule_nextDue">Next Due Date <span class="text-danger">*</span></label>
+                                                                    <input type="date" class="form-control" id="schedule_nextDue" required>
+                                                                    <small class="form-text text-muted">When this maintenance is next due</small>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="schedule_intervalMonths">Interval (Optional)</label>
+                                                                    <select class="form-control" id="schedule_intervalMonths">
+                                                                        <option value="">No recurring interval</option>
+                                                                        <option value="3">3 months</option>
+                                                                        <option value="6">6 months</option>
+                                                                        <option value="12">12 months (1 year)</option>
+                                                                        <option value="24">24 months (2 years)</option>
+                                                                        <option value="36">36 months (3 years)</option>
+                                                                        <option value="60">60 months (5 years)</option>
+                                                                    </select>
+                                                                    <small class="form-text text-muted">Suggested interval for future maintenance (can be changed later)</small>
+                                                                </div>
+
+                                                                <div class="form-check mb-3">
+                                                                    <input type="checkbox" class="form-check-input" id="schedule_enabled" checked>
+                                                                    <label class="form-check-label" for="schedule_enabled">Enabled</label>
+                                                                    <br><small class="form-text text-muted">Schedule is active</small>
+                                                                </div>
+
+                                                                <div class="form-check mb-3">
+                                                                    <input type="checkbox" class="form-check-input" id="schedule_blockWhenOverdue" checked>
+                                                                    <label class="form-check-label" for="schedule_blockWhenOverdue">Block asset when overdue</label>
+                                                                    <br><small class="form-text text-muted">Prevent asset from being scanned out when overdue</small>
+                                                                </div>
+
+                                                                <div class="form-check mb-3">
+                                                                    <input type="checkbox" class="form-check-input" id="schedule_autoCreateJob" checked>
+                                                                    <label class="form-check-label" for="schedule_autoCreateJob">Auto-create maintenance job when overdue</label>
+                                                                    <br><small class="form-text text-muted">Automatically create a maintenance job when due date arrives</small>
+                                                                </div>
+
+                                                                <button type="submit" class="btn btn-primary" id="saveScheduleButton">Save Schedule</button>
+                                                                <button type="button" class="btn btn-secondary" id="cancelScheduleButton">Cancel</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                <div id="schedulesList">
+                                                    {% if assets[0].schedules is defined and assets[0].schedules|length > 0 %}
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Type</th>
+                                                                    <th>Next Due</th>
+                                                                    <th>Interval</th>
+                                                                    <th>Status</th>
+                                                                    <th>Blocks Asset</th>
+                                                                    <th>Auto-Create Job</th>
+                                                                    <th style="width: 120px;">Actions</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="schedulesTableBody">
+                                                                {% for schedule in assets[0].schedules %}
+                                                                <tr data-schedule-id="{{ schedule.assetMaintenanceSchedules_id }}">
+                                                                    <td>{{ schedule.assetMaintenanceSchedules_type }}</td>
+                                                                    <td>
+                                                                        {{ schedule.assetMaintenanceSchedules_nextDue|date("d M Y") }}
+                                                                        {% if schedule.assetMaintenanceSchedules_nextDue|date("U") < "now"|date("U") %}
+                                                                            <span class="badge badge-danger ml-1">Overdue</span>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                    <td>
+                                                                        {% if schedule.assetMaintenanceSchedules_intervalMonths %}
+                                                                            {{ schedule.assetMaintenanceSchedules_intervalMonths }} months
+                                                                        {% else %}
+                                                                            <span class="text-muted">None</span>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                    <td>
+                                                                        {% if schedule.assetMaintenanceSchedules_enabled == 1 %}
+                                                                            <span class="badge badge-success">Enabled</span>
+                                                                        {% else %}
+                                                                            <span class="badge badge-secondary">Disabled</span>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                    <td>
+                                                                        {% if schedule.assetMaintenanceSchedules_blockWhenOverdue == 1 %}
+                                                                            <i class="fas fa-check text-success"></i>
+                                                                        {% else %}
+                                                                            <i class="fas fa-times text-muted"></i>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                    <td>
+                                                                        {% if schedule.assetMaintenanceSchedules_autoCreateJob == 1 %}
+                                                                            <i class="fas fa-check text-success"></i>
+                                                                        {% else %}
+                                                                            <i class="fas fa-times text-muted"></i>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                    <td>
+                                                                        {% if "MAINTENANCE_JOBS:SCHEDULES:EDIT"|instancePermissions %}
+                                                                        <button class="btn btn-sm btn-info editScheduleButton" data-schedule='{{ schedule|json_encode|e('html_attr') }}'><i class="fas fa-edit"></i></button>
+                                                                        {% endif %}
+                                                                        {% if "MAINTENANCE_JOBS:SCHEDULES:DELETE"|instancePermissions %}
+                                                                        <button class="btn btn-sm btn-danger deleteScheduleButton" data-id="{{ schedule.assetMaintenanceSchedules_id }}"><i class="fas fa-trash"></i></button>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    {% else %}
+                                                        <div class="alert alert-info">
+                                                            <i class="fas fa-info-circle"></i> No scheduled maintenance configured for this asset.
+                                                            {% if "MAINTENANCE_JOBS:SCHEDULES:CREATE"|instancePermissions %}
+                                                                Click "Add Schedule" above to create one.
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                         <!-- /.tab-content -->
                                     </div><!-- /.card-body -->
@@ -1507,6 +1712,227 @@
                     fade: true,
                     cssEase: 'linear'
                 });
+                {% if "ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS"|instancePermissions and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
+                // Initialize Select2 for barcode type with custom template
+                function formatBarcodeType(option) {
+                    if (!option.id) {
+                        return option.text;
+                    }
+
+                    // Define sample barcode images for different types
+                    var barcodeImages = {
+                        'EAN_8': 'https://barcode.tec-it.com/barcode.ashx?data=1234567&code=EAN8&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                        'EAN_13': 'https://barcode.tec-it.com/barcode.ashx?data=123456789012&code=EAN13&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                        'CODE_39': 'https://barcode.tec-it.com/barcode.ashx?data=CODE39&code=Code39&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                        'CODE_93': 'https://barcode.tec-it.com/barcode.ashx?data=CODE93&code=Code93&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                        'CODE_128': 'https://barcode.tec-it.com/barcode.ashx?data=CODE128&code=Code128&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                        'UPC_A': 'https://barcode.tec-it.com/barcode.ashx?data=01234567890&code=UPCA&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                        'UPC_E': 'https://barcode.tec-it.com/barcode.ashx?data=0123456&code=UPCE&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                        'QR_CODE': 'https://barcode.tec-it.com/barcode.ashx?data=QR&code=QRCode&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0'
+                    };
+
+                    var imageUrl = barcodeImages[option.id];
+                    var description = $(option.element).data('desc') || '';
+
+                    var $option = $(
+                        '<div style="display: flex; align-items: center; padding: 8px 0;">' +
+                            '<img src="' + imageUrl + '" style="height: 35px; width: auto; margin-right: 12px; border: 1px solid #dee2e6; border-radius: 3px; padding: 4px; background: white;" />' +
+                            '<div style="flex: 1;">' +
+                                '<div style="font-weight: 500; color: #212529;">' + option.text + '</div>' +
+                                (description ? '<div style="font-size: 0.875rem; color: #6c757d;">' + description + '</div>' : '') +
+                            '</div>' +
+                        '</div>'
+                    );
+                    return $option;
+                }
+
+                $("#barcodeType").select2({
+                    theme: 'bootstrap4',
+                    placeholder: 'Select barcode type...',
+                    allowClear: false,
+                    templateResult: formatBarcodeType,
+                    templateSelection: function(option) {
+                        if (!option.id) {
+                            return option.text;
+                        }
+                        return option.text;
+                    },
+                    escapeMarkup: function(markup) {
+                        return markup;
+                    }
+                });
+
+                // Barcode validation function
+                function validateBarcode(value, type) {
+                    if (!value || !type) return { valid: false, message: "" };
+
+                    var validations = {
+                        'EAN_8': {
+                            regex: /^\d{7,8}$/,
+                            message: "EAN-8 requires 7-8 numeric digits",
+                            hint: "Enter 7-8 numeric digits (e.g., 1234567)"
+                        },
+                        'EAN_13': {
+                            regex: /^\d{12,13}$/,
+                            message: "EAN-13 requires 12-13 numeric digits",
+                            hint: "Enter 12-13 numeric digits (e.g., 123456789012)"
+                        },
+                        'CODE_39': {
+                            regex: /^[A-Z0-9\-\.\ \$\/\+\%]+$/,
+                            message: "CODE-39 allows uppercase letters, numbers, and special characters (- . $ / + % space)",
+                            hint: "Uppercase letters, numbers, and - . $ / + % space allowed"
+                        },
+                        'CODE_93': {
+                            regex: /^[A-Z0-9\-\.\ \$\/\+\%]+$/,
+                            message: "CODE-93 allows uppercase letters, numbers, and special characters",
+                            hint: "Uppercase letters, numbers, and special characters allowed"
+                        },
+                        'CODE_128': {
+                            regex: /^[\x20-\x7E]+$/,
+                            message: "CODE-128 allows all ASCII characters",
+                            hint: "Any printable ASCII characters allowed"
+                        },
+                        'UPC_A': {
+                            regex: /^\d{11,12}$/,
+                            message: "UPC-A requires 11-12 numeric digits",
+                            hint: "Enter 11-12 numeric digits (e.g., 01234567890)"
+                        },
+                        'UPC_E': {
+                            regex: /^\d{6,8}$/,
+                            message: "UPC-E requires 6-8 numeric digits",
+                            hint: "Enter 6-8 numeric digits (e.g., 0123456)"
+                        },
+                        'QR_CODE': {
+                            regex: /.+/,
+                            message: "QR Code can contain any text",
+                            hint: "Any text allowed (no restrictions)"
+                        }
+                    };
+
+                    var validation = validations[type];
+                    if (!validation) return { valid: true, message: "" };
+
+                    var valid = validation.regex.test(value);
+                    return {
+                        valid: valid,
+                        message: validation.message,
+                        hint: validation.hint
+                    };
+                }
+
+                // Update hint text when barcode type changes
+                $("#barcodeType").on("change", function() {
+                    var type = $(this).val();
+                    var value = $("#barcodeValue").val().trim();
+
+                    if (type) {
+                        var validation = validateBarcode("dummy", type);
+                        $("#barcodeValueHint").text(validation.hint).removeClass("text-danger").addClass("text-muted");
+
+                        // Validate current value if exists
+                        if (value) {
+                            var result = validateBarcode(value, type);
+                            if (!result.valid) {
+                                $("#barcodeValue").addClass("is-invalid");
+                                $("#barcodeValueHint").text(result.message).removeClass("text-muted").addClass("text-danger");
+                            } else {
+                                $("#barcodeValue").removeClass("is-invalid");
+                                $("#barcodeValueHint").text(validation.hint).removeClass("text-danger").addClass("text-muted");
+                            }
+                        }
+                    } else {
+                        $("#barcodeValueHint").text("Enter the barcode number/text").removeClass("text-danger").addClass("text-muted");
+                    }
+                });
+
+                // Real-time validation as user types
+                $("#barcodeValue").on("input", function() {
+                    var value = $(this).val().trim();
+                    var type = $("#barcodeType").val();
+
+                    if (value && type) {
+                        var result = validateBarcode(value, type);
+                        if (!result.valid) {
+                            $(this).addClass("is-invalid");
+                            $("#barcodeValueHint").text(result.message).removeClass("text-muted").addClass("text-danger");
+                        } else {
+                            $(this).removeClass("is-invalid");
+                            var validation = validateBarcode("dummy", type);
+                            $("#barcodeValueHint").text(validation.hint).removeClass("text-danger").addClass("text-muted");
+                        }
+                    } else {
+                        $(this).removeClass("is-invalid");
+                    }
+                });
+
+                // Open modal when button is clicked
+                $("#manuallyAssignBarcodeButton").on("click", function () {
+                    $("#manuallyAssignBarcodeModal").modal("show");
+                });
+
+                // Handle form submission
+                $("#manuallyAssignBarcodeSubmit").on("click", function () {
+                    // Get form values
+                    var barcodeValue = $("#barcodeValue").val().trim();
+                    var barcodeType = $("#barcodeType").val();
+
+                    // Validate inputs
+                    if (!barcodeValue) {
+                        bootbox.alert("Please enter a barcode value.");
+                        return;
+                    }
+
+                    if (!barcodeType) {
+                        bootbox.alert("Please select a barcode type.");
+                        return;
+                    }
+
+                    // Validate barcode format
+                    var validation = validateBarcode(barcodeValue, barcodeType);
+                    if (!validation.valid) {
+                        bootbox.alert("Invalid barcode format: " + validation.message);
+                        $("#barcodeValue").addClass("is-invalid");
+                        $("#barcodeValueHint").text(validation.message).removeClass("text-muted").addClass("text-danger");
+                        return;
+                    }
+
+                    // Prepare data for API call
+                    const args = {
+                        "id": "{{ assets[0].assets_id }}",
+                        "text": barcodeValue,
+                        "type": barcodeType
+                    };
+
+                    // Disable submit button to prevent double-submission
+                    $("#manuallyAssignBarcodeSubmit").prop("disabled", true).text("Assigning...");
+
+                    // Make API call
+                    ajaxcall("assets/barcodes/assign.php", args, function (data) {
+                        // Close modal
+                        $("#manuallyAssignBarcodeModal").modal("hide");
+
+                        // Show success message using SweetAlert2 Toast
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Barcode assigned successfully'
+                        });
+
+                        // Reload page to show new barcode in the table
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    });
+                });
+
+                // Reset form when modal is closed
+                $("#manuallyAssignBarcodeModal").on("hidden.bs.modal", function () {
+                    $("#manuallyAssignBarcodeForm")[0].reset();
+                    $("#barcodeType").val(null).trigger('change');
+                    $("#barcodeValue").removeClass("is-invalid");
+                    $("#barcodeValueHint").text("Enter the barcode number/text").removeClass("text-danger").addClass("text-muted");
+                    $("#manuallyAssignBarcodeSubmit").prop("disabled", false).text("Assign Barcode");
+                });
+                {% endif %}
                 {% if "ASSETS:DELETE"|instancePermissions %}
                 $(".deleteAssetButton").click(function () {
                     var assetid = $(this).data("assetid");
@@ -1867,6 +2293,114 @@
                     }
                 });
                 {% endif %}
+                {% if "MAINTENANCE_JOBS:SCHEDULES:VIEW"|instancePermissions %}
+                // Scheduled Maintenance Handlers
+                const assetId = {{ assets[0].assets_id }};
+
+                $('#addScheduleButton').on('click', function() {
+                    $('#scheduleFormTitle').text('Add Scheduled Maintenance');
+                    $('#schedule_id').val('');
+                    $('#scheduleFormElement')[0].reset();
+                    $('#schedule_enabled').prop('checked', true);
+                    $('#schedule_blockWhenOverdue').prop('checked', true);
+                    $('#schedule_autoCreateJob').prop('checked', true);
+                    $('#scheduleForm').slideDown();
+                });
+
+                $('#cancelScheduleButton').on('click', function() {
+                    $('#scheduleForm').slideUp();
+                    $('#scheduleFormElement')[0].reset();
+                });
+
+                $('#scheduleFormElement').on('submit', function(e) {
+                    e.preventDefault();
+
+                    const scheduleId = $('#schedule_id').val();
+                    const isEdit = scheduleId.length > 0;
+
+                    const data = {
+                        assets_id: assetId,
+                        type: $('#schedule_type').val(),
+                        nextDue: $('#schedule_nextDue').val(),
+                        intervalMonths: $('#schedule_intervalMonths').val() || null,
+                        enabled: $('#schedule_enabled').is(':checked') ? 1 : 0,
+                        blockWhenOverdue: $('#schedule_blockWhenOverdue').is(':checked') ? 1 : 0,
+                        autoCreateJob: $('#schedule_autoCreateJob').is(':checked') ? 1 : 0
+                    };
+
+                    if (isEdit) {
+                        data.assetMaintenanceSchedules_id = scheduleId;
+                    }
+
+                    const endpoint = isEdit ? 'maintenance/schedules/updateNextDue.php' : 'maintenance/schedules/create.php';
+
+                    ajaxcall(endpoint, data, function(result) {
+                        if (result.result) {
+                            bootbox.alert({
+                                message: isEdit ? 'Schedule updated successfully!' : 'Schedule created successfully!',
+                                callback: function() {
+                                    location.reload();
+                                }
+                            });
+                        }
+                    });
+                });
+
+                $('.editScheduleButton').on('click', function() {
+                    const schedule = JSON.parse($(this).attr('data-schedule'));
+
+                    $('#scheduleFormTitle').text('Edit Scheduled Maintenance');
+                    $('#schedule_id').val(schedule.assetMaintenanceSchedules_id);
+                    $('#schedule_type').val(schedule.assetMaintenanceSchedules_type);
+                    $('#schedule_nextDue').val(schedule.assetMaintenanceSchedules_nextDue.split(' ')[0]);
+                    $('#schedule_intervalMonths').val(schedule.assetMaintenanceSchedules_intervalMonths || '');
+                    $('#schedule_enabled').prop('checked', schedule.assetMaintenanceSchedules_enabled == 1);
+                    $('#schedule_blockWhenOverdue').prop('checked', schedule.assetMaintenanceSchedules_blockWhenOverdue == 1);
+                    $('#schedule_autoCreateJob').prop('checked', schedule.assetMaintenanceSchedules_autoCreateJob == 1);
+
+                    $('#scheduleForm').slideDown();
+                    $('html, body').animate({
+                        scrollTop: $('#scheduleForm').offset().top - 100
+                    }, 500);
+                });
+
+                $('.deleteScheduleButton').on('click', function() {
+                    const scheduleId = $(this).data('id');
+                    const row = $(this).closest('tr');
+
+                    bootbox.confirm({
+                        title: "Delete Schedule",
+                        message: "Are you sure you want to delete this scheduled maintenance? This cannot be undone.",
+                        buttons: {
+                            confirm: {
+                                label: 'Delete',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-secondary'
+                            }
+                        },
+                        callback: function(result) {
+                            if (result) {
+                                ajaxcall('maintenance/schedules/updateNextDue.php', {
+                                    assetMaintenanceSchedules_id: scheduleId,
+                                    deleted: 1
+                                }, function(response) {
+                                    if (response.result) {
+                                        row.fadeOut(300, function() {
+                                            $(this).remove();
+                                            if ($('#schedulesTableBody tr').length === 0) {
+                                                location.reload();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+                {% endif %}
                 {% if "ASSETS:TRANSFER"|instancePermissions %}
                 $("#assetMigrateInstance").select2({
                     tags: false,
@@ -2218,6 +2752,92 @@
                 {% endif %}
             });
         </script>
+
+{% if "ASSETS:LABEL_PRINTERS:PRINT"|instancePermissions %}
+<!-- Print Label Modal -->
+<div class="modal fade" id="printLabelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Print Label for {{ assets[0].assets_tag }}</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Select Printer</label>
+                    <select class="form-control" id="printPrinterSelect">
+                        <option value="">-- Select Printer --</option>
+                        {% for printer in labelPrinters %}
+                        <option value="{{ printer.labelPrinters_id }}">
+                            {{ printer.labelPrinters_name }} ({{ printer.labelPrinters_model }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Template</label>
+                    <select class="form-control" id="printTemplateSelect">
+                        <option value="">-- Select Template --</option>
+                        {% for template in labelTemplates %}
+                        <option value="{{ template.labelTemplates_id }}">
+                            {{ template.labelTemplates_name }}
+                            ({{ template.labelTemplates_width }}mm{% if template.labelTemplates_height > 0 %} × {{ template.labelTemplates_height }}mm{% endif %})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirmPrintBtn">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $("#printLabelBtn").click(function() {
+        $("#printLabelModal").modal('show');
+    });
+
+    $("#confirmPrintBtn").click(function() {
+        let printerId = $("#printPrinterSelect").val();
+        let templateId = $("#printTemplateSelect").val();
+
+        if (!printerId || !templateId) {
+            alert('Please select both a printer and template');
+            return;
+        }
+
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Printing...');
+
+        $.post("{{ CONFIG.ROOTURL }}/api/labelPrinters/print.php", {
+            labelPrinters_id: printerId,
+            labelTemplates_id: templateId,
+            assets_ids: [{{ assets[0].assets_id }}]
+        }, function(data) {
+            $("#confirmPrintBtn").prop('disabled', false).html('<i class="fas fa-print"></i> Print');
+
+            if (data.result) {
+                $("#printLabelModal").modal('hide');
+                displayResponse(true, 'Label sent to printer successfully');
+            } else {
+                displayResponse(false, 'Print failed: ' + (data.error ? data.error.message : 'Unknown error'));
+            }
+        }).fail(function() {
+            $("#confirmPrintBtn").prop('disabled', false).html('<i class="fas fa-print"></i> Print');
+            displayResponse(false, 'Network error - failed to send print job');
+        });
+    });
+});
+</script>
+{% endif %}
+
 {% embed 'assets/templates/fileBoxJS.twig' %}
 
         {% endembed %}

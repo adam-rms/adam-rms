@@ -57,15 +57,15 @@
                             <form id="settings">
                                 <p class="text-sm">Barcode Type
                                     <b class="d-block">
-                                        <select class="form-control" name="barcodeType">
-                                            <option value="EAN_8">EAN 8 (not recommended - numeric digits only)</option><!-- Cannot encode characters - numbers only -->
-                                            <option value="EAN_13">EAN 13 (not recommended - numeric digits only)</option><!-- Cannot encode characters - numbers only -->
-                                            <option value="CODE_39">Code 39</option>
-                                            <option value="CODE_93">Code 93</option>
-                                            <option value="CODE_128">Code 128</option>
-                                            <option value="UPC_E">UPC E (not recommended - numeric digits only)</option><!-- Cannot encode characters - numbers only -->
-                                            <option value="UPC_A">UPC A (not recommended - numeric digits only)</option><!-- Cannot encode characters- numbers only -->
-                                            <option value="QR_CODE" selected>QR Code</option>
+                                        <select class="form-control select2-barcode-generator" id="barcodeTypeGenerator" name="barcodeType" style="width: 100%;">
+                                            <option value="EAN_8" data-desc="8-digit linear barcode (numeric only)">EAN-8</option>
+                                            <option value="EAN_13" data-desc="13-digit linear barcode (numeric only)">EAN-13</option>
+                                            <option value="CODE_39" data-desc="Alphanumeric linear barcode">CODE-39</option>
+                                            <option value="CODE_93" data-desc="Compact linear barcode">CODE-93</option>
+                                            <option value="CODE_128" data-desc="High-density linear barcode">CODE-128</option>
+                                            <option value="UPC_E" data-desc="Compact UPC barcode (numeric only)">UPC-E</option>
+                                            <option value="UPC_A" data-desc="12-digit product barcode (numeric only)">UPC-A</option>
+                                            <option value="QR_CODE" data-desc="2D matrix barcode" selected>QR Code</option>
                                         </select>
                                     </b>
                                 </p>
@@ -241,6 +241,55 @@
                             results: []
                         };
                     }
+                }
+            });
+
+            // Initialize Select2 for barcode type with images
+            function formatBarcodeTypeGenerator(option) {
+                if (!option.id) {
+                    return option.text;
+                }
+
+                // Define sample barcode images for different types
+                var barcodeImages = {
+                    'EAN_8': 'https://barcode.tec-it.com/barcode.ashx?data=1234567&code=EAN8&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                    'EAN_13': 'https://barcode.tec-it.com/barcode.ashx?data=123456789012&code=EAN13&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                    'CODE_39': 'https://barcode.tec-it.com/barcode.ashx?data=CODE39&code=Code39&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                    'CODE_93': 'https://barcode.tec-it.com/barcode.ashx?data=CODE93&code=Code93&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                    'CODE_128': 'https://barcode.tec-it.com/barcode.ashx?data=CODE128&code=Code128&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                    'UPC_A': 'https://barcode.tec-it.com/barcode.ashx?data=01234567890&code=UPCA&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                    'UPC_E': 'https://barcode.tec-it.com/barcode.ashx?data=0123456&code=UPCE&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0',
+                    'QR_CODE': 'https://barcode.tec-it.com/barcode.ashx?data=QR&code=QRCode&translate-esc=on&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0'
+                };
+
+                var imageUrl = barcodeImages[option.id];
+                var description = $(option.element).data('desc') || '';
+
+                var $option = $(
+                    '<div style="display: flex; align-items: center; padding: 8px 0;">' +
+                        '<img src="' + imageUrl + '" style="height: 35px; width: auto; margin-right: 12px; border: 1px solid #dee2e6; border-radius: 3px; padding: 4px; background: white;" />' +
+                        '<div style="flex: 1;">' +
+                            '<div style="font-weight: 500; color: #212529;">' + option.text + '</div>' +
+                            (description ? '<div style="font-size: 0.875rem; color: #6c757d;">' + description + '</div>' : '') +
+                        '</div>' +
+                    '</div>'
+                );
+                return $option;
+            }
+
+            $("#barcodeTypeGenerator").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select barcode type...',
+                allowClear: false,
+                templateResult: formatBarcodeTypeGenerator,
+                templateSelection: function(option) {
+                    if (!option.id) {
+                        return option.text;
+                    }
+                    return option.text;
+                },
+                escapeMarkup: function(markup) {
+                    return markup;
                 }
             });
         });

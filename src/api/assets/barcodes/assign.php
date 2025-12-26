@@ -10,6 +10,25 @@ $DBLIB->where("assets.assets_id", $_POST['id']);
 $asset = $DBLIB->getone("assets", ["assets_id", "assetTypes_id"]);
 if (!$asset) finish(false, ["message" => "Asset not found"]);
 
+// Check if barcode value is already in use globally (across all instances)
+$DBLIB->where("assetsBarcodes_value", $_POST['text']);
+$DBLIB->where("assetsBarcodes_deleted", 0);
+$DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
+$DBLIB->join("instances", "instances.instances_id=assets.instances_id", "LEFT");
+$existingBarcode = $DBLIB->getone("assetsBarcodes", [
+    "assetsBarcodes.assetsBarcodes_id",
+    "assets.assets_id",
+    "assets.assets_tag",
+    "instances.instances_name"
+]);
+
+if ($existingBarcode) {
+    finish(false, [
+        "code" => "BARCODE-ALREADY-EXISTS",
+        "message" => "This barcode is already assigned to asset '" . $existingBarcode['assets_tag'] . "' in instance '" . $existingBarcode['instances_name'] . "'. All barcodes must be unique."
+    ]);
+}
+
 $barcode = $DBLIB->insert("assetsBarcodes", [
     "assetsBarcodes_value" => $_POST['text'],
     "assetsBarcodes_type" => $_POST['type'],

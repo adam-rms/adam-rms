@@ -95,6 +95,13 @@ if (count($PAGEDATA['assets']) == 1) {
     $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_timestamp_added", "ASC");
     $PAGEDATA['assets'][0]['jobs'] = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.*", "maintenanceJobsStatuses.maintenanceJobsStatuses_name", "userCreator.users_userid AS userCreatorUserID", "userCreator.users_name1 AS userCreatorUserName1", "userCreator.users_name2 AS userCreatorUserName2", "userCreator.users_email AS userCreatorUserEMail", "userCreator.users_thumbnail AS userCreatorUserThumb", "userAssigned.users_name1 AS userAssignedUserName1", "userAssigned.users_userid AS userAssignedUserID", "userAssigned.users_name2 AS userAssignedUserName2", "userAssigned.users_email AS userAssignedUserEMail", "userAssigned.users_thumbnail AS userAssignedUserThumb"]);
 
+    //Scheduled Maintenance
+    $DBLIB->where("assetMaintenanceSchedules.assetMaintenanceSchedules_deleted", 0);
+    $DBLIB->where("assetMaintenanceSchedules.assets_id", $PAGEDATA['assets'][0]['assets_id']);
+    $DBLIB->where("assetMaintenanceSchedules.instances_id", $PAGEDATA['ASSET_INSTANCE']['instances_id']);
+    $DBLIB->orderBy("assetMaintenanceSchedules.assetMaintenanceSchedules_nextDue", "ASC");
+    $PAGEDATA['assets'][0]['schedules'] = $DBLIB->get('assetMaintenanceSchedules');
+
     //Links
     if ($PAGEDATA['assets'][0]['assets_linkedTo']) {
         $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_linkedTo']);
@@ -173,6 +180,20 @@ if (count($PAGEDATA['assets']) == 1) {
         $PAGEDATA['assets'][0]['assets_latestScanLocationName'] = 'Inside asset ' . $latestScan['assetTypes_name'] . ' (' . $latestScan['assets_tag'] . ')';
     } elseif (isset($latestScan['assetsBarcodes_customLocation'])) {
         $PAGEDATA['assets'][0]['assets_latestScanLocationName'] = $latestScan['assetsBarcodes_customLocation'];
+    }
+
+    // Load label printers for print button
+    if ($AUTH->instancePermissionCheck("ASSETS:LABEL_PRINTERS:VIEW")) {
+        $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+        $DBLIB->where("labelPrinters_deleted", 0);
+        $PAGEDATA['labelPrinters'] = $DBLIB->get("labelPrinters");
+
+        $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+        $DBLIB->where("labelTemplates_deleted", 0);
+        $PAGEDATA['labelTemplates'] = $DBLIB->get("labelTemplates");
+    } else {
+        $PAGEDATA['labelPrinters'] = [];
+        $PAGEDATA['labelTemplates'] = [];
     }
 
     //All Locations - to be used for setting an asset location manually

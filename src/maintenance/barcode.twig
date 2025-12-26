@@ -1,5 +1,6 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
     <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/zxing-js/v0.21.min.js"></script>
     <!--<script type="text/javascript" src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>-->
     <script>
@@ -41,39 +42,88 @@
             'UPC_EAN_EXTENSION'
         ];
     </script>
+    <style>
+        /* Location autocomplete styling - matching warehouse mode */
+        .ui-autocomplete {
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background-color: #ffffff;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            padding: 0;
+            list-style: none;
+            z-index: 1000;
+        }
+        .ui-menu-item {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .ui-menu-item-wrapper {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #212529;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+        .ui-menu-item-wrapper:hover,
+        .ui-state-active {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .ui-helper-hidden-accessible {
+            display: none;
+        }
+
+        /* Camera info accordion chevron rotation */
+        #cameraInfoChevron {
+            transition: transform 0.3s ease;
+        }
+        #cameraInfoBody.show + .card-header #cameraInfoChevron,
+        [aria-expanded="true"] #cameraInfoChevron {
+            transform: rotate(180deg);
+        }
+    </style>
 {% endblock %}
 {% block content %}
-    <div class="row" id="errorCardContainer" style="display: none;">
-        <div class="col-lg-6 offset-lg-3 col-md-12">
-            <div class="card">
-                <div class="card-header border-danger">
-                    <h3 class="card-title">⚠️ No Camera Found</h3>
-                </div>
-                <div class="card-body">
-                    <p>We couldn't find a camera attached to this device, so can't start scanning for barcodes.</p>
-                    <p>If you think you should have one available, try:</p>
-                    <ul>
-                        <li>Checking the camera is connected to the computer</li>
-                        <li>Checking this tab has access to the camera in your browser settings</li>
-                        <li>Checking your browser can access the camera in your computer settings</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col-12 col-md-6">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Barcode Scanner</h3>
                     <div class="card-tools">
-                        <button class="btn btn-sm btn-danger" title="Stop Scanning" id="barcodeScanResetButton" style="display: none;">Stop Scanning</button>
+                        <button class="btn btn-sm btn-danger" title="Stop Camera Scanner" id="barcodeScanResetButton" style="display: none;">Stop Camera Scanner</button>
                         <a class="btn btn-sm btn-info" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
                     </div>
                 </div>
                 <div class="card-body" id="barcodeScanVideoCard">
-                    <button class="btn btn-success btn-lg" title="Start Scanning" id="barcodeScanStartButton">Start Scanning</button>
-                    <video id="barcodeScanVideo" width="1920" style="border: 0;"></video>
+                    <button class="btn btn-success btn-lg" title="Start Camera Barcode Scanner" id="barcodeScanStartButton">Start Camera Barcode Scanner</button>
+                    <video id="barcodeScanVideo" width="100%" style="border: 0; display: none; max-width: 640px;"></video>
+
+                    <!-- Manual Barcode Input Section -->
+                    <div class="form-group mt-3">
+                        <label for="manualBarcodeInput">
+                            <i class="fas fa-keyboard"></i> Manual Barcode Entry
+                        </label>
+                        <div class="input-group input-group-lg">
+                            <input type="text"
+                                   class="form-control"
+                                   id="manualBarcodeInput"
+                                   placeholder="Scan or type barcode here..."
+                                   autocomplete="off">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="manualBarcodeSubmit">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted">
+                            Use a hardware barcode scanner or type manually, then press Enter
+                        </small>
+                    </div>
                 </div>
                 <div class="card-footer" id="barcodeScanSourceSelectPanel" style="display: none;">
                     <div class="input-group my-2">
@@ -83,6 +133,28 @@
                             </span>
                         </div>
                         <select class="form-control" id="barcodeScanSourceSelect"></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Not Available Accordion -->
+            <div class="card" id="errorCardContainer" style="display: none;">
+                <div class="card-header d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#cameraInfoBody" aria-expanded="false">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-info-circle"></i> Camera Not Available
+                    </h3>
+                    <i class="fas fa-chevron-down" id="cameraInfoChevron"></i>
+                </div>
+                <div class="collapse" id="cameraInfoBody">
+                    <div class="card-body">
+                        <p>No camera was detected, but you can still scan barcodes using:</p>
+                        <ul>
+                            <li><strong>Hardware Barcode Scanner:</strong> Use the manual entry field above - most scanners act like a keyboard</li>
+                            <li><strong>Manual Entry:</strong> Type barcode values directly into the input field</li>
+                        </ul>
+                        <p class="mb-0">
+                            <small>Hardware scanners will automatically enter the barcode when you scan. Just point and scan!</small>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -145,6 +217,49 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="completeMaintenanceModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Complete Scheduled Maintenance</h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Asset: <strong id="maintenance-asset-tag"></strong></p>
+                    <p>Maintenance Type: <strong id="maintenance-type"></strong></p>
+                    <p>Current Due Date: <strong id="maintenance-current-due"></strong></p>
+
+                    <div class="form-group">
+                        <label for="maintenance-next-due">Next Due Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="maintenance-next-due" required>
+                        <small class="form-text text-muted">Enter the new expiry date for this maintenance</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maintenance-interval">Update Interval (Optional)</label>
+                        <select class="form-control" id="maintenance-interval">
+                            <option value="">Keep current interval</option>
+                            <option value="3">3 months</option>
+                            <option value="6">6 months</option>
+                            <option value="12">12 months</option>
+                            <option value="24">24 months</option>
+                            <option value="36">36 months</option>
+                            <option value="60">60 months (5 years)</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" id="maintenance-schedule-id" value="">
+                    <input type="hidden" id="maintenance-asset-barcode" value="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="completeMaintenanceButton">Complete Maintenance</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         var barcodeScanLocation = {
             value: null,
@@ -158,7 +273,8 @@
                 return
             }
             var value = result.text
-            var format = BARCODEFORMATS[result.format]
+            // Handle null format from manual entry (auto-detect on backend)
+            var format = result.format !== null ? BARCODEFORMATS[result.format] : null
             if (barcodeScanLocation.type === false) {
                 scanParseLocation(value, format)
             } else {
@@ -167,30 +283,45 @@
         }
         function scanParseLocation(barcodeValue, barcodeType) {
             barcodeRequestInProgress = true
-            ajaxcall("assets/barcodes/search.php", {
+
+            // Build request data - only include type if not null
+            var requestData = {
                 "text": barcodeValue,
-                "type": barcodeType,
-                "scanned": true,
-            }, function (data) {
+                "scanned": "false"  // Hardware scanner, not camera
+            };
+            if (barcodeType !== null) {
+                requestData.type = barcodeType;
+            }
+
+            ajaxcall("assets/barcodes/search.php", requestData, function (data) {
                 if (data.response.location) {
                     setScanLocation(data.response.location["locationsBarcodes_id"], data.response.location['locations_name'], "barcode")
                     bootbox.alert("Location set to " + data.response.location['locations_name'], function () {
                         barcodeRequestInProgress = false
                     });
-                } else if (data.response.asset) {
-                    setScanLocation(data.response.asset['assets_id'], data.response.asset['assets_tag'] + " " + data.response.asset['assetTypes_name'], "asset")
-                    bootbox.alert("Location set to asset " + data.response.asset['assets_tag'] + " " + data.response.asset['assetTypes_name'], function () {
+                } else {
+                    bootbox.alert("Sorry, location not found. Please scan a location barcode or manually enter a location below.", function () {
                         barcodeRequestInProgress = false
                     });
-                } else {
-                    bootbox.alert("Sorry location not found");
-                    barcodeRequestInProgress = false
                 }
             });
         }
         function scanParseAsset(barcodeValue, barcodeType) {
             barcodeRequestInProgress = true
-            ajaxcall("assets/barcodes/search.php", {"text":barcodeValue,"type":barcodeType,"location":barcodeScanLocation.value,"locationType":barcodeScanLocation.type,"scanned": true}, function (assetResult) {
+
+            // Build request data - only include type if not null
+            var requestData = {
+                "text": barcodeValue,
+                "location": barcodeScanLocation.value,
+                "locationType": barcodeScanLocation.type,
+                "scanned": "false",  // Hardware scanner, not camera
+                "validation": "Location set manually"
+            };
+            if (barcodeType !== null) {
+                requestData.type = barcodeType;
+            }
+
+            ajaxcall("assets/barcodes/search.php", requestData, function (assetResult) {
                 if (assetResult.response.asset === false && assetResult.response.location !== false) {
                     bootbox.confirm({
                         title: "Location Barcode Scanned",
@@ -279,18 +410,83 @@
                         });
                     {% endif %}
                 } else if (assetResult.result && assetResult.response.asset) {
-                    appendAssetToList(assetResult.response.asset, assetResult.response.barcode)
+                    // Check for overdue scheduled maintenance errors
+                    if (assetResult.response.errors && assetResult.response.errors.length > 0) {
+                        const overdueError = assetResult.response.errors.find(e => e.type === 'scheduled_maintenance_overdue');
+
+                        if (overdueError) {
+                            bootbox.confirm({
+                                title: "Maintenance Overdue",
+                                message: `<strong>${assetResult.response.asset.assets_tag}</strong> is overdue for ${overdueError.message}.<br/><br/>
+                                         ${overdueError.description}<br/><br/>
+                                         Would you like to complete this maintenance now?`,
+                                buttons: {
+                                    confirm: {
+                                        label: 'Complete Now',
+                                        className: 'btn-success'
+                                    },
+                                    cancel: {
+                                        label: 'Cancel Scan',
+                                        className: 'btn-danger'
+                                    }
+                                },
+                                callback: function (result) {
+                                    if (result) {
+                                        showMaintenanceCompletionModal(
+                                            assetResult.response.asset,
+                                            overdueError,
+                                            barcodeValue
+                                        );
+                                    }
+                                    barcodeRequestInProgress = false;
+                                }
+                            });
+                            return; // Don't append to list
+                        }
+                    }
+
+                    // Normal flow - no blocking maintenance
+                    appendAssetToList(
+                        assetResult.response.asset,
+                        assetResult.response.barcode,
+                        assetResult.response  // Pass full response for status/location data
+                    )
                     barcodeRequestInProgress = false
                 }
             });
         }
-        function appendAssetToList(asset, barcode) {
+        function appendAssetToList(asset, barcode, scanData) {
+            // scanData contains: storageLocationUpdated, statusUpdated, assignment, oldStatus, newStatus
+
+            let statusBadge = '';
+            let locationBadge = '';
+            let cardClass = 'bg-light';
+
+            if (scanData && scanData.storageLocationUpdated) {
+                locationBadge = '<span class="badge badge-success ml-1">Location Updated</span>';
+            }
+
+            if (scanData && scanData.statusUpdated) {
+                statusBadge = `<span class="badge badge-warning ml-1">Status: ${scanData.oldStatus.assetsAssignmentsStatus_name} → ${scanData.newStatus.assetsAssignmentsStatus_name}</span>`;
+                cardClass = 'bg-warning';
+            } else if (scanData && scanData.assignment) {
+                statusBadge = `<a href="{{ CONFIG.ROOTURL }}/project/?id=${scanData.assignment.projects_id}" style="cursor: pointer;"><span class="badge badge-info ml-1">On Project: ${scanData.assignment.projects_name}</span></a>`;
+            }
+
             $("#assetsScannedList").prepend(`
                 <div class="col-auto d-flex align-items-stretch" style="padding: 10px;">
-                    <div class="card bg-light">
+                    <div class="card ${cardClass}">
                         <div class="card-body" style="max-width: 250px;">
                             <h2 class="lead"><b>${asset.assets_tag}</b> ${asset.assetTypes_name}</h2>
-                            <p class="text-muted text-sm m-0">${asset.assetCategoriesGroups_name} - ${asset.assetCategories_name}<br/>${asset.manufacturers_name}<br/>${new Date().toLocaleTimeString()}</p>
+                            <p class="text-muted text-sm m-0">
+                                ${asset.assetCategoriesGroups_name} - ${asset.assetCategories_name}<br/>
+                                ${asset.manufacturers_name}<br/>
+                                ${new Date().toLocaleTimeString()}
+                            </p>
+                            <div class="mt-2">
+                                ${locationBadge}
+                                ${statusBadge}
+                            </div>
                         </div>
                         <div class="card-footer">
                             <div class="text-right">
@@ -320,7 +516,7 @@
                         label: 'No',
                         className: 'btn-success'
                     }
-                
+
             },
             callback: function (result) {
                 if (result) {
@@ -332,6 +528,62 @@
                     });
                 }
             }});
+        }
+        function showMaintenanceCompletionModal(asset, overdueError, barcode) {
+            // Populate modal with asset and maintenance info
+            $("#maintenance-asset-tag").text(asset.assets_tag);
+            $("#maintenance-type").text(overdueError.message);
+            $("#maintenance-current-due").text(overdueError.description);
+            $("#maintenance-schedule-id").val(overdueError.schedule_id);
+            $("#maintenance-asset-barcode").val(barcode);
+
+            // Set default next due date to today
+            const today = new Date().toISOString().split('T')[0];
+            $("#maintenance-next-due").val(today);
+
+            // Reset interval dropdown
+            $("#maintenance-interval").val("");
+
+            // Show the modal
+            $("#completeMaintenanceModal").modal('show');
+        }
+        function completeMaintenance() {
+            const scheduleId = $("#maintenance-schedule-id").val();
+            const nextDue = $("#maintenance-next-due").val();
+            const intervalMonths = $("#maintenance-interval").val();
+            const barcode = $("#maintenance-asset-barcode").val();
+
+            if (!nextDue) {
+                bootbox.alert("Please enter a next due date");
+                return;
+            }
+
+            // Build request data
+            const requestData = {
+                "assetMaintenanceSchedules_id": scheduleId,
+                "nextDue": nextDue
+            };
+
+            if (intervalMonths) {
+                requestData.intervalMonths = intervalMonths;
+            }
+
+            // Call the complete schedule API
+            ajaxcall("maintenance/schedules/completeSchedule.php", requestData, function (result) {
+                if (result.result) {
+                    $("#completeMaintenanceModal").modal('hide');
+                    bootbox.alert({
+                        title: "Maintenance Completed",
+                        message: "Maintenance has been completed successfully. Next due date: " + nextDue,
+                        callback: function() {
+                            // Re-scan the asset to add it to the list now that it's unblocked
+                            scanParseAsset(barcode, null);
+                        }
+                    });
+                } else {
+                    bootbox.alert("Failed to complete maintenance: " + (result.error && result.error.message ? result.error.message : "Unknown error"));
+                }
+            });
         }
         function setScanLocation(value, name, type) {
             localStorage.setItem("adamrms-barcode-scan-location-value", value)
@@ -346,7 +598,13 @@
             $("#currentLocationText").html("Current Location: " + name)
             $("#assetsScannedList").parent().show()
             $("#currentLocationCard").show()
-            $("#barcodeScanStartButton").html("Start Scanning Assets")
+            $("#barcodeScanStartButton").html("Start Camera Barcode Scanner")
+
+            // Enable barcode input when location is set
+            $("#manualBarcodeInput").prop("disabled", false);
+            $("#manualBarcodeSubmit").prop("disabled", false);
+            $("#manualBarcodeInput").attr("placeholder", "Scan or type barcode here...");
+            $("#manualBarcodeInput").focus();
         }
         function clearScanLocation() {
             localStorage.removeItem("adamrms-barcode-scan-location-value")
@@ -357,10 +615,15 @@
                 name: null,
                 type: false
             }
-            $("#barcodeScanStartButton").html("Start Scanning to Set Location")
+            $("#barcodeScanStartButton").html("Start Camera Barcode Scanner")
             $("#assetsScannedList").parent().hide()
             $("#setLocationCard").show()
             $("#currentLocationCard").hide()
+
+            // Disable barcode input when location is cleared
+            $("#manualBarcodeInput").prop("disabled", true);
+            $("#manualBarcodeSubmit").prop("disabled", true);
+            $("#manualBarcodeInput").attr("placeholder", "Set location first before scanning assets");
         }
         $(document).ready(function () {
             if (localStorage.getItem("adamrms-barcode-scan-location-value") !== null && localStorage.getItem("adamrms-barcode-scan-location-name") !== null && localStorage.getItem("adamrms-barcode-scan-location-type") !== null) {
@@ -372,10 +635,13 @@
                 clearScanLocation()
             })
             $("#setCustomLocationButton").on('click', function() {
-                setScanLocation($("#customLocationText").val(), $("#customLocationText").val(), "custom")
+                setScanLocation($("#customLocationText").val(), $("#customLocationText").val(), "Custom")
             })
             $('body').on('click', ".deleteBarcodeButton[data-barcode]", function() {
                 deleteBarcode($(this).data("barcode"))
+            })
+            $("#completeMaintenanceButton").on('click', function() {
+                completeMaintenance()
             })
             $("#selectAnAssetToAssign-assets").select2({
                 tags: false,
@@ -413,11 +679,33 @@
                 }
             });
             $("#selectAnAssetToAssign-button").on("click", function() {
-                ajaxcall("assets/barcodes/assign.php", {
-                    "id": $("#selectAnAssetToAssign-assets").val(),
-                    "text": $("#selectAnAssetToAssign-barcode").val(),
-                    "type": $("#selectAnAssetToAssign-barcodetype").val()
-                }, function (result) {
+                const barcodeValue = $("#selectAnAssetToAssign-barcode").val();
+                const barcodeType = $("#selectAnAssetToAssign-barcodetype").val();
+                const assetId = $("#selectAnAssetToAssign-assets").val();
+
+                // First, validate that the barcode isn't already in use globally
+                ajaxcall("assets/barcodes/search.php", {
+                    "text": barcodeValue,
+                    "type": barcodeType,
+                    "globalSearch": "true"
+                }, function (validationResult) {
+                    if (validationResult.response.barcode) {
+                        // Barcode already exists - show error
+                        const existingAssetTag = validationResult.response.barcode.assets_tag || 'Unknown';
+                        const existingInstance = validationResult.response.barcode.instances_name || 'Unknown Instance';
+                        bootbox.alert({
+                            title: "Barcode Already Exists",
+                            message: `This barcode is already assigned to asset '<strong>${existingAssetTag}</strong>' in instance '<strong>${existingInstance}</strong>'.<br/><br/>All barcodes must be unique across the system.`
+                        });
+                        return;
+                    }
+
+                    // Barcode is unique - proceed with assignment
+                    ajaxcall("assets/barcodes/assign.php", {
+                        "id": assetId,
+                        "text": barcodeValue,
+                        "type": barcodeType
+                    }, function (result) {
                     $('#selectAnAssetToAssign').modal('hide');
                     {% if "ASSETS:EDIT"|instancePermissions %}
                     bootbox.confirm({
@@ -455,12 +743,89 @@
                     $("#selectAnAssetToAssign-barcode").val('');
                     $("#selectAnAssetToAssign-barcodetype").val('');
                     {% endif %}
-                    
+
+                    });
                 });
             });
 
-            const barcodeScanVideoWidth = $("#barcodeScanVideoCard").width()
-            $("#barcodeScanVideo").attr("width", barcodeScanVideoWidth)
+            // Manual barcode input handler - Enter key
+            $('#manualBarcodeInput').on('keydown', function(e) {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+
+                const barcodeValue = $(this).val().trim();
+                if (barcodeValue.length === 0) return;
+
+                // Call existing barcode handler with manual input
+                // Format is set to null - backend will auto-detect
+                barcodeScanned({
+                    text: barcodeValue,
+                    format: null  // Auto-detect on backend
+                });
+
+                // Clear input and refocus for next scan
+                $(this).val('');
+                $(this).focus();
+            });
+
+            // Manual barcode input handler - Button click
+            $('#manualBarcodeSubmit').on('click', function() {
+                const barcodeValue = $('#manualBarcodeInput').val().trim();
+                if (barcodeValue.length === 0) return;
+
+                barcodeScanned({
+                    text: barcodeValue,
+                    format: null
+                });
+
+                $('#manualBarcodeInput').val('');
+                $('#manualBarcodeInput').focus();
+            });
+
+            // Auto-focus manual input on page load for hardware scanners
+            $('#manualBarcodeInput').focus();
+
+            // Disable barcode input until location is set
+            if (barcodeScanLocation.type === false) {
+                $("#manualBarcodeInput").prop("disabled", true);
+                $("#manualBarcodeSubmit").prop("disabled", true);
+                $("#manualBarcodeInput").attr("placeholder", "Set location first before scanning assets");
+            }
+
+            // Initialize location autocomplete
+            $('#customLocationText').autocomplete({
+                minLength: 1,
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{{ CONFIG.ROOTURL }}/api/locations/search.php",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function(data) {
+                            if (data.result && data.response) {
+                                response(data.response);
+                            } else {
+                                response([]);
+                            }
+                        },
+                        error: function() {
+                            response([]);
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    $(this).val(ui.item.value);
+                    return false;
+                },
+                open: function() {
+                    // Match dropdown width to input width
+                    $(this).autocomplete('widget').css('width', $(this).outerWidth() + 'px');
+                }
+            });
+
+            // Video width is now set via CSS (max-width: 640px, width: 100%)
 
             const codeReader = new ZXing.BrowserMultiFormatReader();
 
@@ -495,6 +860,7 @@
                     document.getElementById('barcodeScanStartButton').addEventListener('click', () => {
                         $("#barcodeScanResetButton").show()
                         $("#barcodeScanStartButton").hide()
+                        $("#barcodeScanVideo").show()
                         codeReader.decodeFromVideoDevice(selectedDeviceId, 'barcodeScanVideo', (result, err) => {
                         if (result) {
                             barcodeScanned(result)
@@ -509,6 +875,7 @@
                     })
                     document.getElementById('barcodeScanResetButton').addEventListener('click', () => {
                         $("#barcodeScanResetButton").hide()
+                        $("#barcodeScanVideo").hide()
                         codeReader.reset()
                         $("#barcodeScanStartButton").show()
                     })
@@ -530,12 +897,24 @@
             
 
             function handleDeviceHasNoCamera(){
-                // This device doesn't have a camera, show a nicer message
-                $('#barcodeScanStartButton').prop("disabled",true); // Disable scanning button
-                $('#customLocationText').prop("disabled",true); // Disable Location text input
-                $('#setCustomLocationButton').prop("disabled",true); // Disable Location button
+                // Hide camera-specific UI only, keep manual input enabled
+                $('#barcodeScanStartButton').hide(); // Hide camera scanning button
+                $('#barcodeScanVideo').hide(); // Hide video element
+                $('#barcodeScanSourceSelectPanel').hide(); // Hide camera selector
+
+                // DO NOT disable location inputs - they work with manual scanning
+                // Location inputs remain enabled for hardware scanner use
+
+                // Show the camera info accordion
                 $('#errorCardContainer').show();
             }
+
+            // Handle chevron rotation for camera info accordion
+            $('#cameraInfoBody').on('show.bs.collapse', function() {
+                $('#cameraInfoChevron').css('transform', 'rotate(180deg)');
+            }).on('hide.bs.collapse', function() {
+                $('#cameraInfoChevron').css('transform', 'rotate(0deg)');
+            });
 
         })
     </script>

@@ -24,6 +24,9 @@
     #navItemQuickDispatch button {
         background-color: transparent;
     }
+    #warehouse-mode-tab {
+        color: #000000 !important;
+    }
 </style>
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0 card-tabs">
@@ -44,6 +47,11 @@
                         <i class="fas fas fa-shipping-fast"></i>
                     </button>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="warehouse-mode-tab" data-toggle="pill" href="#warehouse-mode" role="tab" aria-controls="warehouse-mode" title="Warehouse Mode">
+                        <i class="fas fa-barcode"></i> Warehouse Mode
+                    </a>
+                </li>
             {% endif %}
         </ul>
     </div>
@@ -59,6 +67,12 @@
                 {% endembed %}
             </div>
             {% endfor %}
+            {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+            <div class="tab-pane p2" id="warehouse-mode" role="tabpanel" aria-labelledby="warehouse-mode-tab">
+                {% embed 'project/project_warehouseMode.twig' %}
+                {% endembed %}
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -238,5 +238,19 @@
             </div>
         </div>
         {% endif %}
+        {% if "ASSETS:LABEL_PRINTERS:VIEW"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Label Printers</h3>
+                    <p>Configure label printers and templates.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-print"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/labelPrinters.php" class="small-box-footer">Manage Label Printers <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}

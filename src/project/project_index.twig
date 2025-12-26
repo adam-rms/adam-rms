@@ -104,7 +104,19 @@
                                 {% endif %}
                                 <li class="nav-item"><a class="nav-link" href="#file-view" data-toggle="tab"><i class="fas fa-file-alt"></i> {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and project.projectsTypes_config_files == 1 %}Files, {% endif %}{% if project.projectsTypes_config_notes == 1 %}Notes, {% endif %} Invoices & Quotes</a></li>
                                 {% if "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 %}
-                                    <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab"><i class="fas fa-pound-sign"></i> Finance</a></li>
+                                    {% set currencyIcons = {
+                                        'GBP': 'fa-pound-sign',
+                                        'USD': 'fa-dollar-sign',
+                                        'AUD': 'fa-dollar-sign',
+                                        'CAD': 'fa-dollar-sign',
+                                        'NZD': 'fa-dollar-sign',
+                                        'EUR': 'fa-euro-sign',
+                                        'JPY': 'fa-yen-sign',
+                                        'CNY': 'fa-yen-sign',
+                                        'INR': 'fa-rupee-sign'
+                                    } %}
+                                    {% set currencyIcon = currencyIcons[USERDATA.instance.instances_config_currency] ?? 'fa-dollar-sign' %}
+                                    <li class="nav-item"><a class="nav-link" href="#payments-view" data-toggle="tab"><i class="fas {{ currencyIcon }}"></i> Finance</a></li>
                                 {% endif %}
                                 {% if "PROJECTS:PROJECT_CREW:VIEW"|instancePermissions and project.projectsTypes_config_crew == 1 %}
                                     <li class="nav-item"><a class="nav-link" href="#crew-view" data-toggle="tab"><i class="fas fa-users"></i> Crew</a></li>

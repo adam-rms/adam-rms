@@ -1,0 +1,464 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-print"></i> Label Printers
+        </h3>
+        {% if "ASSETS:LABEL_PRINTERS:CREATE"|instancePermissions %}
+        <div class="card-tools">
+          <button class="btn btn-primary" id="addPrinterBtn">
+            <i class="fas fa-plus"></i> Add Printer
+          </button>
+        </div>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <table class="table table-hover" id="printersTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Manufacturer</th>
+              <th>Model</th>
+              <th>CUPS Queue</th>
+              <th>CUPS Server</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="printersList">
+            <tr>
+              <td colspan="6" class="text-center text-muted">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-tags"></i> Label Templates
+        </h3>
+        {% if "ASSETS:LABEL_PRINTERS:CREATE"|instancePermissions %}
+        <div class="card-tools">
+          <button class="btn btn-primary" id="addTemplateBtn">
+            <i class="fas fa-plus"></i> Add Template
+          </button>
+        </div>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <table class="table table-hover" id="templatesTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Size</th>
+              <th>Manufacturer</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="templatesList">
+            <tr>
+              <td colspan="5" class="text-center text-muted">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Printer Modal -->
+<div class="modal fade" id="addPrinterModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Label Printer</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="addPrinterForm">
+          <div class="form-group">
+            <label>Printer Name</label>
+            <input type="text" class="form-control" name="name" required
+                   placeholder="e.g., Main Label Printer">
+          </div>
+          <div class="form-group">
+            <label>Manufacturer</label>
+            <select class="form-control" name="manufacturer">
+              <option value="brother" selected>Brother</option>
+              <option value="zebra">Zebra</option>
+              <option value="dymo">Dymo</option>
+              <option value="generic">Generic</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Model</label>
+            <input type="text" class="form-control" name="model"
+                   placeholder="e.g., PT-P700" value="PT-P700">
+          </div>
+          <div class="form-group">
+            <label>CUPS Queue Name</label>
+            <input type="text" class="form-control" name="cupsName" required
+                   placeholder="e.g., Brother_PT_P700">
+            <small class="form-text text-muted">
+              The printer name as shown in CUPS (run 'lpstat -p' to see available printers)
+            </small>
+          </div>
+          <div class="form-group">
+            <label>CUPS Server (Optional)</label>
+            <input type="text" class="form-control" name="cupsServer"
+                   placeholder="e.g., raspberrypi.local:631">
+            <small class="form-text text-muted">
+              Leave blank if printer is on local CUPS server
+            </small>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="savePrinterBtn">Save Printer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Template Modal -->
+<div class="modal fade" id="addTemplateModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Label Template</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="addTemplateForm">
+          <div class="form-group">
+            <label>Template Name</label>
+            <input type="text" class="form-control" name="name" required
+                   placeholder="e.g., 24mm Square - Full Info">
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" name="description" rows="2"
+                      placeholder="e.g., Square label with barcode and QR code"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Width (mm)</label>
+                <input type="number" class="form-control" name="width" required value="24">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Height (mm)</label>
+                <input type="number" class="form-control" name="height" value="0">
+                <small class="form-text text-muted">0 = continuous</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Orientation</label>
+                <select class="form-control" name="orientation">
+                  <option value="horizontal">Horizontal</option>
+                  <option value="vertical">Vertical</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Template JSON</label>
+            <textarea class="form-control" name="template" rows="10" required
+                      style="font-family: monospace; font-size: 12px;"
+                      placeholder='{"elements": [...]}'></textarea>
+            <small class="form-text text-muted">
+              See documentation for template format. Element types: text, barcode, qrcode
+            </small>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveTemplateBtn">Save Template</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    loadPrinters();
+    loadTemplates();
+
+    function loadPrinters() {
+        $.post("{{ CONFIG.ROOTURL }}/api/labelPrinters/list.php", function(data) {
+            if (data.result && data.response) {
+                renderPrinters(data.response);
+            } else {
+                $("#printersList").html('<tr><td colspan="6" class="text-center text-danger">Failed to load printers</td></tr>');
+            }
+        });
+    }
+
+    function renderPrinters(printers) {
+        if (printers.length === 0) {
+            $("#printersList").html('<tr><td colspan="6" class="text-center text-muted">No printers configured</td></tr>');
+            return;
+        }
+
+        let html = '';
+        printers.forEach(function(printer) {
+            html += `<tr>
+                <td><strong>${escapeHtml(printer.labelPrinters_name)}</strong></td>
+                <td>${escapeHtml(printer.labelPrinters_manufacturer)}</td>
+                <td>${escapeHtml(printer.labelPrinters_model)}</td>
+                <td><code>${escapeHtml(printer.labelPrinters_cupsName)}</code></td>
+                <td>${printer.labelPrinters_cupsServer ? escapeHtml(printer.labelPrinters_cupsServer) : '<span class="text-muted">Local</span>'}</td>
+                <td>
+                    {% if "ASSETS:LABEL_PRINTERS:EDIT"|instancePermissions %}
+                    <button class="btn btn-sm btn-primary editPrinterBtn" data-id="${printer.labelPrinters_id}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    {% endif %}
+                    {% if "ASSETS:LABEL_PRINTERS:DELETE"|instancePermissions %}
+                    <button class="btn btn-sm btn-danger deletePrinterBtn" data-id="${printer.labelPrinters_id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>`;
+        });
+        $("#printersList").html(html);
+    }
+
+    function loadTemplates() {
+        $.post("{{ CONFIG.ROOTURL }}/api/labelPrinters/templates/list.php", function(data) {
+            if (data.result && data.response) {
+                renderTemplates(data.response);
+            } else {
+                $("#templatesList").html('<tr><td colspan="5" class="text-center text-danger">Failed to load templates</td></tr>');
+            }
+        });
+    }
+
+    function renderTemplates(templates) {
+        if (templates.length === 0) {
+            $("#templatesList").html('<tr><td colspan="5" class="text-center text-muted">No templates configured</td></tr>');
+            return;
+        }
+
+        let html = '';
+        templates.forEach(function(template) {
+            let size = template.labelTemplates_width + 'mm';
+            if (template.labelTemplates_height > 0) {
+                size += ' × ' + template.labelTemplates_height + 'mm';
+            } else {
+                size += ' (continuous)';
+            }
+
+            html += `<tr>
+                <td><strong>${escapeHtml(template.labelTemplates_name)}</strong></td>
+                <td>${template.labelTemplates_description ? escapeHtml(template.labelTemplates_description) : '<span class="text-muted">-</span>'}</td>
+                <td>${size}</td>
+                <td>${escapeHtml(template.labelTemplates_manufacturer)}</td>
+                <td>
+                    {% if "ASSETS:LABEL_PRINTERS:EDIT"|instancePermissions %}
+                    <button class="btn btn-sm btn-primary editTemplateBtn" data-id="${template.labelTemplates_id}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    {% endif %}
+                    {% if "ASSETS:LABEL_PRINTERS:DELETE"|instancePermissions %}
+                    <button class="btn btn-sm btn-danger deleteTemplateBtn" data-id="${template.labelTemplates_id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>`;
+        });
+        $("#templatesList").html(html);
+    }
+
+    let editingPrinterId = null;
+    let editingTemplateId = null;
+
+    // Add Printer
+    $("#addPrinterBtn").click(function() {
+        editingPrinterId = null;
+        $("#addPrinterForm")[0].reset();
+        $("#addPrinterModal .modal-title").text('Add Label Printer');
+        $("#addPrinterModal").modal('show');
+    });
+
+    // Edit Printer
+    $(document).on('click', '.editPrinterBtn', function() {
+        let id = $(this).data('id');
+        editingPrinterId = id;
+
+        // Load printer data
+        $.post("{{ CONFIG.ROOTURL }}/api/labelPrinters/list.php", function(data) {
+            if (data.result && data.response) {
+                let printer = data.response.find(p => p.labelPrinters_id == id);
+                if (printer) {
+                    $("#addPrinterForm [name='name']").val(printer.labelPrinters_name);
+                    $("#addPrinterForm [name='manufacturer']").val(printer.labelPrinters_manufacturer);
+                    $("#addPrinterForm [name='model']").val(printer.labelPrinters_model);
+                    $("#addPrinterForm [name='cupsName']").val(printer.labelPrinters_cupsName);
+                    $("#addPrinterForm [name='cupsServer']").val(printer.labelPrinters_cupsServer || '');
+                    $("#addPrinterModal .modal-title").text('Edit Label Printer');
+                    $("#addPrinterModal").modal('show');
+                }
+            }
+        });
+    });
+
+    $("#savePrinterBtn").click(function() {
+        let formData = $("#addPrinterForm").serialize();
+        let url = "{{ CONFIG.ROOTURL }}/api/labelPrinters/create.php";
+
+        if (editingPrinterId) {
+            formData += "&labelPrinters_id=" + editingPrinterId;
+            url = "{{ CONFIG.ROOTURL }}/api/labelPrinters/edit.php";
+        }
+
+        $.post(url, formData, function(data) {
+            if (data.result) {
+                $("#addPrinterModal").modal('hide');
+                loadPrinters();
+                showNotification('success', editingPrinterId ? 'Printer updated successfully' : 'Printer added successfully');
+                editingPrinterId = null;
+            } else {
+                showNotification('error', 'Failed to save printer: ' + (data.error ? data.error.message : 'Unknown error'));
+            }
+        });
+    });
+
+    // Add Template
+    $("#addTemplateBtn").click(function() {
+        editingTemplateId = null;
+        $("#addTemplateForm")[0].reset();
+        $("#addTemplateModal .modal-title").text('Add Label Template');
+        $("#addTemplateModal").modal('show');
+    });
+
+    // Edit Template
+    $(document).on('click', '.editTemplateBtn', function() {
+        let id = $(this).data('id');
+        editingTemplateId = id;
+
+        // Load template data
+        $.post("{{ CONFIG.ROOTURL }}/api/labelPrinters/templates/list.php", function(data) {
+            if (data.result && data.response) {
+                let template = data.response.find(t => t.labelTemplates_id == id);
+                if (template) {
+                    $("#addTemplateForm [name='name']").val(template.labelTemplates_name);
+                    $("#addTemplateForm [name='description']").val(template.labelTemplates_description || '');
+                    $("#addTemplateForm [name='width']").val(template.labelTemplates_width);
+                    $("#addTemplateForm [name='height']").val(template.labelTemplates_height);
+                    $("#addTemplateForm [name='orientation']").val(template.labelTemplates_orientation);
+                    $("#addTemplateForm [name='template']").val(template.labelTemplates_template);
+                    $("#addTemplateModal .modal-title").text('Edit Label Template');
+                    $("#addTemplateModal").modal('show');
+                }
+            }
+        });
+    });
+
+    $("#saveTemplateBtn").click(function() {
+        let formData = new FormData(document.getElementById('addTemplateForm'));
+
+        // Parse and validate JSON
+        let templateJson = formData.get('template');
+        try {
+            let parsed = JSON.parse(templateJson);
+            formData.set('template', parsed);
+        } catch (e) {
+            showNotification('error', 'Invalid JSON in template: ' + e.message);
+            return;
+        }
+
+        let url = "{{ CONFIG.ROOTURL }}/api/labelPrinters/templates/create.php";
+        let dataObj = Object.fromEntries(formData);
+
+        if (editingTemplateId) {
+            dataObj.labelTemplates_id = editingTemplateId;
+            url = "{{ CONFIG.ROOTURL }}/api/labelPrinters/templates/edit.php";
+        }
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: dataObj,
+            success: function(data) {
+                if (data.result) {
+                    $("#addTemplateModal").modal('hide');
+                    loadTemplates();
+                    showNotification('success', editingTemplateId ? 'Template updated successfully' : 'Template added successfully');
+                    editingTemplateId = null;
+                } else {
+                    showNotification('error', 'Failed to save template: ' + (data.error ? data.error.message : 'Unknown error'));
+                }
+            }
+        });
+    });
+
+    // Delete handlers
+    $(document).on('click', '.deletePrinterBtn', function() {
+        if (!confirm('Are you sure you want to delete this printer?')) return;
+
+        let id = $(this).data('id');
+        $.post("{{ CONFIG.ROOTURL }}/api/labelPrinters/delete.php", {labelPrinters_id: id}, function(data) {
+            if (data.result) {
+                loadPrinters();
+                showNotification('success', 'Printer deleted');
+            } else {
+                showNotification('error', 'Failed to delete printer');
+            }
+        });
+    });
+
+    $(document).on('click', '.deleteTemplateBtn', function() {
+        if (!confirm('Are you sure you want to delete this template?')) return;
+
+        let id = $(this).data('id');
+        $.post("{{ CONFIG.ROOTURL }}/api/labelPrinters/templates/delete.php", {labelTemplates_id: id}, function(data) {
+            if (data.result) {
+                loadTemplates();
+                showNotification('success', 'Template deleted');
+            } else {
+                showNotification('error', 'Failed to delete template');
+            }
+        });
+    });
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        let div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showNotification(type, message) {
+        // Use existing notification system
+        if (typeof displayResponse !== 'undefined') {
+            displayResponse(type === 'success', message);
+        } else {
+            alert(message);
+        }
+    }
+});
+</script>
+
+{% endblock %}

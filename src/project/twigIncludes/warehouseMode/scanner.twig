@@ -1,0 +1,197 @@
+<div class="warehouse-scanner" data-instanceid="{{ instanceid }}">
+    <!-- Combined Form Row -->
+    <div class="row">
+        <!-- Status Selection -->
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="warehouse-status-{{ instanceid }}">Set Status to:</label>
+                <select class="form-control warehouse-status-select" id="warehouse-status-{{ instanceid }}" data-instanceid="{{ instanceid }}">
+                    {% for status in BOARDSTATUSES[instanceid] %}
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">
+                            {{ status['assetsAssignmentsStatus_name'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Location Input (Optional) -->
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="warehouse-location-{{ instanceid }}">Location (Optional):</label>
+                <input type="text" class="form-control warehouse-location-input"
+                       id="warehouse-location-{{ instanceid }}"
+                       placeholder="Enter location"
+                       data-instanceid="{{ instanceid }}">
+            </div>
+        </div>
+
+        <!-- Barcode Input -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="warehouse-barcode-{{ instanceid }}">Scan Asset Barcode/Tag:</label>
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control warehouse-barcode-input"
+                           id="warehouse-barcode-{{ instanceid }}"
+                           data-instanceid="{{ instanceid }}"
+                           placeholder="Scan or type asset tag here..."
+                           autofocus>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary warehouse-scan-button" type="button">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Scanned Assets Table -->
+    <div class="warehouse-scanned-assets" data-instanceid="{{ instanceid }}">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>Scanned Assets (<span class="warehouse-asset-count">0</span>)</h4>
+            <small class="text-muted">Instance: {{ USERDATA.instance.instances_name }}</small>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Asset Tag</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Current Location</th>
+                        <th>Current Status</th>
+                        <th>Warnings</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="warehouse-assets-tbody" data-instanceid="{{ instanceid }}">
+                    <!-- Dynamically populated via JavaScript -->
+                    <tr class="text-muted">
+                        <td colspan="7" class="text-center">No assets scanned yet. Start scanning to add assets to the list.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Summary and Action Buttons Row -->
+    <div class="row mt-3 warehouse-summary" style="display: none;">
+        <div class="col-md-6">
+            <small class="text-muted">
+                <span class="warehouse-valid-count">0</span> ready,
+                <span class="warehouse-warning-count">0</span> warnings,
+                <span class="warehouse-error-count">0</span> errors
+            </small>
+        </div>
+        <div class="col-md-6 text-right">
+            <button class="btn btn-success warehouse-finalize-btn"
+                    data-instanceid="{{ instanceid }}"
+                    disabled>
+                <i class="fas fa-check"></i> Finalize Scan & Apply Changes
+            </button>
+            <button class="btn btn-outline-secondary warehouse-clear-btn"
+                    data-instanceid="{{ instanceid }}">
+                <i class="fas fa-times"></i> Clear All
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal for Unassigned Assets -->
+<div class="modal fade" id="warehouseUnassignedModal-{{ instanceid }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Asset Not Assigned to Project</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>The asset <strong class="warehouse-modal-asset-tag"></strong>
+                   (<span class="warehouse-modal-asset-name"></span>) is not assigned to this project.</p>
+                <p>Would you like to add it to the project?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Adding the asset will check for date conflicts and maintenance blocks.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Cancel - Don't Add
+                </button>
+                <button type="button" class="btn btn-primary warehouse-modal-add-btn">
+                    <i class="fas fa-plus"></i> Add to Project
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .warehouse-asset-row-valid {
+        background-color: #d4edda !important;
+    }
+    .warehouse-asset-row-warning {
+        background-color: #fff3cd !important;
+    }
+    .warehouse-asset-row-error {
+        background-color: #f8d7da !important;
+    }
+    .warehouse-warning-badge {
+        cursor: pointer;
+    }
+    .warehouse-finalize-btn:disabled {
+        cursor: not-allowed;
+    }
+    .warehouse-scanned-assets {
+        margin-top: 20px;
+    }
+
+    /* Toast notification styling */
+    .swal2-toast .swal2-title {
+        color: inherit !important;
+    }
+    .swal2-toast .swal2-html-container {
+        color: inherit !important;
+    }
+
+    /* Location autocomplete styling */
+    .ui-autocomplete {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        padding: 0;
+        list-style: none;
+        z-index: 1000;
+    }
+    .ui-menu-item {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .ui-menu-item-wrapper {
+        display: block;
+        padding: 0.5rem 1rem;
+        color: #212529;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+    }
+    .ui-menu-item-wrapper:hover,
+    .ui-state-active {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+    .ui-helper-hidden-accessible {
+        display: none;
+    }
+</style>

@@ -117,6 +117,44 @@ function generateNewTag()
 function assetFlagsAndBlocks($assetid)
 {
     global $DBLIB;
+
+    $return = ["BLOCK" => [], "FLAG" => [], "COUNT" => ["BLOCK" => 0, "FLAG" => 0]];
+
+    // 1. Check for scheduled maintenance that's overdue AND blocking
+    $DBLIB->where("assetMaintenanceSchedules.assets_id", $assetid);
+    $DBLIB->where("assetMaintenanceSchedules.assetMaintenanceSchedules_deleted", 0);
+    $DBLIB->where("assetMaintenanceSchedules.assetMaintenanceSchedules_enabled", 1);
+    $DBLIB->where("assetMaintenanceSchedules.assetMaintenanceSchedules_blockWhenOverdue", 1);
+    $DBLIB->where("assetMaintenanceSchedules.assetMaintenanceSchedules_nextDue <= NOW()");
+    $overdueSchedules = $DBLIB->get('assetMaintenanceSchedules');
+
+    // Add overdue scheduled maintenance to blocks
+    // Auto-create maintenance jobs on-demand if configured
+    if ($overdueSchedules) {
+        require_once __DIR__ . '/libs/Maintenance/ScheduledMaintenanceCreator.php';
+        $scheduledMaintenanceCreator = new ScheduledMaintenanceCreator();
+
+        foreach ($overdueSchedules as $schedule) {
+            $jobId = null;
+
+            // Try to create a job on-demand if auto-create is enabled
+            if ($schedule['assetMaintenanceSchedules_autoCreateJob'] == 1) {
+                $jobId = $scheduledMaintenanceCreator->createJobForSchedule($schedule['assetMaintenanceSchedules_id']);
+            }
+
+            $return['BLOCK'][] = [
+                'maintenanceJobs_id' => $jobId,
+                'maintenanceJobs_title' => $schedule['assetMaintenanceSchedules_type'] . " Overdue",
+                'maintenanceJobs_faultDescription' => "Due: " . date('d/m/Y', strtotime($schedule['assetMaintenanceSchedules_nextDue'])),
+                'maintenanceJobsStatuses_name' => 'Overdue',
+                'assetMaintenanceSchedules_id' => $schedule['assetMaintenanceSchedules_id'],
+                'isScheduledMaintenance' => true,
+            ];
+            $return['COUNT']['BLOCK'] += 1;
+        }
+    }
+
+    // 2. Check for existing maintenance jobs (original logic)
     $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
     $DBLIB->where("(maintenanceJobs.maintenanceJobs_blockAssets = 1 OR maintenanceJobs.maintenanceJobs_flagAssets = 1)");
     $DBLIB->where("(FIND_IN_SET(" . $assetid . ", maintenanceJobs.maintenanceJobs_assets) > 0)");
@@ -124,19 +162,21 @@ function assetFlagsAndBlocks($assetid)
     //$DBLIB->join("users AS userCreator", "userCreator.users_userid=maintenanceJobs.maintenanceJobs_user_creator", "LEFT");
     //$DBLIB->join("users AS userAssigned", "userAssigned.users_userid=maintenanceJobs.maintenanceJobs_user_assignedTo", "LEFT");
     $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_priority", "DESC");
-    $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.maintenanceJobs_id", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_title", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_flagAssets", "maintenanceJobs.maintenanceJobs_blockAssets", "maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
-    $return = ["BLOCK" => [], "FLAG" => [], "COUNT" => ["BLOCK" => 0, "FLAG" => 0]];
-    if (!$jobs) return $return;
-    foreach ($jobs as $job) {
-        if ($job["maintenanceJobs_blockAssets"] == 1) {
-            $return['BLOCK'][] = $job;
-            $return['COUNT']['BLOCK'] += 1;
-        }
-        if ($job["maintenanceJobs_flagAssets"] == 1) {
-            $return['FLAG'][] = $job;
-            $return['COUNT']['FLAG'] += 1;
+    $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.maintenanceJobs_id", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_title", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_flagAssets", "maintenanceJobs.maintenanceJobs_blockAssets", "maintenanceJobsStatuses.maintenanceJobsStatuses_name", "maintenanceJobs.assetMaintenanceSchedules_id"]);
+
+    if ($jobs) {
+        foreach ($jobs as $job) {
+            if ($job["maintenanceJobs_blockAssets"] == 1) {
+                $return['BLOCK'][] = $job;
+                $return['COUNT']['BLOCK'] += 1;
+            }
+            if ($job["maintenanceJobs_flagAssets"] == 1) {
+                $return['FLAG'][] = $job;
+                $return['COUNT']['FLAG'] += 1;
+            }
         }
     }
+
     return $return;
 }
 function assetLatestScan($assetid)

@@ -571,12 +571,57 @@
                     ],
                     callback: function (result) {
                         if (result) {
+                            // Check if changing to "Closed" status (ID = 2) and job has scheduled maintenance with interval
+                            {% if job.assetMaintenanceSchedules_id and job.assetMaintenanceSchedules_intervalMonths %}
+                            if (result == '2') {
+                                // Calculate new due date
+                                var intervalMonths = {{ job.assetMaintenanceSchedules_intervalMonths }};
+                                var today = new Date();
+                                var newDueDate = new Date(today.getFullYear(), today.getMonth() + intervalMonths, today.getDate());
+                                var formattedDate = newDueDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+                                // Show confirmation with schedule update message
+                                bootbox.confirm({
+                                    message: "Marking this job as Closed will also update the scheduled maintenance <strong>\"{{ job.assetMaintenanceSchedules_type }}\"</strong> due date to <strong>" + formattedDate + "</strong> (+" + intervalMonths + " month" + (intervalMonths > 1 ? "s" : "") + " from today).<br><br>Continue?",
+                                    buttons: {
+                                        confirm: {
+                                            label: 'Yes, Close Job',
+                                            className: 'btn-success'
+                                        },
+                                        cancel: {
+                                            label: 'Cancel',
+                                            className: 'btn-default'
+                                        }
+                                    },
+                                    callback: function (confirmed) {
+                                        if (confirmed) {
+                                            ajaxcall("maintenance/job/changeJobStatus.php", {
+                                                "maintenanceJobsStatuses_id": result,
+                                                "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                                            }, function (data) {
+                                                location.reload();
+                                            });
+                                        }
+                                    }
+                                });
+                            } else {
+                                // Regular status change (not Closed or no schedule)
+                                ajaxcall("maintenance/job/changeJobStatus.php", {
+                                    "maintenanceJobsStatuses_id": result,
+                                    "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
+                                }, function (data) {
+                                    location.reload();
+                                });
+                            }
+                            {% else %}
+                            // Job not linked to schedule, proceed normally
                             ajaxcall("maintenance/job/changeJobStatus.php", {
                                 "maintenanceJobsStatuses_id": result,
                                 "maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"
                             }, function (data) {
                                 location.reload();
                             });
+                            {% endif %}
                         }
                     }
                 });
