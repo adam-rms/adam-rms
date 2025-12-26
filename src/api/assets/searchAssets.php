@@ -31,7 +31,6 @@ $assets = $DBLIB->get("assets", 15, [
 	"assets.asset_definableFields_9",
 	"assets.asset_definableFields_10",
 	"assetTypes.assetTypes_definableFields",
-	"assetTypes.assetTypes_definableFields_ARRAY",
 	"assetTypes.assetTypes_name",
 	"assetTypes.assetTypes_id",
 	"assetCategories.assetCategories_name",
