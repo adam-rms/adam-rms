@@ -167,7 +167,7 @@ Both files export arrays mapping permission keys to metadata including supported
 
 **IMPORTANT**: When adding new features that require permission checks, you MUST add the corresponding permissions to the definition files:
 
-**Since April 2023**, permissions are defined in PHP files (not in the database) to avoid merge conflicts during development.
+Permissions are defined in PHP files (not in the database) to avoid merge conflicts during development. This change was introduced in April 2023.
 
 1. **For Instance Permissions**:
    Add a new entry to `src/common/libs/Auth/instanceActions.php`:
