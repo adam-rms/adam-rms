@@ -132,7 +132,7 @@ if (!$AUTH->login) die($TWIG->render('404.twig', $PAGEDATA));
 if (!$AUTH->serverPermissionCheck("USERS:EDIT")) die($TWIG->render('404.twig', $PAGEDATA));
 
 // Check instance permission
-if (!$AUTH->instancePermissionCheck("ASSETS:CREATE")) die("Sorry - you can't access this page");
+if (!$AUTH->instancePermissionCheck("ASSETS:CREATE")) die($TWIG->render('404.twig', $PAGEDATA));
 
 // Multiple permission check (OR logic)
 if ($AUTH->instancePermissionCheck("BUSINESS:USERS:VIEW:INDIVIDUAL_USER") or $AUTH->serverPermissionCheck("USERS:EDIT")) {
