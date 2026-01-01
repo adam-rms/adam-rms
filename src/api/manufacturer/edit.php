@@ -75,32 +75,33 @@ Requires Instance Permission ASSETS:MANUFACTURERS:EDIT",
  *             ),
  *         ),
  *     ), 
- *     @OA\Parameter(
- *         name="formData",
- *         in="query",
+ *     @OA\RequestBody(
+ *         required=true,
  *         description="The manufacturer data",
- *         required="true", 
- *         @OA\Schema(
- *             type="object", 
- *             @OA\Property(
- *                 property="manufacturers_id", 
- *                 type="integer", 
- *                 description="The ID of the manufacturer",
- *             ),
- *             @OA\Property(
- *                 property="manufacturers_name", 
- *                 type="string", 
- *                 description="The name of the manufacturer",
- *             ),
- *             @OA\Property(
- *                 property="manufacturers_website", 
- *                 type="string", 
- *                 description="The website of the manufacturer",
- *             ),
- *             @OA\Property(
- *                 property="manufacturers_notes", 
- *                 type="string", 
- *                 description="The notes of the manufacturer",
+ *         @OA\MediaType(
+ *             mediaType="application/x-www-form-urlencoded",
+ *             @OA\Schema(
+ *                 type="object",
+ *                 @OA\Property(
+ *                     property="manufacturers_id",
+ *                     type="integer",
+ *                     description="The ID of the manufacturer",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="manufacturers_name",
+ *                     type="string",
+ *                     description="The name of the manufacturer",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="manufacturers_website",
+ *                     type="string",
+ *                     description="The website of the manufacturer",
+ *                 ),
+ *                 @OA\Property(
+ *                     property="manufacturers_notes",
+ *                     type="string",
+ *                     description="The notes of the manufacturer",
+ *                 ),
  *             ),
  *         ),
  *     ), 
