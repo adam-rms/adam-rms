@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->instancePermissionCheck("ASSETS:MANUFACTURERS:EDIT"))
-  die("404");
+if (!$AUTH->instancePermissionCheck("ASSETS:MANUFACTURERS:EDIT")) {
+  finish(false, ["code" => "AUTH-ERROR", "message" => "No auth for action"]);
+}
 
 $array = [];
 foreach ($_POST['formData'] as $item) {
