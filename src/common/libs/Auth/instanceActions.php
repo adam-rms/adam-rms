@@ -372,6 +372,17 @@ $instanceActions = [
     'LEGACY-ID' => 38,
     'LEGACY-Sort Rank' => 4,
   ],
+  'ASSETS:MANUFACTURERS:EDIT' => [
+    'Category' => 'Assets',
+    'Table' => 'Manufacturers',
+    'Type' => 'Edit',
+    'Detail' => null,
+    'Combined Text Description' => 'Assets - Manufacturers: Edit ',
+    'Dependencies' => null,
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+    'Caution' => null,
+  ],
   'ASSETS:TRANSFER' => [
     'Category' => 'Assets',
     'Table' => 'Assets',
