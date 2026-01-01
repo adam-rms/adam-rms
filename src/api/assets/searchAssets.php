@@ -17,7 +17,26 @@ if (isset($_POST['term'])) {
         assetTypes_name LIKE '%" . $bCMS->sanitizeStringMYSQL($_POST['term']) . "%'
     )");
 } else $DBLIB->orderBy("assetTypes_name", "ASC");
-$assets = $DBLIB->get("assets", 15, ["assets.assets_id", "assets.assets_tag", "assetTypes.assetTypes_name", "assetTypes.assetTypes_id", "assetCategories.assetCategories_name", "assetCategoriesGroups.assetCategoriesGroups_name", "manufacturers.manufacturers_name"]);
+$assets = $DBLIB->get("assets", 15, [
+	"assets.assets_id",
+	"assets.assets_tag",
+	"assets.asset_definableFields_1",
+	"assets.asset_definableFields_2",
+	"assets.asset_definableFields_3",
+	"assets.asset_definableFields_4",
+	"assets.asset_definableFields_5",
+	"assets.asset_definableFields_6",
+	"assets.asset_definableFields_7",
+	"assets.asset_definableFields_8",
+	"assets.asset_definableFields_9",
+	"assets.asset_definableFields_10",
+	"assetTypes.assetTypes_definableFields",
+	"assetTypes.assetTypes_name",
+	"assetTypes.assetTypes_id",
+	"assetCategories.assetCategories_name",
+	"assetCategoriesGroups.assetCategoriesGroups_name",
+	"manufacturers.manufacturers_name"
+]);
 if (!$assets) finish(false, ["code" => "LIST-ASSETS-FAIL", "message" => "Could not search"]);
 $assetsReturn = [];
 foreach ($assets as $asset) {
