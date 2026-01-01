@@ -22,8 +22,8 @@ if (isset($array['manufacturers_website']) && trim($array['manufacturers_website
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("manufacturers_id", $array['manufacturers_id']);
-$project = $DBLIB->update("manufacturers", $array);
-if (!$project) finish(false);
+$result = $DBLIB->update("manufacturers", $array);
+if (!$result) finish(false);
 
 $bCMS->auditLog("EDIT", "manufacturers", json_encode($array), $AUTH->data['users_userid']);
 finish(true);
