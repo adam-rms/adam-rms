@@ -156,7 +156,7 @@
                                                             {% if "PROJECTS:EDIT:CLIENT"|instancePermissions and project.projectsTypes_config_client == 1 %}
                                                                 <div class="d-flex flex-row">
                                                                     <p class="text-sm">Client</p>
-                                                                    {% if "CLIENTS:CREATE"|instancePermissions %}
+                                                                    {% if "CLIENTS:CREATE"|instancePermissions and "PROJECTS:EDIT:CLIENT"|instancePermissions %}
                                                                     <button type="button" class="btn btn-link btn-sm ml-auto" id="newClientButton">Create Client</button>
                                                                     {% endif %}
                                                                 </div>
@@ -901,12 +901,19 @@
                     }
                 });
             });
-            {% if "CLIENTS:CREATE"|instancePermissions %}
+            {% if "CLIENTS:CREATE"|instancePermissions and "PROJECTS:EDIT:CLIENT"|instancePermissions %}
             $("#newClientButton").click(function () {
                 bootbox.prompt("Enter Client Name", function (result) {
                     if (result) {
                         ajaxcall("clients/new.php", {"clients_name": result}, function (data) {
-                            location.reload();
+                            if (data.result && data.response.clients_id) {
+                                ajaxcall("projects/changeClient.php", {
+                                    "clients_id": data.response.clients_id,
+                                    "projects_id": "{{ project.projects_id }}"
+                                }, function (data) {
+                                    location.reload();
+                                }); 
+                            }
                         });
                     }
                 });
