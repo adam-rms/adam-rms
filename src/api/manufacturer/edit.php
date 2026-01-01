@@ -25,8 +25,9 @@ if (isset($array['manufacturers_website']) && trim($array['manufacturers_website
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("manufacturers_id", $array['manufacturers_id']);
 $result = $DBLIB->update("manufacturers", array_intersect_key($array, array_flip(['manufacturers_name', 'manufacturers_website', 'manufacturers_notes'])), 1);
-if (!$result)
-  finish(false);
+if (!$result) {
+  finish(false, ["code" => "UPDATE-FAIL", "message" => "Could not update manufacturer"]);
+}
 
 $bCMS->auditLog("EDIT", "manufacturers", json_encode($array), $AUTH->data['users_userid']);
 finish(true);
