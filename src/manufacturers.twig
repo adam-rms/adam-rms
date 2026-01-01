@@ -38,7 +38,7 @@
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{CONFIG.ROOTURL}}/assets.php?manufacturer%5B%5D={{ manufacturer.manufacturers_id }}&showlinked=1&showarchived=1" class="btn btn-default btn-sm"><i class="fas fa-eye"></i></a>
-                                            {% if "ASSETS:MANUFACTURERS:EDIT"|instancePermissions %}
+                                            {% if "ASSETS:MANUFACTURERS:EDIT"|instancePermissions and manufacturer.instances_id == AUTH.data.instance.instances_id %}
                                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editManufacturer-{{ manufacturer.manufacturers_id }}"><i class="fas fa-edit"></i></button>
                                             {% endif %}
                                         </div>
