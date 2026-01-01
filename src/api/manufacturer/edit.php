@@ -81,30 +81,28 @@ Requires Instance Permission ASSETS:MANUFACTURERS:EDIT",
  *     ), 
  *     @OA\RequestBody(
  *         required=true,
- *         description="The manufacturer data",
+ *         description="The manufacturer data, wrapped in a formData array of name/value pairs",
  *         @OA\MediaType(
  *             mediaType="application/x-www-form-urlencoded",
  *             @OA\Schema(
  *                 type="object",
  *                 @OA\Property(
- *                     property="manufacturers_id",
- *                     type="integer",
- *                     description="The ID of the manufacturer",
- *                 ),
- *                 @OA\Property(
- *                     property="manufacturers_name",
- *                     type="string",
- *                     description="The name of the manufacturer",
- *                 ),
- *                 @OA\Property(
- *                     property="manufacturers_website",
- *                     type="string",
- *                     description="The website of the manufacturer",
- *                 ),
- *                 @OA\Property(
- *                     property="manufacturers_notes",
- *                     type="string",
- *                     description="The notes of the manufacturer",
+ *                     property="formData",
+ *                     type="array",
+ *                     description="Array of form fields, each with a name and value (e.g. manufacturers_id, manufacturers_name, manufacturers_website, manufacturers_notes)",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(
+ *                             property="name",
+ *                             type="string",
+ *                             description="Field name (one of: manufacturers_id, manufacturers_name, manufacturers_website, manufacturers_notes)"
+ *                         ),
+ *                         @OA\Property(
+ *                             property="value",
+ *                             type="string",
+ *                             description="Value for the given field"
+ *                         ),
+ *                     ),
  *                 ),
  *             ),
  *         ),
