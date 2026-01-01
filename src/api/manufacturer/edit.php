@@ -7,7 +7,18 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
   $array[$item['name']] = $item['value'];
 }
-if (strlen($array['manufacturers_id']) < 1) finish(false, ["code" => "PARAM-ERROR", "message" => "No data for action"]);
+// Basic parameter validation
+if (!isset($array['manufacturers_id']) || strlen($array['manufacturers_id']) < 1) {
+  finish(false, ["code" => "PARAM-ERROR", "message" => "No data for action"]);
+}
+if (!isset($array['manufacturers_name']) || trim($array['manufacturers_name']) === '') {
+  finish(false, ["code" => "PARAM-ERROR", "message" => "Manufacturer name is required"]);
+}
+if (isset($array['manufacturers_website']) && trim($array['manufacturers_website']) !== '') {
+  if (filter_var($array['manufacturers_website'], FILTER_VALIDATE_URL) === false) {
+    finish(false, ["code" => "PARAM-ERROR", "message" => "Manufacturer website must be a valid URL"]);
+  }
+}
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("manufacturers_id", $array['manufacturers_id']);
