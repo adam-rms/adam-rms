@@ -44,6 +44,17 @@
                         <i class="fas fas fa-shipping-fast"></i>
                     </button>
                 </li>
+                <li class="nav-item">
+                    {% if BOARDGROUPED %}
+                        <a class="nav-link btn" href="?id={{ project.projects_id }}&ungrouped" onclick="this.href+=window.location.hash" title="Grouped - Click to ungroup linked assets">
+                            <i class="fas fa-layer-group"></i>
+                        </a>
+                    {% else %}
+                        <a class="nav-link btn" href="?id={{ project.projects_id }}" onclick="this.href+=window.location.hash" title="Ungrouped - Click to group linked assets">
+                            <i class="fas fa-list"></i>
+                        </a>
+                    {% endif %}
+                </li>
             {% endif %}
         </ul>
     </div>
@@ -190,6 +201,27 @@
             });
         });
     }
+    
+    /**
+     * Function to change status of a parent asset and all its children
+     * @param parentAssignment Id of the parent AssetAssignment
+     * @param childAssignments Comma-separated string of child AssetAssignment IDs
+     * @param newStatus New status id
+     */
+    function changeStatusWithChildren(parentAssignment, childAssignments, newStatus) {
+        // Update parent assignment
+        changeStatus(parseInt(parentAssignment), parseInt(newStatus));
+        
+        // Update all child assignments if any
+        if (childAssignments && childAssignments.toString().length > 0) {
+            const childIds = childAssignments.toString().split(',');
+            childIds.forEach(function(childId) {
+                if (childId && !isNaN(parseInt(childId))) {
+                    changeStatus(parseInt(childId), parseInt(newStatus));
+                }
+            });
+        }
+    }
     {% endif %}
     $(document).ready(function () {
         {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
@@ -206,19 +238,23 @@
                 const groupStatus = this.dataset.statusid;
                 const assetOldStatus = ui.item[0].dataset.currentstatus;
                 const assetAssignment = ui.item[0].dataset.assignment;
+                const childAssignments = ui.item[0].dataset.childAssignments;
 
                 if (assetOldStatus !== groupStatus) {
-                    changeStatus(parseInt(assetAssignment),parseInt(groupStatus));
+                    changeStatusWithChildren(assetAssignment, childAssignments, groupStatus);
                     ui.item[0].dataset.currentstatus = groupStatus;
                 }
             }
         });
 
         $(".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton").click(function (){
-            const assetCard = $(this).parent();
+            const assetCard = $(this).closest('.assetDispatchAssetList-card');
             const assetAssignment = assetCard.data("assignment");
+            const childAssignments = assetCard.data("child-assignments");
             const assetNextStatus = $(this).data("nextstatus");
-            changeStatus(parseInt(assetAssignment),parseInt(assetNextStatus));
+            
+            changeStatusWithChildren(assetAssignment, childAssignments, assetNextStatus);
+            
             //move card to new status
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
         });

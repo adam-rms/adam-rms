@@ -81,6 +81,60 @@ if ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FO
  */
 $PAGEDATA['BOARDASSETS'] = [];
 $PAGEDATA['BOARDSTATUSES'] = []; //A slimmer version of the above for loading into Javascript!
+$PAGEDATA['BOARDGROUPED'] = !isset($_GET['ungrouped']); // Check if grouping is enabled (default: true)
+
+// Helper function to group assets by parent/child relationship (supports multi-level hierarchy)
+// Only groups if parent and child have the same status
+function groupAssetsByParent($assets)
+{
+    // Build a lookup of all assets in this status column by their ID (using references)
+    $assetsById = [];
+    foreach ($assets as $asset) {
+        $asset['children'] = [];
+        $asset['allChildAssignmentIds'] = [];
+        $assetsById[$asset['assets_id']] = $asset;
+    }
+
+    // First pass: Build direct parent-child relationships
+    $rootAssetIds = [];
+    foreach ($assetsById as $assetId => &$asset) {
+        $parentId = $asset['assets_linkedTo'];
+
+        if ($parentId === null) {
+            // This is a root asset (no parent)
+            $rootAssetIds[] = $assetId;
+        } elseif (isset($assetsById[$parentId])) {
+            // Parent is in this status column, add this asset as a child of its parent
+            $assetsById[$parentId]['children'][] = &$asset;
+        } else {
+            // Parent is in a different status column, treat this as a standalone root
+            $rootAssetIds[] = $assetId;
+        }
+    }
+    unset($asset); // Break reference
+
+    // Recursively collect all descendant assignment IDs
+    $collectChildAssignments = function (&$asset) use (&$collectChildAssignments) {
+        $allChildIds = [];
+        foreach ($asset['children'] as &$child) {
+            $allChildIds[] = $child['assetsAssignments_id'];
+            $childDescendants = $collectChildAssignments($child);
+            $allChildIds = array_merge($allChildIds, $childDescendants);
+        }
+        $asset['allChildAssignmentIds'] = $allChildIds;
+        return $allChildIds;
+    };
+
+    // Build result array from root assets and collect descendant IDs
+    $result = [];
+    foreach ($rootAssetIds as $rootId) {
+        $collectChildAssignments($assetsById[$rootId]);
+        $result[] = $assetsById[$rootId];
+    }
+
+    return $result;
+}
+
 foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
     $tempAssets = [];
     foreach ($PAGEDATA['FINANCIALS']['assetsAssigned'] as $assetType){
@@ -91,6 +145,9 @@ foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
                 $tempAssets[] = $asset;
             }
         }
+    }
+    if ($PAGEDATA['BOARDGROUPED']) {
+        $tempAssets = groupAssetsByParent($tempAssets);
     }
     $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']] = $status;
     $PAGEDATA['BOARDSTATUSES'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']] = $status; //For the JS Array
@@ -112,6 +169,9 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
                     $tempAssets[] = $asset;
                 }
             }
+        }
+        if ($PAGEDATA['BOARDGROUPED']) {
+            $tempAssets = groupAssetsByParent($tempAssets);
         }
         $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']][$status['assetsAssignmentsStatus_order']]["assets"] = $tempAssets;
     }
