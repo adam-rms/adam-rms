@@ -1,14 +1,17 @@
-{# Macro to render children recursively #}
-{% macro renderChildren(children, instanceid, depth) %}
-    {% import _self as self %}
-    {% for child in children %}
-        <div class="row align-middle p-2 m-0 border-top border-secondary" data-assignment="{{ child['assetsAssignments_id'] }}" data-asset="{{ child['assets_id'] }}" data-parent="{{ child['assets_linkedTo'] }}">
-            <h6 class="col my-auto" style="padding-left: {{ (depth * 1.5) + 0.5 }}rem;"><small class="text-muted">↳</small> <i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ child['assetTypes_id'] }}&asset={{ child['assets_id'] }}&instance={{ instanceid }}">{{ child['assets_tag'] }}</a>)</i><br><small style="padding-left: {{ (depth * 1.5) + 0.5 }}rem;">{{ child['assetTypes_name'] }}</small></h6>
-        </div>
-        {% if child.children|default([])|length > 0 %}
-            {{ self.renderChildren(child.children, instanceid, depth + 1) }}
-        {% endif %}
-    {% endfor %}
+{# Macro to render children recursively (max depth: 10 to prevent infinite recursion) #}
+{% macro renderChildren(children, instanceid, depth, maxDepth) %}
+    {% set maxDepth = maxDepth|default(10) %}
+    {% if depth <= maxDepth %}
+        {% import _self as self %}
+        {% for child in children %}
+            <div class="row align-middle p-2 m-0 border-top border-secondary" data-assignment="{{ child['assetsAssignments_id'] }}" data-asset="{{ child['assets_id'] }}" data-parent="{{ child['assets_linkedTo'] }}">
+                <h6 class="col my-auto" style="padding-left: {{ (depth * 1.5) + 0.5 }}rem;"><small class="text-muted">↳</small> <i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ child['assetTypes_id'] }}&asset={{ child['assets_id'] }}&instance={{ instanceid }}">{{ child['assets_tag'] }}</a>)</i><br><small style="padding-left: {{ (depth * 1.5) + 0.5 }}rem;">{{ child['assetTypes_name'] }}</small></h6>
+            </div>
+            {% if child.children|default([])|length > 0 %}
+                {{ self.renderChildren(child.children, instanceid, depth + 1, maxDepth) }}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endmacro %}
 {% import _self as macros %}
 

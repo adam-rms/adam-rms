@@ -84,10 +84,9 @@ $PAGEDATA['BOARDSTATUSES'] = []; //A slimmer version of the above for loading in
 $PAGEDATA['BOARDGROUPED'] = !isset($_GET['ungrouped']); // Check if grouping is enabled (default: true)
 
 // Helper function to group assets by parent/child relationship (supports multi-level hierarchy)
-// Only groups if parent and child have the same status
+// Only groups if parent and child have the same status. Includes cycle detection.
 function groupAssetsByParent($assets)
 {
-    // Build a lookup of all assets in this status column by their ID (using references)
     $assetsById = [];
     foreach ($assets as $asset) {
         $asset['children'] = [];
@@ -95,43 +94,51 @@ function groupAssetsByParent($assets)
         $assetsById[$asset['assets_id']] = $asset;
     }
 
-    // First pass: Build direct parent-child relationships
+    // Build parent-child relationships with cycle detection
     $rootAssetIds = [];
     foreach ($assetsById as $assetId => &$asset) {
         $parentId = $asset['assets_linkedTo'];
+        // Check for cycle by walking up the parent chain
+        $isCycle = false;
+        if ($parentId !== null && isset($assetsById[$parentId])) {
+            $checkId = $parentId;
+            $seen = [$assetId => true];
+            while ($checkId !== null && isset($assetsById[$checkId])) {
+                if (isset($seen[$checkId])) {
+                    $isCycle = true;
+                    break;
+                }
+                $seen[$checkId] = true;
+                $checkId = $assetsById[$checkId]['assets_linkedTo'];
+            }
+        }
 
-        if ($parentId === null) {
-            // This is a root asset (no parent)
+        if ($parentId === null || !isset($assetsById[$parentId]) || $isCycle) {
             $rootAssetIds[] = $assetId;
-        } elseif (isset($assetsById[$parentId])) {
-            // Parent is in this status column, add this asset as a child of its parent
-            $assetsById[$parentId]['children'][] = &$asset;
         } else {
-            // Parent is in a different status column, treat this as a standalone root
-            $rootAssetIds[] = $assetId;
+            $assetsById[$parentId]['children'][] = &$asset;
         }
     }
-    unset($asset); // Break reference
+    unset($asset);
 
     // Recursively collect all descendant assignment IDs
-    $collectChildAssignments = function (&$asset) use (&$collectChildAssignments) {
+    $collectChildAssignments = function (&$asset, $seen = []) use (&$collectChildAssignments) {
+        if (isset($seen[$asset['assets_id']])) return [];
+        $seen[$asset['assets_id']] = true;
         $allChildIds = [];
         foreach ($asset['children'] as &$child) {
             $allChildIds[] = $child['assetsAssignments_id'];
-            $childDescendants = $collectChildAssignments($child);
-            $allChildIds = array_merge($allChildIds, $childDescendants);
+            $allChildIds = array_merge($allChildIds, $collectChildAssignments($child, $seen));
         }
         $asset['allChildAssignmentIds'] = $allChildIds;
         return $allChildIds;
     };
 
-    // Build result array from root assets and collect descendant IDs
     $result = [];
     foreach ($rootAssetIds as $rootId) {
         $collectChildAssignments($assetsById[$rootId]);
         $result[] = $assetsById[$rootId];
     }
-
     return $result;
 }
 

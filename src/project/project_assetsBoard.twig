@@ -18,10 +18,10 @@
             max-width: 100%;
         }
     }
-    #navItemQuickDispatch {
+    .extended-functions {
         height: 100%;
     }
-    #navItemQuickDispatch button {
+    .extended-functions button {
         background-color: transparent;
     }
 </style>
@@ -39,20 +39,20 @@
                 </li>
             {% endfor %}
             {% if (FINANCIALS.assetsAssigned|length > 0 or FINANCIALS.assetsAssignedSUB|length > 0) and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-                <li class="nav-item" id="navItemQuickDispatch">
+                <li class="nav-item extended-functions">
                     <button type="button" class="nav-link" title="Quick Dispatch" data-toggle="modal" data-target="#quickDispatchModal">
-                        <i class="fas fas fa-shipping-fast"></i>
+                        <i class="fas fa-shipping-fast"></i>
                     </button>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item extended-functions">
                     {% if BOARDGROUPED %}
-                        <a class="nav-link btn" href="?id={{ project.projects_id }}&ungrouped" onclick="this.href+=window.location.hash" title="Grouped - Click to ungroup linked assets">
+                        <button type="button" class="nav-link grouping-toggle" data-href="?id={{ project.projects_id }}&ungrouped" title="Grouped - Click to ungroup linked assets" aria-label="Toggle asset grouping">
                             <i class="fas fa-layer-group"></i>
-                        </a>
+                        </button>
                     {% else %}
-                        <a class="nav-link btn" href="?id={{ project.projects_id }}" onclick="this.href+=window.location.hash" title="Ungrouped - Click to group linked assets">
+                        <button type="button" class="nav-link grouping-toggle" data-href="?id={{ project.projects_id }}" title="Ungrouped - Click to group linked assets" aria-label="Toggle asset grouping">
                             <i class="fas fa-list"></i>
-                        </a>
+                        </button>
                     {% endif %}
                 </li>
             {% endif %}
@@ -189,7 +189,7 @@
     }
     /**
      * Function to change the status of an asset assignment
-     * @param assetsAssignments_id Id of the AssetAssignment
+     * @param assetsAssignments_id Id of the AssetAssignment (single ID or array of IDs)
      * @param assetsAssignments_status new status id of the AssetAssignment
      */
     function changeStatus(assetsAssignments_id, assetsAssignments_status) {
@@ -203,24 +203,24 @@
     }
     
     /**
-     * Function to change status of a parent asset and all its children
+     * Function to change status of a parent asset and all its children in a single API call
      * @param parentAssignment Id of the parent AssetAssignment
      * @param childAssignments Comma-separated string of child AssetAssignment IDs
      * @param newStatus New status id
      */
     function changeStatusWithChildren(parentAssignment, childAssignments, newStatus) {
-        // Update parent assignment
-        changeStatus(parseInt(parentAssignment), parseInt(newStatus));
+        // Collect all assignment IDs (parent + children)
+        const allIds = [parseInt(parentAssignment)];
         
-        // Update all child assignments if any
         if (childAssignments && childAssignments.toString().length > 0) {
             const childIds = childAssignments.toString().split(',');
             childIds.forEach(function(childId) {
                 if (childId && !isNaN(parseInt(childId))) {
-                    changeStatus(parseInt(childId), parseInt(newStatus));
+                    allIds.push(parseInt(childId));
                 }
             });
         }
+        changeStatus(allIds, parseInt(newStatus));
     }
     {% endif %}
     $(document).ready(function () {
@@ -250,13 +250,14 @@
         $(".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton").click(function (){
             const assetCard = $(this).closest('.assetDispatchAssetList-card');
             const assetAssignment = assetCard.data("assignment");
-            const childAssignments = assetCard.data("child-assignments");
+            const childAssignments = assetCard.data("childAssignments");
             const assetNextStatus = $(this).data("nextstatus");
             
             changeStatusWithChildren(assetAssignment, childAssignments, assetNextStatus);
             
             //move card to new status
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
+            drawButtons();
         });
 
         function doQuickDispatch() {
@@ -311,6 +312,11 @@
 
         $('a.assetsBoardToggle[data-toggle="pill"]').on('click', function (e) {
             localStorage.setItem("activeTab-board", e.target.getAttribute('aria-controls'));
-        })
+        });
+
+        // Preserve URL hash when toggling grouping mode
+        $('button.grouping-toggle').on('click', function (e) {
+            window.location.href = $(this).data('href') + window.location.hash;
+        });
     });
 </script>
