@@ -14,10 +14,13 @@ services:
 
     volumes:
       - ..:/workspace:cached
-
-    # Overrides default command so things don't shut down after the process ends.
-    command: sleep infinity
+      
+    ports:
+    - "8080:80" 
     
+    # Overrides default command so things don't shut down after the process ends.
+    command: apache2-foreground
+
     # Uncomment the next line to use a non-root user for all processes.
     # user: vscode
     depends_on:

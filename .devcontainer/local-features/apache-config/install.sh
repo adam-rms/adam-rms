@@ -5,9 +5,9 @@ set -e
 cat > /etc/apache2/sites-available/000-default.conf << 'EOF'
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
-    DocumentRoot /workspace
+    DocumentRoot /workspace/src
     
-    <Directory /workspace>
+    <Directory /workspace/src>
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
