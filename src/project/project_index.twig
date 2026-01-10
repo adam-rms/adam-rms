@@ -50,6 +50,11 @@
         .timeline-body > p {
             margin-bottom: 0;
         }
+        
+        /* Hide timeline bar when empty */
+        .timeline-empty::before {
+            content: none !important;
+        }
     </style>
 
     <!--Summernote-->
@@ -366,9 +371,18 @@
                                             </div>
                                             <div class="card-body">
                                                 <!-- The time line -->
-                                                <div class="timeline">
                                                     {% set currentDate = '' %}
                                                     {% set comments = false %}
+                                                    {% for event in project.auditLog %}
+                                                        {% if event.auditLog_actionType in ['QUICKCOMMENT'] %}
+                                                            {% set comments = true %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if not comments %}
+                                                    <i>Nobody has commented on this project</i>
+                                                {% endif %}
+                                                <div class="timeline{{ comments ? '' : ' timeline-empty' }}">
+                                                {% set currentDate = '' %}
                                                     {% for event in project.auditLog %}
                                                         {% if event.auditLog_actionType in ['QUICKCOMMENT'] %}
                                                             {% set comments = true %}
@@ -393,8 +407,6 @@
                                                     <div>
                                                         <i class="fas fa-clock bg-gray"></i>
                                                     </div>
-                                                    {% else %}
-                                                        <i>Nobody has commented on this project</i>
                                                     {% endif %}
                                                 </div>
                                             </div>
