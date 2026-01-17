@@ -200,7 +200,6 @@ $CSP = [
         ["value" => "https://static.cloudflareinsights.com", "comment" => ""],
         ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
         ["value" => "https://*.ytimg.com", "comment" => "Training modules allow youtube embed"],
-        ["value" => "https://*.freshstatus.io", "comment" => ""],
         ["value" => "https://js.stripe.com", "comment" => "Stripe payment pricing table"]
     ],
     "style-src" => [
@@ -237,11 +236,9 @@ $CSP = [
         ["value" => "https://sentry.io", "comment" => ""],
         ["value" => "https://cloudflareinsights.com", "comment" => ""],
         ["value" => "https://*.amazonaws.com", "comment" => "To allow S3 uploads"],
-        ["value" => "https://*.freshstatus.io", "comment" => ""]
     ],
     "frame-src" => [
         ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
-        ["value" => "https://*.freshstatus.io", "comment" => "Training modules allow youtube embed"],
         ["value" => "https://js.stripe.com", "comment" => "Stripe payment pricing table"]
     ],
     "object-src" => [
