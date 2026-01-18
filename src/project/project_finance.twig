@@ -184,6 +184,25 @@
 											<button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
 											</button>
 										{% endif %}
+										{% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
+											<button title="Edit" class="btn btn-sm btn-default editPaymentButton"
+												data-paymentid="{{ payment.payments_id }}"
+												data-type="2"
+												data-quantity="{{ payment.payments_quantity }}"
+												data-supplier="{{ payment.payments_supplier|default('')|e('html_attr') }}"
+												data-comment="{{ payment.payments_comment|default('')|e('html_attr') }}"
+												data-amount="{{ payment.payments_amount|moneyDecimal }}">
+												<i class="fas fa-edit"></i>
+											</button>
+											<button title="Duplicate" class="btn btn-sm btn-default duplicatePaymentButton"
+												data-type="2"
+												data-quantity="{{ payment.payments_quantity }}"
+												data-supplier="{{ payment.payments_supplier|default('')|e('html_attr') }}"
+												data-comment="{{ payment.payments_comment|default('')|e('html_attr') }}"
+												data-amount="{{ payment.payments_amount|moneyDecimal }}">
+												<i class="fas fa-copy"></i>
+											</button>
+										{% endif %}
 										{% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
 											<button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}">
 												<i class="fa fa-trash"></i>
@@ -236,6 +255,25 @@
 											<button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
 											</button>
 										{% endif %}
+										{% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
+											<button title="Edit" class="btn btn-sm btn-default editPaymentButton"
+												data-paymentid="{{ payment.payments_id }}"
+												data-type="3"
+												data-quantity="{{ payment.payments_quantity }}"
+												data-supplier="{{ payment.payments_supplier|default('')|e('html_attr') }}"
+												data-comment="{{ payment.payments_comment|default('')|e('html_attr') }}"
+												data-amount="{{ payment.payments_amount|moneyDecimal }}">
+												<i class="fas fa-edit"></i>
+											</button>
+											<button title="Duplicate" class="btn btn-sm btn-default duplicatePaymentButton"
+												data-type="3"
+												data-quantity="{{ payment.payments_quantity }}"
+												data-supplier="{{ payment.payments_supplier|default('')|e('html_attr') }}"
+												data-comment="{{ payment.payments_comment|default('')|e('html_attr') }}"
+												data-amount="{{ payment.payments_amount|moneyDecimal }}">
+												<i class="fas fa-copy"></i>
+											</button>
+										{% endif %}
 										{% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}
 											<button title="Delete" class="btn btn-sm btn-danger deletePaymentButton" data-paymentid="{{ payment.payments_id }}">
 												<i class="fa fa-trash"></i>
@@ -277,6 +315,25 @@
 									<td>
 										{% if CONFIG.FILES_ENABLED == "Enabled" and "PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS"|instancePermissions %}
 											<button data-toggle="modal" data-target="#filesModal{{ payment.payments_id }}" type="button" class="btn btn-outline-secondary btn-sm">{{ (payment.files|length > 0 ? payment.files|length ~ '&nbsp;' : '')|raw }}<i class="fas fa-paperclip" style="display:inline;"></i>
+											</button>
+										{% endif %}
+										{% if "PROJECTS:PROJECT_PAYMENTS:CREATE"|instancePermissions %}
+											<button title="Edit" class="btn btn-sm btn-default editPaymentButton"
+												data-paymentid="{{ payment.payments_id }}"
+												data-type="4"
+												data-quantity="{{ payment.payments_quantity }}"
+												data-supplier="{{ payment.payments_supplier|default('')|e('html_attr') }}"
+												data-comment="{{ payment.payments_comment|default('')|e('html_attr') }}"
+												data-amount="{{ payment.payments_amount|moneyDecimal }}">
+												<i class="fas fa-edit"></i>
+											</button>
+											<button title="Duplicate" class="btn btn-sm btn-default duplicatePaymentButton"
+												data-type="4"
+												data-quantity="{{ payment.payments_quantity }}"
+												data-supplier="{{ payment.payments_supplier|default('')|e('html_attr') }}"
+												data-comment="{{ payment.payments_comment|default('')|e('html_attr') }}"
+												data-amount="{{ payment.payments_amount|moneyDecimal }}">
+												<i class="fas fa-copy"></i>
 											</button>
 										{% endif %}
 										{% if "PROJECTS:PROJECT_PAYMENTS:DELETE"|instancePermissions %}

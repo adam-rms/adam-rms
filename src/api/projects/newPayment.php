@@ -9,6 +9,10 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
+// Remove payments_id if empty (used for edit mode, not for create)
+if (isset($array['payments_id']) && $array['payments_id'] === '') {
+    unset($array['payments_id']);
+}
 if (strlen($array['projects_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 $array['payments_date'] = date("Y-m-d H:i:s", strtotime($array['payments_date']));
 if (!$array['payments_quantity']) $array['payments_quantity'] = 1;
