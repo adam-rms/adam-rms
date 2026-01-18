@@ -30,7 +30,9 @@ $moneyParser = new DecimalMoneyParser($currencies);
 
 // Prepare new values
 $array['payments_date'] = isset($array['payments_date']) ? date("Y-m-d H:i:s", strtotime($array['payments_date'])) : null;
-$array['payments_quantity'] = ($array['payments_quantity'] ?? 1) === '' ? 1 : $array['payments_quantity'];
+if (!isset($array['payments_quantity']) || !$array['payments_quantity']) {
+    $array['payments_quantity'] = 1;
+}
 $array['payments_amount'] = $moneyParser->parse($array['payments_amount'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
 $array['payments_type'] = intval($array['payments_type']);
 
