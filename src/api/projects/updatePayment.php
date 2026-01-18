@@ -33,7 +33,14 @@ $array['payments_date'] = isset($array['payments_date']) ? date("Y-m-d H:i:s", s
 if (!isset($array['payments_quantity']) || !$array['payments_quantity']) {
     $array['payments_quantity'] = 1;
 }
-$array['payments_amount'] = $moneyParser->parse($array['payments_amount'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
+try {
+    $array['payments_amount'] = $moneyParser->parse(
+        $array['payments_amount'],
+        $AUTH->data['instance']['instances_config_currency']
+    )->getAmount();
+} catch (\Throwable $e) {
+    finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid amount format"]);
+}
 $array['payments_type'] = intval($array['payments_type']);
 
 $projectFinanceCacher = new projectFinanceCacher($existing['projects_id']);
