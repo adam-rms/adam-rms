@@ -458,6 +458,7 @@
             <div class="modal-body">
                 <form id="newPaymentModal-form">
                     <input type="hidden" id="newPaymentModal-form-type" name="payments_type" value="1"/>
+                    <input type="hidden" id="newPaymentModal-form-payment-id" name="payments_id" value=""/>
                     <input type="hidden" name="projects_id" value="{{ project.projects_id }}"/>
                     <div class="input-group newPaymentModal-paymentOnly" style="margin-bottom: 5px;">
                         <div class="input-group-prepend">
@@ -1382,32 +1383,91 @@
                 startDate: "{{ "now"|date("j M Y h:i:sa") }}",
                 maxDate:"{{ "now"|date("j M Y h:i:sa") }}",
             });
-            $(".newPayment").click(function () {
-                var type = $(this).data("type");
+            function setPaymentModal(type, titlePrefix) {
                 $("#newPaymentModal-form-type").val(type);
-                $("#newPaymentModal").modal('show');
-                $(".newPaymentModal-paymentOnly").hide();
-                $(".newPaymentModal-nonPaymentOnly").show();
+                $(".newPaymentModal-paymentOnly").toggle(type === 1);
+                $(".newPaymentModal-nonPaymentOnly").toggle(type !== 1);
                 switch(type) {
                     case 1:
-                        $("#newPaymentModal-title").html("Add payment received");
-                        $(".newPaymentModal-paymentOnly").show();
-                        $(".newPaymentModal-nonPaymentOnly").hide();
+                        $("#newPaymentModal-title").html(titlePrefix + "payment received");
                         break;
                     case 2:
-                        $("#newPaymentModal-title").html("Add Sales Item");
+                        $("#newPaymentModal-title").html(titlePrefix + "Sales Item");
                         break;
                     case 3:
-                        $("#newPaymentModal-title").html("Add Additional Hire Cost");
+                        $("#newPaymentModal-title").html(titlePrefix + "Additional Hire Cost");
                         break;
                     case 4:
-                        $("#newPaymentModal-title").html("Add Staff cost");
+                        $("#newPaymentModal-title").html(titlePrefix + "Staff cost");
                         break;
                 }
+            }
+            function resetPaymentModal() {
+                $("#newPaymentModal-form-payment-id").val("");
+                $("#newPaymentModal-form")[0].reset();
+                const picker = $('#newPaymentModal-form-date').data('daterangepicker');
+                if (picker) {
+                    picker.setStartDate("{{ "now"|date("j M Y h:i:sa") }}");
+                    picker.setEndDate("{{ "now"|date("j M Y h:i:sa") }}");
+                }
+            }
+            function populatePaymentModal(data, isEdit) {
+                setPaymentModal(data.type, isEdit ? "Edit " : "Add ");
+                if (data.id) $("#newPaymentModal-form-payment-id").val(data.id); else $("#newPaymentModal-form-payment-id").val("");
+                if (data.date) {
+                    const picker = $('#newPaymentModal-form-date').data('daterangepicker');
+                    if (picker) {
+                        picker.setStartDate(data.date);
+                        picker.setEndDate(data.date);
+                    }
+                    $("#newPaymentModal-form-date").val(data.date);
+                }
+                $("[name='payments_reference']").val(data.reference || "");
+                $("[name='payments_method']").val(data.method || "");
+                $("[name='payments_quantity']").val(data.quantity || 1);
+                $("[name='payments_supplier']").val(data.supplier || "");
+                $("[name='payments_comment']").val(data.comment || "");
+                $("[name='payments_amount']").val(data.amount || 0);
+                $("#newPaymentModal").modal('show');
+            }
+            $(".newPayment").click(function () {
+                resetPaymentModal();
+                var type = $(this).data("type");
+                populatePaymentModal({type: type}, false);
+            });
+            $(".editPaymentButton").click(function () {
+                resetPaymentModal();
+                var btn = $(this);
+                populatePaymentModal({
+                    id: btn.data('paymentid'),
+                    type: btn.data('type'),
+                    quantity: btn.data('quantity'),
+                    supplier: btn.data('supplier'),
+                    comment: btn.data('comment'),
+                    amount: btn.data('amount'),
+                    date: btn.data('date'),
+                    reference: btn.data('reference'),
+                    method: btn.data('method')
+                }, true);
+            });
+            $(".duplicatePaymentButton").click(function () {
+                resetPaymentModal();
+                var btn = $(this);
+                populatePaymentModal({
+                    type: btn.data('type'),
+                    quantity: btn.data('quantity'),
+                    supplier: btn.data('supplier'),
+                    comment: btn.data('comment'),
+                    amount: btn.data('amount'),
+                    date: btn.data('date'),
+                    reference: btn.data('reference'),
+                    method: btn.data('method')
+                }, false);
             });
             $("#newPaymentModal-button").click(function () {
                 var formData = $("#newPaymentModal-form").serializeArray();
-                ajaxcall("projects/newPayment.php", {formData}, function (data) {
+                var target = $("#newPaymentModal-form-payment-id").val() ? "projects/updatePayment.php" : "projects/newPayment.php";
+                ajaxcall(target, {formData}, function (data) {
                     location.reload();
                 });
             });
