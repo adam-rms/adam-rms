@@ -81,6 +81,67 @@ if ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FO
  */
 $PAGEDATA['BOARDASSETS'] = [];
 $PAGEDATA['BOARDSTATUSES'] = []; //A slimmer version of the above for loading into Javascript!
+$PAGEDATA['BOARDGROUPED'] = !isset($_GET['ungrouped']); // Check if grouping is enabled (default: true)
+
+// Helper function to group assets by parent/child relationship (supports multi-level hierarchy)
+// Only groups if parent and child have the same status. Includes cycle detection.
+function groupAssetsByParent($assets)
+{
+    $assetsById = [];
+    foreach ($assets as $asset) {
+        $asset['children'] = [];
+        $asset['allChildAssignmentIds'] = [];
+        $assetsById[$asset['assets_id']] = $asset;
+    }
+
+    // Build parent-child relationships with cycle detection
+    $rootAssetIds = [];
+    foreach ($assetsById as $assetId => &$asset) {
+        $parentId = $asset['assets_linkedTo'];
+        // Check for cycle by walking up the parent chain
+        $isCycle = false;
+        if ($parentId !== null && isset($assetsById[$parentId])) {
+            $checkId = $parentId;
+            $seen = [$assetId => true];
+            while ($checkId !== null && isset($assetsById[$checkId])) {
+                if (isset($seen[$checkId])) {
+                    $isCycle = true;
+                    break;
+                }
+                $seen[$checkId] = true;
+                $checkId = $assetsById[$checkId]['assets_linkedTo'];
+            }
+        }
+
+        if ($parentId === null || !isset($assetsById[$parentId]) || $isCycle) {
+            $rootAssetIds[] = $assetId;
+        } else {
+            $assetsById[$parentId]['children'][] = &$asset;
+        }
+    }
+    unset($asset);
+
+    // Recursively collect all descendant assignment IDs
+    $collectChildAssignments = function (&$asset, $seen = []) use (&$collectChildAssignments) {
+        if (isset($seen[$asset['assets_id']])) return [];
+        $seen[$asset['assets_id']] = true;
+        $allChildIds = [];
+        foreach ($asset['children'] as &$child) {
+            $allChildIds[] = $child['assetsAssignments_id'];
+            $allChildIds = array_merge($allChildIds, $collectChildAssignments($child, $seen));
+        }
+        $asset['allChildAssignmentIds'] = $allChildIds;
+        return $allChildIds;
+    };
+
+    $result = [];
+    foreach ($rootAssetIds as $rootId) {
+        $collectChildAssignments($assetsById[$rootId]);
+        $result[] = $assetsById[$rootId];
+    }
+    return $result;
+}
+
 foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
     $tempAssets = [];
     foreach ($PAGEDATA['FINANCIALS']['assetsAssigned'] as $assetType){
@@ -91,6 +152,9 @@ foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
                 $tempAssets[] = $asset;
             }
         }
+    }
+    if ($PAGEDATA['BOARDGROUPED']) {
+        $tempAssets = groupAssetsByParent($tempAssets);
     }
     $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']] = $status;
     $PAGEDATA['BOARDSTATUSES'][$AUTH->data['instance']['instances_id']][$status['assetsAssignmentsStatus_order']] = $status; //For the JS Array
@@ -112,6 +176,9 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
                     $tempAssets[] = $asset;
                 }
             }
+        }
+        if ($PAGEDATA['BOARDGROUPED']) {
+            $tempAssets = groupAssetsByParent($tempAssets);
         }
         $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']][$status['assetsAssignmentsStatus_order']]["assets"] = $tempAssets;
     }
