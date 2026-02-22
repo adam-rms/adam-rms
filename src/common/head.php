@@ -260,7 +260,7 @@ $CSP = [
     ]
 ];
 $CSPString = "Content-Security-Policy: ";
-foreach ($CONFIG['CSP'] as $key => $value) {
+foreach ($CSP as $key => $value) {
     $CSPString .= $key;
     foreach ($value as $subvalue) {
         $CSPString .= " " . $subvalue['value'];

@@ -33,6 +33,7 @@ $moneyParser = new DecimalMoneyParser($currencies);
 $array['payments_date'] = isset($array['payments_date']) ? date("Y-m-d H:i:s", strtotime($array['payments_date'])) : null;
 if (!isset($array['payments_quantity']) || !$array['payments_quantity']) {
 $existing = $DBLIB->getone("payments", ["payments.payments_id", "payments.projects_id", "payments.payments_type", "payments.payments_amount", "payments.payments_quantity", "payments.payments_date"]);
+}
 if (!$existing) finish(false, ["code" => "NOT-FOUND", "message" => "Payment not found"]);
 
 $currencies = new ISOCurrencies();
