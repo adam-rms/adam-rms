@@ -20,6 +20,7 @@ if (empty($array['payments_id']) || empty($array['projects_id'])) finish(false, 
 // Fetch existing payment to compute deltas
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("payments.payments_deleted", 0);
 $DBLIB->join("projects", "payments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->where("payments.payments_id", $array['payments_id']);
 $existing = $DBLIB->getone("payments", ["payments.payments_id", "payments.projects_id", "payments.payments_type", "payments.payments_amount", "payments.payments_quantity"]);
@@ -31,17 +32,38 @@ $moneyParser = new DecimalMoneyParser($currencies);
 // Prepare new values
 $array['payments_date'] = isset($array['payments_date']) ? date("Y-m-d H:i:s", strtotime($array['payments_date'])) : null;
 if (!isset($array['payments_quantity']) || !$array['payments_quantity']) {
-    $array['payments_quantity'] = 1;
+$existing = $DBLIB->getone("payments", ["payments.payments_id", "payments.projects_id", "payments.payments_type", "payments.payments_amount", "payments.payments_quantity", "payments.payments_date"]);
+if (!$existing) finish(false, ["code" => "NOT-FOUND", "message" => "Payment not found"]);
+
+$currencies = new ISOCurrencies();
+$moneyParser = new DecimalMoneyParser($currencies);
+
+// Prepare new values
+// Determine payment type, falling back to existing if not supplied
+if (isset($array['payments_type']) && $array['payments_type'] !== '') {
+    $array['payments_type'] = intval($array['payments_type']);
+} else {
+    $array['payments_type'] = (int) $existing['payments_type'];
 }
-try {
-    $array['payments_amount'] = $moneyParser->parse(
-        $array['payments_amount'],
-        $AUTH->data['instance']['instances_config_currency']
-    )->getAmount();
-} catch (\Throwable $e) {
-    finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid amount format"]);
+
+// Validate and normalise payment date
+if (isset($array['payments_date']) && $array['payments_date'] !== '') {
+    $timestamp = strtotime($array['payments_date']);
+    if ($timestamp === false) {
+        finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid payment date"]);
+    }
+    $array['payments_date'] = date("Y-m-d H:i:s", $timestamp);
+} else {
+    // If this payment type requires a date and there is no existing date, reject the update
+    if ($array['payments_type'] === 1 && empty($existing['payments_date'])) {
+        finish(false, ["code" => "PARAM-ERROR", "message" => "Payment date is required for received payments"]);
+    }
+    // Do not update payments_date if no new value is provided
+    unset($array['payments_date']);
 }
-$array['payments_type'] = intval($array['payments_type']);
+
+$array['payments_quantity'] = ($array['payments_quantity'] ?? 1) === '' ? 1 : $array['payments_quantity'];
+$array['payments_amount'] = $moneyParser->parse($array['payments_amount'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
 
 $projectFinanceCacher = new projectFinanceCacher($existing['projects_id']);
 
@@ -63,7 +85,7 @@ $newAmount = new Money($array['payments_amount'], new Currency($AUTH->data['inst
 $newAmount = $newAmount->multiply($array['payments_quantity']);
 $projectFinanceCacher->adjustPayment($array['payments_type'], $newAmount, false);
 
-$bCMS->auditLog("UPDATE", "payments", $array['payments_id'], $AUTH->data['users_userid'], null, $existing['projects_id']);
+$bCMS->auditLog("UPDATE", "payments", $existing['payments_id'], $AUTH->data['users_userid'], null, $existing['projects_id']);
 
 if ($projectFinanceCacher->save()) finish(true);
 else finish(false, ["message" => "Finance Cacher Save failed"]);
@@ -83,6 +105,46 @@ else finish(false, ["message" => "Finance Cacher Save failed"]);
  *         )
  *     ),
  *     @OA\Response(response="404", description="Permission Error"),
- *     @OA\Parameter(name="formData", in="query", description="Serialized form data", required="true", @OA\Schema(type="object"))
+ *     @OA\Parameter(
+ *         name="formData",
+ *         in="query",
+ *         description="Serialized form data for updating a project payment",
+ *         required=true,
+ *         @OA\Schema(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="payments_id",
+ *                 type="integer",
+ *                 description="Identifier of the payment to update"
+ *             ),
+ *             @OA\Property(
+ *                 property="projects_id",
+ *                 type="integer",
+ *                 description="Identifier of the project this payment belongs to"
+ *             ),
+ *             @OA\Property(
+ *                 property="payments_date",
+ *                 type="string",
+ *                 format="date-time",
+ *                 nullable=true,
+ *                 description="Date and time of the payment"
+ *             ),
+ *             @OA\Property(
+ *                 property="payments_quantity",
+ *                 type="integer",
+ *                 description="Quantity associated with the payment (defaults to 1 if empty)"
+ *             ),
+ *             @OA\Property(
+ *                 property="payments_amount",
+ *                 type="string",
+ *                 description="Payment amount in the instance currency, as a decimal string"
+ *             ),
+ *             @OA\Property(
+ *                 property="payments_type",
+ *                 type="integer",
+ *                 description="Payment type identifier"
+ *             )
+ *         )
+ *     )
  * )
  */

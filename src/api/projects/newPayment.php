@@ -9,8 +9,8 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
-// Remove payments_id if empty (used for edit mode, not for create)
-if (isset($array['payments_id']) && $array['payments_id'] === '') {
+// Remove payments_id entirely; this endpoint always creates new payments
+if (array_key_exists('payments_id', $array)) {
     unset($array['payments_id']);
 }
 if (strlen($array['projects_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
