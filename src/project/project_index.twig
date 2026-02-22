@@ -1387,6 +1387,18 @@
                 $("#newPaymentModal-form-type").val(type);
                 $(".newPaymentModal-paymentOnly").toggle(type === 1);
                 $(".newPaymentModal-nonPaymentOnly").toggle(type !== 1);
+                if (type === 1) {
+                    // Enable all payment-only inputs when creating/editing a payment
+                    $(".newPaymentModal-paymentOnly").find(":input").prop("disabled", false);
+                } else {
+                    // Disable (and clear) payment-only inputs so they are not submitted for non-payment items
+                    $(".newPaymentModal-paymentOnly").find(":input").each(function () {
+                        $(this).prop("disabled", true);
+                        if (this.type !== "hidden" && this.type !== "checkbox" && this.type !== "radio") {
+                            $(this).val("");
+                        }
+                    });
+                }
                 switch(type) {
                     case 1:
                         $("#newPaymentModal-title").html(titlePrefix + "payment received");
