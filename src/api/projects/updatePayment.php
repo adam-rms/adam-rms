@@ -14,24 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     finish(false, ["code" => "METHOD-NOT-ALLOWED", "message" => "POST required"]);
 }
 
-// Basic CSRF protection using a session-bound token
-$sessionCsrfToken = isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : null;
-$requestCsrfToken = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null;
-
-// If not provided as a top-level field, look for csrf_token inside formData
-if ($requestCsrfToken === null && isset($_POST['formData']) && is_array($_POST['formData'])) {
-    foreach ($_POST['formData'] as $item) {
-        if (isset($item['name'], $item['value']) && $item['name'] === 'csrf_token') {
-            $requestCsrfToken = $item['value'];
-            break;
-        }
-    }
-}
-
-if (empty($sessionCsrfToken) || empty($requestCsrfToken) || !hash_equals((string) $sessionCsrfToken, (string) $requestCsrfToken)) {
-    finish(false, ["code" => "CSRF-ERROR", "message" => "Invalid CSRF token"]);
-}
-
 // Normalise incoming form data
 if (!isset($_POST['formData']) || !is_array($_POST['formData'])) {
     finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid form data"]);
@@ -40,10 +22,6 @@ if (!isset($_POST['formData']) || !is_array($_POST['formData'])) {
 $array = [];
 foreach ($_POST['formData'] as $item) {
     if (!isset($item['name'])) {
-        continue;
-    }
-    // Skip CSRF token entry if present in formData
-    if ($item['name'] === 'csrf_token') {
         continue;
     }
     $array[$item['name']] = isset($item['value']) ? $item['value'] : null;
