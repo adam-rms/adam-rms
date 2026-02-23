@@ -57,18 +57,6 @@ if (!$existing) finish(false, ["code" => "NOT-FOUND", "message" => "Payment not 
 if ((int) $array['projects_id'] !== (int) $existing['projects_id']) {
     finish(false, ["code" => "PROJECT-MISMATCH", "message" => "Payment does not belong to the specified project"]);
 }
-$currencies = new ISOCurrencies();
-$moneyParser = new DecimalMoneyParser($currencies);
-
-// Prepare new values
-$array['payments_date'] = isset($array['payments_date']) ? date("Y-m-d H:i:s", strtotime($array['payments_date'])) : null;
-if (!isset($array['payments_quantity']) || !$array['payments_quantity']) {
-$existing = $DBLIB->getone("payments", ["payments.payments_id", "payments.projects_id", "payments.payments_type", "payments.payments_amount", "payments.payments_quantity", "payments.payments_date"]);
-}
-if (!$existing) finish(false, ["code" => "NOT-FOUND", "message" => "Payment not found"]);
-
-$currencies = new ISOCurrencies();
-$moneyParser = new DecimalMoneyParser($currencies);
 
 // Prepare new values
 // Determine payment type, falling back to existing if not supplied
@@ -97,8 +85,16 @@ if (isset($array['payments_date']) && $array['payments_date'] !== '') {
 // Normalise payment quantity (default to 1 if missing or blank)
 $array['payments_quantity'] = isset($array['payments_quantity']) && $array['payments_quantity'] !== '' ? $array['payments_quantity'] : 1;
 
-// Parse and normalise payment amount
-$array['payments_amount'] = $moneyParser->parse($array['payments_amount'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
+// Parse and normalise payment amount; if not provided, keep existing amount
+if (isset($array['payments_amount']) && $array['payments_amount'] !== '') {
+    $array['payments_amount'] = $moneyParser->parse(
+        $array['payments_amount'],
+        $AUTH->data['instance']['instances_config_currency']
+    )->getAmount();
+} else {
+    // Do not change the amount if no new value is provided
+    $array['payments_amount'] = $existing['payments_amount'];
+}
 
 $projectFinanceCacher = new projectFinanceCacher($existing['projects_id']);
 
@@ -120,8 +116,14 @@ $newAmount = new Money($array['payments_amount'], new Currency($AUTH->data['inst
 $newAmount = $newAmount->multiply($array['payments_quantity']);
 $projectFinanceCacher->adjustPayment($array['payments_type'], $newAmount, false);
 
-$bCMS->auditLog("UPDATE", "payments", $existing['payments_id'], $AUTH->data['users_userid'], null, $existing['projects_id']);
+// Explicitly record if the payment type was changed, as this affects financial reporting
+$paymentTypeChanged = isset($array['payments_type']) && (int)$array['payments_type'] !== (int)$existing['payments_type'];
+$changeNote = null;
+if ($paymentTypeChanged) {
+    $changeNote = 'payments_type changed from ' . $existing['payments_type'] . ' to ' . $array['payments_type'];
+}
 
+$bCMS->auditLog("UPDATE", "payments", $existing['payments_id'], $AUTH->data['users_userid'], $changeNote, $existing['projects_id']);
 if ($projectFinanceCacher->save()) finish(true);
 else finish(false, ["message" => "Finance Cacher Save failed"]);
 
@@ -140,44 +142,50 @@ else finish(false, ["message" => "Finance Cacher Save failed"]);
  *         )
  *     ),
  *     @OA\Response(response="404", description="Permission Error"),
- *     @OA\Parameter(
- *         name="formData",
- *         in="query",
- *         description="Serialized form data for updating a project payment",
+ *     @OA\RequestBody(
  *         required=true,
- *         @OA\Schema(
- *             type="object",
- *             @OA\Property(
- *                 property="payments_id",
- *                 type="integer",
- *                 description="Identifier of the payment to update"
- *             ),
- *             @OA\Property(
- *                 property="projects_id",
- *                 type="integer",
- *                 description="Identifier of the project this payment belongs to"
- *             ),
- *             @OA\Property(
- *                 property="payments_date",
- *                 type="string",
- *                 format="date-time",
- *                 nullable=true,
- *                 description="Date and time of the payment"
- *             ),
- *             @OA\Property(
- *                 property="payments_quantity",
- *                 type="integer",
- *                 description="Quantity associated with the payment (defaults to 1 if empty)"
- *             ),
- *             @OA\Property(
- *                 property="payments_amount",
- *                 type="string",
- *                 description="Payment amount in the instance currency, as a decimal string"
- *             ),
- *             @OA\Property(
- *                 property="payments_type",
- *                 type="integer",
- *                 description="Payment type identifier"
+ *         description="Form data for updating a project payment, submitted via POST",
+ *         @OA\MediaType(
+ *             mediaType="application/x-www-form-urlencoded",
+ *             @OA\Schema(
+ *                 type="object",
+ *                 @OA\Property(
+ *                     property="formData",
+ *                     type="object",
+ *                     description="Serialized form data for updating a project payment",
+ *                     @OA\Property(
+ *                         property="payments_id",
+ *                         type="integer",
+ *                         description="Identifier of the payment to update"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="projects_id",
+ *                         type="integer",
+ *                         description="Identifier of the project this payment belongs to"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_date",
+ *                         type="string",
+ *                         format="date-time",
+ *                         nullable=true,
+ *                         description="Date and time of the payment"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_quantity",
+ *                         type="integer",
+ *                         description="Quantity associated with the payment (defaults to 1 if empty)"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_amount",
+ *                         type="string",
+ *                         description="Payment amount in the instance currency, as a decimal string"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_type",
+ *                         type="integer",
+ *                         description="Payment type identifier"
+ *                     )
+ *                 )
  *             )
  *         )
  *     )
