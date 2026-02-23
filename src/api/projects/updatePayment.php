@@ -19,6 +19,14 @@ if (!isset($_POST['formData']) || !is_array($_POST['formData'])) {
     finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid form data"]);
 }
 
+// Validate payments_type
+if (isset($_POST['formData']['payments_type'])) {
+    $paymentsType = intval($_POST['formData']['payments_type']);
+    if ($paymentsType < 1 || $paymentsType > 4) {
+        finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid payment type"]);
+    }
+}
+
 $array = [];
 foreach ($_POST['formData'] as $item) {
     if (!isset($item['name'])) {
@@ -29,13 +37,20 @@ foreach ($_POST['formData'] as $item) {
 
 if (empty($array['payments_id']) || empty($array['projects_id'])) finish(false, ["code" => "PARAM-ERROR", "message" => "Missing identifiers"]);
 
+// Verify the project exists and belongs to the current instance
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects_deleted", 0);
+$DBLIB->where("projects_id", $array['projects_id']);
+$project = $DBLIB->getone("projects", ["projects_id"]);
+if (!$project) finish(false, ["code" => "NOT-FOUND", "message" => "Project not found"]);
+
 // Fetch existing payment to compute deltas
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("payments.payments_deleted", 0);
 $DBLIB->join("projects", "payments.projects_id=projects.projects_id", "LEFT");
 $DBLIB->where("payments.payments_id", $array['payments_id']);
-$existing = $DBLIB->getone("payments", ["payments.payments_id", "payments.projects_id", "payments.payments_type", "payments.payments_amount", "payments.payments_quantity"]);
+$existing = $DBLIB->getone("payments", ["payments.payments_id", "payments.projects_id", "payments.payments_type", "payments.payments_amount", "payments.payments_quantity", "payments.payments_date"]);
 if (!$existing) finish(false, ["code" => "NOT-FOUND", "message" => "Payment not found"]);
 
 // Ensure the supplied projects_id matches the project of the payment
@@ -79,7 +94,10 @@ if (isset($array['payments_date']) && $array['payments_date'] !== '') {
     unset($array['payments_date']);
 }
 
-$array['payments_quantity'] = ($array['payments_quantity'] ?? 1) === '' ? 1 : $array['payments_quantity'];
+// Normalise payment quantity (default to 1 if missing or blank)
+$array['payments_quantity'] = isset($array['payments_quantity']) && $array['payments_quantity'] !== '' ? $array['payments_quantity'] : 1;
+
+// Parse and normalise payment amount
 $array['payments_amount'] = $moneyParser->parse($array['payments_amount'], $AUTH->data['instance']['instances_config_currency'])->getAmount();
 
 $projectFinanceCacher = new projectFinanceCacher($existing['projects_id']);

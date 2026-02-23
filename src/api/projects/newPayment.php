@@ -14,7 +14,15 @@ if (array_key_exists('payments_id', $array)) {
     unset($array['payments_id']);
 }
 if (strlen($array['projects_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
-$array['payments_date'] = date("Y-m-d H:i:s", strtotime($array['payments_date']));
+// Normalise payments_date only when provided and valid; otherwise let DB default apply
+if (isset($array['payments_date']) && $array['payments_date'] !== '') {
+    $timestamp = strtotime($array['payments_date']);
+    if ($timestamp !== false) {
+        $array['payments_date'] = date("Y-m-d H:i:s", $timestamp);
+    } else {
+        unset($array['payments_date']);
+    }
+}
 if (!$array['payments_quantity']) $array['payments_quantity'] = 1;
 use Money\Currencies\ISOCurrencies;
 use Money\Parser\DecimalMoneyParser;
