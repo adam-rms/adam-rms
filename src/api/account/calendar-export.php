@@ -39,6 +39,8 @@ foreach ($assignments as $assignment) {
 
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 foreach ($iCalAssignments as $event) {
+    // Skip projects without both start and end dates to avoid defaulting to current date
+    if (!$event['projects_dates_use_start'] || !$event['projects_dates_use_end']) continue;
     $vEvent = new \Eluceo\iCal\Component\Event();
     $vEvent->setUseTimezone(true);
     $vEvent

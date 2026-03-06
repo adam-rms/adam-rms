@@ -30,6 +30,8 @@ $iCalProjects = $DBLIB->get("projects", null, ["pmusers.users_name1 AS pm_name1"
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 
 foreach ($iCalProjects as $event) {
+    // Skip projects without both start and end dates to avoid defaulting to current date
+    if (!$event['projects_dates_use_start'] || !$event['projects_dates_use_end']) continue;
     $vEvent = new \Eluceo\iCal\Component\Event();
     $vEvent->setUseTimezone(true);
     $vEvent
