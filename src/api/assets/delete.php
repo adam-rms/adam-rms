@@ -39,7 +39,7 @@ else {
         $projectFinanceCacher->adjust('projectsFinanceCache_value',new Money(($asset['assets_value'] !== null ? $asset['assets_value'] : $asset['assetTypes_value']), new Currency($AUTH->data['instance']['instances_config_currency'])),true);
 
         if ($assignment['assetsAssignments_customPrice'] > 0) {
-            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal',$assignment['assetsAssignments_customPrice'],true);
+            $projectFinanceCacher->adjust('projectsFinanceCache_equipmentSubTotal', new Money($assignment['assetsAssignments_customPrice'], new Currency($AUTH->data['instance']['instances_config_currency'])), true);
         } else {
             $oldPrice = new Money(null, new Currency($AUTH->data['instance']['instances_config_currency']));
             $oldPrice = $oldPrice->add((new Money(($asset['assets_dayRate'] !== null ? $asset['assets_dayRate'] : $asset['assetTypes_dayRate']), new Currency($AUTH->data['instance']['instances_config_currency'])))->multiply($priceMaths['days']));
