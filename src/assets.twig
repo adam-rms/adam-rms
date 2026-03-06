@@ -630,8 +630,14 @@ $(document).ready(function () {
         const thisButton = $(this);
         var assetTypeId = thisButton.data("assettypeid");
         ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
-            $(".addToBasketAssetButton[data-assettypeid=" + assetTypeId + "]").hide();
-            $(".removeFromBasketAssetButton[data-assettypeid=" + assetTypeId + "]").show();
+            var failedIds = (data.response && data.response.failed ? data.response.failed : []).map(function(f) { return f.assets_id; });
+            $(".addToBasketAssetButton[data-assettypeid=" + assetTypeId + "]").each(function() {
+                var assetId = $(this).data("assetid");
+                if (failedIds.indexOf(assetId) === -1) {
+                    $(this).hide();
+                    $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+                }
+            });
             thisButton.prop('disabled', true);
             Toast.fire({
                 type: 'success',
