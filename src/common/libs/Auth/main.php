@@ -317,8 +317,8 @@ class bID
     public function usernameTaken($username)
     {
         global $DBLIB;
-        if (strlen($username) < 1) return false;
         $username = trim(strtolower($username)); //Usernames must be unique
+        if (strlen($username) < 1) return false;
         $DBLIB->where("users_username", $username);
         if ($DBLIB->getValue("users", "count(*)") > 0) return true;
         else return false;
