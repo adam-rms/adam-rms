@@ -1,0 +1,31 @@
+name: Create architecture review issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print issue titles without creating them)"
+        required: false
+        default: "false"
+        type: boolean
+
+permissions:
+  issues: write
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "Dry run — the following issues would be created:"
+            grep '^create_issue' create-issues.sh | sed "s/create_issue '\([^']*\)'.*/  - \1/"
+          else
+            bash create-issues.sh
+          fi

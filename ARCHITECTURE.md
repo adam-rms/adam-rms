@@ -15,8 +15,7 @@ This document provides a comprehensive review of the AdamRMS codebase architectu
 9. [File Storage](#file-storage)
 10. [Deployment & Infrastructure](#deployment--infrastructure)
 11. [CI/CD Pipeline](#cicd-pipeline)
-12. [Security Analysis](#security-analysis)
-13. [Technical Debt & Improvement Areas](#technical-debt--improvement-areas)
+12. [Technical Debt & Improvement Areas](#technical-debt--improvement-areas)
 
 ---
 
@@ -338,71 +337,38 @@ Docker images are built for: `linux/amd64`, `linux/arm64`, `linux/arm64/v8`
 
 ---
 
-## Security Analysis
-
-### Strengths
-
-- Content Security Policy headers are implemented and structured (`head.php`)
-- HTML purification via `ezyang/htmlpurifier` for user-generated content
-- Sentry error tracking for production
-- Session-based auth with 12-hour token expiry
-- Brute force protection on login (6 attempts / 5 min lockout, tracked in `loginAttempts` table)
-- Multi-tenancy with strict instance ID scoping on DB queries
-- Comprehensive audit logging via `auditLog` function in `bCMS.php`
-- Automated dependency updates via Dependabot (monthly, with major version exclusions)
-
-### Weaknesses & Risks
-
-| Issue | Location | Severity |
-|-------|----------|----------|
-| **Custom password hashing** instead of `password_hash()`/bcrypt — uses `hash($algo, $salt1 . $pass . $salt2)` | `api/login/login.php:14`, `api/account/changePass.php:5,8` | **Critical** |
-| No CSRF token validation on API endpoints | `api/apiHead.php` | **High** |
-| Wildcard CORS (`Access-Control-Allow-Origin: *`) | `apiHead.php:7` | High |
-| Audit logs store full request payloads (may capture passwords) | `bCMS/bCMS.php:68` | High |
-| Database collation defaults to `latin1_swedish_ci` (not `utf8mb4`) | `db/migrations/` | Medium |
-| `firebase/php-jwt ^5.2` is outdated (current: 6.x) | `composer.json` | Medium |
-| `sanitizeString()` uses `ENT_NOQUOTES` — single quotes not escaped | `bCMS.php` | Medium |
-| No SRI (Subresource Integrity) on CDN-loaded assets | `template.twig` | Medium |
-| `'unsafe-inline'` and `'unsafe-eval'` in CSP for scripts | `head.php` | Medium |
-| Dev PHP version (8.1) differs from prod (8.3); CI uses 8.1 too | devcontainer, `generateApiDocs.yaml` vs Dockerfile | Medium |
-| No automated dependency vulnerability scanning | CI pipeline | Medium |
-| AWS SDK excluded from Dependabot updates | `.github/dependabot.yml` | Low |
-| API request body merged into `$_GET`/`$_POST` | `apiHead.php:10-18` | Low |
-
----
-
 ## Technical Debt & Improvement Areas
 
 ### High Priority
 
-1. **Migrate to `password_hash()`/`password_verify()`**: The current custom hashing (`hash($algo, $salt . $pass . $salt)`) is insecure compared to modern adaptive algorithms. This requires a migration path to re-hash passwords on next login.
+1. **Migrate to `password_hash()`/`password_verify()`**: The current custom hashing scheme is weaker than modern adaptive algorithms. This requires a migration path to re-hash passwords on next login.
 2. **Add CSRF protection**: API endpoints have no CSRF token validation. A double-submit cookie or synchroniser token pattern should be implemented.
 3. **Add automated testing**: No test suite exists. PHPUnit for unit/integration tests would significantly improve confidence in changes.
 4. **API versioning**: The API has no versioning strategy. Both the web UI and mobile app share endpoints — versioning would allow safe evolution.
-5. **Sanitise audit log payloads**: The `auditLog` function in `bCMS.php` stores raw request payloads which may include passwords. Sensitive fields should be redacted before logging.
-7. **Upgrade `firebase/php-jwt`**: Version 5.x is outdated; upgrade to 6.x for improved security defaults.
-8. **PHP version alignment**: Align the devcontainer and `generateApiDocs.yaml` PHP version (8.1) with production (8.3).
+5. **Sanitise audit log payloads**: The `auditLog` function stores raw request payloads which may include sensitive fields. These should be redacted before logging.
+6. **Upgrade `firebase/php-jwt`**: Version 5.x is outdated; upgrade to 6.x for improved security defaults.
+7. **PHP version alignment**: Align the devcontainer and `generateApiDocs.yaml` PHP version (8.1) with production (8.3).
 
 ### Medium Priority
 
-9. **Database collation**: Migrate from `latin1_swedish_ci` to `utf8mb4_unicode_ci` to properly support Unicode characters and emoji. The collation fix migration (20250302170000) partially addresses this but a full migration is needed.
-10. **Static analysis**: Add PHPStan or Psalm to the CI pipeline to catch type errors and logic bugs before runtime.
-11. **Dependency auditing**: Add `composer audit` to CI to automatically detect known vulnerabilities in dependencies.
-12. **CORS policy**: Replace the wildcard `Access-Control-Allow-Origin: *` with an explicit allowlist of trusted origins.
-13. **CSP tightening**: The `'unsafe-inline'` and `'unsafe-eval'` CSP directives significantly weaken the Content Security Policy. Moving JavaScript out of Twig templates would allow these to be removed.
-14. **Reduce global variable usage**: The heavy reliance on PHP globals (`$DBLIB`, `$AUTH`, `$CONFIG`, etc.) makes testing and reasoning about code difficult. Dependency injection or a service container would improve this.
+8. **Database collation**: Migrate from `latin1_swedish_ci` to `utf8mb4_unicode_ci` to properly support Unicode characters and emoji. The collation fix migration (20250302170000) partially addresses this but a full migration is needed.
+9. **Static analysis**: Add PHPStan or Psalm to the CI pipeline to catch type errors and logic bugs before runtime.
+10. **Dependency auditing**: Add `composer audit` to CI to automatically detect known vulnerabilities in dependencies.
+11. **CORS policy**: Replace the wildcard `Access-Control-Allow-Origin: *` with an explicit allowlist of trusted origins.
+12. **CSP tightening**: The `'unsafe-inline'` and `'unsafe-eval'` CSP directives significantly weaken the Content Security Policy. Moving JavaScript out of Twig templates would allow these to be removed.
+13. **Reduce global variable usage**: The heavy reliance on PHP globals (`$DBLIB`, `$AUTH`, `$CONFIG`, etc.) makes testing and reasoning about code difficult. Dependency injection or a service container would improve this.
 
 ### Lower Priority
 
-15. **Frontend modernisation**: No asset pipeline means all 1.3MB of CSS is loaded on every page. A build step (even a simple one) could enable code splitting and cache busting.
-16. **jQuery version**: jQuery 3.4.1 (2019) is in active security maintenance; upgrade to 3.7.x.
-17. **Remove jQuery Migrate**: If modern jQuery is used throughout, the migrate plugin is unnecessary overhead.
-18. **SRI for CDN assets**: Add Subresource Integrity hashes to CDN-loaded scripts and stylesheets.
-19. **Docker health checks**: No `HEALTHCHECK` instruction in the Dockerfile; add one to support container orchestrators.
-20. **Docker cache improvement**: Switch from `type=local` to `type=gha` for Docker layer caching in GitHub Actions.
-21. **PHP CS Fixer**: Add a code style linter to CI for consistent PHP formatting.
-22. **AWS SDK Dependabot exclusion**: `aws/aws-sdk-php` is excluded from automated updates — ensure it is periodically reviewed manually.
-23. **Tag `mysqli-database-class`**: `adam-rms/mysqli-database-class` is pinned to `dev-main`. Since it's within the same organisation this carries no external supply chain risk, but tagging a release version would make change tracking easier.
+14. **Frontend modernisation**: No asset pipeline means all 1.3MB of CSS is loaded on every page. A build step (even a simple one) could enable code splitting and cache busting.
+15. **jQuery version**: jQuery 3.4.1 (2019) is in active security maintenance; upgrade to 3.7.x.
+16. **Remove jQuery Migrate**: If modern jQuery is used throughout, the migrate plugin is unnecessary overhead.
+17. **SRI for CDN assets**: Add Subresource Integrity hashes to any CDN-loaded scripts and stylesheets that lack them.
+18. **Docker health checks**: No `HEALTHCHECK` instruction in the Dockerfile; add one to support container orchestrators.
+19. **Docker cache improvement**: Switch from `type=local` to `type=gha` for Docker layer caching in GitHub Actions.
+20. **PHP CS Fixer**: Add a code style linter to CI for consistent PHP formatting.
+21. **AWS SDK Dependabot exclusion**: `aws/aws-sdk-php` is excluded from automated updates — ensure it is periodically reviewed manually.
+22. **Tag `mysqli-database-class`**: `adam-rms/mysqli-database-class` is pinned to `dev-main`. Since it's within the same organisation this carries no external supply chain risk, but tagging a release version would make change tracking easier.
 
 ---
 
