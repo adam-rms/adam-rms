@@ -163,9 +163,9 @@ The base template (`src/assets/template.twig`, ~40KB) includes all shared naviga
 
 ### External CDN Dependencies
 
-The application loads assets from external CDNs at runtime (no Subresource Integrity verification):
-- cdnjs.cloudflare.com (Bootstrap, jQuery, Font Awesome, etc.)
-- fonts.googleapis.com / fonts.gstatic.com
+The application loads assets from external CDNs at runtime. Many core assets (e.g. jQuery, Bootstrap, Font Awesome in `src/assets/template.twig`) are loaded with Subresource Integrity (SRI) attributes, but some external resources are still fetched without SRI:
+- cdnjs.cloudflare.com (Bootstrap, jQuery, Font Awesome, etc. — mostly with SRI)
+- fonts.googleapis.com / fonts.gstatic.com (no SRI support; trusted via HTTPS only)
 
 ---
 

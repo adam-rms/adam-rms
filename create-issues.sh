@@ -40,7 +40,12 @@ create_issue() {
   else
     echo "Failed ($http_code): $(echo "$body_out" | jq -r '.message // "unknown error"')" >&2
   fi
+
   sleep 0.5  # avoid secondary rate limits
+
+  if [[ "$http_code" != "201" ]]; then
+    return 1
+  fi
 }
 
 echo "Creating GitHub issues for adam-rms/adam-rms..."
