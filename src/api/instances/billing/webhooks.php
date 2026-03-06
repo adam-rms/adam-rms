@@ -39,6 +39,9 @@ function handleWebhook($subscription)  // contains a \Stripe\Subscription
         break;
       }
     }
+    if ($status === "trialing") {
+      $instanceUpdateData['instances_hadTrial'] = 1;
+    }
   } else if ($status === "canceled") {
     $instanceUpdateData['instances_planName'] = "";
     $instanceUpdateData['instances_suspended'] = 1;
