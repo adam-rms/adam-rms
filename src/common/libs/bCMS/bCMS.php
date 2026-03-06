@@ -65,9 +65,33 @@ class bCMS
     }
     return $_GET;
   }
+  /** Sensitive array keys that are stripped from $revelantData before storage.
+   *  Pass only non-sensitive descriptive strings as $revelantData; never pass
+   *  raw $_POST / $_GET arrays or any value that may contain passwords or secrets.
+   */
+  private const SENSITIVE_KEYS = ['password', 'pass', 'newpass', 'oldpass', 'token', 'secret', 'key'];
+
+  /** Recursively remove sensitive keys (case-insensitive) from an array. */
+  private function redactSensitiveData(array $data): array
+  {
+    foreach ($data as $key => $value) {
+      if (in_array(strtolower((string)$key), self::SENSITIVE_KEYS, true)) {
+        unset($data[$key]);
+      } elseif (is_array($value)) {
+        $data[$key] = $this->redactSensitiveData($value);
+      }
+    }
+    return $data;
+  }
+
   function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null, $targetid = null)
   { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
     global $DBLIB;
+    if (is_array($revelantData)) {
+      $revelantData = $this->redactSensitiveData($revelantData);
+      $encoded = json_encode($revelantData);
+      $revelantData = ($encoded !== false) ? $encoded : null;
+    }
     $data = [
       "auditLog_actionType" => $actionType,
       "auditLog_actionTable" => $table,
