@@ -176,8 +176,8 @@ The application loads assets from external CDNs at runtime (no Subresource Integ
 
 The project uses a custom fork of `mysqli-database-class` (`adam-rms/mysqli-database-class`, pinned to `dev-main`). This is a query builder, not a full ORM — there are no model classes. Database calls are made directly in PHP page files and API endpoints.
 
-**Risks:**
-- Pinning to `dev-main` means the dependency can change unexpectedly without a version bump
+**Notes:**
+- Pinned to `dev-main` (same organisation, so team controls both repos — not a third-party supply chain risk, but tagging a version would make change tracking easier)
 - No ORM means schema changes require manual updates across all query sites
 - Raw `MysqliDb` calls scattered throughout 301 PHP files
 
@@ -365,7 +365,6 @@ Docker images are built for: `linux/amd64`, `linux/arm64`, `linux/arm64/v8`
 | No SRI (Subresource Integrity) on CDN-loaded assets | `template.twig` | Medium |
 | `'unsafe-inline'` and `'unsafe-eval'` in CSP for scripts | `head.php` | Medium |
 | Dev PHP version (8.1) differs from prod (8.3); CI uses 8.1 too | devcontainer, `generateApiDocs.yaml` vs Dockerfile | Medium |
-| DB abstraction dependency pinned to `dev-main` | `composer.json` | Medium |
 | No automated dependency vulnerability scanning | CI pipeline | Medium |
 | AWS SDK excluded from Dependabot updates | `.github/dependabot.yml` | Low |
 | API request body merged into `$_GET`/`$_POST` | `apiHead.php:10-18` | Low |
@@ -380,8 +379,7 @@ Docker images are built for: `linux/amd64`, `linux/arm64`, `linux/arm64/v8`
 2. **Add CSRF protection**: API endpoints have no CSRF token validation. A double-submit cookie or synchroniser token pattern should be implemented.
 3. **Add automated testing**: No test suite exists. PHPUnit for unit/integration tests would significantly improve confidence in changes.
 4. **API versioning**: The API has no versioning strategy. Both the web UI and mobile app share endpoints — versioning would allow safe evolution.
-5. **Unpin `dev-main` dependency**: `adam-rms/mysqli-database-class` is pinned to `dev-main`, creating a risk of unexpected breaking changes. It should be tagged and versioned.
-6. **Sanitise audit log payloads**: The `auditLog` function in `bCMS.php` stores raw request payloads which may include passwords. Sensitive fields should be redacted before logging.
+5. **Sanitise audit log payloads**: The `auditLog` function in `bCMS.php` stores raw request payloads which may include passwords. Sensitive fields should be redacted before logging.
 7. **Upgrade `firebase/php-jwt`**: Version 5.x is outdated; upgrade to 6.x for improved security defaults.
 8. **PHP version alignment**: Align the devcontainer and `generateApiDocs.yaml` PHP version (8.1) with production (8.3).
 
@@ -404,6 +402,7 @@ Docker images are built for: `linux/amd64`, `linux/arm64`, `linux/arm64/v8`
 20. **Docker cache improvement**: Switch from `type=local` to `type=gha` for Docker layer caching in GitHub Actions.
 21. **PHP CS Fixer**: Add a code style linter to CI for consistent PHP formatting.
 22. **AWS SDK Dependabot exclusion**: `aws/aws-sdk-php` is excluded from automated updates — ensure it is periodically reviewed manually.
+23. **Tag `mysqli-database-class`**: `adam-rms/mysqli-database-class` is pinned to `dev-main`. Since it's within the same organisation this carries no external supply chain risk, but tagging a release version would make change tracking easier.
 
 ---
 
