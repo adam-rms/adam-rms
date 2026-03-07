@@ -83,7 +83,7 @@ Set "needs_improvement" to false and both improved fields to null when no change
   try {
     result = JSON.parse(raw);
   } catch {
-    console.error("Failed to parse Claude response as JSON:", raw);
+    console.error("Failed to parse model response as JSON:", raw);
     process.exit(1);
   }
 
