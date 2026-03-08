@@ -5,6 +5,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -45,6 +51,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to GitHub Container Registry
+        id: push
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -56,3 +63,9 @@ jobs:
           annotations: ${{ steps.docker_github_meta.outputs.annotations }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Attest Docker image
+        uses: actions/attest@v2
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
