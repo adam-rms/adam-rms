@@ -22,6 +22,11 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
 - **Error Tracking**: `sentry/sdk` for production error monitoring
 - **Database Migrations**: `robmorgan/phinx`
 
+### Website & Documentation
+- **Docusaurus v3**: Static site generator for the project website and documentation
+- **React**: Custom components for the website (pricing table, homepage features)
+- **Netlify/Cloudflare Pages**: Website hosting and deployment
+
 ### Infrastructure
 - **Docker**: Containerized deployment with pre-built images
 - **GitHub Actions**: CI/CD pipelines for Docker builds, API docs generation, and code review
@@ -41,6 +46,11 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
     - `libs/` - Utility classes and helper functions
   - `assets/`, `clients/`, `instances/`, `login/`, `maintenance/`, `project/`, etc. - Feature modules
 - `db/migrations/` - Phinx database migrations
+- `website/` - Docusaurus website and documentation
+  - `docs/` - Documentation source files (user guide, hosting, contributor guides)
+  - `src/` - React components and custom pages
+  - `static/` - Static assets (images, redirects, headers)
+  - `docusaurus.config.js` - Docusaurus configuration
 
 ### Request Flow
 

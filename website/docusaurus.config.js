@@ -59,7 +59,7 @@ const config = {
             label: "Contributing",
           },
           {
-            href: "https://api-docs.adam-rms.com/",
+            to: "/api-docs",
             label: "API Documentation",
           },
           {
@@ -118,7 +118,7 @@ const config = {
       ({
         docs: {
           sidebarPath: "./sidebars.js",
-          editUrl: "https://github.com/adam-rms/website/edit/main/",
+          editUrl: "https://github.com/adam-rms/adam-rms/edit/main/website/",
           editCurrentVersion: true,
           // includeCurrentVersion: !production,
           showLastUpdateTime: true,

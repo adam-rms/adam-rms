@@ -16,7 +16,7 @@ This guide assumes you have a good understanding of deploying web infrastructure
 
 :::info
 AdamRMS is distributed under the [GNU Affero General Public License v3.0](https://github.com/adam-rms/adam-rms/blob/main/LICENSE) and therefore is provided "AS IS".  
-The documentation on this page is delivered as guidance and advice, and it is believed to be correct and working at the time of writing. Any comments are greatly appreciated, and should be [submitted as an issue.](https://github.com/adam-rms/website/issues/new?assignees=&labels=documentation&projects=&template=doc_issue.yaml&title=%5BDocs+Issue%5D+%3Ctitle%3E)
+The documentation on this page is delivered as guidance and advice, and it is believed to be correct and working at the time of writing. Any comments are greatly appreciated, and should be [submitted as an issue.](https://github.com/adam-rms/adam-rms/issues/new?assignees=&labels=documentation&projects=&title=%5BDocs+Issue%5D+%3Ctitle%3E)
 :::
 
 ## What You need
