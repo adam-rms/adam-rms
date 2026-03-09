@@ -111,13 +111,22 @@ class bID
         $positions = $DBLIB->get("userPositions");
         $this->data['positions'] = [];
         $permissionCodes = [];
+        $allGroupIds = [];
         foreach ($positions as $position) {
             $this->data['positions'][] = $position;
             $position['groups'] = explode(",", $position['positions_positionsGroups']);
-            foreach ($position['groups'] as $positiongroup) {
-                $DBLIB->where("positionsGroups_id", $positiongroup);
-                $positiongroup = $DBLIB->getone("positionsGroups", ["positionsGroups_actions"]);
-                $permissionCodes = array_merge($permissionCodes, explode(",", $positiongroup['positionsGroups_actions']), explode(",", $position['userPositions_extraPermissions']));
+            foreach ($position['groups'] as $groupId) {
+                $groupId = trim($groupId);
+                if ($groupId !== '') $allGroupIds[] = $groupId;
+            }
+            $permissionCodes = array_merge($permissionCodes, explode(",", $position['userPositions_extraPermissions']));
+        }
+        if (count($allGroupIds) > 0) {
+            $allGroupIds = array_unique($allGroupIds);
+            $DBLIB->where("positionsGroups_id", $allGroupIds, "IN");
+            $positionGroups = $DBLIB->get("positionsGroups", null, ["positionsGroups_actions"]);
+            foreach ($positionGroups as $positionGroup) {
+                $permissionCodes = array_merge($permissionCodes, explode(",", $positionGroup['positionsGroups_actions']));
             }
         }
 

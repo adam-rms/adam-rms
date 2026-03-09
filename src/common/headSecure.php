@@ -97,21 +97,23 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
     $DBLIB->where("cmsPages_deleted", 0);
     $DBLIB->where("cmsPages_archived", 0);
     $DBLIB->where("cmsPages_showNav", 1);
-    $DBLIB->where("cmsPages_subOf", NULL, "IS");
     if (isset($AUTH->data['instance']["instancePositions_id"])) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're server admins
     $DBLIB->orderBy("cmsPages_navOrder", "ASC");
+    $DBLIB->orderBy("cmsPages_name", "ASC");
     $DBLIB->orderBy("cmsPages_id", "ASC");
+    $allCmsPages = $DBLIB->get("cmsPages", null, ["cmsPages.*"]);
     $PAGEDATA['NAVIGATIONCMSPages'] = [];
-    foreach ($DBLIB->get("cmsPages", null, ["cmsPages.*"]) as $page) {
-        $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-        $DBLIB->where("cmsPages_deleted", 0);
-        $DBLIB->where("cmsPages_archived", 0);
-        $DBLIB->where("cmsPages_showNav", 1);
-        $DBLIB->where("cmsPages_subOf", $page['cmsPages_id']);
-        if (isset($AUTH->data['instance']["instancePositions_id"])) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're server admins
-        $DBLIB->orderBy("cmsPages_name", "ASC");
-        $page['SUBPAGES'] = $DBLIB->get("cmsPages");
-        $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
+    $subPagesByParent = [];
+    foreach ($allCmsPages as $page) {
+        if ($page['cmsPages_subOf'] !== null) {
+            $subPagesByParent[$page['cmsPages_subOf']][] = $page;
+        }
+    }
+    foreach ($allCmsPages as $page) {
+        if ($page['cmsPages_subOf'] === null) {
+            $page['SUBPAGES'] = isset($subPagesByParent[$page['cmsPages_id']]) ? $subPagesByParent[$page['cmsPages_id']] : [];
+            $PAGEDATA['NAVIGATIONCMSPages'][] = $page;
+        }
     }
 } elseif ($AUTH->serverPermissionCheck("INSTANCES:VIEW") && $AUTH->serverPermissionCheck("INSTANCES:FULL_PERMISSIONS_IN_INSTANCE")) {
     // User is a server admin who has no instance - this is often caused by them deleting one. Select an instance for them to use at random.
