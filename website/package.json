@@ -6,7 +6,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build:api-docs": "redocly build-docs ../apiDocs.yaml --output ./static/api-docs/index.html",
+    "build:api-docs": "test -f ./static/apiDocs.yaml && redocly build-docs ./static/apiDocs.yaml --output ./static/api-docs/index.html || echo 'Skipping API docs build (apiDocs.yaml not found)'",
     "build": "npm run build:api-docs && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -46,7 +46,7 @@
     ]
   },
   "devDependencies": {
-    "@redocly/cli": "^1.0.0",
+    "@redocly/cli": "^2.20.4",
     "eslint": "^8.26.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.31.10"

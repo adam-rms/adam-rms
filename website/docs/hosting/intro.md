@@ -28,7 +28,7 @@ The documentation on this page is delivered as guidance and advice, and it is be
 ### Optional Features you can setup later on
 
 - [S3-compatible storage](./s3-storage) - if you want to store images & files
-- [A SendGrid account](./sendgrid) - for emails
+- [A SendGrid account](./email) - for emails
 - [Developer Google and Microsoft accounts](./auth) - for Advanced sign-in options
 - [Sentry](./sentry) - for error logging
 

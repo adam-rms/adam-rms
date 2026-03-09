@@ -47,12 +47,12 @@ jobs:
           $finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in('src/api/');
           $openapi = \OpenApi\Generator::scan($finder, ['logger' => new \Psr\Log\NullLogger()]);
           $yaml = $openapi->toYaml();
-          file_put_contents('apiDocs.yaml', $yaml);
+          file_put_contents('website/static/apiDocs.yaml', $yaml);
 
       - uses: actions/upload-artifact@v4
         with:
           name: "apiDocs.yaml"
-          path: "apiDocs.yaml"
+          path: "website/static/apiDocs.yaml"
           if-no-files-found: "error"
           overwrite: "true"
 
@@ -61,5 +61,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add apiDocs.yaml
+          git add website/static/apiDocs.yaml
           git diff --staged --quiet || (git commit -m "Update generated API docs" && git push)
