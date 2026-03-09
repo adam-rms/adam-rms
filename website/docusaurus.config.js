@@ -59,7 +59,7 @@ const config = {
             label: "Contributing",
           },
           {
-            href: "/api-docs",
+            href: "/api",
             label: "API Documentation",
           },
           {

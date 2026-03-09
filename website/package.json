@@ -6,7 +6,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build:api-docs": "test -f ./static/apiDocs.yaml && redocly build-docs ./static/apiDocs.yaml --output ./static/api-docs/index.html || echo 'Skipping API docs build (apiDocs.yaml not found)'",
+    "build:api-docs": "test -f ./static/apiDocs.yaml && redocly build-docs ./static/apiDocs.yaml --output ./static/api/index.html || echo 'Skipping API docs build (apiDocs.yaml not found)'",
     "build": "npm run build:api-docs && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
