@@ -57,6 +57,7 @@ const config = {
         path: "api-docs",
         routeBasePath: "api",
         sidebarPath: "./api-sidebars.js",
+        docItemComponent: "@theme/ApiItem",
       },
     ],
   ],
