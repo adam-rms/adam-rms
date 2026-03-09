@@ -10,7 +10,6 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-      artifact-metadata: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -64,7 +63,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Attest Docker image
-        uses: actions/attest@v2
+        uses: actions/attest-build-provenance@v2
         with:
           subject-name: ghcr.io/${{ github.repository }}
           subject-digest: ${{ steps.push.outputs.digest }}
