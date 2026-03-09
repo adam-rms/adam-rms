@@ -55,7 +55,7 @@
                 var assets = $("#addAssetModal-assets").select2("val");
                 formData.push({"name": "maintenanceJobs_assets", "value":assets.join(',')});
                 ajaxcall("maintenance/newJob.php", {formData}, function (data) {
-                    window.location.href = "{{ CONFIG.ROOTURL }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
+                    window.location.href = "{{ CONFIG.ROOTPATH }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
                 });
             });
             $("#addAssetModal-assets").select2({
@@ -67,7 +67,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Enter asset numbers to search for assets",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchAsset.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/maintenance/searchAsset.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {

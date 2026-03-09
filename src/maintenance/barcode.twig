@@ -1,6 +1,6 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
-    <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/zxing-js/v0.21.min.js"></script>
+    <script src="{{ CONFIG.ROOTPATH }}/static-assets/libs/zxing-js/v0.21.min.js"></script>
     <!--<script type="text/javascript" src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>-->
     <script>
         // Format conversion for the library - do not adjust this array or the order of the elements - it's a lookup table
@@ -68,7 +68,7 @@
                     <h3 class="card-title">Barcode Scanner</h3>
                     <div class="card-tools">
                         <button class="btn btn-sm btn-danger" title="Stop Scanning" id="barcodeScanResetButton" style="display: none;">Stop Scanning</button>
-                        <a class="btn btn-sm btn-info" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
+                        <a class="btn btn-sm btn-info" href="{{ CONFIG.ROOTPATH }}/maintenance/barcodeGenerator.php">Generate/Export Barcodes</a>
                     </div>
                 </div>
                 <div class="card-body" id="barcodeScanVideoCard">
@@ -298,7 +298,7 @@
                                     <button class="btn btn-sm btn-danger deleteBarcodeButton" data-barcode="${barcode}">
                                         Delete Barcode
                                     </button>
-                                    <a href="{{CONFIG.ROOTURL}}/asset.php?id=${asset.assetTypes_id}&asset=${asset.assets_id}" class="btn btn-sm btn-default" target="_blank">
+                                    <a href="{{CONFIG.ROOTPATH}}/asset.php?id=${asset.assetTypes_id}&asset=${asset.assets_id}" class="btn btn-sm btn-default" target="_blank">
                                         View Asset
                                     </a>
                                 </div>
@@ -387,7 +387,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Enter asset numbers to search for assets",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/assets/searchAssets.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {

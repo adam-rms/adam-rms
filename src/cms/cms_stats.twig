@@ -12,7 +12,7 @@
                     </h3>
                     <div class="card-tools pull-right">
                         <div class="input-group input-group-sm">
-                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}">View Page</a>
+                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTPATH }}/cms/?p={{ PAGE.cmsPages_id }}">View Page</a>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                         <div class="card-tools pull-right">
                             <div class="input-group input-group-sm">
                                 {% if "CMS:CMS_PAGES:VIEW:ACCESS_LOG"|instancePermissions %}
-                                    <a href="{{ CONFIG.ROOTURL }}/cms/log.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Page View Log"><i class="fas fa-binoculars"></i></a>
+                                    <a href="{{ CONFIG.ROOTPATH }}/cms/log.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Page View Log"><i class="fas fa-binoculars"></i></a>
                                 {% endif %}
                             </div>
                         </div>
@@ -66,7 +66,7 @@
                                         <td>
                                             {% if entry.users_userid != null %}
                                                 {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
+                                                    <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ entry.users_userid }}">
                                                         {{ entry.user.users_name1 }} {{ entry.user.users_name2 }}
                                                     </a>
                                                 {% else %}

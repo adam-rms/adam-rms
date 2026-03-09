@@ -87,7 +87,7 @@
                                 <p class="text-sm">Creator
                                     <b class="d-block">
                                         {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                        <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}">
+                                        <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userCreatorUserID }}">
                                             {% endif %}
                                             {{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}
                                             {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
@@ -110,7 +110,7 @@
                                     <p class="text-sm">Assigned to
                                         <b class="d-block">
                                             {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                            <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}">
+                                            <a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userAssignedUserID }}">
                                                 {% endif %}
                                                 {{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}
                                                 {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
@@ -201,7 +201,7 @@
                         {% for asset in job.assets %}
                             <li class="assetlist" data-assetid="{{ asset.assets_id }}">
                                 <span class="text">
-                                    <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}&asset={{ asset.assets_id }}" target="_blank">
+                                    <a href="{{ CONFIG.ROOTPATH }}/asset.php?id={{ asset.assetTypes_id }}&asset={{ asset.assets_id }}" target="_blank">
                                         {{ asset.assets_tag|aTag }}
                                     </a>
                                     {% if asset.assetCategories_fontAwesome %}
@@ -271,14 +271,14 @@
                                 <span class="direct-chat-name float-left">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
                                 <span class="direct-chat-timestamp float-right">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
                             </div>
-                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ message.users_userid }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ message.users_userid }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
                         {% else %}
                         <div class="direct-chat-msg right">
                             <div class="direct-chat-infos clearfix">
                                 <span class="direct-chat-name float-right">{{ message.users_name1 ~ " " ~ message.users_name2 }}</span>
                                 <span class="direct-chat-timestamp float-left">{{ message.maintenanceJobsMessages_timestamp|date("d M Y h:ia") }}</span>
                             </div>
-                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ message.users_userid }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
+                            <img loading="lazy" class="direct-chat-img" src="{{ CONFIG.FILES_ENABLED == "Enabled" and message.users_thumbnail ? message.users_thumbnail|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ message.users_userid }}"  alt="{{ message.users_name1 ~ " " ~ message.users_name2 }}">
                         {% endif %}
                             <div class="direct-chat-text">
                                 {% if message.maintenanceJobsMessages_text|length > 0 %}
@@ -358,7 +358,7 @@
                                             <span class="time"><i class="fas fa-clock"></i> {{ event.auditLog_timestamp|date("h:i:sa") }}</span>
                                             <h3 class="timeline-header">
                                                 {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ event.users_userid }}">
+                                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ event.users_userid }}">
                                                 {% endif %}{{ event.users_name1 ~ " " ~ event.users_name2}}{% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}</a>{% endif %}
                                                 {% if event.auditLog_actionType == "INSERT" %}
                                                     created the job
@@ -428,7 +428,7 @@
                     callback: function (result) {
                         if (result) {
                             ajaxcall("maintenance/job/deleteJob.php", {"maintenanceJobs_id": "{{ job.maintenanceJobs_id }}"}, function (data) {
-                                window.location.href = "{{CONFIG.ROOTURL}}/maintenance/";
+                                window.location.href = "{{CONFIG.ROOTPATH}}/maintenance/";
                             });
                         }
                     }
@@ -486,7 +486,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Enter email addresses to search for existing {{ CONFIG.PROJECT_NAME }} users to add to job",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchUser.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/maintenance/searchUser.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {
@@ -622,7 +622,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Enter asset numbers to search for assets",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchAsset.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/maintenance/searchAsset.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {

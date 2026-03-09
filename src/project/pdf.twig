@@ -521,7 +521,7 @@
                 formData.append("fileNumber", "{{ fileNumber|escape("js") }}");
                 formData.append("id", "{{ project['projects_id'] }}");
                 var oReq = new XMLHttpRequest();
-                oReq.open("POST", "{{CONFIG.ROOTURL}}/api/s3files/uploadProjectInvoice.php", true);
+                oReq.open("POST", "{{CONFIG.ROOTPATH}}/api/s3files/uploadProjectInvoice.php", true);
                 oReq.onload = function (oEvent) {
                     var response = JSON.parse(oReq.responseText);
                     console.log(response)
@@ -552,7 +552,7 @@
 </head>
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/pace/pace.css">
+    <link rel="stylesheet" href="{{ CONFIG.ROOTPATH }}/static-assets/libs/pace/pace.css">
     <!--Pace Loader-->
     <script>
         window.paceOptions = {

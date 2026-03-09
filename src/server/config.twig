@@ -59,7 +59,7 @@
                 $(".suspenduser").click(function () {
                     $("#loadingoverlay").show();
                     $.ajax({
-                        url: "{{ CONFIG.ROOTURL }}/api/account/suspend.php?userid=" + $(this).data("userid") + '&suspendval=' + $(this).data("suspendval"),
+                        url: "{{ CONFIG.ROOTPATH }}/api/account/suspend.php?userid=" + $(this).data("userid") + '&suspendval=' + $(this).data("suspendval"),
                         success: function (result) {
                             if (result == '1') {
                                 bootbox.alert("Success", function () {

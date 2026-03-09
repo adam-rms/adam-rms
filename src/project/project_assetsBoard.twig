@@ -229,7 +229,7 @@
             const instanceId = $(".assetStatusSelectorQuickDispatch:visible").data("instanceid");
             // Not using ajaxcall so we can have our own error handling for the alert boxes
             $.ajax({
-                url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusByTag.php",
+                url: "{{ CONFIG.ROOTPATH }}/api/projects/assets/setStatusByTag.php",
                 type: "POST",
                 data: {
                     text: assetTag,

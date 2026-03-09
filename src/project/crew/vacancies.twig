@@ -68,14 +68,14 @@
                     </td>
                     <td class="project-actions text-right">
                         <div class="btn-group">
-                            <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">More Info</a>
+                            <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTPATH}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">More Info</a>
                             {% if role.users_userid == USERDATA.users_userid %}
                                 <a href="vacantCrew.php?id={{ role.projects_id }}" class="btn btn-secondary btn-sm">Manage</a>
                             {% endif %}
                             {% if role.application %}
                                 <button type="button" class="btn btn-default btn-sm" disabled>Applied</button>
                             {% else %}
-                                <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">
+                                <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTPATH}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">
                                     {% if role.projectsVacantRoles_firstComeFirstServed %}
                                     Sign Up
                                     {% else %}
@@ -136,14 +136,14 @@
                         </p>
                         <div class="project-actions text-center">
                             <div class="btn-group">
-                                <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">More Info</a>
+                                <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTPATH}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">More Info</a>
                                 {% if role.users_userid == USERDATA.users_userid %}
                                     <a href="vacantCrew.php?id={{ role.projects_id }}" class="btn btn-secondary btn-sm">Manage</a>
                                 {% endif %}
                                 {% if role.application %}
                                     <button type="button" class="btn btn-default btn-sm" disabled>Applied</button>
                                 {% else %}
-                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">
+                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTPATH}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}">
                                         {% if role.projectsVacantRoles_firstComeFirstServed %}
                                         Sign Up
                                         {% else %}

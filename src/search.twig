@@ -1,7 +1,7 @@
 {% extends "assets/template.twig" %}
 
 {% block content %}
-    <form action="{{ CONFIG.ROOTURL }}/search.php" method="get">
+    <form action="{{ CONFIG.ROOTPATH }}/search.php" method="get">
         <input type="hidden" name="offset" value="0">
         <input type="hidden" name="limit" value="25">
         <div class="row">
@@ -14,7 +14,7 @@
                             <button type="submit" class="btn btn-lg btn-default">
                                 <i class="fa fa-search"></i> Search
                             </button>
-                            <a href="{{ CONFIG.ROOTURL }}/assets.php" type="button" class="btn btn-lg btn-default">
+                            <a href="{{ CONFIG.ROOTPATH }}/assets.php" type="button" class="btn btn-lg btn-default">
                                 Search Assets
                             </a>
                         </div>
@@ -46,11 +46,11 @@
                                     {% set total_pages =  (results['total']/limit)|round(0, 'ceil') %}
 
                                     {% if page > 1 %}
-                                        <li class="page-item"><a class="page-link" href="{{ CONFIG.ROOTURL }}/search.php?offset={{ (page-1) * limit }}&limit={{ limit }}&term={{ term }}">&laquo;</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ CONFIG.ROOTPATH }}/search.php?offset={{ (page-1) * limit }}&limit={{ limit }}&term={{ term }}">&laquo;</a></li>
                                     {% endif %}
                                     {% for i in range((page> 3 ? page-2 : 1), (total_pages > 5 and page +2 < total_pages ? page+2 : total_pages)) %}
                                         <li class="page-item">
-                                            <a class="page-link" href="{{ CONFIG.ROOTURL }}/search.php?offset={{ (i - 1) * limit }}&limit={{ limit }}&term={{ term }}">
+                                            <a class="page-link" href="{{ CONFIG.ROOTPATH }}/search.php?offset={{ (i - 1) * limit }}&limit={{ limit }}&term={{ term }}">
                                                 {% if page == i %}
                                                     <b>{{ i }}</b>
                                                 {% else %}
@@ -60,7 +60,7 @@
                                         </li>
                                     {% endfor %}
                                     {% if page < total_pages %}
-                                        <li class="page-item"><a class="page-link" href="{{ CONFIG.ROOTURL }}/search.php?offset={{ (page+1) * limit }}&limit={{ limit }}&term={{ term }}">&raquo;</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ CONFIG.ROOTPATH }}/search.php?offset={{ (page+1) * limit }}&limit={{ limit }}&term={{ term }}">&raquo;</a></li>
                                     {% endif %}
                                 </ul>
                             {% endif %}
@@ -75,7 +75,7 @@
                                             <h3>
                                                 {% set result_url = generate_result_url(result) %}
                                                 {% if result_url is not null %}
-                                                    <a href="{{ CONFIG.ROOTURL }}{{ result_url }}" class="stretched-link">{{ result.title }}</a>
+                                                    <a href="{{ CONFIG.ROOTPATH }}{{ result_url }}" class="stretched-link">{{ result.title }}</a>
                                                 {% else %}
                                                     {{ result.title }}
                                                 {% endif %}

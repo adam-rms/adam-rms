@@ -9,22 +9,22 @@
                     <div class="card">
                         <div class="card-header">
                             <ul class="nav nav-pills">
-                                <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/project/?id={{project.projects_id}}#details-view"><i class="fas fa-arrow-left"></i> Back to <span style="font-weight:bold;">{{project.projects_name}}</span></a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/project/?id={{project.projects_id}}#details-view"><i class="fas fa-arrow-left"></i> Back to <span style="font-weight:bold;">{{project.projects_name}}</span></a></li>
                             </ul>
                         </div>
                     </div>
                 {% endif %}
             {% endfor %}
         {% endif %}
-        <form method="get" action="{{CONFIG.ROOTURL}}/assets.php" id="assetSearchForm">
+        <form method="get" action="{{CONFIG.ROOTPATH}}/assets.php" id="assetSearchForm">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Assets</h3>
                     <div class="card-tools">
 <a href="{{ CONFIG.LINKS_USERGUIDEURL }}assets/finding-assets/" target="_blank" class="btn btn-tool">Help</a>
 
-                        <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?xlsx" class="btn btn-tool" title="Excel Export"><i class="fas fa-file-excel"></i></a>
-                        <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?csv" class="btn btn-tool" title="CSV Export"><i class="fas fa-file-csv"></i></a>
+                        <a href="{{ CONFIG.ROOTPATH }}/api/assets/export.php?xlsx" class="btn btn-tool" title="Excel Export"><i class="fas fa-file-excel"></i></a>
+                        <a href="{{ CONFIG.ROOTPATH }}/api/assets/export.php?csv" class="btn btn-tool" title="CSV Export"><i class="fas fa-file-csv"></i></a>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
                     </div>
                 </div>
@@ -190,7 +190,7 @@
                                         <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                             {% for thumb in asset.thumbnail %}
                                                 <div>
-                                                    <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" target="_blank">
+                                                    <a href="{{ CONFIG.ROOTPATH }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" target="_blank">
                                                     <img class="img-fluid" loading="lazy" style="max-height: 200px;"
                                                         src="{{ thumb.s3files_id|s3URL("small") }}"
                                                         fetchpriority="low" alt="{{asset.assetTypes_name}}"></a>
@@ -393,7 +393,7 @@
                                                     <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                             {% endif %}
                                         {% endif %}
-                                            <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default" target="_blank">
+                                            <a href="{{ CONFIG.ROOTPATH }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default" target="_blank">
                                                 <i class="fas fa-info-circle"></i>
                                             </a>
                                         </div>
@@ -494,7 +494,7 @@ $(document).ready(function () {
         placeholder: "Enter some manufacturer names to search",
         ajax: {
             delay: 250,
-            url: "{{ CONFIG.ROOTURL }}/api/manufacturer/search.php",
+            url: "{{ CONFIG.ROOTPATH }}/api/manufacturer/search.php",
             dataType: "json",
             type: "POST",
             data: function (params) {
@@ -530,7 +530,7 @@ $(document).ready(function () {
         placeholder: "Enter some category names to search",
         ajax: {
             delay: 250,
-            url: "{{ CONFIG.ROOTURL }}/api/categories/search.php",
+            url: "{{ CONFIG.ROOTPATH }}/api/categories/search.php",
             dataType: "json",
             type: "POST",
             data: function (params) {
@@ -566,7 +566,7 @@ $(document).ready(function () {
         placeholder: "Enter some group names to search",
         ajax: {
             delay: 250,
-            url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+            url: "{{ CONFIG.ROOTPATH }}/api/groups/search.php",
             dataType: "json",
             type: "POST",
             data: function (params) {

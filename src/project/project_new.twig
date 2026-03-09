@@ -9,7 +9,7 @@
             </div>
             <div class="card-body">
                 <p>Your current plan does not enable you to create any more projects as you have used your capacity.</p>
-                <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+                <a href="{{ CONFIG.ROOTPATH }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
             </div>
         </div>
     </div>
@@ -141,7 +141,7 @@
                     data['projects_parent_project_id'] = $('#parent').val();
 
                 ajaxcall("projects/new.php", data , function (data) {
-                    window.location.href = "{{ CONFIG.ROOTURL }}/project/?id=" + data.response['projects_id'];
+                    window.location.href = "{{ CONFIG.ROOTPATH }}/project/?id=" + data.response['projects_id'];
                 });
             });
         });

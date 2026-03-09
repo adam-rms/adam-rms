@@ -5,12 +5,12 @@
         <div class="card">
 			<div class="card-header">
 				<ul class="nav nav-pills">
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
 					{% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
-                    <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/customCategories.php">Asset Categories</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTPATH}}/instances/customCategories.php">Asset Categories</a></li>
                     {% endif %}
                     {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/barcodes.php">Barcodes</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/configuration/barcodes.php">Barcodes</a></li>
                     {% endif %}
 				</ul>
 			</div>
@@ -107,7 +107,7 @@
                                 </td>
                                 <td style="width:70px;">
                                     <div class="btn-group">
-                                        <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
+                                        <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTPATH}}/assets.php?category%5B%5D={{ category.assetCategories_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
                                         {% if category.instances_id is not null %}
                                             {% if "ASSETS:ASSET_CATEGORIES:EDIT"|instancePermissions %}
                                                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal{{ category.assetCategories_id }}"><i class="fas fa-edit"></i></button>
@@ -263,7 +263,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Search for an Icon",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/icons/getIcons.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/icons/getIcons.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {

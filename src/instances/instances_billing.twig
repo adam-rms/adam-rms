@@ -5,15 +5,15 @@
         <div class="card">
 			<div class="card-header">
 				<ul class="nav nav-pills">
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
-					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/billing.php">Billing</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTPATH}}/instances/billing.php">Billing</a></li>
                     {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/settings.php">Basic Settings</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/settings.php">Basic Settings</a></li>
 					{% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/logo.php">Logo</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/configuration/logo.php">Logo</a></li>
                     {% endif %}
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/public.php">Public Site</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/calendarSettings.php">Calendar Settings</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/public.php">Public Site</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/calendarSettings.php">Calendar Settings</a></li>
                     {% endif %}
 				</ul>
 			</div>
@@ -28,7 +28,7 @@
                     <h3 class="card-title">Billing Statistics for {{USERDATA.instance.instances_name}}</h3>
                     <div class="card-tools">
                     {% if USERDATA.instance.instances_billingUser == USERDATA.users_userid and showStripeBillingLink %}
-                        <a href="{{CONFIG.ROOTURL}}/api/instances/billing/billingPortal.php" class="btn btn-success btn-sm" target="_blank">Manage Billing</a>
+                        <a href="{{CONFIG.ROOTPATH}}/api/instances/billing/billingPortal.php" class="btn btn-success btn-sm" target="_blank">Manage Billing</a>
                     {% endif %}
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                             <tr>
                                 <td>Nominated Billing Contact</td>
                                 <td>
-                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ billingUser.users_userid }}" title="{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}">{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}</a>
+                                    <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ billingUser.users_userid }}" title="{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}">{{ billingUser.users_name1 ~ " " ~ billingUser.users_name2 }}</a>
                                     <br/>
                                     {% if CONFIG.LINKS_SUPPORTURL|length > 0 %}
                                         <a href="{{CONFIG.LINKS_SUPPORTURL}}" target="_blank">Contact support to change this</a>

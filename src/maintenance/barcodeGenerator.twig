@@ -171,7 +171,7 @@
             $(".generateButton").click(function () {
                 var assets = $("#assetSearch").val();
                 var groups = $("#assetGroups").val();
-                window.location="{{ CONFIG.ROOTURL }}/maintenance/barcodePrint.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&groups=" + groups.join() + "&type=" + $(this).data("type");
+                window.location="{{ CONFIG.ROOTPATH }}/maintenance/barcodePrint.php?" + $('#settings').serialize() + "&ids=" + assets.join() + "&blanks=" + $("#blanksInput").val() + "&groups=" + groups.join() + "&type=" + $(this).data("type");
             });
 
             $("#assetSearch").select2({
@@ -184,7 +184,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Enter asset numbers to search for assets",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/barcodes/searchAsset.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/barcodes/searchAsset.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {
@@ -218,7 +218,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Enter group name to search",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/groups/search.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {

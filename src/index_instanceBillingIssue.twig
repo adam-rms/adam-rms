@@ -25,10 +25,10 @@
                     </p>
                 {% endif %}
                 {% if USERDATA.instance.instances_billingUser == USERDATA.users_userid and USERDATA.instance.instances_suspendedReasonType == "billing" %}
-                    <a href="{{CONFIG.ROOTURL}}/api/instances/billing/billingPortal.php" class="btn btn-success" target="_blank">Fix issue in Billing Portal</a>
+                    <a href="{{CONFIG.ROOTPATH}}/api/instances/billing/billingPortal.php" class="btn btn-success" target="_blank">Fix issue in Billing Portal</a>
                 {% endif %}
                 {% if "INSTANCES:EDIT"|serverPermissions %}
-                    <a href="{{CONFIG.ROOTURL}}/server/instances.php" class="btn btn-success">Edit Server Configuration to un-suspend business</a>
+                    <a href="{{CONFIG.ROOTPATH}}/server/instances.php" class="btn btn-success">Edit Server Configuration to un-suspend business</a>
                 {% endif %}
                 {% if CONFIG.LINKS_SUPPORTURL|length > 0 %}
                     <a href="{{CONFIG.LINKS_SUPPORTURL}}" class="btn btn-default" target="_blank">Contact support</a>
@@ -54,7 +54,7 @@
             <div class="card-body">
                     {% for instance in USERDATA.instances %}
                         {% if USERDATA.instance.instances_id != instance.instances_id %}
-                        <a href="{{ CONFIG.ROOTURL }}?i={{instance.instances_id}}" class="dropdown-item changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
+                        <a href="{{ CONFIG.ROOTPATH }}?i={{instance.instances_id}}" class="dropdown-item changeInstanceActionButton" data-newinstance="{{instance.instances_id}}">
                             {{instance.instances_name}}
                             <p class="text-sm text-muted">{{ instance.userInstances_label }}</p>
                         </a>
@@ -87,7 +87,7 @@ $(document).ready(function () {
             }
             string += "</ul>";
             for (var j = 0; j < data.response[i].price.length; j++) {
-                string += "<a href=\"{{CONFIG.ROOTURL}}/api/instances/billing/subscribe.php?currency=" + data.response[i].price[j].currency + "&price_id=" + data.response[i].price_id + "\" class='btn btn-default m-1'>Start 7 day trial - " + data.response[i].price[j].formatted_amount + "/" + data.response[i].time_period + "</a><br/>";
+                string += "<a href=\"{{CONFIG.ROOTPATH}}/api/instances/billing/subscribe.php?currency=" + data.response[i].price[j].currency + "&price_id=" + data.response[i].price_id + "\" class='btn btn-default m-1'>Start 7 day trial - " + data.response[i].price[j].formatted_amount + "/" + data.response[i].time_period + "</a><br/>";
             }
             string += "</div>" +
                 "</div></div>";

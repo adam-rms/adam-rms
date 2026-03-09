@@ -52,7 +52,7 @@
                         {% endif %}
                         <br/>
                         {% if module.modules_type != 3 %}
-                            <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{{ module.modules_name }}</a>
+                            <a href="{{ CONFIG.ROOTPATH }}/training/module.php?id={{ module.modules_id }}">{{ module.modules_name }}</a>
                         {% else %}
                             {{ module.modules_name }}
                         {% endif %}
@@ -65,7 +65,7 @@
                         {% endif %}
                         {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and module.modules_thumbnail %}
                            <div>
-                               {% if module.modules_type != 3 %}<a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}">{% else %}<a href="#">{% endif %}
+                               {% if module.modules_type != 3 %}<a href="{{ CONFIG.ROOTPATH }}/training/module.php?id={{ module.modules_id }}">{% else %}<a href="#">{% endif %}
                                     <img class="img-fluid" style="max-height: 340px;"
                                          loading="lazy" src="{{ module.modules_thumbnail|s3URL("small") }}"
                                          alt="{{ module.modules_name }}"></a>
@@ -104,18 +104,18 @@
                                 {% if "TRAINING:EDIT"|instancePermissions %}
                                     <button data-toggle="modal" data-target="#editModuleModal{{ module.modules_id }}" class="btn btn-sm btn-default" title="Edit"><i class="fas fa-edit"></i></button>
                                     {% if module.modules_type != 3 %}
-                                    <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&steps" class="btn btn-sm btn-default" title="Edit Module Steps">
+                                    <a href="{{ CONFIG.ROOTPATH }}/training/module.php?id={{ module.modules_id }}&steps" class="btn btn-sm btn-default" title="Edit Module Steps">
                                         <i class="fas fa-chalkboard-teacher"></i>
                                     </a>
                                     {% endif %}
                                 {% endif %}
                                 {% if "TRAINING:VIEW:USER_PROGRESS_IN_MODULES"|instancePermissions %}
-                                    <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}&users" class="btn btn-sm btn-default" title="User list">
+                                    <a href="{{ CONFIG.ROOTPATH }}/training/module.php?id={{ module.modules_id }}&users" class="btn btn-sm btn-default" title="User list">
                                         <i class="fas fa-user-graduate"></i>
                                     </a>
                                 {% endif %}
                                 {% if module.modules_type != 3 and module.canComplete %}
-                                <a href="{{ CONFIG.ROOTURL }}/training/module.php?id={{ module.modules_id }}" class="btn btn-sm btn-default" title="Work on Module">
+                                <a href="{{ CONFIG.ROOTPATH }}/training/module.php?id={{ module.modules_id }}" class="btn btn-sm btn-default" title="Work on Module">
                                     {% if module.completed %}
                                         <i class="fas fa-list-ol"></i>
                                     {% else %}

@@ -13,16 +13,16 @@
         <div class="card">
 			<div class="card-header">
 				<ul class="nav nav-pills">
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
 					{% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
-                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectTypes.php">Project Types</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/projectTypes.php">Project Types</a></li>
                     {% endif %}
 					{% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
-					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/projectStatuses.php">Project Statuses</a></li>
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTPATH}}/instances/projectStatuses.php">Project Statuses</a></li>
                     {% endif %}
 					{% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/invoices.php">Invoices</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/configuration/invoices.php">Invoices</a></li>
                     {% endif %}
 				</ul>
 			</div>
@@ -68,7 +68,7 @@
                             <td>
                                 <i class="{{ status.projectsStatuses_fontAwesome }}"></i>
                             </td>
-                            <td><a href="{{CONFIG.ROOTURL}}/project/list.php?status={{status.projectsStatuses_id}}">{{ status.project_count > 0 ? status.project_count : '' }}</a></td>
+                            <td><a href="{{CONFIG.ROOTPATH}}/project/list.php?status={{status.projectsStatuses_id}}">{{ status.project_count > 0 ? status.project_count : '' }}</a></td>
                             <td style="background-color:{{ status.projectsStatuses_backgroundColour }}; color: {{ status.projectsStatuses_foregroundColour }}">
                                 {{status.projectsStatuses_name}}
                                 {% if status.projectsStatuses_description != '' %}
@@ -245,7 +245,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Search for an Icon",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/icons/getIcons.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/icons/getIcons.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {

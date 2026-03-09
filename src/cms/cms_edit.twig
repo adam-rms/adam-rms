@@ -5,8 +5,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.min.js" integrity="sha256-jPK1ABk4CuFvSr31v4CLU7X7XCvixZSi8fTTCw/tsto=" crossorigin="anonymous"></script>
 
 
-    <link rel="stylesheet" href="{{ CONFIG.ROOTURL }}/static-assets/libs/gridstrap/jquery.gridstrap.min.css">
-    <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/gridstrap/jquery.gridstrap.min.js"></script>
+    <link rel="stylesheet" href="{{ CONFIG.ROOTPATH }}/static-assets/libs/gridstrap/jquery.gridstrap.min.css">
+    <script src="{{ CONFIG.ROOTPATH }}/static-assets/libs/gridstrap/jquery.gridstrap.min.js"></script>
 {% endblock %}
 {% block content %}
     {% set possibleCardStyles = ["primary","secondary","success","danger","warning","info","light","dark"] %}
@@ -18,7 +18,7 @@
             <div class="card-tools pull-right">
                 <div class="btn-group  btn-group-sm" role="group">
                     <button type="button" class="btn btn-default btn-sm" id="addNewCard" title="Add new Card">Add Card</button>
-                    <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ PAGE.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
+                    <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTPATH }}/cms/stats.php?p={{ PAGE.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
                     <button type="button" class="btn btn-default btn-sm" title="Edit History" data-toggle="modal" data-target="#revisionHistoryModal"><i class="fas fa-history"></i></button>
                     <button type="button" class="btn btn-success btn-sm" id="masterSave" title="Save"><i class="fas fa-save"></i></button>
                 </div>
@@ -53,7 +53,7 @@
                             {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 %}
                                 {% embed 'assets/templates/uppy.twig' with {'type': 'CMS-IMAGE', 'paste': true, 'typeId': 19, 'subTypeId': PAGE.cmsPages_id, 'imagesOnly': true } %}
                                     {% block success %}
-                                        $('#summernote').summernote('insertImage', "{{ CONFIG.ROOTURL }}/api/file/index.php?r=true&f=" + responseJson.id);
+                                        $('#summernote').summernote('insertImage', "{{ CONFIG.ROOTPATH }}/api/file/index.php?r=true&f=" + responseJson.id);
                                     {% endblock %}
                                 {% endembed %}
                         {% endif %}
@@ -155,7 +155,7 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}&r={{ draft.cmsPagesDrafts_id }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                            <a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTPATH }}/cms/?p={{ PAGE.cmsPages_id }}&r={{ draft.cmsPagesDrafts_id }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
                                             <button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="{{ draft.cmsPagesDrafts_id }}" title="Rollback to this change"><i class="fas fa-history"></i></button>
                                         </div>
                                     </td>
@@ -427,7 +427,7 @@
                 ajaxcall("cms/editPageContent.php", {"pageData": data,"cmsPages_id":"{{ PAGE.cmsPages_id }}","changelog":changelog}, function (response) {
                     //Add to revision list
                     lastSaveData = data;
-                    $("#revisionTableBody").prepend('<tr><td>v' + response.response.revision + '</td><td>{{ USERDATA.users_name1 ~ " " ~ USERDATA.users_name2 }}</td><td><i>Just now</i></td><td>' + changelog + '</td><td><div class="btn-group btn-group-sm" role="group"><a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}&r=' + response.response.revisionID + '" target="_blank"><i class="fas fa-external-link-alt"></i></a><button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="' + response.response.revisionID + '" title="Rollback to this change"><i class="fas fa-history"></i></button></div></td></tr>');
+                    $("#revisionTableBody").prepend('<tr><td>v' + response.response.revision + '</td><td>{{ USERDATA.users_name1 ~ " " ~ USERDATA.users_name2 }}</td><td><i>Just now</i></td><td>' + changelog + '</td><td><div class="btn-group btn-group-sm" role="group"><a type="button" class="btn btn-default btn-sm" title="Preview" href="{{ CONFIG.ROOTPATH }}/cms/?p={{ PAGE.cmsPages_id }}&r=' + response.response.revisionID + '" target="_blank"><i class="fas fa-external-link-alt"></i></a><button type="button" class="btn btn-warning btn-sm restoreRevisionButton" data-id="' + response.response.revisionID + '" title="Rollback to this change"><i class="fas fa-history"></i></button></div></td></tr>');
                 });
             }
             function generateSave() {

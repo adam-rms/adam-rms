@@ -3,7 +3,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js" integrity="sha512-1aNp9qKP+hKU/VJwCtYqJP9tdZWbMDN5pEEXXoXT0pTAxZq1HHZhNBR/dtTNSrHO4U1FsFGGILbqG1O9nl8Mdg==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css" integrity="sha512-KuSX+43gVS5MEIJD2ewtrFPOHqC1PJnL8o2f5ciggPC0JUZ8XV0QXlfArO1mSzKkVFdRjsBDfrTU96C5SuRfqQ==" crossorigin="anonymous" />
 
-    <script src="{{ CONFIG.ROOTURL }}/static-assets/libs/invert-color/invert.min.js"></script>
+    <script src="{{ CONFIG.ROOTPATH }}/static-assets/libs/invert-color/invert.min.js"></script>
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -11,12 +11,12 @@
         <div class="card">
 			<div class="card-header">
 				<ul class="nav nav-pills">
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
                     {% if "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions %}
-					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/customCategories.php">Asset Categories</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/customCategories.php">Asset Categories</a></li>
                     {% endif %}
                     {% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
-					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/configuration/barcodes.php">Barcodes</a></li>
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTPATH}}/instances/configuration/barcodes.php">Barcodes</a></li>
                     {% endif %}
 				</ul>
 			</div>

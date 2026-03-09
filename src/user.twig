@@ -11,7 +11,7 @@
                 <div class="card-body box-profile">
                         <div class="text-center">
                             <img class="profile-user-img img-fluid img-circle"
-                                 src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ user.users_userid }}"
+                                 src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ user.users_userid }}"
                                  loading="lazy"
                                  alt="{{ user.users_name1 }} {{ user.users_name2 }}">
                         </div>
@@ -290,7 +290,7 @@
                                         });
                                     </script>
                                 {% else %}
-                                    <a href="{{ CONFIG.ROOTURL }}/api/account/oauth-link/google.php" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
+                                    <a href="{{ CONFIG.ROOTPATH }}/api/account/oauth-link/google.php" class="btn btn-default"><i class="fab fa-google"></i> Link to Google Account</a>
                                 {% endif %}
                             {% endif %}
                             {% if microsoftAuthAvailable %}
@@ -310,7 +310,7 @@
                                         });
                                     </script>
                                 {% else %}
-                                    <a href="{{ CONFIG.ROOTURL }}/api/account/oauth-link/microsoft.php" class="btn btn-default"><i class="fab fa-microsoft"></i> Link to Microsoft Account</a>
+                                    <a href="{{ CONFIG.ROOTPATH }}/api/account/oauth-link/microsoft.php" class="btn btn-default"><i class="fab fa-microsoft"></i> Link to Microsoft Account</a>
                                 {% endif %}
                             {% endif %}
                         </div>
@@ -473,7 +473,7 @@
                                 {% for project in user.crewAssignments %}
                                     <tr>
                                         <td>
-                                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">{{ project.clients_name ? project.clients_name ~ " - " }}{{ project.projects_name }}</a>
+                                            <a href="{{ CONFIG.ROOTPATH }}/project/?id={{ project.projects_id }}">{{ project.clients_name ? project.clients_name ~ " - " }}{{ project.projects_name }}</a>
                                         </td>
                                         <td>
                                             {{ project.projects_dates_use_start|date("M Y") }}
@@ -494,7 +494,7 @@
                                 {% for project in user.projectManagement %}
                                     <tr>
                                         <td>
-                                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">{{ project.clients_name ? project.clients_name ~ " - " }}{{ project.projects_name }}</a>
+                                            <a href="{{ CONFIG.ROOTPATH }}/project/?id={{ project.projects_id }}">{{ project.clients_name ? project.clients_name ~ " - " }}{{ project.projects_name }}</a>
                                         </td>
                                         <td>
                                             {{ project.projects_dates_use_start|date("M Y") }}
@@ -511,7 +511,7 @@
                         <!-- /.tab-pane -->
                         {% if user.users_userid == USERDATA.users_userid %}
                         <div class="tab-pane" style="padding: 1.25rem" id="export">
-                            <input type="url" class="form-control" disabled value="{{ CONFIG.ROOTURL }}/api/account/calendar-export.php?uid={{ user.users_userid }}&key={{ user.users_calendarHash }}" />
+                            <input type="url" class="form-control" disabled value="{{ CONFIG.ROOTPATH }}/api/account/calendar-export.php?uid={{ user.users_userid }}&key={{ user.users_calendarHash }}" />
                             <br/>
                             <h2>Google Calendar</h2>
                             <ol>

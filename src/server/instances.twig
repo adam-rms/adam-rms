@@ -100,7 +100,7 @@
                                         {% if instance.usersForBillingUser|length > 0 %}
                                             {% for user in instance.usersForBillingUser %}
                                                 {% if instance.instances_billingUser == user.users_userid %}
-                                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}" target="_blank">{{ user.users_name1 ~ " " ~ user.users_name2 }}</a>
+                                                    <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ user.users_userid }}" target="_blank">{{ user.users_name1 ~ " " ~ user.users_name2 }}</a>
                                                 {% endif %}
                                             {% endfor %}
                                         {% endif %}
@@ -147,7 +147,7 @@
                                                 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editModal{{ instance.instances_id }}"><i class="fas fa-cog"></i></button>
                                             {% endif %}
                                             {% if "INSTANCES:FULL_PERMISSIONS_IN_INSTANCE"|serverPermissions and instance.instances_deleted == 0 and USERDATA.instance.instances_id != instance.instances_id %}
-                                                <a href="{{ CONFIG.ROOTURL }}/?i={{ instance.instances_id }}"
+                                                <a href="{{ CONFIG.ROOTPATH }}/?i={{ instance.instances_id }}"
                                                 title="Login to Instance">
                                                     <button type="button" class="btn btn-warning">Login as Admin</button>
                                                 </a>

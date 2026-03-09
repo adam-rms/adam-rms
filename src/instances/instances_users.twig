@@ -11,18 +11,18 @@
             <div class="card">
                 <div class="card-header">
                     <ul class="nav nav-pills">
-                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
                         {% if "BUSINESS:USERS:VIEW:LIST"|instancePermissions %}
-                        <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/users.php">Users</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTPATH}}/instances/users.php">Users</a></li>
                         {% endif %}
                         {% if "BUSINESS:ROLES_AND_PERMISSIONS:VIEW"|instancePermissions %}
-                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/permissions.php">Permissions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/permissions.php">Permissions</a></li>
                         {% endif %}
                         {% if "BUSINESS:USER_SIGNUP_CODES:VIEW"|instancePermissions %}
-                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/signupCodes.php">Signup Codes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/signupCodes.php">Signup Codes</a></li>
                         {% endif %}
                         {% if "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"|instancePermissions %}
-                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/trustedDomains.php">Trusted Domains</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/instances/trustedDomains.php">Trusted Domains</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -35,7 +35,7 @@
                 <div class="card-body">
                     {% if NOCAPACITY %}
                     <p>Your current plan does not enable you to add any more users. You have {{ NOCAPACITY.USED }} users, with a limit of {{ NOCAPACITY.CAPACITY }}.</p>
-                    <a href="{{ CONFIG.ROOTURL }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
+                    <a href="{{ CONFIG.ROOTPATH }}/instances/billing.php" class="btn btn-default">Billing Settings</a>
                     {% else %}
                     <p>Enter email addresses to search for existing AdamRMS users to add to business</p>
                      <div class="input-group">
@@ -72,11 +72,11 @@
                         {% for user in users %}
                             <tr>
                                 <td>
-                                    <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ user.users_userid }}">
+                                    <img loading="lazy" alt="{{user.users_name1 ~ " " ~ user.users_name2 }}" class="table-avatar" style="height: 63px;" src="{{ CONFIG.FILES_ENABLED == "Enabled" and user.users_thumbnail ? user.users_thumbnail|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ user.users_userid }}">
                                 </td>
                                 <td>
                                     {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user.users_userid }}">
+                                    <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ user.users_userid }}">
                                         {% endif %}
                                         {{ user.users_username }}
                                         {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
@@ -239,7 +239,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Email Addresses",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/instances/searchUser.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/instances/searchUser.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {

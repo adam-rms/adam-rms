@@ -18,17 +18,17 @@
 				<div class="card-tools pull-right">
 					<div class="input-group input-group-sm">
 						{% if "CMS:CMS_PAGES:EDIT"|instancePermissions %}
-							<a href="{{ CONFIG.ROOTURL }}/cms/edit.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Edit Page">
+							<a href="{{ CONFIG.ROOTPATH }}/cms/edit.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Edit Page">
 								<i class="fas fa-edit"></i>
 							</a>
 						{% endif %}
 						{% if "CMS:CMS_PAGES:CREATE"|instancePermissions %}
-							<a href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Viewing Stats">
+							<a href="{{ CONFIG.ROOTPATH }}/cms/stats.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Viewing Stats">
 								<i class="far fa-chart-bar"></i>
 							</a>
 						{% endif %}
 						{% if "CMS:CMS_PAGES:VIEW:ACCESS_LOG"|instancePermissions %}
-							<a href="{{ CONFIG.ROOTURL }}/cms/log.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Page View Log">
+							<a href="{{ CONFIG.ROOTPATH }}/cms/log.php?p={{ PAGE.cmsPages_id }}" type="button" class="btn btn-default btn-sm" title="Page View Log">
 								<i class="fas fa-binoculars"></i>
 							</a>
 						{% endif %}

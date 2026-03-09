@@ -1,7 +1,7 @@
 {% extends "assets/template.twig" %}
 {% block htmlIncludes %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTPATH }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 {% endblock %}
 {% block content %}
 
@@ -17,7 +17,7 @@
 <a href="{{ CONFIG.LINKS_USERGUIDEURL }}assets/asset-groups" target="_blank" type="button" class="btn btn-info btn-sm">Help</a>
 
                         <div class="input-group-prepend">
-                            <a href="{{ CONFIG.ROOTURL }}/user.php" type="button" class="btn btn-default">Notification Settings</a>
+                            <a href="{{ CONFIG.ROOTPATH }}/user.php" type="button" class="btn btn-default">Notification Settings</a>
                         </div>
                         <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                         <div class="input-group-append">
@@ -52,7 +52,7 @@
                         </td>
                         <td style="width:70px;">
                             <div class="btn-group">
-                                <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/assets.php?group%5B%5D={{ group.assetGroups_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
+                                <a type="button" title="View assets" class="btn btn-default btn-sm" href="{{CONFIG.ROOTPATH}}/assets.php?group%5B%5D={{ group.assetGroups_id }}&showlinked=1&showarchived=1"><i class="nav-icon fas fa-warehouse"></i></a>
                                 <button type="button" title="{% if group.assetGroups_id in watching %}Stop watching{% else %}Watch{% endif %} this group" class="btn btn-primary btn-sm watchButton" data-id="{{ group.assetGroups_id }}">
                                     {% if group.assetGroups_id in watching %}
                                         <i class="fas fa-eye-slash"></i>
@@ -222,7 +222,7 @@
                 minimumResultsForSearch: 1,
                 placeholder: "Search for assets to add to group or visit an assets page to add them there",
                 ajax: {
-                    url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                    url: "{{ CONFIG.ROOTPATH }}/api/assets/searchAssets.php",
                     dataType: "json",
                     type: "POST",
                     data: function (params) {

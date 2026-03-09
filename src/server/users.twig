@@ -112,7 +112,7 @@
                                         {% endif %}
                                         {% if user.users_userid != USERDATA.users_userid %}
                                             {% if "USERS:EDIT"|serverPermissions %}
-                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ user["users_userid"] }}"
+                                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ user["users_userid"] }}"
                                                    type="button" title="Edit user" class="btn btn-default"><i
                                                             class="fa fa-pencil-alt"></i></a>
                                             {% endif %}
@@ -142,7 +142,7 @@
                                                     <i class="fa fa-trash"></i></button>
                                             {% endif %}
                                             {% if "USERS:VIEW_SITE_AS"|serverPermissions %}
-                                                <a href="{{ CONFIG.ROOTURL }}/api/account/viewSiteAs.php?userid={{ user["users_userid"] }}"
+                                                <a href="{{ CONFIG.ROOTPATH }}/api/account/viewSiteAs.php?userid={{ user["users_userid"] }}"
                                                    title="Login as User">
                                                     <button type="button" class="btn btn-default"><i
                                                                 class="fa fa-sign-in-alt"></i></button>
@@ -193,7 +193,7 @@
                             <div class="modal-body">
                                 <div class="list-group">
                                     {% for email in user.emails %}
-                                        <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ email.emailSent_id }}"
+                                        <a href="{{ CONFIG.ROOTPATH }}/api/account/emailViewer.php?email={{ email.emailSent_id }}"
                                            target="_blank" class="list-group-item"><span
                                                     class="badge">{{ email.emailSent_sent|date("d/m/Y H:i:s") }}</span> {{ email.emailSent_subject }}
                                         </a>
@@ -201,7 +201,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <a href="{{ CONFIG.ROOTURL }}/api/account/emailViewer.php?email={{ user.email_ids }}"
+                                <a href="{{ CONFIG.ROOTPATH }}/api/account/emailViewer.php?email={{ user.email_ids }}"
                                    class="btn btn-default">Output All</a>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             </div>
@@ -246,7 +246,7 @@
                 $(".logoutbutton").click(function () {
                     $("#loadingoverlay").show();
                     $.ajax({
-                        url: "{{ CONFIG.ROOTURL }}/api/account/destroyTokens.php?userid=" + $(this).data("userid"),
+                        url: "{{ CONFIG.ROOTPATH }}/api/account/destroyTokens.php?userid=" + $(this).data("userid"),
                         success: function (result) {
                             if (result == '1') {
                                 $("#loadingoverlay").hide();
@@ -261,7 +261,7 @@
                 $(".suspenduser").click(function () {
                     $("#loadingoverlay").show();
                     $.ajax({
-                        url: "{{ CONFIG.ROOTURL }}/api/account/suspend.php?userid=" + $(this).data("userid") + '&suspendval=' + $(this).data("suspendval"),
+                        url: "{{ CONFIG.ROOTPATH }}/api/account/suspend.php?userid=" + $(this).data("userid") + '&suspendval=' + $(this).data("suspendval"),
                         success: function (result) {
                             if (result == '1') {
                                 bootbox.alert("Success", function () {

@@ -56,7 +56,7 @@
             {% for job in jobs %}
             <tr>
                 <td>
-                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                    <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
                 </td>
                 <td>
                     <a>
@@ -70,8 +70,8 @@
                 <td>
                     <ul class="list-inline">
                         <li class="list-inline-item">
-                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
+                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
                             </a>
                         </li>
                     </ul>
@@ -80,8 +80,8 @@
                     {% if job.userAssignedUserName1 != null %}
                         <ul class="list-inline">
                             <li class="list-inline-item">
-                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
-                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
+                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 ~ " (" ~ job.userAssignedUserEMail ~ ")" }}">
+                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
                                 </a>
                             </li>
                         </ul>

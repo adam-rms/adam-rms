@@ -222,10 +222,10 @@
         $('#createNewInstanceForm').on('submit', function(e){
             e.preventDefault();
             $.ajax({
-                url: '{{ CONFIG.ROOTURL }}/api/instances/new.php?' + $( this ).serialize(),
+                url: '{{ CONFIG.ROOTPATH }}/api/instances/new.php?' + $( this ).serialize(),
                 success: function (result) {
                     if (result.result) {
-                        window.location.href = "{{CONFIG.ROOTURL}}?i=" + result.response.instanceid;
+                        window.location.href = "{{CONFIG.ROOTPATH}}?i=" + result.response.instanceid;
                     } else {
                         console.log(result);
                         bootbox.alert('Error - Could not create a new business - please try again!', function () {

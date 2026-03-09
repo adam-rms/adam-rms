@@ -90,7 +90,7 @@ x-amz-meta-size
             metaFields: ['name','typeid','subtype'],
             getUploadParameters (file) {
                 // Send a request to our PHP signing endpoint.
-                return fetch('{{ CONFIG.ROOTURL }}/api/s3files/generateSignatureUppy.php', {
+                return fetch('{{ CONFIG.ROOTPATH }}/api/s3files/generateSignatureUppy.php', {
                     method: 'POST',
                     headers: {
                         accept: 'application/json',
@@ -145,7 +145,7 @@ x-amz-meta-size
             ]
         }).on('upload-success', (file, response) => {
             $.ajax({
-                url: "{{ CONFIG.ROOTURL }}/api/s3files/uploadSuccess.php",
+                url: "{{ CONFIG.ROOTPATH }}/api/s3files/uploadSuccess.php",
                 type: "JSON",
                 method: "POST",
                 data: {

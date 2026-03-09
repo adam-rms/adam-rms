@@ -14,7 +14,7 @@
                     <input type="text" name="q" class="form-control" placeholder="Search" value="{{ search }}" />
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-default"><i class="fa fa-search" title="Search"></i></button>
-                        {% if "PROJECTS:CREATE"|instancePermissions %}<a type="button" class="btn btn-default" href="{{ CONFIG.ROOTURL }}/project/new.php" title="Add new project"><i class="fa fa-plus"></i></a>{% endif %}
+                        {% if "PROJECTS:CREATE"|instancePermissions %}<a type="button" class="btn btn-default" href="{{ CONFIG.ROOTPATH }}/project/new.php" title="Add new project"><i class="fa fa-plus"></i></a>{% endif %}
                     </div>
                 </form>
             </div>
@@ -62,7 +62,7 @@
                     {% endif %}
                     <tr>
                         <td>
-                            <a href="{{ CONFIG.ROOTURL }}/project/?id={{ project.projects_id }}">#{{ project.projects_id }}</a>
+                            <a href="{{ CONFIG.ROOTPATH }}/project/?id={{ project.projects_id }}">#{{ project.projects_id }}</a>
                         </td>
                         <td>
                             <a>
@@ -86,8 +86,8 @@
                         <td>
                             <ul class="list-inline">
                                 <li class="list-inline-item">
-                                    <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
-                                        <img loading="lazy" alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ project.projects_manager }}">
+                                    <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ project.projects_manager }}" title="{{project.users_name1 ~ " " ~ project.users_name2 ~ " (" ~ project.users_email ~ ")" }}">
+                                        <img loading="lazy" alt="{{ project.users_name1 ~ " " ~ project.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and project.users_thumbnail ? project.users_thumbnail|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ project.projects_manager }}">
                                     </a>
                                 </li>
                             </ul>
@@ -114,7 +114,7 @@
                         {% for subProject in project.subProjects  %}
                             <tr>
                                 <td>
-                                    ↳<a href="{{ CONFIG.ROOTURL }}/project/?id={{ subProject.projects_id }}">#{{ subProject.projects_id }}</a>
+                                    ↳<a href="{{ CONFIG.ROOTPATH }}/project/?id={{ subProject.projects_id }}">#{{ subProject.projects_id }}</a>
                                 </td>
                                 <td>
                                     <a>
@@ -140,8 +140,8 @@
                                 <td>
                                     <ul class="list-inline">
                                         <li class="list-inline-item">
-                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ subProject.users_email ~ ")" }}">
-                                                <img loading="lazy" alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ subProject.projects_manager }}">
+                                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ subProject.projects_manager }}" title="{{subProject.users_name1 ~ " " ~ subProject.users_name2 ~ " (" ~ subProject.users_email ~ ")" }}">
+                                                <img loading="lazy" alt="{{ subProject.users_name1 ~ " " ~ subProject.users_name2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and subProject.users_thumbnail ? subProject.users_thumbnail|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ subProject.projects_manager }}">
                                             </a>
                                         </li>
                                     </ul>

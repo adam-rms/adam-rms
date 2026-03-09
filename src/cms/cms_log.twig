@@ -10,8 +10,8 @@
                     <h3 class="card-title">CMS Page Access</h3>
                     <div class="card-tools pull-right">
                         <div class="input-group input-group-sm">
-                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTURL }}/cms/?p={{ PAGE.cmsPages_id }}">View Page</a>
-                            <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTURL }}/cms/stats.php?p={{ PAGE.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
+                            <a type="button" class="btn btn-default btn-sm" title="View Page" href="{{ CONFIG.ROOTPATH }}/cms/?p={{ PAGE.cmsPages_id }}">View Page</a>
+                            <a type="button" class="btn btn-default btn-sm" title="Viewing Stats" href="{{ CONFIG.ROOTPATH }}/cms/stats.php?p={{ PAGE.cmsPages_id }}"><i class="far fa-chart-bar"></i></a>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                                     <td>
                                         {% if entry.users_userid != null %}
                                             {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ entry.users_userid }}">
+                                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ entry.users_userid }}">
                                                     {{ entry.users_name1 }} {{ entry.users_name2 }}
                                                 </a>
                                             {% else %}

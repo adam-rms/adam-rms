@@ -95,7 +95,7 @@ $(document).ready(function() {
 			var get = "removepermission=" + $(this).data("permissionid");
 		}
 		$.ajax({
-			url: "{{CONFIG.ROOTURL}}/api/permissions/permissionsEditor.php?" + get + "&position=" + $(this).data("positionid"),
+			url: "{{CONFIG.ROOTPATH}}/api/permissions/permissionsEditor.php?" + get + "&position=" + $(this).data("positionid"),
 			cache : false,
 			success: function(result){
 				if (result == '1') {

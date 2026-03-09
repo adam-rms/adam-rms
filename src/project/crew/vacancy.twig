@@ -6,9 +6,9 @@
             <div class="card-header">
                 <ul class="nav nav-pills">
                     {% if referringPage != "project" %}
-                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/project/crew/vacancies.php"><i class="fas fa-arrow-left"></i> Back to <span style="font-weight:bold;">Crew Vacancies</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/project/crew/vacancies.php"><i class="fas fa-arrow-left"></i> Back to <span style="font-weight:bold;">Crew Vacancies</span></a></li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/project/?id={{ role.projects_id }}#crew-view">{% if referringPage =="project" %}<i class="fas fa-arrow-left"></i> Back to {% endif %}Project <span style="font-weight:bold;">{{ role.projects_name }}</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTPATH}}/project/?id={{ role.projects_id }}#crew-view">{% if referringPage =="project" %}<i class="fas fa-arrow-left"></i> Back to {% endif %}Project <span style="font-weight:bold;">{{ role.projects_name }}</span></a></li>
                 </ul>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <div class="text-muted">
                     <p class="text-sm">Project Manager
                         <b class="d-block">
-                                {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}<a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTURL }}/user.php?id={{ role.projects_manager }}">{% endif %}
+                                {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}<a style="color: inherit; text-decoration: inherit;" href="{{ CONFIG.ROOTPATH }}/user.php?id={{ role.projects_manager }}">{% endif %}
                                 {{role.users_name1 ~ " " ~ role.users_name2 ~ " (" ~ role.users_email ~ ")" }}
                             {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}</a>{% endif %}
                         </b>
@@ -238,7 +238,7 @@
 
             ajaxcall("projects/crew/crewRoles/apply.php", {formData}, function (data) {
                 bootbox.alert("Application Successfully Submitted", function(){
-                    window.location.href = "{{CONFIG.ROOTURL}}/project/crew/vacancies.php";
+                    window.location.href = "{{CONFIG.ROOTPATH}}/project/crew/vacancies.php";
                 });
             });
         });

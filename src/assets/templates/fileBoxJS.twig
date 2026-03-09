@@ -53,7 +53,7 @@
         function showShareKeyDialog(file,shareKey) {
             bootbox.dialog({
                 title: 'Shared File',
-                message: '<p>This file has been shared, which makes it visible to everyone on the web - be careful when publishing private or sensitive information.</p><div class="input-group"><input type="text" class="form-control" value="' + "{{ CONFIG.ROOTURL }}/api/file/?r&f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>',
+                message: '<p>This file has been shared, which makes it visible to everyone on the web - be careful when publishing private or sensitive information.</p><div class="input-group"><input type="text" class="form-control" value="' + "{{ CONFIG.ROOTPATH }}/api/file/?r&f=" + file + "&key=" + shareKey + '" disabled><span class="input-group-btn"><button class="btn btn-default copybutton" type="button" title="Copy to Clipboard">Copy</button></span></div>',
                 size: 'large',
                 buttons: {
                     disableshare: {

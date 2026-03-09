@@ -35,7 +35,7 @@
                                         <i>Vacant</i>
                                     {% elseif crew.users_name1 %}
                                         {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
-                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ crew.users_userid }}">
+                                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ crew.users_userid }}">
                                         {% endif %}
                                         {{ crew.users_name1 ~ " " ~ crew.users_name2 }}
                                         {% if "BUSINESS:USERS:VIEW:INDIVIDUAL_USER"|instancePermissions %}
@@ -66,7 +66,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="card-title">Crew Role Vacancies</h3>
                 {% if "PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT"|instancePermissions %}
-                <a href="{{ CONFIG.ROOTURL }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary btn-sm ml-auto">Manage</a>
+                <a href="{{ CONFIG.ROOTPATH }}/project/crew/vacantCrew.php?id={{ project.projects_id }}" type="button" class="btn btn-secondary btn-sm ml-auto">Manage</a>
                 {% endif %}
             </div>
         </div>
@@ -102,7 +102,7 @@
                             </p>
                             <div class="project-actions text-center">
                                 <div class="btn-group">
-                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTURL}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}&from=project">
+                                    <a type="button" class="btn btn-default btn-sm" href="{{CONFIG.ROOTPATH}}/project/crew/vacancy.php?id={{ role.projectsVacantRoles_id }}&from=project">
                                         More Info and
                                         {% if role.projectsVacantRoles_firstComeFirstServed %}
                                         Sign Up

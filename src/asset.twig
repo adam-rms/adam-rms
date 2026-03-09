@@ -2,7 +2,7 @@
 {% block htmlIncludes %}
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/8.19.1/sweetalert2.min.js" integrity="sha512-wKdazFGbrow0TxFpymoSlXoqpHt9SOXw94CYLZV+BTCbk6RH67FuaVTjMo2/rs0doYWEy8mdGbk0/mSSUOJG7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet"  href="{{ CONFIG.ROOTURL }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
+    <link rel="stylesheet"  href="{{ CONFIG.ROOTPATH }}/static-assets/libs/sweetalert2/sweetAlert2-bootstrap-4.min.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" integrity="sha512-1P/SRFqI1do4eNtBsGIAqIZIlnmOQkaY7ESI2vkl+q+hl9HSXmdPqotN0McmeZVyR4AWV+NvkP6pKOiVdY/V5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js" integrity="sha512-VyGX7HXwa9yMgIfDPYcj7+XFjtSEzqY7LTf2Tvn2FAf4O6MkD5UzNkrlkMHyLQMbdYfor8SNYKyyeBhTazNgPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -27,7 +27,7 @@
                         {% endif %}
                         {% if assets[0]['link'] %}
                             <div class="callout callout-success">
-                                Asset is linked to asset <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
+                                Asset is linked to asset <a href="{{ CONFIG.ROOTPATH }}/asset.php?id={{ assets[0]['link']['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ assets[0]['link']['assets_id'] }}">{{ assets[0]['link']['assets_tag']|aTag }} ({{ assets[0]['link']['assetTypes_name'] }})</a>
                             </div>
                         {% endif %}
                         {% if assets[0]['assets_notes']|length > 0 %}
@@ -59,7 +59,7 @@
                             <li class="list-group-item">
                                 <b>Storage Location</b>
                                 {% if "LOCATIONS:VIEW"|instancePermissions %}
-                                    <a class="float-right" href="{{ CONFIG.ROOTURL }}/location/">{{assets[0]['storage_location'][0]['locations_name']}}</a>
+                                    <a class="float-right" href="{{ CONFIG.ROOTPATH }}/location/">{{assets[0]['storage_location'][0]['locations_name']}}</a>
                                 {% else %}
                                     <span class="float-right">{{assets[0]['storage_location'][0]['locations_name']}}</span
                                 {% endif %}
@@ -134,14 +134,14 @@
             {% if assets|length == 1 %}
                 {% for flag in assets[0].flagsblocks.BLOCK %}
                     <div class="alert alert-danger">
-                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                        <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
                         <h5> <i class="fas fa-ban"></i> {{ flag.maintenanceJobs_title }}</h5>
                         {{ flag.maintenanceJobs_faultDescription }}
                     </div>
                 {% endfor %}
                 {% for flag in assets[0].flagsblocks.FLAG %}
                     <div class="alert alert-warning">
-                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                        <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
                         <h5><i class="far fa-flag"></i> {{ flag.maintenanceJobs_title }}</h5>
                         {{ flag.maintenanceJobs_faultDescription }}
                     </div>
@@ -162,7 +162,7 @@
                                 <tbody>
                                 {% for asset in assets[0]['linkedToThis'] %}
                                 <tr>
-                                    <td><a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag']|aTag }}</a></td>
+                                    <td><a href="{{ CONFIG.ROOTPATH }}/asset.php?id={{ asset['assetTypes_id'] }}&instance={{ASSET_INSTANCE.instances_id}}&asset={{ asset['assets_id'] }}">{{ asset['assets_tag']|aTag }}</a></td>
                                     <td>
                                         {% for i in range(1, asset['tier']) %}
                                             {% if i == 1 %}
@@ -233,7 +233,7 @@
                                                 title          : '{{ thisasset.assets_tag|aTag }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} [{{ assignment.projectsStatuses_name|escape("js") }}]{% endif %} {{ assignment.projects_name }}',
                                                 start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                 end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
-                                                url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
+                                                url            : '{{CONFIG.ROOTPATH}}/project/?id={{ assignment.projects_id }}',
                                                 backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
                                                 textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                             },
@@ -493,7 +493,7 @@
                                             {% if scan.assetsBarcodesScans_barcodeWasScanned == "1" %}Barcode scanned{% else %}Location set manually{% endif %}
                                         </td>
                                         <td>
-                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ scan.users_userid }}">{{ scan.users_name1 ~ " " ~ scan.users_name2 }}</a>
+                                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ scan.users_userid }}">{{ scan.users_name1 ~ " " ~ scan.users_name2 }}</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -542,7 +542,7 @@
                                     {% for barcode in assets[0].barcodes %}
                                         <tr>
                                             <td>
-                                                <img src="{{ CONFIG.ROOTURL }}/api/assets/barcodes/?barcode={{ barcode.assetsBarcodes_value }}&size=50&type={{ barcode.assetsBarcodes_type }}" alt="Barcode">
+                                                <img src="{{ CONFIG.ROOTPATH }}/api/assets/barcodes/?barcode={{ barcode.assetsBarcodes_value }}&size=50&type={{ barcode.assetsBarcodes_type }}" alt="Barcode">
                                             </td>
                                             <td>
                                                 {{ barcode.assetsBarcodes_value }}
@@ -554,7 +554,7 @@
                                                 {{ barcode.assetsBarcodes_notes }}
                                             </td>
                                             <td>
-                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.users_userid }}">
+                                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ barcode.users_userid }}">
                                                     {{ barcode.users_name1 ~ ' ' ~ barcode.users_name2}}
                                                 </a>
                                                 <br/>
@@ -577,7 +577,7 @@
                                                     {% endif %}
                                                     <br/>
                                                     <small>
-                                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ barcode.latestScan.users_userid }}">{{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}</a> {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
+                                                        <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ barcode.latestScan.users_userid }}">{{ barcode.latestScan.users_name1 ~ " " ~ barcode.latestScan.users_name2 }}</a> {{ barcode.latestScan.assetsBarcodesScans_timestamp|date("d/M/Y G:i:s") }}
                                                     </small>
                                                 {% else %}
                                                     <i>Never scanned</i>
@@ -593,7 +593,7 @@
                                     </tbody>
                                 </table>
                                 {% if ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
-                                     <a class="btn btn-default btn-block" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?id={{assets[0].assets_id}}">Generate/Export Barcodes</a>
+                                     <a class="btn btn-default btn-block" href="{{ CONFIG.ROOTPATH }}/maintenance/barcodeGenerator.php?id={{assets[0].assets_id}}">Generate/Export Barcodes</a>
                                 {% endif %}
                             </div>
                         {% endif %}
@@ -653,14 +653,14 @@
                                             <div class="active tab-pane" style="padding: 1.25rem" id="maintenance-flags">
                                                 {% for flag in assets[0].flagsblocks.BLOCK %}
                                                     <div class="alert alert-danger">
-                                                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                        <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
                                                         <h5><i class="fas fa-ban"></i> {{ flag.maintenanceJobs_title }}</h5>
                                                         {{ flag.maintenanceJobs_faultDescription }}
                                                     </div>
                                                 {% endfor %}
                                                 {% for flag in assets[0].flagsblocks.FLAG %}
                                                     <div class="alert alert-warning">
-                                                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                        <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
                                                         <h5><i class="far fa-flag"></i> {{ flag.maintenanceJobs_title }}</h5>
                                                         {{ flag.maintenanceJobs_faultDescription }}
                                                     </div>
@@ -701,7 +701,7 @@
                                                         {% if job.maintenanceJobsStatuses_id != 2 %}
                                                             <tr>
                                                                 <td>
-                                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                                    <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
                                                                 </td>
                                                                 <td>
                                                                     <a>
@@ -715,8 +715,8 @@
                                                                 <td>
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
-                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                            <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
+                                                                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                            <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -725,8 +725,8 @@
                                                                     {% if job.userAssignedUserName1 != null %}
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
-                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
-                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
+                                                                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -797,7 +797,7 @@
                                                         {% if job.maintenanceJobsStatuses_id == 2 %}
                                                             <tr>
                                                                 <td>
-                                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                                    <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
                                                                 </td>
                                                                 <td>
                                                                     <a>
@@ -811,8 +811,8 @@
                                                                 <td>
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
-                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
+                                                                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -821,8 +821,8 @@
                                                                     {% if job.userAssignedUserName1 != null %}
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
-                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
-                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
+                                                                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -890,7 +890,7 @@
                             <li class="nav-item"><a class="nav-link" href="#typeFiles" data-toggle="tab">Type Files</a></li>
                         {% endif %}
                         {% if "ASSETS:ASSET_BARCODES:VIEW"|instancePermissions  and ASSET_INSTANCE.instances_id == USERDATA.instance.instances_id %}
-                            <li class="nav-item"><a class="nav-link" href="{{ CONFIG.ROOTURL }}/maintenance/barcodeGenerator.php?type={{ asset.assetTypes_id }}">Generate/Export Barcodes</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ CONFIG.ROOTPATH }}/maintenance/barcodeGenerator.php?type={{ asset.assetTypes_id }}">Generate/Export Barcodes</a></li>
                         {% endif %}
                     </ul>
                 </div><!-- /.card-header -->
@@ -992,7 +992,7 @@
                                                     title          : '{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ assignment.projectsStatuses_name }}] {% endif %}{{ assignment.projects_name }}',
                                                     start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
                                                     end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
-                                                    url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
+                                                    url            : '{{CONFIG.ROOTPATH}}/project/?id={{ assignment.projects_id }}',
                                                     backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
                                                     textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                                 },
@@ -1237,14 +1237,14 @@
                                             <div class="active tab-pane" style="padding: 1.25rem" id="maintenance-flags">
                                                 {% for flag in assets[0].flagsblocks.BLOCK %}
                                                     <div class="alert alert-danger">
-                                                        <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                        <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button" style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
                                                         <h5><i class="fas fa-ban"></i> {{ flag.maintenanceJobs_title }}</h5>
                                                         {{ flag.maintenanceJobs_faultDescription }}
                                                     </div>
                                                 {% endfor %}
                                                 {% for flag in assets[0].flagsblocks.FLAG %}
                                                 <div class="alert alert-warning">
-                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
+                                                    <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ flag.maintenanceJobs_id }}" type="button"  style="text-decoration: none;" class="close"><i class="fas fa-info-circle"></i></a>
                                                     <h5><i class="far fa-flag"></i> {{ flag.maintenanceJobs_title }}</h5>
                                                     {{ flag.maintenanceJobs_faultDescription }}
                                                 </div>
@@ -1285,7 +1285,7 @@
                                                         {% if job.maintenanceJobsStatuses_id != 2 %}
                                                         <tr>
                                                             <td>
-                                                                <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                                <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
                                                             </td>
                                                             <td>
                                                                 <a>
@@ -1299,8 +1299,8 @@
                                                             <td>
                                                                 <ul class="list-inline">
                                                                     <li class="list-inline-item">
-                                                                        <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                            <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
+                                                                        <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                            <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
                                                                         </a>
                                                                     </li>
                                                                 </ul>
@@ -1309,8 +1309,8 @@
                                                                 {% if job.userAssignedUserName1 != null %}
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
-                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
-                                                                                <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
+                                                                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1381,7 +1381,7 @@
                                                         {% if job.maintenanceJobsStatuses_id == 2 %}
                                                             <tr>
                                                                 <td>
-                                                                    <a href="{{ CONFIG.ROOTURL }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
+                                                                    <a href="{{ CONFIG.ROOTPATH }}/maintenance/job.php?id={{ job.maintenanceJobs_id }}">#{{ job.maintenanceJobs_id }}</a>
                                                                 </td>
                                                                 <td>
                                                                     <a>
@@ -1395,8 +1395,8 @@
                                                                 <td>
                                                                     <ul class="list-inline">
                                                                         <li class="list-inline-item">
-                                                                            <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
-                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
+                                                                            <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userCreatorUserID }}" title="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 ~ " (" ~ job.userCreatorUserEMail ~ ")" }}">
+                                                                                <img loading="lazy" alt="{{job.userCreatorUserName1 ~ " " ~ job.userCreatorUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userCreatorUserThumb ? job.userCreatorUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userCreatorUserID }}">
                                                                             </a>
                                                                         </li>
                                                                     </ul>
@@ -1405,8 +1405,8 @@
                                                                     {% if job.userAssignedUserName1 != null %}
                                                                         <ul class="list-inline">
                                                                             <li class="list-inline-item">
-                                                                                <a href="{{ CONFIG.ROOTURL }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
-                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTURL ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
+                                                                                <a href="{{ CONFIG.ROOTPATH }}/user.php?id={{ job.userAssignedUserID }}" title="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}">
+                                                                                    <img loading="lazy" alt="{{job.userAssignedUserName1 ~ " " ~ job.userAssignedUserName2 }}" class="table-avatar" src="{{ CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and job.userAssignedUserThumb ? job.userAssignedUserThumb|s3URL("small") : CONFIG.ROOTPATH ~ '/api/file/avatarGen.php?users_userid=' ~ job.userAssignedUserID }}">
                                                                                 </a>
                                                                             </li>
                                                                         </ul>
@@ -1525,7 +1525,7 @@
                         callback: function (result) {
                             if (result) {
                                 ajaxcall("assets/delete.php", {"assets_id":assetid}, function (data) {
-                                    window.location.href = "{{CONFIG.ROOTURL}}/";
+                                    window.location.href = "{{CONFIG.ROOTPATH}}/";
                                 });
                             }
                         }
@@ -1656,7 +1656,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Search for asset types",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/assets/searchType.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/assets/searchType.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
@@ -1694,7 +1694,7 @@
                             },
                         ];
                         ajaxcall("assets/editAsset.php", {formData}, function (data) {
-                            window.location.href = "{{ CONFIG.ROOTURL }}/asset.php?instance={{ASSET_INSTANCE.instances_id}}&id=" + $("#assetTypeChange").val();
+                            window.location.href = "{{ CONFIG.ROOTPATH }}/asset.php?instance={{ASSET_INSTANCE.instances_id}}&id=" + $("#assetTypeChange").val();
                         }, false);
                     }
                 });
@@ -1708,7 +1708,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Search for assets",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/assets/searchAssets.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
@@ -1781,7 +1781,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Enter group name to search",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/groups/search.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/groups/search.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
@@ -1832,7 +1832,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Enter name to search for users",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/maintenance/searchUser.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/maintenance/searchUser.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
@@ -1862,7 +1862,7 @@
                     if ($("#maintenanceJobstitle").val().length > 0 && $("#maintenanceJobsfaultDescription").val().length > 0) {
                         formData.push({"name": "maintenanceJobs_assets", "value": "{{assets[0]['assets_id']}}"},{"name": "maintenanceJobs_user_tagged", "value": $("#tagUserInJob").val()},{"name": "maintenanceJobs_user_creator", "value": "{{ USERDATA.users_userid }}"});
                         ajaxcall("maintenance/newJob.php", {formData}, function (data) {
-                            window.location.href = "{{ CONFIG.ROOTURL }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
+                            window.location.href = "{{ CONFIG.ROOTPATH }}/maintenance/job.php?id=" + data.response['maintenanceJobs_id'];
                         }, false);
                     }
                 });
@@ -1877,7 +1877,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Search for a Business",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/instances/list.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/instances/list.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
@@ -1922,7 +1922,7 @@
                         minimumResultsForSearch: 1,
                         placeholder: "Search for an Asset Type",
                         ajax: {
-                            url: "{{ CONFIG.ROOTURL }}/api/assets/searchType.php?other_instances_id=" + id,
+                            url: "{{ CONFIG.ROOTPATH }}/api/assets/searchType.php?other_instances_id=" + id,
                             dataType: "json",
                             type: "POST",
                             data: function (params) {
@@ -1978,7 +1978,7 @@
                             minimumResultsForSearch: 1,
                             placeholder: "Search for a Manufacturer",
                             ajax: {
-                                url: "{{ CONFIG.ROOTURL }}/api/manufacturer/search.php?other_instances_id=" + instanceId,
+                                url: "{{ CONFIG.ROOTPATH }}/api/manufacturer/search.php?other_instances_id=" + instanceId,
                                 dataType: "json",
                                 type: "POST",
                                 data: function (params) {
@@ -2020,7 +2020,7 @@
                             minimumResultsForSearch: 1,
                             placeholder: "Search for a Category",
                             ajax: {
-                                url: "{{ CONFIG.ROOTURL }}/api/categories/search.php?other_instances_id=" + instanceId,
+                                url: "{{ CONFIG.ROOTPATH }}/api/categories/search.php?other_instances_id=" + instanceId,
                                 dataType: "json",
                                 type: "POST",
                                 data: function (params) {
@@ -2094,7 +2094,7 @@
                                 ajaxcall("assets/transfer.php", 
                                     args,
                                     function (data) {
-                                        location.href = "{{ CONFIG.ROOTURL }}/assets.php";
+                                        location.href = "{{ CONFIG.ROOTPATH }}/assets.php";
                                     }
                                 );
                             }
@@ -2161,7 +2161,7 @@
                     minimumResultsForSearch: 1,
                     placeholder: "Enter asset numbers to search for assets",
                     ajax: {
-                        url: "{{ CONFIG.ROOTURL }}/api/assets/searchAssets.php",
+                        url: "{{ CONFIG.ROOTPATH }}/api/assets/searchAssets.php",
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
