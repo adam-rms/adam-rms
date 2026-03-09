@@ -14,13 +14,13 @@ Bithell Studios takes its commitment to the environment seriously, and all carbo
 
 ![This website is hosted Green - checked by thegreenwebfoundation.org](https://api.thegreenwebfoundation.org/greencheckimage/adam-rms.com?nocache=true)
 
-### Agolia
+### Algolia
 
-We use Agolia to power the search on this site, and they are also [committed to reducing their environmental impact](https://www.algolia.com/blog/algolia/sweeping-away-our-environmental-footprint/)
+We use Algolia to power the search on this site, and they are also [committed to reducing their environmental impact](https://www.algolia.com/blog/algolia/sweeping-away-our-environmental-footprint/)
 
-## Github
+## GitHub
 
-Github has been [Carbon Neutral since 2019](https://github.blog/2021-04-22-environmental-sustainability-github/).
+GitHub has been [Carbon Neutral since 2019](https://github.blog/2021-04-22-environmental-sustainability-github/).
 
 ## Hosted Solution
 
