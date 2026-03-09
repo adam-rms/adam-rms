@@ -4,12 +4,9 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - main
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,14 +14,19 @@ concurrency:
 
 jobs:
   build:
-    name: Parse PHP files and generate OpenAPI docs as YAML file
+    name: Generate OpenAPI docs from PHP source
     runs-on: ubuntu-latest
+    # Only run for PRs from the same repo (forks don't have push permission)
+    if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
           extensions: zip, mysqli, intl, gd
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v4
@@ -45,78 +47,19 @@ jobs:
           $finder = \Symfony\Component\Finder\Finder::create()->files()->name('*.php')->in('src/api/');
           $openapi = \OpenApi\Generator::scan($finder, ['logger' => new \Psr\Log\NullLogger()]);
           $yaml = $openapi->toYaml();
-          file_put_contents('apiDocs.yaml', $yaml);
-
-      - name: Set Version Number
-        uses: jacobtomlinson/gha-find-replace@v3
-        with:
-          find: "APIVERSION"
-          replace: ${{ github.ref_name }}
-          regex: false
-          include: "apiDocs.yaml"
+          file_put_contents('website/static/apiDocs.yaml', $yaml);
 
       - uses: actions/upload-artifact@v4
         with:
           name: "apiDocs.yaml"
-          path: "apiDocs.yaml"
+          path: "website/static/apiDocs.yaml"
           if-no-files-found: "error"
           overwrite: "true"
 
-  # Generate ReDocly static API docs
-  generate:
-    name: Generate ReDocly static API docs using YAML file
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
-    steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: "apiDocs.yaml"
-
-      - name: Install ReDocly
-        run: npm i @redocly/cli
-
-      - name: Build ReDocly
-        run: npx @redocly/cli build-docs apiDocs.yaml --output ./dist/index.html
-
-      # Upload to Github Pages if a push to main
-      - name: Upload GH Pages Artefact
-        if: github.event_name == 'push'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "dist/"
-
-      # Just upload the artefact if a PR
-      - uses: actions/upload-artifact@v4
-        if: github.event_name == 'pull_request'
-        with:
-          name: "ReDocly.html"
-          path: "dist/index.html"
-          if-no-files-found: "error"
-          overwrite: "true"
-
-  # Deploy to GH Pages
-  deploy:
-    name: Upload ReDocly file to GH Pages
-    needs: [build, generate]
-    if: github.event_name == 'push'
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-    permissions:
-      pages: write # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
-
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      # Commit updated apiDocs.yaml to the PR branch if it has changed
+      - name: Commit apiDocs.yaml if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add website/static/apiDocs.yaml
+          git diff --staged --quiet || (git commit -m "Update generated API docs" && git push)
