@@ -511,7 +511,7 @@
                         <!-- /.tab-pane -->
                         {% if user.users_userid == USERDATA.users_userid %}
                         <div class="tab-pane" style="padding: 1.25rem" id="export">
-                            <input type="url" class="form-control" disabled value="{{ CONFIG.ROOTPATH }}/api/account/calendar-export.php?uid={{ user.users_userid }}&key={{ user.users_calendarHash }}" />
+                            <input type="url" class="form-control" disabled value="{{ CONFIG.ROOTURL }}/api/account/calendar-export.php?uid={{ user.users_userid }}&key={{ user.users_calendarHash }}" />
                             <br/>
                             <h2>Google Calendar</h2>
                             <ol>

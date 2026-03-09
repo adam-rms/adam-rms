@@ -7,7 +7,7 @@ $configStructureArray = [
         return 'http://' . $_SERVER['HTTP_HOST'];
       },
       "name" => "Root URL", // The name of the field to be shown to the user
-      "description" => "The URL of the site that is used as a point of reference for all links and emails. This is an important URL, because if it is misconfigured it will prevent you from logging in. It is probably https://yourdomain.com or https://yourdomain.com/adamrms or http://localhost:8080. It must not end in a trailing slash.", // A description of the field to be shown to the user
+      "description" => "The full URL of the site used for emails, OAuth callbacks and external links. This URL must be correct for email links and third-party authentication to work. It is probably https://yourdomain.com or https://yourdomain.com/adamrms or http://localhost:8080. It must not end in a trailing slash. Internal navigation uses the path component of this URL, so hosting on a subpath like /applications/adam-rms is supported.", // A description of the field to be shown to the user
       "group" => "General", // The group this field belongs to
       "required" => true, // Is this value required? Or can it be left blank
       "maxlength" => 255, // This is the maximum length of the string (if of string type)
