@@ -448,6 +448,11 @@ function replaceQueryParam(param, newval, search) {
     return (query.length > 2 ? query + "&" : "?") + (newval ? param + "=" + newval : '');
 }
 $(document).ready(function () {
+    // Auto-submit when selecting or clearing something in Select2
+    $('#assetSearchForm select').on('select2:select select2:unselect', function(e) {
+        $('#assetSearchForm').submit();
+    });
+
     $('#assetSearchForm input[name ="dates"]').daterangepicker({
         timePicker: true,
         timePickerIncrement: 15,
