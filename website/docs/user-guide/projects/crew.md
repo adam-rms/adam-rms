@@ -72,7 +72,7 @@ Crew vacancies ask for the following information:
 *Application creator*
 
 ### Apply for a role
-Users can apply for the role any time the position is open. If the role is First-Come-First-Served, #
+Users can apply for the role any time the position is open. If the role is First-Come-First-Served,
 the first user to apply will get the position. Otherwise, the Project manager must accept or reject each application.
 
 ![Role Application](/img/tutorial/projects/crew-application.png)
