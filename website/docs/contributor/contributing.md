@@ -3,9 +3,9 @@ sidebar_position: 20
 title: Contributing
 ---
 
-Thanks for you interest in contributing to the AdamRMS project!
+Thanks for your interest in contributing to the AdamRMS project!
 
-We use [Github](https://github.com/adam-rms/adam-rms/) as our source control system.
+We use [GitHub](https://github.com/adam-rms/adam-rms/) as our source control system.
 
 All contributions are covered by the existing project licence - please have a look at this to ensure you're familiar with it before contributing. When you contribute you'll be asked to accept the CLA (Contributor Licence Agreement).
 
@@ -17,18 +17,18 @@ AdamRMS uses semantic versioning.
 
 #### v1
 
-1. Create a new release in Github (`adam-rms/adam-rms`), with a tag of the semantic version number. **Tips:**
+1. Create a new release in GitHub (`adam-rms/adam-rms`), with a tag of the semantic version number. **Tips:**
     - Make sure you are targeting the default branch (`main`)
     - Make sure you use a lowercase `v` in the tag name
     - Make sure your release is in the format `vx.y.z` where `x`/`y`/`z` is a positive integer
 1. A new Docker image for will be built and pushed to GitHub Packages
-1. The hosted-solution servers will pull the latest update from Github Packages to update the dashboard.
+1. The hosted-solution servers will pull the latest update from GitHub Packages to update the dashboard.
 
 #### Website
 
 Any push to main will automatically update the website on Cloudflare
 
-## Using Github
+## Using GitHub
 
 We use the [Git Feature Branch Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) for writing new features/bug fixes etc, and for code review.
 
