@@ -13,7 +13,7 @@ module.exports = {
   contributorSidebar: [
     {
       type: "link",
-      label: "Github", // The link label
+      label: "GitHub", // The link label
       href: "https://github.com/adam-rms", // The external URL
     },
     {

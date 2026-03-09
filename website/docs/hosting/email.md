@@ -5,16 +5,15 @@ title: Emails
 
 AdamRMS sends a variety of notifications through email and support three major email providers. You can enable emails and select which provider to use in your site's [configuration menu](./configuration-menu.md).
 
-If there is a provider you'd like to use but isn't included here, please [create an issue](https://github.com/adam-rms/adam-rms/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.yml&title=%5BFEATURE%5D+%3Ctitle%3E) in AdamRMS' Github!
+If there is a provider you'd like to use but isn't included here, please [create an issue](https://github.com/adam-rms/adam-rms/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.yml&title=%5BFEATURE%5D+%3Ctitle%3E) in AdamRMS' GitHub!
 
 ## [Sendgrid](https://sendgrid.com/en-us)
 
 For many deployments of AdamRMS the free tier provided by Sendgrid should be sufficient.
 
-You will need to generate a [Sendgrid API Key](https://app.sendgrid.com/settings/api_keys) and store this in the [configuration menu](./configuration-menu.md) under  API key.
+You will need to generate a [Sendgrid API Key](https://app.sendgrid.com/settings/api_keys) and store this in the [configuration menu](./configuration-menu.md) under API key.
 
 You must also set from email to be the email address that these emails are sent from. This should be an address that is known to Sendgrid and has had [Domain Authentication](https://docs.sendgrid.com/ui/account-and-settings/how-to-set-up-domain-authentication) set up, otherwise your emails are likely to be blocked or send to spam.
-
 
 ## [Mailgun](https://www.mailgun.com/)
 

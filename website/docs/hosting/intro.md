@@ -8,7 +8,7 @@ import TabItem from "@theme/TabItem";
 
 # Self-Hosting AdamRMS
 
-The AdamRMS dashboard is packaged as a Docker image, which is stored in the Github Image repository. We recommend you deploy this on managed infrastructure (such as AWS or DigitalOcean), but this guide will be generic, and not make use of platform-specific tools where possible.
+The AdamRMS dashboard is packaged as a Docker image, which is stored in the GitHub Image repository. We recommend you deploy this on managed infrastructure (such as AWS or DigitalOcean), but this guide will be generic, and not make use of platform-specific tools where possible.
 
 :::note Before you start
 This guide assumes you have a good understanding of deploying web infrastructure, and it will not give specific commands, or guidance for how to manage areas such as DNS.
@@ -42,7 +42,7 @@ The container is based on the PHP Apache2 image, and requires a number of enviro
 - `DB_PASSWORD` the password for the database user
 - `DB_PORT` the port that the database is listening on, will default to `3306`
 
-The Docker image of AdamRMS can be found in the project's [Github package repository](https://github.com/adam-rms/adam-rms/pkgs/container/adam-rms), and you can pull it by running:
+The Docker image of AdamRMS can be found in the project's [GitHub package repository](https://github.com/adam-rms/adam-rms/pkgs/container/adam-rms), and you can pull it by running:
 
 ```sh
 docker pull ghcr.io/adam-rms/adam-rms:latest
