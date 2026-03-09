@@ -7,12 +7,14 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
 ## Technology Stack
 
 ### Backend
+
 - **PHP 8.0+**: Object-oriented patterns with some procedural code
 - **MySQL Database**: Via custom `adam-rms/mysqli-database-class` wrapper
 - **Twig v3.7**: Templating engine for all views
 - **Composer**: Dependency management
 
 ### Key Dependencies
+
 - **Twig**: Template rendering (`twig/twig`, `twig/string-extra`)
 - **Money Handling**: `moneyphp/money` for currency operations
 - **Authentication**: `firebase/php-jwt`, `hybridauth/hybridauth`
@@ -23,11 +25,13 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
 - **Database Migrations**: `robmorgan/phinx`
 
 ### Website & Documentation
+
 - **Docusaurus v3**: Static site generator for the project website and documentation
 - **React**: Custom components for the website (pricing table, homepage features)
-- **Netlify/Cloudflare Pages**: Website hosting and deployment
+- **Cloudflare Workers**: Website hosting and deployment
 
 ### Infrastructure
+
 - **Docker**: Containerized deployment with pre-built images
 - **GitHub Actions**: CI/CD pipelines for Docker builds, API docs generation, and code review
 - **Reviewdog**: Automated spelling and language checks on pull requests
@@ -111,6 +115,7 @@ finish(false, ["code" => "ERROR_CODE", "message" => "Human readable error"]);
 ```
 
 API responses always include:
+
 - `result`: boolean indicating success/failure
 - `error`: array with `code` and `message` (if result is false)
 - `response`: data payload (if result is true)
@@ -125,7 +130,6 @@ AdamRMS uses a two-tier permission system: **Server Permissions** and **Instance
   - Checked via `$AUTH->serverPermissionCheck("PERMISSION:NAME")`
   - Granted through user positions (roles) in the `positions` and `positionsGroups` tables
   - Examples: Creating instances, viewing all users, server configuration
-  
 - **Instance Permissions**: Permissions specific to a single instance/business (e.g., `ASSETS:CREATE`, `PROJECTS:VIEW`, `BUSINESS:USERS:VIEW:LIST`)
   - Checked via `$AUTH->instancePermissionCheck("PERMISSION:NAME")`
   - Granted through instance positions in the `instancePositions` table
@@ -160,7 +164,6 @@ Permissions are loaded in the `Auth` class constructor (`src/common/libs/Auth/ma
 1. **Server Permissions**: Retrieved from user's positions → position groups → actions
    - Stored in `$AUTH->data['positions']`
    - Available as array in `$this->serverPermissions`
-   
 2. **Instance Permissions**: Retrieved per instance from `instancePositions` and `userInstances`
    - Each instance in `$AUTH->data['instances']` has a `permissions` array
    - Current instance accessible via `$AUTH->data['instance']['permissions']`
@@ -181,11 +184,11 @@ Permissions are defined in PHP files (not in the database) to avoid merge confli
 
 1. **For Instance Permissions**:
    Add a new entry to `src/common/libs/Auth/instanceActions.php`:
-   
+
    ```php
    $instanceActions = [
        // ... existing permissions ...
-       
+
        'CUSTOM:NEW_FEATURE:VIEW' => [
            'Category' => 'Custom',
            'Table' => 'New Feature',
@@ -202,11 +205,11 @@ Permissions are defined in PHP files (not in the database) to avoid merge confli
 
 2. **For Server Permissions**:
    Add a new entry to `src/common/libs/Auth/serverActions.php`:
-   
+
    ```php
    $serverActions = [
        // ... existing permissions ...
-       
+
        'CUSTOM:NEW_FEATURE' => [
            'Category' => 'Custom',
            'Table' => 'Table Name',
@@ -227,6 +230,7 @@ Permissions are defined in PHP files (not in the database) to avoid merge confli
    ```
 
 **Key Fields**:
+
 - **Dependencies**: Array of permission keys that must also be granted
 - **Supported Token Types**: Which authentication methods can use this permission. Unless you are developing for the mobile app, only enable "web-session".
   - `"web-session"`: Web browser sessions
@@ -237,6 +241,7 @@ Permissions are defined in PHP files (not in the database) to avoid merge confli
 #### Permission Naming Conventions
 
 Follow hierarchical naming with colons:
+
 - `CATEGORY:SUBCATEGORY:ACTION[:DETAIL]`
 - Examples:
   - `ASSETS:CREATE`
@@ -341,6 +346,7 @@ Files are stored in AWS S3
 ## When Reviewing Code
 
 Please check for:
+
 - Proper authentication and authorization checks
 - SQL injection prevention (use $DBLIB parameterized methods)
 - Checks of instance permissions for a given user to perform an operation

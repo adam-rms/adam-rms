@@ -1,14 +1,14 @@
-import {themes as prismThemes} from "prism-react-renderer";
-import type {Config} from "@docusaurus/types";
+import { themes as prismThemes } from "prism-react-renderer";
+import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import fs from "node:fs";
 
-const production = process.env.CONTEXT === "production"; // Netlify/Cloudflare Pages set environment variable "CONTEXT" to "production"/"deploy-preview"
+const production = process.env.CONTEXT === "production"; // Cloudflare Workers set environment variable "CONTEXT" to "production"/"deploy-preview"
 const apiSpecExists = fs.existsSync("./static/apiDocs.yaml");
 
 // Ensure api-docs directory exists for the content-docs plugin
 if (!fs.existsSync("./api-docs")) {
-  fs.mkdirSync("./api-docs", {recursive: true});
+  fs.mkdirSync("./api-docs", { recursive: true });
 }
 
 const config: Config = {
@@ -32,23 +32,23 @@ const config: Config = {
     "docusaurus-plugin-sass",
     ...(apiSpecExists
       ? [
-        [
-          "docusaurus-plugin-openapi-docs",
-          {
-            id: "openapi",
-            docsPluginId: "api",
-            config: {
-              api: {
-                specPath: "./static/apiDocs.yaml",
-                outputDir: "api-docs",
-                sidebarOptions: {
-                  groupPathsBy: "tag",
+          [
+            "docusaurus-plugin-openapi-docs",
+            {
+              id: "openapi",
+              docsPluginId: "api",
+              config: {
+                api: {
+                  specPath: "./static/apiDocs.yaml",
+                  outputDir: "api-docs",
+                  sidebarOptions: {
+                    groupPathsBy: "tag",
+                  },
                 },
               },
             },
-          },
-        ],
-      ]
+          ],
+        ]
       : []),
     [
       "@docusaurus/plugin-content-docs",
