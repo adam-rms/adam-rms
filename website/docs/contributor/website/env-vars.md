@@ -5,4 +5,4 @@ title: Environment Variables
 
 Name|Description|Default
 ---|---|---
-`PRODUCTION`|The environment in which the application is running. If set to `PRODUCTION` then draft banner will be hidden|`development`
+`CONTEXT`|The deployment context, set automatically by Netlify/Cloudflare Pages. When set to `production` the draft banner will be hidden and the site will be indexed by search engines.|`deploy-preview`

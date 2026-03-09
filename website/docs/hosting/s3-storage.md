@@ -124,8 +124,6 @@ CDN Url is `https://s3.eu-central-003.backblazeb2.com/<BUCKETNAME>`
 
 And endpoint is `s3.eu-central-003.backblazeb2.com`
 
-````
-
 ### AWS S3
 
 To use AWS S3 you need to create an IAM user
@@ -146,7 +144,7 @@ Create an S3 Bucket, with the follwing Policy
     }
   ]
 }
-````
+```
 
 - Then set the following environment variables, with information from the S3 console.
 

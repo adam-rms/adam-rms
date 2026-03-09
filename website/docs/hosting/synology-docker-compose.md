@@ -141,13 +141,13 @@ MYSQL_ROOT_PASSWORD=
 
 Go to your Synology Nas -> Container Manager -> Projects -> Create.
 
-Give it a Name and selec the Folder where you stored your `docker-compose.yml`, then select use existing.
+Give it a Name and select the Folder where you stored your `docker-compose.yml`, then select use existing.
 
 
 ## Create Bucket in MinIO
 
 Go to [http://yourNasIp:9000](http://yourNasIp:9000) and login with the Username `minioadmin` and your given Password (CHANGE_THIS_MINO_PW).
 
-Create a new Container `adamrms` and `adamrms-database-backup`
+Create a new Bucket `adamrms` and `adamrms-database-backup`
 
 Now everything should be ready to upload your Files.

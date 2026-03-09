@@ -5,9 +5,7 @@ title: CI/CD
 
 ## Versioning
 
-The site supports multiple versions. To edit the `v1` version, please edit the `/docs/versioned_docs/version-v1` folder.
-
-To edit the next (currently `v2`) version, please edit the `/docs/docs/` folder.
+The site supports multiple versions. To edit the current (unreleased) version, please edit the `website/docs/` folder.
 
 ### Create a new version
 
@@ -17,7 +15,7 @@ To create a new version (such as a version 1.0)
 npm run docusaurus docs:version 1.0
 ```
 
-The `docs` folder is copied into `versioned_docs/version-1.0`
+The `website/docs` folder is copied into `website/versioned_docs/version-1.0`
 
 Your docs now have 2 versions:
 
@@ -28,8 +26,8 @@ Your docs now have 2 versions:
 
 It is possible to edit versioned docs in their respective folder:
 
-- `versioned_docs/version-1.0/hello.md` updates `http://localhost:3000/docs/hello`
-- `docs/hello.md` updates `http://localhost:3000/docs/next/hello`
+- `website/versioned_docs/version-1.0/hello.md` updates `http://localhost:3000/docs/hello`
+- `website/docs/hello.md` updates `http://localhost:3000/docs/next/hello`
 
 ## CI
 
