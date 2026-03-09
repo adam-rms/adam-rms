@@ -6,10 +6,10 @@ $PAGEDATA['pageConfig'] = ["TITLE" => "Dashboard", "BREADCRUMB" => false];
 if (isset($_GET['i'])) {
     if ($AUTH->serverPermissionCheck("INSTANCES:FULL_PERMISSIONS_IN_INSTANCE")) {
         $_SESSION['instanceID'] = intval($_GET['i']); //It doesn't even bother to verify the instance ID as the user is trusted to be server admins
-        header("Location: " . $CONFIG['ROOTURL'] . "?");
+        header("Location: " . $CONFIG['ROOTPATH'] . "/?");
     } else {
         $GLOBALS['AUTH']->setInstance($_GET['i']);
-        header("Location: " . $CONFIG['ROOTURL'] . "?");
+        header("Location: " . $CONFIG['ROOTPATH'] . "/?");
     }
 }
 

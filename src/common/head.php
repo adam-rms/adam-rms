@@ -71,6 +71,13 @@ try {
 
 $CONFIGCLASS = new Config;
 $CONFIG = $CONFIGCLASS->getConfigArray();
+
+// Derive ROOTPATH from ROOTURL for use in internal/relative links.
+// ROOTPATH is the path component of ROOTURL (e.g. "/adam-rms" for "https://example.com/adam-rms"),
+// or an empty string when hosted at the domain root. This allows internal links and static asset
+// references to work without requiring the full absolute URL.
+$CONFIG['ROOTPATH'] = isset($CONFIG['ROOTURL']) ? rtrim(parse_url($CONFIG['ROOTURL'], PHP_URL_PATH) ?: '', '/') : '';
+
 if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
     $update = false;
     if (isset($_POST['settingUpConfigUsingConfigFormTwig']) and $_POST['settingUpConfigUsingConfigFormTwig'] == "true") {
@@ -78,7 +85,7 @@ if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
     }
     if ($update !== true) die($TWIG->render('common/libs/Config/configForm.twig', ["form" => $CONFIGCLASS->formArrayBuild(), "errors" => is_array($update) ? $update : []]));
     else {
-        header("Location: " . $CONFIG['ROOTURL'] . "?");
+        header("Location: " . $CONFIG['ROOTPATH'] . "/?");
         exit;
     }
 }

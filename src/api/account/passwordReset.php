@@ -3,7 +3,7 @@ require_once __DIR__ . '/../apiHead.php';
 
 header('Content-Type:text/plain');
 if (!isset($_POST['code'])) {
-	header('Location: ' . $CONFIG['ROOTURL']); //If it fails we may as well just assume they have tried to click it a second time.
+	header('Location: ' . $CONFIG['ROOTPATH'] . '/'); //If it fails we may as well just assume they have tried to click it a second time.
 	exit;
 }
 
@@ -26,7 +26,7 @@ if (isset($code) and $code['passwordResetCodes_valid'] == '1') {
 	$AUTH->generateToken($code['users_userid'], false, "Web", "web-session");
 	$AUTH->redirectToReturnAddress();
 } else {
-	header('Location: ' . $CONFIG['ROOTURL']); //If it fails we may as well just assume they have tried to click it a second time.
+	header('Location: ' . $CONFIG['ROOTPATH'] . '/'); //If it fails we may as well just assume they have tried to click it a second time.
 	exit;
 }
 

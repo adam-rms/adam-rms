@@ -273,9 +273,9 @@ class bID
         global $CONFIG;
         //If the function call has asked for a redirect
         try {
-            header('Location: ' . (isset($_SESSION['return']) ? $_SESSION['return'] :  $CONFIG['ROOTURL'])); //Check for session url to redirect to
+            header('Location: ' . (isset($_SESSION['return']) ? $_SESSION['return'] :  $CONFIG['ROOTPATH'] . '/')); //Check for session url to redirect to
         } catch (Exception $e) {
-            die('<meta http-equiv="refresh" content="0;url=' . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']) . '" />');
+            die('<meta http-equiv="refresh" content="0;url=' . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTPATH'] . '/') . '" />');
         }
     }
 

@@ -8,7 +8,7 @@ $PAGEDATA['microsoftAuthAvailable'] = $CONFIGCLASS->get("AUTH_PROVIDERS_MICROSOF
 
 if (!$PAGEDATA['microsoftAuthAvailable']) {
 	//Display normal login page if oauth isn't available
-	header("Location: " . $CONFIG['ROOTURL'] . "/login");
+	header("Location: " . $CONFIG['ROOTPATH'] . "/login");
 	exit;
 }
 //Similar setup can be found in the link provider api endpoint
@@ -53,7 +53,7 @@ if ($user) {
 	//Log them in successfully - duplicated below for signup
 
 	$GLOBALS['AUTH']->generateToken($user['users_userid'], false, "Web - Microsoft", "web-session");
-	header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
+	header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTPATH'] . '/'));
 	exit;
 } else {
 	//See if an email is found, but not linked to microsoft. We don't want to auto-link them because its a good attack vector, so instead prompt a password login and then link in account settings.
@@ -100,6 +100,6 @@ if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
 	exit;
 } else {
 	$GLOBALS['AUTH']->generateToken($newUser, false, "Web - Microsoft", "web-session");
-	header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
+	header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTPATH'] . '/'));
 	exit;
 }

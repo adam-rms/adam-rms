@@ -44,7 +44,7 @@ if (isset($_POST['formInput']) and isset($_POST['password'])) {
                 finish(true,null,["redirect" => $_SESSION['app-oauth'] . "oauth_callback?token=" . $jwt]);
             } else {
                 $GLOBALS['AUTH']->generateToken($user['users_userid'], false, "Web", "web-session");
-                finish(true,null,["redirect" => (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL'])]);
+                finish(true,null,["redirect" => (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTPATH'] . '/')]);
             }
         }
 	}

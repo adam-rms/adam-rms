@@ -79,7 +79,7 @@ if ($user) {
 		exit;
 	} else {
 		$GLOBALS['AUTH']->generateToken($user['users_userid'], false, "Web - Google", "web-session");
-		header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
+		header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTPATH'] . '/'));
 		exit;
 	}
 } else {
@@ -127,6 +127,6 @@ if (!$_SESSION['return'] and isset($_SESSION['app-oauth'])) {
 	exit;
 } else {
 	$GLOBALS['AUTH']->generateToken($newUser, false, "Web - Google", "web-session");
-	header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTURL']));
+	header("Location: " . (isset($_SESSION['return']) ? $_SESSION['return'] : $CONFIG['ROOTPATH'] . '/'));
 	exit;
 }

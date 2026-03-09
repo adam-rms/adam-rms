@@ -19,7 +19,7 @@ $userProfile = $adapter->getUserProfile();
 $adapter->disconnect(); //Disconnect this authentication from the session, so they can pick another account
 if (strlen($userProfile->identifier) < 1) {
     //ISSUE WITH PROFILE
-    header("Location: " . $CONFIG['ROOTURL'] . "/user.php");
+    header("Location: " . $CONFIG['ROOTPATH'] . "/user.php");
     exit;
 }
 
@@ -33,7 +33,7 @@ if ($user and $user['users_userid'] != $AUTH->data['users_userid']) {
 
 $DBLIB->where("users_userid", $AUTH->data['users_userid']);
 $DBLIB->update("users", ["users_oauth_microsoftid" => $userProfile->identifier]);
-header("Location: " . $CONFIG['ROOTURL'] . "/user.php");
+header("Location: " . $CONFIG['ROOTPATH'] . "/user.php");
 exit;
 
 

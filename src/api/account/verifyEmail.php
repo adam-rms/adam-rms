@@ -3,7 +3,7 @@
 
 	header('Content-Type:text/plain');
 	if (!isset($_POST['code'])) {
-        header('Location: ' . $CONFIG['ROOTURL']);
+        header('Location: ' . $CONFIG['ROOTPATH'] . '/');
         exit;
 	}
 
@@ -26,9 +26,9 @@
 				<h2 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 18px; line-height: 22px; color: #333333; font-weight: bold;">Welcome to ' . $CONFIG['PROJECT_NAME'] . ' - We are delighted to have you onboard!</h2>
 			');
 		$bCMS->auditLog("UPDATE", "users", "VERIFY EMAIL", $AUTH->data['users_userid'],$AUTH->data['users_userid']);
-		header('Location: ' . $CONFIG['ROOTURL']); exit;
+		header('Location: ' . $CONFIG['ROOTPATH'] . '/'); exit;
 	} else {
-		header('Location: ' . $CONFIG['ROOTURL']); //If it fails we may as well just assume they have tried to click it a second time.
+		header('Location: ' . $CONFIG['ROOTPATH'] . '/'); //If it fails we may as well just assume they have tried to click it a second time.
         exit;
     }
 

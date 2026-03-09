@@ -21,12 +21,12 @@ if (isset($_GET['app-oauth'])) {
 	}
 } elseif (isset($_GET['logout'])) {
 	$AUTH->logout();
-	header("Location: " . $CONFIG['ROOTURL'] . "/");
-	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
+	header("Location: " . $CONFIG['ROOTPATH'] . "/");
+	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTPATH'] . "/" . '" />');
 } elseif ($GLOBALS['AUTH']->login and !isset($_GET['app-magiclink'])) {
 	//If they're logged in, take them back to root - this fixes a loop redirect issue
-	header("Location: " . $CONFIG['ROOTURL'] . "/");
-	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/" . '" />');
+	header("Location: " . $CONFIG['ROOTPATH'] . "/");
+	die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTPATH'] . "/" . '" />');
 } 
 
 if ($PAGEDATA['signupEnabled'] && isset($_GET['signup'])) echo $TWIG->render('login/signup.twig', $PAGEDATA);

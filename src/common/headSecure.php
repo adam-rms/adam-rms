@@ -6,9 +6,9 @@ require_once __DIR__ . '/../assets/widgets/statsWidgets.php'; //Stats on homepag
 
 if (!$GLOBALS['AUTH']->login) {
     $_SESSION['return'] = str_replace("src/", "", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    if ($CONFIG['DEV']) die($GLOBALS['AUTH']->debug . "<br/><a href='" . $CONFIG['ROOTURL'] . "/login/'>" . $CONFIG['ROOTURL'] . "/login/</a>");
-    header("Location: " . $CONFIG['ROOTURL'] . "/login/");
-    die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTURL'] . "/login/" . '" />');
+    if ($CONFIG['DEV']) die($GLOBALS['AUTH']->debug . "<br/><a href='" . $CONFIG['ROOTPATH'] . "/login/'>" . $CONFIG['ROOTPATH'] . "/login/</a>");
+    header("Location: " . $CONFIG['ROOTPATH'] . "/login/");
+    die('<meta http-equiv="refresh" content="0; url="' . $CONFIG['ROOTPATH'] . "/login/" . '" />');
 }
 if (!$CONFIG['DEV']) {
     Sentry\configureScope(function (Sentry\State\Scope $scope): void {
@@ -16,7 +16,7 @@ if (!$CONFIG['DEV']) {
         if ($GLOBALS['AUTH']->data['instance']) $scope->setExtra('instances_id', $GLOBALS['AUTH']->data['instance']['instances_id']);
     });
 } elseif (!$AUTH->serverPermissionCheck("USE-DEV") and !$GLOBALS['AUTH']->data['viewSiteAs']) {
-    die("Sorry - you can't use this development version of the site. <a href=\"" . $CONFIG['ROOTURL'] . "/login/?logout\">Logout</a>");
+    die("Sorry - you can't use this development version of the site. <a href=\"" . $CONFIG['ROOTPATH'] . "/login/?logout\">Logout</a>");
 }
 
 $PAGEDATA['AUTH'] = $AUTH;
@@ -119,7 +119,7 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
     $instance = $DBLIB->getOne("instances", ["instances_id"]);
     if ($instance) {
         $_SESSION['instanceID'] = $instance["instances_id"];
-        header("Location: " . $CONFIG['ROOTURL'] . "/server/instances.php");
+        header("Location: " . $CONFIG['ROOTPATH'] . "/server/instances.php");
         exit;
     } else {
         $PAGEDATA['pageConfig'] = ["TITLE" => "No Businesses", "BREADCRUMB" => false, "NOMENU" => true];
