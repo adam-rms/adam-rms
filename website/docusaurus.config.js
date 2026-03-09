@@ -100,7 +100,7 @@ const config = {
             label: "Contributing",
           },
           {
-            href: "/api",
+            href: "/api/adamrms-api",
             label: "API Documentation",
           },
           {
