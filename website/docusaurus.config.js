@@ -1,7 +1,14 @@
 /* eslint-disable max-len */
 import {themes as prismThemes} from "prism-react-renderer";
+import fs from "node:fs";
 
 const production = process.env.CONTEXT === "production"; // Netlify/Cloudflare Pages set environment variable "CONTEXT" to "production"/"deploy-preview"
+const apiSpecExists = fs.existsSync("./static/apiDocs.yaml");
+
+// Ensure api-docs directory exists for the content-docs plugin
+if (!fs.existsSync("./api-docs")) {
+  fs.mkdirSync("./api-docs", {recursive: true});
+}
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -20,7 +27,40 @@ const config = {
   },
   organizationName: "adam-rms",
   projectName: "adam-rms",
-  plugins: ["@docusaurus/plugin-ideal-image"],
+  plugins: [
+    "@docusaurus/plugin-ideal-image",
+    "docusaurus-plugin-sass",
+    ...(apiSpecExists
+      ? [
+        [
+          "docusaurus-plugin-openapi-docs",
+          {
+            id: "openapi",
+            docsPluginId: "api",
+            config: {
+              api: {
+                specPath: "./static/apiDocs.yaml",
+                outputDir: "api-docs",
+                sidebarOptions: {
+                  groupPathsBy: "tag",
+                },
+              },
+            },
+          },
+        ],
+      ]
+      : []),
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "api",
+        path: "api-docs",
+        routeBasePath: "api",
+        sidebarPath: "./api-sidebars.js",
+      },
+    ],
+  ],
+  themes: ["docusaurus-theme-openapi-docs"],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({

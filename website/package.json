@@ -2,12 +2,13 @@
   "name": "adam-rms-docs",
   "version": "0.0.0",
   "private": false,
-  "licence": "AGPL-3.0-only",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build:api-docs": "test -f ./static/apiDocs.yaml && redocly build-docs ./static/apiDocs.yaml --output ./static/api/index.html || echo 'Skipping API docs build (apiDocs.yaml not found)'",
-    "build": "npm run build:api-docs && docusaurus build",
+    "gen-api-docs": "docusaurus gen-api-docs all",
+    "clean-api-docs": "docusaurus clean-api-docs all",
+    "build": "(test -f ./static/apiDocs.yaml && npm run gen-api-docs || echo 'Skipping API docs generation (apiDocs.yaml not found)') && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -31,6 +32,10 @@
     "prism-react-renderer": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "docusaurus-plugin-openapi-docs": "^4.7.1",
+    "docusaurus-plugin-sass": "^0.2.3",
+    "docusaurus-theme-openapi-docs": "^4.7.1",
+    "sass": "^1.80.0",
     "react-waypoint": "^10.3.0"
   },
   "browserslist": {
@@ -46,7 +51,6 @@
     ]
   },
   "devDependencies": {
-    "@redocly/cli": "^2.20.4",
     "eslint": "^8.26.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.31.10"
