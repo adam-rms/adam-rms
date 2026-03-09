@@ -18,10 +18,10 @@
             max-width: 100%;
         }
     }
-    #navItemQuickDispatch {
+    .extended-functions {
         height: 100%;
     }
-    #navItemQuickDispatch button {
+    .extended-functions button {
         background-color: transparent;
     }
 </style>
@@ -39,10 +39,21 @@
                 </li>
             {% endfor %}
             {% if (FINANCIALS.assetsAssigned|length > 0 or FINANCIALS.assetsAssignedSUB|length > 0) and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-                <li class="nav-item" id="navItemQuickDispatch">
+                <li class="nav-item extended-functions">
                     <button type="button" class="nav-link" title="Quick Dispatch" data-toggle="modal" data-target="#quickDispatchModal">
-                        <i class="fas fas fa-shipping-fast"></i>
+                        <i class="fas fa-shipping-fast"></i>
                     </button>
+                </li>
+                <li class="nav-item extended-functions">
+                    {% if BOARDGROUPED %}
+                        <button type="button" class="nav-link grouping-toggle" data-href="?id={{ project.projects_id }}&ungrouped" title="Grouped - Click to ungroup linked assets" aria-label="Toggle asset grouping">
+                            <i class="fas fa-layer-group"></i>
+                        </button>
+                    {% else %}
+                        <button type="button" class="nav-link grouping-toggle" data-href="?id={{ project.projects_id }}" title="Ungrouped - Click to group linked assets" aria-label="Toggle asset grouping">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    {% endif %}
                 </li>
             {% endif %}
         </ul>
@@ -178,7 +189,7 @@
     }
     /**
      * Function to change the status of an asset assignment
-     * @param assetsAssignments_id Id of the AssetAssignment
+     * @param assetsAssignments_id Id of the AssetAssignment (single ID or array of IDs)
      * @param assetsAssignments_status new status id of the AssetAssignment
      */
     function changeStatus(assetsAssignments_id, assetsAssignments_status) {
@@ -189,6 +200,27 @@
                 title: 'Asset Status Updated'
             });
         });
+    }
+    
+    /**
+     * Function to change status of a parent asset and all its children in a single API call
+     * @param parentAssignment Id of the parent AssetAssignment
+     * @param childAssignments Comma-separated string of child AssetAssignment IDs
+     * @param newStatus New status id
+     */
+    function changeStatusWithChildren(parentAssignment, childAssignments, newStatus) {
+        // Collect all assignment IDs (parent + children)
+        const allIds = [parseInt(parentAssignment)];
+        
+        if (childAssignments && childAssignments.toString().length > 0) {
+            const childIds = childAssignments.toString().split(',');
+            childIds.forEach(function(childId) {
+                if (childId && !isNaN(parseInt(childId))) {
+                    allIds.push(parseInt(childId));
+                }
+            });
+        }
+        changeStatus(allIds, parseInt(newStatus));
     }
     {% endif %}
     $(document).ready(function () {
@@ -206,21 +238,26 @@
                 const groupStatus = this.dataset.statusid;
                 const assetOldStatus = ui.item[0].dataset.currentstatus;
                 const assetAssignment = ui.item[0].dataset.assignment;
+                const childAssignments = ui.item[0].dataset.childAssignments;
 
                 if (assetOldStatus !== groupStatus) {
-                    changeStatus(parseInt(assetAssignment),parseInt(groupStatus));
+                    changeStatusWithChildren(assetAssignment, childAssignments, groupStatus);
                     ui.item[0].dataset.currentstatus = groupStatus;
                 }
             }
         });
 
         $(".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton").click(function (){
-            const assetCard = $(this).parent();
+            const assetCard = $(this).closest('.assetDispatchAssetList-card');
             const assetAssignment = assetCard.data("assignment");
+            const childAssignments = assetCard.data("childAssignments");
             const assetNextStatus = $(this).data("nextstatus");
-            changeStatus(parseInt(assetAssignment),parseInt(assetNextStatus));
+            
+            changeStatusWithChildren(assetAssignment, childAssignments, assetNextStatus);
+            
             //move card to new status
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
+            drawButtons();
         });
 
         function doQuickDispatch() {
@@ -275,6 +312,11 @@
 
         $('a.assetsBoardToggle[data-toggle="pill"]').on('click', function (e) {
             localStorage.setItem("activeTab-board", e.target.getAttribute('aria-controls'));
-        })
+        });
+
+        // Preserve URL hash when toggling grouping mode
+        $('button.grouping-toggle').on('click', function (e) {
+            window.location.href = $(this).data('href') + window.location.hash;
+        });
     });
 </script>

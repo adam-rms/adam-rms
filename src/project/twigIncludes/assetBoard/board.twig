@@ -1,3 +1,20 @@
+{# Macro to render children recursively (max depth: 10 to prevent infinite recursion) #}
+{% macro renderChildren(children, instanceid, depth, maxDepth) %}
+    {% set maxDepth = maxDepth|default(10) %}
+    {% if depth <= maxDepth %}
+        {% import _self as self %}
+        {% for child in children %}
+            <div class="row align-middle p-2 m-0 border-top border-secondary" data-assignment="{{ child['assetsAssignments_id'] }}" data-asset="{{ child['assets_id'] }}" data-parent="{{ child['assets_linkedTo'] }}">
+                <h6 class="col my-auto" style="padding-left: {{ (depth * 1.5) + 0.5 }}rem;"><small class="text-muted">↳</small> <i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ child['assetTypes_id'] }}&asset={{ child['assets_id'] }}&instance={{ instanceid }}">{{ child['assets_tag'] }}</a>)</i><br><small style="padding-left: {{ (depth * 1.5) + 0.5 }}rem;">{{ child['assetTypes_name'] }}</small></h6>
+            </div>
+            {% if child.children|default([])|length > 0 %}
+                {{ self.renderChildren(child.children, instanceid, depth + 1, maxDepth) }}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+{% import _self as macros %}
+
 <div class="p-2 scrolling-head h-100" >
     {% for status in instanceAssets %}
         {% if status.instances_id == instanceid %}
@@ -8,13 +25,22 @@
                 </div>
                 <div class="card-body assetDispatchAssetList" data-statusid="{{ status['assetsAssignmentsStatus_id'] }}" data-instance="{{ instanceid }}">
                     {% for asset in status['assets'] %}
-                        <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card" data-currentstatus="{{ status['assetsAssignmentsStatus_id'] }}" data-assignment="{{ asset['assetsAssignments_id'] }}" data-instance="{{ instanceid }}" data-asset="{{ asset['assets_id'] }}">
-                            {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
-                                <button class="btn btn-outline-secondary assetDispatchAssetList-statusPrevButton col-1" data-nextstatus="" style="display: none;">«</button>
-                            {% endif %}
-                            <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}&instance={{ instanceid }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
-                            {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
-                                <button class="btn btn-outline-secondary assetDispatchAssetList-statusNextButton col-1" data-nextstatus="" style="display: none;">»</button>
+                        <div class="border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card overflow-hidden" data-currentstatus="{{ status['assetsAssignmentsStatus_id'] }}" data-assignment="{{ asset['assetsAssignments_id'] }}" data-child-assignments="{{ asset.allChildAssignmentIds|default([])|join(',') }}" data-instance="{{ instanceid }}" data-asset="{{ asset['assets_id'] }}">
+                            {# Main asset row #}
+                            <div class="row align-middle p-2 m-0">
+                                {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
+                                    <button class="btn btn-outline-secondary assetDispatchAssetList-statusPrevButton col-1" data-nextstatus="" style="display: none;">«</button>
+                                {% endif %}
+                                <h6 class="col my-auto "><i>(<a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}&instance={{ instanceid }}">{{ asset['assets_tag'] }}</a>)</i><br>{{ asset['assetTypes_name'] }}</h6>
+                                {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
+                                    <button class="btn btn-outline-secondary assetDispatchAssetList-statusNextButton col-1" data-nextstatus="" style="display: none;">»</button>
+                                {% endif %}
+                            </div>
+                            {# Child assets inside the same card (recursive) #}
+                            {% if asset.children|default([])|length > 0 %}
+                                <div class="border-top border-secondary" style="background-color: rgba(0,0,0,0.04);">
+                                    {{ macros.renderChildren(asset.children, instanceid, 1) }}
+                                </div>
                             {% endif %}
                         </div>
                     {% endfor %}
