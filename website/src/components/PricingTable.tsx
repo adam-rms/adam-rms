@@ -1,49 +1,72 @@
-/* eslint-disable require-jsdoc */
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import clsx from "clsx";
 import Link from "@docusaurus/Link";
 import styles from "./PricingTable.module.css";
-const Price = ({ price }) => (
-  <div className={clsx("col col--4")} style={{ padding: "1rem" }}>
-    <div className={styles.feature}>
-      <div className="text--center padding-horiz--md">
-        <h1>{price.name}</h1>
 
-        {price.price.map((p, idx) => (
-          <h2 key={p.currency} style={{ margin: 0 }}>
-            {p.formatted_amount} / month
-            <br />
-          </h2>
-        ))}
+interface PriceAmount {
+  currency: string;
+  formatted_amount: string;
+}
 
-        <p>{price.description}</p>
-        <Link
-          style={{ marginBottom: "1rem" }}
-          className="button button--secondary"
-          href="https://dash.adam-rms.com"
-        >
-          Start Trial
-        </Link>
-      </div>
-      <div className="padding-horiz--md">
-        <ul>
-          {price.marketing_features.map((feature, idx) => (
-            <li key={idx}>{feature.name}</li>
+interface MarketingFeature {
+  name: string;
+}
+
+interface PriceData {
+  name: string;
+  description: string;
+  price: PriceAmount[];
+  marketing_features: MarketingFeature[];
+}
+
+interface ApiResponse {
+  result: boolean;
+  response: PriceData[];
+}
+
+function Price({price}: {price: PriceData}): React.JSX.Element {
+  return (
+    <div className={clsx("col col--4")} style={{padding: "1rem"}}>
+      <div className={styles.feature}>
+        <div className="text--center padding-horiz--md">
+          <h1>{price.name}</h1>
+
+          {price.price.map((p) => (
+            <h2 key={p.currency} style={{margin: 0}}>
+              {p.formatted_amount} / month
+              <br />
+            </h2>
           ))}
-        </ul>
+
+          <p>{price.description}</p>
+          <Link
+            style={{marginBottom: "1rem"}}
+            className="button button--secondary"
+            href="https://dash.adam-rms.com"
+          >
+            Start Trial
+          </Link>
+        </div>
+        <div className="padding-horiz--md">
+          <ul>
+            {price.marketing_features.map((feature, idx) => (
+              <li key={idx}>{feature.name}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+}
 
-export default function PricingTable() {
-  const [prices, setPrices] = useState([]);
+export default function PricingTable(): React.JSX.Element {
+  const [prices, setPrices] = useState<PriceData[]>([]);
   useEffect(() => {
     fetch("https://dash.adam-rms.com/api/instances/billing/getPrices.php")
       .then((res) => {
         return res.json();
       })
-      .then((data) => {
+      .then((data: ApiResponse) => {
         if (data.result && data.response.length > 0) {
           setPrices(data.response);
         }
@@ -54,11 +77,11 @@ export default function PricingTable() {
       className={[
         clsx("hero hero--primary", styles.heroBanner),
         styles.features,
-      ]}
+      ].join(" ")}
     >
       <div className="container">
         <div className="row text--center">
-          <h1 className="hero__title" style={{ width: "100%" }}>
+          <h1 className="hero__title" style={{width: "100%"}}>
             Pricing
           </h1>
           <p className="hero__subtitle">

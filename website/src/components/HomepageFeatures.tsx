@@ -2,7 +2,14 @@ import React from "react";
 import clsx from "clsx";
 import styles from "./HomepageFeatures.module.css";
 import Image from "@theme/IdealImage";
-const FeatureList = [
+
+interface FeatureItem {
+  title: string;
+  image: string;
+  description: string;
+}
+
+const FeatureList: FeatureItem[] = [
   {
     title: "Asset Management",
     image: require("./../../static/img/features/assetManagement.png"),
@@ -65,11 +72,11 @@ const FeatureList = [
   },
 ];
 
-function Feature({image, title, description}) {
+function Feature({image, title, description}: FeatureItem): React.JSX.Element {
   return (
     <div className={clsx("col col--4")}>
       <div className="text--center">
-        <Image style={{"margin-bottom": 5}} img={image} />
+        <Image style={{marginBottom: 5}} img={image} />
       </div>
       <div className="text--center padding-horiz--md">
         <h2>{title}</h2>
@@ -79,7 +86,7 @@ function Feature({image, title, description}) {
   );
 }
 
-export default function HomepageFeatures() {
+export default function HomepageFeatures(): React.JSX.Element {
   return (
     <section className={styles.features}>
       <div className="container">

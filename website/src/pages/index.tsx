@@ -9,8 +9,8 @@ import HomepageFeatures from "../components/HomepageFeatures";
 import Video from "../components/Video";
 import PricingTable from "../components/PricingTable";
 
-function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
+function HomepageHeader(): React.JSX.Element {
+  const {siteConfig} = useDocusaurusContext();
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="container">
@@ -29,7 +29,7 @@ function HomepageHeader() {
   );
 }
 
-function PartsOfTheSite() {
+function PartsOfTheSite(): React.JSX.Element {
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="container">
@@ -83,8 +83,8 @@ function PartsOfTheSite() {
   );
 }
 
-export default function Home() {
-  const { siteConfig } = useDocusaurusContext();
+export default function Home(): React.JSX.Element {
+  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
       title={`${siteConfig.title} | Open Source Advanced Rental Management System for Theatre, AV & Broadcast`}

@@ -1,8 +1,7 @@
 import React from "react";
 import styles from "./Video.module.css";
-import clsx from "clsx";
 
-export default function Video() {
+export default function Video(): React.JSX.Element {
   return (
     <section className={styles.video}>
       <div className="text--center  padding-horiz--md">
