@@ -117,16 +117,16 @@ class bID
             $position['groups'] = explode(",", $position['positions_positionsGroups']);
             foreach ($position['groups'] as $groupId) {
                 $groupId = trim($groupId);
-                if ($groupId !== '') $allGroupIds[] = $groupId;
+                if ($groupId !== '' && is_numeric($groupId)) $allGroupIds[] = $groupId;
             }
-            $permissionCodes = array_merge($permissionCodes, explode(",", $position['userPositions_extraPermissions']));
+            $permissionCodes = array_merge($permissionCodes, array_filter(explode(",", $position['userPositions_extraPermissions']), function($v) { return trim($v) !== ''; }));
         }
         if (count($allGroupIds) > 0) {
             $allGroupIds = array_unique($allGroupIds);
             $DBLIB->where("positionsGroups_id", $allGroupIds, "IN");
             $positionGroups = $DBLIB->get("positionsGroups", null, ["positionsGroups_actions"]);
             foreach ($positionGroups as $positionGroup) {
-                $permissionCodes = array_merge($permissionCodes, explode(",", $positionGroup['positionsGroups_actions']));
+                $permissionCodes = array_merge($permissionCodes, array_filter(explode(",", $positionGroup['positionsGroups_actions']), function($v) { return trim($v) !== ''; }));
             }
         }
 
