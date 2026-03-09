@@ -59,15 +59,17 @@ class bID
         } elseif ((strtotime($tokenCheck["authTokens_created"]) + (12 * 60 * 60)) < time()) {
              // Tokens are valid for 12 hrs (this includes the mobile app), which matches the session timeout
             throw new AuthFail("Token expired at " . $tokenCheck["authTokens_created"] . " - server time is " . time());
-        } elseif (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+        } elseif (!empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
             if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
                 throw new AuthFail("IP from Cloudflare doesn't match token. Received [" . $_SERVER["HTTP_CF_CONNECTING_IP"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
-        } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            if (array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
+        } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $xff = $_SERVER["HTTP_X_FORWARDED_FOR"];
+            $firstIp = trim(explode(",", (string)$xff)[0] ?? '');
+            if ($firstIp != $tokenCheck["authTokens_ipAddress"]) {
+                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . $firstIp . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
             }
-        } elseif($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
+        } elseif ($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
             throw new AuthFail("IP direct doesn't match token. Received [" . $_SERVER["REMOTE_ADDR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
         }
 
@@ -114,11 +116,11 @@ class bID
         $permissionCodes = [];
         foreach ($positions as $position) {
             $this->data['positions'][] = $position;
-            $position['groups'] = explode(",", $position['positions_positionsGroups']);
+            $position['groups'] = explode(",", $position['positions_positionsGroups'] ?? '');
             foreach ($position['groups'] as $positiongroup) {
                 $DBLIB->where("positionsGroups_id", $positiongroup);
                 $positiongroup = $DBLIB->getone("positionsGroups", ["positionsGroups_actions"]);
-                $permissionCodes = array_merge($permissionCodes, explode(",", $positiongroup['positionsGroups_actions']), explode(",", $position['userPositions_extraPermissions']));
+                $permissionCodes = array_merge($permissionCodes, explode(",", $positiongroup['positionsGroups_actions'] ?? ''), explode(",", $position['userPositions_extraPermissions'] ?? ''));
             }
         }
 
@@ -145,13 +147,13 @@ class bID
             $permissionsArray = [];
             //Seems to work better when done like this for the mobile app calls as it prevents the array becoming associative
             if ($instance['instancePositions_actions']) {
-                $actionsArray = explode(",", $instance['instancePositions_actions']);
+                $actionsArray = explode(",", $instance['instancePositions_actions'] ?? '');
                 foreach ($actionsArray as $action) {
                     array_push($permissionsArray,trim($action));
                 }
             }
             if ($instance['userInstances_extraPermissions']) {
-                $extraActionsArray = explode(",", $instance['userInstances_extraPermissions']);
+                $extraActionsArray = explode(",", $instance['userInstances_extraPermissions'] ?? '');
                 foreach ($extraActionsArray as $action) {
                     array_push($permissionsArray,trim($action));
                 }
@@ -164,8 +166,8 @@ class bID
                 }
             }
 
-            $instance['publicData'] = json_decode($instance['instances_publicConfig'],true);
-            $instance['calendarSettings'] = json_decode($instance['instances_calendarConfig'], true);
+            $instance['publicData'] = json_decode($instance['instances_publicConfig'] ?? '', true);
+            $instance['calendarSettings'] = json_decode($instance['instances_calendarConfig'] ?? '', true);
             $this->data['instances'][] = $instance;
             array_push($this->data['instance_ids'], $instance['instances_id']);
         }
@@ -240,14 +242,17 @@ class bID
         return md5(time() . $randomString);
     }
 
-    function generateToken($userID, $adminUserID = false, $deviceType, $tokenType) {
+    function generateToken($userID, $adminUserID = false, $deviceType = "Web", $tokenType = "web-session")
+    {
         global $DBLIB;
         if (!in_array($tokenType, ["web-session", "app-v1", "app-v2-magic-email"])) throw new Exception("Unknown token type");
         if (is_null($userID)) throw new Exception("User ID cannot be null");
 
-        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
-        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]));
-        else $ipAddress = $_SERVER["REMOTE_ADDR"];
+        if (!empty($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
+        elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $xff = $_SERVER["HTTP_X_FORWARDED_FOR"];
+            $ipAddress = trim(explode(",", (string)$xff)[0] ?? '');
+        } else $ipAddress = $_SERVER["REMOTE_ADDR"];
 
         $tokenKey = $this->generateTokenKey();
         $data = [
