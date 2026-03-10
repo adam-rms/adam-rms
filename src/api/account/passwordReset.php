@@ -52,33 +52,47 @@ $AUTH->generateToken($code['users_userid'], false, "Web", "web-session");
 $AUTH->redirectToReturnAddress();
 exit;
 
-/** @OA\Post(
+/**
+ * @OA\Get(
  *     path="/account/passwordReset.php",
- *     summary="Password Reset",
- *     description="Act on a password reset code",
- *     operationId="passwordReset",
+ *     summary="Password Reset Confirmation Page",
+ *     description="Validates the reset code and shows an HTML confirmation page with a form that POSTs back to process the reset. This two-step flow prevents email security scanners from consuming the one-time code.",
+ *     operationId="passwordResetConfirm",
  *     tags={"account"},
- *     @OA\Response(
- *         response="200",
- *         description="Error",
- *         @OA\MediaType(
- *             mediaType="text/plain",
- *             @OA\Schema(
- *                 type="string",
- *                 ),
- *         ),
- *     ),
- *     @OA\Response(
- *         response="308",
- *         description="Success",
- *     ),
  *     @OA\Parameter(
  *         name="code",
  *         in="query",
- *         description="undefined",
- *         required="true",
- *         @OA\Schema(
- *             type="string"),
- *         ),
+ *         description="The password reset code from the email link",
+ *         required=true,
+ *         @OA\Schema(type="string"),
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="HTML confirmation page with a form to confirm the reset",
+ *         @OA\MediaType(mediaType="text/html"),
+ *     ),
+ *     @OA\Response(
+ *         response="302",
+ *         description="Redirect to homepage if code is missing or invalid",
+ *     ),
+ * )
+ *
+ * @OA\Post(
+ *     path="/account/passwordReset.php",
+ *     summary="Process Password Reset",
+ *     description="Processes the password reset: sets the user password to a temporary value, logs them in, and redirects to the forced password change page.",
+ *     operationId="passwordReset",
+ *     tags={"account"},
+ *     @OA\Parameter(
+ *         name="code",
+ *         in="query",
+ *         description="The password reset code from the email link (also accepted in the POST body)",
+ *         required=true,
+ *         @OA\Schema(type="string"),
+ *     ),
+ *     @OA\Response(
+ *         response="302",
+ *         description="Redirect to homepage on success (user is now logged in with a forced password change)",
+ *     ),
  * )
  */
