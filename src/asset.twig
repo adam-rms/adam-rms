@@ -231,24 +231,24 @@
                                             {% for assignment in thisasset.assignments %}
                                             {
                                                 title          : '{{ thisasset.assets_tag|aTag }}{% if USERDATA['instance']['calendarSettings'].showProjectStatus %} [{{ assignment.projectsStatuses_name|escape("js") }}]{% endif %} {{ assignment.projects_name }}',
-                                                start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
-                                                end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
+                                                start          : '{{ assignment.projects_dates_deliver_start|date("Y-m-d\\TH:i:s") }}',
+                                                end            : '{{ assignment.projects_dates_deliver_end|date("Y-m-d\\TH:i:s") }}',
                                                 url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
                                                 backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
                                                 textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                             },
-                                            {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
-                                            {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
+                                            {% if earliestStart > assignment.projects_dates_deliver_start|date("Y-m-d\\TH:i:s") or earliestStart == false %}
+                                            {% set earliestStart = assignment.projects_dates_deliver_start|date("Y-m-d\\TH:i:s") %}
                                             {% endif %}
-                                            {% if latestEnd < assignment.projects_dates_deliver_end|date("c") or latestEnd == false %}
-                                            {% set latestEnd = assignment.projects_dates_deliver_end|date("c") %}
+                                            {% if latestEnd < assignment.projects_dates_deliver_end|date("Y-m-d\\TH:i:s") or latestEnd == false %}
+                                            {% set latestEnd = assignment.projects_dates_deliver_end|date("Y-m-d\\TH:i:s") %}
                                             {% endif %}
                                             {% endfor %}
                                             {% endfor %}
                                         ],
                                         validRange: {
-                                            start: '{{ earliestStart|date("c") }}',
-                                            end: '{{ latestEnd|date("c") }}'
+                                            start: '{{ earliestStart }}',
+                                            end: '{{ latestEnd }}'
                                         },
                                         editable  : false,
                                         droppable : false, // this allows things to be dropped onto the calendar !!!
@@ -990,24 +990,24 @@
                                                 {% for assignment in thisasset.assignments %}
                                                 {
                                                     title          : '{% if USERDATA['instance']['calendarSettings'].showProjectStatus %}[{{ assignment.projectsStatuses_name }}] {% endif %}{{ assignment.projects_name }}',
-                                                    start          : Date.parse("{{ assignment.projects_dates_deliver_start|date("c") }}"),
-                                                    end            : Date.parse("{{ assignment.projects_dates_deliver_end|date("c") }}"),
+                                                    start          : '{{ assignment.projects_dates_deliver_start|date("Y-m-d\\TH:i:s") }}',
+                                                    end            : '{{ assignment.projects_dates_deliver_end|date("Y-m-d\\TH:i:s") }}',
                                                     url            : '{{CONFIG.ROOTURL}}/project/?id={{ assignment.projects_id }}',
                                                     backgroundColor: '{{ assignment.projectsStatuses_backgroundColour }}',
                                                     textColor    : '{{ assignment.projectsStatuses_foregroundColour }}'
                                                 },
-                                                {% if earliestStart > assignment.projects_dates_deliver_start|date("c") or earliestStart == false %}
-                                                    {% set earliestStart = assignment.projects_dates_deliver_start|date("c") %}
+                                                {% if earliestStart > assignment.projects_dates_deliver_start|date("Y-m-d\\TH:i:s") or earliestStart == false %}
+                                                    {% set earliestStart = assignment.projects_dates_deliver_start|date("Y-m-d\\TH:i:s") %}
                                                 {% endif %}
-                                                {% if latestEnd < assignment.projects_dates_deliver_end|date("c") or latestEnd == false %}
-                                                    {% set latestEnd = assignment.projects_dates_deliver_end|date("c") %}
+                                                {% if latestEnd < assignment.projects_dates_deliver_end|date("Y-m-d\\TH:i:s") or latestEnd == false %}
+                                                    {% set latestEnd = assignment.projects_dates_deliver_end|date("Y-m-d\\TH:i:s") %}
                                                 {% endif %}
                                                 {% endfor %}
                                             {% endfor %}
                                         ],
                                         validRange: {
-                                            start: '{{ earliestStart|date("c") }}',
-                                            end: '{{ latestEnd|date("c") }}'
+                                            start: '{{ earliestStart }}',
+                                            end: '{{ latestEnd }}'
                                         },
                                         editable  : false,
                                         droppable : false, // this allows things to be dropped onto the calendar !!!
