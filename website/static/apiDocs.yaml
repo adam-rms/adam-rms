@@ -4395,29 +4395,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/SimpleResponse'
   /account/passwordReset.php:
+    get:
+      tags:
+        - account
+      summary: 'Password Reset Confirmation Page'
+      description: 'Validates the reset code and shows an HTML confirmation page with a form that POSTs back to process the reset. This two-step flow prevents email security scanners from consuming the one-time code.'
+      operationId: passwordResetConfirm
+      parameters:
+        -
+          name: code
+          in: query
+          description: 'The password reset code from the email link'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'HTML confirmation page with a form to confirm the reset'
+          content:
+            text/html: {  }
+        '302':
+          description: 'Redirect to homepage if code is missing or invalid'
     post:
       tags:
         - account
-      summary: 'Password Reset'
-      description: 'Act on a password reset code'
+      summary: 'Process Password Reset'
+      description: 'Processes the password reset: sets the user password to a temporary value, logs them in, and redirects to the forced password change page.'
       operationId: passwordReset
       parameters:
         -
           name: code
           in: query
-          description: undefined
-          required: 'true'
+          description: 'The password reset code from the email link (also accepted in the POST body)'
+          required: true
           schema:
             type: string
       responses:
-        '200':
-          description: Error
-          content:
-            text/plain:
-              schema:
-                type: string
-        '308':
-          description: Success
+        '302':
+          description: 'Redirect to homepage on success (user is now logged in with a forced password change)'
   /account/basicDetails.php:
     post:
       tags:
