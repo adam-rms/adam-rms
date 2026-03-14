@@ -1,0 +1,195 @@
+{# 
+    Shared barcode scanner widget.
+    
+    Provides camera-based barcode scanning (via ZXing.js) and USB/Bluetooth text input.
+    
+    Parameters (passed via embed/include with):
+    - scannerCallback: JavaScript function name (string) to call when a barcode is scanned.
+                       The function will be called as: functionName(value, type)
+                       where value is the barcode text and type is the barcode format name 
+                       (e.g. 'QR_CODE', 'CODE_128') or 'UNKNOWN' for USB/Bluetooth text input.
+    - scannerIdSuffix: Unique suffix for HTML element IDs to allow multiple scanners on a page (default: '')
+#}
+{% set suffix = scannerIdSuffix|default('') %}
+<script src="{{ CONFIG.ROOTURL }}/static-assets/libs/zxing-js/v0.21.min.js"></script>
+<script>
+    // Format conversion for the library - do not adjust this array or the order of the elements - it's a lookup table
+    if (typeof BARCODEFORMATS === 'undefined') {
+        var BARCODEFORMATS = [
+            /** Aztec 2D barcode format. */
+            'AZTEC',
+            /** CODABAR 1D format. */
+            'CODABAR',
+            /** Code 39 1D format. */
+            'CODE_39',
+            /** Code 93 1D format. */
+            'CODE_93',
+            /** Code 128 1D format. */
+            'CODE_128',
+            /** Data Matrix 2D barcode format. */
+            'DATA_MATRIX',
+            /** EAN-8 1D format. */
+            'EAN_8',
+            /** EAN-13 1D format. */
+            'EAN_13',
+            /** ITF (Interleaved Two of Five) 1D format. */
+            'ITF',
+            /** MaxiCode 2D barcode format. */
+            'MAXICODE',
+            /** PDF417 format. */
+            'PDF_417',
+            /** QR Code 2D barcode format. */
+            'QR_CODE',
+            /** RSS 14 */
+            'RSS_14',
+            /** RSS EXPANDED */
+            'RSS_EXPANDED',
+            /** UPC-A 1D format. */
+            'UPC_A',
+            /** UPC-E 1D format. */
+            'UPC_E',
+            /** UPC/EAN extension format. Not a stand-alone format. */
+            'UPC_EAN_EXTENSION'
+        ];
+    }
+</script>
+<div class="row" id="errorCardContainer{{ suffix }}" style="display: none;">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> No camera found on this device. You can still use a USB or Bluetooth barcode scanner, or type a barcode value manually below.
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-camera"></i> Camera Scanner</h3>
+                <div class="card-tools">
+                    <button class="btn btn-sm btn-danger" title="Stop Scanning" id="barcodeScanResetButton{{ suffix }}" style="display: none;">Stop Scanning</button>
+                </div>
+            </div>
+            <div class="card-body" id="barcodeScanVideoCard{{ suffix }}">
+                <button class="btn btn-success btn-lg" title="Start Scanning" id="barcodeScanStartButton{{ suffix }}">Start Camera Scanning</button>
+                <video id="barcodeScanVideo{{ suffix }}" width="1920" style="border: 0;"></video>
+            </div>
+            <div class="card-footer" id="barcodeScanSourceSelectPanel{{ suffix }}" style="display: none;">
+                <div class="input-group my-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            Camera:
+                        </span>
+                    </div>
+                    <select class="form-control" id="barcodeScanSourceSelect{{ suffix }}"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-keyboard"></i> USB/Bluetooth Scanner</h3>
+            </div>
+            <div class="card-body">
+                <p>Use a USB or Bluetooth barcode scanner, or type a barcode value manually and press Enter.</p>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="barcodeScanTextInput{{ suffix }}" placeholder="Scan or type barcode value">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" id="barcodeScanTextButton{{ suffix }}">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        var suffix = '{{ suffix }}';
+        var callbackFn = {{ scannerCallback }};
+
+        // --- USB/Bluetooth text input handling ---
+        function submitTextBarcode() {
+            var value = $("#barcodeScanTextInput" + suffix).val().trim();
+            if (value.length > 0) {
+                callbackFn(value, "UNKNOWN");
+                $("#barcodeScanTextInput" + suffix).val("").focus();
+            }
+        }
+        $("#barcodeScanTextInput" + suffix).on("keydown", function(e) {
+            if (e.key !== "Enter") return;
+            e.preventDefault();
+            submitTextBarcode();
+        });
+        $("#barcodeScanTextButton" + suffix).on("click", submitTextBarcode);
+
+        // --- Camera scanner setup ---
+        var barcodeScanVideoWidth = $("#barcodeScanVideoCard" + suffix).width();
+        $("#barcodeScanVideo" + suffix).attr("width", barcodeScanVideoWidth);
+
+        var codeReader = new ZXing.BrowserMultiFormatReader();
+        var selectedDeviceId;
+
+        if (codeReader.canEnumerateDevices) {
+            codeReader.listVideoInputDevices().then(function(videoInputDevices) {
+                if (videoInputDevices.length < 1) {
+                    throw new Error('NO-DEVICE');
+                }
+                var sourceSelect = document.getElementById('barcodeScanSourceSelect' + suffix);
+                selectedDeviceId = videoInputDevices[0].deviceId;
+                if (videoInputDevices.length > 1) {
+                    videoInputDevices.forEach(function(element) {
+                        var sourceOption = document.createElement('option');
+                        sourceOption.text = element.label;
+                        sourceOption.value = element.deviceId;
+                        sourceSelect.appendChild(sourceOption);
+                    });
+                    sourceSelect.onchange = function() {
+                        selectedDeviceId = sourceSelect.value;
+                    };
+                    $("#barcodeScanSourceSelectPanel" + suffix).show();
+                }
+                document.getElementById('barcodeScanStartButton' + suffix).addEventListener('click', function() {
+                    $("#barcodeScanResetButton" + suffix).show();
+                    $("#barcodeScanStartButton" + suffix).hide();
+                    codeReader.decodeFromVideoDevice(selectedDeviceId, 'barcodeScanVideo' + suffix, function(result, err) {
+                        if (result) {
+                            callbackFn(result.text, BARCODEFORMATS[result.format]);
+                        }
+                        if (err && !(err instanceof ZXing.NotFoundException)) {
+                            console.error(err);
+                            bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function() {
+                                codeReader.reset();
+                            });
+                        }
+                    });
+                });
+                document.getElementById('barcodeScanResetButton' + suffix).addEventListener('click', function() {
+                    $("#barcodeScanResetButton" + suffix).hide();
+                    codeReader.reset();
+                    $("#barcodeScanStartButton" + suffix).show();
+                });
+            })
+            .catch(function(err) {
+                if (err.message == 'NO-DEVICE') {
+                    handleDeviceHasNoCamera();
+                    return;
+                }
+                console.error(err);
+                bootbox.alert("Sorry - Barcode scanner encountered a problem: " + err, function() {
+                    location.reload();
+                });
+            });
+        } else {
+            handleDeviceHasNoCamera();
+        }
+
+        function handleDeviceHasNoCamera() {
+            $('#barcodeScanStartButton' + suffix).prop("disabled", true);
+            $('#errorCardContainer' + suffix).show();
+            // Focus the text input since camera is not available
+            $('#barcodeScanTextInput' + suffix).focus();
+        }
+    })();
+</script>

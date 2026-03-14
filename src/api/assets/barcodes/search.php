@@ -1,11 +1,13 @@
 <?php
 require_once __DIR__ . '/../../apiHeadSecure.php';
 
-if (!isset($_POST['text']) or !isset($_POST['type']) or strlen($_POST['text']) < 1 or strlen($_POST['type']) < 1) finish(false);
+if (!isset($_POST['text']) or strlen($_POST['text']) < 1) finish(false);
+
+$hasType = isset($_POST['type']) && strlen($_POST['type']) > 0 && $_POST['type'] !== 'UNKNOWN';
 
 // See if the barcode is a location
 $DBLIB->where("locationsBarcodes_value", $_POST['text']);
-$DBLIB->where("locationsBarcodes_type", $_POST['type']);
+if ($hasType) $DBLIB->where("locationsBarcodes_type", $_POST['type']);
 $DBLIB->where("locationsBarcodes_deleted", 0);
 $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("locations.locations_deleted", 0);
@@ -18,8 +20,8 @@ if ($location) {
 
 //See if Barcode is in database
 $DBLIB->where("assetsBarcodes_value", $_POST['text']);
-$DBLIB->where("assetsBarcodes_type", $_POST['type']);
-$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']); // Restrict only to the current instance. This may need revisiting with asset dispatch (might be worth doing some seperate logic for that page)
+if ($hasType) $DBLIB->where("assetsBarcodes_type", $_POST['type']);
+$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
 $DBLIB->where("assetsBarcodes_deleted", 0);
 $barcode = $DBLIB->getone("assetsBarcodes", ["assetsBarcodes.assets_id", "assetsBarcodes.assetsBarcodes_id"]);
@@ -28,10 +30,10 @@ if ($barcode) {
         "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
         "users_userid" => $AUTH->data['users_userid'],
         "assetsBarcodesScans_timestamp" => date('Y-m-d H:i:s'),
-        "locationsBarcodes_id" => ($_POST['locationType'] == "barcode" ? $_POST['location'] : null),
-        "location_assets_id" => ($_POST['locationType'] == "asset" ? $_POST['location'] : null),
-        "assetsBarcodes_customLocation" => ($_POST['locationType'] == "Custom" ? $_POST['location'] : null),
-        "assetsBarcodesScans_barcodeWasScanned" => ($_POST['scanned'] == "true" ? 1 : 0),
+        "locationsBarcodes_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "barcode" && isset($_POST['location']) ? $_POST['location'] : null),
+        "location_assets_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "asset" && isset($_POST['location']) ? $_POST['location'] : null),
+        "assetsBarcodes_customLocation" => (isset($_POST['locationType']) && $_POST['locationType'] == "Custom" && isset($_POST['location']) ? $_POST['location'] : null),
+        "assetsBarcodesScans_barcodeWasScanned" => (isset($_POST['scanned']) && $_POST['scanned'] == "true" ? 1 : 0),
         "assetsBarcodesScans_validation" => isset($_POST['validation']) ? $_POST['validation'] : null,
     ];
     $DBLIB->insert("assetsBarcodesScans", $scan);
@@ -107,8 +109,7 @@ finish(true, null, ["asset" => $asset, "assetSuggest" => $assetSuggest, "barcode
  *     @OA\Parameter(
  *         name="type",
  *         in="query",
- *         description="The barcode type",
- *         required="true", 
+ *         description="The barcode type (optional - if not provided or set to UNKNOWN, searches by value only)",
  *         @OA\Schema(
  *             type="string"), 
  *         ), 
