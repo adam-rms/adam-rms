@@ -590,8 +590,7 @@ paths:
         -
           name: type
           in: query
-          description: 'The barcode type'
-          required: 'true'
+          description: 'The barcode type (optional - if not provided or set to UNKNOWN, searches by value only)'
           schema:
             type: string
         -
@@ -1509,8 +1508,7 @@ paths:
         -
           name: type
           in: query
-          description: 'barcode type'
-          required: 'true'
+          description: 'barcode type (optional - if not provided or set to UNKNOWN, searches by value only)'
           schema:
             type: string
         -
