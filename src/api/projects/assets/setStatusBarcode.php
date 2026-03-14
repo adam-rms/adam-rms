@@ -51,7 +51,7 @@ if ($barcode and $barcode['assets_id'] != null) {
     $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $_POST['assetsAssignments_status']], 1);
 
     if (!$assignment or $DBLIB->count != 1) {
-        finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED"]);
+        finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
     } else {
         $bCMS->auditLog("EDIT-STATUS", "assetsAssignments", "set to " . $_POST['assetsAssignments_status'] . " by barcode scan", $AUTH->data['users_userid'], null, $_POST['projects_id']);
         finish(true, null, ["assets_id" => $barcode['assets_id']]);

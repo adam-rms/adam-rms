@@ -297,6 +297,11 @@
                     });
                 } else if (result.error && result.error.code === "NOTASSIGNED" && ('assets_id' in result.error) && canAssignAssets) {
                     // Supermarket Sweep: asset exists but is not assigned to this project
+                    // Prevent multiple concurrent NOTASSIGNED flows (scanner may fire repeatedly)
+                    if (window.barcodeAssignInProgress) {
+                        return;
+                    }
+                    window.barcodeAssignInProgress = true;
                     bootbox.confirm({
                         title: "Add asset to project?",
                         message: "This asset is not currently assigned to this project. Would you like to add it to the project and set its status?",
@@ -324,6 +329,8 @@
                                                             type: 'success',
                                                             title: 'Asset added to project and dispatched via barcode'
                                                         });
+                                                        // Clear in-progress flag before reload
+                                                        window.barcodeAssignInProgress = false;
                                                         // Reload to show the newly assigned asset on the board
                                                         location.reload();
                                                     } else {
@@ -332,6 +339,7 @@
                                                             type: 'warning',
                                                             title: 'Asset added to project but status could not be updated'
                                                         });
+                                                        window.barcodeAssignInProgress = false;
                                                         location.reload();
                                                     }
                                                 },
@@ -340,6 +348,7 @@
                                                         type: 'warning',
                                                         title: 'Asset added to project but status could not be updated'
                                                     });
+                                                    window.barcodeAssignInProgress = false;
                                                     location.reload();
                                                 }
                                             });
@@ -351,12 +360,17 @@
                                             });
                                             var resultDiv = $("<div>").addClass("alert alert-danger").text(value + ": " + assignErrorMsg);
                                             $("#barcodeDispatchResult").prepend(resultDiv);
+                                            window.barcodeAssignInProgress = false;
                                         }
                                     },
                                     error: function() {
+                                        window.barcodeAssignInProgress = false;
                                         bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection');
                                     }
                                 });
+                            } else {
+                                // User cancelled the assignment flow
+                                window.barcodeAssignInProgress = false;
                             }
                         }
                     });
