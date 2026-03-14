@@ -5,11 +5,13 @@ if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STA
 
 $hasType = isset($_POST['type']) && strlen($_POST['type']) > 0 && $_POST['type'] !== 'UNKNOWN';
 
-//See if Barcode is in database
-$DBLIB->where("assetsBarcodes_value", $_POST['text']);
-if ($hasType) $DBLIB->where("assetsBarcodes_type", $_POST['type']);
-$DBLIB->where("assetsBarcodes_deleted", 0);
-$barcode = $DBLIB->getone("assetsBarcodes", ["assets_id", "assetsBarcodes_id"]);
+//See if Barcode is in database - scope to current instance via assets join
+$DBLIB->where("assetsBarcodes.assetsBarcodes_value", $_POST['text']);
+if ($hasType) $DBLIB->where("assetsBarcodes.assetsBarcodes_type", $_POST['type']);
+$DBLIB->where("assetsBarcodes.assetsBarcodes_deleted", 0);
+$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
+$barcode = $DBLIB->getone("assetsBarcodes", ["assetsBarcodes.assets_id", "assetsBarcodes.assetsBarcodes_id"]);
 if ($barcode and $barcode['assets_id'] != null) {
     $scan = [
         "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
@@ -48,7 +50,7 @@ if ($barcode and $barcode['assets_id'] != null) {
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
     $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $_POST['assetsAssignments_status']], 1);
 
-    if (!$assignment) {
+    if (!$assignment or $DBLIB->count != 1) {
         finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED"]);
     } else {
         $bCMS->auditLog("EDIT-STATUS", "assetsAssignments", "set to " . $_POST['assetsAssignments_status'] . " by barcode scan", $AUTH->data['users_userid'], null, $_POST['projects_id']);
