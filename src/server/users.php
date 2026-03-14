@@ -12,7 +12,7 @@ $DBLIB->where("users_deleted", 0);
 $users = $DBLIB->get('users', null, ["users.users_email", "users.users_userid", "users.users_emailVerified", "users.users_name1", "users.users_name2", "users.users_suspended", "users.users_termsAccepted", "users.users_thumbnail", "users.users_username"]);
 foreach ($users as $user) {
 	$DBLIB->where('users_userid', $user['users_userid']);
-	$user['emails'] = $DBLIB->get('emailSent', null, ["emailSent_id", "emailSent_subject"]); //Get user's E-Mails
+	$user['emails'] = $DBLIB->get('emailSent', null, ["emailSent_id", "emailSent_subject", "emailSent_sent"]); //Get user's E-Mails
 	$user['email_ids'] = array_map(function ($a) {
 		return $a['emailSent_id'];
 	}, $user['emails']);
