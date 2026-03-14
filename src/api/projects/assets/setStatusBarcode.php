@@ -32,7 +32,7 @@ if ($barcode and $barcode['assets_id'] != null) {
     $currentAssignment = $DBLIB->getOne("assetsAssignments", ["assetsAssignmentsStatus_id"]);
 
     if (!$currentAssignment) {
-        finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED"]);
+        finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
     }
 
     // If the assignment already has the requested status, treat this as success (no-op)
