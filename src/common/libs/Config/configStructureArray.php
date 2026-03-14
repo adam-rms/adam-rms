@@ -706,7 +706,7 @@ $configStructureArray = [
       },
       "name" => "AWS S3 Bucket Server Endpoint",
       "group" => "File Storage",
-      "description" => "The AWS S3 bucket endpoint for the server to use to upload files - this is almost certainly the same as the above, except in some very specific circumstances such as running in docker containers.",
+      "description" => "The AWS S3 bucket endpoint for the server to use to upload files and fetch files server-side (e.g. for PDF generation). This is almost certainly the same as the above, except when running in docker containers where the server may need an internal hostname to reach the S3-compatible service.",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,

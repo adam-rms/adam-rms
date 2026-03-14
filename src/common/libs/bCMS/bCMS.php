@@ -130,7 +130,7 @@ class bCMS
     $file = $DBLIB->getone("s3files", ["s3files_extension", "s3files_id"]);
     if (!$file) return false;
 
-    $url = $this->s3URL($file["s3files_id"], false);
+    $url = $this->s3URL($file["s3files_id"], false, '+10 minutes', false, true);
     if (!$url) return false;
 
     $data = file_get_contents($url);
@@ -142,7 +142,7 @@ class bCMS
       "url" => $url
     ];
   }
-  function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false)
+  function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false, $serverSide = false)
   {
     global $DBLIB, $CONFIG, $AUTH, $CONFIGCLASS;
     /*
@@ -151,6 +151,7 @@ class bCMS
          *      f (required) - the file id as specified in the database
          *      d (optional, default false) - should a download be forced or should it be displayed in the browser? (if set it will download)
          *      e (optional, default 1 minute) - when should the link expire? Must be a string describing how long in words basically. If this file type has security features then it will default to 1 minute.
+         *      serverSide (optional, default false) - if true, uses AWS_S3_SERVER_ENDPOINT instead of AWS_S3_BROWSER_ENDPOINT for server-side operations (e.g. PDF generation)
          */
     $fileid = $this->sanitizeString($fileid);
     if (strlen($fileid) < 1) return false;
@@ -205,7 +206,7 @@ class bCMS
       //Download direct from S3
       $s3Client = new Aws\S3\S3Client([
         'region' => $CONFIGCLASS->get('AWS_S3_REGION'),
-        'endpoint' => $CONFIGCLASS->get('AWS_S3_BROWSER_ENDPOINT'),
+        'endpoint' => $CONFIGCLASS->get($serverSide ? 'AWS_S3_SERVER_ENDPOINT' : 'AWS_S3_BROWSER_ENDPOINT'),
         'use_path_style_endpoint' => $CONFIGCLASS->get('AWS_S3_ENDPOINT_PATHSTYLE') === 'Enabled',
         'version' => 'latest',
         'credentials' => array(
