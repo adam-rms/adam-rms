@@ -99,7 +99,6 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
     $DBLIB->where("cmsPages_showNav", 1);
     if (isset($AUTH->data['instance']["instancePositions_id"])) $DBLIB->where("(cmsPages_visibleToGroups IS NULL OR (FIND_IN_SET(" . $AUTH->data['instance']["instancePositions_id"] . ", cmsPages_visibleToGroups) > 0))"); //If the user doesn't have a position - they're server admins
     $DBLIB->orderBy("cmsPages_navOrder", "ASC");
-    $DBLIB->orderBy("cmsPages_name", "ASC");
     $DBLIB->orderBy("cmsPages_id", "ASC");
     $allCmsPages = $DBLIB->get("cmsPages", null, ["cmsPages.*"]);
     $PAGEDATA['NAVIGATIONCMSPages'] = [];
@@ -109,6 +108,12 @@ if ($CONFIG['LINKS_TERMSOFSERVICEURL'] and ($PAGEDATA['USERDATA']['users_termsAc
             $subPagesByParent[$page['cmsPages_subOf']][] = $page;
         }
     }
+    foreach ($subPagesByParent as &$subPages) {
+        usort($subPages, function ($a, $b) {
+            return strnatcasecmp($a['cmsPages_name'], $b['cmsPages_name']);
+        });
+    }
+    unset($subPages);
     foreach ($allCmsPages as $page) {
         if ($page['cmsPages_subOf'] === null) {
             $page['SUBPAGES'] = isset($subPagesByParent[$page['cmsPages_id']]) ? $subPagesByParent[$page['cmsPages_id']] : [];
