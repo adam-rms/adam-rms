@@ -34,7 +34,7 @@ Use a device's built-in or attached camera to scan barcodes in real-time. This i
 ### USB/Bluetooth Scanner
 If you have a USB or Bluetooth barcode scanner (sometimes called a "keyboard wedge" scanner), you can use the text input field on the scanner page. Simply scan a barcode with your USB/Bluetooth scanner and it will be entered into the text field automatically. You can also type a barcode value manually and press Enter.
 
-Both scanning methods are available on the Barcode Scanner page and within the [Asset Dispatch Barcode Dispatch](../projects/assets#barcode-dispatch) feature.
+Both scanning methods are available on the Barcode Scanner page and within the [Asset Dispatch Barcode Dispatch](../projects/assets#barcode-dispatch) feature. When using Barcode Dispatch, assets that are not yet assigned to the project can be added automatically via the [Supermarket Sweep](../projects/assets#supermarket-sweep) feature.
 
 ### Barcode Scanner Page
 

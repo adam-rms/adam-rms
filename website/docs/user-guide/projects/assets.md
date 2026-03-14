@@ -110,4 +110,10 @@ The Barcode Dispatch button in the board header opens a dialog that allows you t
 
 Select the target status from the dropdown, then scan or enter barcodes. Each scanned asset will be moved to the selected status on the dispatch board automatically.
 
+#### Supermarket Sweep
+
+If you scan a barcode for an asset that is not currently assigned to the project, AdamRMS will prompt you to add it. Confirming will assign the asset to the project and set its status in one step. This is useful when picking assets from a warehouse — you can scan items as you go without needing to pre-assign them to the project.
+
+This feature requires the **PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN** permission in addition to the dispatch status permission. If you do not have this permission, you will see the standard error message instead.
+
 For more information about barcode scanning methods, see [Asset Barcodes](../assets/asset-barcodes#scanning-barcodes).

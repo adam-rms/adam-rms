@@ -369,7 +369,13 @@
                                     }
                                 });
                             } else {
-                                // User cancelled the assignment flow
+                                // User cancelled - show the original error so it's clear nothing changed
+                                Toast.fire({
+                                    type: 'info',
+                                    title: 'Asset not added to project'
+                                });
+                                var resultDiv = $("<div>").addClass("alert alert-warning").text(value + ": Asset not assigned to project - skipped");
+                                $("#barcodeDispatchResult").prepend(resultDiv);
                                 window.barcodeAssignInProgress = false;
                             }
                         }
