@@ -214,6 +214,9 @@
 
     {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
 
+    // Whether the user can assign assets to projects (for Supermarket Sweep)
+    const canAssignAssets = {{ "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions ? 'true' : 'false' }};
+
     // Create an array of status ids, ordered
     const assetStatusesRaw = JSON.parse('{{ BOARDSTATUSES|json_encode|raw }}');
     var assetStatuses = {};
@@ -292,8 +295,93 @@
                         type: 'success',
                         title: 'Asset dispatched via barcode'
                     });
+                } else if (result.error && result.error.code === "NOTASSIGNED" && ('assets_id' in result.error) && canAssignAssets) {
+                    // Supermarket Sweep: asset exists but is not assigned to this project
+                    // Prevent multiple concurrent NOTASSIGNED flows (scanner may fire repeatedly)
+                    if (window.barcodeAssignInProgress) {
+                        return;
+                    }
+                    window.barcodeAssignInProgress = true;
+                    bootbox.confirm({
+                        title: "Add asset to project?",
+                        message: "This asset is not currently assigned to this project. Would you like to add it to the project and set its status?",
+                        callback: function(confirmed) {
+                            if (confirmed) {
+                                $.ajax({
+                                    url: "{{ CONFIG.ROOTURL }}/api/projects/assets/assign.php",
+                                    type: "POST",
+                                    data: {
+                                        projects_id: {{ project.projects_id }},
+                                        assets_id: result.error.assets_id
+                                    },
+                                    cache: false,
+                                    success: function(assignResult) {
+                                        if (assignResult.result === true) {
+                                            // Asset assigned, now set its status via barcode dispatch
+                                            $.ajax({
+                                                url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusBarcode.php",
+                                                type: "POST",
+                                                data: requestData,
+                                                cache: false,
+                                                success: function(retryResult) {
+                                                    if (retryResult.result === true) {
+                                                        Toast.fire({
+                                                            type: 'success',
+                                                            title: 'Asset added to project and dispatched via barcode'
+                                                        });
+                                                        // Clear in-progress flag before reload
+                                                        window.barcodeAssignInProgress = false;
+                                                        // Reload to show the newly assigned asset on the board
+                                                        location.reload();
+                                                    } else {
+                                                        // Assignment succeeded but status change failed
+                                                        Toast.fire({
+                                                            type: 'warning',
+                                                            title: 'Asset added to project but status could not be updated'
+                                                        });
+                                                        window.barcodeAssignInProgress = false;
+                                                        location.reload();
+                                                    }
+                                                },
+                                                error: function() {
+                                                    Toast.fire({
+                                                        type: 'warning',
+                                                        title: 'Asset added to project but status could not be updated'
+                                                    });
+                                                    window.barcodeAssignInProgress = false;
+                                                    location.reload();
+                                                }
+                                            });
+                                        } else {
+                                            var assignErrorMsg = assignResult.error ? assignResult.error.message : "Could not assign asset to project";
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: value + ": " + assignErrorMsg
+                                            });
+                                            var resultDiv = $("<div>").addClass("alert alert-danger").text(value + ": " + assignErrorMsg);
+                                            $("#barcodeDispatchResult").prepend(resultDiv);
+                                            window.barcodeAssignInProgress = false;
+                                        }
+                                    },
+                                    error: function() {
+                                        window.barcodeAssignInProgress = false;
+                                        bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection');
+                                    }
+                                });
+                            } else {
+                                // User cancelled - show the original error so it's clear nothing changed
+                                Toast.fire({
+                                    type: 'info',
+                                    title: 'Asset not added to project'
+                                });
+                                var resultDiv = $("<div>").addClass("alert alert-warning").text(value + ": Asset not assigned to project - skipped");
+                                $("#barcodeDispatchResult").prepend(resultDiv);
+                                window.barcodeAssignInProgress = false;
+                            }
+                        }
+                    });
                 } else {
-                    var errorMsg = result.error ? result.error.message : "Barcode not found or asset not assigned to project";
+                    var errorMsg = (result.error && result.error.message) ? result.error.message : "Barcode not found or asset not assigned to project";
                     Toast.fire({
                         type: 'error',
                         title: value + ": " + errorMsg
