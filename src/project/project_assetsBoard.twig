@@ -153,17 +153,18 @@
                 <ul class="nav nav-tabs" role="tablist">
                     {% if FINANCIALS.assetsAssigned|length > 0 %}
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="pill" href="#barcode-dispatch-modal-board-thisinstance" role="tab" aria-controls="barcode-dispatch-modal-board-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
+                            <a class="nav-link active" data-toggle="pill" href="#barcode-dispatch-modal-board-thisinstance" role="tab" aria-controls="barcode-dispatch-modal-board-thisinstance" aria-selected="true">{{ USERDATA.instance.instances_name }}</a>
                         </li>
                     {% endif %}
                     {% for instance in FINANCIALS.assetsAssignedSUB %}
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="pill" href="#barcode-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="barcode-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }}</a>
+                            <a class="nav-link{% if FINANCIALS.assetsAssigned|length == 0 and loop.first %} active{% endif %}" data-toggle="pill" href="#barcode-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="barcode-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }}</a>
                         </li>
                     {% endfor %}
                 </ul>
                 <div class="p-3">
                     <div class="tab-content">
+                        {% if FINANCIALS.assetsAssigned|length > 0 %}
                         <div class="tab-pane show active p2" id="barcode-dispatch-modal-board-thisinstance" role="tabpanel">
                             <p>Scan a barcode for an asset from {{ USERDATA.instance.instances_name }} to set its status.</p>
                             <div class="form-group">
@@ -175,8 +176,9 @@
                                 </select>
                             </div>
                         </div>
+                        {% endif %}
                         {% for instance in FINANCIALS.assetsAssignedSUB %}
-                        <div class="tab-pane p2" id="barcode-dispatch-modal-board-instance{{ instance['instance']['instances_id'] }}">
+                        <div class="tab-pane p2{% if FINANCIALS.assetsAssigned|length == 0 and loop.first %} show active{% endif %}" id="barcode-dispatch-modal-board-instance{{ instance['instance']['instances_id'] }}">
                             <p>Scan a barcode for an asset from {{  instance['instance'].instances_name }} to set its status.</p>
                             <div class="form-group">
                                 <label>Set Asset Status to</label>

@@ -107,7 +107,27 @@
 <script>
     (function() {
         var suffix = '{{ suffix }}';
-        var callbackFn = {{ scannerCallback }};
+        var callbackFn = (function() {
+            // scannerCallback is documented as a function name string.
+            // Keep it as a string and resolve lazily via window[callbackName].
+            var callbackName = {{ scannerCallback|json_encode|raw }};
+            return function(value, type) {
+                if (!callbackName) {
+                    console.error("barcodeScanner widget: scannerCallback name not provided.");
+                    return;
+                }
+                var fn = window[callbackName];
+                if (typeof fn !== "function") {
+                    console.error("barcodeScanner widget: scannerCallback function '" + callbackName + "' not found or not a function.");
+                    return;
+                }
+                try {
+                    fn(value, type);
+                } catch (e) {
+                    console.error("barcodeScanner widget: error while executing scannerCallback '" + callbackName + "':", e);
+                }
+            };
+        })();
 
         // --- USB/Bluetooth text input handling ---
         function submitTextBarcode() {
@@ -125,11 +145,9 @@
         $("#barcodeScanTextButton" + suffix).on("click", submitTextBarcode);
 
         // --- Camera scanner setup ---
-        var barcodeScanVideoWidth = $("#barcodeScanVideoCard" + suffix).width();
-        $("#barcodeScanVideo" + suffix).attr("width", barcodeScanVideoWidth);
-
         var codeReader = new ZXing.BrowserMultiFormatReader();
         var selectedDeviceId;
+        var scanningActive = false;
 
         if (codeReader.canEnumerateDevices) {
             codeReader.listVideoInputDevices().then(function(videoInputDevices) {
@@ -151,8 +169,13 @@
                     $("#barcodeScanSourceSelectPanel" + suffix).show();
                 }
                 document.getElementById('barcodeScanStartButton' + suffix).addEventListener('click', function() {
+                    var barcodeScanVideoWidth = $("#barcodeScanVideoCard" + suffix).width();
+                    if (barcodeScanVideoWidth && barcodeScanVideoWidth > 0) {
+                        $("#barcodeScanVideo" + suffix).attr("width", barcodeScanVideoWidth);
+                    }
                     $("#barcodeScanResetButton" + suffix).show();
                     $("#barcodeScanStartButton" + suffix).hide();
+                    scanningActive = true;
                     codeReader.decodeFromVideoDevice(selectedDeviceId, 'barcodeScanVideo' + suffix, function(result, err) {
                         if (result) {
                             callbackFn(result.text, BARCODEFORMATS[result.format]);
@@ -168,7 +191,18 @@
                 document.getElementById('barcodeScanResetButton' + suffix).addEventListener('click', function() {
                     $("#barcodeScanResetButton" + suffix).hide();
                     codeReader.reset();
+                    scanningActive = false;
                     $("#barcodeScanStartButton" + suffix).show();
+                });
+
+                $(window).on('resize.barcodeScanner' + suffix, function() {
+                    if (!scanningActive) {
+                        return;
+                    }
+                    var barcodeScanVideoWidth = $("#barcodeScanVideoCard" + suffix).width();
+                    if (barcodeScanVideoWidth && barcodeScanVideoWidth > 0) {
+                        $("#barcodeScanVideo" + suffix).attr("width", barcodeScanVideoWidth);
+                    }
                 });
             })
             .catch(function(err) {
