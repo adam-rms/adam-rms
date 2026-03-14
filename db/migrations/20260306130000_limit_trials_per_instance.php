@@ -34,5 +34,13 @@ final class LimitTrialsPerInstance extends AbstractMigration
                 ]
             )
             ->save();
+
+        // Backfill: mark instances that already have a Stripe customer ID as having had a trial
+        $this->execute(
+            "UPDATE `instances`
+             SET `instances_hadTrial` = 1
+             WHERE `instances_planStripeCustomerId` IS NOT NULL
+               AND `instances_planStripeCustomerId` != ''"
+        );
     }
 }
