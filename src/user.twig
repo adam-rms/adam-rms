@@ -248,8 +248,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="username">New Password</label>
-                                <input type="password" placeholder="New Password" class="form-control" id="passnew" /><br/>
+                                <input type="password" placeholder="New Password (min. 12 characters)" class="form-control" id="passnew" /><br/>
                                 <input type="password" placeholder="Confirm New Password" class="form-control" id="passconf" />
+                                <small class="form-text text-muted">Choose a strong, unique password. We recommend using a password manager such as <a href="https://bitwarden.com" target="_blank" rel="noopener noreferrer">Bitwarden</a> to generate and store secure passwords.</small>
                             </div>
                             <button id="save-password-settings" class="btn btn-default">Change Password</button>
                             <script>
@@ -257,7 +258,7 @@
                                     $('#save-password-settings').on('click', function() {
                                         if ($('#passnew').val() != $('#passconf').val()) {
                                             bootbox.alert("Sorry - Your new password's don't match!");
-                                        } else if ($("#passnew").val().length < 6) bootbox.alert("Sorry - Your password is too short!");
+                                        } else if ($("#passnew").val().length < 12) bootbox.alert("Sorry - Your password is too short - please choose a password of at least 12 characters!");
                                         else {
                                             ajaxcall("account/changePass.php", {
                                                 "users_userid": "{{ user.users_userid }}",

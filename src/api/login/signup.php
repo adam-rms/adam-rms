@@ -6,11 +6,14 @@ if ($CONFIGCLASS->get("AUTH_SIGNUP_ENABLED") !== 'Enabled') {
 }
 
 if (isset($_POST['name1']) and isset($_POST['password']) and isset($_POST['username']) and isset($_POST['email']) and isset($_POST['name2'])) {
-    if ($AUTH->usernameTaken($GLOBALS['bCMS']->sanitizeString(strtolower($_POST['username'])))) finish(false, ["code" => null, "message" => "Sorry that username is taken, please try another"]);
+    if (strlen($_POST['password']) < 12) finish(false, ["code" => null, "message" => "Sorry - Your password is too short - please choose a password of at least 12 characters"]);
+    $username = strtolower($GLOBALS['bCMS']->sanitizeString($_POST['username']));
+    if (strlen(trim($username)) < 1) finish(false, ["code" => null, "message" => "Sorry that username is invalid, please try another"]);
+    if ($AUTH->usernameTaken($username)) finish(false, ["code" => null, "message" => "Sorry that username is taken, please try another"]);
     if ($AUTH->emailTaken($GLOBALS['bCMS']->sanitizeString(strtolower($_POST['email'])))) finish(false, ["code" => null, "message" => "Sorry, you already have an account with that email address"]);
     $data = Array (
         'users_email' => strtolower($bCMS->sanitizeString($_POST['email'])),
-        'users_username' => strtolower($bCMS->sanitizeString($_POST['username'])),
+        'users_username' => $username,
         'users_name1' => $bCMS->sanitizeString($_POST['name1']),
         'users_name2' => $bCMS->sanitizeString($_POST['name2']),
         "users_salty1" => $bCMS->randomString(8),

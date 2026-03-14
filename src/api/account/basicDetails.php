@@ -24,6 +24,7 @@ $array["users_username"] = strtolower($array["users_username"]);
 $array = array_intersect_key($array, array_flip(["users_username", "users_name1", "users_name2", "users_email", "users_social_facebook", "users_social_twitter", "users_social_instagram", "users_social_linkedin", "users_social_snapchat"]));
 
 if ($array["users_email"] != $currentUserData["users_email"] and $AUTH->emailTaken($array["users_email"])) finish(false, ["message" => "Sorry this email is in use for another account"]);
+if (strlen(trim($array["users_username"])) < 1) finish(false, ["message" => "Sorry that username is invalid, please try another"]);
 if ($array["users_username"] != $currentUserData["users_username"] and $AUTH->usernameTaken($array["users_username"])) finish(false, ["message" => "Sorry this username is in use for another account, please pick another"]);
 
 if ($array["users_email"] != $currentUserData["users_email"]) $array["users_emailVerified"] = 0;

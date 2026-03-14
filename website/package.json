@@ -1,0 +1,62 @@
+{
+  "name": "adam-rms-docs",
+  "version": "0.0.0",
+  "private": false,
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "gen-api-docs": "docusaurus gen-api-docs all",
+    "clean-api-docs": "docusaurus clean-api-docs all",
+    "build": "(test -f ./static/apiDocs.yaml && npm run gen-api-docs || echo 'Skipping API docs generation (apiDocs.yaml not found)') && docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "lint": "eslint src/",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.9.0",
+    "@docusaurus/plugin-ideal-image": "^3.9.0",
+    "@docusaurus/preset-classic": "^3.9.0",
+    "@docusaurus/theme-search-algolia": "^3.9.0",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "docusaurus-plugin-openapi-docs": "^4.7.1",
+    "docusaurus-plugin-sass": "^0.2.3",
+    "docusaurus-theme-openapi-docs": "^4.7.1",
+    "sass": "^1.80.0",
+    "react-waypoint": "^10.3.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@docusaurus/tsconfig": "^3.9.0",
+    "typescript": "~5.7.0",
+    "eslint": "^9.0.0",
+    "typescript-eslint": "^8.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "@eslint/js": "^9.0.0",
+    "globals": "^15.0.0"
+  }
+}

@@ -39,12 +39,17 @@ foreach ($assignments as $assignment) {
 
 $vCalendar = new \Eluceo\iCal\Component\Calendar($CONFIG['ROOTURL']);
 foreach ($iCalAssignments as $event) {
+    // Skip projects without both start and end dates to avoid defaulting to current date
+    if (!$event['projects_dates_use_start'] || !$event['projects_dates_use_end']) continue;
+    $dtStart = new \DateTime($event['projects_dates_use_start'], $dtz);
+    $dtEnd = new \DateTime($event['projects_dates_use_end'], $dtz);
+    $isMultiDay = $dtStart->format('Y-m-d') !== $dtEnd->format('Y-m-d');
     $vEvent = new \Eluceo\iCal\Component\Event();
-    $vEvent->setUseTimezone(true);
+    $vEvent->setUseTimezone(!$isMultiDay);
     $vEvent
-        ->setDtStart(new \DateTime($event['projects_dates_use_start']))
-        ->setDtEnd(new \DateTime($event['projects_dates_use_end']))
-        ->setNoTime(false)
+        ->setDtStart($dtStart)
+        ->setDtEnd($dtEnd)
+        ->setNoTime($isMultiDay)
         ->setSummary($event['projects_name'] . ($event['clients_name'] ? " (" . $event['clients_name'] . ")" : ""))
         ->setCategories(['events', 'AdamRMS'])
         ->setLocation($event['locations_name'] . "\n" . $event['locations_address'], $event['locations_name'] . "\n" . $event['locations_address'])
