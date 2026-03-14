@@ -4,6 +4,7 @@ require_once __DIR__ . '/serverActions.php';
 require_once __DIR__ . '/../Telemetry/Telemetry.php';
 date_default_timezone_set($CONFIG['TIMEZONE']);
 use \Firebase\JWT\JWT;
+use \Firebase\JWT\Key;
 
 class AuthFail extends Exception {
     public function message() {
@@ -31,7 +32,7 @@ class bID
         if (isset($_POST['jwt'])) {
             //JWTs come via POST from the mobile app
             try {
-                $decoded = JWT::decode($_POST['jwt'], $CONFIG['AUTH_JWTKey'], array('HS256'));
+                $decoded = JWT::decode($_POST['jwt'], new Key($CONFIG['AUTH_JWTKey'], 'HS256'));
                 $decoded_array = (array) $decoded;
                 if (!in_array($decoded_array['type'], ["app-v1", "app-v2-magic-email"])) throw new AuthFail('JWT type invalid for receipt via POST');
                 return ["token" => $decoded_array['token'], "type" => $decoded_array['type']];
@@ -298,7 +299,7 @@ class bID
             "exp" => time()+12*60*60, //12 hours token expiry
             "iat" => time(),
             "type" => $type
-        ), $CONFIG['AUTH_JWTKey']);
+        ), $CONFIG['AUTH_JWTKey'], 'HS256');
         return $jwt;
     }
 

@@ -76,7 +76,11 @@ class projectFinanceCacher
       $this->data[$key] += $value;
     } else {
       $this->changesMade = true;
-      //It's a money object!
+      //Ensure value is a Money object
+      if (!($value instanceof Money)) {
+        global $AUTH;
+        $value = new Money($value, new Currency($AUTH->data['instance']['instances_config_currency']));
+      }
       if ($subtract) {
         $this->data[$key] = $this->data[$key]->subtract($value);
       } else {
