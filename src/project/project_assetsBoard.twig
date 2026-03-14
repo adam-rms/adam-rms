@@ -295,7 +295,7 @@
                         type: 'success',
                         title: 'Asset dispatched via barcode'
                     });
-                } else if (result.error && result.error.code === "NOTASSIGNED" && result.error.assets_id && canAssignAssets) {
+                } else if (result.error && result.error.code === "NOTASSIGNED" && ('assets_id' in result.error) && canAssignAssets) {
                     // Supermarket Sweep: asset exists but is not assigned to this project
                     bootbox.confirm({
                         title: "Add asset to project?",
