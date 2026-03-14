@@ -6,38 +6,92 @@ if (!isset($_POST['text']) or strlen($_POST['text']) < 1) finish(false);
 $hasType = isset($_POST['type']) && strlen($_POST['type']) > 0 && $_POST['type'] !== 'UNKNOWN';
 
 // See if the barcode is a location
-$DBLIB->where("locationsBarcodes_value", $_POST['text']);
-if ($hasType) $DBLIB->where("locationsBarcodes_type", $_POST['type']);
-$DBLIB->where("locationsBarcodes_deleted", 0);
-$DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->where("locations.locations_deleted", 0);
-$DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
-$location = $DBLIB->getone("locationsBarcodes", ["locationsBarcodes.locations_id", "locationsBarcodes.locationsBarcodes_id", "locations.locations_name"]);
-if ($location) {
-    $location['barcode'] = $location['locationsBarcodes_id'];
-    //Location has been found
-} else $location = false;
+if ($hasType) {
+    $DBLIB->where("locationsBarcodes_value", $_POST['text']);
+    $DBLIB->where("locationsBarcodes_type", $_POST['type']);
+    $DBLIB->where("locationsBarcodes_deleted", 0);
+    $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("locations.locations_deleted", 0);
+    $DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
+    $location = $DBLIB->getone("locationsBarcodes", ["locationsBarcodes.locations_id", "locationsBarcodes.locationsBarcodes_id", "locations.locations_name"]);
+    if ($location) {
+        $location['barcode'] = $location['locationsBarcodes_id'];
+        //Location has been found
+    } else {
+        $location = false;
+    }
+} else {
+    $DBLIB->where("locationsBarcodes_value", $_POST['text']);
+    $DBLIB->where("locationsBarcodes_deleted", 0);
+    $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("locations.locations_deleted", 0);
+    $DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
+    $locations = $DBLIB->get("locationsBarcodes", null, ["locationsBarcodes.locations_id", "locationsBarcodes.locationsBarcodes_id", "locations.locations_name"]);
+    if (is_array($locations) && count($locations) > 1) {
+        finish(false, [
+            "code" => "LOCATION-BARCODE-NOT-UNIQUE",
+            "message" => "Multiple locations share this barcode value in this instance"
+        ]);
+    } elseif (is_array($locations) && count($locations) === 1) {
+        $location = $locations[0];
+        $location['barcode'] = $location['locationsBarcodes_id'];
+        //Location has been found
+    } else {
+        $location = false;
+    }
+}
 
 //See if Barcode is in database
-$DBLIB->where("assetsBarcodes_value", $_POST['text']);
-if ($hasType) $DBLIB->where("assetsBarcodes_type", $_POST['type']);
-$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
-$DBLIB->where("assetsBarcodes_deleted", 0);
-$barcode = $DBLIB->getone("assetsBarcodes", ["assetsBarcodes.assets_id", "assetsBarcodes.assetsBarcodes_id"]);
-if ($barcode) {
-    $scan = [
-        "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
-        "users_userid" => $AUTH->data['users_userid'],
-        "assetsBarcodesScans_timestamp" => date('Y-m-d H:i:s'),
-        "locationsBarcodes_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "barcode" && isset($_POST['location']) ? $_POST['location'] : null),
-        "location_assets_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "asset" && isset($_POST['location']) ? $_POST['location'] : null),
-        "assetsBarcodes_customLocation" => (isset($_POST['locationType']) && $_POST['locationType'] == "Custom" && isset($_POST['location']) ? $_POST['location'] : null),
-        "assetsBarcodesScans_barcodeWasScanned" => (isset($_POST['scanned']) && $_POST['scanned'] == "true" ? 1 : 0),
-        "assetsBarcodesScans_validation" => isset($_POST['validation']) ? $_POST['validation'] : null,
-    ];
-    $DBLIB->insert("assetsBarcodesScans", $scan);
-} else $barcode = false;
+if ($hasType) {
+    $DBLIB->where("assetsBarcodes_value", $_POST['text']);
+    $DBLIB->where("assetsBarcodes_type", $_POST['type']);
+    $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
+    $DBLIB->where("assetsBarcodes_deleted", 0);
+    $barcode = $DBLIB->getone("assetsBarcodes", ["assetsBarcodes.assets_id", "assetsBarcodes.assetsBarcodes_id"]);
+    if ($barcode) {
+        $scan = [
+            "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
+            "users_userid" => $AUTH->data['users_userid'],
+            "assetsBarcodesScans_timestamp" => date('Y-m-d H:i:s'),
+            "locationsBarcodes_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "barcode" && isset($_POST['location']) ? $_POST['location'] : null),
+            "location_assets_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "asset" && isset($_POST['location']) ? $_POST['location'] : null),
+            "assetsBarcodes_customLocation" => (isset($_POST['locationType']) && $_POST['locationType'] == "Custom" && isset($_POST['location']) ? $_POST['location'] : null),
+            "assetsBarcodesScans_barcodeWasScanned" => (isset($_POST['scanned']) && $_POST['scanned'] == "true" ? 1 : 0),
+            "assetsBarcodesScans_validation" => isset($_POST['validation']) ? $_POST['validation'] : null,
+        ];
+        $DBLIB->insert("assetsBarcodesScans", $scan);
+    } else {
+        $barcode = false;
+    }
+} else {
+    $DBLIB->where("assetsBarcodes_value", $_POST['text']);
+    $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
+    $DBLIB->where("assetsBarcodes_deleted", 0);
+    $barcodes = $DBLIB->get("assetsBarcodes", null, ["assetsBarcodes.assets_id", "assetsBarcodes.assetsBarcodes_id"]);
+    if (is_array($barcodes) && count($barcodes) > 1) {
+        finish(false, [
+            "code" => "ASSET-BARCODE-NOT-UNIQUE",
+            "message" => "Multiple assets share this barcode value in this instance"
+        ]);
+    } elseif (is_array($barcodes) && count($barcodes) === 1) {
+        $barcode = $barcodes[0];
+        $scan = [
+            "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
+            "users_userid" => $AUTH->data['users_userid'],
+            "assetsBarcodesScans_timestamp" => date('Y-m-d H:i:s'),
+            "locationsBarcodes_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "barcode" && isset($_POST['location']) ? $_POST['location'] : null),
+            "location_assets_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "asset" && isset($_POST['location']) ? $_POST['location'] : null),
+            "assetsBarcodes_customLocation" => (isset($_POST['locationType']) && $_POST['locationType'] == "Custom" && isset($_POST['location']) ? $_POST['location'] : null),
+            "assetsBarcodesScans_barcodeWasScanned" => (isset($_POST['scanned']) && $_POST['scanned'] == "true" ? 1 : 0),
+            "assetsBarcodesScans_validation" => isset($_POST['validation']) ? $_POST['validation'] : null,
+        ];
+        $DBLIB->insert("assetsBarcodesScans", $scan);
+    } else {
+        $barcode = false;
+    }
+}
 
 //If it's in the database and has an asset, return that asset
 if ($barcode) {

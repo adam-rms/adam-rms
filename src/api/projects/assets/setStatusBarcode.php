@@ -21,8 +21,9 @@ if ($barcode and $barcode['assets_id'] != null) {
     ];
     $DBLIB->insert("assetsBarcodesScans", $scan);
 
-    $DBLIB->where("assets_id", $barcode['assets_id']);
-    $DBLIB->where("projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments.assets_id", $barcode['assets_id']);
+    $DBLIB->where("assetsAssignments.projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
@@ -39,8 +40,9 @@ if ($barcode and $barcode['assets_id'] != null) {
     }
 
     // Otherwise, update the status
-    $DBLIB->where("assets_id", $barcode['assets_id']);
-    $DBLIB->where("projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments.assets_id", $barcode['assets_id']);
+    $DBLIB->where("assetsAssignments.projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");

@@ -106,7 +106,7 @@
 </div>
 <script>
     (function() {
-        var suffix = '{{ suffix }}';
+        var suffix = {{ suffix|json_encode|raw }};
         var callbackFn = (function() {
             // scannerCallback is documented as a function name string.
             // Keep it as a string and resolve lazily via window[callbackName].
@@ -189,10 +189,7 @@
                     });
                 });
                 document.getElementById('barcodeScanResetButton' + suffix).addEventListener('click', function() {
-                    $("#barcodeScanResetButton" + suffix).hide();
-                    codeReader.reset();
-                    scanningActive = false;
-                    $("#barcodeScanStartButton" + suffix).show();
+                    cleanupScanner();
                 });
 
                 $(window).on('resize.barcodeScanner' + suffix, function() {
@@ -225,5 +222,38 @@
             // Focus the text input since camera is not available
             $('#barcodeScanTextInput' + suffix).focus();
         }
+
+        // Cleanup function to stop scanning, release camera and remove event handlers
+        function cleanupScanner() {
+            if (scanningActive) {
+                try {
+                    codeReader.reset();
+                } catch (e) {
+                    console.error("Error while resetting barcode scanner", e);
+                }
+                scanningActive = false;
+            }
+            $("#barcodeScanResetButton" + suffix).hide();
+            $("#barcodeScanStartButton" + suffix).show();
+            // Remove resize handler for this scanner instance
+            $(window).off('resize.barcodeScanner' + suffix);
+        }
+
+        // Automatically cleanup when a Bootstrap modal containing this scanner is hidden
+        $(document).on('hidden.bs.modal.barcodeScanner' + suffix, '.modal', function() {
+            if ($(this).find('#barcodeScanVideoCard' + suffix).length > 0) {
+                cleanupScanner();
+            }
+        });
+
+        // Cleanup before the page is unloaded
+        window.addEventListener('beforeunload', cleanupScanner);
+
+        // Cleanup when the page becomes hidden (e.g. user switches tab or minimizes)
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                cleanupScanner();
+            }
+        });
     })();
 </script>
