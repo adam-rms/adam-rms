@@ -24,6 +24,12 @@
     #navItemQuickDispatch button {
         background-color: transparent;
     }
+    #navItemBarcodeDispatch {
+        height: 100%;
+    }
+    #navItemBarcodeDispatch button {
+        background-color: transparent;
+    }
 </style>
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0 card-tabs">
@@ -42,6 +48,11 @@
                 <li class="nav-item" id="navItemQuickDispatch">
                     <button type="button" class="nav-link" title="Quick Dispatch" data-toggle="modal" data-target="#quickDispatchModal">
                         <i class="fas fas fa-shipping-fast"></i>
+                    </button>
+                </li>
+                <li class="nav-item" id="navItemBarcodeDispatch">
+                    <button type="button" class="nav-link" title="Barcode Dispatch" data-toggle="modal" data-target="#barcodeDispatchModal">
+                        <i class="fas fa-barcode"></i>
                     </button>
                 </li>
             {% endif %}
@@ -129,6 +140,65 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="barcodeDispatchModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Barcode Dispatch</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    {% if FINANCIALS.assetsAssigned|length > 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="pill" href="#barcode-dispatch-modal-board-thisinstance" role="tab" aria-controls="barcode-dispatch-modal-board-thisinstance" aria-selected="true">{{ USERDATA.instance.instances_name }}</a>
+                        </li>
+                    {% endif %}
+                    {% for instance in FINANCIALS.assetsAssignedSUB %}
+                        <li class="nav-item">
+                            <a class="nav-link{% if FINANCIALS.assetsAssigned|length == 0 and loop.first %} active{% endif %}" data-toggle="pill" href="#barcode-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="barcode-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="p-3">
+                    <div class="tab-content">
+                        {% if FINANCIALS.assetsAssigned|length > 0 %}
+                        <div class="tab-pane show active p2" id="barcode-dispatch-modal-board-thisinstance" role="tabpanel">
+                            <p>Scan a barcode for an asset from {{ USERDATA.instance.instances_name }} to set its status.</p>
+                            <div class="form-group">
+                                <label>Set Asset Status to</label>
+                                <select class="form-control assetStatusSelectorBarcodeDispatch" data-instanceid="{{ USERDATA.instance["instances_id"] }}">
+                                    {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
+                                    <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% for instance in FINANCIALS.assetsAssignedSUB %}
+                        <div class="tab-pane p2{% if FINANCIALS.assetsAssigned|length == 0 and loop.first %} show active{% endif %}" id="barcode-dispatch-modal-board-instance{{ instance['instance']['instances_id'] }}">
+                            <p>Scan a barcode for an asset from {{  instance['instance'].instances_name }} to set its status.</p>
+                            <div class="form-group">
+                                <label>Set Asset Status to</label>
+                                <select class="form-control assetStatusSelectorBarcodeDispatch" data-instanceid="{{ instance['instance']['instances_id'] }}">
+                                    {% for status in BOARDSTATUSES[instance['instance']['instances_id']] %}
+                                    <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% embed 'assets/widgets/barcodeScanner.twig' with {"scannerCallback": "dispatchBarcodeScanned", "scannerIdSuffix": "Dispatch"} %}
+                    {% endembed %}
+                    <div id="barcodeDispatchResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 <script>
     const Toast = Swal.mixin({
@@ -188,6 +258,56 @@
                 type: 'success',
                 title: 'Asset Status Updated'
             });
+        });
+    }
+    /**
+     * Function to handle a barcode scan for asset dispatch
+     * Called by the shared barcode scanner widget
+     * @param value The barcode value
+     * @param type The barcode format type (e.g. 'QR_CODE', 'CODE_128', or 'UNKNOWN' for USB/Bluetooth)
+     */
+    function dispatchBarcodeScanned(value, type) {
+        var assetStatus = $(".assetStatusSelectorBarcodeDispatch:visible").val();
+        var instanceId = $(".assetStatusSelectorBarcodeDispatch:visible").data("instanceid");
+        var requestData = {
+            text: value,
+            assetsAssignments_status: assetStatus,
+            projects_id: {{ project.projects_id }},
+            instances_id: instanceId
+        };
+        if (type && type !== "UNKNOWN") {
+            requestData.type = type;
+        }
+        $.ajax({
+            url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusBarcode.php",
+            type: "POST",
+            data: requestData,
+            cache: false,
+            success: function(result, status, data) {
+                if (result.result === true) {
+                    var assetCard = $(".assetDispatchAssetList[data-instance=" + instanceId + "] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
+                    assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance=" + instanceId + "]");
+                    drawButtons();
+                    Toast.fire({
+                        type: 'success',
+                        title: 'Asset dispatched via barcode'
+                    });
+                } else {
+                    var errorMsg = result.error ? result.error.message : "Barcode not found or asset not assigned to project";
+                    Toast.fire({
+                        type: 'error',
+                        title: value + ": " + errorMsg
+                    });
+                    var resultDiv = $("<div>").addClass("alert alert-danger").text(value + ": " + errorMsg);
+                    $("#barcodeDispatchResult").prepend(resultDiv);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR, textStatus, errorThrown);
+                bootbox.alert('Sorry we couldn\'t connect to the internet - please check your connection', function () {
+                    location.reload();
+                });
+            }
         });
     }
     {% endif %}
