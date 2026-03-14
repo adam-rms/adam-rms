@@ -361,7 +361,7 @@
                         }
                     });
                 } else {
-                    var errorMsg = result.error ? result.error.message : "Barcode not found or asset not assigned to project";
+                    var errorMsg = (result.error && result.error.message) ? result.error.message : "Barcode not found or asset not assigned to project";
                     Toast.fire({
                         type: 'error',
                         title: value + ": " + errorMsg
