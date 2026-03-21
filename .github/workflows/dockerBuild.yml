@@ -129,8 +129,9 @@ jobs:
           while IFS= read -r tag; do
             TAG_ARGS+=( -t "$tag" )
           done < <(jq -r '.tags[]' <<< "$DOCKER_METADATA_OUTPUT_JSON")
-          DIGEST=$(docker buildx imagetools create -q "${TAG_ARGS[@]}" \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *))
+          docker buildx imagetools create "${TAG_ARGS[@]}" \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+          DIGEST="sha256:$(docker buildx imagetools inspect "$(jq -r '.tags[0]' <<< "$DOCKER_METADATA_OUTPUT_JSON")" --raw | sha256sum | awk '{print $1}')"
           echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
       - name: Inspect image
         run: |
