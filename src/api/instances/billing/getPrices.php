@@ -15,11 +15,8 @@ use Money\Formatter\IntlMoneyFormatter;
 
 foreach ($products->data as $product) {
   if (!$product->default_price) continue;
-  $thisPrice = $stripe->prices->search([
-    'query' => 'active:\'true\' AND type:\'recurring\' AND product:\'' . $product->id . '\'',
-  ]);
-  if (!$thisPrice->data or count($thisPrice->data) < 1) continue;
-  $priceData = $stripe->prices->retrieve($thisPrice->data[0]->id, ["expand" => ['currency_options']]);
+  $priceData = $stripe->prices->retrieve($product->default_price, ["expand" => ['currency_options']]);
+  if (!$priceData->active || $priceData->type !== 'recurring') continue;
   $productReturn = [
     'id' => $product->id,
     'name' => $product->name,
