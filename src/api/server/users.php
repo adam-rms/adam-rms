@@ -89,21 +89,25 @@ if (count($userIds) > 0) {
     }
 
     // Fetch last login for all users on this page (most recent auth token per user)
-    foreach ($userIds as $uid) {
-        $DBLIB->where("users_userid", $uid);
-        $DBLIB->where("(authTokens_adminId IS NULL)");
-        $DBLIB->orderBy("authTokens_created", "DESC");
-        $login = $DBLIB->getOne("authTokens", ["authTokens_created"]);
-        if ($login) $lastLoginByUser[$uid] = $login['authTokens_created'];
+    $DBLIB->where("users_userid", $userIds, "IN");
+    $DBLIB->where("(authTokens_adminId IS NULL)");
+    $DBLIB->groupBy("users_userid");
+    $allLogins = $DBLIB->get("authTokens", null, ["users_userid", "MAX(authTokens_created) AS lastLogin"]);
+    if ($allLogins) {
+        foreach ($allLogins as $login) {
+            $lastLoginByUser[$login['users_userid']] = $login['lastLogin'];
+        }
     }
 
     // Fetch last analytics event for all users on this page
-    foreach ($userIds as $uid) {
-        $DBLIB->where("users_userid", $uid);
-        $DBLIB->where("(adminUser_users_userid IS NULL)");
-        $DBLIB->orderBy("analyticsEvents_timestamp", "DESC");
-        $analytics = $DBLIB->getOne("analyticsEvents", ["analyticsEvents_timestamp"]);
-        if ($analytics) $lastAnalyticsByUser[$uid] = $analytics['analyticsEvents_timestamp'];
+    $DBLIB->where("users_userid", $userIds, "IN");
+    $DBLIB->where("(adminUser_users_userid IS NULL)");
+    $DBLIB->groupBy("users_userid");
+    $allAnalytics = $DBLIB->get("analyticsEvents", null, ["users_userid", "MAX(analyticsEvents_timestamp) AS lastAnalytics"]);
+    if ($allAnalytics) {
+        foreach ($allAnalytics as $analytics) {
+            $lastAnalyticsByUser[$analytics['users_userid']] = $analytics['lastAnalytics'];
+        }
     }
 }
 
