@@ -81,15 +81,16 @@ export default function PricingTable(): React.JSX.Element {
     >
       <div className="container">
         <div className="row text--center">
-          <h1 className="hero__title" style={{width: "100%"}}>
-            Pricing
-          </h1>
-          <p className="hero__subtitle">
-            AdamRMS is currently offered as a paid hosted solution and as a{" "}
-            <Link to="/docs/v1/hosting/intro">free self-hosted solution</Link>.
-            We are able to offer discounts to educational institutions - sign-up
-            for a trial and <Link to="/support">get in touch for a quote</Link>.
-          </p>
+          <div className="col col--12">
+            <h1 className="hero__title">Pricing</h1>
+            <p className="hero__subtitle">
+              AdamRMS is currently offered as a paid hosted solution and as a{" "}
+              <Link to="/docs/v1/hosting/intro">free self-hosted solution</Link>.
+              We are able to offer discounts to educational institutions -
+              sign-up for a trial and{" "}
+              <Link to="/support">get in touch for a quote</Link>.
+            </p>
+          </div>
         </div>
         {prices.length === 0 ? (
           <p className="hero__subtitle">
@@ -102,11 +103,13 @@ export default function PricingTable(): React.JSX.Element {
             ))}
           </div>
         )}
-        <div className="row ">
-          <p className="hero__subtitle text--right">
-            Pricing is charged per business, not per user. Need More of
-            anything? <Link to="/support">Contact us for a quote</Link>
-          </p>
+        <div className="row">
+          <div className="col col--12">
+            <p className="hero__subtitle text--right">
+              Pricing is charged per business, not per user. Need More of
+              anything? <Link to="/support">Contact us for a quote</Link>
+            </p>
+          </div>
         </div>
       </div>
     </section>
