@@ -92,3 +92,10 @@ Every generated invoice is stored, so you can track the history of the project t
 
 ![A Sample Invoice](/img/tutorial/projects/finance-invoice.png)
 *An example invoice*
+
+## Related Features
+
+- [Ledger](../business/ledger) -- view all payments across the business in one place
+- [Clients](../business/clients) -- view total paid and outstanding balances per client
+- [Business Settings](../business/business-settings#basic-settings) -- customise invoice and quote footers
+- [Project Assets](./assets) -- asset pricing, discounts, and custom prices that feed into the finance calculations

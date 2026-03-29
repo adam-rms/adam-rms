@@ -5,7 +5,7 @@ title: File & Image Storage
 
 Images and files are stored using an [AWS S3 Bucket](https://aws.amazon.com/s3/), which can either be from Amazon, or from a service such as [Backblaze](https://www.backblaze.com/), [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces) or [Cloudflare R2](https://developers.cloudflare.com/r2/).
 
-To set up the file storage, you need to set the following settings in the [configuration menu](./configuration-menu.md):
+To set up the file storage, you need to set the following settings in the [configuration menu](./configuration-reference):
 
 ### File Storage
 
@@ -118,7 +118,7 @@ You need to setup the CORS on the bucket to allow uploads
 aws s3api put-bucket-cors --bucket=<BUCKETNAME> --endpoint-url=https://s3.eu-central-003.backblazeb2.com --cors-configuration=file://backblaze-cors.json
 ```
 
-The region is usually `eu-central-003` for setting in [configuration menu](./configuration-menu.md) of AdamRMS
+The region is usually `eu-central-003` for setting in [configuration menu](./configuration-reference) of AdamRMS
 
 CDN Url is `https://s3.eu-central-003.backblazeb2.com/<BUCKETNAME>`
 

@@ -6039,6 +6039,70 @@ paths:
                   code: { description: 'The error code', type: string }
                   error: { description: 'An Array containing an error code and a message', type: array }
                 type: object
+  /server/users.php:
+    post:
+      tags:
+        - server
+      summary: 'List Users (DataTables)'
+      description: "Server-side processing endpoint for DataTables. Returns paginated, searchable user list with related data (positions, instances, last login, last page view).\n * Requires Server Permission USERS:VIEW\n * "
+      operationId: serverUsers
+      parameters:
+        -
+          name: draw
+          in: query
+          description: 'DataTables draw counter'
+          required: 'true'
+          schema:
+            type: integer
+        -
+          name: start
+          in: query
+          description: 'Paging start index'
+          required: 'true'
+          schema:
+            type: integer
+        -
+          name: length
+          in: query
+          description: 'Number of records per page (max 100)'
+          required: 'true'
+          schema:
+            type: integer
+        -
+          name: 'search[value]'
+          in: query
+          description: 'Global search value applied to username, first name, last name, and email'
+          required: 'false'
+          schema:
+            type: string
+        -
+          name: 'order[0][column]'
+          in: query
+          description: 'Column index to order by'
+          required: 'false'
+          schema:
+            type: integer
+        -
+          name: 'order[0][dir]'
+          in: query
+          description: 'Order direction (asc or desc)'
+          required: 'false'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  draw: { description: 'Draw counter for DataTables', type: integer }
+                  recordsTotal: { description: 'Total number of unfiltered records', type: integer }
+                  recordsFiltered: { description: 'Total number of records after search filter', type: integer }
+                  data: { description: 'Array of user objects for the current page', type: array, items: { type: object } }
+                type: object
+        '403':
+          description: 'Permission Error'
   /server/assetImport.php:
     post:
       summary: 'Bulk Asset Import'
