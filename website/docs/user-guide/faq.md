@@ -107,10 +107,10 @@ Notifications are enabled by default for crew assignments. You can manage your n
 Go to the [User Management](./business/user-management#permissions) page, create a new Role Group, and select only the permissions you want to grant. Assign users to this role group to limit their access. See the [Permissions Reference](./business/permissions-reference) for a complete list of available permissions.
 
 ### How do I configure email sending?
-Email configuration is done at the server/installation level. See the [Configuration Reference](./business/configuration-reference#email) for all email-related settings, or the [hosting documentation](../hosting/email) for setup guides.
+Email configuration is done at the server/installation level. See the [Configuration Reference](../hosting/configuration-reference#email) for all email-related settings, or the [email setup guide](../hosting/email) for provider-specific instructions.
 
 ### Where can I find all available configuration options?
-See the [Configuration Reference](./business/configuration-reference) for a complete list of all settings with descriptions, types, defaults, and environment variable fallbacks.
+See the [Configuration Reference](../hosting/configuration-reference) for a complete list of all settings with descriptions, types, defaults, and environment variable fallbacks.
 
 ---
 

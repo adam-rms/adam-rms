@@ -1,5 +1,5 @@
 ---
-sidebar_position: 36
+sidebar_position: 5
 title: "Configuration Reference"
 ---
 
@@ -9,8 +9,13 @@ AdamRMS includes a system-wide configuration panel that controls how your instal
 
 Configuration values are stored in the database, but many can also fall back to environment variables if no database value has been set. This is particularly useful during initial setup or when deploying with Docker. The configuration page is accessible to server/platform administrators with the `CONFIG:SET` server permission via the server administration panel.
 
-:::tip
-If you are using the hosted version of AdamRMS at [adam-rms.com](https://adam-rms.com), these settings are managed for you. This page is primarily relevant to self-hosted installations.
+You can find the configuration menu by clicking **Configuration** at the bottom of the menu on the left of the screen.
+
+![Commands](/img/hosting-docs/finding-the-config-menu.png)
+
+:::info
+Can't find the configuration menu? If the menu does not appear, your account does not have the correct permissions to access it -- you must set your account as a server administrator.
+Login to AdamRMS using the default super admin account (username `username` and the password `password!` -- make sure to change this) -- this account can access the configuration menu.
 :::
 
 ---
@@ -40,7 +45,7 @@ The **Root URL** is critically important. If it is misconfigured, it will preven
 Email settings control whether and how AdamRMS sends emails to users. When email is enabled, users will also be required to verify their email addresses on signup.
 
 :::tip
-You will need to configure an email provider before enabling email sending. AdamRMS supports Sendgrid, Mailgun, Postmark, and SMTP. For more information on setting up email for a self-hosted installation, see the [hosting documentation](../../hosting/intro).
+You will need to configure an email provider before enabling email sending. AdamRMS supports Sendgrid, Mailgun, Postmark, and SMTP. For more information on setting up email for a self-hosted installation, see the [email setup documentation](./email).
 :::
 
 ### Core Email Settings

@@ -11,7 +11,7 @@ We use the HybridAuth library, and its [Google Provider](https://hybridauth.gith
 
 To set up Google authentication, you will need to create a new project in the [Google Developer Console](https://console.developers.google.com/), and then create a new OAuth 2.0 Client ID.
 
-You will need to set the following configuration variables in the [configuration menu](./configuration-menu.md):
+You will need to set the following configuration variables in the [configuration menu](./configuration-reference):
 
 ### Google Auth Key
 
@@ -31,7 +31,7 @@ This is normally left as `https://www.googleapis.com/auth/userinfo.profile https
 
 To set up Microsoft authentication, you will need to create a new project in the [Microsoft Azure Portal](https://portal.azure.com/), and then create a new App Registration.
 
-You will need to set the following configuration variables in the [configuration menu](./configuration-menu.md):
+You will need to set the following configuration variables in the [configuration menu](./configuration-reference):
 
 ### Microsoft Auth App ID
 

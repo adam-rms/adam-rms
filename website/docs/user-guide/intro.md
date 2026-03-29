@@ -54,7 +54,7 @@ This guide covers everything you need to know to use AdamRMS effectively, from s
 
 ### Reference
 - [Permissions Reference](./business/permissions-reference) -- complete list of all permissions
-- [Configuration Reference](./business/configuration-reference) -- all configuration options for self-hosted installations
+- [Configuration Reference](../hosting/configuration-reference) -- all configuration options for self-hosted installations
 - [Glossary](./glossary) -- definitions of key AdamRMS terms
 - [FAQ & Troubleshooting](./faq) -- common questions and solutions
 
