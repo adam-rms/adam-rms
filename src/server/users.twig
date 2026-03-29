@@ -115,6 +115,10 @@
                         "url": rootUrl + "/api/server/users.php",
                         "type": "POST"
                     },
+                    "searchDelay": 400,
+                    "search": {
+                        "regex": false
+                    },
                     "columns": [
                         {
                             "data": "users_username",
@@ -126,7 +130,6 @@
                         },
                         {
                             "data": "users_name2",
-                            "searchable": false,
                             "render": function(data) { return escapeHtml(data); }
                         },
                         {

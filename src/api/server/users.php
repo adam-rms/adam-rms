@@ -1,7 +1,16 @@
 <?php
 require_once __DIR__ . '/../apiHeadSecure.php';
 
-if (!$AUTH->serverPermissionCheck("USERS:VIEW")) finish(false, ["code" => "AUTH-ERROR", "message" => "No auth for action"]);
+if (!$AUTH->serverPermissionCheck("USERS:VIEW")) {
+    http_response_code(403);
+    die(json_encode([
+        'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0,
+        'recordsTotal' => 0,
+        'recordsFiltered' => 0,
+        'data' => [],
+        'error' => 'No auth for action'
+    ]));
+}
 
 // DataTables server-side processing parameters
 $draw = isset($_POST['draw']) ? intval($_POST['draw']) : 1;
