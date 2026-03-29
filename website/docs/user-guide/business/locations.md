@@ -18,19 +18,18 @@ LOCATIONS:EDIT
 ![Locations List](/img/tutorial/businesses/utilities-locations.png)
 *List of locations*
 
-The locations page displays your venues in a hierarchical list. Each location shows:
+The locations page displays your venues in a hierarchical list. The table shows the following columns:
 
 - **Name** -- the location's name
+- **Notes** -- additional information
 - **Address** -- physical address
 - **Client** -- the client associated with this location (if any)
-- **Notes** -- additional information
-- **Files** -- attached documents (e.g. venue plans, risk assessments)
+- **Actions** -- buttons for viewing barcodes, files, calendar, editing, archiving, and deleting
 
 ### Filtering
 
 - **Search** -- filter locations by name, address, or notes
 - **Show archived** -- toggle between active and archived locations
-- **Filter by client** -- view locations associated with a specific client
 
 ## Sub-Locations
 

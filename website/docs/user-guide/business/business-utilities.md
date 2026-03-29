@@ -20,7 +20,7 @@ BUSINESS:BUSINESS_STATS:VIEW
 *Business Stats Widgets*
 
 To add a widget to your dashboard:
-1. Navigate to **Business Settings > Statistics**.
+1. Navigate to **Business > Stats** in the side menu.
 2. Browse the available widgets.
 3. Click on a widget to add it to your dashboard.
 4. Widgets can be removed by clicking on them again.

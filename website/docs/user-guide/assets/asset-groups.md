@@ -19,19 +19,17 @@ ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP
 
 ## Creating a Group
 
-1. Navigate to the **Asset Groups** page from the Assets menu.
-2. Click **New Group**.
+1. Navigate to the **Asset Groups** page from Business Settings.
+2. Click the **+** button.
 3. Enter a group name and description.
-4. Choose the group's visibility:
-   - **Public** -- visible to all users in the business
-   - **Private** -- visible only to you
+4. Optionally tick **Visible to only me** to make the group personal (unticked groups are visible to all users in the business).
 
 ## Adding Assets to a Group
 
 Assets can be added to groups in two ways:
 
 - **From the groups page** -- select assets to add to an existing group.
-- **From an individual asset's page** -- use the Groups tab on a specific asset to assign it to one or more groups.
+- **From an individual asset's page** -- use the edit form on a specific asset to assign it to one or more groups.
 
 An asset can belong to multiple groups simultaneously.
 

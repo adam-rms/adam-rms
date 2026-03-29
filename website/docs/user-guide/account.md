@@ -80,7 +80,11 @@ If your AdamRMS installation has Google or Microsoft OAuth configured, you can l
 
 ## Your Calendar
 
-The account page shows a personal calendar view of all your crew assignments and projects you manage, giving you a quick overview of your schedule.
+The account page shows a personal calendar view of all your crew assignments, giving you a quick overview of your schedule.
+
+## Positions
+
+If you have the appropriate server permissions, the **Positions** tab shows your positions (roles) within the AdamRMS platform, including the position title and the start/end dates. Server administrators can manage positions for other users from this tab.
 
 ## Crew Roles & Projects Managed
 
@@ -89,7 +93,7 @@ Your profile displays:
 - **Crew Roles** -- all active projects where you have a crew assignment, showing the project name, date, and your role.
 - **Projects Managed** -- all active projects where you are the project manager.
 
-These are visible to other users who have permission to view your profile.
+These tabs are visible to other users who have permission to view your profile.
 
 ## Calendar Export {#calendar-export}
 

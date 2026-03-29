@@ -79,7 +79,7 @@ A date-based event or job that brings together assets, crew, locations, and fina
 The user designated as the lead for a project. Project managers are indicated with a star icon in the sidebar menu.
 
 ### Project Status
-The current state of a project in its lifecycle. Statuses include: Added to RMS, Targeted, Quote Sent, Confirmed, Prep, Dispatched, Returned, Closed, Cancelled, and Lead Lost. Each status has a colour code used throughout the interface.
+The current state of a project in its lifecycle. Default statuses include: Added to RMS, Targeted, Quote Sent, Confirmed, Prep, Dispatched, Returned, Closed, Cancelled, and Lead Lost. Businesses can define [custom project statuses](./business/business-settings#project-statuses) to fit their workflow. Each status has a colour code used throughout the interface.
 
 ### Project Type
 A classification for projects that determines their behaviour, such as whether finance tracking is enabled. Project types are configured per-business.

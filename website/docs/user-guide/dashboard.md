@@ -13,18 +13,20 @@ The default dashboard consists of two main sections:
 
 ### Widgets
 
-The top section of the dashboard displays **widgets** -- small cards showing key statistics and information about your business. Widgets can include metrics such as:
+The top section of the dashboard displays **widgets** -- small cards showing key statistics and information about your business. Available widgets include:
 
-- Number of active projects
-- Total asset count
-- Upcoming project dates
-- Financial summaries
-- Recent activity
+- Inventory value graph
+- Inventory totals (total value and mass)
+- Storage usage
+- User count
+- Outstanding maintenance jobs
+- Your maintenance jobs
+- Your personal calendar
 
 You can customise which widgets appear on your dashboard from the **Statistics** page in Business Settings. If no widgets have been added, the dashboard will show a prompt to add some.
 
 :::note Permissions Required
-BUSINESS:BUSINESS_STATS:VIEW
+`BUSINESS:BUSINESS_STATS:VIEW` is required to access the Statistics page where you manage which widgets are shown.
 :::
 
 :::tip
@@ -33,7 +35,7 @@ Administrators can set up [Custom Dashboards](./cms/custom-dashboards) to replac
 
 ### Calendar
 
-Below the widgets, the dashboard features a **calendar view** showing all your upcoming projects. The calendar displays project dates colour-coded by their status, giving you a visual overview of your schedule.
+Below the widgets, the dashboard features a **calendar view** showing all projects in your business that are not archived or deleted. The calendar displays project dates colour-coded by their status, giving you a visual overview of your schedule.
 
 The calendar can be exported to external calendar applications (Google Calendar, Outlook, Apple Calendar, etc.) via the iCal export feature on your [account page](./account#calendar-export).
 

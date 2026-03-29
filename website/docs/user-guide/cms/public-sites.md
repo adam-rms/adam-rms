@@ -52,7 +52,7 @@ The public widgets are available at a URL specific to your business instance. Yo
 
 ```html
 <iframe
-  src="https://your-adamrms-url/public/embed/jobs.php?instance=YOUR_INSTANCE_ID"
+  src="https://your-adamrms-url/public/embed/jobs.php?i=YOUR_INSTANCE_ID"
   width="100%"
   height="600"
   frameborder="0"

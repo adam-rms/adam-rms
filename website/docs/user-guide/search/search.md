@@ -25,7 +25,7 @@ The global search covers the following types of content:
 | **Locations** | Indigo | Location names and addresses |
 | **Clients** | Light Blue | Client names and details |
 | **CMS Pages** | Primary (Blue) | Page content and titles |
-| **Users** | Grey | User names |
+| **Users** | Secondary (Grey) | User names |
 
 Clicking on a search result takes you directly to that item's page.
 
