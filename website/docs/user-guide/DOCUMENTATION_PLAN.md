@@ -20,15 +20,16 @@ This document outlines a comprehensive plan for dramatically improving the AdamR
 - [x] **Permissions Reference** -- NEW comprehensive reference generated from source code
 - [x] **Configuration Reference** -- NEW reference generated from source code
 
+### Completed (Batch 2)
+- [x] **Manufacturers** -- NEW page covering viewing, creating, editing, shared vs business-specific manufacturers
+- [x] **Your Account** -- NEW comprehensive page covering account settings, notifications, profile picture, password/sign-in, authentication providers, calendar export with step-by-step instructions for Google/Apple/Outlook
+- [x] **Business Utilities** -- UPDATED to cross-link to new standalone Clients, Ledger, and Locations pages, added widget setup instructions
+- [x] **FAQ & Troubleshooting** -- NEW page with 20+ Q&A entries covering account/login, assets, projects, finance, calendar, crew, and administration
+
 ### Still To Do
-- [ ] Manufacturers page
-- [ ] Calendar export page
-- [ ] User Account management page
-- [ ] Notifications page
-- [ ] Public Sites / CMS public page
-- [ ] FAQ / Troubleshooting page
-- [ ] Screenshot automation setup
-- [ ] Expand remaining thin pages (Projects sub-pages, Business Settings, etc.)
+- [ ] Screenshot automation setup (Playwright/shot-scraper)
+- [ ] Seed data improvements for realistic screenshots
+- [ ] Additional pages if needed: Public Sites CMS embed page
 
 ---
 
