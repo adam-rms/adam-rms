@@ -16,7 +16,7 @@ CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS
 
 ## How Custom Dashboards Work
 
-When a user logs in, AdamRMS checks whether their role group has a custom dashboard assigned. If so, that CMS page is displayed instead of the default widget-based dashboard. The default calendar and any [dashboard widgets](../business/business-utilities#statistics--widgets) are still shown below the custom CMS page content.
+When a user logs in, AdamRMS checks whether their role group has a custom dashboard assigned. If so, that CMS page is displayed **instead of** the default widget-based dashboard and calendar. The entire dashboard is replaced with your custom CMS page content.
 
 Users who do not have a custom dashboard assigned to their role group will see the standard dashboard with widgets and the calendar as normal.
 

@@ -35,7 +35,7 @@ Administrators can set up [Custom Dashboards](./cms/custom-dashboards) to replac
 
 Below the widgets, the dashboard features a **calendar view** showing all your upcoming projects. The calendar displays project dates colour-coded by their status, giving you a visual overview of your schedule.
 
-The calendar can be exported to external calendar applications (Google Calendar, Outlook, Apple Calendar, etc.) via the iCal export feature in your [account settings](#navigation).
+The calendar can be exported to external calendar applications (Google Calendar, Outlook, Apple Calendar, etc.) via the iCal export feature on your [account page](./account#calendar-export).
 
 ## Navigation
 

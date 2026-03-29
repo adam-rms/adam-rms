@@ -11,7 +11,6 @@ Locations in AdamRMS represent venues, warehouses, storage areas, and other phys
 LOCATIONS:VIEW
 LOCATIONS:CREATE
 LOCATIONS:EDIT
-LOCATIONS:DELETE
 :::
 
 ## Viewing Locations
@@ -53,7 +52,6 @@ Sub-locations are displayed indented beneath their parent in the location list. 
 2. Fill in the location details:
    - **Name** (required)
    - **Address**
-   - **What3Words** -- a What3Words address for precise location identification
    - **Client** -- optionally associate the location with a client
    - **Notes**
    - **Sub-location of** -- optionally make this a sub-location of an existing location
@@ -69,10 +67,10 @@ Each location automatically has a barcode assigned to it. These barcodes can be 
 
 When an asset's barcode is scanned at a location, AdamRMS records the asset's position, building up a history of where each asset has been.
 
-## Archiving and Deleting
+## Archiving Locations
 
-- **Archive** a location to hide it from the default view without deleting it. Archived locations can be restored later.
-- **Delete** a location to permanently remove it (soft delete).
+- **Archive** a location to hide it from the default view without removing it. Archived locations can be restored later.
+- Archiving is a soft operation -- no data is lost, and the location can be viewed by switching to the archived locations view.
 
 :::caution
 Archiving or deleting a location does not affect assets currently assigned to that storage location. You should reassign assets before archiving their storage location.

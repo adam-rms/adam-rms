@@ -13,7 +13,7 @@ AdamRMS uses a **two-tier permission system** to control what users can do acros
 Most users will only ever interact with instance permissions. Server permissions are typically only relevant if you are self-hosting AdamRMS or are a platform administrator.
 
 :::tip
-If you are looking for information on how to create Role Groups and assign permissions to users, see the [User Management](./user-management.md) page.
+If you are looking for information on how to create Role Groups and assign permissions to users, see the [User Management](./user-management) page.
 :::
 
 ## How permissions are assigned
