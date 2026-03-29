@@ -93,9 +93,13 @@ export default function PricingTable(): React.JSX.Element {
           </div>
         </div>
         {prices.length === 0 ? (
-          <p className="hero__subtitle">
-            Loading latest pricing information...
-          </p>
+          <div className="row">
+            <div className="col col--12">
+              <p className="hero__subtitle">
+                Loading latest pricing information...
+              </p>
+            </div>
+          </div>
         ) : (
           <div className="row">
             {prices.map((price, idx) => (
