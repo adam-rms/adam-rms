@@ -6,6 +6,32 @@ This document outlines a comprehensive plan for dramatically improving the AdamR
 
 ---
 
+## Progress Tracker
+
+### Completed
+- [x] **Assets overview** -- expanded from 2 sentences to comprehensive guide covering asset types, individual assets, lifecycle, flags/blocks, categories
+- [x] **Search** -- expanded from bullet list to full guide covering usage, searchable types, pagination, tips
+- [x] **Custom Dashboards** -- expanded from 3 steps to full guide with use cases, setup instructions, role group integration
+- [x] **Dashboard & Navigation** -- NEW page covering widgets, calendar, top nav bar, side menu, business switching
+- [x] **Clients** -- NEW page covering viewing, creating, editing, archiving, financial tracking
+- [x] **Locations** -- NEW page covering hierarchical locations, sub-locations, barcodes, files
+- [x] **Ledger** -- NEW page covering payment records, searching, file attachments
+- [x] **Glossary** -- NEW page with 30+ defined terms
+- [x] **Permissions Reference** -- NEW comprehensive reference generated from source code
+- [x] **Configuration Reference** -- NEW reference generated from source code
+
+### Still To Do
+- [ ] Manufacturers page
+- [ ] Calendar export page
+- [ ] User Account management page
+- [ ] Notifications page
+- [ ] Public Sites / CMS public page
+- [ ] FAQ / Troubleshooting page
+- [ ] Screenshot automation setup
+- [ ] Expand remaining thin pages (Projects sub-pages, Business Settings, etc.)
+
+---
+
 ## 1. Current State Assessment
 
 ### What Exists Today
