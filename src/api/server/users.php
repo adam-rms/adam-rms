@@ -153,3 +153,92 @@ die(json_encode([
     'recordsFiltered' => intval($filteredRecords),
     'data' => $data,
 ]));
+
+/**
+ *  @OA\Post(
+ *      path="/server/users.php",
+ *      summary="List Users (DataTables)",
+ *      description="Server-side processing endpoint for DataTables. Returns paginated, searchable user list with related data (positions, instances, last login, last page view).
+ * Requires Server Permission USERS:VIEW
+ * ",
+ *      operationId="serverUsers",
+ *      tags={"server"},
+ *      @OA\Response(
+ *          response="200",
+ *          description="Success",
+ *          @OA\MediaType(
+ *              mediaType="application/json",
+ *              @OA\Schema(
+ *                  type="object",
+ *                  @OA\Property(
+ *                      property="draw",
+ *                      type="integer",
+ *                      description="Draw counter for DataTables",
+ *                  ),
+ *                  @OA\Property(
+ *                      property="recordsTotal",
+ *                      type="integer",
+ *                      description="Total number of unfiltered records",
+ *                  ),
+ *                  @OA\Property(
+ *                      property="recordsFiltered",
+ *                      type="integer",
+ *                      description="Total number of records after search filter",
+ *                  ),
+ *                  @OA\Property(
+ *                      property="data",
+ *                      type="array",
+ *                      description="Array of user objects for the current page",
+ *                      @OA\Items(type="object"),
+ *                  ),
+ *              ),
+ *          ),
+ *      ),
+ *      @OA\Response(
+ *          response="403",
+ *          description="Permission Error",
+ *      ),
+ *      @OA\Parameter(
+ *          name="draw",
+ *          in="query",
+ *          description="DataTables draw counter",
+ *          required="true",
+ *          @OA\Schema(type="integer"),
+ *      ),
+ *      @OA\Parameter(
+ *          name="start",
+ *          in="query",
+ *          description="Paging start index",
+ *          required="true",
+ *          @OA\Schema(type="integer"),
+ *      ),
+ *      @OA\Parameter(
+ *          name="length",
+ *          in="query",
+ *          description="Number of records per page (max 100)",
+ *          required="true",
+ *          @OA\Schema(type="integer"),
+ *      ),
+ *      @OA\Parameter(
+ *          name="search[value]",
+ *          in="query",
+ *          description="Global search value applied to username, first name, last name, and email",
+ *          required="false",
+ *          @OA\Schema(type="string"),
+ *      ),
+ *      @OA\Parameter(
+ *          name="order[0][column]",
+ *          in="query",
+ *          description="Column index to order by",
+ *          required="false",
+ *          @OA\Schema(type="integer"),
+ *      ),
+ *      @OA\Parameter(
+ *          name="order[0][dir]",
+ *          in="query",
+ *          description="Order direction (asc or desc)",
+ *          required="false",
+ *          @OA\Schema(type="string"),
+ *      ),
+ *  )
+ */
