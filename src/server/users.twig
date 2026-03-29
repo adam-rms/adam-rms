@@ -65,10 +65,36 @@
                 return div.innerHTML;
             }
 
+            function parseServerDate(dateStr) {
+                if (!dateStr) return null;
+                if (dateStr instanceof Date) {
+                    return isNaN(dateStr.getTime()) ? null : dateStr;
+                }
+                if (typeof dateStr === 'number' || (/^\d+$/).test(dateStr)) {
+                    var num = Number(dateStr);
+                    if (!isNaN(num)) {
+                        var tsDate = new Date(num);
+                        return isNaN(tsDate.getTime()) ? null : tsDate;
+                    }
+                }
+                var str = String(dateStr);
+                var isoCandidate = str.replace(' ', 'T');
+                var d = new Date(isoCandidate);
+                if (!isNaN(d.getTime())) {
+                    return d;
+                }
+                var m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})$/.exec(str);
+                if (m) {
+                    var manualDate = new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10), parseInt(m[4], 10), parseInt(m[5], 10), parseInt(m[6], 10));
+                    return isNaN(manualDate.getTime()) ? null : manualDate;
+                }
+                return null;
+            }
+
             function formatDate(dateStr) {
                 if (!dateStr) return '';
-                var d = new Date(dateStr);
-                if (isNaN(d.getTime())) return '';
+                var d = parseServerDate(dateStr);
+                if (!d || isNaN(d.getTime())) return '';
                 var day = ('0' + d.getDate()).slice(-2);
                 var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 var month = months[d.getMonth()];
@@ -134,10 +160,15 @@
                             "render": function(data, type, row) {
                                 if (!data || data.length < 1) return '<span class="badge bg-warning">No instances</span>';
                                 var html = '';
-                                var now = new Date();
+                                var now = Date.now();
                                 for (var i = 0; i < data.length; i++) {
                                     var inst = data[i];
-                                    if (inst.userInstances_archived && new Date(inst.userInstances_archived) <= now) {
+                                    var isArchived = false;
+                                    if (inst.userInstances_archived) {
+                                        var archivedDate = parseServerDate(inst.userInstances_archived);
+                                        isArchived = archivedDate ? archivedDate.getTime() <= now : true;
+                                    }
+                                    if (isArchived) {
                                         html += '<span class="badge bg-danger">Archived</span> ';
                                     }
                                     html += escapeHtml(inst.instances_name) + ' (' + escapeHtml(inst.instances_planName) + ') - '
@@ -168,8 +199,8 @@
                             "orderable": false,
                             "searchable": false,
                             "render": function(data) {
-                                var uid = data.users_userid;
-                                var isSelf = (uid === currentUserId);
+                                var uid = String(data.users_userid);
+                                var isSelf = (uid === String(currentUserId));
                                 var html = '<div class="btn-group">';
                                 if (!isSelf) {
                                     if (canEditUser) {

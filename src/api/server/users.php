@@ -63,8 +63,9 @@ $lastAnalyticsByUser = [];
 if (count($userIds) > 0) {
     // Fetch current positions for all users on this page
     $DBLIB->where("users_userid", $userIds, "IN");
-    $DBLIB->where("userPositions_end >= '" . date('Y-m-d H:i:s') . "'");
-    $DBLIB->where("userPositions_start <= '" . date('Y-m-d H:i:s') . "'");
+    $now = date('Y-m-d H:i:s');
+    $DBLIB->where("userPositions_end >= '" . $now . "'");
+    $DBLIB->where("userPositions_start <= '" . $now . "'");
     $DBLIB->orderBy("positions_rank", "ASC");
     $DBLIB->orderBy("positions_displayName", "ASC");
     $DBLIB->join("positions", "positions.positions_id=userPositions.positions_id", "LEFT");
