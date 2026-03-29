@@ -1,0 +1,51 @@
+name: Sync Docs to AI Search
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "website/docs/**"
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Upload docs to R2 and sync AI Search
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install rclone
+        run: |
+          sudo apt-get update && sudo apt-get install -y rclone
+
+      - name: Configure rclone for R2
+        run: |
+          mkdir -p ~/.config/rclone
+          cat > ~/.config/rclone/rclone.conf << EOF
+          [r2]
+          type = s3
+          provider = Cloudflare
+          access_key_id = ${{ secrets.R2_ACCESS_KEY_ID }}
+          secret_access_key = ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          endpoint = https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          acl = private
+          no_check_bucket = true
+          EOF
+
+      - name: Sync docs to R2 bucket
+        run: |
+          rclone sync website/docs/ r2:${{ vars.AI_SEARCH_R2_BUCKET }}/ \
+            --include "*.md" \
+            --include "*.mdx" \
+            --verbose
+
+      - name: Trigger AI Search sync
+        run: |
+          curl -sf -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/ai-search/instances/${{ vars.AI_SEARCH_INSTANCE_ID }}/sync" \
+            -H "Authorization: Bearer ${{ secrets.AI_SEARCH_API_TOKEN }}" \
+            -H "Content-Type: application/json"
