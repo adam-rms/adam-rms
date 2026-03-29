@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   sync:
-    name: Upload docs to R2 and sync AI Search
+    name: Upload docs to R2
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,10 +45,3 @@ jobs:
             --include "*.md" \
             --include "*.mdx" \
             --verbose
-
-      - name: Trigger AI Search sync
-        run: |
-          curl -sf -X POST \
-            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/ai-search/instances/${{ vars.AI_SEARCH_INSTANCE_ID }}/sync" \
-            -H "Authorization: Bearer ${{ secrets.AI_SEARCH_API_TOKEN }}" \
-            -H "Content-Type: application/json"
