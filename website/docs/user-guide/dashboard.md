@@ -58,18 +58,27 @@ The top bar contains the following controls (left to right):
 
 ### Side Menu
 
-The side menu provides access to all major sections of AdamRMS:
+The side menu provides access to all major sections of AdamRMS, organised under headers:
 
 - **Dashboard** -- return to the home page
-- **Projects** -- all non-archived projects are listed individually in the menu, with icons and colours indicating your role and the project status (see [Projects](./projects/projects) for the colour code reference)
-- **Assets** -- browse and search your equipment catalogue
-- **Maintenance** -- manage maintenance jobs
-- **Training** -- training modules and progress
-- **Locations** -- manage venues and storage locations
-- **Clients** -- manage your client directory
-- **Ledger** -- view payment records
-- **CMS** -- content management pages (if visible to your role)
-- **Business Settings** -- administration and configuration (if you have permission)
+- **Business** -- expands to show business-wide tools:
+  - **Stats** -- business statistics and [dashboard widget](./business/business-utilities#statistics--widgets) configuration
+  - **Calendar** -- business-wide calendar view
+  - **Clients** -- manage your [client directory](./business/clients)
+  - **Payments** -- view [payment records](./business/ledger) (the ledger)
+  - **Locations** -- manage [venues and storage locations](./business/locations)
+  - **Manufacturers** -- manage [equipment manufacturers](./assets/manufacturers)
+  - **CMS Pages** -- [content management pages](./cms/cms-pages) (if visible to your role)
+  - **Users & Settings** -- [user management](./business/user-management) and [business configuration](./business/business-settings) (if you have permission)
+- **ASSETS** header:
+  - **Assets** -- browse and [search your equipment](./assets/finding-assets) catalogue
+  - **New Asset** -- [create a new asset type](./assets/new-assets)
+  - **Groups** -- manage [asset groups](./assets/asset-groups)
+  - **Maintenance** -- manage [maintenance jobs](./assets/maintenance)
+  - **Barcode Scanner** -- scan [asset barcodes](./assets/asset-barcodes)
+- **PROJECTS** header:
+  - All non-archived projects are listed individually, with icons and colours indicating your role and the project status (see [Projects](./projects/projects) for the colour code reference)
+  - **Training** -- [training modules](./training/training) and progress
 
 :::caution Please note
 AdamRMS uses a granular permission management system, so the items visible in your side menu depend on the permissions assigned to your role group. You may not see all of the sections listed above.

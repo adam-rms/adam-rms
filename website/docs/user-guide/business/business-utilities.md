@@ -28,7 +28,7 @@ To add a widget to your dashboard:
 Your widget selection is personal -- each user can customise their own dashboard independently.
 
 :::tip
-If your role group has a [Custom Dashboard](../cms/custom-dashboards) assigned, your selected widgets will appear below the custom CMS page content.
+If your role group has a [Custom Dashboard](../cms/custom-dashboards) assigned, the custom CMS page replaces the standard dashboard, so these widgets (and the calendar) will not be shown.
 :::
 
 ## Calendar

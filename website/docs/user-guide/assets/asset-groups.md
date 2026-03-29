@@ -19,7 +19,7 @@ ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP
 
 ## Creating a Group
 
-1. Navigate to the **Asset Groups** page from Business Settings.
+1. In the side menu, under **ASSETS**, click **Groups** to open the Asset Groups page.
 2. Click the **+** button.
 3. Enter a group name and description.
 4. Optionally tick **Visible to only me** to make the group personal (unticked groups are visible to all users in the business).
