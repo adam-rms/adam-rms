@@ -8,7 +8,7 @@ title: Ledger
 The Ledger provides a centralised view of all payment records across your business. It shows every payment that has been received against any project, giving you a single place to review your business's incoming finances.
 
 :::note Permissions Required
-FINANCE:PAYMENTS_LEDGER:VIEW
+FINANCE:PAYMENTS_LEDGER:VIEW  
 :::
 
 ## Viewing the Ledger
@@ -38,8 +38,8 @@ Payments are displayed 20 per page. Use the pagination controls at the bottom of
 If file storage is enabled for your business, each payment can have files attached to it (e.g. remittance advice, bank statements, receipts).
 
 :::note Permissions Required
-PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS
-PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS
+PROJECTS:PROJECT_PAYMENTS:VIEW:FILE_ATTACHMENTS  
+PROJECTS:PROJECT_PAYMENTS:CREATE:FILE_ATTACHMENTS  
 :::
 
 Click the **paperclip** icon next to a payment to view or upload file attachments. The icon shows a count of existing attachments.

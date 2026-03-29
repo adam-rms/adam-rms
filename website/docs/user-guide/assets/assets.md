@@ -82,9 +82,9 @@ Assets are organised into **categories**, which are themselves grouped into **ca
 Categories help you filter and find assets quickly in the [asset search](./finding-assets).
 
 :::note Permissions Required
-ASSETS:CREATE
-ASSETS:ASSET_TYPES:CREATE
-ASSETS:ASSET_TYPES:EDIT
+ASSETS:CREATE  
+ASSETS:ASSET_TYPES:CREATE  
+ASSETS:ASSET_TYPES:EDIT  
 :::
 
 ## What's Next?

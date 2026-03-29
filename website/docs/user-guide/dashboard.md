@@ -26,7 +26,7 @@ The top section of the dashboard displays **widgets** -- small cards showing key
 You can customise which widgets appear on your dashboard from the **Statistics** page in Business Settings. If no widgets have been added, the dashboard will show a prompt to add some.
 
 :::note Permissions Required
-`BUSINESS:BUSINESS_STATS:VIEW` is required to access the Statistics page where you manage which widgets are shown.
+BUSINESS:BUSINESS_STATS:VIEW  
 :::
 
 :::tip

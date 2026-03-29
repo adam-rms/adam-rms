@@ -42,8 +42,8 @@ The widget is responsive, displaying as a table on desktop and as stacked cards 
 *AdamRMS public site settings*
 
 :::note Permissions Required
-BUSINESS:BUSINESS_SETTINGS:VIEW
-BUSINESS:BUSINESS_SETTINGS:EDIT
+BUSINESS:BUSINESS_SETTINGS:VIEW  
+BUSINESS:BUSINESS_SETTINGS:EDIT  
 :::
 
 ## Embedding on Your Website

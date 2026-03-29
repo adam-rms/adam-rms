@@ -8,8 +8,8 @@ title: Manufacturers
 Manufacturers represent the companies that produce your equipment. Every asset type in AdamRMS is linked to a manufacturer, making it easy to browse your catalogue by brand and find manufacturer information.
 
 :::note Permissions Required
-ASSETS:MANUFACTURERS:CREATE
-ASSETS:MANUFACTURERS:EDIT
+ASSETS:MANUFACTURERS:CREATE  
+ASSETS:MANUFACTURERS:EDIT  
 :::
 
 ## Viewing Manufacturers

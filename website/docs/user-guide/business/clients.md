@@ -8,9 +8,9 @@ title: Clients
 The Clients page lets you manage your business's client directory. Clients are the organisations or individuals you hire equipment to, and they can be linked to projects to track financial relationships.
 
 :::note Permissions Required
-CLIENTS:VIEW
-CLIENTS:CREATE
-CLIENTS:EDIT
+CLIENTS:VIEW  
+CLIENTS:CREATE  
+CLIENTS:EDIT  
 :::
 
 ## Viewing Clients

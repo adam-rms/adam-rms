@@ -8,9 +8,9 @@ title: Locations
 Locations in AdamRMS represent venues, warehouses, storage areas, and other physical places relevant to your business. They are used for tracking where equipment is stored and where projects take place.
 
 :::note Permissions Required
-LOCATIONS:VIEW
-LOCATIONS:CREATE
-LOCATIONS:EDIT
+LOCATIONS:VIEW  
+LOCATIONS:CREATE  
+LOCATIONS:EDIT  
 :::
 
 ## Viewing Locations
