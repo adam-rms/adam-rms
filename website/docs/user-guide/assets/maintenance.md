@@ -46,6 +46,13 @@ MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB
 MAINTENANCE_JOBS:EDIT:NAME  
 MAINTENANCE_JOBS:EDIT:STATUS  
 MAINTENANCE_JOBS:MAINTENANCE_JOBS_FILE_ATTACHMENTS:CREATE  
-MAINTENANCE_JOBS:EDIT:ASSET_FLAGS  
-MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS  
+MAINTENANCE_JOBS:EDIT:ASSET_FLAGS
+MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS
 :::
+
+## Related Features
+
+- [Assets](./assets) -- understanding flags and blocks on assets
+- [Asset Barcodes](./asset-barcodes) -- maintenance jobs support barcode-based job tracking
+- [Your Account](../account#notifications) -- configuring maintenance notification preferences
+- [Permissions Reference](../business/permissions-reference) -- full list of maintenance-related permissions

@@ -48,5 +48,10 @@ Each Card has the following properties:
 ![Page edit with cards](/img/tutorial/cms/cms-edit.png)
 *Editing a CMS page*
 
-When saving the page, provide a revision comment to explain the page changes.  
+When saving the page, provide a revision comment to explain the page changes.
 If you need to revert changes, there is a revision history for each page. This lets you fall back to a specific point in the page history based on its timestamp and comment.
+
+## Related Features
+
+- [Custom Dashboards](./custom-dashboards) -- using CMS pages as role-group-specific dashboards
+- [Public Sites](./public-sites) -- embedding public-facing content on external websites

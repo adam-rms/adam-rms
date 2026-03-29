@@ -43,3 +43,16 @@ There are many colour codes denoting different project statuses:
 - Blue means the project is 'Dispatched' or 'Returned'
 - Gray means the project is 'Closed'
 - Red means the project is 'Cancelled' or 'Lead Lost'
+
+:::tip
+Project statuses can be customised by your administrator. See [Business Settings](../business/business-settings#project-statuses) for details on creating custom statuses. For information about the project types that control which features are available, see [Project Types](../business/business-settings#project-types).
+:::
+
+## Related Features
+
+- [Project Overview](./overview) -- project details, comments, sub-projects, and audit log
+- [Project Assets](./assets) -- assigning and dispatching equipment
+- [Project Crew](./crew) -- crew management and recruitment
+- [Project Finance](./finance) -- costs, payments, invoices, and quotes
+- [Clients](../business/clients) -- managing the clients linked to projects
+- [Glossary](../glossary) -- definitions of key terms like project status, project type, and sub-project

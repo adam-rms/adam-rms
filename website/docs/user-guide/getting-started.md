@@ -62,22 +62,26 @@ You can also add your AdamRMS calendar to a variety of services through the expo
 ## What's Next?
 ---
 One of the first things to be aware of is what different Icons mean in AdamRMS. Many icons are explained throughout the
-user guide.  
+user guide. For a full overview of navigation, see [Dashboard & Navigation](./dashboard).
 
-![Top Menu](/img/tutorial/base/start-menu.png "Top Navigation Bar")  
+![Top Menu](/img/tutorial/base/start-menu.png "Top Navigation Bar")
 The top bar of the rms contains the following icons:
 - Show/Hide side menu
 - Logout
 - Find a [Project](projects)
-- Current Business name 
+- Current Business name
   - Click here to change or join a new business
 - Light/Dark mode
 - [Asset Search](assets/finding-assets)
 
-
-We recommend you spend some time exploring the dashboard, and have a look through the rest of this documentation.
+Here are some recommended next steps:
+- **Explore your dashboard** -- see [Dashboard & Navigation](./dashboard) for a full guide
+- **Manage your account** -- update your details, notifications, and calendar export on [Your Account](./account) page
+- **Browse your assets** -- learn about [Assets](./assets/assets) and how to [find them](./assets/finding-assets)
+- **Understand projects** -- see how [Projects](./projects/projects) bring assets, crew, and finance together
+- **Check the glossary** -- unfamiliar with a term? See the [Glossary](./glossary)
 
 :::caution Please note
-AdamRMS uses a granular permission management system, so some features in this documentation may be disabled by your administrator.   
+AdamRMS uses a granular permission management system, so some features in this documentation may be disabled by your administrator. See the [Permissions Reference](./business/permissions-reference) for a complete list.
 Screenshots in this guide will contain only the features the documentation is discussing, so the dashboard may look different in each section.
 :::

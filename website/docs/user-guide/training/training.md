@@ -74,3 +74,8 @@ To certify a user, head to the module’s user page, find the user and certify t
 
 ![Physical training certification](/img/tutorial/training/training-certify.png)
 *Certifying a physical training module*
+
+## Related Features
+
+- [User Management](../business/user-management) -- training module visibility can be restricted to specific role groups
+- [Permissions Reference](../business/permissions-reference) -- full list of training-related permissions

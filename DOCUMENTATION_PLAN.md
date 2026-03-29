@@ -26,10 +26,16 @@ This document outlines a comprehensive plan for dramatically improving the AdamR
 - [x] **Business Utilities** -- UPDATED to cross-link to new standalone Clients, Ledger, and Locations pages, added widget setup instructions
 - [x] **FAQ & Troubleshooting** -- NEW page with 20+ Q&A entries covering account/login, assets, projects, finance, calendar, crew, and administration
 
+### Completed (Batch 3)
+- [x] **Public Sites** -- NEW page covering embeddable crew vacancies widget, setup, and embedding instructions
+- [x] **Asset Groups** -- EXPANDED with use cases, watching, project assignment, filtering
+- [x] **Introduction** -- REWRITTEN with complete site map linking to all 35+ pages
+- [x] **Cross-linking** -- Added Related Features sections to Projects, Finance, Maintenance, CMS Pages, Training pages; improved Getting Started with next-steps guidance
+- [x] **DOCUMENTATION_PLAN.md** -- Moved from docs/ to repo root (no longer renders in sidebar)
+
 ### Still To Do
 - [ ] Screenshot automation setup (Playwright/shot-scraper)
 - [ ] Seed data improvements for realistic screenshots
-- [ ] Additional pages if needed: Public Sites CMS embed page
 
 ---
 
