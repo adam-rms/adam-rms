@@ -1,0 +1,193 @@
+<?php
+require_once __DIR__ . '/../apiHeadSecure.php';
+require_once __DIR__ . '/../../common/libs/bCMS/projectFinance.php';
+
+use Money\Currency;
+use Money\Money;
+use Money\Currencies\ISOCurrencies;
+use Money\Parser\DecimalMoneyParser;
+
+if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_PAYMENTS:CREATE")) die("404");
+
+// Enforce POST-only semantics to avoid state changes via GET
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    finish(false, ["code" => "METHOD-NOT-ALLOWED", "message" => "POST required"]);
+}
+
+// Normalise incoming form data
+if (!isset($_POST['formData']) || !is_array($_POST['formData'])) {
+    finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid form data"]);
+}
+
+// Validate payments_type
+if (isset($_POST['formData']['payments_type'])) {
+    $paymentsType = intval($_POST['formData']['payments_type']);
+    if ($paymentsType < 1 || $paymentsType > 4) {
+        finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid payment type"]);
+    }
+}
+
+$array = [];
+foreach ($_POST['formData'] as $item) {
+    if (!isset($item['name'])) {
+        continue;
+    }
+    $array[$item['name']] = isset($item['value']) ? $item['value'] : null;
+}
+
+if (empty($array['payments_id']) || empty($array['projects_id'])) finish(false, ["code" => "PARAM-ERROR", "message" => "Missing identifiers"]);
+
+// Verify the project exists and belongs to the current instance
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects_deleted", 0);
+$DBLIB->where("projects_id", $array['projects_id']);
+$project = $DBLIB->getone("projects", ["projects_id"]);
+if (!$project) finish(false, ["code" => "NOT-FOUND", "message" => "Project not found"]);
+
+// Fetch existing payment to compute deltas
+$DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("payments.payments_deleted", 0);
+$DBLIB->join("projects", "payments.projects_id=projects.projects_id", "LEFT");
+$DBLIB->where("payments.payments_id", $array['payments_id']);
+$existing = $DBLIB->getone("payments", ["payments.payments_id", "payments.projects_id", "payments.payments_type", "payments.payments_amount", "payments.payments_quantity", "payments.payments_date"]);
+if (!$existing) finish(false, ["code" => "NOT-FOUND", "message" => "Payment not found"]);
+
+// Ensure the supplied projects_id matches the project of the payment
+if ((int) $array['projects_id'] !== (int) $existing['projects_id']) {
+    finish(false, ["code" => "PROJECT-MISMATCH", "message" => "Payment does not belong to the specified project"]);
+}
+
+// Prepare new values
+// Determine payment type, falling back to existing if not supplied
+if (isset($array['payments_type']) && $array['payments_type'] !== '') {
+    $array['payments_type'] = intval($array['payments_type']);
+} else {
+    $array['payments_type'] = (int) $existing['payments_type'];
+}
+
+// Validate and normalise payment date
+if (isset($array['payments_date']) && $array['payments_date'] !== '') {
+    $timestamp = strtotime($array['payments_date']);
+    if ($timestamp === false) {
+        finish(false, ["code" => "PARAM-ERROR", "message" => "Invalid payment date"]);
+    }
+    $array['payments_date'] = date("Y-m-d H:i:s", $timestamp);
+} else {
+    // If this payment type requires a date and there is no existing date, reject the update
+    if ($array['payments_type'] === 1 && empty($existing['payments_date'])) {
+        finish(false, ["code" => "PARAM-ERROR", "message" => "Payment date is required for received payments"]);
+    }
+    // Do not update payments_date if no new value is provided
+    unset($array['payments_date']);
+}
+
+// Normalise payment quantity (default to 1 if missing or blank)
+$array['payments_quantity'] = isset($array['payments_quantity']) && $array['payments_quantity'] !== '' ? $array['payments_quantity'] : 1;
+
+// Parse and normalise payment amount; if not provided, keep existing amount
+if (isset($array['payments_amount']) && $array['payments_amount'] !== '') {
+    $array['payments_amount'] = $moneyParser->parse(
+        $array['payments_amount'],
+        $AUTH->data['instance']['instances_config_currency']
+    )->getAmount();
+} else {
+    // Do not change the amount if no new value is provided
+    $array['payments_amount'] = $existing['payments_amount'];
+}
+
+$projectFinanceCacher = new projectFinanceCacher($existing['projects_id']);
+
+// Remove identifiers from update data - they shouldn't be changed
+unset($array['payments_id']);
+unset($array['projects_id']);
+
+// Apply update
+$DBLIB->where("payments_id", $existing['payments_id']);
+$update = $DBLIB->update("payments", $array, 1);
+if (!$update) finish(false);
+
+// Adjust finance cache using delta
+$oldAmount = new Money($existing['payments_amount'], new Currency($AUTH->data['instance']['instances_config_currency']));
+$oldAmount = $oldAmount->multiply($existing['payments_quantity']);
+$projectFinanceCacher->adjustPayment($existing['payments_type'], $oldAmount, true);
+
+$newAmount = new Money($array['payments_amount'], new Currency($AUTH->data['instance']['instances_config_currency']));
+$newAmount = $newAmount->multiply($array['payments_quantity']);
+$projectFinanceCacher->adjustPayment($array['payments_type'], $newAmount, false);
+
+// Explicitly record if the payment type was changed, as this affects financial reporting
+$paymentTypeChanged = isset($array['payments_type']) && (int)$array['payments_type'] !== (int)$existing['payments_type'];
+$changeNote = null;
+if ($paymentTypeChanged) {
+    $changeNote = 'payments_type changed from ' . $existing['payments_type'] . ' to ' . $array['payments_type'];
+}
+
+$bCMS->auditLog("UPDATE", "payments", $existing['payments_id'], $AUTH->data['users_userid'], $changeNote, $existing['projects_id']);
+if ($projectFinanceCacher->save()) finish(true);
+else finish(false, ["message" => "Finance Cacher Save failed"]);
+
+/** @OA\Post(
+ *     path="/projects/updatePayment.php",
+ *     summary="Update Payment",
+ *     description="Edit an existing project payment. Requires Instance Permission PROJECTS:PROJECT_PAYMENTS:CREATE",
+ *     operationId="updatePayment",
+ *     tags={"projects"},
+ *     @OA\Response(
+ *         response="200",
+ *         description="Success",
+ *         @OA\MediaType(
+ *             mediaType="application/json",
+ *             @OA\Schema(type="object", @OA\Property(property="result", type="boolean"))
+ *         )
+ *     ),
+ *     @OA\Response(response="404", description="Permission Error"),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Form data for updating a project payment, submitted via POST",
+ *         @OA\MediaType(
+ *             mediaType="application/x-www-form-urlencoded",
+ *             @OA\Schema(
+ *                 type="object",
+ *                 @OA\Property(
+ *                     property="formData",
+ *                     type="object",
+ *                     description="Serialized form data for updating a project payment",
+ *                     @OA\Property(
+ *                         property="payments_id",
+ *                         type="integer",
+ *                         description="Identifier of the payment to update"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="projects_id",
+ *                         type="integer",
+ *                         description="Identifier of the project this payment belongs to"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_date",
+ *                         type="string",
+ *                         format="date-time",
+ *                         nullable=true,
+ *                         description="Date and time of the payment"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_quantity",
+ *                         type="integer",
+ *                         description="Quantity associated with the payment (defaults to 1 if empty)"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_amount",
+ *                         type="string",
+ *                         description="Payment amount in the instance currency, as a decimal string"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="payments_type",
+ *                         type="integer",
+ *                         description="Payment type identifier"
+ *                     )
+ *                 )
+ *             )
+ *         )
+ *     )
+ * )
+ */
