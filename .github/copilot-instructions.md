@@ -338,7 +338,7 @@ final class AddFeatureColumn extends AbstractMigration
 
 ## Testing & Quality
 
-- **No automated test suite**: No PHPUnit or test framework is configured
+- **No automated test suite**: No PHPUnit or test framework is currently configured; CI focuses on builds, linting, and doc generation
 - **GitHub Actions**: Docker builds, API docs generation (`generateApiDocs.yaml`), and documentation sync
 - **Reviewdog**: Automated spelling checks (UK English) and inclusive language review on PRs
 - **OpenAPI docs**: Auto-generated from `@OA\` annotations in PHP files via `zircote/swagger-php`
