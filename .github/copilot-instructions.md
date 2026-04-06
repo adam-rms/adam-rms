@@ -15,10 +15,11 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
 
 ### Frontend (CDN-loaded, no build step)
 
-- **jQuery 3.4.1**, **Bootstrap 4.4.1**, **DataTables 1.10.21**
-- **Select2 4.0.13**, **SweetAlert2**, **Bootbox.js 5.3.4**
-- **FullCalendar 5.11.5**, **Moment.js 2.24.0**, **DaterangePicker 3.0.5**
-- All loaded from CDN with SRI integrity hashes in `src/assets/template.twig`
+- **jQuery 3.4.1**, **Bootstrap 4.4.1** — loaded globally in `src/assets/template.twig`
+- **Select2 4.0.13**, **SweetAlert2 8.19.1**, **Bootbox.js 5.3.4** — loaded globally
+- **Moment.js 2.24.0**, **DaterangePicker 3.0.5** — loaded globally
+- **DataTables 1.10.21**, **FullCalendar 5.11.5** — loaded per-page via `htmlIncludes` block
+- All loaded from CDN with SRI integrity hashes
 
 ### Key Dependencies
 
@@ -40,8 +41,7 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
 ### Infrastructure
 
 - **Docker**: Containerized deployment with pre-built images
-- **GitHub Actions**: CI/CD pipelines for Docker builds, API docs generation, and code review
-- **Reviewdog**: Automated spelling and language checks on pull requests
+- **GitHub Actions**: CI/CD pipelines for Docker builds, API docs generation, and documentation sync
 
 ## Architecture
 
@@ -339,8 +339,7 @@ final class AddFeatureColumn extends AbstractMigration
 ## Testing & Quality
 
 - **No automated test suite**: No PHPUnit or test framework is currently configured; CI focuses on builds, linting, and doc generation
-- **GitHub Actions**: Docker builds, API docs generation (`generateApiDocs.yaml`), and documentation sync
-- **Reviewdog**: Automated spelling checks (UK English) and inclusive language review on PRs
+- **GitHub Actions**: Docker builds (`dockerBuild.yml`), API docs generation (`generateApiDocs.yaml`), and documentation sync (`syncDocsToAISearch.yml`)
 - **OpenAPI docs**: Auto-generated from `@OA\` annotations in PHP files via `zircote/swagger-php`
 - **License**: AGPLv3 - all changes must remain open source
 
