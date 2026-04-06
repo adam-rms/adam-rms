@@ -8,10 +8,17 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
 
 ### Backend
 
-- **PHP 8.0+**: Object-oriented patterns with some procedural code
+- **PHP 8.0+** (runtime uses 8.3): Object-oriented patterns with some procedural code
 - **MySQL Database**: Via custom `adam-rms/mysqli-database-class` wrapper
 - **Twig v3.7**: Templating engine for all views
 - **Composer**: Dependency management
+
+### Frontend (CDN-loaded, no build step)
+
+- **jQuery 3.4.1**, **Bootstrap 4.4.1**, **DataTables 1.10.21**
+- **Select2 4.0.13**, **SweetAlert2**, **Bootbox.js 5.3.4**
+- **FullCalendar 5.11.5**, **Moment.js 2.24.0**, **DaterangePicker 3.0.5**
+- All loaded from CDN with SRI integrity hashes in `src/assets/template.twig`
 
 ### Key Dependencies
 
@@ -54,13 +61,29 @@ AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It 
   - `docs/` - Documentation source files (user guide, hosting, contributor guides)
   - `src/` - React components and custom pages
   - `static/` - Static assets (images, redirects, headers)
-  - `docusaurus.config.js` - Docusaurus configuration
+  - `docusaurus.config.ts` - Docusaurus configuration (TypeScript)
 
 ### Request Flow
 
 1. **Web Pages**: `*.php` controller → includes `headSecure.php` → sets `$PAGEDATA` → renders `*.twig` via `$TWIG`
 2. **API Endpoints**: `api/**/*.php` → includes `apiHeadSecure.php` → processes request → calls `finish()` with JSON response
 3. **Public Pages**: Login/signup pages use `head.php` instead of `headSecure.php`
+
+### Twig Template Structure
+
+All pages extend the base template `assets/template.twig`. Two main blocks:
+
+- `htmlIncludes` - Additional CSS/JS for the page
+- `content` - Main page content
+
+```twig
+{% extends "assets/template.twig" %}
+{% block content %}
+    <!-- page content -->
+{% endblock %}
+```
+
+Reusable components use `{% embed %}` with context passing. Sub-templates go in `twigIncludes/` subdirectories.
 
 ## Global Variables
 
@@ -80,7 +103,7 @@ The codebase uses several global variables throughout:
 
 - **Database Columns**: `snake_case` with table prefix (e.g., `projects_id`, `users_userid`, `assetTypes_name`, `instances_deleted`)
 - **PHP Variables**: `camelCase` for local variables, `UPPERCASE` for constants
-- **Classes**: `PascalCase` (e.g., `assetAssignmentSelector`)
+- **Classes**: Inconsistent - some `camelCase` (e.g., `assetAssignmentSelector`, `bCMS`), some `PascalCase` (e.g., `Config`, `AuthFail`). Match surrounding code style.
 - **Functions**: `camelCase`
 
 ### Database Patterns
@@ -107,18 +130,22 @@ $DBLIB->update("tableName", ["column" => $newValue]);
 All API endpoints must use the `finish()` function:
 
 ```php
-// Success response
-finish(true, false, ["data" => $result]);
-
-// Error response
-finish(false, ["code" => "ERROR_CODE", "message" => "Human readable error"]);
+finish(true, false, ["data" => $result]);  // Success
+finish(false, ["code" => "ERROR_CODE", "message" => "Human readable error"]);  // Error
 ```
 
-API responses always include:
+### Input Validation
 
-- `result`: boolean indicating success/failure
-- `error`: array with `code` and `message` (if result is false)
-- `response`: data payload (if result is true)
+- `$bCMS->sanitizeString($var)` — HTML escaping via `htmlspecialchars()` (for display)
+- `$bCMS->sanitizeStringMYSQL($var)` — SQL-safe escaping via `$DBLIB->escape()` (for LIKE clauses)
+- Always check POST parameters exist before use:
+
+```php
+if (!isset($_POST['projects_id'])) finish(false, ["code" => "PARAM-ERROR", "message" => "No data for action"]);
+
+// Whitelist allowed fields for updates
+$array = array_intersect_key($data, array_flip(["users_username", "users_name1", "users_email"]));
+```
 
 ### Authentication & Authorization
 
@@ -178,65 +205,24 @@ Both files export arrays mapping permission keys to metadata including supported
 
 #### Creating New Permissions
 
-**IMPORTANT**: When adding new features that require permission checks, you MUST add the corresponding permissions to the definition files:
+When adding features requiring permission checks, add entries to the definition files.
 
-Permissions are defined in PHP files (not in the database) to avoid merge conflicts during development. This change was introduced in April 2023.
+Permissions are defined in PHP files (not in the database) to avoid merge conflicts.
 
-1. **For Instance Permissions**:
-   Add a new entry to `src/common/libs/Auth/instanceActions.php`:
+**Instance permission** — add to `src/common/libs/Auth/instanceActions.php`:
 
-   ```php
-   $instanceActions = [
-       // ... existing permissions ...
+```php
+'CUSTOM:NEW_FEATURE:VIEW' => [
+    'Category' => 'Custom', 'Table' => 'New Feature', 'Type' => 'View',
+    'Detail' => null, 'Combined Text Description' => 'Custom - New Feature: View',
+    'Dependencies' => null, 'Comment' => null,
+    'Supported Token Types' => ["web-session"], 'Caution' => null,
+],
+```
 
-       'CUSTOM:NEW_FEATURE:VIEW' => [
-           'Category' => 'Custom',
-           'Table' => 'New Feature',
-           'Type' => 'View',
-           'Detail' => null,
-           'Combined Text Description' => 'Custom - New Feature: View',
-           'Dependencies' => null,  // Or array of required permission keys
-           'Comment' => null,
-           'Supported Token Types' => ["web-session"],  // or ["web-session","app-v1"]
-           'Caution' => null,  // Warning text if this is a dangerous permission
-       ],
-   ];
-   ```
+**Server permission** — add to `src/common/libs/Auth/serverActions.php` with the same structure (minus `Combined Text Description` and `Caution`).
 
-2. **For Server Permissions**:
-   Add a new entry to `src/common/libs/Auth/serverActions.php`:
-
-   ```php
-   $serverActions = [
-       // ... existing permissions ...
-
-       'CUSTOM:NEW_FEATURE' => [
-           'Category' => 'Custom',
-           'Table' => 'Table Name',
-           'Type' => 'Action Type',
-           'Detail' => 'Additional details',
-           'Dependencies' => null,  // Or array like ['USERS:VIEW', 'USERS:EDIT']
-           'Comment' => null,
-           'Supported Token Types' => ["web-session"],
-       ],
-   ];
-   ```
-
-3. **Use in Code**:
-   ```php
-   if (!$AUTH->instancePermissionCheck("CUSTOM:NEW_FEATURE:VIEW")) {
-       die($TWIG->render('404.twig', $PAGEDATA));
-   }
-   ```
-
-**Key Fields**:
-
-- **Dependencies**: Array of permission keys that must also be granted
-- **Supported Token Types**: Which authentication methods can use this permission. Unless you are developing for the mobile app, only enable "web-session".
-  - `"web-session"`: Web browser sessions
-  - `"app-v1"`: Mobile app v1
-  - `"app-v2-magic-email"`: Mobile app v2 magic link auth
-- **Caution**: Warning message for dangerous permissions (e.g., "Allows user to delete all data")
+**Key fields**: `Dependencies` = array of required permission keys; `Supported Token Types` = `["web-session"]` for web-only (add `"app-v1"` for mobile app support).
 
 #### Permission Naming Conventions
 
@@ -311,30 +297,60 @@ $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 
 ### Pagination & Sorting
 
-Common patterns for ordering:
+API pagination uses `$DBLIB->paginate()`:
 
 ```php
-$DBLIB->orderBy("created_timestamp", "DESC");
-$DBLIB->orderBy("name", "ASC");
+$DBLIB->pageLimit = 20;
+$page = isset($_POST['page']) ? $bCMS->sanitizeString($_POST['page']) : 1;
+$results = $DBLIB->arraybuilder()->paginate('tableName', $page, ["fields"]);
+finish(true, null, ["data" => $results, "pagination" => ["page" => $page, "total" => $DBLIB->totalPages]]);
 ```
 
 ### File Uploads
 
 Files are stored in AWS S3
 
+### Database Migrations
+
+Use Phinx with the `change()` method for reversible migrations. File naming: `YYYYMMDDHHmmss_description.php`.
+
+```php
+<?php
+declare(strict_types=1);
+use Phinx\Migration\AbstractMigration;
+
+final class AddFeatureColumn extends AbstractMigration
+{
+    public function change(): void
+    {
+        $this->table('tableName')
+            ->addColumn('columnName', 'string', ['limit' => 255, 'null' => true])
+            ->update();
+    }
+}
+```
+
+### Configuration
+
+- **Environment variables**: `DB_HOSTNAME`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`, `DB_PORT`, `DEV_MODE`
+- **Database config**: Runtime config stored in `config` table (`config_key`/`config_value`), loaded via `Config` class in `src/common/libs/Config/Config.php`
+- Config structure defined in `src/common/libs/Config/configStructureArray.php`
+
 ## Testing & Quality
 
-- **GitHub Actions**: Automated workflows for Docker builds and API documentation
-- **Reviewdog**: Automated spelling checks (UK English) and inclusive language review
-- **Devcontainer**: VS Code/GitHub Codespaces configuration for consistent development environment
+- **No automated test suite**: No PHPUnit or test framework is configured
+- **GitHub Actions**: Docker builds, API docs generation (`generateApiDocs.yaml`), and documentation sync
+- **Reviewdog**: Automated spelling checks (UK English) and inclusive language review on PRs
+- **OpenAPI docs**: Auto-generated from `@OA\` annotations in PHP files via `zircote/swagger-php`
 - **License**: AGPLv3 - all changes must remain open source
 
 ## Development Environment
 
 - Use the provided `.devcontainer` for GitHub Codespaces or VS Code
 - Development mode: Set environment variable `DEV_MODE=true`
-- Database migrations: Use Phinx for schema changes
+- Database migrations: Run via `php vendor/bin/phinx migrate` (config in `phinx.php`)
 - Docker: Use provided Dockerfile and docker-compose setup
+- **UK English**: Use UK spelling in user-facing strings (e.g., "organisation" not "organization")
 
 ## Important Constraints
 
