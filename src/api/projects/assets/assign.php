@@ -38,7 +38,7 @@ if (isset($_POST['assetGroups_id'])) {
     if (!$groups or count($groups) != count($groupIds)) finish(false,["message"=>"Group not found"]);
 
     $groupWhere = [];
-    foreach ($groupIds as $groupId) $groupWhere[] = "FIND_IN_SET(" . $groupId . ", assets.assets_assetGroups)";
+    foreach ($groupIds as $groupId) $groupWhere[] = "FIND_IN_SET(" . (int)$groupId . ", assets.assets_assetGroups)";
     $DBLIB->where("(" . implode(" OR ", $groupWhere) . ")");
 } elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
 elseif (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
