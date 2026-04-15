@@ -631,7 +631,7 @@ $(document).ready(function () {
         var assetTypeId = thisButton.data("assettypeid");
         var assignData = {"assetTypes_id":assetTypeId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"};
         {% if searchResults.SEARCH.TERMS.GROUPS|length > 0 %}
-        assignData.assetGroups_id = {{ searchResults.SEARCH.TERMS.GROUPS|json_encode|raw }};
+        assignData.assetGroups_id = {{ searchResults.SEARCH.TERMS.GROUPS|json_encode }};
         {% endif %}
         ajaxcall("projects/assets/assign.php", assignData, function (data) {
             var failedIds = (data.response && data.response.failed ? data.response.failed : []).map(function(f) { return f.assets_id; });

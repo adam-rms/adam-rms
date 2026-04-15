@@ -27,6 +27,7 @@ if (isset($_POST['assetGroups_id'])) {
     $groupIds = array_filter($groupIds, function ($groupId) {
         return $groupId > 0;
     });
+    $groupIds = array_values($groupIds);
     if (count($groupIds) < 1) finish(false,["message"=>"Group not found"]);
 
     $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");

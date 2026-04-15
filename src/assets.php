@@ -28,7 +28,9 @@ $SEARCH = [
         "CATEGORY" => is_array($_GET['category']) ? $_GET['category'] : [],
         "KEYWORDS" => is_array($_GET['keyword']) ? $_GET['keyword'] : [],
         "MANUFACTURER" => is_array($_GET['manufacturer']) ? $_GET['manufacturer'] : [],
-        "GROUPS" => is_array($_GET['group']) ? $_GET['group'] : [],
+        "GROUPS" => array_values(array_filter(array_map('intval', (is_array($_GET['group']) ? $_GET['group'] : [])), function ($groupId) {
+            return $groupId > 0;
+        })),
         "DATE-START" => $dateStart,
         "DATE-END" => $dateEnd,
         "SORT" => $_GET['sort'] ?: "alphabet-a",
