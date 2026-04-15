@@ -38,12 +38,8 @@ if (isset($_POST['assetGroups_id'])) {
     if (!$groups or count($groups) != count($groupIds)) finish(false,["message"=>"Group not found"]);
 
     $groupWhere = [];
-    $groupWhereValues = [];
-    foreach ($groupIds as $groupId) {
-        $groupWhere[] = "FIND_IN_SET(?, assets.assets_assetGroups)";
-        $groupWhereValues[] = $groupId;
-    }
-    $DBLIB->where("(" . implode(" OR ", $groupWhere) . ")", $groupWhereValues);
+    foreach ($groupIds as $groupId) $groupWhere[] = "FIND_IN_SET(" . $groupId . ", assets.assets_assetGroups)";
+    $DBLIB->where("(" . implode(" OR ", $groupWhere) . ")");
 } elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
 elseif (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
 elseif ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS")) {
