@@ -21,14 +21,24 @@ $priceMaths = $projectFinanceHelper->durationMaths($project['projects_id']);
 $assetRequiredFields = ["assetTypes_name","assets_tag","assets_id","assets_dayRate","assets_weekRate","assetTypes_dayRate","assetTypes_weekRate","assetTypes_mass","assetTypes_value","assets_value","assets_mass","assets_assetGroups"];
 
 if (isset($_POST['assetGroups_id'])) {
+    $groupIds = $_POST['assetGroups_id'];
+    if (!is_array($groupIds)) $groupIds = [$groupIds];
+    $groupIds = array_values(array_unique(array_map('intval', $groupIds)));
+    $groupIds = array_filter($groupIds, function ($groupId) {
+        return $groupId > 0;
+    });
+    if (count($groupIds) < 1) finish(false,["message"=>"Group not found"]);
+
     $DBLIB->where("(users_userid IS NULL OR users_userid = '" . $AUTH->data['users_userid'] . "')");
     $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
-    $DBLIB->where("assetGroups_id", $_POST['assetGroups_id']);
+    $DBLIB->where("assetGroups_id", $groupIds, "IN");
     $DBLIB->where("assetGroups_deleted",0);
-    $group = $DBLIB->getOne("assetGroups",["assetGroups_id"]);
-    if (!$group) finish(false,["message"=>"Group not found"]);
+    $groups = $DBLIB->get("assetGroups", null,["assetGroups_id"]);
+    if (!$groups or count($groups) != count($groupIds)) finish(false,["message"=>"Group not found"]);
 
-    $DBLIB->where("FIND_IN_SET(" . $group['assetGroups_id'] . ", assets.assets_assetGroups)");
+    $groupWhere = [];
+    foreach ($groupIds as $groupId) $groupWhere[] = "FIND_IN_SET(" . $groupId . ", assets.assets_assetGroups)";
+    $DBLIB->where("(" . implode(" OR ", $groupWhere) . ")");
 } elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
 elseif (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
 elseif ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS")) {
