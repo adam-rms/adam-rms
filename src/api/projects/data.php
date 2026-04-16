@@ -87,6 +87,7 @@ function projectFinancials($project) {
     $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
     $DBLIB->join("assetsAssignmentsStatus", "assetsAssignments.assetsAssignmentsStatus_id=assetsAssignmentsStatus.assetsAssignmentsStatus_id", "LEFT");
     $DBLIB->orderBy("assetCategories.assetCategories_rank", "ASC");
+    $DBLIB->orderBy("assetCategories.assetCategories_id", "ASC");
     $DBLIB->orderBy("assetTypes.assetTypes_id", "ASC");
     $DBLIB->orderBy("assets.assets_tag", "ASC");
     $DBLIB->where("assets.assets_deleted", 0);
