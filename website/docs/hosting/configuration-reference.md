@@ -251,6 +251,18 @@ These settings configure an optional AWS CloudFront distribution for serving fil
 | AWS CloudFront Key Pair ID | -- |
 | AWS S3 CDN Endpoint | `CONFIG_AWS_CLOUDFRONT_ENDPOINT` |
 
+### Cloudflare Image Transformation
+
+This optional setting enables [Cloudflare Image Transformations](https://developers.cloudflare.com/images/transform-images/) for image files. When configured, image URLs are routed through Cloudflare's image transformation pipeline for automatic optimisation and caching. Non-image files are not affected.
+
+| Setting | Key | Type | Default | Required | Description |
+|---------|-----|------|---------|----------|-------------|
+| Cloudflare Image Transformation Domain | `CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` | Text | -- | No | The domain for Cloudflare Image Transformations (e.g. `https://cdn.yourdomain.com`). When set, image files (jpg, jpeg, png, gif, webp, avif, svg, bmp, tiff, tif, ico) are served via Cloudflare's image transformation pipeline. |
+
+| Setting | Env Fallback |
+|---------|--------------|
+| Cloudflare Image Transformation Domain | `CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` |
+
 :::tip
 If you are using an S3-compatible provider other than AWS (such as MinIO, DigitalOcean Spaces, or Backblaze B2), you may need to enable **path-style requests** and adjust the endpoint URLs accordingly.
 :::
@@ -318,3 +330,4 @@ Many configuration values can be set via environment variables as a fallback whe
 | `AWS_S3_ENDPOINT_PATHSTYLE` | `CONFIG_AWS_S3_ENDPOINT_PATHSTYLE` |
 | `AWS_S3_REGION` | `CONFIG_AWS_S3_REGION` |
 | `AWS_CLOUDFRONT_ENDPOINT` | `CONFIG_AWS_CLOUDFRONT_ENDPOINT` |
+| `CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` | `CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` |

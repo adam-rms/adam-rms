@@ -870,6 +870,57 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "CONFIG_AWS_CLOUDFRONT_ENDPOINT",
   ],
+
+  "CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Cloudflare Image Transformation Domain",
+      "group" => "File Storage",
+      "description" => "The domain for Cloudflare Image Transformations, used to optimise image delivery. When set, image file URLs will be routed through Cloudflare. For example: https://cdn.yourdomain.com",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        if ($value === null) {
+          return ["valid" => true, "value" => null, "error" => ''];
+        }
+
+        $value = trim($value);
+
+        if ($value === '') {
+          return ["valid" => true, "value" => '', "error" => ''];
+        }
+
+        if (!filter_var($value, FILTER_VALIDATE_URL)) {
+          return ["valid" => false, "value" => $value, "error" => 'Please enter a valid URL including http:// or https://'];
+        }
+
+        $parsedUrl = parse_url($value);
+
+        if (
+          $parsedUrl === false ||
+          !isset($parsedUrl['scheme']) ||
+          !isset($parsedUrl['host']) ||
+          isset($parsedUrl['query']) ||
+          isset($parsedUrl['fragment']) ||
+          isset($parsedUrl['user']) ||
+          isset($parsedUrl['pass']) ||
+          (isset($parsedUrl['path']) && $parsedUrl['path'] !== '/')
+        ) {
+          return ["valid" => false, "value" => $value, "error" => 'Please enter only the domain URL, for example https://cdn.yourdomain.com'];
+        }
+        return ["valid" => true, "value" => rtrim($value, '/'), "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN",
+  ],
+
   "NEW_INSTANCE_ENABLED" => [
     "form" => [
       "type" => "select",

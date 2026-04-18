@@ -5615,6 +5615,18 @@ paths:
           required: 'false'
           schema:
             type: boolean
+        -
+          name: s
+          in: query
+          description: 'Image size hint for Cloudflare Image Transformation. Only applied when Cloudflare Image Transformation is configured and the file is an image.'
+          required: false
+          schema:
+            type: string
+            enum:
+              - tiny
+              - small
+              - medium
+              - large
       responses:
         '200':
           description: Success

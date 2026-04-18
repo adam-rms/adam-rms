@@ -142,7 +142,7 @@ class bCMS
       "url" => $url
     ];
   }
-  function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false)
+  function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false, $size = null)
   {
     global $DBLIB, $CONFIG, $AUTH, $CONFIGCLASS;
     /*
@@ -182,6 +182,13 @@ class bCMS
     elseif ($secure and $requireInstance and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
 
     //Generate the url
+    // Determine if this image will be routed through Cloudflare Image Transformation.
+    // If so, omit the response-content-disposition parameter as it causes 403 errors
+    // when Cloudflare fetches the origin URL.
+    // Bypass Cloudflare when a download is forced so the response-content-disposition
+    // attachment header is preserved and the documented `d` parameter keeps working.
+    $useCloudflareTransform = (!$forceDownload && $this->isCloudflareImageTransformable($file['s3files_extension']));
+
     if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED') === 'Enabled') {
       // Create a CloudFront Client to sign the string
       $CloudFrontClient = new Aws\CloudFront\CloudFrontClient([
@@ -190,17 +197,20 @@ class bCMS
         'region' => 'us-east-2'
       ]);
 
-      $ResponseContentDisposition = "?response-content-disposition=" . rawurlencode(
-        ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'])
-      );
+      $cloudFrontUrl = $CONFIGCLASS->get("AWS_CLOUDFRONT_ENDPOINT") . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'];
+      if (!$useCloudflareTransform) {
+        $cloudFrontUrl .= "?response-content-disposition=" . rawurlencode(
+          ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'])
+        );
+      }
 
       $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
-        'url' => $CONFIGCLASS->get("AWS_CLOUDFRONT_ENDPOINT") . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
+        'url' => $cloudFrontUrl,
         'expires' => strtotime($file['expiry']),
         'private_key' => str_replace(["BEGIN\nRSA\nPRIVATE\nKEY", "END\nRSA\nPRIVATE\nKEY"], ["BEGIN RSA PRIVATE KEY", "END RSA PRIVATE KEY"], str_replace(" ", "\n", $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'))),
         'key_pair_id' => $CONFIGCLASS->get('AWS_CLOUDFRONT_KEYPAIRID')
       ]);
-      return $signedUrlCannedPolicy;
+      return $this->applyCloudflareImageTransform($signedUrlCannedPolicy, $file['s3files_extension'], $size);
     } else {
       //Download direct from S3
       $s3Client = new Aws\S3\S3Client([
@@ -218,13 +228,59 @@ class bCMS
         'Bucket' => $CONFIGCLASS->get('AWS_S3_BUCKET'),
         'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
       ];
-      $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
+      if (!$useCloudflareTransform) {
+        $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
+      }
 
       $cmd = $s3Client->getCommand('GetObject', $parameters);
       $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
       $presignedUrl = (string)$request->getUri();
-      return $presignedUrl;
+      return $this->applyCloudflareImageTransform($presignedUrl, $file['s3files_extension'], $size);
     }
+  }
+
+  /**
+   * Check if a file extension is an image type that can be processed by Cloudflare
+   * Image Transformation, and if the transformation is configured.
+   *
+   * @param string $extension The file extension
+   * @return bool Whether Cloudflare Image Transformation should be applied
+   */
+  private function isCloudflareImageTransformable($extension)
+  {
+    global $CONFIGCLASS;
+    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
+    return $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN') && in_array(strtolower($extension), $imageExtensions);
+  }
+
+  /**
+   * Apply Cloudflare Image Transformation to image URLs if configured.
+   * The resulting URL format is: {DOMAIN}/cdn-cgi/image/onerror=redirect{SIZE_OPTIONS}/{ORIGINAL_URL}
+   * The source URL is NOT encoded — Cloudflare expects a plain absolute URL.
+   *
+   * @param string $url The original file URL (S3 or CloudFront signed URL)
+   * @param string $extension The file extension
+   * @param string|null $size Optional named size (tiny, small, medium, large) for Cloudflare resizing
+   * @return string The original URL, or a Cloudflare-wrapped URL for image files
+   */
+  private function applyCloudflareImageTransform($url, $extension, $size = null)
+  {
+    global $CONFIGCLASS;
+    if ($this->isCloudflareImageTransformable($extension)) {
+      $cfDomain = rtrim($CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN'), '/');
+      $sizeOptions = '';
+      $sizeMap = [
+        'tiny' => ',width=50,fit=scale-down',
+        'small' => ',width=100,fit=scale-down',
+        'medium' => ',width=500,fit=scale-down',
+        'large' => ',width=1000,fit=scale-down',
+      ];
+      if ($size !== null && isset($sizeMap[strtolower($size)])) {
+        $sizeOptions = $sizeMap[strtolower($size)];
+      }
+      return $cfDomain . '/cdn-cgi/image/onerror=redirect' . $sizeOptions . '/' . $url;
+    }
+    return $url;
   }
   function aTag($id)
   {

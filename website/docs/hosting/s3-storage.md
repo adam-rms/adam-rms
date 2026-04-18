@@ -62,6 +62,35 @@ The AWS CloudFront key pair ID.
 
 The AWS S3 CDN endpoint. This is the URL that users will access the files from: it may be cloudfront, or it may be s3/an alternative.
 
+### Cloudflare Image Transformation Domain
+
+An optional domain for [Cloudflare Image Transformations](https://developers.cloudflare.com/images/transform-images/). When set, image file URLs (jpg, jpeg, png, gif, webp, avif, svg, bmp, tiff, tif, ico) will be routed through Cloudflare's image transformation pipeline, which can optimise and cache images automatically.
+
+The value should be just the domain, e.g. `https://cdn.yourdomain.com` (without a trailing slash). The application automatically appends the `/cdn-cgi/image/onerror=redirect` path. The resulting image URL will be:
+
+```
+https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect/<ORIGINAL_URL>
+```
+
+Where `<ORIGINAL_URL>` is the S3 pre-signed URL or CloudFront signed URL (depending on your configuration), appended as a plain absolute URL (not URL-encoded) as required by [Cloudflare's URL format](https://developers.cloudflare.com/images/transform-images/transform-via-url/).
+
+When a size hint is provided by the application (e.g. `tiny`, `small`, `medium`, or `large`), Cloudflare resizing options are appended to the URL automatically:
+
+| Size | Cloudflare options |
+|------|-------------------|
+| `tiny` | `width=50,fit=scale-down` |
+| `small` | `width=100,fit=scale-down` |
+| `medium` | `width=500,fit=scale-down` |
+| `large` | `width=1000,fit=scale-down` |
+
+For example, a `small` image would produce:
+
+```
+https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect,width=100,fit=scale-down/<ORIGINAL_URL>
+```
+
+Non-image files are not affected and will continue to be served directly from S3 or CloudFront.
+
 ## Setting up a bucket
 
 ### BackBlaze B2
