@@ -248,12 +248,12 @@ class bCMS
   {
     global $CONFIGCLASS;
     $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
-    return $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL') && in_array(strtolower($extension), $imageExtensions);
+    return $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN') && in_array(strtolower($extension), $imageExtensions);
   }
 
   /**
    * Apply Cloudflare Image Transformation to image URLs if configured.
-   * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}{SIZE_OPTIONS}/{ORIGINAL_URL}
+   * The resulting URL format is: {DOMAIN}/cdn-cgi/image/onerror=redirect{SIZE_OPTIONS}/{ORIGINAL_URL}
    * The source URL is NOT encoded — Cloudflare expects a plain absolute URL.
    *
    * @param string $url The original file URL (S3 or CloudFront signed URL)
@@ -265,7 +265,7 @@ class bCMS
   {
     global $CONFIGCLASS;
     if ($this->isCloudflareImageTransformable($extension)) {
-      $cfBaseUrl = rtrim($CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL'), '/');
+      $cfDomain = rtrim($CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN'), '/');
       $sizeOptions = '';
       $sizeMap = [
         'tiny' => ',width=50,fit=scale-down',
@@ -276,7 +276,7 @@ class bCMS
       if ($size !== null && isset($sizeMap[strtolower($size)])) {
         $sizeOptions = $sizeMap[strtolower($size)];
       }
-      return $cfBaseUrl . $sizeOptions . '/' . $url;
+      return $cfDomain . '/cdn-cgi/image/onerror=redirect' . $sizeOptions . '/' . $url;
     }
     return $url;
   }

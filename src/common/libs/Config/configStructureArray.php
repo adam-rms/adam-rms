@@ -871,15 +871,15 @@ $configStructureArray = [
     "envFallback" => "CONFIG_AWS_CLOUDFRONT_ENDPOINT",
   ],
 
-  "CLOUDFLARE_IMAGE_TRANSFORM_URL" => [
+  "CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN" => [
     "form" => [
       "type" => "text",
       "default" => function () {
         return null;
       },
-      "name" => "Cloudflare Image Transformation URL",
+      "name" => "Cloudflare Image Transformation Domain",
       "group" => "File Storage",
-      "description" => "The base URL for Cloudflare Image Transformations, used to optimise image delivery. When set, image file URLs will be prefixed with this URL. For example: https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect",
+      "description" => "The domain for Cloudflare Image Transformations, used to optimise image delivery. When set, image file URLs will be routed through Cloudflare. For example: https://cdn.yourdomain.com",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -890,7 +890,7 @@ $configStructureArray = [
     ],
     "specialRequest" => true,
     "default" => false,
-    "envFallback" => "CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_URL",
+    "envFallback" => "CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN",
   ],
 
   "NEW_INSTANCE_ENABLED" => [
