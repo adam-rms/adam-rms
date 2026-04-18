@@ -77,7 +77,7 @@ $configStructureArray = [
       "required" => false,
       "maxlength" => 255,
       "minlength" => 4,
-      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP"],
+      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP", "Cloudflare"],
       "verifyMatch" => function ($value, $options) {
         return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
       }
@@ -117,7 +117,7 @@ $configStructureArray = [
       },
       "name" => "Email Service API key",
       "group" => "Email",
-      "description" => "If Sengrid, Mailgun or Postmark is selected above, the API key to use to send emails",
+      "description" => "If Sendgrid, Mailgun, Postmark or Cloudflare is selected above, the API key/token to use to send emails",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -150,6 +150,27 @@ $configStructureArray = [
     "specialRequest" => true,
     "default" => false,
     "envFallback" => false,
+  ],
+  "EMAILS_PROVIDERS_CLOUDFLARE_ACCOUNT_ID" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "";
+      },
+      "name" => "Cloudflare Account ID",
+      "group" => "Email",
+      "description" => "If Cloudflare is selected above, the Cloudflare Account ID to use for sending emails",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_EMAILS_CLOUDFLARE_ACCOUNT_ID",
   ],
   "EMAILS_SMTP_SERVER" => [
     "form" => [
