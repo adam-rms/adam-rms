@@ -242,7 +242,8 @@ class bCMS
     $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
     $cfBaseUrl = $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL');
     if ($cfBaseUrl && in_array(strtolower($extension), $imageExtensions)) {
-      return $cfBaseUrl . '/' . urlencode($url);
+      $cfBaseUrl = rtrim($cfBaseUrl, '/');
+      return $cfBaseUrl . '/' . rawurlencode($url);
     }
     return $url;
   }
