@@ -25,7 +25,7 @@ class CloudflareEmailHandler extends EmailHandler
     $accountId = $CONFIGCLASS->get('EMAILS_PROVIDERS_CLOUDFLARE_ACCOUNT_ID');
     $apiToken = $CONFIGCLASS->get('EMAILS_PROVIDERS_APIKEY');
 
-    $url = "https://api.cloudflare.com/client/v4/accounts/" . urlencode($accountId) . "/email/sending/send";
+    $url = "https://api.cloudflare.com/client/v4/accounts/" . rawurlencode($accountId) . "/email/sending/send";
 
     $payload = json_encode([
       "to" => $user["userData"]["users_email"],
