@@ -62,6 +62,18 @@ The AWS CloudFront key pair ID.
 
 The AWS S3 CDN endpoint. This is the URL that users will access the files from: it may be cloudfront, or it may be s3/an alternative.
 
+### Cloudflare Image Transformation URL
+
+An optional base URL for [Cloudflare Image Transformations](https://developers.cloudflare.com/images/transform-images/). When set, image file URLs (jpg, jpeg, png, gif, webp, avif, svg, bmp, tiff, tif, ico) will be routed through Cloudflare's image transformation pipeline, which can optimise and cache images automatically.
+
+The URL should be in the format `https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect` (without a trailing slash). The resulting image URL will be:
+
+```
+https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect/<ENCODED_S3_URL>
+```
+
+Non-image files are not affected and will continue to be served directly from S3 or CloudFront.
+
 ## Setting up a bucket
 
 ### BackBlaze B2

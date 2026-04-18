@@ -200,7 +200,7 @@ class bCMS
         'private_key' => str_replace(["BEGIN\nRSA\nPRIVATE\nKEY", "END\nRSA\nPRIVATE\nKEY"], ["BEGIN RSA PRIVATE KEY", "END RSA PRIVATE KEY"], str_replace(" ", "\n", $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'))),
         'key_pair_id' => $CONFIGCLASS->get('AWS_CLOUDFRONT_KEYPAIRID')
       ]);
-      return $signedUrlCannedPolicy;
+      return $this->applyCloudflareImageTransform($signedUrlCannedPolicy, $file['s3files_extension']);
     } else {
       //Download direct from S3
       $s3Client = new Aws\S3\S3Client([
@@ -223,8 +223,24 @@ class bCMS
       $cmd = $s3Client->getCommand('GetObject', $parameters);
       $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
       $presignedUrl = (string)$request->getUri();
-      return $presignedUrl;
+      return $this->applyCloudflareImageTransform($presignedUrl, $file['s3files_extension']);
     }
+  }
+
+  /**
+   * Apply Cloudflare Image Transformation to image URLs if configured.
+   * Only applies to image file types (jpg, jpeg, png, gif, webp, avif, svg, bmp, tiff, tif, ico).
+   * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}/{ENCODED_ORIGINAL_URL}
+   */
+  private function applyCloudflareImageTransform($url, $extension)
+  {
+    global $CONFIGCLASS;
+    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
+    $cfBaseUrl = $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL');
+    if ($cfBaseUrl && in_array(strtolower($extension), $imageExtensions)) {
+      return $cfBaseUrl . '/' . urlencode($url);
+    }
+    return $url;
   }
   function aTag($id)
   {
