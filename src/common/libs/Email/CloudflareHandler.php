@@ -29,10 +29,7 @@ class CloudflareEmailHandler extends EmailHandler
 
     $payload = json_encode([
       "to" => $user["userData"]["users_email"],
-      "from" => [
-        "email" => $CONFIGCLASS->get('EMAILS_FROMEMAIL'),
-        "name" => $CONFIG['PROJECT_NAME'],
-      ],
+      "from" => $CONFIG['PROJECT_NAME'] . " <" . $CONFIGCLASS->get('EMAILS_FROMEMAIL') . ">",
       "subject" => $bCMS->cleanString($subject),
       "html" => $body,
     ]);
