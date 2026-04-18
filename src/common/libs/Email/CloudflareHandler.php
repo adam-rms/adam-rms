@@ -59,6 +59,18 @@ class CloudflareEmailHandler extends EmailHandler
 
     $response = json_decode($responseBody, true);
 
+    if (json_last_error() !== JSON_ERROR_NONE) {
+      $trimmedResponseBody = trim($responseBody);
+      if (strlen($trimmedResponseBody) > 500) {
+        $trimmedResponseBody = substr($trimmedResponseBody, 0, 500) . "...";
+      }
+
+      trigger_error(
+        "Cloudflare Email API returned invalid JSON (HTTP $httpCode): " . json_last_error_msg() . ($trimmedResponseBody !== "" ? " - Response body: " . $trimmedResponseBody : ""),
+        E_USER_WARNING
+      );
+      return false;
+    }
     if ($httpCode >= 200 && $httpCode < 300 && isset($response['success']) && $response['success'] === true) {
       return parent::logEmail($user, $subject, $body);
     }
