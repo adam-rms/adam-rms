@@ -185,7 +185,9 @@ class bCMS
     // Determine if this image will be routed through Cloudflare Image Transformation.
     // If so, omit the response-content-disposition parameter as it causes 403 errors
     // when Cloudflare fetches the origin URL.
-    $useCloudflareTransform = $this->isCloudflareImageTransformable($file['s3files_extension']);
+    // Bypass Cloudflare when a download is forced so the response-content-disposition
+    // attachment header is preserved and the documented `d` parameter keeps working.
+    $useCloudflareTransform = (!$forceDownload && $this->isCloudflareImageTransformable($file['s3files_extension']));
 
     if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED') === 'Enabled') {
       // Create a CloudFront Client to sign the string
