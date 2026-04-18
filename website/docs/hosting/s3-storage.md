@@ -74,18 +74,19 @@ https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect/<ORIGINAL_URL>
 
 Where `<ORIGINAL_URL>` is the S3 pre-signed URL or CloudFront signed URL (depending on your configuration), appended as a plain absolute URL (not URL-encoded) as required by [Cloudflare's URL format](https://developers.cloudflare.com/images/transform-images/transform-via-url/).
 
-When a size hint is provided by the application (e.g. `tiny`, `small`, or `medium`), Cloudflare resizing options are appended to the URL automatically:
+When a size hint is provided by the application (e.g. `tiny`, `small`, `medium`, or `large`), Cloudflare resizing options are appended to the URL automatically:
 
 | Size | Cloudflare options |
 |------|-------------------|
 | `tiny` | `width=50,fit=scale-down` |
-| `small` | `width=200,fit=scale-down` |
-| `medium` | `width=600,fit=scale-down` |
+| `small` | `width=100,fit=scale-down` |
+| `medium` | `width=500,fit=scale-down` |
+| `large` | `width=1000,fit=scale-down` |
 
 For example, a `small` image would produce:
 
 ```
-https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect,width=200,fit=scale-down/<ORIGINAL_URL>
+https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect,width=100,fit=scale-down/<ORIGINAL_URL>
 ```
 
 Non-image files are not affected and will continue to be served directly from S3 or CloudFront.

@@ -255,15 +255,16 @@ class bCMS
    * Map a named size to Cloudflare Image Transformation width options.
    * These are appended to the options portion of the Cloudflare URL.
    *
-   * @param string|null $size The named size (tiny, small, medium) or null for no resizing
+   * @param string|null $size The named size (tiny, small, medium, large) or null for no resizing
    * @return string Comma-prefixed Cloudflare options string, or empty string
    */
   private function getCloudflareImageSizeOptions($size)
   {
     $sizeMap = [
       'tiny' => ',width=50,fit=scale-down',
-      'small' => ',width=200,fit=scale-down',
-      'medium' => ',width=600,fit=scale-down',
+      'small' => ',width=100,fit=scale-down',
+      'medium' => ',width=500,fit=scale-down',
+      'large' => ',width=1000,fit=scale-down',
     ];
     if ($size !== null && isset($sizeMap[strtolower($size)])) {
       return $sizeMap[strtolower($size)];
@@ -278,7 +279,7 @@ class bCMS
    *
    * @param string $url The original file URL (S3 or CloudFront signed URL)
    * @param string $extension The file extension
-   * @param string|null $size Optional named size (tiny, small, medium) for Cloudflare resizing
+   * @param string|null $size Optional named size (tiny, small, medium, large) for Cloudflare resizing
    * @return string The original URL, or a Cloudflare-wrapped URL for image files
    */
   private function applyCloudflareImageTransform($url, $extension, $size = null)
