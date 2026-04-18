@@ -37,6 +37,11 @@ class CloudflareEmailHandler extends EmailHandler
       "html" => $body,
     ]);
 
+    if ($payload === false) {
+      trigger_error("Cloudflare Email: Failed to encode email payload as JSON: " . json_last_error_msg(), E_USER_WARNING);
+      return false;
+    }
+
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
