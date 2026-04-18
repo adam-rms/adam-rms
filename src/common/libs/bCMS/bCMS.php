@@ -253,7 +253,8 @@ class bCMS
 
   /**
    * Apply Cloudflare Image Transformation to image URLs if configured.
-   * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}/{ENCODED_ORIGINAL_URL}
+   * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}/{ORIGINAL_URL}
+   * The source URL is NOT encoded — Cloudflare expects a plain absolute URL.
    *
    * @param string $url The original file URL (S3 or CloudFront signed URL)
    * @param string $extension The file extension
@@ -264,7 +265,7 @@ class bCMS
     global $CONFIGCLASS;
     if ($this->isCloudflareImageTransformable($extension)) {
       $cfBaseUrl = rtrim($CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL'), '/');
-      return $cfBaseUrl . '/' . rawurlencode($url);
+      return $cfBaseUrl . '/' . $url;
     }
     return $url;
   }
