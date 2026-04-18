@@ -185,8 +185,7 @@ class bCMS
     // Determine if this image will be routed through Cloudflare Image Transformation.
     // If so, omit the response-content-disposition parameter as it causes 403 errors
     // when Cloudflare fetches the origin URL.
-    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
-    $willApplyCloudflareTransform = $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL') && in_array(strtolower($file['s3files_extension']), $imageExtensions);
+    $useCloudflareTransform = $this->isCloudflareImageTransformable($file['s3files_extension']);
 
     if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED') === 'Enabled') {
       // Create a CloudFront Client to sign the string
@@ -197,7 +196,7 @@ class bCMS
       ]);
 
       $cloudFrontUrl = $CONFIGCLASS->get("AWS_CLOUDFRONT_ENDPOINT") . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'];
-      if (!$willApplyCloudflareTransform) {
+      if (!$useCloudflareTransform) {
         $cloudFrontUrl .= "?response-content-disposition=" . rawurlencode(
           ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'])
         );
@@ -227,7 +226,7 @@ class bCMS
         'Bucket' => $CONFIGCLASS->get('AWS_S3_BUCKET'),
         'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
       ];
-      if (!$willApplyCloudflareTransform) {
+      if (!$useCloudflareTransform) {
         $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
       }
 
@@ -239,8 +238,21 @@ class bCMS
   }
 
   /**
+   * Check if a file extension is an image type that can be processed by Cloudflare
+   * Image Transformation, and if the transformation is configured.
+   *
+   * @param string $extension The file extension
+   * @return bool Whether Cloudflare Image Transformation should be applied
+   */
+  private function isCloudflareImageTransformable($extension)
+  {
+    global $CONFIGCLASS;
+    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
+    return $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL') && in_array(strtolower($extension), $imageExtensions);
+  }
+
+  /**
    * Apply Cloudflare Image Transformation to image URLs if configured.
-   * Only applies to image file types (jpg, jpeg, png, gif, webp, avif, svg, bmp, tiff, tif, ico).
    * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}/{ENCODED_ORIGINAL_URL}
    *
    * @param string $url The original file URL (S3 or CloudFront signed URL)
@@ -250,10 +262,8 @@ class bCMS
   private function applyCloudflareImageTransform($url, $extension)
   {
     global $CONFIGCLASS;
-    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
-    $cfBaseUrl = $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL');
-    if ($cfBaseUrl && in_array(strtolower($extension), $imageExtensions)) {
-      $cfBaseUrl = rtrim($cfBaseUrl, '/');
+    if ($this->isCloudflareImageTransformable($extension)) {
+      $cfBaseUrl = rtrim($CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL'), '/');
       return $cfBaseUrl . '/' . rawurlencode($url);
     }
     return $url;
