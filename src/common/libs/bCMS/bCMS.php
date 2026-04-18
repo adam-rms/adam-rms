@@ -231,6 +231,10 @@ class bCMS
    * Apply Cloudflare Image Transformation to image URLs if configured.
    * Only applies to image file types (jpg, jpeg, png, gif, webp, avif, svg, bmp, tiff, tif, ico).
    * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}/{ENCODED_ORIGINAL_URL}
+   *
+   * @param string $url The original file URL (S3 or CloudFront signed URL)
+   * @param string $extension The file extension
+   * @return string The original URL, or a Cloudflare-wrapped URL for image files
    */
   private function applyCloudflareImageTransform($url, $extension)
   {
