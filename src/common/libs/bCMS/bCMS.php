@@ -182,6 +182,12 @@ class bCMS
     elseif ($secure and $requireInstance and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;
 
     //Generate the url
+    // Determine if this image will be routed through Cloudflare Image Transformation.
+    // If so, omit the response-content-disposition parameter as it causes 403 errors
+    // when Cloudflare fetches the origin URL.
+    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'bmp', 'tiff', 'tif', 'ico'];
+    $willApplyCloudflareTransform = $CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL') && in_array(strtolower($file['s3files_extension']), $imageExtensions);
+
     if ($CONFIGCLASS->get('AWS_CLOUDFRONT_ENABLED') === 'Enabled') {
       // Create a CloudFront Client to sign the string
       $CloudFrontClient = new Aws\CloudFront\CloudFrontClient([
@@ -190,12 +196,15 @@ class bCMS
         'region' => 'us-east-2'
       ]);
 
-      $ResponseContentDisposition = "?response-content-disposition=" . rawurlencode(
-        ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'])
-      );
+      $cloudFrontUrl = $CONFIGCLASS->get("AWS_CLOUDFRONT_ENDPOINT") . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'];
+      if (!$willApplyCloudflareTransform) {
+        $cloudFrontUrl .= "?response-content-disposition=" . rawurlencode(
+          ($forceDownload ? 'attachment' : 'inline') . '; filename=' . utf8_encode(preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'])
+        );
+      }
 
       $signedUrlCannedPolicy = $CloudFrontClient->getSignedUrl([
-        'url' => $CONFIGCLASS->get("AWS_CLOUDFRONT_ENDPOINT") . "/" . $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'] . $ResponseContentDisposition,
+        'url' => $cloudFrontUrl,
         'expires' => strtotime($file['expiry']),
         'private_key' => str_replace(["BEGIN\nRSA\nPRIVATE\nKEY", "END\nRSA\nPRIVATE\nKEY"], ["BEGIN RSA PRIVATE KEY", "END RSA PRIVATE KEY"], str_replace(" ", "\n", $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'))),
         'key_pair_id' => $CONFIGCLASS->get('AWS_CLOUDFRONT_KEYPAIRID')
@@ -218,7 +227,9 @@ class bCMS
         'Bucket' => $CONFIGCLASS->get('AWS_S3_BUCKET'),
         'Key' => $file['s3files_path'] . "/" . $file['s3files_filename'] . '.' . $file['s3files_extension'],
       ];
-      $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
+      if (!$willApplyCloudflareTransform) {
+        $parameters['ResponseContentDisposition'] = ($forceDownload ? 'attachment' : 'inline') . '; filename="' . preg_replace('/[^A-Za-z0-9 _\-]/', '_', $file['s3files_name']) . '.' . $file['s3files_extension'] . '"';
+      }
 
       $cmd = $s3Client->getCommand('GetObject', $parameters);
       $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);

@@ -69,8 +69,10 @@ An optional base URL for [Cloudflare Image Transformations](https://developers.c
 The URL should be in the format `https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect` (without a trailing slash). The resulting image URL will be:
 
 ```
-https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect/<ENCODED_S3_URL>
+https://cdn.yourdomain.com/cdn-cgi/image/onerror=redirect/<ENCODED_ORIGINAL_URL>
 ```
+
+Where `<ENCODED_ORIGINAL_URL>` is the URL-encoded S3 pre-signed URL or CloudFront signed URL (depending on your configuration).
 
 Non-image files are not affected and will continue to be served directly from S3 or CloudFront.
 
