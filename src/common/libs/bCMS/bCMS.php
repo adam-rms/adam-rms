@@ -252,27 +252,6 @@ class bCMS
   }
 
   /**
-   * Map a named size to Cloudflare Image Transformation width options.
-   * These are appended to the options portion of the Cloudflare URL.
-   *
-   * @param string|null $size The named size (tiny, small, medium, large) or null for no resizing
-   * @return string Comma-prefixed Cloudflare options string, or empty string
-   */
-  private function getCloudflareImageSizeOptions($size)
-  {
-    $sizeMap = [
-      'tiny' => ',width=50,fit=scale-down',
-      'small' => ',width=100,fit=scale-down',
-      'medium' => ',width=500,fit=scale-down',
-      'large' => ',width=1000,fit=scale-down',
-    ];
-    if ($size !== null && isset($sizeMap[strtolower($size)])) {
-      return $sizeMap[strtolower($size)];
-    }
-    return '';
-  }
-
-  /**
    * Apply Cloudflare Image Transformation to image URLs if configured.
    * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}{SIZE_OPTIONS}/{ORIGINAL_URL}
    * The source URL is NOT encoded — Cloudflare expects a plain absolute URL.
@@ -287,7 +266,16 @@ class bCMS
     global $CONFIGCLASS;
     if ($this->isCloudflareImageTransformable($extension)) {
       $cfBaseUrl = rtrim($CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL'), '/');
-      $sizeOptions = $this->getCloudflareImageSizeOptions($size);
+      $sizeOptions = '';
+      $sizeMap = [
+        'tiny' => ',width=50,fit=scale-down',
+        'small' => ',width=100,fit=scale-down',
+        'medium' => ',width=500,fit=scale-down',
+        'large' => ',width=1000,fit=scale-down',
+      ];
+      if ($size !== null && isset($sizeMap[strtolower($size)])) {
+        $sizeOptions = $sizeMap[strtolower($size)];
+      }
       return $cfBaseUrl . $sizeOptions . '/' . $url;
     }
     return $url;
