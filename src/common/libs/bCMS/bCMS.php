@@ -142,7 +142,7 @@ class bCMS
       "url" => $url
     ];
   }
-  function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false)
+  function s3URL($fileid, $forceDownload = false, $expire = '+10 minutes', $shareKey = false, $size = null)
   {
     global $DBLIB, $CONFIG, $AUTH, $CONFIGCLASS;
     /*
@@ -208,7 +208,7 @@ class bCMS
         'private_key' => str_replace(["BEGIN\nRSA\nPRIVATE\nKEY", "END\nRSA\nPRIVATE\nKEY"], ["BEGIN RSA PRIVATE KEY", "END RSA PRIVATE KEY"], str_replace(" ", "\n", $CONFIGCLASS->get('AWS_CLOUDFRONT_PRIVATEKEY'))),
         'key_pair_id' => $CONFIGCLASS->get('AWS_CLOUDFRONT_KEYPAIRID')
       ]);
-      return $this->applyCloudflareImageTransform($signedUrlCannedPolicy, $file['s3files_extension']);
+      return $this->applyCloudflareImageTransform($signedUrlCannedPolicy, $file['s3files_extension'], $size);
     } else {
       //Download direct from S3
       $s3Client = new Aws\S3\S3Client([
@@ -233,7 +233,7 @@ class bCMS
       $cmd = $s3Client->getCommand('GetObject', $parameters);
       $request = $s3Client->createPresignedRequest($cmd, $file['expiry']);
       $presignedUrl = (string)$request->getUri();
-      return $this->applyCloudflareImageTransform($presignedUrl, $file['s3files_extension']);
+      return $this->applyCloudflareImageTransform($presignedUrl, $file['s3files_extension'], $size);
     }
   }
 
@@ -252,20 +252,42 @@ class bCMS
   }
 
   /**
+   * Map a named size to Cloudflare Image Transformation width options.
+   * These are appended to the options portion of the Cloudflare URL.
+   *
+   * @param string|null $size The named size (tiny, small, medium) or null for no resizing
+   * @return string Comma-prefixed Cloudflare options string, or empty string
+   */
+  private function getCloudflareImageSizeOptions($size)
+  {
+    $sizeMap = [
+      'tiny' => ',width=50,fit=scale-down',
+      'small' => ',width=200,fit=scale-down',
+      'medium' => ',width=600,fit=scale-down',
+    ];
+    if ($size !== null && isset($sizeMap[strtolower($size)])) {
+      return $sizeMap[strtolower($size)];
+    }
+    return '';
+  }
+
+  /**
    * Apply Cloudflare Image Transformation to image URLs if configured.
-   * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}/{ORIGINAL_URL}
+   * The resulting URL format is: {CLOUDFLARE_IMAGE_TRANSFORM_URL}{SIZE_OPTIONS}/{ORIGINAL_URL}
    * The source URL is NOT encoded — Cloudflare expects a plain absolute URL.
    *
    * @param string $url The original file URL (S3 or CloudFront signed URL)
    * @param string $extension The file extension
+   * @param string|null $size Optional named size (tiny, small, medium) for Cloudflare resizing
    * @return string The original URL, or a Cloudflare-wrapped URL for image files
    */
-  private function applyCloudflareImageTransform($url, $extension)
+  private function applyCloudflareImageTransform($url, $extension, $size = null)
   {
     global $CONFIGCLASS;
     if ($this->isCloudflareImageTransformable($extension)) {
       $cfBaseUrl = rtrim($CONFIGCLASS->get('CLOUDFLARE_IMAGE_TRANSFORM_URL'), '/');
-      return $cfBaseUrl . '/' . $url;
+      $sizeOptions = $this->getCloudflareImageSizeOptions($size);
+      return $cfBaseUrl . $sizeOptions . '/' . $url;
     }
     return $url;
   }

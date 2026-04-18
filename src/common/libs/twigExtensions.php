@@ -52,8 +52,9 @@ $TWIG->addFilter(new \Twig\TwigFilter('randomString', function ($characters) {
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('s3URL', function ($fileid, $size = null) {
     global $CONFIG;
-    // The size parameter is no longer used, but is kept incase it is used in the future.
-    return $CONFIG['ROOTURL'] . "/api/file/index.php?r&f=" . $fileid;
+    $url = $CONFIG['ROOTURL'] . "/api/file/index.php?r&f=" . $fileid;
+    if ($size !== null) $url .= "&s=" . $size;
+    return $url;
 }));
 $TWIG->addFilter(new \Twig\TwigFilter('jsonDecode', function ($raw) {
     if ($raw == null) return [];
