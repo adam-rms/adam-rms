@@ -35,7 +35,11 @@ final class S3FilesDoNotDeleteOnInstanceDeletion extends AbstractMigration
                 'instances_id',
                 'instances',
                 'instances_id',
-                ['delete' => 'SET_NULL', 'update' => 'CASCADE']
+                [
+                    'constraint' => 's3files_instances_instances_id_fk',
+                    'delete' => 'SET_NULL',
+                    'update' => 'CASCADE',
+                ]
             )
             ->update();
     }
