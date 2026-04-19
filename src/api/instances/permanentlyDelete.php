@@ -7,6 +7,11 @@ $DBLIB->where('instances_id', $_POST['instances_id']);
 $DBLIB->where("instances_deleted", 1);
 if (!$DBLIB->getOne("instances", "instances_id")) finish(false);
 
+// Delete all files associated with this instance that haven't already been marked for deletion. This ensures that when the instance is permanently deleted, there are no remaining files that are still accessible.
+$DBLIB->where('instances_id', $_POST['instances_id']);
+$DBLIB->where('s3files_meta_deleteOn', null);
+$update = $DBLIB->update("s3files", ["s3files_meta_deleteOn" => date('Y-m-d H:i:s', strtotime('-5 minutes'))]);
+
 $DBLIB->where('instances_id', $_POST['instances_id']);
 $DBLIB->where("instances_deleted", 1);
 if($DBLIB->delete('instances')) {
