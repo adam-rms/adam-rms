@@ -22,6 +22,7 @@ final class S3FilesDoNotDeleteOnInstanceDeletion extends AbstractMigration
     {
         $this
             ->table('s3files')
+            ->dropForeignKey('instances_id')
             ->changeColumn(
                 'instances_id',
                 'integer',
@@ -30,7 +31,6 @@ final class S3FilesDoNotDeleteOnInstanceDeletion extends AbstractMigration
                     'comment' => 'The ID of the instance this file is associated with. Nullable because files may be retained even after instance deletion.',
                 ]
             )
-            ->dropForeignKey('instances_id')
             ->addForeignKey(
                 'instances_id',
                 'instances',
