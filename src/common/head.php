@@ -256,8 +256,19 @@ $CSP = [
         ["value" => "https://o83272.ingest.sentry.io/api/5204912/security/?sentry_key=3937ab95cc404dfa95b0e0cb91db5fc6", "comment" => "Report to sentry"]
     ]
 ];
+
+if (!empty($CONFIG['ANALYTICS_CLARITY_PROJECT_ID'])) {
+    // Clarity load-balances across many subdomains ([a-z].clarity.ms, scripts.clarity.ms, etc.)
+    // so the wildcard is required. c.bing.com is used for Clarity telemetry.
+    // See https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-csp
+    $CSP['script-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity analytics"];
+    $CSP['connect-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity analytics"];
+    $CSP['connect-src'][] = ["value" => "https://c.bing.com", "comment" => "Microsoft Clarity telemetry"];
+    $CSP['img-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity"];
+}
+
 $CSPString = "Content-Security-Policy: ";
-foreach ($CONFIG['CSP'] as $key => $value) {
+foreach ($CSP as $key => $value) {
     $CSPString .= $key;
     foreach ($value as $subvalue) {
         $CSPString .= " " . $subvalue['value'];

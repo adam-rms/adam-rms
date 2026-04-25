@@ -891,5 +891,10 @@ location.reload();
 console.log("Welcome to    {{ CONFIG.PROJECT_NAME|escape("js") }}version    {{ VERSION|escape("js") }}");
 			</script>
 			{{ CONFIG.FOOTER_ANALYTICS|raw }}
+			{% if CONFIG.ANALYTICS_CLARITY_PROJECT_ID %}
+			<script type="text/javascript">
+				(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","{{ CONFIG.ANALYTICS_CLARITY_PROJECT_ID|escape("js") }}");
+			</script>
+			{% endif %}
 		</body>
 	</html>

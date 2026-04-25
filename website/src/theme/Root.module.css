@@ -1,0 +1,62 @@
+/* stylelint-disable docusaurus/copyright-header */
+
+.banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  background-color: #1c1e21;
+  color: #f5f6f7;
+  font-size: 0.875rem;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.text {
+  margin: 0;
+  flex: 1 1 auto;
+  line-height: 1.5;
+}
+
+.text a {
+  color: var(--ifm-color-primary-light);
+  text-decoration: underline;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.reject,
+.accept {
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+}
+
+.reject:hover,
+.accept:hover {
+  opacity: 0.85;
+}
+
+.reject {
+  background-color: #444950;
+  color: #f5f6f7;
+}
+
+.accept {
+  background-color: var(--ifm-color-primary);
+  color: #fff;
+}

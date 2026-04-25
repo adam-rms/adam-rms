@@ -611,6 +611,27 @@ $configStructureArray = [
     "default" => null,
     "envFallback" => false,
   ],
+  "ANALYTICS_CLARITY_PROJECT_ID" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Microsoft Clarity Project ID",
+      "group" => "Customisation",
+      "description" => "The Microsoft Clarity project ID to use for session recording and heatmaps. Leave blank to disable Clarity.",
+      "required" => false,
+      "maxlength" => 64,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => null,
+    "envFallback" => "bCMS__CLARITY_PROJECT_ID",
+  ],
   "FILES_ENABLED" => [
     "form" => [
       "type" => "select",
