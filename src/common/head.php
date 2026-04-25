@@ -258,10 +258,13 @@ $CSP = [
 ];
 
 if (!empty($CONFIG['ANALYTICS_CLARITY_PROJECT_ID'])) {
-    $CSP['script-src'][] = ["value" => "https://www.clarity.ms", "comment" => "Microsoft Clarity analytics"];
-    $CSP['connect-src'][] = ["value" => "https://www.clarity.ms", "comment" => "Microsoft Clarity analytics"];
-    $CSP['connect-src'][] = ["value" => "https://e.clarity.ms", "comment" => "Microsoft Clarity data collection"];
-    $CSP['img-src'][] = ["value" => "https://c.clarity.ms", "comment" => "Microsoft Clarity"];
+    // Clarity load-balances across many subdomains ([a-z].clarity.ms, scripts.clarity.ms, etc.)
+    // so the wildcard is required. c.bing.com is used for Clarity telemetry.
+    // See https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-csp
+    $CSP['script-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity analytics"];
+    $CSP['connect-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity analytics"];
+    $CSP['connect-src'][] = ["value" => "https://c.bing.com", "comment" => "Microsoft Clarity telemetry"];
+    $CSP['img-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity"];
 }
 
 $CSPString = "Content-Security-Policy: ";
