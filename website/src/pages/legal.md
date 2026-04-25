@@ -84,7 +84,9 @@ We use cookies when you are logged in so that we can remember this fact and ensu
 
 #### Third Party Cookies
 
-AdamRMS does not use Google Analytics or similar services, and as such does not add third party cookies, except where they are essential to allowing you to login with a third party service (such as Login with Google and Login with Microsoft buttons)
+AdamRMS uses Microsoft Clarity, a behaviour analytics tool, to understand how users interact with the website and dashboard. Microsoft Clarity may set cookies and collect data about your session, including mouse movements, clicks, and scrolling behaviour. This data is used to improve the user experience. For more information, see [Microsoft's Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement). Where applicable, Microsoft Clarity is also used on the `dash.adam-rms.com` hosted dashboard.
+
+Apart from Microsoft Clarity, AdamRMS does not use Google Analytics or similar services, and as such does not add other third party cookies, except where they are essential to allowing you to login with a third party service (such as Login with Google and Login with Microsoft buttons)
 
 ## Terms of Service
 

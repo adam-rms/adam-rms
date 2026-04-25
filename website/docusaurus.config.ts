@@ -13,6 +13,15 @@ if (!fs.existsSync("./api-docs")) {
 
 const config: Config = {
   title: "AdamRMS",
+  headTags: process.env.CLARITY_PROJECT_ID
+    ? [
+        {
+          tagName: "script",
+          attributes: { type: "text/javascript" },
+          innerHTML: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${process.env.CLARITY_PROJECT_ID}");`,
+        },
+      ]
+    : [],
   tagline:
     "AdamRMS is a free, open source advanced Rental Management System for Theatre, AV & Broadcast",
   url: "https://adam-rms.com",

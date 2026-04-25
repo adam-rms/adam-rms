@@ -256,8 +256,16 @@ $CSP = [
         ["value" => "https://o83272.ingest.sentry.io/api/5204912/security/?sentry_key=3937ab95cc404dfa95b0e0cb91db5fc6", "comment" => "Report to sentry"]
     ]
 ];
+
+if (!empty($CONFIG['ANALYTICS_CLARITY_PROJECT_ID'])) {
+    $CSP['script-src'][] = ["value" => "https://www.clarity.ms", "comment" => "Microsoft Clarity analytics"];
+    $CSP['connect-src'][] = ["value" => "https://www.clarity.ms", "comment" => "Microsoft Clarity analytics"];
+    $CSP['connect-src'][] = ["value" => "https://e.clarity.ms", "comment" => "Microsoft Clarity data collection"];
+    $CSP['img-src'][] = ["value" => "https://c.clarity.ms", "comment" => "Microsoft Clarity"];
+}
+
 $CSPString = "Content-Security-Policy: ";
-foreach ($CONFIG['CSP'] as $key => $value) {
+foreach ($CSP as $key => $value) {
     $CSPString .= $key;
     foreach ($value as $subvalue) {
         $CSPString .= " " . $subvalue['value'];
