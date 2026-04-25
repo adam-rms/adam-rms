@@ -38,7 +38,9 @@ export default function Root({ children }: { children: ReactNode }): JSX.Element
       return;
     }
 
-    const stored = localStorage.getItem(CONSENT_STORAGE_KEY) as ConsentValue | null;
+    const raw = localStorage.getItem(CONSENT_STORAGE_KEY);
+    const stored: ConsentValue | null =
+      raw === "accepted" || raw === "rejected" ? raw : null;
     if (stored === "accepted" || stored === "rejected") {
       // Replay the stored decision so Clarity can act on it for this page load.
       signalClarityConsent(stored === "accepted");
