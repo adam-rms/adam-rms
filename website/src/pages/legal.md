@@ -64,6 +64,8 @@ We endeavour to store your data within the European Union as per our legal oblig
 
 ## Cookie Policy
 
+This Cookie Policy applies to the hosted edition of AdamRMS at `adam-rms.com` and `dash.adam-rms.com`. Self-hosted installations of AdamRMS are controlled by their respective administrators and are not subject to this policy.
+
 ### What Are Cookies?
 
 As is common practice with almost all professional websites this site uses cookies, which are tiny files that are downloaded to your computer, to improve your experience.
@@ -82,11 +84,25 @@ You can prevent the setting of cookies by adjusting the settings on your browser
 
 We use cookies when you are logged in so that we can remember this fact and ensure our site is secure. This prevents you from having to log in every single time you visit a new page. These cookies are typically removed or cleared when you log out to ensure that you can only access restricted features and areas when logged in.
 
-#### Third Party Cookies
+#### Microsoft Clarity (Analytics & Session Recording)
 
-AdamRMS uses Microsoft Clarity, a behaviour analytics tool, to understand how users interact with the website and dashboard. Microsoft Clarity may set cookies and collect data about your session, including mouse movements, clicks, and scrolling behaviour. This data is used to improve the user experience. For more information, see [Microsoft's Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement). Where applicable, Microsoft Clarity is also used on the `dash.adam-rms.com` hosted dashboard.
+Both `adam-rms.com` and `dash.adam-rms.com` use [Microsoft Clarity](https://clarity.microsoft.com/), a free behaviour analytics tool provided by Microsoft, to help us understand how visitors interact with our website and dashboard. Clarity collects:
 
-Apart from Microsoft Clarity, AdamRMS does not use Google Analytics or similar services, and as such does not add other third party cookies, except where they are essential to allowing you to login with a third party service (such as Login with Google and Login with Microsoft buttons)
+- **Session recordings** — video-like replays of your interactions with the page
+- **Heatmaps** — aggregate visualisations of where users click, tap, and scroll
+- **Interaction data** — mouse movements, clicks, scrolls, and page navigation events
+
+Clarity uses **first-party cookies** set on our domain to enable session continuity and funnel tracking. No personally identifiable information (such as form content) is collected; Clarity masks sensitive content by default.
+
+**EEA, UK, and Switzerland:** In accordance with local regulations, Clarity does not place any cookies on your device until explicit consent is given. Without consent, session recording and funnel tracking functionality may be limited.
+
+Clarity data is stored in **Microsoft Azure** and is retained for up to **30 days** from the time of recording. Microsoft acts as the data controller for data processed through Clarity. Clarity does not sell data. For full details, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement) and the [Clarity Terms of Use](https://clarity.microsoft.com/terms).
+
+You may opt out of Clarity telemetry by selecting Microsoft via the [Digital Advertising Alliance opt-out tool](https://optout.aboutads.info/). Clarity also respects the [Global Privacy Control (GPC)](https://globalprivacycontrol.org/) signal.
+
+#### Third Party Login Cookies
+
+AdamRMS does not use Google Analytics or similar advertising analytics services. Third-party cookies may be set where they are essential to enabling login with a third-party identity provider (such as Login with Google or Login with Microsoft).
 
 ## Terms of Service
 

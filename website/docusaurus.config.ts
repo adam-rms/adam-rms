@@ -11,14 +11,21 @@ if (!fs.existsSync("./api-docs")) {
   fs.mkdirSync("./api-docs", { recursive: true });
 }
 
+// Microsoft Clarity project ID for adam-rms.com — hardcoded as this website is
+// only ever deployed by the AdamRMS team, not by self-hosters.
+// TODO: replace with the actual Clarity project ID for adam-rms.com
+const CLARITY_PROJECT_ID = process.env.CLARITY_PROJECT_ID ?? "";
+
 const config: Config = {
   title: "AdamRMS",
-  headTags: process.env.CLARITY_PROJECT_ID
+  // Inject Clarity on production builds only so that development previews do not
+  // pollute analytics data. Only inject if a project ID has been configured.
+  headTags: production && CLARITY_PROJECT_ID
     ? [
         {
           tagName: "script",
           attributes: { type: "text/javascript" },
-          innerHTML: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${process.env.CLARITY_PROJECT_ID}");`,
+          innerHTML: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`,
         },
       ]
     : [],
