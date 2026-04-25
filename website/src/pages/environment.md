@@ -56,6 +56,6 @@ We are awaiting details from [Sentry](https://sentry.io) and [DataDog](https://w
 
 ### Analytics
 
-We do not use Google Analytics. We use [Microsoft Clarity](https://clarity.microsoft.com/) on the hosted solution (dash.adam-rms.com) to understand how users interact with the application. Clarity collects anonymised usage data such as heatmaps and session recordings. Microsoft publishes their sustainability plans at [microsoft.com/sustainability](https://azure.microsoft.com/en-gb/explore/global-infrastructure/sustainability).
+We do not use Google Analytics. We use [Microsoft Clarity](https://clarity.microsoft.com/) on both adam-rms.com and the hosted solution (dash.adam-rms.com) to understand how users interact with the website and application. Clarity collects anonymised usage data such as heatmaps and session recordings. Microsoft publishes their sustainability plans at [microsoft.com/sustainability](https://azure.microsoft.com/en-gb/explore/global-infrastructure/sustainability).
 
 We also use analytics provided as part of Cloudflare.
