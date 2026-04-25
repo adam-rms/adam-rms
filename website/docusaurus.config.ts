@@ -13,14 +13,13 @@ if (!fs.existsSync("./api-docs")) {
 
 // Microsoft Clarity project ID for adam-rms.com — hardcoded as this website is
 // only ever deployed by the AdamRMS team, not by self-hosters.
-// TODO: replace with the actual Clarity project ID for adam-rms.com
-const CLARITY_PROJECT_ID = process.env.CLARITY_PROJECT_ID ?? "";
+const CLARITY_PROJECT_ID = "ree0pnhyh9";
 
 const config: Config = {
   title: "AdamRMS",
   // Inject Clarity on production builds only so that development previews do not
-  // pollute analytics data. Only inject if a project ID has been configured.
-  headTags: production && CLARITY_PROJECT_ID
+  // pollute analytics data.
+  headTags: production
     ? [
         {
           tagName: "script",
