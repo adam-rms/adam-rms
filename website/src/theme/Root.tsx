@@ -3,88 +3,6 @@ import styles from "./Root.module.css";
 
 const CONSENT_STORAGE_KEY = "adam-rms-analytics-consent";
 
-// IANA timezone identifiers for the EEA, UK, and Switzerland where GDPR /
-// UK GDPR / nFADP requires explicit opt-in before analytics cookies are set.
-// Falls back to showing the banner if timezone detection fails.
-const EEA_UK_SWISS_TIMEZONES = new Set([
-  // Austria
-  "Europe/Vienna",
-  // Belgium
-  "Europe/Brussels",
-  // Bulgaria
-  "Europe/Sofia",
-  // Cyprus
-  "Europe/Nicosia", "Asia/Nicosia",
-  // Czech Republic
-  "Europe/Prague",
-  // Denmark
-  "Europe/Copenhagen",
-  // Estonia
-  "Europe/Tallinn",
-  // Finland (incl. Åland Islands)
-  "Europe/Helsinki", "Europe/Mariehamn",
-  // France
-  "Europe/Paris",
-  // Germany
-  "Europe/Berlin", "Europe/Busingen",
-  // Greece
-  "Europe/Athens",
-  // Hungary
-  "Europe/Budapest",
-  // Iceland (EEA non-EU)
-  "Atlantic/Reykjavik",
-  // Ireland
-  "Europe/Dublin",
-  // Italy
-  "Europe/Rome",
-  // Latvia
-  "Europe/Riga",
-  // Liechtenstein (EEA non-EU)
-  "Europe/Vaduz",
-  // Lithuania
-  "Europe/Vilnius",
-  // Luxembourg
-  "Europe/Luxembourg",
-  // Malta
-  "Europe/Malta",
-  // Netherlands
-  "Europe/Amsterdam",
-  // Norway (EEA non-EU) + Svalbard
-  "Europe/Oslo", "Arctic/Longyearbyen",
-  // Poland
-  "Europe/Warsaw",
-  // Portugal (incl. Azores & Madeira)
-  "Europe/Lisbon", "Atlantic/Azores", "Atlantic/Madeira",
-  // Romania
-  "Europe/Bucharest",
-  // Slovakia
-  "Europe/Bratislava",
-  // Slovenia
-  "Europe/Ljubljana",
-  // Spain (incl. Ceuta & Canary Islands)
-  "Europe/Madrid", "Africa/Ceuta", "Atlantic/Canary",
-  // Sweden
-  "Europe/Stockholm",
-  // Switzerland (nFADP)
-  "Europe/Zurich",
-  // United Kingdom (UK GDPR)
-  "Europe/London",
-  // Faroe Islands (Denmark)
-  "Atlantic/Faroe",
-]);
-
-// Returns true when the visitor's browser timezone suggests they are in a
-// jurisdiction where explicit cookie consent is legally required.
-// Errs on the side of showing the banner when detection fails.
-function requiresExplicitConsent(): boolean {
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return EEA_UK_SWISS_TIMEZONES.has(tz);
-  } catch {
-    return true;
-  }
-}
-
 type ConsentValue = "accepted" | "rejected";
 
 // Clarity Consent API v2 — informs Clarity of the user's decision.
@@ -110,6 +28,8 @@ export default function Root({ children }: { children: ReactNode }): JSX.Element
   const [needsBanner, setNeedsBanner] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     // Honour the Global Privacy Control signal for all visitors, regardless of
     // region, without prompting the user.
     if (
@@ -118,31 +38,44 @@ export default function Root({ children }: { children: ReactNode }): JSX.Element
     ) {
       signalClarityConsent(false);
       setConsent("rejected");
-      setMounted(true);
       return;
     }
-
-    // The consent banner is only required for visitors from the EEA, UK, or
-    // Switzerland. For all other regions Clarity operates under its default
-    // behaviour and no banner is shown.
-    if (!requiresExplicitConsent()) {
-      setMounted(true);
-      return;
-    }
-
-    setNeedsBanner(true);
 
     const raw = localStorage.getItem(CONSENT_STORAGE_KEY);
     const stored: ConsentValue | null =
       raw === "accepted" || raw === "rejected" ? raw : null;
-    if (stored === "accepted" || stored === "rejected") {
+    if (stored) {
       // Replay the stored decision so Clarity can act on it for this page load.
       signalClarityConsent(stored === "accepted");
       setConsent(stored);
+      return;
     }
-    // If stored is null the consent state stays null → banner is shown.
 
-    setMounted(true);
+    // No stored preference — ask Clarity whether consent is required for this
+    // visitor. Clarity enforces consent mode by default for EEA, UK, and
+    // Switzerland users. When active and no decision has been made yet, Clarity
+    // reports analytics_storage as "DENIED". For all other regions (where
+    // consent is not legally required) the status is absent/null, so we do not
+    // show the banner.
+    const w = window as Window & {
+      clarity?: (cmd: string, ...args: unknown[]) => void;
+    };
+    if (typeof w.clarity !== "function") return;
+    w.clarity(
+      "metadata",
+      (
+        _data: unknown,
+        _upgrade: unknown,
+        consentStatus: { analytics_storage?: string } | null | undefined,
+      ) => {
+        if (consentStatus?.analytics_storage === "DENIED") {
+          setNeedsBanner(true);
+        }
+      },
+      false,
+      true,
+      true,
+    );
   }, []);
 
   const handleAccept = () => {
