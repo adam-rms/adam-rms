@@ -12,7 +12,11 @@ if (count($dates) == 2) {
     $dateEnd = false;
 }
 
-$searchGroupTerms = is_array($_GET['group']) ? $_GET['group'] : [];
+$searchGroupTerms = [];
+if (isset($_GET['group'])) {
+    if (is_array($_GET['group'])) $searchGroupTerms = $_GET['group'];
+    else $searchGroupTerms = [$_GET['group']];
+}
 $searchGroupTerms = array_map('intval', $searchGroupTerms);
 $searchGroupTerms = array_filter($searchGroupTerms, function ($groupId) {
     return $groupId > 0;

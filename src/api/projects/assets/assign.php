@@ -40,6 +40,7 @@ if (isset($_POST['assetGroups_id'])) {
     $groupWhere = [];
     foreach ($groupIds as $groupId) $groupWhere[] = "FIND_IN_SET(" . (int)$groupId . ", assets.assets_assetGroups)";
     $DBLIB->where("(" . implode(" OR ", $groupWhere) . ")");
+    if (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
 } elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
 elseif (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
 elseif ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS")) {
