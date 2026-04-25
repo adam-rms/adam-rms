@@ -15,8 +15,8 @@ function signalClarityConsent(granted: boolean): void {
   if (typeof w.clarity !== "function") return;
   const value = granted ? "granted" : "denied";
   w.clarity("consentv2", {
-    ad_Storage: value,
-    analytics_Storage: value,
+    ad_storage: value,
+    analytics_storage: value,
   });
 }
 
