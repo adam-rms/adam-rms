@@ -94,11 +94,11 @@ Both `adam-rms.com` and `dash.adam-rms.com` use [Microsoft Clarity](https://clar
 
 Clarity uses **first-party cookies** set on our domain to enable session continuity and funnel tracking. No personally identifiable information (such as form content) is collected; Clarity masks sensitive content by default.
 
-**EEA, UK, and Switzerland:** In accordance with local regulations, Clarity does not place any cookies on your device until explicit consent is given. Without consent, session recording and funnel tracking functionality may be limited.
+**Consent:** When you first visit `adam-rms.com` you will be shown a cookie consent banner. Clarity cookies are only placed once you click **Accept**. If you click **Reject**, or if your browser broadcasts the [Global Privacy Control (GPC)](https://globalprivacycontrol.org/) signal, Clarity will not set any cookies and will delete any that have already been set. For visitors from the EEA, UK, and Switzerland, Clarity will not place any cookies at all until an explicit **Accept** is received, even before the banner is interacted with. You may change your preference at any time by clearing this site's cookies and local storage in your browser settings, which will cause the banner to appear again on your next visit.
 
 Clarity data is stored in **Microsoft Azure** and is retained for up to **30 days** from the time of recording. Microsoft acts as the data controller for data processed through Clarity. Clarity does not sell data. For full details, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement) and the [Clarity Terms of Use](https://clarity.microsoft.com/terms).
 
-You may opt out of Clarity telemetry by selecting Microsoft via the [Digital Advertising Alliance opt-out tool](https://optout.aboutads.info/). Clarity also respects the [Global Privacy Control (GPC)](https://globalprivacycontrol.org/) signal.
+You may also opt out of Clarity telemetry at any time by selecting Microsoft via the [Digital Advertising Alliance opt-out tool](https://optout.aboutads.info/).
 
 #### Third Party Login Cookies
 
