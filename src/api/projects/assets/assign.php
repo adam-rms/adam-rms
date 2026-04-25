@@ -19,6 +19,11 @@ $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 $priceMaths = $projectFinanceHelper->durationMaths($project['projects_id']);
 
 $assetRequiredFields = ["assetTypes_name","assets_tag","assets_id","assets_dayRate","assets_weekRate","assetTypes_dayRate","assetTypes_weekRate","assetTypes_mass","assetTypes_value","assets_value","assets_mass","assets_assetGroups"];
+$assetTypeId = null;
+if (isset($_POST['assetTypes_id'])) {
+    $assetTypeId = intval($_POST['assetTypes_id']);
+    if ($assetTypeId < 1) finish(false,["message"=>"Invalid asset type"]);
+}
 
 if (isset($_POST['assetGroups_id'])) {
     $groupIds = $_POST['assetGroups_id'];
@@ -40,9 +45,9 @@ if (isset($_POST['assetGroups_id'])) {
     $groupWhere = [];
     foreach ($groupIds as $groupId) $groupWhere[] = "FIND_IN_SET(" . (int)$groupId . ", assets.assets_assetGroups)";
     $DBLIB->where("(" . implode(" OR ", $groupWhere) . ")");
-    if (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
+    if ($assetTypeId !== null) $DBLIB->where("assets.assetTypes_id", $assetTypeId);
 } elseif (isset($_POST['assets_id'])) $DBLIB->where("assets_id", $_POST['assets_id']);
-elseif (isset($_POST['assetTypes_id'])) $DBLIB->where("assets.assetTypes_id", $_POST['assetTypes_id']);
+elseif ($assetTypeId !== null) $DBLIB->where("assets.assetTypes_id", $assetTypeId);
 elseif ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS")) {
     $DBLIB->where("(assets_linkedTo IS NULL)"); //We'll handle linked assets later in the script but for now add all assets
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
