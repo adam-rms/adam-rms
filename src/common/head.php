@@ -236,6 +236,7 @@ $CSP = [
         ["value" => "https://sentry.io", "comment" => ""],
         ["value" => "https://cloudflareinsights.com", "comment" => ""],
         ["value" => "https://*.amazonaws.com", "comment" => "To allow S3 uploads"],
+        ["value" => "https://cdnjs.cloudflare.com", "comment" => "Browser fetches source maps from CDN scripts"],
     ],
     "frame-src" => [
         ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
@@ -265,6 +266,20 @@ if (!empty($CONFIG['ANALYTICS_CLARITY_PROJECT_ID'])) {
     $CSP['connect-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity analytics"];
     $CSP['connect-src'][] = ["value" => "https://c.bing.com", "comment" => "Microsoft Clarity telemetry"];
     $CSP['img-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity"];
+}
+
+// Add the configured S3-compatible browser upload endpoint to connect-src.
+// This is needed for non-AWS backends such as Cloudflare R2, where the bucket
+// URL is a subdomain of the account endpoint (e.g. bucket.account.r2.cloudflarestorage.com)
+// and is therefore not covered by the static *.amazonaws.com wildcard.
+if (!empty($CONFIG['AWS_S3_BROWSER_ENDPOINT'])) {
+    $s3BrowserEndpointParsed = parse_url($CONFIG['AWS_S3_BROWSER_ENDPOINT']);
+    if (!empty($s3BrowserEndpointParsed['scheme']) && !empty($s3BrowserEndpointParsed['host'])) {
+        $s3Origin = $s3BrowserEndpointParsed['scheme'] . '://' . $s3BrowserEndpointParsed['host'];
+        $CSP['connect-src'][] = ["value" => $s3Origin, "comment" => "S3-compatible browser upload endpoint"];
+        // Also allow bucket subdomains for providers that use subdomain-style URLs (e.g. Cloudflare R2)
+        $CSP['connect-src'][] = ["value" => $s3BrowserEndpointParsed['scheme'] . '://*.' . $s3BrowserEndpointParsed['host'], "comment" => "S3-compatible browser upload bucket subdomains"];
+    }
 }
 
 $CSPString = "Content-Security-Policy: ";
