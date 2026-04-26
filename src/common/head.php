@@ -76,7 +76,8 @@ if (count($CONFIGCLASS->CONFIG_MISSING_VALUES) > 0) {
     if (isset($_POST['settingUpConfigUsingConfigFormTwig']) and $_POST['settingUpConfigUsingConfigFormTwig'] == "true") {
         $update = $CONFIGCLASS->formArrayProcess($_POST);
     }
-    if ($update !== true) die($TWIG->render('common/libs/Config/configForm.twig', ["form" => $CONFIGCLASS->formArrayBuild(), "errors" => is_array($update) ? $update : []]));
+    if ($update !== true)
+        die($TWIG->render('common/libs/Config/configForm.twig', ["form" => $CONFIGCLASS->formArrayBuild(), "errors" => is_array($update) ? $update : []]));
     else {
         header("Location: " . $CONFIG['ROOTURL'] . "?");
         exit;
@@ -109,10 +110,13 @@ function generateNewTag()
     if ($tag) {
         if (is_numeric(str_replace("A-", "", $tag["assets_tag"]))) {
             $value = intval(str_replace("A-", "", $tag["assets_tag"])) + 1;
-            if ($value <= 9999) $value = sprintf('%04d', $value);
+            if ($value <= 9999)
+                $value = sprintf('%04d', $value);
             return "A-" . $value;
-        } else return "A-0001";
-    } else return "A-0001";
+        } else
+            return "A-0001";
+    } else
+        return "A-0001";
 }
 function assetFlagsAndBlocks($assetid)
 {
@@ -126,7 +130,8 @@ function assetFlagsAndBlocks($assetid)
     $DBLIB->orderBy("maintenanceJobs.maintenanceJobs_priority", "DESC");
     $jobs = $DBLIB->get('maintenanceJobs', null, ["maintenanceJobs.maintenanceJobs_id", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_title", "maintenanceJobs.maintenanceJobs_faultDescription", "maintenanceJobs.maintenanceJobs_flagAssets", "maintenanceJobs.maintenanceJobs_blockAssets", "maintenanceJobsStatuses.maintenanceJobsStatuses_name"]);
     $return = ["BLOCK" => [], "FLAG" => [], "COUNT" => ["BLOCK" => 0, "FLAG" => 0]];
-    if (!$jobs) return $return;
+    if (!$jobs)
+        return $return;
     foreach ($jobs as $job) {
         if ($job["maintenanceJobs_blockAssets"] == 1) {
             $return['BLOCK'][] = $job;
@@ -141,7 +146,8 @@ function assetFlagsAndBlocks($assetid)
 }
 function assetLatestScan($assetid)
 {
-    if ($assetid == null) return false;
+    if ($assetid == null)
+        return false;
     global $DBLIB;
     $DBLIB->orderBy("assetsBarcodesScans.assetsBarcodesScans_timestamp", "DESC");
     $DBLIB->where("assetsBarcodes.assets_id", $assetid);
@@ -236,6 +242,8 @@ $CSP = [
         ["value" => "https://sentry.io", "comment" => ""],
         ["value" => "https://cloudflareinsights.com", "comment" => ""],
         ["value" => "https://*.amazonaws.com", "comment" => "To allow S3 uploads"],
+        ["value" => "https://*.r2.cloudflarestorage.com", "comment" => "Cloudflare R2 bucket uploads"],
+        ["value" => "https://cdnjs.cloudflare.com", "comment" => "Browser fetches source maps from CDN scripts"],
     ],
     "frame-src" => [
         ["value" => "https://www.youtube.com", "comment" => "Training modules allow youtube embed"],
@@ -256,11 +264,8 @@ $CSP = [
         ["value" => "https://o83272.ingest.sentry.io/api/5204912/security/?sentry_key=3937ab95cc404dfa95b0e0cb91db5fc6", "comment" => "Report to sentry"]
     ]
 ];
-
 if (!empty($CONFIG['ANALYTICS_CLARITY_PROJECT_ID'])) {
-    // Clarity load-balances across many subdomains ([a-z].clarity.ms, scripts.clarity.ms, etc.)
-    // so the wildcard is required. c.bing.com is used for Clarity telemetry.
-    // See https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-csp
+    // https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-csp
     $CSP['script-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity analytics"];
     $CSP['connect-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity analytics"];
     $CSP['connect-src'][] = ["value" => "https://c.bing.com", "comment" => "Microsoft Clarity telemetry"];
