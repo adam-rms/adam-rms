@@ -29,7 +29,7 @@ if ($barcode and $barcode['assets_id'] != null) {
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
-    $currentAssignment = $DBLIB->getOne("assetsAssignments", ["assetsAssignmentsStatus_id"]);
+    $currentAssignment = $DBLIB->getOne("assetsAssignments", ["assetsAssignments.assetsAssignments_id", "assetsAssignmentsStatus_id"]);
 
     if (!$currentAssignment) {
         finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
@@ -41,13 +41,9 @@ if ($barcode and $barcode['assets_id'] != null) {
         finish(true, null, ["assets_id" => $barcode['assets_id']]);
     }
 
-    // Otherwise, update the status
-    $DBLIB->where("assetsAssignments.assets_id", $barcode['assets_id']);
-    $DBLIB->where("assetsAssignments.projects_id", $_POST['projects_id']);
-    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-    $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
-    $DBLIB->where("projects.projects_deleted", 0);
-    $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+    // Otherwise, update the status - use assetsAssignments_id to avoid the MySQL restriction
+    // on LIMIT in multi-table UPDATE statements
+    $DBLIB->where("assetsAssignments_id", $currentAssignment['assetsAssignments_id']);
     $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $_POST['assetsAssignments_status']], 1);
 
     if (!$assignment or $DBLIB->count != 1) {
