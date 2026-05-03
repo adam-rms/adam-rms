@@ -48,9 +48,12 @@ if ($barcode and $barcode['assets_id'] != null) {
     $status = $DBLIB->getone("assetsAssignmentsStatus", ["assetsAssignmentsStatus_id"]);
     if (!$status or $status['assetsAssignmentsStatus_id'] == null) finish(false, ["message" => "Status not found", "code" => "STATUSNOTFOUND"]);
 
-    // Update using assetsAssignments_id to avoid the MySQL restriction on LIMIT in
-    // multi-table UPDATE statements; soft-delete guard protects against TOCTOU races
+    // Update using the assignment ID while also asserting the originally matched
+    // asset/project identity still holds, so a concurrent swap cannot cause this
+    // scan to update the status of a replacement asset on the same assignment row.
     $DBLIB->where("assetsAssignments_id", $currentAssignment['assetsAssignments_id']);
+    $DBLIB->where("assets_id", $barcode['assets_id']);
+    $DBLIB->where("projects_id", $_POST['projects_id']);
     $DBLIB->where("assetsAssignments_deleted", 0);
     $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $status['assetsAssignmentsStatus_id']], 1);
 
