@@ -57,12 +57,25 @@ if ($barcode and $barcode['assets_id'] != null) {
     $DBLIB->where("assetsAssignments_deleted", 0);
     $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $status['assetsAssignmentsStatus_id']], 1);
 
-    if (!$assignment or $DBLIB->count != 1) {
+    if (!$assignment) {
         finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
-    } else {
-        $bCMS->auditLog("EDIT-STATUS", "assetsAssignments", "set to " . $_POST['assetsAssignments_status'] . " by barcode scan", $AUTH->data['users_userid'], null, $_POST['projects_id']);
-        finish(true, null, ["assets_id" => $barcode['assets_id']]);
     }
+
+    // MySQL returns 0 affected rows when the row exists but the value is unchanged
+    // (e.g. a concurrent scan already wrote this status). Re-read to distinguish a
+    // genuine no-match from an idempotent write, avoiding a false NOTASSIGNED error.
+    if ($DBLIB->count != 1) {
+        $DBLIB->where("assetsAssignments_id", $currentAssignment['assetsAssignments_id']);
+        $DBLIB->where("assets_id", $barcode['assets_id']);
+        $DBLIB->where("projects_id", $_POST['projects_id']);
+        $DBLIB->where("assetsAssignments_deleted", 0);
+        $DBLIB->where("assetsAssignmentsStatus_id", $status['assetsAssignmentsStatus_id']);
+        $confirm = $DBLIB->getone("assetsAssignments", ["assetsAssignments_id"]);
+        if (!$confirm) finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
+    }
+
+    $bCMS->auditLog("EDIT-STATUS", "assetsAssignments", "set to " . $_POST['assetsAssignments_status'] . " by barcode scan", $AUTH->data['users_userid'], null, $_POST['projects_id']);
+    finish(true, null, ["assets_id" => $barcode['assets_id']]);
 } else finish(false);
 
 /** @OA\Post(
