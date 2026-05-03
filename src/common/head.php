@@ -272,15 +272,17 @@ if (!empty($CONFIG['ANALYTICS_CLARITY_PROJECT_ID'])) {
     $CSP['img-src'][] = ["value" => "https://*.clarity.ms", "comment" => "Microsoft Clarity"];
 }
 
-$CSPString = "Content-Security-Policy: ";
-foreach ($CSP as $key => $value) {
-    $CSPString .= $key;
-    foreach ($value as $subvalue) {
-        $CSPString .= " " . $subvalue['value'];
+if ($CONFIG['CSP_ENABLED'] === "Enabled") {
+    $CSPString = "Content-Security-Policy: ";
+    foreach ($CSP as $key => $value) {
+        $CSPString .= $key;
+        foreach ($value as $subvalue) {
+            $CSPString .= " " . $subvalue['value'];
+        }
+        $CSPString .= ";";
     }
-    $CSPString .= ";";
+    header($CSPString);
 }
-header($CSPString);
 
 
 // Include the Auth class

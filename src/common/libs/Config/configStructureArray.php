@@ -390,6 +390,27 @@ $configStructureArray = [
     "default" => "sha256",
     "envFallback" => false,
   ],
+  "CSP_ENABLED" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Disabled";
+      },
+      "name" => "Content Security Policy",
+      "group" => "Security & Login",
+      "description" => "Whether to send a Content-Security-Policy header with every page response. Enabling this improves security but may block uploads to storage providers whose endpoints are not in the built-in allowlist (e.g. custom Backblaze B2 or MinIO endpoints). Disable if you experience network errors when uploading files.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 5,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "Disabled",
+    "envFallback" => "CONFIG_CSP_ENABLED",
+  ],
   "AUTH_PROVIDERS_GOOGLE_KEYS_ID" => [
     "form" => [
       "type" => "text",
