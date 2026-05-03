@@ -41,10 +41,18 @@ if ($barcode and $barcode['assets_id'] != null) {
         finish(true, null, ["assets_id" => $barcode['assets_id']]);
     }
 
-    // Otherwise, update the status - use assetsAssignments_id to avoid the MySQL restriction
-    // on LIMIT in multi-table UPDATE statements
+    // Validate that the requested status belongs to the current instance and is not deleted
+    $DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+    $status = $DBLIB->getone("assetsAssignmentsStatus", ["assetsAssignmentsStatus_id"]);
+    if (!$status or $status['assetsAssignmentsStatus_id'] == null) finish(false, ["message" => "Status not found", "code" => "STATUSNOTFOUND"]);
+
+    // Update using assetsAssignments_id to avoid the MySQL restriction on LIMIT in
+    // multi-table UPDATE statements; soft-delete guard protects against TOCTOU races
     $DBLIB->where("assetsAssignments_id", $currentAssignment['assetsAssignments_id']);
-    $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $_POST['assetsAssignments_status']], 1);
+    $DBLIB->where("assetsAssignments_deleted", 0);
+    $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $status['assetsAssignmentsStatus_id']], 1);
 
     if (!$assignment or $DBLIB->count != 1) {
         finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
