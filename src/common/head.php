@@ -103,8 +103,8 @@ if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strl
 function generateNewTag()
 {
     global $DBLIB;
-    //Get highest current tag
-    $DBLIB->orderBy("assets_tag", "DESC");
+    //Get highest current tag - sort numerically so A-10000 ranks above A-9999
+    $DBLIB->orderBy("CAST(SUBSTRING(assets_tag, 3) AS UNSIGNED)", "DESC");
     $DBLIB->where("assets_tag", 'A-%', 'like');
     $tag = $DBLIB->getone("assets", ["assets_tag"]);
     if ($tag) {
