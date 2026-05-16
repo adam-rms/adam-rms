@@ -121,9 +121,14 @@ Settings that control user signup and authentication security.
 | User Signup | `AUTH_SIGNUP_ENABLED` | Select | `Enabled` | Yes | Whether new users can create an account. Disabling this means new users cannot sign up themselves. Options: `Enabled`, `Disabled`. |
 | JWT Key | `AUTH_JWTKey` | Secret | Auto-generated (64 characters) | Yes | The key used for signing JWTs. Must be exactly 64 uppercase alphanumeric characters. If you are setting up AdamRMS for the first time, the generated default value will be fine. |
 | Next password hashing algorithm | `AUTH_NEXTHASH` | Select | `sha256` | No | The hashing algorithm to use for new passwords. Options: `sha256`, `sha512`. Changing this will not require users to change their passwords; the new algorithm is applied the next time a user changes their password. |
+| Content Security Policy | `CSP_ENABLED` | Select | `Disabled` | No | Whether to send a `Content-Security-Policy` header with every page response. Enabling this improves security but may block uploads to storage providers whose endpoints are not in the built-in allowlist (e.g. custom Backblaze B2 or MinIO endpoints). Disable if you experience network errors when uploading files. Options: `Enabled`, `Disabled`. |
 
 :::note
 **Changing the JWT Key will invalidate all existing user sessions.** Users will need to log in again. Only change this if you have a specific reason to do so, such as a suspected security compromise.
+:::
+
+:::tip
+If you are using a custom S3-compatible storage provider such as Backblaze B2 or MinIO and are seeing network errors when uploading files, ensure **Content Security Policy** is set to `Disabled` (the default).
 :::
 
 | Setting | Validation | Env Fallback |
@@ -131,6 +136,7 @@ Settings that control user signup and authentication security.
 | User Signup | Must be `Enabled` or `Disabled` | `CONFIG_SIGNUP_ENABLED` |
 | JWT Key | Exactly 64 characters, uppercase letters and digits only (`A-Z`, `0-9`) | `CONFIG_AUTH_JWTKey` |
 | Next password hashing algorithm | Must be `sha256` or `sha512` | -- |
+| Content Security Policy | Must be `Enabled` or `Disabled` | `CONFIG_CSP_ENABLED` |
 
 ---
 
@@ -251,6 +257,18 @@ These settings configure an optional AWS CloudFront distribution for serving fil
 | AWS CloudFront Key Pair ID | -- |
 | AWS S3 CDN Endpoint | `CONFIG_AWS_CLOUDFRONT_ENDPOINT` |
 
+### Cloudflare Image Transformation
+
+This optional setting enables [Cloudflare Image Transformations](https://developers.cloudflare.com/images/transform-images/) for image files. When configured, image URLs are routed through Cloudflare's image transformation pipeline for automatic optimisation and caching. Non-image files are not affected.
+
+| Setting | Key | Type | Default | Required | Description |
+|---------|-----|------|---------|----------|-------------|
+| Cloudflare Image Transformation Domain | `CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` | Text | -- | No | The domain for Cloudflare Image Transformations (e.g. `https://cdn.yourdomain.com`). When set, image files (jpg, jpeg, png, gif, webp, avif, svg, bmp, tiff, tif, ico) are served via Cloudflare's image transformation pipeline. |
+
+| Setting | Env Fallback |
+|---------|--------------|
+| Cloudflare Image Transformation Domain | `CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` |
+
 :::tip
 If you are using an S3-compatible provider other than AWS (such as MinIO, DigitalOcean Spaces, or Backblaze B2), you may need to enable **path-style requests** and adjust the endpoint URLs accordingly.
 :::
@@ -318,3 +336,4 @@ Many configuration values can be set via environment variables as a fallback whe
 | `AWS_S3_ENDPOINT_PATHSTYLE` | `CONFIG_AWS_S3_ENDPOINT_PATHSTYLE` |
 | `AWS_S3_REGION` | `CONFIG_AWS_S3_REGION` |
 | `AWS_CLOUDFRONT_ENDPOINT` | `CONFIG_AWS_CLOUDFRONT_ENDPOINT` |
+| `CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` | `CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN` |

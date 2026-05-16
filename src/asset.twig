@@ -82,7 +82,7 @@
                         {% for thumb in asset.thumbnail %}
                             <div>
                                 <img class="img-fluid" style="max-height: 340px;"
-                                     src="{{ thumb.s3files_id|s3URL("small") }}"
+                                     src="{{ thumb.s3files_id|s3URL("large") }}"
                                      alt="{{asset.assetTypes_name}}"
                                      loading="lazy">
                             </div>

@@ -29,7 +29,7 @@ if ($barcode and $barcode['assets_id'] != null) {
     $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("projects.projects_deleted", 0);
     $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
-    $currentAssignment = $DBLIB->getOne("assetsAssignments", ["assetsAssignmentsStatus_id"]);
+    $currentAssignment = $DBLIB->getOne("assetsAssignments", ["assetsAssignments.assetsAssignments_id", "assetsAssignmentsStatus_id"]);
 
     if (!$currentAssignment) {
         finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
@@ -41,21 +41,41 @@ if ($barcode and $barcode['assets_id'] != null) {
         finish(true, null, ["assets_id" => $barcode['assets_id']]);
     }
 
-    // Otherwise, update the status
-    $DBLIB->where("assetsAssignments.assets_id", $barcode['assets_id']);
-    $DBLIB->where("assetsAssignments.projects_id", $_POST['projects_id']);
-    $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-    $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
-    $DBLIB->where("projects.projects_deleted", 0);
-    $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
-    $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $_POST['assetsAssignments_status']], 1);
+    // Validate that the requested status belongs to the current instance and is not deleted
+    $DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+    $status = $DBLIB->getone("assetsAssignmentsStatus", ["assetsAssignmentsStatus_id"]);
+    if (!$status or $status['assetsAssignmentsStatus_id'] == null) finish(false, ["message" => "Status not found", "code" => "STATUSNOTFOUND"]);
 
-    if (!$assignment or $DBLIB->count != 1) {
+    // Update using the assignment ID while also asserting the originally matched
+    // asset/project identity still holds, so a concurrent swap cannot cause this
+    // scan to update the status of a replacement asset on the same assignment row.
+    $DBLIB->where("assetsAssignments_id", $currentAssignment['assetsAssignments_id']);
+    $DBLIB->where("assets_id", $barcode['assets_id']);
+    $DBLIB->where("projects_id", $_POST['projects_id']);
+    $DBLIB->where("assetsAssignments_deleted", 0);
+    $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $status['assetsAssignmentsStatus_id']], 1);
+
+    if (!$assignment) {
         finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
-    } else {
-        $bCMS->auditLog("EDIT-STATUS", "assetsAssignments", "set to " . $_POST['assetsAssignments_status'] . " by barcode scan", $AUTH->data['users_userid'], null, $_POST['projects_id']);
-        finish(true, null, ["assets_id" => $barcode['assets_id']]);
     }
+
+    // MySQL returns 0 affected rows when the row exists but the value is unchanged
+    // (e.g. a concurrent scan already wrote this status). Re-read to distinguish a
+    // genuine no-match from an idempotent write, avoiding a false NOTASSIGNED error.
+    if ($DBLIB->count != 1) {
+        $DBLIB->where("assetsAssignments_id", $currentAssignment['assetsAssignments_id']);
+        $DBLIB->where("assets_id", $barcode['assets_id']);
+        $DBLIB->where("projects_id", $_POST['projects_id']);
+        $DBLIB->where("assetsAssignments_deleted", 0);
+        $DBLIB->where("assetsAssignmentsStatus_id", $status['assetsAssignmentsStatus_id']);
+        $confirm = $DBLIB->getone("assetsAssignments", ["assetsAssignments_id"]);
+        if (!$confirm) finish(false, ["message" => "Asset not assigned to project", "code" => "NOTASSIGNED", "assets_id" => $barcode['assets_id']]);
+    }
+
+    $bCMS->auditLog("EDIT-STATUS", "assetsAssignments", "set to " . $_POST['assetsAssignments_status'] . " by barcode scan", $AUTH->data['users_userid'], null, $_POST['projects_id']);
+    finish(true, null, ["assets_id" => $barcode['assets_id']]);
 } else finish(false);
 
 /** @OA\Post(

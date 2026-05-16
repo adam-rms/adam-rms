@@ -11,8 +11,23 @@ if (!fs.existsSync("./api-docs")) {
   fs.mkdirSync("./api-docs", { recursive: true });
 }
 
+// Microsoft Clarity project ID for adam-rms.com — hardcoded as this website is
+// only ever deployed by the AdamRMS team, not by self-hosters.
+const CLARITY_PROJECT_ID = "ree0pnhyh9";
+
 const config: Config = {
   title: "AdamRMS",
+  // Inject Clarity on production builds only so that development previews do not
+  // pollute analytics data.
+  headTags: production
+    ? [
+        {
+          tagName: "script",
+          attributes: { type: "text/javascript" },
+          innerHTML: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`,
+        },
+      ]
+    : [],
   tagline:
     "AdamRMS is a free, open source advanced Rental Management System for Theatre, AV & Broadcast",
   url: "https://adam-rms.com",

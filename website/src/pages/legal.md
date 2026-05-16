@@ -64,6 +64,8 @@ We endeavour to store your data within the European Union as per our legal oblig
 
 ## Cookie Policy
 
+This Cookie Policy applies to the hosted edition of AdamRMS at `adam-rms.com` and `dash.adam-rms.com`. Self-hosted installations of AdamRMS are controlled by their respective administrators and are not subject to this policy.
+
 ### What Are Cookies?
 
 As is common practice with almost all professional websites this site uses cookies, which are tiny files that are downloaded to your computer, to improve your experience.
@@ -82,9 +84,27 @@ You can prevent the setting of cookies by adjusting the settings on your browser
 
 We use cookies when you are logged in so that we can remember this fact and ensure our site is secure. This prevents you from having to log in every single time you visit a new page. These cookies are typically removed or cleared when you log out to ensure that you can only access restricted features and areas when logged in.
 
-#### Third Party Cookies
+#### Microsoft Clarity (Analytics & Session Recording)
 
-AdamRMS does not use Google Analytics or similar services, and as such does not add third party cookies, except where they are essential to allowing you to login with a third party service (such as Login with Google and Login with Microsoft buttons)
+Both `adam-rms.com` and `dash.adam-rms.com` use [Microsoft Clarity](https://clarity.microsoft.com/), a free behaviour analytics tool provided by Microsoft, to help us understand how visitors interact with our website and dashboard. Clarity collects:
+
+- **Session recordings** — video-like replays of your interactions with the page
+- **Heatmaps** — aggregate visualisations of where users click, tap, and scroll
+- **Interaction data** — mouse movements, clicks, scrolls, and page navigation events
+
+Clarity uses **first-party cookies** set on our domain to enable session continuity and funnel tracking. No personally identifiable information (such as form content) is collected; Clarity masks sensitive content by default.
+
+**Consent on `adam-rms.com`:** The cookie consent banner is shown to visitors who Microsoft Clarity identifies as being located in the **EEA, UK, or Switzerland**, where GDPR / UK GDPR / nFADP requires explicit opt-in before analytics cookies are set. Clarity is loaded on every visit but operates in a no-cookie mode until consent is granted via the banner. Clarity cookies are only placed once you click **Accept**. If you click **Reject**, or if your browser broadcasts the [Global Privacy Control (GPC)](https://globalprivacycontrol.org/) signal (which is honoured for all visitors regardless of region), Clarity will not set any cookies and will delete any that have already been set. You may change your preference at any time by clearing this site's cookies and local storage in your browser settings, which will cause the banner to appear again on your next visit. For visitors outside the EEA, UK, and Switzerland, Clarity operates under its default behaviour without a consent prompt.
+
+**Consent on `dash.adam-rms.com`:** Clarity is active on the hosted dashboard. By creating an account or logging in to the hosted edition of AdamRMS you agree to these Terms, including the use of analytics cookies by Microsoft Clarity, as part of the service. If you do not wish to accept this use of cookies you should not use the hosted edition of AdamRMS.
+
+Clarity data is stored in **Microsoft Azure** and is retained for up to **30 days** from the time of recording. Microsoft acts as the data controller for data processed through Clarity. Clarity does not sell data. For full details, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement) and the [Clarity Terms of Use](https://clarity.microsoft.com/terms).
+
+You may also opt out of Clarity telemetry at any time by selecting Microsoft via the [Digital Advertising Alliance opt-out tool](https://optout.aboutads.info/).
+
+#### Third Party Login Cookies
+
+AdamRMS does not use Google Analytics or similar advertising analytics services. Third-party cookies may be set where they are essential to enabling login with a third-party identity provider (such as Login with Google or Login with Microsoft).
 
 ## Terms of Service
 

@@ -34,6 +34,9 @@ function sendEmail($user, $instanceID, $subject, $html = false, $template = fals
         case 'SMTP':
             require_once __DIR__ . '/../../../common/libs/Email/SMTPHandler.php';
             return SMTPEmailHandler::sendEmail($user, $subject, $outputHTML);
+        case 'Cloudflare':
+            require_once __DIR__ . '/../../../common/libs/Email/CloudflareHandler.php';
+            return CloudflareEmailHandler::sendEmail($user, $subject, $outputHTML);
         default:
             trigger_error("Unknown email provider set", E_USER_ERROR);
             return false;
