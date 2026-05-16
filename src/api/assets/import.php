@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../apiHeadSecure.php';
+require_once __DIR__ . '/../apiHeadSecure.php';
 
 use Money\Currency;
 use Money\Money;
