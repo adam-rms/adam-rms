@@ -17,7 +17,7 @@ if ($_POST['type'] == "QR_CODE") {
         new SvgImageBackEnd()
     );
     $writer = new Writer($renderer);
-    echo $writer->writeString($bCMS->sanitizeString($_POST['barcode']));
+    echo $writer->writeString($bCMS->sanitizeString($_POST['barcode']), 'UTF-8');
 } else {
     $generator = new Picqer\Barcode\BarcodeGeneratorSVG();
     /*
