@@ -128,6 +128,7 @@ for ($i = 1; $i < count($csv); $i++) {
         
         //Asset Category - supports "Group - Category" format to disambiguate duplicate names
         $categoryInput = $row[7];
+        $assetCategory = null;
         if (strpos($categoryInput, ' - ') !== false) {
             // Split on the first occurrence of ' - ' to get group and category names
             [$groupName, $categoryName] = explode(' - ', $categoryInput, 2);
@@ -137,11 +138,13 @@ for ($i = 1; $i < count($csv); $i++) {
                 $DBLIB->where("assetCategories.assetCategories_deleted", 0);
                 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
                 $DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_name", $groupName);
+                $DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_deleted", 0);
+                $DBLIB->where("(assetCategoriesGroups.instances_id IS NULL OR assetCategoriesGroups.instances_id = ?)", [$instances_id]);
                 $assetCategory = $DBLIB->getOne("assetCategories", ["assetCategories.assetCategories_id"]);
-            } else {
-                $assetCategory = null;
             }
-        } else {
+        }
+        if (!$assetCategory) {
+            // Fall back to plain category name lookup (also handles categories whose name contains ' - ')
             $DBLIB->where("assetCategories_name", $categoryInput);
             $DBLIB->where("(assetCategories.instances_id = ? or assetCategories.instances_id IS NULL)", [$instances_id]);
             $DBLIB->where("assetCategories.assetCategories_deleted", 0);

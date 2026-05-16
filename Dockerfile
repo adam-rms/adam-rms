@@ -45,7 +45,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpng-dev \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mysqli intl zip
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mysqli intl zip mbstring
 
 # Copy our php.ini file
 
