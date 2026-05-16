@@ -147,5 +147,6 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.POST_CONTAINER_BUILD_WEBHOOK }}
         run: |
+          # Wait for the new image to propagate through the registry before triggering a deploy
           sleep 10
-          curl -X POST "$WEBHOOK_URL"
+          curl -fsS --show-error -X POST "$WEBHOOK_URL" || exit 1
