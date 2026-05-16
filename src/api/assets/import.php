@@ -1,12 +1,14 @@
 <?php
-require_once __DIR__ . '/../apiHeadSecure.php';
+require_once __DIR__ . '/../../apiHeadSecure.php';
 
 use Money\Currency;
 use Money\Money;
 use Money\Currencies\ISOCurrencies;
 use Money\Parser\DecimalMoneyParser;
 
-if (!$AUTH->serverPermissionCheck("INSTANCES:IMPORT:ASSETS") or !isset($_POST['instances_id'])) die("404");
+if (!$AUTH->instancePermissionCheck("ASSETS:IMPORT")) finish(false, ["code" => "AUTH-ERROR", "message" => "No auth for action"]);
+
+$instances_id = $AUTH->data['instance']['instances_id'];
 
 //Expected list of headers for the CSV file
 $CSVHEADERS = ["assetTypes_name","assetTypes_description","assetTypes_productLink","assetTypes_mass","assetTypes_dayRate","assetTypes_weekRate","assetTypes_value","assetCategories_id","manufacturers_name","assets_tag","assets_notes","assets_storageLocation","assets_dayRate","assets_WeekRate","assets_value","assets_mass","assetType_definableFieldsName_1","assetType_definableFieldsName_2","assetType_definableFieldsName_3","assetType_definableFieldsName_4","assetType_definableFieldsName_5","assetType_definableFieldsName_6","assetType_definableFieldsName_7","assetType_definableFieldsName_8","assetType_definableFieldsName_9","assetType_definableFieldsName_10","asset_definableFields_1","asset_definableFields_2","asset_definableFields_3","asset_definableFields_4","asset_definableFields_5","asset_definableFields_6","asset_definableFields_7","asset_definableFields_8","asset_definableFields_9","asset_definableFields_10"];
@@ -17,37 +19,37 @@ $failedAssets = [];
 
 //Validate file is what we expect
 // Undefined or Multiple Files
-if (!isset($_FILES['csvFile']['error']) || is_array($_FILES['csvFile']['error'])) finish(false, "Invalid file parameters");
+if (!isset($_FILES['csvFile']['error']) || is_array($_FILES['csvFile']['error'])) finish(false, ["code" => "FILE-ERROR", "message" => "Invalid file parameters"]);
 
 // Check upload error value value.
 switch ($_FILES['csvFile']['error']) {
     case UPLOAD_ERR_OK:
         break;
     case UPLOAD_ERR_NO_FILE:
-        finish(false, "No file uploaded");
+        finish(false, ["code" => "FILE-ERROR", "message" => "No file uploaded"]);
     case UPLOAD_ERR_INI_SIZE:
     case UPLOAD_ERR_FORM_SIZE:
-        finish(false,'Exceeded filesize limit');
+        finish(false, ["code" => "FILE-ERROR", "message" => "Exceeded filesize limit"]);
     default:
-        finish(false,'Unknown errors');
+        finish(false, ["code" => "FILE-ERROR", "message" => "Unknown errors"]);
 }
 //Check the file is a CSV or an excel file - excel doesn't save csvs correctly
-if ($_FILES['csvFile']['type'] != "text/csv" && $_FILES['csvFile']['type'] != "application/vnd.ms-excel") finish(false, "File is not a CSV");
+if ($_FILES['csvFile']['type'] != "text/csv" && $_FILES['csvFile']['type'] != "application/vnd.ms-excel") finish(false, ["code" => "FILE-ERROR", "message" => "File is not a CSV"]);
 //Check the file is not empty
-if ($_FILES['csvFile']['size'] == 0) finish(false, "File is empty");
+if ($_FILES['csvFile']['size'] == 0) finish(false, ["code" => "FILE-ERROR", "message" => "File is empty"]);
 
 //File is probably ok, lets try and read it
 $csv = array_map('str_getcsv', file($_FILES['csvFile']['tmp_name']));
 //Check the file has the correct headers
-if ($csv[0] != $CSVHEADERS) finish(false, "File does not have the correct headers");
+if ($csv[0] != $CSVHEADERS) finish(false, ["code" => "FILE-ERROR", "message" => "File does not have the correct headers"]);
 
-//File is ok, lets start importing
-$DBLIB->where("instances.instances_id", $_POST['instances_id']);
+//Get the instance currency
+$DBLIB->where("instances.instances_id", $instances_id);
 $DBLIB->where("instances.instances_deleted", 0);
 $instance = $DBLIB->getOne("instances", ["instances.instances_id", "instances.instances_name", "instances.instances_config_currency"]);
-if (!$instance) finish(false, "Instance not found");
+if (!$instance) finish(false, ["code" => "INSTANCE-ERROR", "message" => "Instance not found"]);
 
-// Function to remove issuses with dollar signs and other non-numeric characters from numeric strings
+// Function to remove issues with dollar signs and other non-numeric characters from numeric strings
 function sanitizeNumericString(string $input): string
 {
     $output = (string) '';
@@ -85,7 +87,7 @@ for ($i = 1; $i < count($csv); $i++) {
     //Check if asset with given tag already exists
     if (isset($row[9]) and $row[9] != null){
         $DBLIB->where("assets_tag", $row[9]);
-        $DBLIB->where("assets.instances_id", $_POST['instances_id']);
+        $DBLIB->where("assets.instances_id", $instances_id);
         $DBLIB->where("assets.assets_deleted", 0);
         $asset = $DBLIB->getOne("assets", ["assets.assets_id"]);
         if ($asset) {
@@ -101,7 +103,7 @@ for ($i = 1; $i < count($csv); $i++) {
         continue;
     }
     $DBLIB->where("assetTypes_name", $row[0]);
-    $DBLIB->where("(assetTypes.instances_id = ? or assetTypes.instances_id IS NULL)", [$_POST['instances_id']]);
+    $DBLIB->where("(assetTypes.instances_id = ? or assetTypes.instances_id IS NULL)", [$instances_id]);
     $assetType = $DBLIB->getOne("assetTypes", ["assetTypes.assetTypes_id"]);
 
     if(!$assetType){
@@ -109,19 +111,19 @@ for ($i = 1; $i < count($csv); $i++) {
         //Manufacturer
         if($row[8] == "") $row[8] = "Unknown/Generic"; //Use the generic manufacturer if none specified
         $DBLIB->where("manufacturers_name", $row[8]);
-        $DBLIB->where("(manufacturers.instances_id = ? or manufacturers.instances_id IS NULL)", [$_POST['instances_id']]);
+        $DBLIB->where("(manufacturers.instances_id = ? or manufacturers.instances_id IS NULL)", [$instances_id]);
         $manufacturer = $DBLIB->getOne("manufacturers", ["manufacturers.manufacturers_id"]);
         if (!$manufacturer) {
             $manufacturer = [
                 "manufacturers_name" => $row[8],
-                "instances_id" => $_POST['instances_id']
+                "instances_id" => $instances_id
             ];
             $manufacturer['manufacturers_id'] = $DBLIB->insert("manufacturers", $manufacturer);
         }
         
         //Asset Category
-        $DBLIB->where("assetCategories_id", $row[7],);
-        $DBLIB->where("(assetCategories.instances_id = ? or assetCategories.instances_id IS NULL)", [$_POST['instances_id']]);
+        $DBLIB->where("assetCategories_id", $row[7]);
+        $DBLIB->where("(assetCategories.instances_id = ? or assetCategories.instances_id IS NULL)", [$instances_id]);
         $DBLIB->where("assetCategories.assetCategories_deleted", 0);
         $assetCategory = $DBLIB->getOne("assetCategories", ["assetCategories.assetCategories_id"]);
         if (!$assetCategory) {
@@ -144,7 +146,7 @@ for ($i = 1; $i < count($csv); $i++) {
             "assetTypes_name" => $row[0],
             "assetCategories_id" => $row[7],
             "manufacturers_id" => $manufacturer['manufacturers_id'],
-            "instances_id" => $_POST['instances_id'],
+            "instances_id" => $instances_id,
             "assetTypes_description" => $row[1],
             "assetTypes_productLink" => $row[2],
             "assetTypes_definableFields" => $definableFields,
@@ -165,7 +167,7 @@ for ($i = 1; $i < count($csv); $i++) {
         "assets_tag" => $row[9],
         "assetTypes_id" => $assetType['assetTypes_id'],
         "assets_notes" => $row[10],
-        "instances_id" => $_POST['instances_id'],
+        "instances_id" => $instances_id,
         "asset_definableFields_1" => $row[26],
         "asset_definableFields_2" => $row[27],
         "asset_definableFields_3" => $row[28],
@@ -197,7 +199,7 @@ return finish(true, null, ["createdTypes" => $createdAssetTypes,"successfulAsset
 
 /**
  *  @OA\Post(
- *      path="/server/assetImport.php",
+ *      path="/assets/import.php",
  *      summary="Bulk Asset Import",
  *      description="Bulk import assets, using templated csv",
  *      operationId="assetImport",
@@ -214,15 +216,6 @@ return finish(true, null, ["createdTypes" => $createdAssetTypes,"successfulAsset
  *          in="files",
  *          description="CSV File with assets to import",
  *          required="true",
- *      ),
- *      @OA\Parameter(
- *          name="instances_id",
- *          in="query",
- *          description="Instance Id to import assets to",
- *          required="true",
- *          @OA\Schema(
- *              type="number",
- *          ),
  *      ),
  *  )
  */

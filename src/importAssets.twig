@@ -11,16 +11,7 @@
             <div class="card-body">
                 <p>Assets can be imported by uploading a CSV file. The CSV should be comma-delimited and with the headers found in the downloaded template above.</p>
                 <hr />
-                <form class="form" action="{{CONFIG.ROOTURL}}/api/server/assetImport.php">
-                    <div class="form-group">
-                        <label for="instances_id">Instance</label>
-                        <select id="instances_id" name="instances_id" class="form-control" required>
-                            <option disabled selected>Select an Instance</option>
-                            {% for instance in instances %}
-                            <option value="{{ instance.instances_id }}">{{ instance.instances_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <form class="form" action="{{CONFIG.ROOTURL}}/api/assets/import.php">
                     <div class="form-group">
                         <label for="csvFile">CSV File</label>
                         <input type="file" class="form-control-file" id="csvFile" required>
@@ -72,10 +63,9 @@
         $("#import-upload").click(function (e) {
             e.preventDefault();
             var formData = new FormData();
-            formData.append('instances_id', $("#instances_id").val());
             formData.append('csvFile', $("#csvFile")[0].files[0]);
             $.ajax({
-                url: "{{CONFIG.ROOTURL}}/api/server/assetImport.php",
+                url: "{{CONFIG.ROOTURL}}/api/assets/import.php",
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -139,12 +129,6 @@
                     </thead>
                     <tbody>
                 {% for category in categories %}
-                    {% if instance != category.instances_name %}
-                    <tr>
-                        <td colspan="2" style="font-weight: bold;">{{ category.instances_name }}</td>
-                    </tr>
-                    {% set instance = category.instances_name %}
-                    {% endif %}
                     <tr>
                         <td>{{ category.assetCategories_id }}</td>
                         <td>{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</td>
