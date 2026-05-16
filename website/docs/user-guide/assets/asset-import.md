@@ -21,7 +21,7 @@ The columns of the CSV file are as follows:
 | assetTypes_dayRate                | Hire cost per day | Yes |
 | assetTypes_weekRate               | Hire cost per week | Yes |
 | assetTypes_value                  | Asset Type Purchase Value | Yes |
-| assetCategories_id                | AdamRMS Asset Category ID | Yes |
+| assetCategories_name              | Asset Category Name (must match an existing category in this instance) | Yes |
 | manufacturers_name                | Manufacturer Name | Yes |
 | assets_tag                        | The Unique ID/Tag associated with the asset | Yes |
 | assets_notes                      |  | No | 
