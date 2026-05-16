@@ -144,7 +144,7 @@ for ($i = 1; $i < count($csv); $i++) {
         //Actually create new asset type
         $assetType = [
             "assetTypes_name" => $row[0],
-            "assetCategories_id" => $row[7],
+            "assetCategories_id" => $assetCategory['assetCategories_id'],
             "manufacturers_id" => $manufacturer['manufacturers_id'],
             "instances_id" => $instances_id,
             "assetTypes_description" => $row[1],
