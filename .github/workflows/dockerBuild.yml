@@ -142,3 +142,10 @@ jobs:
           subject-name: ${{ env.REGISTRY_IMAGE }}
           subject-digest: ${{ steps.create_manifest.outputs.digest }}
           push-to-registry: true
+      - name: Trigger Deploy
+        if: env.WEBHOOK_URL != ''
+        env:
+          WEBHOOK_URL: ${{ secrets.POST_CONTAINER_BUILD_WEBHOOK }}
+        run: |
+          sleep 10
+          curl -X POST "$WEBHOOK_URL"
