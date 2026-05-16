@@ -1,13 +1,14 @@
 ---
-sidebar_position: 34
+sidebar_position: 14
 title: Asset Import
 ---
 
 # Asset Import
-To enable the bulk import of assets, AdamRMS supports the import of assets from a CSV file. This is done as a server Admin function and so can only be done by an AdamRMS server administrator.  
-To import assets to the AdamRMS hosted server, please contact [support@adam-rms.com](mailto:support@adam-rms.com) with your completed csv file and Business name.
+AdamRMS supports the bulk import of assets from a CSV file. This is an instance-level feature, accessible to instance admins with the `ASSETS:IMPORT` permission.
 
-A template is available with the correct CSV headings, which can be downloaded here: [Asset Import Template](https://dash.adam-rms.com/public/templates/asset-import-template.csv).
+A template is available with the correct CSV headings, which can be downloaded from within the Import Assets page in AdamRMS.
+
+To import assets, navigate to **Assets → Import Assets** in the sidebar and upload your completed CSV file.
 
 The columns of the CSV file are as follows:
 
@@ -51,6 +52,6 @@ The columns of the CSV file are as follows:
 | asset_definableFields_10          | As above | Yes, if field name given |
 
 
-:::note Server Permissions Required
-INSTANCES:IMPORT:ASSETS
+:::note Instance Permissions Required
+ASSETS:IMPORT (requires ASSETS:CREATE, ASSETS:ASSET_TYPES:CREATE, ASSETS:MANUFACTURERS:CREATE)
 :::
