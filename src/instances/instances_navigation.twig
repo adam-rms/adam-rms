@@ -201,7 +201,7 @@
             </div>
         </div>
         {% endif %}
-        {% if ("BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions) %}
+        {% if ("BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions or "ASSETS:IMPORT"|instancePermissions) %}
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -235,6 +235,20 @@
                     <i class="fas fa-barcode"></i>
                 </div>
                 <a href="{{ CONFIG.ROOTURL }}/instances/configuration/barcodes.php" class="small-box-footer">Manage Barcodes <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        {% endif %}
+        {% if "ASSETS:IMPORT"|instancePermissions %}
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Import Assets</h3>
+                    <p>Import assets from CSV files.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/importAssets.php" class="small-box-footer">Import Assets <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         {% endif %}

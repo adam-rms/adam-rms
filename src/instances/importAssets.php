@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common/headSecure.php';
+require_once __DIR__ . '/../common/headSecure.php';
 
 if (!$AUTH->instancePermissionCheck("ASSETS:IMPORT")) die($TWIG->render('404.twig', $PAGEDATA));
 
@@ -13,4 +13,4 @@ $DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_deleted", 0);
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $PAGEDATA['categories'] = $DBLIB->get('assetCategories', null, ["assetCategoriesGroups.assetCategoriesGroups_name", "assetCategories.assetCategories_name", "assetCategories.assetCategories_id"]);
 
-echo $TWIG->render('importAssets.twig', $PAGEDATA);
+echo $TWIG->render('instances/instances_importAssets.twig', $PAGEDATA);
