@@ -121,17 +121,17 @@
                 <h4 class="card-title">Asset Categories</h4>
             </div>
             <div class="card-body">
-                <h5 class="card-subtitle">Match the category id to the category you wish to use</h5>
+                <h5 class="card-subtitle">Match the category name to the category you wish to use</h5>
                 <table class="table">
                     <thead>
-                        <th scope="col">ID</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Group</th>
                     </thead>
                     <tbody>
                 {% for category in categories %}
                     <tr>
-                        <td>{{ category.assetCategories_id }}</td>
-                        <td>{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</td>
+                        <td>{{ category.assetCategories_name }}</td>
+                        <td>{{ category.assetCategoriesGroups_name }}</td>
                     </tr>
                 {% endfor %}
                     </tbody>
