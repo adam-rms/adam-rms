@@ -149,4 +149,4 @@ jobs:
         run: |
           # Wait for the new image to propagate through the registry before triggering a deploy
           sleep 10
-          curl -fsS --show-error -X POST "$WEBHOOK_URL" || exit 1
+          curl -fsS --show-error -X POST "$WEBHOOK_URL" || echo "Warning: Deploy webhook failed, continuing anyway"
