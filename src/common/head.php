@@ -56,7 +56,7 @@ try {
         'db' => getenv('DB_DATABASE'),
         'port' => getenv('DB_PORT') ?: 3306,
         //'prefix' => 'adamrms_',
-        'charset' => 'utf8'
+        'charset' => 'utf8mb4'
     ]);
 } catch (Exception $e) {
     // TODO use twig for this
