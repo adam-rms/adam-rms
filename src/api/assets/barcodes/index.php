@@ -103,7 +103,13 @@ if ($_POST['type'] == "QR_CODE") {
             $type = $generator::TYPE_CODE_128;
     }
 
-    echo $generator->getBarcode($bCMS->sanitizeString($_POST['barcode']), $type, $width, $height, "black");
+    try {
+        echo $generator->getBarcode($bCMS->sanitizeString($_POST['barcode']), $type, $width, $height, "black");
+    } catch (\Picqer\Barcode\Exceptions\InvalidCharacterException $e) {
+        http_response_code(400);
+        header('Content-Type: text/plain');
+        echo 'Barcode value contains a character unsupported by the selected barcode type.';
+    }
 }
 /** @OA\Post(
  *     path="/assets/barcodes/index.php", 
