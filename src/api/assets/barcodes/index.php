@@ -104,9 +104,10 @@ if ($_POST['type'] == "QR_CODE") {
     }
 
     $barcodeValue = $bCMS->sanitizeString($_POST['barcode']);
+    // CODE_39 supports only: 0-9, A-Z, space, and - . $ / + %
     if ($type === $generator::TYPE_CODE_39) {
         $barcodeValue = strtoupper($barcodeValue);
-        $barcodeValue = preg_replace('/[^0-9A-Z\-\.\ \$\/\+\%]/', '', $barcodeValue);
+        $barcodeValue = preg_replace('/[^0-9A-Z\-\.\s\$\/\+\%]/', '', $barcodeValue);
     }
 
     try {
