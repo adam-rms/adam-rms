@@ -1,0 +1,58 @@
+---
+sidebar_position: 21
+title: Projects
+---
+
+# Projects
+---
+
+Projects help you track your events by bringing assets, locations, crew and finance together.
+All projects are date and time based, so you can track where your teams and equipment will be throughout the year.
+
+Projects are listed on the main menu and in the project list page.
+
+![Project List](/img/tutorial/projects/projects-list.png)
+*List of Projects*
+
+:::note Permissions Required
+PROJECTS:VIEW  
+PROJECTS:CREATE  
+PROJECTS:ARCHIVE  
+PROJECTS:DELETE  
+PROJECTS:EDIT:PROJECT_TYPE  
+PROJECTS:PROJECT_TYPES:VIEW  
+:::
+
+## Projects in the Menu
+---
+
+All non-archived projects are listed in the side menu, and have the following icons and colour codes:
+
+![Project Menu codes](/img/tutorial/projects/project-menu-codes.png)
+
+- A Circle denotes a project that you are not the project manager of.
+- A Star denotes a project that you are the project manager of.
+- A Sun denotes a parent project of sub-projects.
+    - A solid Sun means you are the Project Manager.
+    - An outlined Sun means you are not the project manager.
+
+There are many colour codes denoting different project statuses:
+- Cyan means the project is either 'Added to RMS' or 'Targeted'
+- Yellow means the project is 'Quote Sent'
+- Green means the project is 'Confirmed' or 'Prep'
+- Blue means the project is 'Dispatched' or 'Returned'
+- Gray means the project is 'Closed'
+- Red means the project is 'Cancelled' or 'Lead Lost'
+
+:::tip
+Project statuses can be customised by your administrator. See [Business Settings](../business/business-settings#project-statuses) for details on creating custom statuses. For information about the project types that control which features are available, see [Project Types](../business/business-settings#project-types).
+:::
+
+## Related Features
+
+- [Project Overview](./overview) -- project details, comments, sub-projects, and audit log
+- [Project Assets](./assets) -- assigning and dispatching equipment
+- [Project Crew](./crew) -- crew management and recruitment
+- [Project Finance](./finance) -- costs, payments, invoices, and quotes
+- [Clients](../business/clients) -- managing the clients linked to projects
+- [Glossary](../glossary) -- definitions of key terms like project status, project type, and sub-project

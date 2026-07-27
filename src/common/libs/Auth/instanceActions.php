@@ -288,6 +288,17 @@ $instanceActions = [
     'LEGACY-ID' => 17,
     'LEGACY-Sort Rank' => 1,
   ],
+  'ASSETS:IMPORT' => [
+    'Category' => 'Assets',
+    'Table' => 'Assets',
+    'Type' => 'Import',
+    'Detail' => null,
+    'Combined Text Description' => 'Assets: Import',
+    'Dependencies' => ['ASSETS:CREATE', 'ASSETS:ASSET_TYPES:CREATE', 'ASSETS:MANUFACTURERS:CREATE'],
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+    'Caution' => null,
+  ],
   'ASSETS:DELETE' => [
     'Category' => 'Assets',
     'Table' => 'Assets',

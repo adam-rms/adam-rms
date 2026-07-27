@@ -4,6 +4,8 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (hash($AUTH->data['users_hash'], $AUTH->data['users_salty1'] . $_POST['oldpass']. $AUTH->data['users_salty2']) != $AUTH->data['users_password']) finish(false,["message"=>"Current Password Incorrect"]);
 
+if (strlen($_POST['newpass'] ?? '') < 12) finish(false, ["message" => "Sorry - Your password is too short - please choose a password of at least 12 characters"]);
+
 $DBLIB->where ('users_userid', $AUTH->data['users_userid']);
 if ($DBLIB->update('users', ["users_password" => hash($CONFIG['AUTH_NEXTHASH'], $AUTH->data['users_salty1'] . $_POST['newpass'] . $AUTH->data['users_salty2'])])) {
     $bCMS->auditLog("UPDATE", "users", "PASSWORD CHANGE", $AUTH->data['users_userid'],$AUTH->data['users_userid']);

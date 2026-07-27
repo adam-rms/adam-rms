@@ -77,7 +77,7 @@ $configStructureArray = [
       "required" => false,
       "maxlength" => 255,
       "minlength" => 4,
-      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP"],
+      "options" => ["Sendgrid", "Mailgun", "Postmark", "SMTP", "Cloudflare"],
       "verifyMatch" => function ($value, $options) {
         return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
       }
@@ -117,7 +117,7 @@ $configStructureArray = [
       },
       "name" => "Email Service API key",
       "group" => "Email",
-      "description" => "If Sengrid, Mailgun or Postmark is selected above, the API key to use to send emails",
+      "description" => "If Sendgrid, Mailgun, Postmark or Cloudflare is selected above, the API key/token to use to send emails",
       "required" => false,
       "maxlength" => 255,
       "minlength" => 0,
@@ -150,6 +150,27 @@ $configStructureArray = [
     "specialRequest" => true,
     "default" => false,
     "envFallback" => false,
+  ],
+  "EMAILS_PROVIDERS_CLOUDFLARE_ACCOUNT_ID" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return "";
+      },
+      "name" => "Cloudflare Account ID",
+      "group" => "Email",
+      "description" => "If Cloudflare is selected above, the Cloudflare Account ID to use for sending emails",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => null];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_EMAILS_CLOUDFLARE_ACCOUNT_ID",
   ],
   "EMAILS_SMTP_SERVER" => [
     "form" => [
@@ -368,6 +389,27 @@ $configStructureArray = [
     "specialRequest" => false,
     "default" => "sha256",
     "envFallback" => false,
+  ],
+  "CSP_ENABLED" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Disabled";
+      },
+      "name" => "Content Security Policy",
+      "group" => "Security & Login",
+      "description" => "Whether to send a Content-Security-Policy header with every page response. Enabling this improves security but may block uploads to storage providers whose endpoints are not in the built-in allowlist (e.g. custom Backblaze B2 or MinIO endpoints). Disable if you experience network errors when uploading files.",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 5,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "Disabled",
+    "envFallback" => "CONFIG_CSP_ENABLED",
   ],
   "AUTH_PROVIDERS_GOOGLE_KEYS_ID" => [
     "form" => [
@@ -589,6 +631,27 @@ $configStructureArray = [
     "specialRequest" => false,
     "default" => null,
     "envFallback" => false,
+  ],
+  "ANALYTICS_CLARITY_PROJECT_ID" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Microsoft Clarity Project ID",
+      "group" => "Customisation",
+      "description" => "The Microsoft Clarity project ID to use for session recording and heatmaps. Leave blank to disable Clarity.",
+      "required" => false,
+      "maxlength" => 64,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => true, "value" => $value, "error" => ''];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => null,
+    "envFallback" => "bCMS__CLARITY_PROJECT_ID",
   ],
   "FILES_ENABLED" => [
     "form" => [
@@ -849,6 +912,57 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "CONFIG_AWS_CLOUDFRONT_ENDPOINT",
   ],
+
+  "CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN" => [
+    "form" => [
+      "type" => "text",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Cloudflare Image Transformation Domain",
+      "group" => "File Storage",
+      "description" => "The domain for Cloudflare Image Transformations, used to optimise image delivery. When set, image file URLs will be routed through Cloudflare. For example: https://cdn.yourdomain.com",
+      "required" => false,
+      "maxlength" => 255,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        if ($value === null) {
+          return ["valid" => true, "value" => null, "error" => ''];
+        }
+
+        $value = trim($value);
+
+        if ($value === '') {
+          return ["valid" => true, "value" => '', "error" => ''];
+        }
+
+        if (!filter_var($value, FILTER_VALIDATE_URL)) {
+          return ["valid" => false, "value" => $value, "error" => 'Please enter a valid URL including http:// or https://'];
+        }
+
+        $parsedUrl = parse_url($value);
+
+        if (
+          $parsedUrl === false ||
+          !isset($parsedUrl['scheme']) ||
+          !isset($parsedUrl['host']) ||
+          isset($parsedUrl['query']) ||
+          isset($parsedUrl['fragment']) ||
+          isset($parsedUrl['user']) ||
+          isset($parsedUrl['pass']) ||
+          (isset($parsedUrl['path']) && $parsedUrl['path'] !== '/')
+        ) {
+          return ["valid" => false, "value" => $value, "error" => 'Please enter only the domain URL, for example https://cdn.yourdomain.com'];
+        }
+        return ["valid" => true, "value" => rtrim($value, '/'), "error" => ''];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_CLOUDFLARE_IMAGE_TRANSFORM_DOMAIN",
+  ],
+
   "NEW_INSTANCE_ENABLED" => [
     "form" => [
       "type" => "select",

@@ -6,6 +6,18 @@ if ($AUTH->data['users_userid'] !== $AUTH->data['instance']['instances_billingUs
 
 \Stripe\Stripe::setApiKey($CONFIGCLASS->get('STRIPE_KEY'));
 
+$subscriptionData = [
+  'metadata' => [
+    'instance_id' => $AUTH->data['instance']['instances_id'],
+  ],
+  'description' => 'AdamRMS Subscription for ' . $AUTH->data['instance']['instances_name'],
+  'trial_settings' => ['end_behavior' => ['missing_payment_method' => 'pause']],
+];
+
+if (!$AUTH->data['instance']['instances_hadTrial']) {
+  $subscriptionData['trial_period_days'] = 7;
+}
+
 $checkout_session = \Stripe\Checkout\Session::create([
   'line_items' => [[
     'price' => $_POST['price_id'],
@@ -20,14 +32,7 @@ $checkout_session = \Stripe\Checkout\Session::create([
   'mode' => 'subscription',
   'success_url' => $CONFIG['ROOTURL'] . '/api/instances/billing/postSubscribeDelay.php',
   'cancel_url' => $CONFIG['ROOTURL'] . '/',
-  'subscription_data' => [
-    'metadata' => [
-      'instance_id' => $AUTH->data['instance']['instances_id'],
-    ],
-    'description' => 'AdamRMS Subscription for ' . $AUTH->data['instance']['instances_name'],
-    'trial_settings' => ['end_behavior' => ['missing_payment_method' => 'pause']],
-    'trial_period_days' => 7,
-  ],
+  'subscription_data' => $subscriptionData,
   'consent_collection' => [
     'payment_method_reuse_agreement' => [
       'position' => 'auto',

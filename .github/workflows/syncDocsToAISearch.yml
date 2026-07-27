@@ -1,0 +1,47 @@
+name: Sync Docs to AI Search
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "website/docs/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Upload docs to R2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install rclone
+        run: |
+          sudo apt-get update && sudo apt-get install -y rclone
+
+      - name: Configure rclone for R2
+        run: |
+          mkdir -p ~/.config/rclone
+          cat > ~/.config/rclone/rclone.conf << EOF
+          [r2]
+          type = s3
+          provider = Cloudflare
+          access_key_id = ${{ secrets.R2_DOCS_UPLOAD_ACCESS_KEY_ID }}
+          secret_access_key = ${{ secrets.R2_DOCS_UPLOAD_SECRET_ACCESS_KEY }}
+          endpoint = https://b02c7bb80b108e24cb7cd05f60e25dbd.r2.cloudflarestorage.com
+          acl = private
+          no_check_bucket = true
+          EOF
+
+      - name: Sync docs to R2 bucket
+        run: |
+          rclone sync website/docs/ r2:adam-rms-v1-website-docs-markdown/ \
+            --include "*.md" \
+            --include "*.mdx" \
+            --verbose

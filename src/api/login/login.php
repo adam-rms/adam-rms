@@ -3,7 +3,7 @@ require_once 'loginAjaxHead.php';
 use \Firebase\JWT\JWT;
 if (isset($_POST['formInput']) and isset($_POST['password'])) {
 	$input = trim(strtolower($GLOBALS['bCMS']->sanitizeString($_POST['formInput'])));
-    $password = $GLOBALS['bCMS']->sanitizeString($_POST['password']);
+    $password = $_POST['password'];
 	if ($input == "" || $password == "") finish(false, ["code" => null, "message" => "No data specified"]);
 	else {
         if (filter_var($input, FILTER_VALIDATE_EMAIL)) $DBLIB->where ("users_email", $input);

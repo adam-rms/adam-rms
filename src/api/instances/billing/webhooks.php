@@ -14,6 +14,11 @@ function handleWebhook($subscription)  // contains a \Stripe\Subscription
   $instance = $DBLIB->getOne('instances', ['instances_id', 'instances_name', 'instances_planStripeCustomerId']);
   if (!$instance) throw new Exception("Instance not found in database.");
   $instanceUpdateData = [];
+  // Determine if this subscription has ever had a trial, based on trial_start/trial_end.
+  $hadTrial = (
+    (isset($subscription->trial_start) && $subscription->trial_start) ||
+    (isset($subscription->trial_end) && $subscription->trial_end)
+  );
   if ($instance['instances_planStripeCustomerId'] !== $subscription->customer) {
     // Change the customer over - TODO this is not ideal - we ideally need to figure out why the customer id has changed.
     $instanceUpdateData['instances_planStripeCustomerId'] = $subscription->customer;
@@ -49,6 +54,10 @@ function handleWebhook($subscription)  // contains a \Stripe\Subscription
     $instanceUpdateData['instances_assetLimit'] = 1;
     $instanceUpdateData['instances_userLimit'] = 1;
     $instanceUpdateData['instances_projectLimit'] = 1;
+  }
+  // If the subscription indicates a trial has occurred, persist that fact regardless of current status.
+  if ($hadTrial) {
+    $instanceUpdateData['instances_hadTrial'] = 1;
   }
   $DBLIB->where('instances_id', $instanceid);
   if (!$DBLIB->update('instances', $instanceUpdateData, 1)) throw new Exception("Failed to update instance in database.");

@@ -6,6 +6,7 @@ if ($CONFIGCLASS->get("AUTH_SIGNUP_ENABLED") !== 'Enabled') {
 }
 
 if (isset($_POST['name1']) and isset($_POST['password']) and isset($_POST['username']) and isset($_POST['email']) and isset($_POST['name2'])) {
+    if (strlen($_POST['password']) < 12) finish(false, ["code" => null, "message" => "Sorry - Your password is too short - please choose a password of at least 12 characters"]);
     $username = strtolower($GLOBALS['bCMS']->sanitizeString($_POST['username']));
     if (strlen(trim($username)) < 1) finish(false, ["code" => null, "message" => "Sorry that username is invalid, please try another"]);
     if ($AUTH->usernameTaken($username)) finish(false, ["code" => null, "message" => "Sorry that username is taken, please try another"]);
