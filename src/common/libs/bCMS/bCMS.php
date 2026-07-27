@@ -75,22 +75,44 @@ class bCMS
   private function redactSensitiveData(array $data): array
   {
     foreach ($data as $key => $value) {
-      if (in_array(strtolower((string)$key), self::SENSITIVE_KEYS, true)) {
-        unset($data[$key]);
-      } elseif (is_array($value)) {
+      $keyLower = strtolower((string) $key);
+      foreach (self::SENSITIVE_KEYS as $sensitiveKey) {
+        $needle = strtolower($sensitiveKey);
+        if (
+          $keyLower === $needle ||
+          str_starts_with($keyLower, $needle . '_') ||
+          str_ends_with($keyLower, '_' . $needle) ||
+          str_contains($keyLower, '_' . $needle . '_')
+        ) {
+          unset($data[$key]);
+          continue 2;
+        }
+      }
+
+      if (is_array($value)) {
         $data[$key] = $this->redactSensitiveData($value);
       }
     }
     return $data;
   }
 
+  private function encodeAuditLogArray(array $data): ?string
+  {
+    $data = $this->redactSensitiveData($data);
+    $encoded = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    return ($encoded !== false) ? $encoded : null;
+  }
+
   function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null, $targetid = null)
   { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
     global $DBLIB;
     if (is_array($revelantData)) {
-      $revelantData = $this->redactSensitiveData($revelantData);
-      $encoded = json_encode($revelantData);
-      $revelantData = ($encoded !== false) ? $encoded : null;
+      $revelantData = $this->encodeAuditLogArray($revelantData);
+    } elseif (is_string($revelantData)) {
+      $decoded = json_decode($revelantData, true);
+      if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+        $revelantData = $this->encodeAuditLogArray($decoded);
+      }
     }
     $data = [
       "auditLog_actionType" => $actionType,
