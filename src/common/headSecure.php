@@ -23,6 +23,7 @@ $PAGEDATA['AUTH'] = $AUTH;
 $PAGEDATA['USERDATA'] = $AUTH->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
+$analyticsPayload = count($_GET) > 0 ? $bCMS->sanitizeLoggedPayload($_GET) : null;
 $DBLIB->insert("analyticsEvents", [
     "analyticsEvents_timestamp" => date("Y-m-d H:i:s"),
     "users_userid" => $AUTH->data['users_userid'],
@@ -31,7 +32,7 @@ $DBLIB->insert("analyticsEvents", [
     "instances_id" => $AUTH->data['instance'] ?  $AUTH->data['instance']['instances_id'] : null,
     "analyticsEvents_path" => strtok($_SERVER["REQUEST_URI"], '?'),
     "analyticsEvents_action" => 'PAGE-REQUEST',
-    "analyticsEvents_payload" => count($_GET) > 0 ? (strlen(json_encode($_GET)) > 65535 ? null : json_encode($_GET)) : null,
+    "analyticsEvents_payload" => ($analyticsPayload !== null && strlen($analyticsPayload) > 65535) ? null : $analyticsPayload,
 ]);
 
 // Create a set of instances that can be joined via the trusted domains route
