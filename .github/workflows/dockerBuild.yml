@@ -142,3 +142,12 @@ jobs:
           subject-name: ${{ env.REGISTRY_IMAGE }}
           subject-digest: ${{ steps.create_manifest.outputs.digest }}
           push-to-registry: true
+      - name: Trigger Deploy
+        if: env.WEBHOOK_URL != ''
+        env:
+          WEBHOOK_URL: ${{ secrets.POST_CONTAINER_BUILD_WEBHOOK }}
+          COOLIFY_TOKEN: ${{ secrets.POST_CONTAINER_BUILD_WEBHOOK_TOKEN }}
+        run: |
+          # Wait for the new image to propagate through the registry before triggering a deploy
+          sleep 10
+          curl -fsS --show-error -X GET -H "Authorization: Bearer $COOLIFY_TOKEN" "$WEBHOOK_URL" || echo "Warning: Deploy webhook failed, continuing anyway"

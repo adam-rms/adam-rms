@@ -28,11 +28,18 @@ if ($hasType) {
     $DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
     $locations = $DBLIB->get("locationsBarcodes", null, ["locationsBarcodes.locations_id", "locationsBarcodes.locationsBarcodes_id", "locations.locations_name"]);
     if (is_array($locations) && count($locations) > 1) {
-        finish(false, [
-            "code" => "LOCATION-BARCODE-NOT-UNIQUE",
-            "message" => "Multiple locations share this barcode value in this instance"
-        ]);
-    } elseif (is_array($locations) && count($locations) === 1) {
+        // Only treat as ambiguous if the matches belong to different locations
+        $uniqueLocationIds = array_unique(array_column($locations, 'locations_id'));
+        if (count($uniqueLocationIds) > 1) {
+            finish(false, [
+                "code" => "LOCATION-BARCODE-NOT-UNIQUE",
+                "message" => "Multiple locations share this barcode value in this instance"
+            ]);
+        }
+        // All matches belong to the same location – treat as a single result
+        $locations = [$locations[0]];
+    }
+    if (is_array($locations) && count($locations) === 1) {
         $location = $locations[0];
         $location['barcode'] = $location['locationsBarcodes_id'];
         //Location has been found
@@ -71,11 +78,18 @@ if ($hasType) {
     $DBLIB->where("assetsBarcodes_deleted", 0);
     $barcodes = $DBLIB->get("assetsBarcodes", null, ["assetsBarcodes.assets_id", "assetsBarcodes.assetsBarcodes_id"]);
     if (is_array($barcodes) && count($barcodes) > 1) {
-        finish(false, [
-            "code" => "ASSET-BARCODE-NOT-UNIQUE",
-            "message" => "Multiple assets share this barcode value in this instance"
-        ]);
-    } elseif (is_array($barcodes) && count($barcodes) === 1) {
+        // Only treat as ambiguous if the matches belong to different assets
+        $uniqueAssetIds = array_unique(array_column($barcodes, 'assets_id'));
+        if (count($uniqueAssetIds) > 1) {
+            finish(false, [
+                "code" => "ASSET-BARCODE-NOT-UNIQUE",
+                "message" => "Multiple assets share this barcode value in this instance"
+            ]);
+        }
+        // All matches belong to the same asset – treat as a single result
+        $barcodes = [$barcodes[0]];
+    }
+    if (is_array($barcodes) && count($barcodes) === 1) {
         $barcode = $barcodes[0];
         $scan = [
             "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],

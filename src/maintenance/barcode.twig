@@ -173,8 +173,7 @@
                                                     "text": barcodeValue,
                                                     "type": barcodeType
                                                 }, function (result) {
-                                                    appendAssetToList(assetResult.response.assetSuggest, result.response.barcodeId)
-                                                    barcodeRequestInProgress = false
+                                                    scanParseAsset(barcodeValue, barcodeType)
                                                 });
                                             } else {
                                                 $("#selectAnAssetToAssign-barcode").val(barcodeValue);
@@ -363,18 +362,20 @@
                                 scanParseAsset($("#selectAnAssetToAssign-barcode").val(), $("#selectAnAssetToAssign-barcodetype").val())
                                 $("#selectAnAssetToAssign-barcode").val('');
                                 $("#selectAnAssetToAssign-barcodetype").val('');
-                                $("#selectAnAssetToAssign-assets").val('');
+                                $("#selectAnAssetToAssign-assets").val(null).trigger('change');
                             });
                         } else {
                             scanParseAsset($("#selectAnAssetToAssign-barcode").val(), $("#selectAnAssetToAssign-barcodetype").val())
                             $("#selectAnAssetToAssign-barcode").val('');
                             $("#selectAnAssetToAssign-barcodetype").val('');
-                            $("#selectAnAssetToAssign-assets").val('');
+                            $("#selectAnAssetToAssign-assets").val(null).trigger('change');
                         }
                     }});
                     {% else %}
+                    scanParseAsset($("#selectAnAssetToAssign-barcode").val(), $("#selectAnAssetToAssign-barcodetype").val())
                     $("#selectAnAssetToAssign-barcode").val('');
                     $("#selectAnAssetToAssign-barcodetype").val('');
+                    $("#selectAnAssetToAssign-assets").val(null).trigger('change');
                     {% endif %}
                     
                 });
