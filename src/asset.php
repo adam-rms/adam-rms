@@ -98,6 +98,7 @@ if (count($PAGEDATA['assets']) == 1) {
     //Links
     if ($PAGEDATA['assets'][0]['assets_linkedTo']) {
         $DBLIB->where("assets_id", $PAGEDATA['assets'][0]['assets_linkedTo']);
+        $DBLIB->where("assets.assets_deleted", 0);
         $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
         $PAGEDATA['assets'][0]['link'] = $DBLIB->getOne("assets", ["assets_tag", "assets_id", "assetTypes_name", "assets.assetTypes_id"]);
     } else $PAGEDATA['assets'][0]['link'] = false;
@@ -110,6 +111,7 @@ if (count($PAGEDATA['assets']) == 1) {
         array_push($assetsLinked, $assetId);
         $DBLIB->where("assets.assets_linkedTo", $assetId);
         $DBLIB->where("assets.assets_id", $assetsLinked, "NOT IN"); // Make sure an asset is not double counted causing an infinite loop
+        $DBLIB->where("assets.assets_deleted", 0);
         $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
         $assets = $DBLIB->get("assets", null, ["assets_tag", "assets_id", "assetTypes_name", "assets.assetTypes_id"]);
         $tier += 1;
