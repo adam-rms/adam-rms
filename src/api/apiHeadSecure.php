@@ -16,7 +16,7 @@ $PAGEDATA['AUTH'] = $GLOBALS['AUTH'];
 $PAGEDATA['USERDATA'] = $GLOBALS['AUTH']->data;
 $PAGEDATA['USERDATA']['users_email_md5'] = md5($PAGEDATA['USERDATA']['users_email']);
 
-
+$analyticsPayload = $bCMS->sanitizeLoggedPayload($_POST);
 $DBLIB->insert("analyticsEvents", [
     "analyticsEvents_timestamp" => date ("Y-m-d H:i:s"),
     "users_userid" => $AUTH->data['users_userid'],
@@ -25,5 +25,5 @@ $DBLIB->insert("analyticsEvents", [
     "instances_id" => $AUTH->data['instance'] ?  $AUTH->data['instance']['instances_id'] : null,
     "analyticsEvents_path" => strtok($_SERVER["REQUEST_URI"], '?'),
     "analyticsEvents_action" => "API-CALL",
-    "analyticsEvents_payload" =>  strlen(json_encode($_POST)) > 65535 ? null : json_encode($_POST),
+    "analyticsEvents_payload" => ($analyticsPayload !== null && strlen($analyticsPayload) > 65535) ? null : $analyticsPayload,
 ]);

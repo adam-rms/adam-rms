@@ -42,7 +42,8 @@
                                     {% endfor %}
                                 </select>
                             {% else %}
-                                <input type="{{ field.form.type }}" class="form-control" name="{{ key|escape('html_attr') }}" value="{{ null is same as(field.value) ? field.form.default|escape('html_attr') : field.value|escape('html_attr') }}" placeholder="{{ field.form.default|escape('html_attr') }}" {{ field.form.required ? "required" : ''}} {{ field.form.minlength ? ('minlength="' ~ field.form.minlength ~ '"')|raw : '' }} {{ field.form.maxlength ? ('maxlength="' ~ field.form.maxlength ~ '"')|raw : '' }}/>
+                                {% set secretFieldHasValue = field.form.type == 'secret' and null is not same as(field.value) and field.value is not same as(false) %}
+                                <input type="{{ field.form.type == 'secret' ? 'password' : field.form.type }}" class="form-control" name="{{ key|escape('html_attr') }}" value="{{ secretFieldHasValue ? '' : (null is same as(field.value) ? field.form.default|escape('html_attr') : field.value|escape('html_attr')) }}" placeholder="{{ secretFieldHasValue ? 'Leave blank to keep existing value' : field.form.default|escape('html_attr') }}" {{ field.form.required ? "required" : ''}} {{ field.form.minlength ? ('minlength="' ~ field.form.minlength ~ '"')|raw : '' }} {{ field.form.maxlength ? ('maxlength="' ~ field.form.maxlength ~ '"')|raw : '' }}/>
                             {% endif %}
                         {% endfor %}
                         <br/><br/>

@@ -65,32 +65,40 @@ class bCMS
     }
     return $_GET;
   }
-  /** Sensitive array keys that are stripped from $revelantData before storage.
-   *  Pass only non-sensitive descriptive strings as $revelantData; never pass
-   *  raw $_POST / $_GET arrays or any value that may contain passwords or secrets.
-   */
+  /** Sensitive keys that are stripped from logged payloads before storage. */
   private const SENSITIVE_KEYS = ['password', 'pass', 'newpass', 'oldpass', 'token', 'secret', 'key'];
+
+  private function isSensitiveAuditLogKey(string $key): bool
+  {
+    $keyLower = strtolower($key);
+    foreach (self::SENSITIVE_KEYS as $sensitiveKey) {
+      $needle = strtolower($sensitiveKey);
+      if (
+        $keyLower === $needle ||
+        str_starts_with($keyLower, $needle . '_') ||
+        str_ends_with($keyLower, '_' . $needle) ||
+        str_contains($keyLower, '_' . $needle . '_')
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   /** Recursively remove sensitive keys (case-insensitive) from an array. */
   private function redactSensitiveData(array $data): array
   {
     foreach ($data as $key => $value) {
-      $keyLower = strtolower((string) $key);
-      foreach (self::SENSITIVE_KEYS as $sensitiveKey) {
-        $needle = strtolower($sensitiveKey);
-        if (
-          $keyLower === $needle ||
-          str_starts_with($keyLower, $needle . '_') ||
-          str_ends_with($keyLower, '_' . $needle) ||
-          str_contains($keyLower, '_' . $needle . '_')
-        ) {
-          unset($data[$key]);
-          continue 2;
-        }
+      if ($this->isSensitiveAuditLogKey((string)$key)) {
+        unset($data[$key]);
+        continue;
       }
 
       if (is_array($value)) {
         $data[$key] = $this->redactSensitiveData($value);
+      } elseif (is_object($value)) {
+        $data[$key] = $this->redactSensitiveData((array)$value);
       }
     }
     return $data;
@@ -103,17 +111,51 @@ class bCMS
     return ($encoded !== false) ? $encoded : null;
   }
 
+  private function sanitizeJsonAuditLogString(string $data): ?string
+  {
+    $decoded = json_decode($data, true);
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+      return null;
+    }
+
+    return $this->encodeAuditLogArray($decoded);
+  }
+
+  /** Prefer descriptive strings; arrays and JSON strings are redacted before storage.
+   *  Never pass raw request payloads unless you explicitly want the remaining non-sensitive fields logged.
+   */
+  public function sanitizeLoggedPayload($payload)
+  {
+    if (is_array($payload)) {
+      return $this->encodeAuditLogArray($payload);
+    }
+    if (!is_string($payload)) {
+      return $payload;
+    }
+
+    $sanitizedPayload = $this->sanitizeJsonAuditLogString($payload);
+    if ($sanitizedPayload !== null) {
+      return $sanitizedPayload;
+    }
+
+    foreach (['{', '['] as $jsonOpeningCharacter) {
+      $jsonStart = strpos($payload, $jsonOpeningCharacter);
+      if ($jsonStart === false) {
+        continue;
+      }
+
+      $sanitizedJsonPayload = $this->sanitizeJsonAuditLogString(substr($payload, $jsonStart));
+      if ($sanitizedJsonPayload !== null) {
+        return substr($payload, 0, $jsonStart) . $sanitizedJsonPayload;
+      }
+    }
+    return $payload;
+  }
+
   function auditLog($actionType = null, $table = null, $revelantData = null, $userid = null, $useridTo = null, $projectid = null, $targetid = null)
   { //Keep an audit trail of actions - $userid is this user, and $useridTo is who this action was done to if it was at all
     global $DBLIB;
-    if (is_array($revelantData)) {
-      $revelantData = $this->encodeAuditLogArray($revelantData);
-    } elseif (is_string($revelantData)) {
-      $decoded = json_decode($revelantData, true);
-      if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-        $revelantData = $this->encodeAuditLogArray($decoded);
-      }
-    }
+    $revelantData = $this->sanitizeLoggedPayload($revelantData);
     $data = [
       "auditLog_actionType" => $actionType,
       "auditLog_actionTable" => $table,
