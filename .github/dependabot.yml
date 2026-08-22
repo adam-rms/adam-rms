@@ -43,7 +43,13 @@ updates:
       interval: "monthly"
       time: "17:00"
       timezone: "Europe/London"
+    # open-pull-requests-limit only stops scheduled version updates - security
+    # updates ignore it, so ignore every dependency to stop those too. The
+    # website is a statically built docs site, so vulnerabilities in its build
+    # toolchain don't reach production.
     open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: "*"
     groups:
        website-dependencies:
           patterns:
