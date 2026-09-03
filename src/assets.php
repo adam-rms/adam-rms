@@ -19,6 +19,8 @@ $SEARCH = [
     "PROJECT_REFERER" => $_GET['project_referer'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
     "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 20,
+    "SIMPLE" => (isset($_GET['simple']) and $_GET['simple'] == '1'),
+    "SIMPLE_KEYWORD" => isset($_GET['simple_keyword']) ? trim((string)$_GET['simple_keyword']) : '',
     "SETTINGS" => [
         "SHOWLINKED" => ($_GET['showlinked'] == 1 ? true : false),
         "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false),
@@ -112,7 +114,59 @@ if (count($sortArray) == 2) {
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC"); // Last item in the sort each time
 
 //Keywords
-if (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
+if ($SEARCH['SIMPLE']) {
+    // Broad AssetType keyword match: name, description, manufacturer, category name,
+    // category-group name, and physical-asset tag. Each whitespace-separated term must
+    // match somewhere.
+    if ($SEARCH['SIMPLE_KEYWORD'] !== '') {
+        // Keep every non-empty term (including the literal "0", which a callback-less
+        // array_filter() would wrongly drop), then bound the query by capping the number
+        // of terms and the length of each so a pathological input can't build a huge WHERE.
+        $terms = array_values(array_filter(
+            preg_split('/\s+/', $SEARCH['SIMPLE_KEYWORD']),
+            function ($t) { return strlen(trim((string)$t)) > 0; }
+        ));
+        $terms = array_slice($terms, 0, 10);
+        $terms = array_map(function ($t) { return substr($t, 0, 100); }, $terms);
+        if (count($terms) > 0) {
+            $instanceIdInt = intval($SEARCH['INSTANCE_ID']);
+            $keywordNow = date("Y-m-d H:i:s");
+            $andClauses = [];
+            $allValues = [];
+            foreach ($terms as $term) {
+                $like = '%' . $term . '%';
+                // Mirror the linked/archived constraints the main results query applies so a
+                // tag match can't surface a type whose matching asset is filtered out below.
+                $existsExtra = '';
+                $existsExtraValues = [];
+                if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) {
+                    $existsExtra .= "\n                          AND (a2.assets_endDate IS NULL OR a2.assets_endDate >= ?)";
+                    $existsExtraValues[] = $keywordNow;
+                }
+                if (!$SEARCH['SETTINGS']['SHOWLINKED']) {
+                    $existsExtra .= "\n                          AND a2.assets_linkedTo IS NULL";
+                }
+                $andClauses[] = "(
+                    assetTypes.assetTypes_name LIKE ?
+                    OR assetTypes.assetTypes_description LIKE ?
+                    OR manufacturers.manufacturers_name LIKE ?
+                    OR assetCategories.assetCategories_name LIKE ?
+                    OR assetCategoriesGroups.assetCategoriesGroups_name LIKE ?
+                    OR EXISTS (
+                        SELECT 1 FROM assets a2
+                        WHERE a2.assetTypes_id = assetTypes.assetTypes_id
+                          AND a2.instances_id = ?
+                          AND a2.assets_deleted = 0
+                          AND a2.assets_tag LIKE ?" . $existsExtra . "
+                    )
+                )";
+                array_push($allValues, $like, $like, $like, $like, $like, $instanceIdInt, $like);
+                foreach ($existsExtraValues as $ev) $allValues[] = $ev;
+            }
+            $DBLIB->where('(' . implode(' AND ', $andClauses) . ')', $allValues);
+        }
+    }
+} elseif (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
     $thisWhere = false;
     $thisValues = [];
     foreach ($SEARCH['TERMS']['KEYWORDS'] as $word) {
