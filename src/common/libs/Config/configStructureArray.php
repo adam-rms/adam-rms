@@ -411,6 +411,51 @@ $configStructureArray = [
     "default" => "Disabled",
     "envFallback" => "CONFIG_CSP_ENABLED",
   ],
+  "AUTH_SESSION_LIFETIME_DAYS" => [
+    "form" => [
+      "type" => "number",
+      "default" => function () {
+        return 7;
+      },
+      "name" => "Login session length (days)",
+      "group" => "Security & Login",
+      "description" => "How long a login lasts before the user has to sign in again. The clock is reset by activity, so someone using the site is never signed out mid-task - only this many days of complete inactivity will end the session. Applies to the browser session and the mobile app. Emailed magic login links always expire after 12 hours regardless of this setting.",
+      "required" => true,
+      "maxlength" => 3,
+      "minlength" => 1,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        if (!is_numeric($value)) return ["valid" => false, "value" => null, "error" => "Must be a whole number of days"];
+        $days = intval($value);
+        if ($days < 1 or $days > 365) return ["valid" => false, "value" => null, "error" => "Must be between 1 and 365 days"];
+        return ["valid" => true, "value" => (string) $days, "error" => null];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => 7,
+    "envFallback" => "CONFIG_AUTH_SESSION_LIFETIME_DAYS",
+  ],
+  "AUTH_SESSION_BIND_IP" => [
+    "form" => [
+      "type" => "select",
+      "default" => function () {
+        return "Enabled";
+      },
+      "name" => "Lock sessions to IP address",
+      "group" => "Security & Login",
+      "description" => "Whether a login is tied to the IP address it was created from. Enabling this limits the damage a stolen session could do, but it signs users out the moment their IP changes - switching between Wi-Fi and mobile data, a VPN, or an ISP that reconnects with a new address. Disable this if users report being logged out at random.",
+      "required" => true,
+      "maxlength" => 255,
+      "minlength" => 5,
+      "options" => ["Enabled", "Disabled"],
+      "verifyMatch" => function ($value, $options) {
+        return ["valid" => in_array($value, $options), "value" => $value, "error" => in_array($value, $options) ? '' : "Invalid option selected"];
+      }
+    ],
+    "specialRequest" => false,
+    "default" => "Enabled",
+    "envFallback" => "CONFIG_AUTH_SESSION_BIND_IP",
+  ],
   "AUTH_PROVIDERS_GOOGLE_KEYS_ID" => [
     "form" => [
       "type" => "text",

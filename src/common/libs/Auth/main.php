@@ -17,6 +17,7 @@ class AuthFail extends Exception {
 class bID
 {
     const TOKEN_LENGTH = 32;
+    const TOKEN_LASTUSED_REFRESH = 300; //Only bump a token's last used timestamp every 5 minutes, to keep writes down
     public $VALIDMAGICLINKREDIRECTS = ["com.bstudios.adamrms://magic-link"];
     public $login;
     private $token;
@@ -42,6 +43,39 @@ class bID
         } elseif (isset($_SESSION['token'])) return ["token" => $_SESSION['token'], "type" => "web-session"];
         else throw new AuthFail('No token found');
     }
+    private function clientIpFromForwardedFor($header) {
+        //The client is the first entry in an X-Forwarded-For chain
+        $forwardedFor = explode(",", $header);
+        return trim(array_shift($forwardedFor));
+    }
+    private function tokenLifetimeSeconds($tokenType) {
+        //Magic links are emailed, so they stay short lived however long normal sessions are configured to last
+        if ($tokenType == "app-v2-magic-email") return 12 * 60 * 60;
+        return authSessionLifetimeSeconds();
+    }
+    private function checkTokenIpAddress($tokenCheck) {
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+            if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
+                throw new AuthFail("IP from Cloudflare doesn't match token. Received [" . $_SERVER["HTTP_CF_CONNECTING_IP"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
+            }
+        } elseif (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $forwardedIp = $this->clientIpFromForwardedFor($_SERVER["HTTP_X_FORWARDED_FOR"]);
+            if ($forwardedIp != $tokenCheck["authTokens_ipAddress"]) {
+                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . $forwardedIp . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
+            }
+        } elseif ($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
+            throw new AuthFail("IP direct doesn't match token. Received [" . $_SERVER["REMOTE_ADDR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
+        }
+    }
+    private function refreshTokenLastUsed($tokenCheck) {
+        global $DBLIB;
+        //Magic link tokens expire a fixed time after being emailed, so they never get their clock reset
+        if ($tokenCheck["authTokens_type"] == "app-v2-magic-email") return;
+        //Only write when the stored value has gone stale, so we don't add a database write to every single request
+        if ($tokenCheck["authTokens_lastUsed"] !== null and (strtotime($tokenCheck["authTokens_lastUsed"]) + self::TOKEN_LASTUSED_REFRESH) > time()) return;
+        $DBLIB->where("authTokens_id", $tokenCheck["authTokens_id"]);
+        $DBLIB->update("authTokens", ["authTokens_lastUsed" => date('Y-m-d H:i:s')]);
+    }
     private function checkToken($tokenPayload) {
         global $DBLIB, $CONFIG;
         $token = $tokenPayload['token'];
@@ -52,24 +86,22 @@ class bID
         $DBLIB->where('authTokens_token', $GLOBALS['bCMS']->sanitizeString($token));
         $DBLIB->where("authTokens_valid", '1');
         $DBLIB->where("authTokens_type", $tokenType);
-        $tokenCheck = $DBLIB->getOne("authTokens", ["authTokens_token", "authTokens_created", "authTokens_ipAddress", "users_userid", "authTokens_adminId", "authTokens_type", "authTokens_id"]);
+        $tokenCheck = $DBLIB->getOne("authTokens", ["authTokens_token", "authTokens_created", "authTokens_lastUsed", "authTokens_ipAddress", "users_userid", "authTokens_adminId", "authTokens_type", "authTokens_id"]);
 
-        if (!$tokenCheck) {
-            throw new AuthFail('Token not found in DB');
-        } elseif ((strtotime($tokenCheck["authTokens_created"]) + (12 * 60 * 60)) < time()) {
-             // Tokens are valid for 12 hrs (this includes the mobile app), which matches the session timeout
-            throw new AuthFail("Token expired at " . $tokenCheck["authTokens_created"] . " - server time is " . time());
-        } elseif (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-            if ($_SERVER["HTTP_CF_CONNECTING_IP"] != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Cloudflare doesn't match token. Received [" . $_SERVER["HTTP_CF_CONNECTING_IP"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
-            }
-        } elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            if (array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) != $tokenCheck["authTokens_ipAddress"]) {
-                throw new AuthFail("IP from Heroku/generic proxy doesn't match token. Received [" . array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"])) . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
-            }
-        } elseif($_SERVER["REMOTE_ADDR"] != $tokenCheck["authTokens_ipAddress"]) {
-            throw new AuthFail("IP direct doesn't match token. Received [" . $_SERVER["REMOTE_ADDR"] . "] but expecting [" . $tokenCheck["authTokens_ipAddress"] . "]");
+        if (!$tokenCheck) throw new AuthFail('Token not found in DB');
+
+        // Tokens expire on inactivity rather than age, so someone using the site is never cut off mid-task.
+        // The window is set server wide by the AUTH_SESSION_LIFETIME_DAYS config value.
+        $lastActive = $tokenCheck["authTokens_lastUsed"] ?: $tokenCheck["authTokens_created"];
+        if ((strtotime($lastActive) + $this->tokenLifetimeSeconds($tokenType)) < time()) {
+            throw new AuthFail("Token expired - last used " . $lastActive . " - server time is " . time());
         }
+
+        // Tying a token to one IP address logs out anyone whose address changes (mobile data, VPN, ISP reconnect),
+        // so whether we do it is a server wide choice
+        if (($CONFIG['AUTH_SESSION_BIND_IP'] ?? "Enabled") == "Enabled") $this->checkTokenIpAddress($tokenCheck);
+
+        $this->refreshTokenLastUsed($tokenCheck);
 
         //Tests have passed, return the token
         return $tokenCheck;
@@ -246,12 +278,13 @@ class bID
         if (is_null($userID)) throw new Exception("User ID cannot be null");
 
         if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) $ipAddress = $_SERVER["HTTP_CF_CONNECTING_IP"];
-        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = array_shift(explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]));
+        elseif(isset($_SERVER["HTTP_X_FORWARDED_FOR"])) $ipAddress = $this->clientIpFromForwardedFor($_SERVER["HTTP_X_FORWARDED_FOR"]);
         else $ipAddress = $_SERVER["REMOTE_ADDR"];
 
         $tokenKey = $this->generateTokenKey();
         $data = [
             "authTokens_created" => date('Y-m-d G:i:s'),
+            "authTokens_lastUsed" => date('Y-m-d H:i:s'), //Sliding expiry is measured from here
             "authTokens_token" => $tokenKey,
             "users_userid" => $userID,
             "authTokens_deviceType" => $deviceType,
@@ -287,7 +320,7 @@ class bID
             "iss" => $CONFIG['ROOTURL'],
             "uid" => $userID,
             "token" => $token,
-            "exp" => time()+12*60*60, //12 hours token expiry
+            "exp" => time() + $this->tokenLifetimeSeconds($type), //Matches the server wide session length
             "iat" => time(),
             "type" => $type
         ), $CONFIG['AUTH_JWTKey'], 'HS256');

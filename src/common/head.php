@@ -183,10 +183,47 @@ $PAGEDATA['MAINTENANCEJOBPRIORITIES'] = $GLOBALS['MAINTENANCEJOBPRIORITIES'];
 // Include Twig Extensions
 require_once __DIR__ . '/libs/twigExtensions.php';
 
+// Did this request actually arrive over https? The reverse proxy terminates TLS, so $_SERVER['HTTPS'] alone isn't enough
+function requestIsHttps() {
+    if (!empty($_SERVER['HTTPS']) and strtolower($_SERVER['HTTPS']) !== 'off') return true;
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) and strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') return true;
+    return false;
+}
+
+// How long a login lasts (in seconds) before inactivity ends it - configurable server-wide
+function authSessionLifetimeSeconds() {
+    global $CONFIG;
+    $days = intval($CONFIG['AUTH_SESSION_LIFETIME_DAYS'] ?? 7);
+    if ($days < 1 or $days > 365) $days = 7; //Guard against a missing or nonsense config value
+    return $days * 24 * 60 * 60;
+}
+
 // Try to open up a session cookie
 try {
-    session_set_cookie_params(43200); //12hours
+    $sessionLifetime = authSessionLifetimeSeconds();
+    //Without this PHP bins the session data after 24 minutes idle, no matter how long the cookie lasts
+    ini_set('session.gc_maxlifetime', $sessionLifetime);
+    ini_set('session.use_strict_mode', '1'); //Don't adopt a session id the client made up
+    //A dedicated directory stops another PHP process sweeping /tmp with the default lifetime from binning our sessions,
+    //and lets the container mount it as a volume so logins survive a restart
+    $sessionSavePath = getenv('SESSION_SAVE_PATH') ?: '/var/lib/adamrms-sessions';
+    if (!is_dir($sessionSavePath)) @mkdir($sessionSavePath, 0700, true);
+    //If we can't write there, stay on PHP's default - a session that can't be saved logs everybody out silently
+    if (is_dir($sessionSavePath) and is_writable($sessionSavePath)) session_save_path($sessionSavePath);
+    $sessionCookieParams = [
+        'path' => '/',
+        'domain' => '',
+        //Only mark it secure when the request really came over https, or direct http access could never log in
+        'secure' => requestIsHttps(),
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ];
+    session_set_cookie_params(['lifetime' => $sessionLifetime] + $sessionCookieParams);
     session_start(); //Open up the session
+    //PHP only sends the cookie when the session is created, so re-send it to slide the expiry forward on every request
+    if (session_status() === PHP_SESSION_ACTIVE and isset($_COOKIE[session_name()]) and !headers_sent()) {
+        setcookie(session_name(), session_id(), ['expires' => time() + $sessionLifetime] + $sessionCookieParams);
+    }
 } catch (Exception $e) {
     //Do Nothing
 }

@@ -70,6 +70,12 @@ COPY ./phinx.php /var/www/html
 COPY ./migrate.sh /var/www/html
 RUN chmod +x /var/www/html/migrate.sh
 
+# Session storage. This sits outside the document root so it can be mounted as a volume and
+# survive container restarts, and is owned by www-data so a new named volume inherits that.
+RUN mkdir -p /var/lib/adamrms-sessions \
+    && chown www-data:www-data /var/lib/adamrms-sessions \
+    && chmod 700 /var/lib/adamrms-sessions
+
 # Switch to the base image non-privileged user that the app will run under.
 USER www-data
 
