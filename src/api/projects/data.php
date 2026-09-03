@@ -132,6 +132,24 @@ function projectFinancials($project) {
 
         $asset['latestScan'] = assetLatestScan($asset['assets_id']);
 
+        //Storage location name, for the Location Dispatch asset table.
+        //Scoped to the asset's OWN instance (sub-business assets live in another
+        //instance), skipped when no storage location is set, and cached per
+        //(instances_id, locations_id) so the same location isn't re-queried per asset.
+        static $storageLocationCache = [];
+        $asset['storage_location'] = [];
+        if (!empty($asset['assets_storageLocation'])) {
+            $storageLocationCacheKey = $asset['instances_id'] . ':' . $asset['assets_storageLocation'];
+            if (!array_key_exists($storageLocationCacheKey, $storageLocationCache)) {
+                $DBLIB->where('locations_id', $asset['assets_storageLocation']);
+                $DBLIB->where('instances_id', $asset['instances_id']);
+                $DBLIB->where('locations_deleted', 0);
+                $DBLIB->where('locations_archived', 0);
+                $storageLocationCache[$storageLocationCacheKey] = $DBLIB->get('locations', 1, ['locations_id', 'locations_name']);
+            }
+            $asset['storage_location'] = $storageLocationCache[$storageLocationCacheKey];
+        }
+
         if ($asset['instances_id'] != $project['instances_id']) {
             if (!isset($return['assetsAssignedSUB'][$asset['instances_id']]['assets'])) $return['assetsAssignedSUB'][$asset['instances_id']]['assets'] = [];
             if (!isset($return['assetsAssignedSUB'][$asset['instances_id']]['assets'][$asset['assetTypes_id']])) $return['assetsAssignedSUB'][$asset['instances_id']]['assets'][$asset['assetTypes_id']]['assets'] = [];
