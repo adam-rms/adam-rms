@@ -160,6 +160,80 @@ function assetLatestScan($assetid)
     $DBLIB->join("users", "users.users_userid=assetsBarcodesScans.users_userid");
     return $DBLIB->getone("assetsBarcodesScans", ["assetsBarcodesScans.*", "users.users_name1", "users.users_name2", "locations.locations_name", "locations.locations_id", "assets.assetTypes_id", "assetTypes.assetTypes_name", "assets.assets_tag"]);
 }
+/**
+ * Build the asset dispatch board columns for an instance.
+ * Asset assignment statuses are soft-deleted, so a status that's been deleted can still be referenced
+ * by assets that were assigned to it before deletion (matched here by ID, so a later reorder of the
+ * active statuses can never collide with a deleted one). An asset with no status at all (NULL) is
+ * always shown in whichever status currently has order 0 - if that status has been deleted, it's
+ * included here too, so those assets aren't lost from the board.
+ * Columns are keyed by assetsAssignmentsStatus_id.
+ * @param int $instancesId The instance that owns the statuses
+ * @param array $assetsList The assigned assets to place onto the board, grouped by assetType (as built in projects/data.php)
+ * @return array Board columns keyed by assetsAssignmentsStatus_id, each including an "assets" key
+ */
+function buildAssetsAssignmentsBoard($instancesId, $assetsList)
+{
+    global $DBLIB;
+
+    $DBLIB->where("instances_id", $instancesId);
+    $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+    $DBLIB->orderBy("assetsAssignmentsStatus_order", "ASC");
+    $statuses = $DBLIB->get("assetsAssignmentsStatus");
+    $statusIds = array_column($statuses, 'assetsAssignmentsStatus_id');
+    $hasActiveOrderZero = in_array(0, array_map('intval', array_column($statuses, 'assetsAssignmentsStatus_order')));
+
+    $missingIds = [];
+    $needsDefaultColumn = false;
+    foreach ($assetsList as $assetType) {
+        foreach ($assetType['assets'] as $asset) {
+            $statusId = $asset['assetsAssignmentsStatus_id'];
+            if ($statusId !== null) {
+                if (!in_array($statusId, $statusIds)) $missingIds[$statusId] = true;
+            } elseif (!$hasActiveOrderZero) {
+                $needsDefaultColumn = true;
+            }
+        }
+    }
+
+    if (!empty($missingIds)) {
+        $DBLIB->where("instances_id", $instancesId);
+        $DBLIB->where("assetsAssignmentsStatus_id", array_keys($missingIds), "IN");
+        foreach ($DBLIB->get("assetsAssignmentsStatus") as $deletedStatus) {
+            $statuses[] = $deletedStatus;
+            $statusIds[] = $deletedStatus['assetsAssignmentsStatus_id'];
+        }
+    }
+    if ($needsDefaultColumn) {
+        $DBLIB->where("instances_id", $instancesId);
+        $DBLIB->where("assetsAssignmentsStatus_order", 0);
+        $DBLIB->orderBy("assetsAssignmentsStatus_id", "ASC");
+        $defaultStatus = $DBLIB->getOne("assetsAssignmentsStatus");
+        if ($defaultStatus && !in_array($defaultStatus['assetsAssignmentsStatus_id'], $statusIds)) {
+            $statuses[] = $defaultStatus;
+        }
+    }
+    usort($statuses, function ($a, $b) {
+        return $a['assetsAssignmentsStatus_order'] <=> $b['assetsAssignmentsStatus_order'];
+    });
+
+    $board = [];
+    foreach ($statuses as $status) {
+        $tempAssets = [];
+        foreach ($assetsList as $assetType) {
+            foreach ($assetType['assets'] as $asset) {
+                if ($asset['assetsAssignmentsStatus_id'] !== null) {
+                    if ($asset['assetsAssignmentsStatus_id'] == $status['assetsAssignmentsStatus_id']) $tempAssets[] = $asset;
+                } elseif ((int)$status['assetsAssignmentsStatus_order'] === 0) { //assets with no status at all go in the order-0 column
+                    $tempAssets[] = $asset;
+                }
+            }
+        }
+        $status['assets'] = $tempAssets;
+        $board[$status['assetsAssignmentsStatus_id']] = $status;
+    }
+    return $board;
+}
 
 // Setup the "PAGEDATA" array which is used by Twig
 $PAGEDATA = array('CONFIG' => $CONFIG, 'VERSION' => $bCMS->getVersionNumber());

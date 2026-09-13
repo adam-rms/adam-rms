@@ -16,6 +16,7 @@ if ($assignment['assetsAssignmentsStatus_id'] == $_POST['assetsAssignments_statu
 
 $DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
 $DBLIB->where("instances_id", $assignment['instances_id']); // Use the instance of the asset
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
 $status = $DBLIB->getone("assetsAssignmentsStatus",["assetsAssignmentsStatus_id"]);
 if (!$status or $status['assetsAssignmentsStatus_id'] == null) finish(false, ["message" => "Status not found","code"=>"STATUSNOTFOUND"]);
 
