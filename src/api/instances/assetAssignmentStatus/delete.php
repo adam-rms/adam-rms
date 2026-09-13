@@ -8,7 +8,23 @@ $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
 $DBLIB->where("assetsAssignmentsStatus_id", $_POST['statusId']);
 $updateQuery = $DBLIB->update("assetsAssignmentsStatus", ["assetsAssignmentsStatus_deleted" => 1]);
 if (!$updateQuery) finish(false, ["code" => "REMOVE-STATUS-FAIL", "message"=> "Could not remove asset status from Business"]);
-else finish(true);
+
+// Re-sequence the remaining statuses to be contiguous from 0, so there's always an order-0 status to act as
+// the default for newly-assigned assets (which otherwise start with no status at all) as long as one remains
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+$DBLIB->orderBy("assetsAssignmentsStatus_order", "ASC");
+$remainingStatuses = $DBLIB->get("assetsAssignmentsStatus", null, ["assetsAssignmentsStatus_id", "assetsAssignmentsStatus_order"]);
+foreach ($remainingStatuses as $index => $remainingStatus) {
+    if ((int)$remainingStatus['assetsAssignmentsStatus_order'] !== $index) {
+        $DBLIB->where("assetsAssignmentsStatus_id", $remainingStatus['assetsAssignmentsStatus_id']);
+        $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+        $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+        if (!$DBLIB->update("assetsAssignmentsStatus", ["assetsAssignmentsStatus_order" => $index], 1)) finish(false, ["code" => "REMOVE-STATUS-FAIL", "message"=> "Could not resequence remaining asset statuses"]);
+    }
+}
+
+finish(true);
 
 /** @OA\Post(
  *     path="/instances/assetAssignmentStatus/delete.php", 

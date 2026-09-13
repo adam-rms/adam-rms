@@ -4,9 +4,9 @@
         <div class="col-2 pageAssetSortable">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ status['assetsAssignmentsStatus_name'] }}</h3>
+                    <h3 class="card-title">{{ status['assetsAssignmentsStatus_name'] }}{% if status['assetsAssignmentsStatus_deleted'] %} <span class="badge badge-secondary" title="This status has been deleted">Deleted</span>{% endif %}</h3>
                 </div>
-                <div class="card-body assetDispatchAssetList" data-statusid="{{ status['assetsAssignmentsStatus_id'] }}" data-instance="{{ instanceid }}">
+                <div class="card-body assetDispatchAssetList" data-statusid="{{ status['assetsAssignmentsStatus_id'] }}" data-instance="{{ instanceid }}" data-deleted="{{ status['assetsAssignmentsStatus_deleted'] ? 'true' : 'false' }}">
                     {% for asset in status['assets'] %}
                         <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card" data-currentstatus="{{ status['assetsAssignmentsStatus_id'] }}" data-assignment="{{ asset['assetsAssignments_id'] }}" data-instance="{{ instanceid }}" data-asset="{{ asset['assets_id'] }}">
                             {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}

@@ -12,12 +12,15 @@ $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "
 $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id", "LEFT");
 $assignment = $DBLIB->getone("assetsAssignments",["assets.assets_id", "assetsAssignments.assetsAssignments_id", "assetsAssignments.assetsAssignmentsStatus_id", "assets.instances_id"]);
 if (!$assignment or $assignment['assets_id'] == null) finish(false, ["message" => "Asset not found","code"=>"NOTFOUND"]);
-if ($assignment['assetsAssignmentsStatus_id'] == $_POST['assetsAssignments_status']) finish(true, null, ["assets_id" => $assignment['assets_id']]); // No change
 
+// Validate before the no-op check below, so a deleted status is always rejected even if the assignment already happens to be on it
 $DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
 $DBLIB->where("instances_id", $assignment['instances_id']); // Use the instance of the asset
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
 $status = $DBLIB->getone("assetsAssignmentsStatus",["assetsAssignmentsStatus_id"]);
 if (!$status or $status['assetsAssignmentsStatus_id'] == null) finish(false, ["message" => "Status not found","code"=>"STATUSNOTFOUND"]);
+
+if ($assignment['assetsAssignmentsStatus_id'] == $_POST['assetsAssignments_status']) finish(true, null, ["assets_id" => $assignment['assets_id']]); // No change
 
 $DBLIB->where("assetsAssignments_id", $assignment['assetsAssignments_id']);
 $update = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $status['assetsAssignmentsStatus_id']], 1);

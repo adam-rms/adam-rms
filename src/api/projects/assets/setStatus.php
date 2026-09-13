@@ -15,6 +15,31 @@ $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+$DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id", "LEFT");
+$matchedAssignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assets.instances_id"]);
+if (!$matchedAssignments) finish(false);
+
+// Find which of the matched assets' instances actually have the requested status (not deleted) - an asset
+// can belong to a different instance to the project (e.g. a sub-project asset, or "Supermarket Sweep"), and a
+// bulk selection (assetsAssignments_id as an array, or projects_id) can span multiple instances with entirely
+// different status catalogs, so only apply the change to the assignments it's actually valid for.
+$assetInstanceIds = array_unique(array_column($matchedAssignments, 'instances_id'));
+$DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
+$DBLIB->where("instances_id", $assetInstanceIds, "IN");
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+$validInstances = array_column($DBLIB->get("assetsAssignmentsStatus", null, ["instances_id"]), 'instances_id');
+$validAssignmentIds = array_column(array_filter($matchedAssignments, function ($assignment) use ($validInstances) {
+    return in_array($assignment['instances_id'], $validInstances);
+}), 'assetsAssignments_id');
+if (empty($validAssignmentIds)) finish(false, ["message" => "Status not found", "code" => "STATUSNOTFOUND"]);
+
+// Re-apply the same scoping as the original match, in case any of these assignments were released/unassigned
+// in the time since the initial query above
+$DBLIB->where("assetsAssignments_id", $validAssignmentIds, "IN");
+$DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
+$DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
 $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $_POST['assetsAssignments_status']]);
 
 if (!$assignment) finish(false);
