@@ -82,10 +82,10 @@ if ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FO
 $PAGEDATA['BOARDASSETS'] = [];
 $PAGEDATA['BOARDSTATUSES'] = []; //A slimmer version of the above for loading into Javascript!
 $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']] = buildAssetsAssignmentsBoard($AUTH->data['instance']['instances_id'], $PAGEDATA['FINANCIALS']['assetsAssigned']);
-$PAGEDATA['BOARDSTATUSES'][$AUTH->data['instance']['instances_id']] = $PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']]; //For the JS Array
+$PAGEDATA['BOARDSTATUSES'][$AUTH->data['instance']['instances_id']] = stripBoardAssets($PAGEDATA['BOARDASSETS'][$AUTH->data['instance']['instances_id']]); //For the JS Array
 foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go through the sub projects
     $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']] = buildAssetsAssignmentsBoard($instance['instance']['instances_id'], $instance['assets']);
-    $PAGEDATA['BOARDSTATUSES'][$instance['instance']['instances_id']] = $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']]; //for the JS Array
+    $PAGEDATA['BOARDSTATUSES'][$instance['instance']['instances_id']] = stripBoardAssets($PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']]); //for the JS Array
 }
 
 //Edit Options - Project Statuses list

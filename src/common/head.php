@@ -241,6 +241,23 @@ function buildAssetsAssignmentsBoard($instancesId, $assetsList)
     }
     return $board;
 }
+/**
+ * Strip the "assets" key from each column of a board built by buildAssetsAssignmentsBoard().
+ * Used for the copy of the board that's JSON-encoded into the page for JavaScript, which only
+ * needs the status metadata - the assets themselves are already rendered from the full board and
+ * would otherwise be duplicated in full in the page's HTML and in client memory for no purpose.
+ * @param array $board A board as returned by buildAssetsAssignmentsBoard()
+ * @return array The same board with each column's "assets" key removed
+ */
+function stripBoardAssets($board)
+{
+    $slim = [];
+    foreach ($board as $key => $status) {
+        unset($status['assets']);
+        $slim[$key] = $status;
+    }
+    return $slim;
+}
 
 // Setup the "PAGEDATA" array which is used by Twig
 $PAGEDATA = array('CONFIG' => $CONFIG, 'VERSION' => $bCMS->getVersionNumber());

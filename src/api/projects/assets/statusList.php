@@ -8,12 +8,17 @@ $_POST['id'] = $_POST['projects_id'];
 require_once __DIR__ . '/../data.php'; //Where most of the data comes from
 
 
-// Keep this endpoint's response keyed by assetsAssignmentsStatus_order, as it was before, for compatibility with existing consumers
+// Keep this endpoint's response keyed by assetsAssignmentsStatus_order, as it was before, for compatibility
+// with existing consumers. A deleted status keeps whatever order it had when it was deleted, so - unlike the
+// live, always-contiguous active statuses - it can (rarely) still collide with another status's order; when
+// that happens, key that entry by "order-id" instead of silently dropping it by overwriting the same key.
 function reindexBoardByOrder($board)
 {
     $reindexed = [];
     foreach ($board as $status) {
-        $reindexed[$status['assetsAssignmentsStatus_order']] = $status;
+        $key = $status['assetsAssignmentsStatus_order'];
+        if (array_key_exists($key, $reindexed)) $key = $key . '-' . $status['assetsAssignmentsStatus_id'];
+        $reindexed[$key] = $status;
     }
     return $reindexed;
 }
