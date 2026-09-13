@@ -181,7 +181,13 @@ function buildAssetsAssignmentsBoard($instancesId, $assetsList)
     $DBLIB->orderBy("assetsAssignmentsStatus_order", "ASC");
     $statuses = $DBLIB->get("assetsAssignmentsStatus");
     $statusIds = array_column($statuses, 'assetsAssignmentsStatus_id');
-    $hasActiveOrderZero = in_array(0, array_map('intval', array_column($statuses, 'assetsAssignmentsStatus_order')));
+    $defaultStatusId = null; //the single column NULL-status assets are placed into
+    foreach ($statuses as $status) {
+        if ((int)$status['assetsAssignmentsStatus_order'] === 0) {
+            $defaultStatusId = $status['assetsAssignmentsStatus_id'];
+            break;
+        }
+    }
 
     $missingIds = [];
     $needsDefaultColumn = false;
@@ -190,7 +196,7 @@ function buildAssetsAssignmentsBoard($instancesId, $assetsList)
             $statusId = $asset['assetsAssignmentsStatus_id'];
             if ($statusId !== null) {
                 if (!in_array($statusId, $statusIds)) $missingIds[$statusId] = true;
-            } elseif (!$hasActiveOrderZero) {
+            } elseif ($defaultStatusId === null) {
                 $needsDefaultColumn = true;
             }
         }
@@ -209,8 +215,9 @@ function buildAssetsAssignmentsBoard($instancesId, $assetsList)
         $DBLIB->where("assetsAssignmentsStatus_order", 0);
         $DBLIB->orderBy("assetsAssignmentsStatus_id", "ASC");
         $defaultStatus = $DBLIB->getOne("assetsAssignmentsStatus");
-        if ($defaultStatus && !in_array($defaultStatus['assetsAssignmentsStatus_id'], $statusIds)) {
-            $statuses[] = $defaultStatus;
+        if ($defaultStatus) {
+            $defaultStatusId = $defaultStatus['assetsAssignmentsStatus_id'];
+            if (!in_array($defaultStatusId, $statusIds)) $statuses[] = $defaultStatus;
         }
     }
     usort($statuses, function ($a, $b) {
@@ -224,7 +231,7 @@ function buildAssetsAssignmentsBoard($instancesId, $assetsList)
             foreach ($assetType['assets'] as $asset) {
                 if ($asset['assetsAssignmentsStatus_id'] !== null) {
                     if ($asset['assetsAssignmentsStatus_id'] == $status['assetsAssignmentsStatus_id']) $tempAssets[] = $asset;
-                } elseif ((int)$status['assetsAssignmentsStatus_order'] === 0) { //assets with no status at all go in the order-0 column
+                } elseif ($status['assetsAssignmentsStatus_id'] == $defaultStatusId) { //assets with no status at all go in the one default column
                     $tempAssets[] = $asset;
                 }
             }

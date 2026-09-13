@@ -8,10 +8,20 @@ $_POST['id'] = $_POST['projects_id'];
 require_once __DIR__ . '/../data.php'; //Where most of the data comes from
 
 
+// Keep this endpoint's response keyed by assetsAssignmentsStatus_order, as it was before, for compatibility with existing consumers
+function reindexBoardByOrder($board)
+{
+    $reindexed = [];
+    foreach ($board as $status) {
+        $reindexed[$status['assetsAssignmentsStatus_order']] = $status;
+    }
+    return $reindexed;
+}
+
 $sortedAssets = [];
-$sortedAssets[$AUTH->data['instance']['instances_id']] = buildAssetsAssignmentsBoard($AUTH->data['instance']['instances_id'], $PAGEDATA['FINANCIALS']['assetsAssigned']);
+$sortedAssets[$AUTH->data['instance']['instances_id']] = reindexBoardByOrder(buildAssetsAssignmentsBoard($AUTH->data['instance']['instances_id'], $PAGEDATA['FINANCIALS']['assetsAssigned']));
 foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go through the sub projects
-    $sortedAssets[$instance['instance']['instances_id']] = buildAssetsAssignmentsBoard($instance['instance']['instances_id'], $instance['assets']);
+    $sortedAssets[$instance['instance']['instances_id']] = reindexBoardByOrder(buildAssetsAssignmentsBoard($instance['instance']['instances_id'], $instance['assets']));
 }
 
 finish(true, null, $sortedAssets);

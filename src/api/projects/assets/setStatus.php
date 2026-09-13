@@ -3,13 +3,6 @@ require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS") || !isset($_POST['assetsAssignments_status']) || !(isset($_POST['assetsAssignments_id']) || isset($_POST['projects_id']))) finish(false);
 
-// Validate that the requested status belongs to the current instance and is not deleted
-$DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
-$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
-$status = $DBLIB->getone("assetsAssignmentsStatus", ["assetsAssignmentsStatus_id"]);
-if (!$status or $status['assetsAssignmentsStatus_id'] == null) finish(false, ["message" => "Status not found", "code" => "STATUSNOTFOUND"]);
-
 if (isset($_POST['assetsAssignments_id'])){
     $DBLIB->where("assetsAssignments_id", $_POST['assetsAssignments_id'], (is_array($_POST['assetsAssignments_id'])? 'IN' : '='));
 } elseif (isset($_POST['projects_id'])) {
@@ -22,6 +15,21 @@ $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+$DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id", "LEFT");
+$matchedAssignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assets.instances_id"]);
+if (!$matchedAssignments) finish(false);
+
+// Validate that the requested status is not deleted and belongs to every instance that owns one
+// of the matched assets - an asset can belong to a different instance to the project (e.g. a
+// sub-project asset, or "Supermarket Sweep"), so this isn't necessarily the current instance.
+$assetInstanceIds = array_unique(array_column($matchedAssignments, 'instances_id'));
+$DBLIB->where("assetsAssignmentsStatus_id", $_POST['assetsAssignments_status']);
+$DBLIB->where("instances_id", $assetInstanceIds, "IN");
+$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
+$validInstances = $DBLIB->get("assetsAssignmentsStatus", null, ["instances_id"]);
+if (count($validInstances) !== count($assetInstanceIds)) finish(false, ["message" => "Status not found", "code" => "STATUSNOTFOUND"]);
+
+$DBLIB->where("assetsAssignments_id", array_column($matchedAssignments, 'assetsAssignments_id'), "IN");
 $assignment = $DBLIB->update("assetsAssignments", ["assetsAssignmentsStatus_id" => $_POST['assetsAssignments_status']]);
 
 if (!$assignment) finish(false);
