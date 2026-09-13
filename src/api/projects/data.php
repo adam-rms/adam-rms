@@ -288,8 +288,9 @@ $PAGEDATA['quotes'] = $bCMS->s3List(21, $PAGEDATA['project']['projects_id'],'s3f
 $PAGEDATA['deliveryNotes'] = $bCMS->s3List(22, $PAGEDATA['project']['projects_id'],'s3files_meta_uploaded', 'DESC');
 
 $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
-$DBLIB->where("assetsAssignmentsStatus_deleted", 0);
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+//Include a deleted status if it's still referenced by an asset assigned to this project, so those assets don't disappear from the asset dispatch board
+$DBLIB->where("(assetsAssignmentsStatus_deleted = 0 OR assetsAssignmentsStatus_id IN (SELECT assetsAssignmentsStatus_id FROM assetsAssignments WHERE assetsAssignments_deleted = 0 AND assetsAssignmentsStatus_id IS NOT NULL AND projects_id = " . (int)$PAGEDATA['project']['projects_id'] . "))");
 $PAGEDATA['assetsAssignmentsStatus'] = $DBLIB->get("assetsAssignmentsStatus");
 
 

@@ -99,7 +99,8 @@ foreach ($PAGEDATA['assetsAssignmentsStatus'] as $status) {
 foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go through the sub projects
     $DBLIB->orderBy("assetsAssignmentsStatus_order","ASC");
     $DBLIB->where("assetsAssignmentsStatus.instances_id", $instance['instance']['instances_id']);
-    $DBLIB->where("assetsAssignmentsStatus.assetsAssignmentsStatus_deleted", 0);
+    //Include a deleted status if it's still referenced by an asset assigned to this project, so those assets don't disappear from the asset dispatch board
+    $DBLIB->where("(assetsAssignmentsStatus.assetsAssignmentsStatus_deleted = 0 OR assetsAssignmentsStatus.assetsAssignmentsStatus_id IN (SELECT assetsAssignmentsStatus_id FROM assetsAssignments WHERE assetsAssignments_deleted = 0 AND assetsAssignmentsStatus_id IS NOT NULL AND projects_id = " . (int)$PAGEDATA['project']['projects_id'] . "))");
     $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']] = $DBLIB->get("assetsAssignmentsStatus");
     $PAGEDATA['BOARDSTATUSES'][$instance['instance']['instances_id']] = $PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']]; //for the JS Array
     foreach ($PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']] as $status) {

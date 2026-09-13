@@ -103,7 +103,7 @@
                             <div class="form-group">
                                 <label>Set Asset Status to</label>
                                 <select class="form-control assetStatusSelectorQuickDispatch" data-instanceid="{{ USERDATA.instance["instances_id"] }}">
-                                    {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
+                                    {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] if not status['assetsAssignmentsStatus_deleted'] %}
                                     <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
                                     {% endfor %}
                                 </select>
@@ -115,7 +115,7 @@
                             <div class="form-group">
                                 <label>Set Asset Status to</label>
                                 <select class="form-control assetStatusSelectorQuickDispatch" data-instanceid="{{ instance['instance']['instances_id'] }}">
-                                    {% for status in BOARDSTATUSES[instance['instance']['instances_id']] %}
+                                    {% for status in BOARDSTATUSES[instance['instance']['instances_id']] if not status['assetsAssignmentsStatus_deleted'] %}
                                     <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
                                     {% endfor %}
                                 </select>
@@ -170,7 +170,7 @@
                             <div class="form-group">
                                 <label>Set Asset Status to</label>
                                 <select class="form-control assetStatusSelectorBarcodeDispatch" data-instanceid="{{ USERDATA.instance["instances_id"] }}">
-                                    {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
+                                    {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] if not status['assetsAssignmentsStatus_deleted'] %}
                                     <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
                                     {% endfor %}
                                 </select>
@@ -183,7 +183,7 @@
                             <div class="form-group">
                                 <label>Set Asset Status to</label>
                                 <select class="form-control assetStatusSelectorBarcodeDispatch" data-instanceid="{{ instance['instance']['instances_id'] }}">
-                                    {% for status in BOARDSTATUSES[instance['instance']['instances_id']] %}
+                                    {% for status in BOARDSTATUSES[instance['instance']['instances_id']] if not status['assetsAssignmentsStatus_deleted'] %}
                                     <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
                                     {% endfor %}
                                 </select>
