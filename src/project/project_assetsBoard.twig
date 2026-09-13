@@ -404,26 +404,31 @@
     $(document).ready(function () {
         {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
         drawButtons();
-        $(".assetDispatchAssetList").sortable({
-            // Deleted-status columns are excluded from the connected set, so assets can be dragged
-            // out of one but not newly dropped into one
-            connectWith: ".assetDispatchAssetList:not([data-deleted='true'])",
-            update: function( event, ui ){
-                /*
-                Update function is called twice, once for the old list and once for the new list.
-                The lists, this, have a data attribute, status, that can be compared with each asset, ui.item[0].
-                If the groupStatus is the same as the old status, this call can be ignored as this is the old list update call.
-                Function call will refresh the page and sort any graphical issues.
-                 */
-                const groupStatus = this.dataset.statusid;
-                const assetOldStatus = ui.item[0].dataset.currentstatus;
-                const assetAssignment = ui.item[0].dataset.assignment;
+        $(".assetDispatchAssetList").each(function () {
+            // Deleted-status columns are excluded from the connected set (so assets can be dragged out of
+            // one but not newly dropped into one), and the connection is scoped to this list's own instance
+            // - the board can show columns for multiple instances (main + sub-projects) in the same DOM, and
+            // an asset can only ever be assigned a status belonging to its own instance.
+            const instance = this.dataset.instance;
+            $(this).sortable({
+                connectWith: ".assetDispatchAssetList[data-instance='" + instance + "']:not([data-deleted='true'])",
+                update: function( event, ui ){
+                    /*
+                    Update function is called twice, once for the old list and once for the new list.
+                    The lists, this, have a data attribute, status, that can be compared with each asset, ui.item[0].
+                    If the groupStatus is the same as the old status, this call can be ignored as this is the old list update call.
+                    Function call will refresh the page and sort any graphical issues.
+                     */
+                    const groupStatus = this.dataset.statusid;
+                    const assetOldStatus = ui.item[0].dataset.currentstatus;
+                    const assetAssignment = ui.item[0].dataset.assignment;
 
-                if (assetOldStatus !== groupStatus) {
-                    changeStatus(parseInt(assetAssignment),parseInt(groupStatus));
-                    ui.item[0].dataset.currentstatus = groupStatus;
+                    if (assetOldStatus !== groupStatus) {
+                        changeStatus(parseInt(assetAssignment),parseInt(groupStatus));
+                        ui.item[0].dataset.currentstatus = groupStatus;
+                    }
                 }
-            }
+            });
         });
 
         $(".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton").click(function (){

@@ -20,7 +20,7 @@ foreach ($remainingStatuses as $index => $remainingStatus) {
         $DBLIB->where("assetsAssignmentsStatus_id", $remainingStatus['assetsAssignmentsStatus_id']);
         $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
         $DBLIB->where("assetsAssignmentsStatus_deleted", 0);
-        $DBLIB->update("assetsAssignmentsStatus", ["assetsAssignmentsStatus_order" => $index], 1);
+        if (!$DBLIB->update("assetsAssignmentsStatus", ["assetsAssignmentsStatus_order" => $index], 1)) finish(false, ["code" => "REMOVE-STATUS-FAIL", "message"=> "Could not resequence remaining asset statuses"]);
     }
 }
 
