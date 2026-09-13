@@ -239,7 +239,9 @@
             var instance = $(this).data("instance");
             var statusid = $(this).data("statusid");
             var orderedStatusIds = assetStatuses[instance]['orderedStatusIds'];
-            var position = orderedStatusIds.indexOf(statusid);
+            // Status IDs from the database may be JSON strings while jQuery's .data() parses a numeric
+            // data-statusid attribute into a number, so compare them numerically rather than with indexOf
+            var position = orderedStatusIds.findIndex((id) => Number(id) === Number(statusid));
             // If this column's own status has been deleted, it won't be in orderedStatusIds (position -1) -
             // there's no natural neighbour, so just offer the first active status as a way to move the asset out
             var prev = (position <= 0 ? false : orderedStatusIds[position-1]);
