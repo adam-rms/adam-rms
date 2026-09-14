@@ -218,7 +218,11 @@
     const canAssignAssets = {{ "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions ? 'true' : 'false' }};
 
     // Create an array of status ids, ordered
-    const assetStatusesRaw = JSON.parse('{{ BOARDSTATUSES|json_encode|raw }}');
+    // Emitted as a JS object literal rather than a quoted string passed to JSON.parse: status names are
+    // free text, and an apostrophe in one (e.g. "Prep'd") would otherwise terminate the string literal
+    // early and throw a SyntaxError, killing this entire script block (arrows and drag/drop included).
+    // JSON_HEX_TAG escapes angle brackets so a status name cannot break out of the script element.
+    const assetStatusesRaw = {{ BOARDSTATUSES|json_encode(constant('JSON_HEX_TAG'))|raw }};
     var assetStatuses = {};
     for (const [instanceid, instanceStatuses] of Object.entries(assetStatusesRaw)) {
         // Board columns are keyed by status ID, not order, so plain object key order (numeric-then-insertion)
