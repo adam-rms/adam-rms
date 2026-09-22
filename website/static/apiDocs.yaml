@@ -1645,7 +1645,51 @@ paths:
                   result: { description: 'Whether the request was successful', type: boolean }
                   error: { description: 'An Array containing an error code and a message', type: array }
                 type: object
-  /categories/new.php:
+  /categories/groups/edit.php:
+    post:
+      tags:
+        - categories
+      summary: 'Edit Asset Category Group'
+      description: 'Edit an Asset Category Group (Parent)'
+      operationId: editCategoryGroup
+      parameters:
+        -
+          name: formData
+          in: query
+          description: 'The category group data'
+          required: 'true'
+          schema:
+            properties:
+              assetCategoriesGroups_id:
+                description: 'The ID of the category group'
+                type: integer
+              assetCategoriesGroups_name:
+                description: 'The new name of the category group'
+                type: string
+              assetCategoriesGroups_fontAwesome:
+                description: 'The font awesome icon for the category group'
+                type: string
+            type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  result: { description: 'Whether the request was successful', type: boolean }
+                  response: { description: 'A null Array', type: array }
+                type: object
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  result: { description: 'Whether the request was successful', type: boolean }
+                  error: { description: 'An Array containing an error code and a message', type: array }
+                type: object
+  /categories/groups/new.php:
     post:
       tags:
         - categories
@@ -1666,6 +1710,50 @@ paths:
               assetCategoriesGroups_fontAwesome:
                 description: 'The font awesome icon for the category group'
                 type: string
+            type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  result: { description: 'Whether the request was successful', type: boolean }
+                  response: { description: 'A null Array', type: array }
+                type: object
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  result: { description: 'Whether the request was successful', type: boolean }
+                  error: { description: 'An Array containing an error code and a message', type: array }
+                type: object
+  /categories/new.php:
+    post:
+      tags:
+        - categories
+      summary: 'Create Asset Category'
+      description: 'Create a category'
+      operationId: createCategory
+      parameters:
+        -
+          name: formData
+          in: query
+          description: 'The category data'
+          required: 'true'
+          schema:
+            properties:
+              assetCategories_name:
+                description: 'The name of the category'
+                type: string
+              assetCategories_fontAwesome:
+                description: 'The font awesome icon for the category'
+                type: string
+              assetCategoriesGroups_id:
+                description: 'The ID of the category group'
+                type: integer
             type: object
       responses:
         '200':
@@ -3284,6 +3372,28 @@ paths:
                 properties:
                   result: { description: 'Whether the request was successful', type: boolean }
                 type: object
+  /instances/permanentlyDelete.php:
+    post:
+      tags:
+        - instances
+      summary: 'Permanently Delete Instance'
+      description: "Permanently Delete a soft-deleted Instance\n Requires Server permission INSTANCES:PERMANENTLY_DELETE"
+      operationId: DeleteInstance
+      parameters:
+        -
+          name: instances_id
+          in: query
+          description: 'Id of soft-deleted instance to delete'
+          required: 'true'
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
   /instances/projectStatus/edit.php:
     post:
       tags:
@@ -3677,6 +3787,28 @@ paths:
                 properties:
                   result: { description: 'Whether the request was successful', type: boolean }
                 type: object
+  /instances/unDelete.php:
+    post:
+      tags:
+        - instances
+      summary: 'Restore Instance'
+      description: "Restore soft-deleted Instance\n Requires Server permission INSTANCES:DELETE"
+      operationId: restoreInstance
+      parameters:
+        -
+          name: instances_id
+          in: query
+          description: 'Id of instance to restore'
+          required: 'true'
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
   /instances/users.php:
     get:
       tags:
@@ -3841,7 +3973,7 @@ paths:
         - locations
       summary: 'UnArchive Location'
       description: "Restore a location\n Requires Instance permission LOCATIONS:EDIT"
-      operationId: archiveLocation
+      operationId: unarchiveLocation
       parameters:
         -
           name: locations_id
@@ -4247,7 +4379,7 @@ paths:
         - maintenanceJobs
       summary: 'Change Name'
       description: "Change the name of a maintenance job  \nRequires Instance Permission MAINTENANCE_JOBS:EDIT:NAME\n"
-      operationId: changeName
+      operationId: changeJobName
       parameters:
         -
           name: maintenanceJobs_id
@@ -4616,7 +4748,7 @@ paths:
         - maintenance
       summary: 'Search User'
       description: 'Search for a user to tag to a maintenance job'
-      operationId: searchUser
+      operationId: searchMaintenanceUser
       parameters:
         -
           name: term
