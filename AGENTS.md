@@ -365,7 +365,7 @@ npx playwright install chromium   # not needed where a browser is pre-installed
 npm test                          # set PHP_BINARY=php8.3 if `php` on your PATH isn't 8.3
 ```
 
-`e2e/globalSetup.ts` migrates and seeds the database, then writes the config the first-run setup form would ask for. The seeded super admin is `test@example.com` / `password!`. The server runs with `DEV_MODE=true` (as the devcontainer does), so pages that require login show the auth error and a login link instead of redirecting.
+`e2e/globalSetup.ts` migrates and seeds the database, then `e2e/setup/seed.php` writes the config the first-run setup form would ask for and makes sure the test super admin `test@example.com` / `password!` exists (resetting its password if it has been changed), so the suite also works against a used devcontainer database. The server runs with `DEV_MODE=true` (as the devcontainer does), so pages that require login show the auth error and a login link instead of redirecting.
 
 ### Writing E2E tests
 
