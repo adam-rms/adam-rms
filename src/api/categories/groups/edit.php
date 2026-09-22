@@ -19,7 +19,7 @@ $bCMS->auditLog("EDIT", "assetCategoriesGroups", json_encode($array), $AUTH->dat
 finish(true);
 
 /** @OA\Post(
- *     path="/categories/edit.php", 
+ *     path="/categories/groups/edit.php", 
  *     summary="Edit Asset Category Group", 
  *     description="Edit an Asset Category Group (Parent)", 
  *     operationId="editCategoryGroup", 

@@ -16,7 +16,7 @@ $bCMS->auditLog("INSERT", "assetCategoriesGroups", json_encode($array), $AUTH->d
 finish(true);
 
 /** @OA\Post(
- *     path="/categories/new.php", 
+ *     path="/categories/groups/new.php", 
  *     summary="Create Asset Category Group", 
  *     description="Create a new asset category group", 
  *     operationId="createCategoryGroup", 

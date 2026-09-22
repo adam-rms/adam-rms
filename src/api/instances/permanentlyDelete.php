@@ -21,7 +21,7 @@ if($DBLIB->delete('instances')) {
 
 /**
  *  @OA\Post(
- *      path="/instances/delete.php",
+ *      path="/instances/permanentlyDelete.php",
  *      summary="Permanently Delete Instance",
  *      description="Permanently Delete a soft-deleted Instance
  Requires Server permission INSTANCES:PERMANENTLY_DELETE",
