@@ -57,6 +57,7 @@ if ($array['projectsVacantRoles_id'] == "NEW") {
  
     $DBLIB->where("projectsVacantRoles_deleted", 0);
     $DBLIB->where("projectsVacantRoles_id",$array['projectsVacantRoles_id']);
+    $DBLIB->where("projects_id", $project['projects_id']); //The role must be on the project checked above
     $update = $DBLIB->update("projectsVacantRoles", $array,1);
     if (!$update) finish(false);
 

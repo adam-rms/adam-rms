@@ -26,6 +26,16 @@ if (!$AUTH->serverPermissionCheck("ASSETS:EDIT:ANY_ASSET_TYPE")) {
 $DBLIB->where("assetTypes_id", $array['assetTypes_id']);
 $assetType = $DBLIB->getone("assetTypes", ['assetTypes.assetTypes_mass','assetTypes.assetTypes_value',"assetTypes.assetTypes_dayRate","assetTypes.assetTypes_weekRate"]);
 if (!$assetType) finish(false);
+if (isset($array['manufacturers_id'])) { //Shared manufacturers, or this business's own
+    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+    $DBLIB->where("manufacturers_id", $array['manufacturers_id']);
+    if (!$DBLIB->getOne("manufacturers", ["manufacturers_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Manufacturer not found"]);
+}
+if (isset($array['assetCategories_id'])) { //Shared categories, or this business's own
+    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+    $DBLIB->where("assetCategories_id", $array['assetCategories_id']);
+    if (!$DBLIB->getOne("assetCategories", ["assetCategories_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Category not found"]);
+}
 
 $DBLIB->where("assetTypes_id",$array['assetTypes_id']);
 $result = $DBLIB->update("assetTypes", array_intersect_key( $array, array_flip( ['assetTypes_name','assetCategories_id','assetTypes_productLink','manufacturers_id','assetTypes_description','assetTypes_definableFields','assetTypes_mass','assetTypes_inserted',"assetTypes_dayRate","assetTypes_weekRate","assetTypes_value"] ) ));

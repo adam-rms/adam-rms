@@ -3,6 +3,12 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck("PROJECTS:EDIT:DELIVERY_NOTES") or !isset($_POST['projects_id'])) die("404");
 
+//The update below reports success even when no project matches, so check the project is in this business first
+$DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projects.projects_deleted", 0);
+$DBLIB->where("projects.projects_id", $_POST['projects_id']);
+if (!$DBLIB->getOne("projects", ["projects_id"])) finish(false, ["code" => "NOT-FOUND", "message" => "Project not found"]);
+
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
 $DBLIB->where("projects.projects_id", $_POST['projects_id']);

@@ -7,8 +7,8 @@ import { test, expect, formData, mentions, seedTenants, snapshot, dbQuery, succe
  *   - with A's own IDs (the control), asserting it does work — so a malformed request can't pass by doing nothing.
  * Controls change A's records, so the tenants are re-seeded after each one (setup/tenants.php resets them).
  *
- * Characterisation tests: a case that currently leaks is marked test.fixme with a note. Don't fix the
- * leak in the same PR as the test; see e2e/COVERAGE.md.
+ * A new case that finds a leak can be marked test.fixme (set `fixme` to a note saying how it leaks)
+ * until the endpoint is fixed; e2e/COVERAGE.md flags those endpoints.
  */
 
 type ReadCase = {
@@ -45,14 +45,8 @@ type LinkCase = {
 
 type PageCase = { file: string; url: (t: Tenant) => string; shows: (t: Tenant) => string; fixme?: string };
 
-const HISTORY_LEAK =
-  "Leak: $DBLIB->update() returns true when no row matches, so the endpoint reports success and writes an audit log entry against B's project ID. B's project page then shows the entry, with A's user name and text A chose.";
 
-const VACANCY_LEAK =
-  "Leak: checks that projects_id is the caller's, then updates the vacancy by projectsVacantRoles_id alone, so a user can edit (rename, close...) any business's crew vacancies.";
 
-const FINANCE_LEAK =
-  "Leak: the asset update is scoped to the caller's business, but the loop after it finds the asset's project assignments by assets_id alone and adjusts those projects' finance cache, so B's project totals change (e.g. value +9999.00).";
 
 const readCases: ReadCase[] = [
   { endpoint: "/api/projects/list.php", params: () => ({}) },
@@ -94,16 +88,16 @@ const pageCases: PageCase[] = [
 
 const writeCases: WriteCase[] = [
   // Projects
-  { endpoint: "/api/projects/changeName.php", params: (t) => ({ projects_id: t.projectId, projects_name: "Renamed by e2e" }), historyFixme: HISTORY_LEAK },
-  { endpoint: "/api/projects/changeDescription.php", params: (t) => ({ projects_id: t.projectId, projects_description: "Changed by e2e" }), historyFixme: HISTORY_LEAK },
-  { endpoint: "/api/projects/changeDeliveryNotes.php", params: (t) => ({ projects_id: t.projectId, projects_deliveryNotes: "Changed by e2e" }), historyFixme: HISTORY_LEAK },
-  { endpoint: "/api/projects/changeInvoiceNotes.php", params: (t) => ({ projects_id: t.projectId, projects_invoiceNotes: "Changed by e2e" }), historyFixme: HISTORY_LEAK },
-  { endpoint: "/api/projects/changeProjectDates.php", params: (t) => ({ projects_id: t.projectId, projects_dates_use_start: "2031-01-01 09:00", projects_dates_use_end: "2031-01-02 09:00" }), historyFixme: HISTORY_LEAK },
-  { endpoint: "/api/projects/archive.php", params: (t) => ({ projects_id: t.projectId }), historyFixme: HISTORY_LEAK },
-  { endpoint: "/api/projects/unArchive.php", params: (t) => ({ projects_id: t.projectId }), control: false, historyFixme: HISTORY_LEAK },
-  { endpoint: "/api/projects/delete.php", params: (t) => ({ projects_id: t.projectId }), historyFixme: HISTORY_LEAK },
+  { endpoint: "/api/projects/changeName.php", params: (t) => ({ projects_id: t.projectId, projects_name: "Renamed by e2e" }) },
+  { endpoint: "/api/projects/changeDescription.php", params: (t) => ({ projects_id: t.projectId, projects_description: "Changed by e2e" }) },
+  { endpoint: "/api/projects/changeDeliveryNotes.php", params: (t) => ({ projects_id: t.projectId, projects_deliveryNotes: "Changed by e2e" }) },
+  { endpoint: "/api/projects/changeInvoiceNotes.php", params: (t) => ({ projects_id: t.projectId, projects_invoiceNotes: "Changed by e2e" }) },
+  { endpoint: "/api/projects/changeProjectDates.php", params: (t) => ({ projects_id: t.projectId, projects_dates_use_start: "2031-01-01 09:00", projects_dates_use_end: "2031-01-02 09:00" }) },
+  { endpoint: "/api/projects/archive.php", params: (t) => ({ projects_id: t.projectId }) },
+  { endpoint: "/api/projects/unArchive.php", params: (t) => ({ projects_id: t.projectId }), control: false },
+  { endpoint: "/api/projects/delete.php", params: (t) => ({ projects_id: t.projectId }) },
   { endpoint: "/api/projects/changeStatus.php", params: (t) => ({ projects_id: t.projectId, projectsStatuses_id: t.projectStatusIds.second }) },
-  { endpoint: "/api/projects/changeSubProject.php", params: (t) => ({ projects_id: t.subProjectId, projects_parent_project_id: -1 }), historyFixme: HISTORY_LEAK },
+  { endpoint: "/api/projects/changeSubProject.php", params: (t) => ({ projects_id: t.subProjectId, projects_parent_project_id: -1 }) },
   { endpoint: "/api/projects/followParentStatus.php", params: (t) => ({ projects_id: t.subProjectId, follow: "true" }) },
   { endpoint: "/api/projects/newNote.php", params: (t) => ({ projects_id: t.projectId, projectsNotes_title: "Note by e2e" }) },
   { endpoint: "/api/projects/editNote.php", params: (t) => ({ projects_id: t.projectId, projectsNotes_id: t.noteId, projectsNotes_text: "Changed by e2e" }) },
@@ -118,14 +112,14 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/projects/crew/edit.php", params: (t) => ({ crewAssignments_id: t.crewAssignmentId, crewAssignments_comment: "Changed by e2e" }) },
   { endpoint: "/api/projects/crew/unassign.php", params: (t) => ({ crewAssignments_id: t.crewAssignmentId }) },
   {
-    endpoint: "/api/projects/crew/crewRoles/edit.php", fixme: VACANCY_LEAK,
+    endpoint: "/api/projects/crew/crewRoles/edit.php",
     // The project must be the caller's own; the vacancy is the target's
     params: (t, self) => ({ formData: formData({ projects_id: self.projectId, projectsVacantRoles_id: t.vacantRoleId, projectsVacantRoles_name: "Renamed by e2e" }) }),
   },
   { endpoint: "/api/projects/crew/crewRoles/accept.php", params: (t) => ({ projectsVacantRolesApplications_id: t.vacancyApplicationId }) },
   { endpoint: "/api/projects/crew/crewRoles/reject.php", params: (t) => ({ projectsVacantRolesApplications_id: t.vacancyApplicationId }) },
   // Assets
-  { endpoint: "/api/assets/editAsset.php", params: (t) => ({ assets_id: t.assetId, assets_notes: "Changed by e2e", assets_value: "9999.00" }), fixme: FINANCE_LEAK },
+  { endpoint: "/api/assets/editAsset.php", params: (t) => ({ assets_id: t.assetId, assets_notes: "Changed by e2e", assets_value: "9999.00" }) },
   { endpoint: "/api/assets/archive.php", params: (t) => ({ assets_id: t.assetId, reason: "e2e", date: "2024-02-01" }) },
   { endpoint: "/api/assets/delete.php", params: (t) => ({ assets_id: t.assetId }) },
   { endpoint: "/api/assets/editAssetType.php", params: (t) => ({ formData: formData({ assetTypes_id: t.assetTypeId, assetTypes_name: "Renamed by e2e" }) }) },
@@ -158,21 +152,18 @@ const writeCases: WriteCase[] = [
 ];
 
 // Endpoints that save the submitted form fields as they are: can a user move their own record into another business?
-const MOVE_LEAK =
-  "Leak: the endpoint saves every submitted form field, including instances_id, so a user can move their own record into another business, where it then shows up.";
 const moveCases: WriteCase[] = (
   [
-    ["/api/clients/edit.php", "clients", "clients_id", "clientId", MOVE_LEAK],
-    ["/api/locations/edit.php", "locations", "locations_id", "locationId", MOVE_LEAK],
-    ["/api/groups/edit.php", "assetGroups", "assetGroups_id", "assetGroupId", MOVE_LEAK],
-    ["/api/categories/edit.php", "assetCategories", "assetCategories_id", "categoryId", MOVE_LEAK],
-    ["/api/categories/groups/edit.php", "assetCategoriesGroups", "assetCategoriesGroups_id", "categoryGroupId", MOVE_LEAK],
+    ["/api/clients/edit.php", "clients", "clients_id", "clientId"],
+    ["/api/locations/edit.php", "locations", "locations_id", "locationId"],
+    ["/api/groups/edit.php", "assetGroups", "assetGroups_id", "assetGroupId"],
+    ["/api/categories/edit.php", "assetCategories", "assetCategories_id", "categoryId"],
+    ["/api/categories/groups/edit.php", "assetCategoriesGroups", "assetCategoriesGroups_id", "categoryGroupId"],
   ] as const
-).map(([endpoint, table, field, key, fixme]) => ({
+).map(([endpoint, table, field, key]) => ({
   endpoint,
   params: (t: Tenant, self: Tenant) => ({ formData: formData({ [field]: self[key], instances_id: t.instanceId }) }),
   control: false as const,
-  fixme,
   restore: (a: Tenant) => [`UPDATE ${table} SET instances_id = ? WHERE ${field} = ?`, [a.instanceId, a[key]]],
 }));
 
@@ -183,16 +174,17 @@ const linkCases: LinkCase[] = [
   { endpoint: "/api/projects/changeProjectType.php", params: (t, a) => ({ projects_id: a.projectId, projectsTypes_id: t.projectTypeId }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE projects_id = ? AND projectsTypes_id = ?", [a.projectId, b.projectTypeId]] },
   { endpoint: "/api/projects/changeStatus.php", params: (t, a) => ({ projects_id: a.projectId, projectsStatuses_id: t.projectStatusIds.second }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE projects_id = ? AND projectsStatuses_id = ?", [a.projectId, b.projectStatusIds.second]] },
   { endpoint: "/api/projects/changeSubProject.php", params: (t, a) => ({ projects_id: a.subProjectId, projects_parent_project_id: t.projectId }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE projects_id = ? AND projects_parent_project_id = ?", [a.subProjectId, b.projectId]] },
-  { endpoint: "/api/projects/changeProjectManager.php", params: (t, a) => ({ projects_id: a.projectId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE projects_id = ? AND projects_manager = ?", [a.projectId, b.users.full.id]], fixme: "Leak: accepts any user ID, not just users in the business; the project page then shows that user's name and email." },
-  { endpoint: "/api/projects/new.php", params: (t, a) => ({ projects_name: "New by e2e", projects_manager: a.users.full.id, projectsType_id: t.projectTypeId }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE instances_id = ? AND projectsTypes_id = ?", [a.instanceId, b.projectTypeId]], fixme: "Leak: projectsType_id isn't checked against the caller's business, so a project can use another business's project type (whose name then shows on it). projects_parent_project_id and projects_manager aren't checked either." },
+  { endpoint: "/api/projects/changeProjectManager.php", params: (t, a) => ({ projects_id: a.projectId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE projects_id = ? AND projects_manager = ?", [a.projectId, b.users.full.id]] },
+  { endpoint: "/api/projects/new.php", params: (t, a) => ({ projects_name: "New by e2e", projects_manager: a.users.full.id, projectsType_id: t.projectTypeId }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE instances_id = ? AND projectsTypes_id = ?", [a.instanceId, b.projectTypeId]] },
   { endpoint: "/api/projects/crew/assign.php", params: (t, a) => ({ formData: formData({ projects_id: a.projectId, crewAssignments_role: "e2e role" }), users: [t.users.limited.id] }), linked: (b, a) => ["SELECT COUNT(*) n FROM crewAssignments WHERE projects_id = ? AND users_userid = ? AND crewAssignments_deleted = 0", [a.projectId, b.users.limited.id]] },
-  { endpoint: "/api/assets/editAsset.php", params: (t, a) => ({ assets_id: a.assetId, assetTypes_id: t.assetTypeId }), linked: (b, a) => ["SELECT COUNT(*) n FROM assets WHERE assets_id = ? AND assetTypes_id = ?", [a.assetId, b.assetTypeId]], fixme: "Leak: assetTypes_id (and assets_linkedTo) aren't checked, so an asset can be given another business's private asset type, whose name and details then show in the caller's asset pages." },
-  { endpoint: "/api/assets/editAssetType.php", params: (t, a) => ({ formData: formData({ assetTypes_id: a.assetTypeId, assetTypes_name: `${a.marker} asset type`, manufacturers_id: t.manufacturerId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE assetTypes_id = ? AND manufacturers_id = ?", [a.assetTypeId, b.manufacturerId]], fixme: "Leak: manufacturers_id and assetCategories_id aren't checked, so an asset type can use another business's manufacturer, whose name then shows." },
+  { endpoint: "/api/assets/editAsset.php", params: (t, a) => ({ assets_id: a.assetId, assetTypes_id: t.assetTypeId }), linked: (b, a) => ["SELECT COUNT(*) n FROM assets WHERE assets_id = ? AND assetTypes_id = ?", [a.assetId, b.assetTypeId]] },
+  { endpoint: "/api/assets/editAssetType.php", params: (t, a) => ({ formData: formData({ assetTypes_id: a.assetTypeId, assetTypes_name: `${a.marker} asset type`, manufacturers_id: t.manufacturerId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE assetTypes_id = ? AND manufacturers_id = ?", [a.assetTypeId, b.manufacturerId]] },
+  { endpoint: "/api/categories/edit.php", params: (t, a) => ({ formData: formData({ assetCategories_id: a.categoryId, assetCategoriesGroups_id: t.categoryGroupId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetCategories WHERE assetCategories_id = ? AND assetCategoriesGroups_id = ?", [a.categoryId, b.categoryGroupId]] },
   { endpoint: "/api/groups/addAsset.php", params: (t, a) => ({ assets_id: a.assetId, assetGroups_id: t.assetGroupId }), linked: (b, a) => ["SELECT COUNT(*) n FROM assets WHERE assets_id = ? AND FIND_IN_SET(?, assets_assetGroups)", [a.assetId, b.assetGroupId]] },
-  { endpoint: "/api/locations/edit.php", params: (t, a) => ({ formData: formData({ locations_id: a.locationId, clients_id: t.clientId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM locations WHERE locations_id = ? AND clients_id = ?", [a.locationId, b.clientId]], fixme: "Leak: the endpoint saves every submitted form field, so clients_id (and locations_subOf) can point at another business's records." },
-  { endpoint: "/api/maintenance/newJob.php", params: (t) => ({ formData: formData({ maintenanceJobs_title: "Job by e2e", maintenanceJobs_assets: String(t.assetId) }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE instances_id = ? AND FIND_IN_SET(?, maintenanceJobs_assets)", [a.instanceId, b.assetId]], fixme: "Leak: maintenanceJobs_assets isn't checked, so a job can list another business's assets, which the job page then shows." },
-  { endpoint: "/api/maintenance/job/tagUser.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_user_tagged)", [a.maintenanceJobId, b.users.full.id]], fixme: "Leak: accepts any user ID, so users of other businesses can be tagged in a job (their name shows on it, and they're notified)." },
-  { endpoint: "/api/maintenance/job/changeJobAssigned.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND maintenanceJobs_user_assignedTo = ?", [a.maintenanceJobId, b.users.full.id]], fixme: "Leak: accepts any user ID, so a job can be assigned to a user of another business (their name shows on it, and they're notified)." },
+  { endpoint: "/api/locations/edit.php", params: (t, a) => ({ formData: formData({ locations_id: a.locationId, clients_id: t.clientId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM locations WHERE locations_id = ? AND clients_id = ?", [a.locationId, b.clientId]] },
+  { endpoint: "/api/maintenance/newJob.php", params: (t) => ({ formData: formData({ maintenanceJobs_title: "Job by e2e", maintenanceJobs_assets: String(t.assetId) }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE instances_id = ? AND FIND_IN_SET(?, maintenanceJobs_assets)", [a.instanceId, b.assetId]] },
+  { endpoint: "/api/maintenance/job/tagUser.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_user_tagged)", [a.maintenanceJobId, b.users.full.id]] },
+  { endpoint: "/api/maintenance/job/changeJobAssigned.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND maintenanceJobs_user_assignedTo = ?", [a.maintenanceJobId, b.users.full.id]] },
 ];
 
 const maybeFixme = (fixme: string | undefined) => (fixme ? test.fixme : test);

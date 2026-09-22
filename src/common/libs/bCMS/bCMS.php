@@ -443,6 +443,16 @@ class bCMS
       return false;
     return true;
   }
+  function userIsInInstance($userid, $instanceid)
+  { //Whether the user is a current (not removed or archived) member of the business
+    global $DBLIB;
+    $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+    $DBLIB->where("userInstances.users_userid", $userid);
+    $DBLIB->where("instancePositions.instances_id", $instanceid);
+    $DBLIB->where("userInstances.userInstances_deleted", 0);
+    $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
+    return $DBLIB->getValue("userInstances", "COUNT(*)") > 0;
+  }
   function instanceHasProjectCapacity($instanceid)
   {
     global $DBLIB;

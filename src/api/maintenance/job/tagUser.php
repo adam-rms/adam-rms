@@ -7,6 +7,7 @@ if (!$AUTH->instancePermissionCheck("MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB")
 $DBLIB->where("users_userid", $_POST['users_userid']);
 $user = $DBLIB->getone("users",["users_userid", "users_name1", "users_name2"]);
 if (!$user) die("404");
+if (!$bCMS->userIsInInstance($user['users_userid'], $AUTH->data['instance']['instances_id'])) die("404"); //Only users in this business can be tagged
 
 $DBLIB->where("maintenanceJobs.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);

@@ -11,7 +11,7 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**105 of 270** entries have at least one test, and **22** have a known leak (68 pages, 202 API endpoints).
+**105 of 270** entries have at least one test, and **0** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
@@ -45,8 +45,8 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/assets/barcodes/index.php` | **none (public)** |  | ✘ | ⬜ |
 | API | `api/assets/barcodes/search.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/delete.php` | instance: `ASSETS:DELETE` | `assets_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/assets/editAsset.php` | instance: `ASSETS:EDIT` | `assets_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/assets/editAssetType.php` | instance: `ASSETS:ASSET_TYPES:EDIT`<br>server: `ASSETS:EDIT:ANY_ASSET_TYPE` | `assetTypes_id` | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/assets/editAsset.php` | instance: `ASSETS:EDIT` | `assetTypes_id`, `assets_id`, `assets_linkedTo` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/assets/editAssetType.php` | instance: `ASSETS:ASSET_TYPES:EDIT`<br>server: `ASSETS:EDIT:ANY_ASSET_TYPE` | `assetCategories_id`, `assetTypes_id`, `manufacturers_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/editAssetTypeDefinableFields.php` | instance: `ASSETS:ASSET_TYPES:EDIT`<br>server: `ASSETS:EDIT:ANY_ASSET_TYPE` | `assetTypes_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/export.php` | login only |  | ✔ | ⬜ |
 | API | `api/assets/getAssetTypeData.php` | login only |  | ✔ | ⬜ |
@@ -60,13 +60,13 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/assets/substitutions.php` | login only | `assetsAssignments_id` | ✔ | ⬜ |
 | API | `api/assets/transfer.php` | instance: `ASSETS:TRANSFER` | `assetCategories_id`, `assetTypes_id`, `assets_id`, `manufacturers_id`, `new_instances_id` | ✘ | ⬜ |
 | API | `api/barcodes/searchAsset.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/categories/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategories_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/categories/groups/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/categories/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id`, `assetCategories_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/categories/groups/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/categories/groups/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ⬜ |
 | API | `api/categories/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ⬜ |
 | API | `api/categories/search.php` | instance: `ASSETS:TRANSFER` | `other_instances_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/addAsset.php` | instance: `ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP` | `assetGroups_id`, `assets_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/groups/edit.php` | instance: `ASSETS:ASSET_GROUPS:EDIT` | `assetGroups_id`, `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/groups/edit.php` | instance: `ASSETS:ASSET_GROUPS:EDIT` | `assetGroups_id`, `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/new.php` | instance: `ASSETS:ASSET_GROUPS:CREATE` | `users_userid` | ✔ | ⬜ |
 | API | `api/groups/removeAsset.php` | instance: `ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP` | `assetGroups_id`, `assets_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/search.php` | login only |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -89,7 +89,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | page | `project/new.php` | instance: `PROJECTS:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | page | `project/noteExport.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `project/projectInvoice.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/archive.php` | instance: `PROJECTS:ARCHIVE` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/archive.php` | instance: `PROJECTS:ARCHIVE` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/assign.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS`, `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetGroups_id`, `assetTypes_id`, `assets_id`, `projects_id` | ✔ | ⬜ |
 | API | `api/projects/assets/setComment.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT` | `assetsAssignments` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/setDiscount.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT` | `assetsAssignments` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -101,23 +101,23 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/projects/assets/swap.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetsAssignments_id`, `assets_id` | ✔ | ⬜ |
 | API | `api/projects/assets/unassign.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetTypes_id`, `assetsAssignments`, `assets_id`, `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeClient.php` | instance: `PROJECTS:EDIT:CLIENT` | `clients_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/changeDeliveryNotes.php` | instance: `PROJECTS:EDIT:DELIVERY_NOTES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/projects/changeDescription.php` | instance: `PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/projects/changeInvoiceNotes.php` | instance: `PROJECTS:EDIT:INVOICE_NOTES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/projects/changeName.php` | instance: `PROJECTS:EDIT:NAME` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/projects/changeProjectDates.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/changeDeliveryNotes.php` | instance: `PROJECTS:EDIT:DELIVERY_NOTES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/projects/changeDescription.php` | instance: `PROJECTS:EDIT:DESCRIPTION_AND_SUB_PROJECTS` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/projects/changeInvoiceNotes.php` | instance: `PROJECTS:EDIT:INVOICE_NOTES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/projects/changeName.php` | instance: `PROJECTS:EDIT:NAME` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/projects/changeProjectDates.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeProjectDeliverDates.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ⬜ |
 | API | `api/projects/changeProjectFinanceDurationMaths.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ⬜ |
-| API | `api/projects/changeProjectManager.php` | instance: `PROJECTS:EDIT:LEAD` | `projects_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/changeProjectManager.php` | instance: `PROJECTS:EDIT:LEAD` | `projects_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeProjectType.php` | instance: `PROJECTS:EDIT:PROJECT_TYPE` | `projectsTypes_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeStatus.php` | instance: `PROJECTS:EDIT:STATUS` | `projectsStatuses_id`, `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/changeSubProject.php` | instance: `PROJECTS:CREATE` | `projects_id`, `projects_parent_project_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/changeSubProject.php` | instance: `PROJECTS:CREATE` | `projects_id`, `projects_parent_project_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeVenue.php` | instance: `PROJECTS:EDIT:ADDRESS` | `locations_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/assign.php` | instance: `PROJECTS:PROJECT_CREW:CREATE` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/accept.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projectsVacantRolesApplications_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/applicationList.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT` | `projectsVacantRoles_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/apply.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projectsVacantRoles_id`, `users_userid` | ✔ | ⬜ |
-| API | `api/projects/crew/crewRoles/edit.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT` | `projectsVacantRoles_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/crew/crewRoles/edit.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT` | `projectsVacantRoles_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/list.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/reject.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projectsVacantRolesApplications_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/edit.php` | instance: `PROJECTS:PROJECT_CREW:EDIT` | `crewAssignments_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
@@ -125,17 +125,17 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/projects/crew/sortRank.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS` | `projects_id` | ✔ | ⬜ |
 | API | `api/projects/crew/unassign.php` | instance: `PROJECTS:PROJECT_CREW:EDIT` | `crewAssignments_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/data.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/delete.php` | instance: `PROJECTS:DELETE` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/delete.php` | instance: `PROJECTS:DELETE` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/deletePayment.php` | instance: `PROJECTS:PROJECT_PAYMENTS:DELETE` | `payments_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/editNote.php` | instance: `PROJECTS:PROJECT_NOTES:EDIT:NOTES` | `projectsNotes_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/followParentStatus.php` | instance: `PROJECTS:CREATE` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/getComments.php` | instance: `PROJECTS:VIEW` | `projects_id` | ✔ | ⬜ |
 | API | `api/projects/list.php` | instance: `PROJECTS:VIEW` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/new.php` | instance: `PROJECTS:CREATE` | `projectsType_id`, `projects_manager`, `projects_parent_project_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/new.php` | instance: `PROJECTS:CREATE` | `projectsType_id`, `projects_manager`, `projects_parent_project_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/newNote.php` | instance: `PROJECTS:PROJECT_NOTES:CREATE:NOTES` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/newPayment.php` | instance: `PROJECTS:PROJECT_PAYMENTS:CREATE` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/newQuickComment.php` | instance: `PROJECTS:VIEW` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/unArchive.php` | instance: `PROJECTS:ARCHIVE` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/projects/unArchive.php` | instance: `PROJECTS:ARCHIVE` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
 ## Clients
 
@@ -143,7 +143,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | --- | --- | --- | --- | :---: | --- |
 | page | `clients.php` | instance: `CLIENTS:VIEW` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/clients/archive.php` | instance: `CLIENTS:EDIT` | `client_id`, `clients_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/clients/edit.php` | instance: `CLIENTS:EDIT` | `clients_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/clients/edit.php` | instance: `CLIENTS:EDIT` | `clients_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/clients/new.php` | instance: `CLIENTS:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/clients/unarchive.php` | instance: `CLIENTS:EDIT` | `client_id`, `clients_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
@@ -154,7 +154,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | page | `location/barcode.php` | instance: `LOCATIONS:LOCATION_BARCODES:VIEW` |  | ✔ | ⬜ |
 | page | `location/index.php` | instance: `LOCATIONS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/locations/archive.php` | instance: `LOCATIONS:EDIT` | `location_id`, `locations_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/locations/edit.php` | instance: `LOCATIONS:EDIT` | `locations_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/locations/edit.php` | instance: `LOCATIONS:EDIT` | `clients_id`, `locations_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/locations/new.php` | instance: `LOCATIONS:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/locations/unarchive.php` | instance: `LOCATIONS:EDIT` | `location_id`, `locations_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
@@ -171,16 +171,16 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/maintenance/job/changeBlock.php` | instance: `MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changeDueDate.php` | instance: `MAINTENANCE_JOBS:EDIT:JOB_DUE_DATE` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changeFlag.php` | instance: `MAINTENANCE_JOBS:EDIT:ASSET_FLAGS` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/maintenance/job/changeJobAssigned.php` | instance: `MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/maintenance/job/changeJobAssigned.php` | instance: `MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changeJobStatus.php` | instance: `MAINTENANCE_JOBS:EDIT:STATUS` | `maintenanceJobsStatuses_id`, `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changeName.php` | instance: `MAINTENANCE_JOBS:EDIT:NAME` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changePriority.php` | instance: `MAINTENANCE_JOBS:EDIT:JOB_PRIORITY` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/deleteJob.php` | instance: `MAINTENANCE_JOBS:DELETE` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/removeAsset.php` | instance: `MAINTENANCE_JOBS:EDIT` | `assets_id`, `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/sendMessage.php` | instance: `MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/maintenance/job/tagUser.php` | instance: `MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/maintenance/job/tagUser.php` | instance: `MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/unTagUser.php` | instance: `MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ⬜ |
-| API | `api/maintenance/newJob.php` | login only | `maintenanceJobs_assets`, `maintenanceJobs_id`, `maintenanceJobs_user_tagged`, `maintenanceJobs_user_taggedFINAL` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/maintenance/newJob.php` | login only | `maintenanceJobs_assets`, `maintenanceJobs_id`, `maintenanceJobs_user_tagged`, `maintenanceJobs_user_taggedFINAL` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/searchAsset.php` | login only | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/searchUser.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 

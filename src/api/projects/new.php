@@ -9,6 +9,20 @@ $DBLIB->where("projectsStatuses_deleted", 0);
 $DBLIB->orderBy("projectsStatuses_rank", "ASC");
 $projectsStatus = $DBLIB->getValue("projectsStatuses","projectsStatuses_id",1);
 
+//The project type, parent project and manager must all be in this business
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("projectsTypes_deleted", 0);
+$DBLIB->where("projectsTypes_id", $_POST['projectsType_id']);
+if (!$DBLIB->getOne("projectsTypes", ["projectsTypes_id"])) finish(false, ["code" => "PARAM-ERROR", "message" => "Project type not found"]);
+if (isset($_POST['projects_parent_project_id']) and $_POST['projects_parent_project_id'] !== "") {
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("projects_deleted", 0);
+    $DBLIB->where("projects_id", $_POST['projects_parent_project_id']);
+    $parentProject = $DBLIB->getOne("projects", ["projects_id", "projects_manager"]);
+    if (!$parentProject) finish(false, ["code" => "PARAM-ERROR", "message" => "Parent project not found"]);
+}
+// Sub-projects created from the project page take the parent's manager, who may since have left the business
+if (!$bCMS->userIsInInstance($_POST['projects_manager'], $AUTH->data['instance']['instances_id']) and (!isset($parentProject) or $parentProject['projects_manager'] != $_POST['projects_manager'])) finish(false, ["code" => "PARAM-ERROR", "message" => "Project manager not found"]);
 $hasProjectDates = isset($_POST['projects_dates_use_start']) and isset($_POST['projects_dates_use_end']);
 
 $project = $DBLIB->insert("projects", [
