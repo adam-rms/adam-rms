@@ -18,7 +18,7 @@ finish(true);
  *     description="Change the name of a maintenance job  
 Requires Instance Permission MAINTENANCE_JOBS:EDIT:NAME
 ", 
- *     operationId="changeName", 
+ *     operationId="changeJobName", 
  *     tags={"maintenanceJobs"}, 
  *     @OA\Response(
  *         response="200", 

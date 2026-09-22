@@ -12,7 +12,7 @@ if($DBLIB->update('instances', ["instances_deleted" => 0], 1)) {
 
 /**
  *  @OA\Post(
- *      path="/instances/delete.php",
+ *      path="/instances/unDelete.php",
  *      summary="Restore Instance",
  *      description="Restore soft-deleted Instance
  Requires Server permission INSTANCES:DELETE",

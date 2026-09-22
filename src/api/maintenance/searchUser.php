@@ -29,7 +29,7 @@ else {
  *     path="/maintenance/searchUser.php", 
  *     summary="Search User", 
  *     description="Search for a user to tag to a maintenance job", 
- *     operationId="searchUser", 
+ *     operationId="searchMaintenanceUser", 
  *     tags={"maintenance"}, 
  *     @OA\Response(
  *         response="200", 

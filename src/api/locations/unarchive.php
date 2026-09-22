@@ -32,7 +32,7 @@ finish(true);
  *      summary="UnArchive Location",
  *      description="Restore a location
  Requires Instance permission LOCATIONS:EDIT",
- *      operationId="archiveLocation",
+ *      operationId="unarchiveLocation",
  *      tags={"locations"},
  *      @OA\Response(
  *          response="200",
