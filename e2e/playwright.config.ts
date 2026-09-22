@@ -62,6 +62,7 @@ export default defineConfig({
   reporter: [
     ["html", { outputFolder: "playwright-report", open: "never" }],
     ["list"],
+    ["json", { outputFile: "playwright-report/results.json" }],
     ...(process.env.CI ? [["github"] as ["github"]] : []),
   ],
 
