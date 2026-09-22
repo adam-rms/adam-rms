@@ -28,7 +28,7 @@ type WriteCase = {
   /** false when the request is a no-op on A's seeded state (e.g. un-archiving something not archived) */
   control?: false;
   fixme?: string;
-  /** B's project history gets an entry although B's records are untouched */
+  /** B's project or maintenance job history gets an entry although B's records are untouched */
   historyFixme?: string;
   /** SQL that undoes the request if it moved A's record into B, so later tests still find it */
   restore?: (a: Tenant) => [string, unknown[]];
@@ -44,9 +44,6 @@ type LinkCase = {
 };
 
 type PageCase = { file: string; url: (t: Tenant) => string; shows: (t: Tenant) => string; fixme?: string };
-
-
-
 
 const readCases: ReadCase[] = [
   { endpoint: "/api/projects/list.php", params: () => ({}) },
@@ -98,6 +95,11 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/projects/delete.php", params: (t) => ({ projects_id: t.projectId }) },
   { endpoint: "/api/projects/changeStatus.php", params: (t) => ({ projects_id: t.projectId, projectsStatuses_id: t.projectStatusIds.second }) },
   { endpoint: "/api/projects/changeSubProject.php", params: (t) => ({ projects_id: t.subProjectId, projects_parent_project_id: -1 }) },
+  // Valid references from the caller's own business, applied to the target's project
+  { endpoint: "/api/projects/changeProjectManager.php", params: (t, self) => ({ projects_id: t.projectId, users_userid: self.users.full.id }) },
+  { endpoint: "/api/projects/changeClient.php", params: (t, self) => ({ projects_id: t.projectId, clients_id: self.clientId }) },
+  { endpoint: "/api/projects/changeVenue.php", params: (t, self) => ({ projects_id: t.projectId, locations_id: self.locationId }) },
+  { endpoint: "/api/projects/changeProjectType.php", params: (t, self) => ({ projects_id: t.projectId, projectsTypes_id: self.projectTypeId }) },
   { endpoint: "/api/projects/followParentStatus.php", params: (t) => ({ projects_id: t.subProjectId, follow: "true" }) },
   { endpoint: "/api/projects/newNote.php", params: (t) => ({ projects_id: t.projectId, projectsNotes_title: "Note by e2e" }) },
   { endpoint: "/api/projects/editNote.php", params: (t) => ({ projects_id: t.projectId, projectsNotes_id: t.noteId, projectsNotes_text: "Changed by e2e" }) },
@@ -148,6 +150,11 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/maintenance/job/changeJobStatus.php", params: (t) => ({ maintenanceJobs_id: t.maintenanceJobId, maintenanceJobsStatuses_id: 2 }) },
   { endpoint: "/api/maintenance/job/removeAsset.php", params: (t) => ({ maintenanceJobs_id: t.maintenanceJobId, assets_id: t.assetId }) },
   { endpoint: "/api/maintenance/job/sendMessage.php", params: (t) => ({ maintenanceJobs_id: t.maintenanceJobId, maintenanceJobsMessages_text: "Message by e2e" }) },
+  { endpoint: "/api/maintenance/job/changeJobAssigned.php", params: (t, self) => ({ maintenanceJobs_id: t.maintenanceJobId, users_userid: self.users.full.id }) },
+  { endpoint: "/api/maintenance/job/tagUser.php", params: (t, self) => ({ maintenanceJobs_id: t.maintenanceJobId, users_userid: self.users.limited.id }) },
+  // The seeded job has nobody tagged, so there's nothing for the control to untag
+  { endpoint: "/api/maintenance/job/unTagUser.php", params: (t, self) => ({ maintenanceJobs_id: t.maintenanceJobId, users_userid: self.users.limited.id }), control: false },
+  { endpoint: "/api/maintenance/job/addAsset.php", params: (t, self) => ({ maintenanceJobs_id: t.maintenanceJobId, maintenanceJobs_assets: [self.assetId] }) },
   { endpoint: "/api/maintenance/job/deleteJob.php", params: (t) => ({ maintenanceJobs_id: t.maintenanceJobId }) },
 ];
 
@@ -183,6 +190,7 @@ const linkCases: LinkCase[] = [
   { endpoint: "/api/groups/addAsset.php", params: (t, a) => ({ assets_id: a.assetId, assetGroups_id: t.assetGroupId }), linked: (b, a) => ["SELECT COUNT(*) n FROM assets WHERE assets_id = ? AND FIND_IN_SET(?, assets_assetGroups)", [a.assetId, b.assetGroupId]] },
   { endpoint: "/api/locations/edit.php", params: (t, a) => ({ formData: formData({ locations_id: a.locationId, clients_id: t.clientId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM locations WHERE locations_id = ? AND clients_id = ?", [a.locationId, b.clientId]] },
   { endpoint: "/api/maintenance/newJob.php", params: (t) => ({ formData: formData({ maintenanceJobs_title: "Job by e2e", maintenanceJobs_assets: String(t.assetId) }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE instances_id = ? AND FIND_IN_SET(?, maintenanceJobs_assets)", [a.instanceId, b.assetId]] },
+  { endpoint: "/api/maintenance/job/addAsset.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, maintenanceJobs_assets: [t.assetId] }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_assets)", [a.maintenanceJobId, b.assetId]] },
   { endpoint: "/api/maintenance/job/tagUser.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_user_tagged)", [a.maintenanceJobId, b.users.full.id]] },
   { endpoint: "/api/maintenance/job/changeJobAssigned.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND maintenanceJobs_user_assignedTo = ?", [a.maintenanceJobId, b.users.full.id]] },
 ];
@@ -227,7 +235,7 @@ test.describe("changing another business's records", () => {
     });
   }
   for (const c of writeCases) {
-    maybeFixme(c.historyFixme ?? c.fixme)(`${c.endpoint} adds nothing to B's project history`, async ({ asA, tenants: { a, b } }) => {
+    maybeFixme(c.historyFixme ?? c.fixme)(`${c.endpoint} adds nothing to B's project or job history`, async ({ asA, tenants: { a, b } }) => {
       const before = snapshot(b.instanceId).history;
       await asA.api(c.endpoint, c.params(b, a));
       expect(snapshot(b.instanceId).history).toEqual(before);

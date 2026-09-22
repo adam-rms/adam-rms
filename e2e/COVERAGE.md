@@ -11,7 +11,7 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**105 of 270** entries have at least one test, and **0** have a known leak (68 pages, 202 API endpoints).
+**107 of 270** entries have at least one test, and **0** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
@@ -19,7 +19,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | Projects | 57 | 47 |
 | Clients | 5 | 5 |
 | Locations | 6 | 5 |
-| Maintenance | 21 | 16 |
+| Maintenance | 21 | 18 |
 | CMS | 13 | 1 |
 | Training | 10 | 1 |
 | Files | 10 | 0 |
@@ -167,7 +167,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | page | `maintenance/barcodePrint.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `ids` | ✔ | ⬜ |
 | page | `maintenance/index.php` | instance: `MAINTENANCE_JOBS:VIEW` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `maintenance/job.php` | instance: `MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB`, `MAINTENANCE_JOBS:VIEW` | `id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/maintenance/job/addAsset.php` | instance: `MAINTENANCE_JOBS:EDIT:ADD_ASSETS` | `maintenanceJobs_assets`, `maintenanceJobs_id` | ✔ | ⬜ |
+| API | `api/maintenance/job/addAsset.php` | instance: `MAINTENANCE_JOBS:EDIT:ADD_ASSETS` | `maintenanceJobs_assets`, `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changeBlock.php` | instance: `MAINTENANCE_JOBS:EDIT:ASSET_BLOCKS` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changeDueDate.php` | instance: `MAINTENANCE_JOBS:EDIT:JOB_DUE_DATE` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/changeFlag.php` | instance: `MAINTENANCE_JOBS:EDIT:ASSET_FLAGS` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -179,7 +179,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/maintenance/job/removeAsset.php` | instance: `MAINTENANCE_JOBS:EDIT` | `assets_id`, `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/sendMessage.php` | instance: `MAINTENANCE_JOBS:EDIT:ADD_MESSAGE_TO_JOB` | `maintenanceJobs_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/tagUser.php` | instance: `MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/maintenance/job/unTagUser.php` | instance: `MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ⬜ |
+| API | `api/maintenance/job/unTagUser.php` | instance: `MAINTENANCE_JOBS:EDIT:USERS_TAGGED_IN_JOB` | `maintenanceJobs_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/newJob.php` | login only | `maintenanceJobs_assets`, `maintenanceJobs_id`, `maintenanceJobs_user_tagged`, `maintenanceJobs_user_taggedFINAL` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/searchAsset.php` | login only | `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/searchUser.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |

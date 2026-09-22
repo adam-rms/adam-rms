@@ -11,7 +11,11 @@ if (!$job) die("404");
 if ($job["maintenanceJobs_assets"] != "") $job["maintenanceJobs_assets"] = explode(",", $job["maintenanceJobs_assets"]);
 else $job["maintenanceJobs_assets"] = [];
 foreach ($_POST['maintenanceJobs_assets'] as $asset) {
-    array_push($job["maintenanceJobs_assets"], $asset);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']); //Only this business's assets can be added
+    $DBLIB->where("assets_deleted", 0);
+    $DBLIB->where("assets_id", $asset);
+    if (!$DBLIB->getOne("assets", ["assets_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Asset not found"]);
+    array_push($job["maintenanceJobs_assets"], intval($asset));
 }
 $job["maintenanceJobs_assets"] = implode(",", $job["maintenanceJobs_assets"]);
 

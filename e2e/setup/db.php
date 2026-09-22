@@ -48,6 +48,9 @@ $snapshot = ["data" => ["instances" => rows("SELECT * FROM instances WHERE insta
 foreach ($byInstance as $table) $snapshot["data"][$table] = rows("SELECT * FROM `$table` WHERE instances_id = ?", [$instance]);
 foreach ($children as $table => $where) $snapshot["data"][$table] = rows("SELECT * FROM `$table` WHERE $where", [$instance]);
 foreach ($snapshot["data"]["users"] as &$user) unset($user["users_selectedInstanceIDLast"]);
-// Project history: shown on the project page, so an entry written by another business's user is visible to this one
-$snapshot["history"] = rows("SELECT auditLog_id, auditLog_actionType, auditLog_actionData, users_userid, projects_id FROM auditLog WHERE projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?) ORDER BY auditLog_id", [$instance]);
+// History shown on the project and maintenance job pages, so an entry written by another business's user is visible to this one
+$snapshot["history"] = rows("SELECT auditLog_id, auditLog_actionType, auditLog_actionData, users_userid, projects_id, auditLog_targetID FROM auditLog
+    WHERE projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)
+    OR (auditLog_actionTable = 'maintenanceJobs' AND auditLog_targetID IN (SELECT maintenanceJobs_id FROM maintenanceJobs WHERE instances_id = ?))
+    ORDER BY auditLog_id", [$instance, $instance]);
 echo json_encode($snapshot);

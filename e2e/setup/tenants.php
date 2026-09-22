@@ -69,13 +69,15 @@ $devGroup = upsert("positionsGroups", "positionsGroups_id", ["positionsGroups_na
 $devPosition = upsert("positions", "positions_id", ["positions_displayName" => "E2E tenant user"], ["positions_positionsGroups" => (string) $devGroup, "positions_rank" => 99]);
 
 function user(string $email, string $name1, string $name2): int {
-    global $credentials, $devPosition;
+    global $db, $credentials, $devPosition;
     $id = upsert("users", "users_userid", ["users_email" => $email], [
         "users_username" => strstr($email, "@", true), "users_name1" => $name1, "users_name2" => $name2,
         "users_created" => "2024-01-01 00:00:00", "users_selectedInstanceIDLast" => null,
     ] + $credentials);
+    // Auth adds up every server position a user has (it ignores userPositions_end), so remove any others
+    $db->prepare("DELETE FROM userPositions WHERE users_userid = ? AND (positions_id IS NULL OR positions_id != ?)")->execute([$id, $devPosition]);
     upsert("userPositions", "userPositions_id", ["users_userid" => $id, "positions_id" => $devPosition], [
-        "userPositions_start" => "2024-01-01 00:00:00", "userPositions_end" => null, "userPositions_show" => 1,
+        "userPositions_start" => "2024-01-01 00:00:00", "userPositions_end" => null, "userPositions_show" => 1, "userPositions_extraPermissions" => null,
     ]);
     return $id;
 }
@@ -111,9 +113,9 @@ function tenant(string $letter): array {
     foreach (["full" => $fullPosition, "limited" => $limitedPosition] as $kind => $position) {
         $email = "e2e_tenant_{$lower}_{$kind}@example.com";
         $userId = user($email, ucfirst($kind), "$marker user");
-        // Remove them from any other business (e.g. added by an earlier test), then add them to this one
-        $db->prepare("UPDATE userInstances JOIN instancePositions USING (instancePositions_id) SET userInstances_deleted = 1 WHERE users_userid = ? AND instancePositions.instances_id != ?")
-            ->execute([$userId, $instance]);
+        // Remove any other membership (another business, or another position in this one), then add the intended one
+        $db->prepare("UPDATE userInstances SET userInstances_deleted = 1 WHERE users_userid = ? AND instancePositions_id != ?")
+            ->execute([$userId, $position]);
         upsert("userInstances", "userInstances_id", ["users_userid" => $userId, "instancePositions_id" => $position], [
             "userInstances_deleted" => 0, "userInstances_archived" => null, "userInstances_extraPermissions" => null, "userInstances_label" => "$marker $kind",
         ]);
