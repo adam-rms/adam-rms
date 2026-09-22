@@ -1,14 +1,27 @@
-# AdamRMS - GitHub Copilot Instructions
+# AdamRMS - Agent Instructions
+
+Instructions for AI coding agents (Claude Code, GitHub Copilot, etc.) working in this repository.
 
 ## Project Overview
 
 AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. It provides comprehensive asset management, project tracking, client management, and billing capabilities for rental businesses in the entertainment industry.
 
+## Project Status: Maintenance Mode
+
+This codebase is in maintenance mode while a rewrite is developed. Changes here should be:
+
+- **Bug fixes, security fixes and small quality-of-life improvements only.** Larger feature requests belong in the rewrite — say so rather than implementing them here.
+- **Minimal and surgical.** Don't refactor, reformat or "improve" code that isn't part of the fix. Match the surrounding style.
+- **Tested.** Every bug fix should come with an e2e test that fails before the fix and passes after it (see Testing below).
+- **One issue or one module per PR**, so each change is easy to review.
+
+Take extra care with, and call out in the PR description, any change that touches authentication, billing/Stripe, instance scoping (multi-tenancy) or database migrations.
+
 ## Technology Stack
 
 ### Backend
 
-- **PHP 8.0+** (runtime uses 8.3): Object-oriented patterns with some procedural code
+- **PHP 8.3** (production runtime): Object-oriented patterns with some procedural code. Do not run on PHP 8.4 — Twig 3.7 compiles closure names that 8.4 formats differently, producing a parse error on logged-in pages
 - **MySQL Database**: Via custom `adam-rms/mysqli-database-class` wrapper
 - **Twig v3.7**: Templating engine for all views
 - **Composer**: Dependency management
@@ -338,14 +351,35 @@ final class AddFeatureColumn extends AbstractMigration
 
 ## Testing & Quality
 
-- **No automated test suite**: No PHPUnit or test framework is currently configured; CI focuses on builds, linting, and doc generation
-- **GitHub Actions**: Docker builds (`dockerBuild.yml`), API docs generation (`generateApiDocs.yaml`), and documentation sync (`syncDocsToAISearch.yml`)
+- **E2E tests**: Playwright (TypeScript) in `e2e/`, run on every PR by `.github/workflows/e2e-tests.yml`. There are no unit tests.
+- **GitHub Actions**: E2E tests (`e2e-tests.yml`), Docker builds (`dockerBuild.yml`), API docs generation (`generateApiDocs.yaml`), and documentation sync (`syncDocsToAISearch.yml`)
+
+### Running the E2E tests
+
+Tests run against PHP's built-in server (started by Playwright) and a real MySQL 8 database. Prerequisites: PHP 8.3 with the Dockerfile's extensions, `composer install`, and MySQL reachable with the devcontainer credentials (`user`/`pass`, database `db` on `127.0.0.1:3306` — override with `DB_*` env vars). Claude Code on the web sets all of this up via `.claude/hooks/session-start.sh`.
+
+```bash
+cd e2e
+npm install
+npx playwright install chromium   # not needed where a browser is pre-installed
+npm test                          # set PHP_BINARY=php8.3 if `php` on your PATH isn't 8.3
+```
+
+`e2e/globalSetup.ts` migrates and seeds the database, then `e2e/setup/seed.php` writes the config the first-run setup form would ask for and makes sure the test super admin `test@example.com` / `password!` exists (resetting its password if it has been changed), so the suite also works against a used devcontainer database. The server runs with `DEV_MODE=true` (as the devcontainer does), so pages that require login show the auth error and a login link instead of redirecting.
+
+### Writing E2E tests
+
+- `e2e/public/` — tests that don't need a session. `e2e/authenticated/` — import `test` from `e2e/fixtures.ts` to get a `page` already logged in as the super admin.
+- Write characterisation tests: assert what the app does today. If you find a bug while writing tests, mark the test `test.fixme` with a comment and raise an issue rather than fixing it in the same PR.
+- For a bug fix, add a test that reproduces the bug first, then fix it.
+- Tests share one database and run serially; create the data each test needs rather than relying on what an earlier test left behind.
 - **OpenAPI docs**: Auto-generated from `@OA\` annotations in PHP files via `zircote/swagger-php`
 - **License**: AGPLv3 - all changes must remain open source
 
 ## Development Environment
 
 - Use the provided `.devcontainer` for GitHub Codespaces or VS Code
+- Default login after seeding: username `username` / password `password!`
 - Development mode: Set environment variable `DEV_MODE=true`
 - Database migrations: Run via `php vendor/bin/phinx migrate` (config in `phinx.php`)
 - Docker: Use provided Dockerfile and docker-compose setup

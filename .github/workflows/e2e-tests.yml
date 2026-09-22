@@ -1,0 +1,143 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write # to post the report link on the PR
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: db
+          MYSQL_USER: user
+          MYSQL_PASSWORD: pass
+          MYSQL_ROOT_PASSWORD: pass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mysqli, pdo_mysql, intl, zip, gd, mbstring
+          tools: composer
+
+      - name: Install PHP dependencies
+        working-directory: .
+        run: composer install --no-interaction --no-progress
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+
+      - name: Install test dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        id: playwright
+        run: npx playwright test
+        env:
+          CI: true
+
+      # Same R2 bucket and report site as adam-rms-remix-exp, under an adam-rms-v1/ prefix.
+      # Skipped when the secrets aren't available (e.g. PRs from forks).
+      - name: Upload test report to R2
+        id: upload
+        if: ${{ !cancelled() }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_CI_REPORTS_UPLOAD_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_CI_REPORTS_UPLOAD_ACCESS_SECRET }}
+          AWS_DEFAULT_REGION: auto
+        run: |
+          if [ -z "$AWS_ACCESS_KEY_ID" ]; then
+            echo "R2 credentials not available; skipping report upload"
+            exit 0
+          fi
+          REPORT_PATH="adam-rms-v1/github-actions/playwright/pr-${{ github.event.pull_request.number }}/run-${{ github.run_id }}"
+          aws s3 cp playwright-report/ "s3://bstudios-githubactions-ci-reports/${REPORT_PATH}/" \
+            --recursive \
+            --endpoint-url https://b02c7bb80b108e24cb7cd05f60e25dbd.r2.cloudflarestorage.com \
+            --no-progress
+          echo "uploaded=true" >> "$GITHUB_OUTPUT"
+
+      - name: Comment report link on PR
+        if: ${{ !cancelled() && steps.upload.outputs.uploaded == 'true' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const buildReportComment = require('./e2e/ci/reportComment.js');
+            const reportPath = `adam-rms-v1/github-actions/playwright/pr-${context.payload.pull_request.number}/run-${context.runId}`;
+            let results = null;
+            try {
+              results = JSON.parse(fs.readFileSync('e2e/playwright-report/results.json', 'utf8'));
+            } catch (e) {
+              core.warning(`Could not read Playwright JSON results: ${e.message}`);
+            }
+            const body = buildReportComment({
+              results,
+              passed: '${{ steps.playwright.outcome }}' === 'success',
+              reportUrl: `https://githubactions-ci-reports.staff.bithell.studio/${reportPath}/index.html`,
+              runUrl: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
+
+            // Find and update existing comment, or create a new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const botComment = comments.find(
+              (c) => c.user.type === 'Bot' && c.body.includes('Playwright E2E Test Report')
+            );
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body,
+              });
+            }
+
+      - name: Upload test report artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 14
