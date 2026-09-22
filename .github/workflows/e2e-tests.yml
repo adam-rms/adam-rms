@@ -67,7 +67,7 @@ jobs:
         env:
           CI: true
 
-      # Same R2 bucket and report site as adam-rms-remix-exp, under an adam-rms-legacy/ prefix.
+      # Same R2 bucket and report site as adam-rms-remix-exp, under an adam-rms-v1/ prefix.
       # Skipped when the secrets aren't available (e.g. PRs from forks).
       - name: Upload test report to R2
         id: upload
@@ -81,7 +81,7 @@ jobs:
             echo "R2 credentials not available; skipping report upload"
             exit 0
           fi
-          REPORT_PATH="adam-rms-legacy/github-actions/playwright/pr-${{ github.event.pull_request.number }}/run-${{ github.run_id }}"
+          REPORT_PATH="adam-rms-v1/github-actions/playwright/pr-${{ github.event.pull_request.number }}/run-${{ github.run_id }}"
           aws s3 cp playwright-report/ "s3://bstudios-githubactions-ci-reports/${REPORT_PATH}/" \
             --recursive \
             --endpoint-url https://b02c7bb80b108e24cb7cd05f60e25dbd.r2.cloudflarestorage.com \
@@ -93,7 +93,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const reportPath = `adam-rms-legacy/github-actions/playwright/pr-${context.payload.pull_request.number}/run-${context.runId}`;
+            const reportPath = `adam-rms-v1/github-actions/playwright/pr-${context.payload.pull_request.number}/run-${context.runId}`;
             const reportUrl = `https://githubactions-ci-reports.staff.bithell.studio/${reportPath}/index.html`;
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const passed = '${{ steps.playwright.outcome }}' === 'success';
