@@ -24,15 +24,17 @@ if (!$AUTH->serverPermissionCheck("ASSETS:EDIT:ANY_ASSET_TYPE")) {
     $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
 }
 $DBLIB->where("assetTypes_id", $array['assetTypes_id']);
-$assetType = $DBLIB->getone("assetTypes", ['assetTypes.assetTypes_mass','assetTypes.assetTypes_value',"assetTypes.assetTypes_dayRate","assetTypes.assetTypes_weekRate"]);
+$assetType = $DBLIB->getone("assetTypes", ['assetTypes.instances_id','assetTypes.assetTypes_mass','assetTypes.assetTypes_value',"assetTypes.assetTypes_dayRate","assetTypes.assetTypes_weekRate"]);
 if (!$assetType) finish(false);
-if (isset($array['manufacturers_id'])) { //Shared manufacturers, or this business's own
-    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+//Server admins can edit other businesses' types, so references must belong to the type's own business (or the current one for shared types)
+$typeInstanceId = $assetType['instances_id'] ?? $AUTH->data['instance']['instances_id'];
+if (isset($array['manufacturers_id'])) { //Shared manufacturers, or the type's business's own
+    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$typeInstanceId]);
     $DBLIB->where("manufacturers_id", $array['manufacturers_id']);
     if (!$DBLIB->getOne("manufacturers", ["manufacturers_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Manufacturer not found"]);
 }
-if (isset($array['assetCategories_id'])) { //Shared categories, or this business's own
-    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+if (isset($array['assetCategories_id'])) { //Shared categories, or the type's business's own
+    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$typeInstanceId]);
     $DBLIB->where("assetCategories_id", $array['assetCategories_id']);
     if (!$DBLIB->getOne("assetCategories", ["assetCategories_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Category not found"]);
 }

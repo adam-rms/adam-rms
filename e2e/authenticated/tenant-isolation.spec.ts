@@ -1,4 +1,5 @@
-import { test, expect, formData, mentions, seedTenants, snapshot, dbQuery, succeeded, type Params, type Tenant } from "../tenants";
+import { test, expect, formData, mentions, newSession, seedTenants, snapshot, dbQuery, succeeded, type Params, type Tenant } from "../tenants";
+import { BASE_URL, TEST_USER } from "../env";
 
 /**
  * Tenant isolation: a user of business A must not be able to read or change business B's records by
@@ -256,4 +257,30 @@ test.describe("pointing A's records at B's", () => {
       seedTenants();
     });
   }
+});
+
+// Not isolation as such, but the same membership check (bCMS::userIsInInstance) guards it
+test.describe("a deleted account that is still a member", () => {
+  test("can't be made a project manager or assigned a maintenance job", async ({ asA, tenants: { a } }) => {
+    const deleted = a.users.deleted.id;
+    await asA.api("/api/projects/changeProjectManager.php", { projects_id: a.projectId, users_userid: deleted });
+    await asA.api("/api/maintenance/job/changeJobAssigned.php", { maintenanceJobs_id: a.maintenanceJobId, users_userid: deleted });
+    expect(dbQuery("SELECT projects_manager FROM projects WHERE projects_id = ?", [a.projectId])[0].projects_manager).not.toBe(deleted);
+    expect(dbQuery("SELECT maintenanceJobs_user_assignedTo FROM maintenanceJobs WHERE maintenanceJobs_id = ?", [a.maintenanceJobId])[0].maintenanceJobs_user_assignedTo).not.toBe(deleted);
+    seedTenants();
+  });
+});
+
+test.describe("a server admin with ASSETS:EDIT:ANY_ASSET_TYPE", () => {
+  test("can edit another business's asset type and keep its own manufacturer", async ({ playwright, tenants: { b } }) => {
+    const request = await playwright.request.newContext({ baseURL: BASE_URL });
+    const admin = await newSession(request, TEST_USER.email, TEST_USER.password);
+    await admin.page("/"); // A server admin with no business of their own is put in the first one on the server, which isn't B
+    const response = await admin.api("/api/assets/editAssetType.php", {
+      formData: formData({ assetTypes_id: b.assetTypeId, assetTypes_name: `${b.marker} asset type`, manufacturers_id: b.manufacturerId, assetCategories_id: b.categoryId }),
+    });
+    expect(succeeded(response), response.body.slice(0, 500)).toBe(true);
+    await request.dispose();
+    seedTenants();
+  });
 });

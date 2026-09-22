@@ -12,7 +12,8 @@ export type Tenant = {
   marker: string;
   instanceId: number;
   positions: { full: number; limited: number };
-  users: { full: TenantUser; limited: TenantUser };
+  /** `deleted` is a soft-deleted account that still has its membership, as account/softDelete.php leaves it */
+  users: { full: TenantUser; limited: TenantUser; deleted: TenantUser };
   clientId: number;
   locationId: number;
   manufacturerId: number;

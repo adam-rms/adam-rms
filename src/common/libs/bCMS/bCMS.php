@@ -444,9 +444,11 @@ class bCMS
     return true;
   }
   function userIsInInstance($userid, $instanceid)
-  { //Whether the user is a current (not removed or archived) member of the business
+  { //Whether the user is a current (not deleted, removed or archived) member of the business
     global $DBLIB;
     $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id", "LEFT");
+    $DBLIB->join("users", "userInstances.users_userid=users.users_userid", "LEFT");
+    $DBLIB->where("users.users_deleted", 0); //Deleting an account leaves its memberships in place
     $DBLIB->where("userInstances.users_userid", $userid);
     $DBLIB->where("instancePositions.instances_id", $instanceid);
     $DBLIB->where("userInstances.userInstances_deleted", 0);

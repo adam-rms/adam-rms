@@ -74,6 +74,8 @@ function user(string $email, string $name1, string $name2): int {
         "users_username" => strstr($email, "@", true), "users_name1" => $name1, "users_name2" => $name2,
         "users_created" => "2024-01-01 00:00:00", "users_selectedInstanceIDLast" => null,
     ] + $credentials);
+    // Too many recent failed logins (e.g. from a manual attempt) would block the tests from logging in
+    $db->prepare("DELETE FROM loginAttempts WHERE loginAttempts_textEntered = ?")->execute([$email]);
     // Auth adds up every server position a user has (it ignores userPositions_end), so remove any others
     $db->prepare("DELETE FROM userPositions WHERE users_userid = ? AND (positions_id IS NULL OR positions_id != ?)")->execute([$id, $devPosition]);
     upsert("userPositions", "userPositions_id", ["users_userid" => $id, "positions_id" => $devPosition], [
@@ -110,7 +112,8 @@ function tenant(string $letter): array {
     $t['positions'] = ["full" => $fullPosition, "limited" => $limitedPosition];
 
     $t['users'] = [];
-    foreach (["full" => $fullPosition, "limited" => $limitedPosition] as $kind => $position) {
+    // "deleted" is a soft-deleted account, which (like src/api/account/softDelete.php leaves it) still has its membership
+    foreach (["full" => $fullPosition, "limited" => $limitedPosition, "deleted" => $limitedPosition] as $kind => $position) {
         $email = "e2e_tenant_{$lower}_{$kind}@example.com";
         $userId = user($email, ucfirst($kind), "$marker user");
         // Remove any other membership (another business, or another position in this one), then add the intended one
@@ -121,6 +124,7 @@ function tenant(string $letter): array {
         ]);
         $t['users'][$kind] = ["id" => $userId, "email" => $email];
     }
+    $db->prepare("UPDATE users SET users_deleted = 1 WHERE users_userid = ?")->execute([$t['users']['deleted']['id']]);
     $manager = $t['users']['full']['id'];
 
     $t['clientId'] = upsert("clients", "clients_id", ["instances_id" => $instance, "clients_email" => "client-$lower@example.com"], [
