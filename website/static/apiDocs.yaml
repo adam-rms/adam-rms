@@ -3973,7 +3973,7 @@ paths:
         - locations
       summary: 'UnArchive Location'
       description: "Restore a location\n Requires Instance permission LOCATIONS:EDIT"
-      operationId: archiveLocation
+      operationId: unarchiveLocation
       parameters:
         -
           name: locations_id
@@ -4379,7 +4379,7 @@ paths:
         - maintenanceJobs
       summary: 'Change Name'
       description: "Change the name of a maintenance job  \nRequires Instance Permission MAINTENANCE_JOBS:EDIT:NAME\n"
-      operationId: changeName
+      operationId: changeJobName
       parameters:
         -
           name: maintenanceJobs_id
@@ -4748,7 +4748,7 @@ paths:
         - maintenance
       summary: 'Search User'
       description: 'Search for a user to tag to a maintenance job'
-      operationId: searchUser
+      operationId: searchMaintenanceUser
       parameters:
         -
           name: term
