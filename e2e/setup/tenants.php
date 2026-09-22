@@ -182,6 +182,15 @@ function tenant(string $letter): array {
     $t['subProjectId'] = upsert("projects", "projects_id", ["instances_id" => $instance, "projects_description" => "$marker sub-project description"],
         ["projects_name" => "$marker sub-project", "projects_created" => "2024-01-01 00:00:00", "projects_parent_project_id" => $t['projectId']] + $project, $remembered['subProjectId'] ?? null);
 
+    // The finance cache the project page and the payment/asset endpoints read and adjust
+    foreach (["projectId", "subProjectId"] as $project) {
+        upsert("projectsFinanceCache", "projectsFinanceCache_id", ["projects_id" => $t[$project]], [
+            "projectsFinanceCache_timestamp" => "2024-01-01 00:00:00", "projectsFinanceCache_timestampUpdated" => null,
+            "projectsFinanceCache_equipmentSubTotal" => 0, "projectsFinanceCache_equiptmentDiscounts" => 0, "projectsFinanceCache_equiptmentTotal" => 0,
+            "projectsFinanceCache_salesTotal" => 0, "projectsFinanceCache_staffTotal" => 0, "projectsFinanceCache_externalHiresTotal" => 0,
+            "projectsFinanceCache_paymentsReceived" => 0, "projectsFinanceCache_grandTotal" => 0, "projectsFinanceCache_value" => 0, "projectsFinanceCache_mass" => 0,
+        ]);
+    }
     $t['assignmentId'] = upsert("assetsAssignments", "assetsAssignments_id", ["assets_id" => $t['assetId'], "projects_id" => $t['projectId']], [
         "assetsAssignments_comment" => "$marker assignment comment", "assetsAssignments_customPrice" => 0, "assetsAssignments_discount" => 0,
         "assetsAssignments_deleted" => 0, "assetsAssignmentsStatus_id" => null, "assetsAssignments_linkedTo" => null,

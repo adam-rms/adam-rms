@@ -4,9 +4,9 @@ test("the seeded super admin can log in and reach the app", async ({ page }) => 
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page).not.toHaveURL(/\/login/);
   // The super admin belongs to no business, so headSecure.php drops them into the first business on the
-  // server as a server admin: business A of the tenant isolation tests, which globalSetup always creates
+  // server as a server admin (globalSetup always creates at least the tenant isolation businesses). Which
+  // one that is depends on the database, so only check they reach a business's dashboard.
   await expect(page).toHaveTitle(/Dashboard/);
-  await expect(page.getByText("E2E_TENANT_A_SECRET Ltd").first()).toBeVisible();
 });
 
 test("logging out returns to the login page", async ({ page }) => {

@@ -51,6 +51,9 @@ const HISTORY_LEAK =
 const VACANCY_LEAK =
   "Leak: checks that projects_id is the caller's, then updates the vacancy by projectsVacantRoles_id alone, so a user can edit (rename, close...) any business's crew vacancies.";
 
+const FINANCE_LEAK =
+  "Leak: the asset update is scoped to the caller's business, but the loop after it finds the asset's project assignments by assets_id alone and adjusts those projects' finance cache, so B's project totals change (e.g. value +9999.00).";
+
 const readCases: ReadCase[] = [
   { endpoint: "/api/projects/list.php", params: () => ({}) },
   { endpoint: "/api/projects/data.php", params: (t) => ({ id: t.projectId }), shows: (t) => `${t.marker} project description` },
@@ -122,7 +125,7 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/projects/crew/crewRoles/accept.php", params: (t) => ({ projectsVacantRolesApplications_id: t.vacancyApplicationId }) },
   { endpoint: "/api/projects/crew/crewRoles/reject.php", params: (t) => ({ projectsVacantRolesApplications_id: t.vacancyApplicationId }) },
   // Assets
-  { endpoint: "/api/assets/editAsset.php", params: (t) => ({ assets_id: t.assetId, assets_notes: "Changed by e2e" }) },
+  { endpoint: "/api/assets/editAsset.php", params: (t) => ({ assets_id: t.assetId, assets_notes: "Changed by e2e", assets_value: "9999.00" }), fixme: FINANCE_LEAK },
   { endpoint: "/api/assets/archive.php", params: (t) => ({ assets_id: t.assetId, reason: "e2e", date: "2024-02-01" }) },
   { endpoint: "/api/assets/delete.php", params: (t) => ({ assets_id: t.assetId }) },
   { endpoint: "/api/assets/editAssetType.php", params: (t) => ({ formData: formData({ assetTypes_id: t.assetTypeId, assetTypes_name: "Renamed by e2e" }) }) },

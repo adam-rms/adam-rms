@@ -30,6 +30,7 @@ $children = [ // table => SQL picking the rows that belong to the business throu
     "assetsAssignments" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
     "projectsNotes" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
     "payments" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
+    "projectsFinanceCache" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
     "crewAssignments" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
     "projectsVacantRoles" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
     "projectsVacantRolesApplications" => "projectsVacantRoles_id IN (SELECT projectsVacantRoles_id FROM projectsVacantRoles JOIN projects USING (projects_id) WHERE instances_id = ?)",
