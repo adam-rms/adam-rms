@@ -69,7 +69,8 @@ export default defineConfig({
     baseURL: BASE_URL,
     ignoreHTTPSErrors: !!httpsProxy,
     trace: "retain-on-failure",
-    screenshot: "only-on-failure",
+    video: "retain-on-failure",
+    screenshot: "on",
   },
 
   webServer: {
