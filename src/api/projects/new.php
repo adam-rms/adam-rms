@@ -21,8 +21,11 @@ if (isset($_POST['projects_parent_project_id']) and $_POST['projects_parent_proj
     $parentProject = $DBLIB->getOne("projects", ["projects_id", "projects_manager"]);
     if (!$parentProject) finish(false, ["code" => "PARAM-ERROR", "message" => "Parent project not found"]);
 }
-// Sub-projects created from the project page take the parent's manager, who may since have left the business
-if (!$bCMS->userIsInInstance($_POST['projects_manager'], $AUTH->data['instance']['instances_id']) and (!isset($parentProject) or $parentProject['projects_manager'] != $_POST['projects_manager'])) finish(false, ["code" => "PARAM-ERROR", "message" => "Project manager not found"]);
+if (!$bCMS->userIsInInstance($_POST['projects_manager'], $AUTH->data['instance']['instances_id'])) {
+    // Sub-projects created from the project page take the parent's manager, who may since have left the business: they're managed by whoever creates them instead
+    if (isset($parentProject) and $parentProject['projects_manager'] == $_POST['projects_manager']) $_POST['projects_manager'] = $AUTH->data['users_userid'];
+    else finish(false, ["code" => "PARAM-ERROR", "message" => "Project manager not found"]);
+}
 $hasProjectDates = isset($_POST['projects_dates_use_start']) and isset($_POST['projects_dates_use_end']);
 
 $project = $DBLIB->insert("projects", [

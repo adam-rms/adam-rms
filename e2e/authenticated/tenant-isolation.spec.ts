@@ -271,6 +271,18 @@ test.describe("a deleted account that is still a member", () => {
   });
 });
 
+test.describe("a sub-project of a project whose manager has since joined another business", () => {
+  test("is managed by its creator, not the other business's user", async ({ asA, tenants: { a, b } }) => {
+    dbQuery("UPDATE projects SET projects_manager = ? WHERE projects_id = ?", [b.users.full.id, a.projectId]);
+    // What the project page's "new sub-project" button sends
+    const response = await asA.api("/api/projects/new.php", { projects_name: "Sub-project by e2e", projectsType_id: a.projectTypeId, projects_manager: b.users.full.id, projects_parent_project_id: a.projectId });
+    expect(succeeded(response), response.body.slice(0, 500)).toBe(true);
+    const [project] = dbQuery<{ projects_manager: number }>("SELECT projects_manager FROM projects WHERE projects_id = ?", [response.json.response.projects_id]);
+    expect(project.projects_manager).toBe(a.users.full.id);
+    seedTenants();
+  });
+});
+
 test.describe("a server admin with ASSETS:EDIT:ANY_ASSET_TYPE", () => {
   test("can edit another business's asset type and keep its own manufacturer", async ({ playwright, tenants: { b } }) => {
     const request = await playwright.request.newContext({ baseURL: BASE_URL });
