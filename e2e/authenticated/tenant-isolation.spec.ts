@@ -418,10 +418,12 @@ test.describe("a sub-project of a project whose manager has since joined another
 });
 
 test.describe("a custom dashboard set to another business's page", () => {
-  test("isn't shown", async ({ asA, tenants: { a, b } }) => {
+  test("can't be set, and isn't shown", async ({ asA, tenants: { a, b } }) => {
     await asA.api("/api/cms/setCustomDashboard.php", { instancePositions_id: a.positions.full, cmsPages_id: b.cmsPageId });
+    expect(dbQuery("SELECT cmsPages_id FROM instancePositions WHERE instancePositions_id = ?", [a.positions.full])[0]).toEqual({ cmsPages_id: null });
     const control = await asA.api("/api/cms/setCustomDashboard.php", { instancePositions_id: a.positions.limited, cmsPages_id: a.cmsPageId });
     expect(succeeded(control)).toBe(true);
+    expect(dbQuery("SELECT cmsPages_id FROM instancePositions WHERE instancePositions_id = ?", [a.positions.limited])[0]).toEqual({ cmsPages_id: a.cmsPageId });
     expect(mentions(await asA.page("/"), b.marker)).toBe(false);
     seedTenants();
   });
@@ -454,6 +456,15 @@ test.describe("files", () => {
         expect(succeeded(await upload(own)), `type ${typeid}, A's record`).toBe(true);
       }
       expect(succeeded(await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 99, subtype: a.projectId, originalName: "Uploaded by e2e.pdf", public: 0 })), "unknown type").toBe(false);
+      // Shared (catalogue) asset types belong to no business, and every business can attach files to them
+      dbQuery("INSERT INTO assetTypes (assetTypes_name, instances_id, manufacturers_id, assetCategories_id, assetTypes_inserted) VALUES ('E2E shared upload type', NULL, ?, ?, NOW())", [a.manufacturerId, a.categoryId]);
+      const [shared] = dbQuery<{ assetTypes_id: number }>("SELECT assetTypes_id FROM assetTypes WHERE assetTypes_name = 'E2E shared upload type' AND instances_id IS NULL");
+      try {
+        const upload = await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 3, subtype: shared.assetTypes_id, originalName: "Uploaded by e2e.pdf", public: 0 });
+        expect(succeeded(upload), `shared asset type\n${upload.body.slice(0, 300)}`).toBe(true);
+      } finally {
+        dbQuery("DELETE FROM assetTypes WHERE assetTypes_name = 'E2E shared upload type'");
+      }
     } finally {
       dbQuery("DELETE FROM config WHERE config_key = 'FILES_ENABLED'");
       dbQuery("DELETE FROM s3files WHERE s3files_original_name = 'Uploaded_by_e2e.pdf' OR s3files_name = 'Uploaded by e2e'");

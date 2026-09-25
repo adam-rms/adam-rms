@@ -187,8 +187,8 @@ class bCMS
     if (in_array($typeid, [5, 10, 15, 16, 17])) return $subtype == $instanceId; //The business's own branding and public site
     if ($typeid == 9) return $subtype == $AUTH->data['users_userid'] or $AUTH->serverPermissionCheck("USERS:EDIT:THUMBNAIL"); //User thumbnails
     $records = [ // type => [table, id column, SQL limiting the table to the business]
-      2 => ["assetTypes", "assetTypes_id", "assetTypes.instances_id = ?"],
-      3 => ["assetTypes", "assetTypes_id", "assetTypes.instances_id = ?"],
+      2 => ["assetTypes", "assetTypes_id", "(assetTypes.instances_id IS NULL OR assetTypes.instances_id = ?)"], //Shared types too
+      3 => ["assetTypes", "assetTypes_id", "(assetTypes.instances_id IS NULL OR assetTypes.instances_id = ?)"],
       4 => ["assets", "assets_id", "assets.instances_id = ?"],
       7 => ["projects", "projects_id", "projects.instances_id = ?"],
       8 => ["maintenanceJobs", "maintenanceJobs_id", "maintenanceJobs.instances_id = ?"],
