@@ -219,6 +219,8 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/instances/editCalendarSettings.php", params: () => ({ formData: formData({ defaultView: "timeGridWeek" }) }) },
   { endpoint: "/api/instances/editInstancePublicSite.php", params: () => ({ formData: formData({ enabled: "on" }) }) },
   { endpoint: "/api/permissions/newInstancePosition.php", params: () => ({ name: "Role by e2e" }) },
+  // Maintenance jobs read fields from the top level of the request too, as the app sends them
+  { endpoint: "/api/maintenance/newJob.php", params: (t, self) => ({ formData: formData({ maintenanceJobs_title: "Job by e2e", maintenanceJobs_assets: String(self.assetId) }), instances_id: t.instanceId }) },
   // Clients
   { endpoint: "/api/clients/edit.php", params: (t) => ({ formData: formData({ clients_id: t.clientId, clients_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/clients/archive.php", params: (t) => ({ clients_id: t.clientId }) },
@@ -363,6 +365,44 @@ test.describe("a deleted account that is still a member", () => {
     expect(dbQuery("SELECT maintenanceJobs_user_assignedTo FROM maintenanceJobs WHERE maintenanceJobs_id = ?", [a.maintenanceJobId])[0].maintenanceJobs_user_assignedTo).not.toBe(deleted);
     seedTenants();
   });
+
+  test("can't be made crew, directly or by accepting their application", async ({ asA, tenants: { a } }) => {
+    const deleted = a.users.deleted.id;
+    const crew = (userId: number) => dbQuery("SELECT crewAssignments_id FROM crewAssignments WHERE projects_id = ? AND users_userid = ? AND crewAssignments_deleted = 0", [a.projectId, userId]).length;
+    const deletedBefore = crew(deleted);
+    await asA.api("/api/projects/crew/assign.php", { formData: formData({ projects_id: a.projectId, crewAssignments_role: "e2e role" }), users: [deleted] });
+    dbQuery("INSERT INTO projectsVacantRolesApplications (projectsVacantRoles_id, users_userid, projectsVacantRolesApplications_submitted, projectsVacantRolesApplications_deleted, projectsVacantRolesApplications_withdrawn, projectsVacantRolesApplications_status) VALUES (?, ?, NOW(), 0, 0, 0)", [a.vacantRoleId, deleted]);
+    const [{ id }] = dbQuery<{ id: number }>("SELECT MAX(projectsVacantRolesApplications_id) id FROM projectsVacantRolesApplications WHERE users_userid = ?", [deleted]);
+    await asA.api("/api/projects/crew/crewRoles/accept.php", { projectsVacantRolesApplications_id: id });
+    expect(crew(deleted)).toBe(deletedBefore);
+
+    // Control: the limited user's seeded application
+    const before = crew(a.users.limited.id);
+    expect(succeeded(await asA.api("/api/projects/crew/crewRoles/accept.php", { projectsVacantRolesApplications_id: a.vacancyApplicationId }))).toBe(true);
+    expect(crew(a.users.limited.id)).toBe(before + 1);
+    seedTenants();
+  });
+});
+
+test.describe("a member whose role has been deleted", () => {
+  test("can't be made a project manager", async ({ asA, tenants: { a } }) => {
+    dbQuery("UPDATE instancePositions SET instancePositions_deleted = 1 WHERE instancePositions_id = ?", [a.positions.limited]);
+    await asA.api("/api/projects/changeProjectManager.php", { projects_id: a.projectId, users_userid: a.users.limited.id });
+    const [project] = dbQuery<{ projects_manager: number }>("SELECT projects_manager FROM projects WHERE projects_id = ?", [a.projectId]);
+    seedTenants();
+    expect(project.projects_manager).toBe(a.users.full.id);
+  });
+});
+
+test.describe("watching asset groups", () => {
+  test("drops groups outside the user's businesses the next time they change what they watch", async ({ asA, tenants: { a, b } }) => {
+    // As it could be left by the time before watch.php checked the group
+    dbQuery("UPDATE users SET users_assetGroupsWatching = ? WHERE users_userid = ?", [String(b.assetGroupId), a.users.full.id]);
+    expect(succeeded(await asA.api("/api/groups/watch.php", { assetGroups_id: a.assetGroupId }))).toBe(true);
+    const [row] = dbQuery<{ users_assetGroupsWatching: string }>("SELECT users_assetGroupsWatching FROM users WHERE users_userid = ?", [a.users.full.id]);
+    seedTenants();
+    expect(row.users_assetGroupsWatching.split(",")).toEqual([String(a.assetGroupId)]);
+  });
 });
 
 test.describe("a sub-project of a project whose manager has since joined another business", () => {
@@ -404,6 +444,16 @@ test.describe("files", () => {
       expect(dbQuery("SELECT s3files_id FROM s3files WHERE s3files_meta_type = 3 AND s3files_meta_subType = ? AND instances_id != ?", [b.assetTypeId, b.instanceId])).toHaveLength(0);
       const control = await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 3, subtype: a.assetTypeId, originalName: "Uploaded by e2e.pdf", public: 0 });
       expect(succeeded(control), `control: A's own asset type\n${control.body.slice(0, 300)}`).toBe(true);
+      // Every other kind of record: B's is refused, A's accepted
+      for (const [typeid, own, other] of [
+        [2, a.assetTypeId, b.assetTypeId], [4, a.assetId, b.assetId], [5, a.instanceId, b.instanceId], [7, a.projectId, b.projectId],
+        [9, a.users.full.id, b.users.full.id], [14, a.paymentId, b.paymentId], [19, a.cmsPageId, b.cmsPageId],
+      ]) {
+        const upload = (subtype: number) => asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid, subtype, originalName: "Uploaded by e2e.pdf", public: 0 });
+        expect(succeeded(await upload(other)), `type ${typeid}, B's record`).toBe(false);
+        expect(succeeded(await upload(own)), `type ${typeid}, A's record`).toBe(true);
+      }
+      expect(succeeded(await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 99, subtype: a.projectId, originalName: "Uploaded by e2e.pdf", public: 0 })), "unknown type").toBe(false);
     } finally {
       dbQuery("DELETE FROM config WHERE config_key = 'FILES_ENABLED'");
       dbQuery("DELETE FROM s3files WHERE s3files_original_name = 'Uploaded_by_e2e.pdf' OR s3files_name = 'Uploaded by e2e'");
@@ -491,6 +541,8 @@ test.describe("a server admin with ASSETS:EDIT:ANY_ASSET_TYPE", () => {
     const request = await playwright.request.newContext({ baseURL: BASE_URL });
     const admin = await newSession(request, TEST_USER.email, TEST_USER.password);
     await admin.page("/"); // A server admin with no business of their own is put in the first one on the server, which isn't B
+    const current = (await admin.api("/api/instances/list.php")).json.response.find((instance: { this: boolean }) => instance.this);
+    expect(current?.instances_id, "the super admin is working in another business").not.toBe(b.instanceId);
     const response = await admin.api("/api/assets/editAssetType.php", {
       formData: formData({ assetTypes_id: b.assetTypeId, assetTypes_name: `${b.marker} asset type`, manufacturers_id: b.manufacturerId, assetCategories_id: b.categoryId }),
     });

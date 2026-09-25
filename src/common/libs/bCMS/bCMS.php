@@ -178,6 +178,37 @@ class bCMS
     $DBLIB->where("s3files_meta_physicallyStored", 1);
     return $DBLIB->getValue("s3files", "SUM(s3files_meta_size)");
   }
+  function s3SubTypeIsInInstance($typeid, $subtype)
+  { //Files are listed by type and subtype (the record they're attached to) whatever business uploaded them, so an uploaded file may only be attached to the current business's records
+    global $DBLIB, $AUTH;
+    if ($subtype === null or $subtype === "") return true; //Not attached to anything
+    if (!is_numeric($subtype) or !is_numeric($typeid)) return false;
+    $instanceId = $AUTH->data['instance']['instances_id'];
+    if (in_array($typeid, [5, 10, 15, 16, 17])) return $subtype == $instanceId; //The business's own branding and public site
+    if ($typeid == 9) return $subtype == $AUTH->data['users_userid'] or $AUTH->serverPermissionCheck("USERS:EDIT:THUMBNAIL"); //User thumbnails
+    $records = [ // type => [table, id column, SQL limiting the table to the business]
+      2 => ["assetTypes", "assetTypes_id", "assetTypes.instances_id = ?"],
+      3 => ["assetTypes", "assetTypes_id", "assetTypes.instances_id = ?"],
+      4 => ["assets", "assets_id", "assets.instances_id = ?"],
+      7 => ["projects", "projects_id", "projects.instances_id = ?"],
+      8 => ["maintenanceJobs", "maintenanceJobs_id", "maintenanceJobs.instances_id = ?"],
+      11 => ["locations", "locations_id", "locations.instances_id = ?"],
+      12 => ["modules", "modules_id", "modules.instances_id = ?"],
+      13 => ["modulesSteps", "modulesSteps_id", "modulesSteps.modules_id IN (SELECT modules_id FROM modules WHERE instances_id = ?)"],
+      14 => ["payments", "payments_id", "payments.projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)"],
+      18 => ["projectsVacantRoles", "projectsVacantRoles_id", "projectsVacantRoles.projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)"],
+      19 => ["cmsPages", "cmsPages_id", "cmsPages.instances_id = ?"],
+      20 => ["projects", "projects_id", "projects.instances_id = ?"],
+      21 => ["projects", "projects_id", "projects.instances_id = ?"],
+      22 => ["projects", "projects_id", "projects.instances_id = ?"],
+    ];
+    if (!isset($records[$typeid])) return false; //Unknown types can't be attached to anything
+    [$table, $idColumn, $inBusiness] = $records[$typeid];
+    $DBLIB->where($idColumn, $subtype);
+    //Server admins can edit any business's (and shared) asset types
+    if (!in_array($typeid, [2, 3]) or !$AUTH->serverPermissionCheck("ASSETS:EDIT:ANY_ASSET_TYPE")) $DBLIB->where($inBusiness, [$instanceId]);
+    return (bool) $DBLIB->getOne($table, [$idColumn]);
+  }
   function s3List($typeid, $subTypeid = false, $sort = 's3files_meta_uploaded', $sortOrder = 'ASC', $limit = null)
   {
     global $DBLIB, $CONFIG;
@@ -461,6 +492,7 @@ class bCMS
     $DBLIB->where("userInstances.users_userid", $userid);
     $DBLIB->where("instancePositions.instances_id", $instanceid);
     $DBLIB->where("userInstances.userInstances_deleted", 0);
+    $DBLIB->where("instancePositions.instancePositions_deleted", 0);
     $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.userInstances_archived >= '" . date('Y-m-d H:i:s') . "')");
     return $DBLIB->getValue("userInstances", "COUNT(*)") > 0;
   }

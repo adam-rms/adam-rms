@@ -15,7 +15,13 @@ else {
     array_push($current, $_POST['assetGroups_id']);
 }
 
-$current = implode(",",array_filter($current));
+$current = array_filter($current);
+if ($current) { //Drop groups outside the user's businesses, such as ones watched before the check above
+    $DBLIB->where("assetGroups_id", $current, "IN");
+    $DBLIB->where("instances_id", $AUTH->data['instance_ids'], "IN");
+    $current = array_column($DBLIB->get("assetGroups", null, ["assetGroups_id"]), "assetGroups_id");
+}
+$current = implode(",",$current);
 
 $DBLIB->where("users_userid", $AUTH->data['users_userid']);
 if (!$DBLIB->update("users",["users_assetGroupsWatching" => $current],1)) finish(false);

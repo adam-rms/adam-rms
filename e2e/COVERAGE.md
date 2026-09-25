@@ -230,7 +230,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/s3files/appUploader.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/s3files/generateSignatureUppy.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/s3files/uploadProjectInvoice.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/s3files/uploadSuccess.php` | server: `ASSETS:EDIT:ANY_ASSET_TYPE` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/s3files/uploadSuccess.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
 ## Instances (business settings, users, permissions)
 
