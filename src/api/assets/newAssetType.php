@@ -11,6 +11,15 @@ foreach ($_POST['formData'] as $item) {
 if (strlen($array['manufacturers_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 if (strlen($array['assetTypes_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No asset type name provided"]);
 
+//Shared manufacturers and categories, or the business's own
+$DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+$DBLIB->where("manufacturers_id", $array['manufacturers_id']);
+if (!$DBLIB->getOne("manufacturers", ["manufacturers_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Manufacturer not found"]);
+if (isset($array['assetCategories_id'])) {
+    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+    $DBLIB->where("assetCategories_id", $array['assetCategories_id']);
+    if (!$DBLIB->getOne("assetCategories", ["assetCategories_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Category not found"]);
+}
 $array['instances_id'] = $AUTH->data['instance']["instances_id"];
 $array['assetTypes_inserted'] = date('Y-m-d H:i:s');
 

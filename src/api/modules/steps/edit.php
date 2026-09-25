@@ -8,6 +8,7 @@ foreach ($_POST['formData'] as $item) {
     if ($item['value'] == '') $item['value'] = null;
     $array[$item['name']] = $item['value'];
 }
+unset($array['modules_id']); //Steps can't be moved to another module
 if (strlen($array['modulesSteps_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 if ($array['modulesSteps_show']) $array['modulesSteps_show'] = 1;
 else $array['modulesSteps_show'] = 0;

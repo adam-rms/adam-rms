@@ -6,7 +6,14 @@ if (!isset($_POST['assetGroups_id']) or !is_numeric($_POST['assetGroups_id'])) f
 $current = $AUTH->data['users_assetGroupsWatching'];
 $current = explode(",",$current);
 if (in_array($_POST['assetGroups_id'],$current)) unset($current[array_search($_POST['assetGroups_id'],$current)]);
-else array_push($current, $_POST['assetGroups_id']);
+else {
+    //Only this business's groups can be watched
+    $DBLIB->where("assetGroups_id", $_POST['assetGroups_id']);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("assetGroups_deleted", 0);
+    if (!$DBLIB->getOne("assetGroups", ["assetGroups_id"])) finish(false);
+    array_push($current, $_POST['assetGroups_id']);
+}
 
 $current = implode(",",array_filter($current));
 

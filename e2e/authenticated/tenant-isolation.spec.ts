@@ -194,9 +194,9 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/modules/steps/edit.php", params: (t) => ({ formData: formData({ modulesSteps_id: t.moduleStepId, modulesSteps_name: "Renamed by e2e", modulesSteps_content: "Changed by e2e" }) }) },
   { endpoint: "/api/modules/steps/new.php", params: (t) => ({ formData: formData({ modules_id: t.moduleId, modulesSteps_name: "Step by e2e", modulesSteps_type: 1, modulesSteps_order: 50, modulesSteps_locked: 0 }) }) },
   { endpoint: "/api/modules/steps/sortRank.php", params: (t) => ({ order: [t.moduleStepId] }) },
-  { endpoint: "/api/training/certify.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId, comment: "Certified by e2e" }), fixme: "Checks neither the module nor the user, so A can certify B's users in B's modules" },
-  { endpoint: "/api/training/revokeAll.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId }), fixme: "Checks neither the module nor the user, so A can revoke B's users' certifications" },
-  { endpoint: "/api/training/completeStep.php", params: (t) => ({ id: t.moduleStepId }), fixme: "Doesn't check the step's module is in the business, so A's user gets progress on B's module" },
+  { endpoint: "/api/training/certify.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId, comment: "Certified by e2e" }) },
+  { endpoint: "/api/training/revokeAll.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId }) },
+  { endpoint: "/api/training/completeStep.php", params: (t) => ({ id: t.moduleStepId }) },
   // Files
   { endpoint: "/api/file/rename.php", params: (t) => ({ s3files_id: t.fileId, s3files_name: "Renamed by e2e" }) },
   { endpoint: "/api/file/delete.php", params: (t) => ({ s3files_id: t.fileId }) },
@@ -253,12 +253,11 @@ const moveCases: WriteCase[] = (
     ["/api/categories/edit.php", "assetCategories", "assetCategories_id", "categoryId"],
     ["/api/categories/groups/edit.php", "assetCategoriesGroups", "assetCategoriesGroups_id", "categoryGroupId"],
     ["/api/cms/editPageConfig.php", "cmsPages", "cmsPages_id", "cmsPageId"],
-    ["/api/modules/edit.php", "modules", "modules_id", "moduleId", "Saves every submitted field, including instances_id"],
-    ["/api/instances/projectTypes/edit.php", "projectsTypes", "projectsTypes_id", "projectTypeId", "Saves every submitted field, including instances_id"],
+    ["/api/modules/edit.php", "modules", "modules_id", "moduleId"],
+    ["/api/instances/projectTypes/edit.php", "projectsTypes", "projectsTypes_id", "projectTypeId"],
   ] as const
-).map(([endpoint, table, field, key, fixme]) => ({
+).map(([endpoint, table, field, key]) => ({
   endpoint,
-  fixme,
   params: (t: Tenant, self: Tenant) => ({ formData: formData({ [field]: self[key], instances_id: t.instanceId }) }),
   control: false as const,
   restore: (a: Tenant) => [`UPDATE ${table} SET instances_id = ? WHERE ${field} = ?`, [a.instanceId, a[key]]],
@@ -268,7 +267,6 @@ moveCases.push({
   params: (t, self) => ({ formData: formData({ projectsStatuses_id: self.projectStatusIds.first, instances_id: t.instanceId }) }),
   control: false,
   restore: (a) => ["UPDATE projectsStatuses SET instances_id = ? WHERE projectsStatuses_id = ?", [a.instanceId, a.projectStatusIds.first]],
-  fixme: "Saves every submitted field, including instances_id",
 });
 
 const count = ([sql, params]: [string, unknown[]]) => Number(dbQuery<{ n: number }>(sql, params)[0].n);
@@ -292,12 +290,12 @@ const linkCases: LinkCase[] = [
   { endpoint: "/api/maintenance/job/addAsset.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, maintenanceJobs_assets: [t.assetId] }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_assets)", [a.maintenanceJobId, b.assetId]] },
   { endpoint: "/api/maintenance/job/tagUser.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_user_tagged)", [a.maintenanceJobId, b.users.full.id]] },
   { endpoint: "/api/maintenance/job/changeJobAssigned.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND maintenanceJobs_user_assignedTo = ?", [a.maintenanceJobId, b.users.full.id]] },
-  { endpoint: "/api/assets/newAssetType.php", label: "manufacturer", fixme: "manufacturers_id isn't checked, so the new type shows B's manufacturer name", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: t.manufacturerId, assetCategories_id: a.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND manufacturers_id = ?", [a.instanceId, b.manufacturerId]] },
-  { endpoint: "/api/assets/newAssetType.php", label: "category", fixme: "assetCategories_id isn't checked, so the new type shows B's category name", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: a.manufacturerId, assetCategories_id: t.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND assetCategories_id = ?", [a.instanceId, b.categoryId]] },
-  { endpoint: "/api/categories/new.php", fixme: "assetCategoriesGroups_id isn't checked, so the new category sits in B's category group", params: (t) => ({ formData: formData({ assetCategories_name: "Category by e2e", assetCategoriesGroups_id: t.categoryGroupId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetCategories WHERE instances_id = ? AND assetCategoriesGroups_id = ?", [a.instanceId, b.categoryGroupId]] },
-  { endpoint: "/api/modules/steps/edit.php", params: (t, a) => ({ formData: formData({ modulesSteps_id: a.moduleStepId, modules_id: t.moduleId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM modulesSteps WHERE modulesSteps_id = ? AND modules_id = ?", [a.moduleStepId, b.moduleId]], fixme: "Saves every submitted field, so A's step can be moved into B's module" },
+  { endpoint: "/api/assets/newAssetType.php", label: "manufacturer", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: t.manufacturerId, assetCategories_id: a.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND manufacturers_id = ?", [a.instanceId, b.manufacturerId]] },
+  { endpoint: "/api/assets/newAssetType.php", label: "category", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: a.manufacturerId, assetCategories_id: t.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND assetCategories_id = ?", [a.instanceId, b.categoryId]] },
+  { endpoint: "/api/categories/new.php", params: (t) => ({ formData: formData({ assetCategories_name: "Category by e2e", assetCategoriesGroups_id: t.categoryGroupId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetCategories WHERE instances_id = ? AND assetCategoriesGroups_id = ?", [a.instanceId, b.categoryGroupId]] },
+  { endpoint: "/api/modules/steps/edit.php", params: (t, a) => ({ formData: formData({ modulesSteps_id: a.moduleStepId, modules_id: t.moduleId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM modulesSteps WHERE modulesSteps_id = ? AND modules_id = ?", [a.moduleStepId, b.moduleId]] },
   // Watchers are notified when assets are added to or removed from the group
-  { endpoint: "/api/groups/watch.php", fixme: "assetGroups_id isn't checked, so A's user is notified of B's asset tags and group name when B changes the group", params: (t) => ({ assetGroups_id: t.assetGroupId }), linked: (b, a) => ["SELECT COUNT(*) n FROM users WHERE users_userid = ? AND FIND_IN_SET(?, users_assetGroupsWatching)", [a.users.full.id, b.assetGroupId]] },
+  { endpoint: "/api/groups/watch.php", params: (t) => ({ assetGroups_id: t.assetGroupId }), linked: (b, a) => ["SELECT COUNT(*) n FROM users WHERE users_userid = ? AND FIND_IN_SET(?, users_assetGroupsWatching)", [a.users.full.id, b.assetGroupId]] },
 ];
 
 const maybeFixme = (fixme: string | undefined) => (fixme ? test.fixme : test);
@@ -398,13 +396,14 @@ test.describe("files", () => {
     expect(own.json?.response?.url ?? own.body).not.toEqual(other.json?.response?.url);
   });
 
-  test.fixme("api/s3files/uploadSuccess.php won't attach a file to another business's record", async ({ asA, tenants: { b } }) => {
-    // uploadSuccess.php doesn't check s3files_meta_subType, and s3List (which asset.php uses) doesn't filter by business,
-    // so A's file is listed, under the name A chose, on B's asset type page
+  test("api/s3files/uploadSuccess.php won't attach a file to another business's record", async ({ asA, tenants: { a, b } }) => {
+    // s3List (which asset.php uses) doesn't filter by business, so a file attached to B's asset type would be listed on B's page
     dbQuery("REPLACE INTO config (config_key, config_value) VALUES ('FILES_ENABLED', 'Enabled')");
     try {
       await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 3, subtype: b.assetTypeId, originalName: "Uploaded by e2e.pdf", public: 0 });
       expect(dbQuery("SELECT s3files_id FROM s3files WHERE s3files_meta_type = 3 AND s3files_meta_subType = ? AND instances_id != ?", [b.assetTypeId, b.instanceId])).toHaveLength(0);
+      const control = await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 3, subtype: a.assetTypeId, originalName: "Uploaded by e2e.pdf", public: 0 });
+      expect(succeeded(control), `control: A's own asset type\n${control.body.slice(0, 300)}`).toBe(true);
     } finally {
       dbQuery("DELETE FROM config WHERE config_key = 'FILES_ENABLED'");
       dbQuery("DELETE FROM s3files WHERE s3files_original_name = 'Uploaded_by_e2e.pdf' OR s3files_name = 'Uploaded by e2e'");

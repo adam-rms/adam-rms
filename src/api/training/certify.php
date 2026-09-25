@@ -3,6 +3,12 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck("TRAINING:EDIT:CERTIFY_USER") or !isset($_POST['userid'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
 
+//The module and the user must both be in this business
+$DBLIB->where("modules_id", $_POST['modules_id']);
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("modules_deleted", 0);
+if (!$DBLIB->getOne("modules", ["modules_id"])) finish(false, ["message"=> "Module not found"]);
+if (!$bCMS->userIsInInstance($_POST['userid'], $AUTH->data['instance']['instances_id'])) finish(false, ["message"=> "User not found"]);
 $insert = $DBLIB->insert("userModulesCertifications",[
     "users_userid" => $_POST['userid'],
     "userModulesCertifications_approvedBy" => $AUTH->data['users_userid'],

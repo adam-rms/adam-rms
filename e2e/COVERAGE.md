@@ -11,7 +11,7 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**218 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
+**218 of 270** entries have at least one test, and **0** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
@@ -53,7 +53,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/assets/import.php` | instance: `ASSETS:IMPORT` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/list.php` | login only | `assetTypes_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/newAssetFromType.php` | instance: `ASSETS:CREATE` | `assetTypes_id` | ✔ | ✅ `authenticated/permissions.spec.ts` |
-| API | `api/assets/newAssetType.php` | instance: `ASSETS:ASSET_TYPES:CREATE` | `manufacturers_id` | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/assets/newAssetType.php` | instance: `ASSETS:ASSET_TYPES:CREATE` | `assetCategories_id`, `manufacturers_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/searchAssets.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/searchAssetsBarcode.php` | ? |  | ✘ | ✅ `public/barcodes.spec.ts` |
 | API | `api/assets/searchType.php` | instance: `ASSETS:TRANSFER` | `other_instances_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -63,14 +63,14 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/categories/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id`, `assetCategories_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/categories/groups/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/categories/groups/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
-| API | `api/categories/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/categories/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/categories/search.php` | instance: `ASSETS:TRANSFER` | `other_instances_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/addAsset.php` | instance: `ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP` | `assetGroups_id`, `assets_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/edit.php` | instance: `ASSETS:ASSET_GROUPS:EDIT` | `assetGroups_id`, `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/new.php` | instance: `ASSETS:ASSET_GROUPS:CREATE` | `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/groups/removeAsset.php` | instance: `ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP` | `assetGroups_id`, `assets_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/search.php` | login only |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/groups/watch.php` | login only | `assetGroups_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/groups/watch.php` | login only | `assetGroups_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/manufacturer/edit.php` | instance: `ASSETS:MANUFACTURERS:EDIT` | `manufacturers_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/manufacturer/new.php` | instance: `ASSETS:MANUFACTURERS:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/manufacturer/search.php` | instance: `ASSETS:TRANSFER` | `other_instances_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -210,12 +210,12 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | page | `training/module.php` | instance: `TRAINING:EDIT`, `TRAINING:VIEW`, `TRAINING:VIEW:DRAFT_MODULES`, `TRAINING:VIEW:USER_PROGRESS_IN_MODULES` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/modules/edit.php` | instance: `TRAINING:EDIT` | `modules_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/modules/new.php` | instance: `TRAINING:CREATE` | `modules_id`, `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts` |
-| API | `api/modules/steps/edit.php` | instance: `TRAINING:EDIT` | `modulesSteps_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/modules/steps/edit.php` | instance: `TRAINING:EDIT` | `modulesSteps_id`, `modules_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/modules/steps/new.php` | instance: `TRAINING:EDIT` | `modules_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/modules/steps/sortRank.php` | instance: `TRAINING:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/training/certify.php` | instance: `TRAINING:EDIT:CERTIFY_USER` | `modules_id`, `userid` | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/training/completeStep.php` | login only | `id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
-| API | `api/training/revokeAll.php` | instance: `TRAINING:EDIT:REVOKE_USER_CERTIFICATION` | `modules_id`, `userid` | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/training/certify.php` | instance: `TRAINING:EDIT:CERTIFY_USER` | `modules_id`, `userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/training/completeStep.php` | login only | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/training/revokeAll.php` | instance: `TRAINING:EDIT:REVOKE_USER_CERTIFICATION` | `modules_id`, `userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 
 ## Files
 
@@ -230,7 +230,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/s3files/appUploader.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/s3files/generateSignatureUppy.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/s3files/uploadProjectInvoice.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/s3files/uploadSuccess.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/s3files/uploadSuccess.php` | server: `ASSETS:EDIT:ANY_ASSET_TYPE` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
 ## Instances (business settings, users, permissions)
 

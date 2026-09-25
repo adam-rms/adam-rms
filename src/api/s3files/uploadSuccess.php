@@ -3,6 +3,26 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if ($CONFIG['FILES_ENABLED'] !== "Enabled") {
     finish(false, ["code" => null, "message" => "File uploads are disabled"]);
 }
+//Files are listed by type and subtype (the record they're attached to) whatever business uploaded them, so the record must be this business's
+$fileRecords = [ // type => [table, id column, SQL limiting the table to the business]
+    3 => ["assetTypes", "assetTypes_id", "assetTypes.instances_id = ?"],
+    4 => ["assets", "assets_id", "assets.instances_id = ?"],
+    7 => ["projects", "projects_id", "projects.instances_id = ?"],
+    8 => ["maintenanceJobs", "maintenanceJobs_id", "maintenanceJobs.instances_id = ?"],
+    11 => ["locations", "locations_id", "locations.instances_id = ?"],
+    12 => ["modules", "modules_id", "modules.instances_id = ?"],
+    13 => ["modulesSteps", "modulesSteps_id", "modulesSteps.modules_id IN (SELECT modules_id FROM modules WHERE instances_id = ?)"],
+    14 => ["payments", "payments_id", "payments.projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)"],
+    18 => ["projectsVacantRoles", "projectsVacantRoles_id", "projectsVacantRoles.projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)"],
+    19 => ["cmsPages", "cmsPages_id", "cmsPages.instances_id = ?"],
+];
+if (isset($fileRecords[$_POST['typeid']]) and is_numeric($_POST['subtype'])) {
+    [$table, $idColumn, $inBusiness] = $fileRecords[$_POST['typeid']];
+    $DBLIB->where($idColumn, $_POST['subtype']);
+    //Asset type thumbnails and attachments: server admins can edit any business's (and shared) types
+    if ($_POST['typeid'] != 3 or !$AUTH->serverPermissionCheck("ASSETS:EDIT:ANY_ASSET_TYPE")) $DBLIB->where($inBusiness, [$AUTH->data['instance']['instances_id']]);
+    if (!$DBLIB->getOne($table, [$idColumn])) finish(false, ["code" => null, "message" => "Record not found"]);
+}
 $fileData = [
     "s3files_extension" => pathinfo($bCMS->sanitizeString($_POST['name']), PATHINFO_EXTENSION),
     "s3files_path" => pathinfo($bCMS->sanitizeString($_POST['name']), PATHINFO_DIRNAME),
