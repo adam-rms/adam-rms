@@ -11,7 +11,7 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**174 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
+**182 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
@@ -23,9 +23,9 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | CMS | 13 | 13 |
 | Training | 10 | 10 |
 | Files | 10 | 10 |
-| Instances (business settings, users, permissions) | 61 | 3 |
+| Instances (business settings, users, permissions) | 61 | 10 |
 | Server administration | 9 | 0 |
-| Account & login | 31 | 2 |
+| Account & login | 31 | 3 |
 | Search | 2 | 2 |
 | Public embeds | 1 | 1 |
 | Other | 4 | 4 |
@@ -164,7 +164,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | --- | --- | --- | --- | :---: | --- |
 | page | `maintenance/barcode.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts` |
 | page | `maintenance/barcodeGenerator.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| page | `maintenance/barcodePrint.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `ids` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `maintenance/barcodePrint.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `ids` | ✔ | ✅ `authenticated/barcode-print.spec.ts`, `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `maintenance/index.php` | instance: `MAINTENANCE_JOBS:VIEW` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `maintenance/job.php` | instance: `MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB`, `MAINTENANCE_JOBS:VIEW` | `id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/addAsset.php` | instance: `MAINTENANCE_JOBS:EDIT:ADD_ASSETS` | `maintenanceJobs_assets`, `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -258,8 +258,8 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | page | `instances/trustedDomains.php` | instance: `BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS` |  | ✔ | ⬜ |
 | page | `instances/users.php` | instance: `BUSINESS:USERS:VIEW:LIST` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/instances/addUser.php` | instance: `BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL` |  | ✔ | ⬜ |
-| API | `api/instances/addUserFromCode.php` | login only |  | ✔ | ⬜ |
-| API | `api/instances/addUserFromTrustedDomain.php` | login only |  | ✔ | ⬜ |
+| API | `api/instances/addUserFromCode.php` | login only |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
+| API | `api/instances/addUserFromTrustedDomain.php` | login only |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
 | API | `api/instances/archiveUser.php` | instance: `BUSINESS:USERS:EDIT:ARCHIVE` | `userid` | ✔ | ⬜ |
 | API | `api/instances/assetAssignmentStatus/delete.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` | `statusId` | ✔ | ⬜ |
 | API | `api/instances/assetAssignmentStatus/edit.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` | `statusId` | ✔ | ⬜ |
@@ -276,8 +276,8 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/instances/editInstance.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ⬜ |
 | API | `api/instances/editInstancePublicSite.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ⬜ |
 | API | `api/instances/editInstanceServerAdmin.php` | server: `INSTANCES:EDIT` |  | ✘ | ⬜ |
-| API | `api/instances/editInstanceTrustedDomains.php` | instance: `BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS` |  | ✘ | ⬜ |
-| API | `api/instances/editUser.php` | instance: `BUSINESS:USERS:EDIT:CHANGE_ROLE` |  | ✘ | ⬜ |
+| API | `api/instances/editInstanceTrustedDomains.php` | instance: `BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS` | `instancePositions_id` | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
+| API | `api/instances/editUser.php` | instance: `BUSINESS:USERS:EDIT:CHANGE_ROLE` |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
 | API | `api/instances/list.php` | login only |  | ✔ | ⬜ |
 | API | `api/instances/new.php` | server: `INSTANCES:CREATE` |  | ✘ | ⬜ |
 | API | `api/instances/permanentlyDelete.php` | server: `INSTANCES:PERMANENTLY_DELETE` |  | ✘ | ⬜ |
@@ -288,13 +288,13 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/instances/projectTypes/new.php` | instance: `PROJECTS:PROJECT_TYPES:CREATE` |  | ✔ | ⬜ |
 | API | `api/instances/removeUser.php` | instance: `BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS` | `userid` | ✔ | ⬜ |
 | API | `api/instances/searchUser.php` | instance: `BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL` |  | ✔ | ⬜ |
-| API | `api/instances/signupCodes/edit.php` | instance: `BUSINESS:USER_SIGNUP_CODES:EDIT` | `signupCodes_id` | ✔ | ⬜ |
-| API | `api/instances/signupCodes/new.php` | instance: `BUSINESS:USER_SIGNUP_CODES:CREATE` |  | ✔ | ⬜ |
+| API | `api/instances/signupCodes/edit.php` | instance: `BUSINESS:USER_SIGNUP_CODES:EDIT` | `instancePositions_id`, `signupCodes_id` | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
+| API | `api/instances/signupCodes/new.php` | instance: `BUSINESS:USER_SIGNUP_CODES:CREATE` | `instancePositions_id` | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
 | API | `api/instances/signupCodes/taken.php` | instance: `BUSINESS:USER_SIGNUP_CODES:VIEW` |  | ✘ | ⬜ |
 | API | `api/instances/switch.php` | login only |  | ✘ | ⬜ |
 | API | `api/instances/unDelete.php` | server: `INSTANCES:DELETE` |  | ✘ | ⬜ |
 | API | `api/instances/users.php` | instance: `BUSINESS:USERS:VIEW:LIST` |  | ✔ | ⬜ |
-| API | `api/permissions/instancePermissionsEditor.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:EDIT` |  | ✘ | ⬜ |
+| API | `api/permissions/instancePermissionsEditor.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:EDIT` |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
 | API | `api/permissions/newInstancePosition.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:CREATE` |  | ✔ | ⬜ |
 | API | `api/permissions/permissionsEditor.php` | server: `PERMISSIONS:EDIT` |  | ✘ | ⬜ |
 
@@ -344,7 +344,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/account/viewSiteAs.php` | server: `USERS:VIEW_SITE_AS` | `userid` | ✘ | ⬜ |
 | API | `api/account/widgetToggle.php` | login only |  | ✘ | ⬜ |
 | API | `api/login/forgotPassword.php` | **none (public)** |  | ✘ | ⬜ |
-| API | `api/login/login.php` | **none (public)** |  | ✘ | ⬜ |
+| API | `api/login/login.php` | **none (public)** |  | ✘ | ✅ `authenticated/barcode-print.spec.ts` |
 | API | `api/login/magicLogin.php` | **none (public)** |  | ✘ | ⬜ |
 | API | `api/login/signup.php` | **none (public)** |  | ✘ | ⬜ |
 
