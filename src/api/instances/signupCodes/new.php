@@ -8,6 +8,9 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['signupCodes_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+$array = array_intersect_key($array, array_flip(["signupCodes_name", "signupCodes_notes", "signupCodes_role", "instancePositions_id"]));
+if (isset($array['instancePositions_id']) and $array['instancePositions_id'] !== "" and !$bCMS->positionIsInInstance($array['instancePositions_id'], $AUTH->data['instance']['instances_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Role not found"]);
+if (isset($array['instancePositions_id']) and $array['instancePositions_id'] === "") $array['instancePositions_id'] = null;
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
 
 $DBLIB->where("signupCodes_name", $array['signupCodes_name']);

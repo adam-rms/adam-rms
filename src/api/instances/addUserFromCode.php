@@ -17,6 +17,8 @@ if (!$code) {
 if ($AUTH->data['instance_ids'] and in_array($code['instances_id'],$AUTH->data['instance_ids'])) finish(false, ["code" => "ALREADY-IN-INSTANCE", "message"=> "Already in Business"]);
 
 $DBLIB->where("instancePositions_id", $code['instancePositions_id']);
+$DBLIB->where("instances_id", $code['instances_id']); //The role must be in the code's business
+$DBLIB->where("instancePositions_deleted", 0);
 $position = $DBLIB->getone("instancePositions", ["instancePositions_id"]);
 if (!$position) finish(false, ["code" => "ADD-USER-TO-INSTANCE-FAIL-NOPOSITION", "message"=> "Could not add user to Business"]);
 

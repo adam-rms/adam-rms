@@ -13,6 +13,7 @@ foreach ($_POST['formData'] as $item) {
 $oldData = json_decode($AUTH->data['instance']['instances_trustedDomains'],true);
 
 $array['domains'] = array_filter(explode(",",trim($array['domains'])));
+if ($array['instancePositions_id'] and !$bCMS->positionIsInInstance($array['instancePositions_id'], $AUTH->data['instance']['instances_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Role not found"]);
 
 $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
 $result = $DBLIB->update("instances", ["instances_trustedDomains" => json_encode($array)]);

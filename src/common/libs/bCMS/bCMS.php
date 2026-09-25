@@ -403,6 +403,15 @@ class bCMS
     }
     return ["userData" => $user, "settings" => $configReturn];
   }
+  function positionIsInInstance($positionid, $instanceid)
+  { //Whether the role (instance position) exists and belongs to the business
+    global $DBLIB;
+    if (!is_numeric($positionid)) return false;
+    $DBLIB->where("instancePositions_id", $positionid);
+    $DBLIB->where("instances_id", $instanceid);
+    $DBLIB->where("instancePositions_deleted", 0);
+    return $DBLIB->getValue("instancePositions", "COUNT(*)") > 0;
+  }
   function usersWatchingGroup($groupid)
   {
     global $DBLIB;
