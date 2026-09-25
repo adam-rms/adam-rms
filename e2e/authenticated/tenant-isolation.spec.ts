@@ -105,6 +105,7 @@ const pageCases: PageCase[] = [
   { file: "cms/log.php", url: (t) => `/cms/log.php?p=${t.cmsPageId}`, shows: (t) => `${t.marker} user` },
   { file: "cms/stats.php", url: (t) => `/cms/stats.php?p=${t.cmsPageId}`, shows: (t) => `${t.marker} user` },
   { file: "training/index.php", url: () => `/training/`, shows: (t) => `${t.marker} training module` },
+  { file: "index.php", url: () => `/`, shows: (t) => `${t.marker} Ltd` },
   { file: "search.php", url: () => `/search.php?term=E2E_TENANT`, shows: (t) => `${t.marker} project` },
 ];
 
@@ -182,6 +183,12 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/training/certify.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId, comment: "Certified by e2e" }), fixme: "Checks neither the module nor the user, so A can certify B's users in B's modules" },
   { endpoint: "/api/training/revokeAll.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId }), fixme: "Checks neither the module nor the user, so A can revoke B's users' certifications" },
   { endpoint: "/api/training/completeStep.php", params: (t) => ({ id: t.moduleStepId }), fixme: "Doesn't check the step's module is in the business, so A's user gets progress on B's module" },
+  // Files
+  { endpoint: "/api/file/rename.php", params: (t) => ({ s3files_id: t.fileId, s3files_name: "Renamed by e2e" }) },
+  { endpoint: "/api/file/delete.php", params: (t) => ({ s3files_id: t.fileId }) },
+  { endpoint: "/api/file/share.php", params: (t) => ({ s3files_id: t.fileId }) },
+  // The seeded file isn't shared, so there's no share for the control to remove
+  { endpoint: "/api/file/removeShare.php", params: (t) => ({ s3files_id: t.fileId }), control: false },
   // Clients
   { endpoint: "/api/clients/edit.php", params: (t) => ({ formData: formData({ clients_id: t.clientId, clients_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/clients/archive.php", params: (t) => ({ clients_id: t.clientId }) },
@@ -341,6 +348,63 @@ test.describe("a custom dashboard set to another business's page", () => {
     expect(succeeded(control)).toBe(true);
     expect(mentions(await asA.page("/"), b.marker)).toBe(false);
     seedTenants();
+  });
+});
+
+test.describe("files", () => {
+  test("api/file/index.php won't give out a link to another business's file", async ({ asA, tenants: { a, b } }) => {
+    // No S3 is configured, so there's no link to check for A's own file: s3URL returns false before it gets that far for B's
+    const own = await asA.api("/api/file/index.php", { f: a.fileId });
+    const other = await asA.api("/api/file/index.php", { f: b.fileId });
+    expect(other.json, other.body.slice(0, 500)).toMatchObject({ result: false });
+    expect(own.json?.response?.url ?? own.body).not.toEqual(other.json?.response?.url);
+  });
+
+  test.fixme("api/s3files/uploadSuccess.php won't attach a file to another business's record", async ({ asA, tenants: { b } }) => {
+    // uploadSuccess.php doesn't check s3files_meta_subType, and s3List (which asset.php uses) doesn't filter by business,
+    // so A's file is listed, under the name A chose, on B's asset type page
+    dbQuery("REPLACE INTO config (config_key, config_value) VALUES ('FILES_ENABLED', 'Enabled')");
+    try {
+      await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 3, subtype: b.assetTypeId, originalName: "Uploaded by e2e.pdf", public: 0 });
+      expect(dbQuery("SELECT s3files_id FROM s3files WHERE s3files_meta_type = 3 AND s3files_meta_subType = ? AND instances_id != ?", [b.assetTypeId, b.instanceId])).toHaveLength(0);
+    } finally {
+      dbQuery("DELETE FROM config WHERE config_key = 'FILES_ENABLED'");
+      dbQuery("DELETE FROM s3files WHERE s3files_original_name = 'Uploaded_by_e2e.pdf' OR s3files_name = 'Uploaded by e2e'");
+    }
+  });
+
+  test("uploads are refused while file storage is disabled", async ({ asA, tenants: { a } }) => {
+    for (const endpoint of ["/api/s3files/uploadSuccess.php", "/api/s3files/generateSignatureUppy.php", "/api/s3files/appUploader.php", "/api/s3files/uploadProjectInvoice.php"]) {
+      const response = await asA.api(endpoint, { id: a.projectId, name: "uploads/e2e/e2e.pdf", size: 1, typeid: 7, subtype: a.projectId, originalName: "e2e.pdf", public: 0 });
+      expect(succeeded(response), `${endpoint}\n${response.body.slice(0, 300)}`).toBe(false);
+    }
+    expect(dbQuery("SELECT s3files_id FROM s3files WHERE s3files_filename = 'e2e' AND s3files_path = 'uploads/e2e'")).toHaveLength(0);
+  });
+
+  test("api/file/avatarGen.php draws initials for any user", async ({ asA, tenants: { a, b } }) => {
+    // Only the initials, so this is allowed: user pages across businesses show avatars
+    for (const user of [a.users.full, b.users.full]) {
+      const response = await asA.api("/api/file/avatarGen.php", { users_userid: user.id }, "GET");
+      expect(response.body).toContain("<svg");
+      expect(mentions(response, "E2E_TENANT")).toBe(false);
+    }
+  });
+});
+
+test.describe("the public vacancies embed", () => {
+  test("lists only the business's own public vacancies, and only when it has turned the embed on", async ({ request, tenants: { a, b } }) => {
+    const publicConfig = JSON.stringify({ enabled: true, enableVacancies: true });
+    dbQuery("UPDATE instances SET instances_publicConfig = ? WHERE instances_id IN (?, ?)", [publicConfig, a.instanceId, b.instanceId]);
+    dbQuery("UPDATE projectsVacantRoles SET projectsVacantRoles_showPublic = 1 WHERE projectsVacantRoles_id IN (?, ?)", [a.vacantRoleId, b.vacantRoleId]);
+    const own = await (await request.get(`/public/embed/jobs.php?i=${a.instanceId}`)).text();
+    dbQuery("UPDATE instances SET instances_publicConfig = NULL WHERE instances_id = ?", [a.instanceId]);
+    const disabled = await (await request.get(`/public/embed/jobs.php?i=${a.instanceId}`)).text();
+    seedTenants();
+
+    expect(own).toContain(`${a.marker} vacancy`);
+    expect(own).not.toContain(b.marker);
+    expect(disabled).toContain("Disabled by AdamRMS administrator");
+    expect(disabled).not.toContain(a.marker);
   });
 });
 

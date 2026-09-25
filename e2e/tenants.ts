@@ -29,6 +29,7 @@ export type Tenant = {
   spareAssetId: number;
   barcodeValue: string;
   barcodeId: number;
+  fileId: number;
   projectTypeId: number;
   projectStatusIds: { first: number; second: number };
   assignmentStatusId: number;

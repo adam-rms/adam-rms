@@ -59,6 +59,10 @@ const writeCases: ApiCase[] = [
   { endpoint: "/api/modules/steps/sortRank.php", permission: "TRAINING:EDIT", params: (a) => ({ order: [a.moduleStepId] }) },
   { endpoint: "/api/training/certify.php", permission: "TRAINING:EDIT:CERTIFY_USER", params: (a) => ({ userid: a.users.limited.id, modules_id: a.moduleId, comment: "Certified by e2e" }) },
   { endpoint: "/api/training/revokeAll.php", permission: "TRAINING:EDIT:REVOKE_USER_CERTIFICATION", params: (a) => ({ userid: a.users.limited.id, modules_id: a.moduleId }) },
+  // Files
+  { endpoint: "/api/file/rename.php", permission: "ASSETS:FILE_ATTACHMENTS:EDIT", params: (a) => ({ s3files_id: a.fileId, s3files_name: "Renamed by e2e" }) },
+  { endpoint: "/api/file/delete.php", permission: "ASSETS:FILE_ATTACHMENTS:DELETE", params: (a) => ({ s3files_id: a.fileId }) },
+  { endpoint: "/api/file/share.php", permission: "FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS", params: (a) => ({ s3files_id: a.fileId }) },
   // Clients
   { endpoint: "/api/clients/new.php", permission: "CLIENTS:CREATE", params: () => ({ clients_name: "New by e2e" }) },
   { endpoint: "/api/clients/edit.php", permission: "CLIENTS:EDIT", params: (a) => ({ formData: formData({ clients_id: a.clientId, clients_name: "Renamed by e2e" }) }) },

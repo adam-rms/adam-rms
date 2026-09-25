@@ -178,6 +178,12 @@ function tenant(string $letter): array {
         "assetsBarcodes_added" => "2024-01-01 00:00:00", "assetsBarcodes_deleted" => 0,
     ], $remembered['barcodeId'] ?? null);
 
+    // A file attached to the asset type (s3files type 3). Nothing is uploaded: the tests only read and change the row.
+    $t['fileId'] = upsert("s3files", "s3files_id", ["instances_id" => $instance, "s3files_filename" => "e2e-tenant-$lower-file"], [
+        "s3files_path" => "e2e", "s3files_name" => "$marker file", "s3files_extension" => "pdf", "s3files_original_name" => "e2e.pdf",
+        "s3files_meta_size" => 1, "s3files_meta_public" => 0, "s3files_shareKey" => null, "s3files_meta_type" => 3,
+        "s3files_meta_subType" => $t['assetTypeId'], "users_userid" => $manager, "s3files_meta_deleteOn" => null, "s3files_meta_physicallyStored" => 1,
+    ], $remembered['fileId'] ?? null);
     $t['projectTypeId'] = upsert("projectsTypes", "projectsTypes_id", ["instances_id" => $instance, "projectsTypes_name" => "$marker project type"], ["projectsTypes_deleted" => 0], $remembered['projectTypeId'] ?? null);
     foreach (["first" => 0, "second" => 1] as $name => $rank) {
         $t['projectStatusIds'][$name] = upsert("projectsStatuses", "projectsStatuses_id", ["instances_id" => $instance, "projectsStatuses_name" => "$marker status $name"], [

@@ -11,7 +11,7 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**159 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
+**174 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
@@ -22,13 +22,13 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | Maintenance | 21 | 21 |
 | CMS | 13 | 13 |
 | Training | 10 | 10 |
-| Files | 10 | 0 |
+| Files | 10 | 10 |
 | Instances (business settings, users, permissions) | 61 | 3 |
 | Server administration | 9 | 0 |
 | Account & login | 31 | 2 |
 | Search | 2 | 2 |
-| Public embeds | 1 | 0 |
-| Other | 4 | 0 |
+| Public embeds | 1 | 1 |
+| Other | 4 | 4 |
 
 ## Assets
 
@@ -221,16 +221,16 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| API | `api/file/avatarGen.php` | login only | `users_userid` | ✘ | ⬜ |
-| API | `api/file/delete.php` | instance: `ASSETS:FILE_ATTACHMENTS:DELETE` | `s3files_id` | ✔ | ⬜ |
-| API | `api/file/index.php` | **none (public)** |  | ✘ | ⬜ |
-| API | `api/file/removeShare.php` | instance: `FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS` | `s3files_id` | ✔ | ⬜ |
-| API | `api/file/rename.php` | instance: `ASSETS:FILE_ATTACHMENTS:EDIT` | `s3files_id` | ✔ | ⬜ |
-| API | `api/file/share.php` | instance: `FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS` | `s3files_id` | ✔ | ⬜ |
-| API | `api/s3files/appUploader.php` | login only |  | ✔ | ⬜ |
-| API | `api/s3files/generateSignatureUppy.php` | login only |  | ✔ | ⬜ |
-| API | `api/s3files/uploadProjectInvoice.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ⬜ |
-| API | `api/s3files/uploadSuccess.php` | login only |  | ✔ | ⬜ |
+| API | `api/file/avatarGen.php` | login only | `users_userid` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/file/delete.php` | instance: `ASSETS:FILE_ATTACHMENTS:DELETE` | `s3files_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/file/index.php` | **none (public)** |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/file/removeShare.php` | instance: `FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS` | `s3files_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/file/rename.php` | instance: `ASSETS:FILE_ATTACHMENTS:EDIT` | `s3files_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/file/share.php` | instance: `FILES:FILE_ATTACHMENTS:EDIT:SHARING_SETTINGS` | `s3files_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/s3files/appUploader.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/s3files/generateSignatureUppy.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/s3files/uploadProjectInvoice.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/s3files/uploadSuccess.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
 ## Instances (business settings, users, permissions)
 
@@ -359,16 +359,16 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `public/embed/jobs.php` | **none (public)** |  | ✔ | ⬜ |
+| page | `public/embed/jobs.php` | **none (public)** |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts`, `public/misc.spec.ts` |
 
 ## Other
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `404.php` | login only |  | ✘ | ⬜ |
-| page | `index.php` | instance: `BUSINESS:BUSINESS_STATS:VIEW`, `CMS:CMS_PAGES:EDIT`<br>server: `INSTANCES:FULL_PERMISSIONS_IN_INSTANCE` |  | ✔ | ⬜ |
-| API | `api/icons/getIcons.php` | login only |  | ✘ | ⬜ |
-| API | `api/onlineCheck.php` | **none (public)** |  | ✘ | ⬜ |
+| page | `404.php` | login only |  | ✘ | ✅ `authenticated/misc.spec.ts` |
+| page | `index.php` | instance: `BUSINESS:BUSINESS_STATS:VIEW`, `CMS:CMS_PAGES:EDIT`<br>server: `INSTANCES:FULL_PERMISSIONS_IN_INSTANCE` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/icons/getIcons.php` | login only |  | ✘ | ✅ `authenticated/misc.spec.ts` |
+| API | `api/onlineCheck.php` | **none (public)** |  | ✘ | ✅ `public/misc.spec.ts` |
 
 ## Not listed
 
