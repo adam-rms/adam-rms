@@ -73,6 +73,7 @@ function user(string $email, string $name1, string $name2): int {
     $id = upsert("users", "users_userid", ["users_email" => $email], [
         "users_username" => strstr($email, "@", true), "users_name1" => $name1, "users_name2" => $name2,
         "users_created" => "2024-01-01 00:00:00", "users_selectedInstanceIDLast" => null, "users_assetGroupsWatching" => null,
+        "users_thumbnail" => null, "users_notificationSettings" => null, "users_oauth_googleid" => null, "users_oauth_microsoftid" => null,
     ] + $credentials);
     // Too many recent failed logins (e.g. from a manual attempt) would block the tests from logging in
     $db->prepare("DELETE FROM loginAttempts WHERE loginAttempts_textEntered = ?")->execute([$email]);
