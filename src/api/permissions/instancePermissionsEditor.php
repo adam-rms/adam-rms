@@ -6,7 +6,9 @@ header("Content-Type: text/plain");
 if (!$AUTH->instancePermissionCheck("BUSINESS:ROLES_AND_PERMISSIONS:EDIT") or !isset($_POST['position'])) die("404");
 
 $DBLIB->where ('instancePositions_id', $bCMS->sanitizeString($_POST['position']));
+$DBLIB->where ('instances_id', $AUTH->data['instance']['instances_id']);
 $position = $DBLIB->getone("instancePositions");
+if (!$position) die('2');
 $position['permissions'] = explode(",",$position['instancePositions_actions']);
 
 
@@ -18,7 +20,8 @@ if (isset($_POST['removepermission'])) {
 	array_push($position['permissions'],$_POST['addpermission']);
 }
 asort($position['permissions']); //Prevents it being associative when downloaded
-$DBLIB->where ('instancePositions_id', $bCMS->sanitizeString($_POST['position']));
+$DBLIB->where ('instancePositions_id', $position['instancePositions_id']);
+$DBLIB->where ('instances_id', $AUTH->data['instance']['instances_id']);
 if ($DBLIB->update ('instancePositions', ['instancePositions_actions' => implode(",",$position['permissions'])])) {
 	$bCMS->auditLog("UPDATE", "instancePositions", $bCMS->sanitizeString($_POST['position']) . " - " . implode(",",$position['permissions']), $AUTH->data['users_userid']);
 	die('1');

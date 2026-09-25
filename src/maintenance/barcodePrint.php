@@ -15,8 +15,8 @@ function checkDuplicate($value, $type)
     else return false;
 }
 foreach ($groups as $group) {
-    if ($group == null) continue;
-    $DBLIB->where("FIND_IN_SET(" . $bCMS->sanitizestring($group) . ", assets.assets_assetGroups)");
+    if ($group === null or filter_var($group, FILTER_VALIDATE_INT) === false) continue;
+    $DBLIB->where("FIND_IN_SET(" . intval($group) . ", assets.assets_assetGroups)");
     $DBLIB->where("assets_deleted", 0);
     $groupAssets = $DBLIB->get("assets", null, ["assets_id"]);
     foreach ($groupAssets as $asset) {

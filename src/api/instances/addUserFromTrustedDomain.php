@@ -18,6 +18,8 @@ elseif (!$instance['trustedDomains']['domains'] or count($instance['trustedDomai
 elseif (!in_array($userEmailDomain,$instance['trustedDomains']['domains']))  finish(false, ["code" => "AUTH-ERROR", "message"=> "Not in trusted domains"]);
   
 $DBLIB->where("instancePositions_id", $instance['trustedDomains']['instancePositions_id']);
+$DBLIB->where("instances_id", $instance['instances_id']); //The role must be in the business being joined
+$DBLIB->where("instancePositions_deleted", 0);
 $position = $DBLIB->getone("instancePositions", ["instancePositions_id"]);
 if (!$position) finish(false, ["code" => "ADD-USER-TO-INSTANCE-FAIL-NOPOSITION", "message"=> "Could not find position to add to Business"]);
 
