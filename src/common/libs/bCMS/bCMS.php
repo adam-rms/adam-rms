@@ -181,8 +181,9 @@ class bCMS
   function s3SubTypeIsInInstance($typeid, $subtype)
   { //Files are listed by type and subtype (the record they're attached to) whatever business uploaded them, so an uploaded file may only be attached to the current business's records
     global $DBLIB, $AUTH;
+    if (!is_numeric($typeid) or !in_array((int) $typeid, [2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22])) return false; //Only the file types AdamRMS uses (see the files docs)
     if ($subtype === null or $subtype === "") return true; //Not attached to anything
-    if (!is_numeric($subtype) or !is_numeric($typeid)) return false;
+    if (!is_numeric($subtype)) return false;
     $instanceId = $AUTH->data['instance']['instances_id'];
     if (in_array($typeid, [5, 10, 15, 16, 17])) return $subtype == $instanceId; //The business's own branding and public site
     if ($typeid == 9) return $subtype == $AUTH->data['users_userid'] or $AUTH->serverPermissionCheck("USERS:EDIT:THUMBNAIL"); //User thumbnails

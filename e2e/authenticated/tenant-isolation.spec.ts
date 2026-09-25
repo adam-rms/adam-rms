@@ -177,6 +177,8 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/assets/barcodes/assign.php", params: (t) => ({ id: t.assetId, text: `E2E${Date.now()}`, type: "CODE_128" }) },
   { endpoint: "/api/assets/barcodes/delete.php", params: (t) => ({ barcodes_id: t.barcodeId }) },
   { endpoint: "/api/groups/edit.php", params: (t) => ({ formData: formData({ assetGroups_id: t.assetGroupId, assetGroups_name: "Renamed by e2e" }) }) },
+  // The target's asset, the caller's own group
+  { endpoint: "/api/groups/addAsset.php", params: (t, self) => ({ assets_id: t.spareAssetId, assetGroups_id: self.assetGroupId }) },
   { endpoint: "/api/groups/removeAsset.php", params: (t) => ({ assetGroups_id: t.assetGroupId, assets_id: t.assetId }) },
   { endpoint: "/api/categories/edit.php", params: (t) => ({ formData: formData({ assetCategories_id: t.categoryId, assetCategories_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/categories/groups/edit.php", params: (t) => ({ formData: formData({ assetCategoriesGroups_id: t.categoryGroupId, assetCategoriesGroups_name: "Renamed by e2e" }) }) },
@@ -449,13 +451,18 @@ test.describe("files", () => {
       // Every other kind of record: B's is refused, A's accepted
       for (const [typeid, own, other] of [
         [2, a.assetTypeId, b.assetTypeId], [4, a.assetId, b.assetId], [5, a.instanceId, b.instanceId], [7, a.projectId, b.projectId],
-        [9, a.users.full.id, b.users.full.id], [14, a.paymentId, b.paymentId], [19, a.cmsPageId, b.cmsPageId],
+        [8, a.maintenanceJobId, b.maintenanceJobId], [9, a.users.full.id, b.users.full.id], [10, a.instanceId, b.instanceId],
+        [11, a.locationId, b.locationId], [12, a.moduleId, b.moduleId], [13, a.moduleStepId, b.moduleStepId], [14, a.paymentId, b.paymentId],
+        [15, a.instanceId, b.instanceId], [16, a.instanceId, b.instanceId], [17, a.instanceId, b.instanceId], [18, a.vacantRoleId, b.vacantRoleId],
+        [19, a.cmsPageId, b.cmsPageId], [20, a.projectId, b.projectId], [21, a.projectId, b.projectId], [22, a.projectId, b.projectId],
       ]) {
         const upload = (subtype: number) => asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid, subtype, originalName: "Uploaded by e2e.pdf", public: 0 });
         expect(succeeded(await upload(other)), `type ${typeid}, B's record`).toBe(false);
         expect(succeeded(await upload(own)), `type ${typeid}, A's record`).toBe(true);
       }
       expect(succeeded(await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 99, subtype: a.projectId, originalName: "Uploaded by e2e.pdf", public: 0 })), "unknown type").toBe(false);
+      expect(succeeded(await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 99, subtype: "", originalName: "Uploaded by e2e.pdf", public: 0 })), "unknown type, not attached").toBe(false);
+      expect(succeeded(await asA.api("/api/s3files/uploadSuccess.php", { name: "uploads/e2e/e2e-upload.pdf", size: 1, typeid: 12, subtype: "", originalName: "Uploaded by e2e.pdf", public: 0 })), "known type, not attached").toBe(true);
       // Shared (catalogue) asset types belong to no business, and every business can attach files to them
       dbQuery("INSERT INTO assetTypes (assetTypes_name, instances_id, manufacturers_id, assetCategories_id, assetTypes_inserted) VALUES ('E2E shared upload type', NULL, ?, ?, NOW())", [a.manufacturerId, a.categoryId]);
       const [shared] = dbQuery<{ assetTypes_id: number }>("SELECT assetTypes_id FROM assetTypes WHERE assetTypes_name = 'E2E shared upload type' AND instances_id IS NULL");
