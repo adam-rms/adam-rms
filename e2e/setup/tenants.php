@@ -119,10 +119,11 @@ function tenant(string $letter): array {
         // Remove any other membership (another business, or another position in this one), then add the intended one
         $db->prepare("UPDATE userInstances SET userInstances_deleted = 1 WHERE users_userid = ? AND instancePositions_id != ?")
             ->execute([$userId, $position]);
-        upsert("userInstances", "userInstances_id", ["users_userid" => $userId, "instancePositions_id" => $position], [
+        $membershipId = upsert("userInstances", "userInstances_id", ["users_userid" => $userId, "instancePositions_id" => $position], [
             "userInstances_deleted" => 0, "userInstances_archived" => null, "userInstances_extraPermissions" => null, "userInstances_label" => "$marker $kind",
-        ]);
+        ], $kind === "deleted" ? ($remembered['deletedMembershipId'] ?? null) : null);
         $t['users'][$kind] = ["id" => $userId, "email" => $email];
+        if ($kind === "deleted") $t['deletedMembershipId'] = $membershipId;
     }
     $db->prepare("UPDATE users SET users_deleted = 1 WHERE users_userid = ?")->execute([$t['users']['deleted']['id']]);
     $manager = $t['users']['full']['id'];
@@ -189,7 +190,7 @@ function tenant(string $letter): array {
         $t['projectStatusIds'][$name] = upsert("projectsStatuses", "projectsStatuses_id", ["instances_id" => $instance, "projectsStatuses_name" => "$marker status $name"], [
             "projectsStatuses_description" => "$marker", "projectsStatuses_foregroundColour" => "#000000", "projectsStatuses_backgroundColour" => "#ffffff",
             "projectsStatuses_rank" => $rank, "projectsStatuses_assetsReleased" => 0, "projectsStatuses_deleted" => 0,
-        ]);
+        ], $remembered['projectStatusIds'][$name] ?? null);
     }
     $t['assignmentStatusId'] = upsert("assetsAssignmentsStatus", "assetsAssignmentsStatus_id", ["instances_id" => $instance, "assetsAssignmentsStatus_name" => "$marker picked"], [
         "assetsAssignmentsStatus_order" => 0, "assetsAssignmentsStatus_deleted" => 0,

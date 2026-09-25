@@ -11,7 +11,7 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**182 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
+**218 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
@@ -23,7 +23,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | CMS | 13 | 13 |
 | Training | 10 | 10 |
 | Files | 10 | 10 |
-| Instances (business settings, users, permissions) | 61 | 10 |
+| Instances (business settings, users, permissions) | 61 | 46 |
 | Server administration | 9 | 0 |
 | Account & login | 31 | 3 |
 | Search | 2 | 2 |
@@ -236,35 +236,35 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `instances/billing.php` | login only |  | ✔ | ⬜ |
-| page | `instances/calendar.php` | login only |  | ✔ | ⬜ |
-| page | `instances/calendarSettings.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ⬜ |
-| page | `instances/configuration/asset-status.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✔ | ⬜ |
-| page | `instances/configuration/barcodes.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ⬜ |
-| page | `instances/configuration/invoices.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ⬜ |
-| page | `instances/configuration/logo.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ⬜ |
-| page | `instances/customCategories.php` | instance: `ASSETS:ASSET_CATEGORIES:VIEW` |  | ✘ | ⬜ |
-| page | `instances/groups.php` | login only |  | ✘ | ⬜ |
-| page | `instances/join.php` | login only |  | ✘ | ⬜ |
-| page | `instances/navigation.php` | login only |  | ✘ | ⬜ |
-| page | `instances/new.php` | server: `INSTANCES:CREATE` |  | ✘ | ⬜ |
+| page | `instances/billing.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/calendar.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/calendarSettings.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/configuration/asset-status.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/configuration/barcodes.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/configuration/invoices.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/configuration/logo.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/customCategories.php` | instance: `ASSETS:ASSET_CATEGORIES:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/groups.php` | login only |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/join.php` | login only |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/navigation.php` | login only |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/new.php` | server: `INSTANCES:CREATE` |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `instances/permissions.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
-| page | `instances/projectStatuses.php` | instance: `PROJECTS:PROJECT_STATUSES:VIEW` |  | ✘ | ⬜ |
-| page | `instances/projectTypes.php` | instance: `PROJECTS:PROJECT_TYPES:VIEW` |  | ✔ | ⬜ |
-| page | `instances/public.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✔ | ⬜ |
+| page | `instances/projectStatuses.php` | instance: `PROJECTS:PROJECT_STATUSES:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/projectTypes.php` | instance: `PROJECTS:PROJECT_TYPES:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/public.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `instances/settings.php` | instance: `BUSINESS:BUSINESS_SETTINGS:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
-| page | `instances/signupCodes.php` | instance: `BUSINESS:USER_SIGNUP_CODES:VIEW` |  | ✔ | ⬜ |
-| page | `instances/stats.php` | instance: `BUSINESS:BUSINESS_STATS:VIEW` |  | ✘ | ⬜ |
-| page | `instances/trustedDomains.php` | instance: `BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS` |  | ✔ | ⬜ |
+| page | `instances/signupCodes.php` | instance: `BUSINESS:USER_SIGNUP_CODES:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/stats.php` | instance: `BUSINESS:BUSINESS_STATS:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `instances/trustedDomains.php` | instance: `BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `instances/users.php` | instance: `BUSINESS:USERS:VIEW:LIST` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
-| API | `api/instances/addUser.php` | instance: `BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL` |  | ✔ | ⬜ |
+| API | `api/instances/addUser.php` | instance: `BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/instances/addUserFromCode.php` | login only |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
 | API | `api/instances/addUserFromTrustedDomain.php` | login only |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
-| API | `api/instances/archiveUser.php` | instance: `BUSINESS:USERS:EDIT:ARCHIVE` | `userid` | ✔ | ⬜ |
-| API | `api/instances/assetAssignmentStatus/delete.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` | `statusId` | ✔ | ⬜ |
-| API | `api/instances/assetAssignmentStatus/edit.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` | `statusId` | ✔ | ⬜ |
-| API | `api/instances/assetAssignmentStatus/new.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✔ | ⬜ |
-| API | `api/instances/assetAssignmentStatus/reorder.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✔ | ⬜ |
+| API | `api/instances/archiveUser.php` | instance: `BUSINESS:USERS:EDIT:ARCHIVE` | `userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/assetAssignmentStatus/delete.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` | `statusId` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/assetAssignmentStatus/edit.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` | `statusId` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/assetAssignmentStatus/new.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
+| API | `api/instances/assetAssignmentStatus/reorder.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/instances/billing/billingPortal.php` | login only |  | ✘ | ⬜ |
 | API | `api/instances/billing/getPrices.php` | **none (public)** |  | ✘ | ⬜ |
 | API | `api/instances/billing/postSubscribeDelay.php` | login only |  | ✘ | ⬜ |
@@ -272,30 +272,30 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/instances/billing/webhooks.php` | **none (public)** |  | ✘ | ⬜ |
 | API | `api/instances/calendar-export.php` | **none (public)** | `id` | ✔ | ⬜ |
 | API | `api/instances/delete.php` | server: `INSTANCES:DELETE` |  | ✘ | ⬜ |
-| API | `api/instances/editCalendarSettings.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ⬜ |
-| API | `api/instances/editInstance.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ⬜ |
-| API | `api/instances/editInstancePublicSite.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ⬜ |
+| API | `api/instances/editCalendarSettings.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/editInstance.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/editInstancePublicSite.php` | instance: `BUSINESS:BUSINESS_SETTINGS:EDIT` |  | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/instances/editInstanceServerAdmin.php` | server: `INSTANCES:EDIT` |  | ✘ | ⬜ |
-| API | `api/instances/editInstanceTrustedDomains.php` | instance: `BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS` | `instancePositions_id` | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
-| API | `api/instances/editUser.php` | instance: `BUSINESS:USERS:EDIT:CHANGE_ROLE` |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
-| API | `api/instances/list.php` | login only |  | ✔ | ⬜ |
+| API | `api/instances/editInstanceTrustedDomains.php` | instance: `BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS` | `instancePositions_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/roles-isolation.spec.ts` |
+| API | `api/instances/editUser.php` | instance: `BUSINESS:USERS:EDIT:CHANGE_ROLE` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/roles-isolation.spec.ts` |
+| API | `api/instances/list.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/instances/new.php` | server: `INSTANCES:CREATE` |  | ✘ | ⬜ |
 | API | `api/instances/permanentlyDelete.php` | server: `INSTANCES:PERMANENTLY_DELETE` |  | ✘ | ⬜ |
-| API | `api/instances/projectStatus/edit.php` | instance: `PROJECTS:PROJECT_STATUSES:EDIT` | `projectsStatuses_id` | ✔ | ⬜ |
-| API | `api/instances/projectStatus/editPageRank.php` | instance: `PROJECTS:PROJECT_STATUSES:EDIT` |  | ✔ | ⬜ |
-| API | `api/instances/projectStatus/new.php` | instance: `PROJECTS:PROJECT_STATUSES:CREATE` |  | ✔ | ⬜ |
-| API | `api/instances/projectTypes/edit.php` | instance: `PROJECTS:PROJECT_TYPES:EDIT` | `projectsTypes_id` | ✔ | ⬜ |
-| API | `api/instances/projectTypes/new.php` | instance: `PROJECTS:PROJECT_TYPES:CREATE` |  | ✔ | ⬜ |
-| API | `api/instances/removeUser.php` | instance: `BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS` | `userid` | ✔ | ⬜ |
+| API | `api/instances/projectStatus/edit.php` | instance: `PROJECTS:PROJECT_STATUSES:EDIT` | `projectsStatuses_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/projectStatus/editPageRank.php` | instance: `PROJECTS:PROJECT_STATUSES:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/projectStatus/new.php` | instance: `PROJECTS:PROJECT_STATUSES:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
+| API | `api/instances/projectTypes/edit.php` | instance: `PROJECTS:PROJECT_TYPES:EDIT` | `projectsTypes_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/instances/projectTypes/new.php` | instance: `PROJECTS:PROJECT_TYPES:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
+| API | `api/instances/removeUser.php` | instance: `BUSINESS:USERS:DELETE:REMOVE_FORM_BUSINESS` | `userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/instances/searchUser.php` | instance: `BUSINESS:USERS:CREATE:ADD_USER_BY_EMAIL` |  | ✔ | ⬜ |
-| API | `api/instances/signupCodes/edit.php` | instance: `BUSINESS:USER_SIGNUP_CODES:EDIT` | `instancePositions_id`, `signupCodes_id` | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
-| API | `api/instances/signupCodes/new.php` | instance: `BUSINESS:USER_SIGNUP_CODES:CREATE` | `instancePositions_id` | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
+| API | `api/instances/signupCodes/edit.php` | instance: `BUSINESS:USER_SIGNUP_CODES:EDIT` | `instancePositions_id`, `signupCodes_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/roles-isolation.spec.ts` |
+| API | `api/instances/signupCodes/new.php` | instance: `BUSINESS:USER_SIGNUP_CODES:CREATE` | `instancePositions_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/roles-isolation.spec.ts` |
 | API | `api/instances/signupCodes/taken.php` | instance: `BUSINESS:USER_SIGNUP_CODES:VIEW` |  | ✘ | ⬜ |
 | API | `api/instances/switch.php` | login only |  | ✘ | ⬜ |
 | API | `api/instances/unDelete.php` | server: `INSTANCES:DELETE` |  | ✘ | ⬜ |
-| API | `api/instances/users.php` | instance: `BUSINESS:USERS:VIEW:LIST` |  | ✔ | ⬜ |
-| API | `api/permissions/instancePermissionsEditor.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:EDIT` |  | ✔ | ✅ `authenticated/roles-isolation.spec.ts` |
-| API | `api/permissions/newInstancePosition.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:CREATE` |  | ✔ | ⬜ |
+| API | `api/instances/users.php` | instance: `BUSINESS:USERS:VIEW:LIST` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/permissions/instancePermissionsEditor.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/roles-isolation.spec.ts` |
+| API | `api/permissions/newInstancePosition.php` | instance: `BUSINESS:ROLES_AND_PERMISSIONS:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/permissions/permissionsEditor.php` | server: `PERMISSIONS:EDIT` |  | ✘ | ⬜ |
 
 ## Server administration

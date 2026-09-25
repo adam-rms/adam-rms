@@ -71,6 +71,8 @@ const readCases: ReadCase[] = [
   { endpoint: "/api/assets/substitutions.php", params: (t) => ({ assetsAssignments_id: t.assignmentId }), shows: (t) => t.spareAssetTag, hides: (t) => t.spareAssetTag },
   { endpoint: "/api/cms/get.php", params: (t) => ({ p: t.cmsPageId }), shows: (t) => `${t.marker} page content` },
   { endpoint: "/api/cms/list.php", params: () => ({}), shows: (t) => `${t.marker} page` },
+  { endpoint: "/api/instances/users.php", params: () => ({}), method: "GET", shows: (t) => t.users.limited.email },
+  { endpoint: "/api/instances/list.php", params: () => ({}), shows: (t) => `${t.marker} Ltd` },
   { endpoint: "/api/projects/getComments.php", params: (t) => ({ projects_id: t.projectId }), shows: (t) => `${t.marker} quick comment` },
 ];
 
@@ -106,6 +108,18 @@ const pageCases: PageCase[] = [
   { file: "cms/stats.php", url: (t) => `/cms/stats.php?p=${t.cmsPageId}`, shows: (t) => `${t.marker} user` },
   { file: "training/index.php", url: () => `/training/`, shows: (t) => `${t.marker} training module` },
   { file: "index.php", url: () => `/`, shows: (t) => `${t.marker} Ltd` },
+  // Business settings: the sidebar lists the business's projects, so every page shows its marker
+  ...[
+    "instances/billing.php", "instances/calendar.php", "instances/calendarSettings.php", "instances/configuration/barcodes.php",
+    "instances/configuration/invoices.php", "instances/configuration/logo.php", "instances/join.php", "instances/navigation.php",
+    "instances/new.php", "instances/public.php", "instances/stats.php", "instances/trustedDomains.php",
+  ].map((file) => ({ file, url: () => `/${file}`, shows: (t: Tenant) => `${t.marker} Ltd` })),
+  { file: "instances/configuration/asset-status.php", url: () => `/instances/configuration/asset-status.php`, shows: (t) => `${t.marker} picked` },
+  { file: "instances/customCategories.php", url: () => `/instances/customCategories.php`, shows: (t) => `${t.marker} category` },
+  { file: "instances/groups.php", url: () => `/instances/groups.php`, shows: (t) => `${t.marker} asset group` },
+  { file: "instances/projectStatuses.php", url: () => `/instances/projectStatuses.php`, shows: (t) => `${t.marker} status second` },
+  { file: "instances/projectTypes.php", url: () => `/instances/projectTypes.php`, shows: (t) => `${t.marker} project type` },
+  { file: "instances/signupCodes.php", url: () => `/instances/signupCodes.php`, shows: (t) => `${t.marker} signup code` },
   { file: "search.php", url: () => `/search.php?term=E2E_TENANT`, shows: (t) => `${t.marker} project` },
 ];
 
@@ -189,6 +203,22 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/file/share.php", params: (t) => ({ s3files_id: t.fileId }) },
   // The seeded file isn't shared, so there's no share for the control to remove
   { endpoint: "/api/file/removeShare.php", params: (t) => ({ s3files_id: t.fileId }), control: false },
+  // Business settings
+  { endpoint: "/api/instances/assetAssignmentStatus/edit.php", params: (t) => ({ statusId: t.assignmentStatusId, statusName: "Renamed by e2e" }) },
+  { endpoint: "/api/instances/assetAssignmentStatus/delete.php", params: (t) => ({ statusId: t.assignmentStatusId }) },
+  { endpoint: "/api/instances/assetAssignmentStatus/reorder.php", params: (t) => ({ order: ["", t.assignmentStatusId] }) },
+  { endpoint: "/api/instances/projectStatus/edit.php", params: (t) => ({ formData: formData({ projectsStatuses_id: t.projectStatusIds.first, projectsStatuses_name: "Renamed by e2e" }) }) },
+  { endpoint: "/api/instances/projectStatus/editPageRank.php", params: (t) => ({ order: ["", "", t.projectStatusIds.first] }) },
+  { endpoint: "/api/instances/projectTypes/edit.php", params: (t) => ({ formData: formData({ projectsTypes_id: t.projectTypeId, projectsTypes_name: "Renamed by e2e" }) }) },
+  { endpoint: "/api/instances/archiveUser.php", params: (t) => ({ userid: t.users.limited.id }) },
+  { endpoint: "/api/instances/removeUser.php", params: (t) => ({ userid: t.users.limited.id }) },
+  // A's deleted account is put in the target's role: the position must be the caller's own
+  { endpoint: "/api/instances/addUser.php", params: (t, self) => ({ rolegroup: t.positions.limited, rolename: "e2e", users: [self.users.deleted.id] }) },
+  // These only ever change the caller's own business, whatever is sent
+  { endpoint: "/api/instances/editInstance.php", params: () => ({ formData: formData({ instances_phone: "01234 567890" }) }) },
+  { endpoint: "/api/instances/editCalendarSettings.php", params: () => ({ formData: formData({ defaultView: "timeGridWeek" }) }) },
+  { endpoint: "/api/instances/editInstancePublicSite.php", params: () => ({ formData: formData({ enabled: "on" }) }) },
+  { endpoint: "/api/permissions/newInstancePosition.php", params: () => ({ name: "Role by e2e" }) },
   // Clients
   { endpoint: "/api/clients/edit.php", params: (t) => ({ formData: formData({ clients_id: t.clientId, clients_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/clients/archive.php", params: (t) => ({ clients_id: t.clientId }) },
@@ -224,6 +254,7 @@ const moveCases: WriteCase[] = (
     ["/api/categories/groups/edit.php", "assetCategoriesGroups", "assetCategoriesGroups_id", "categoryGroupId"],
     ["/api/cms/editPageConfig.php", "cmsPages", "cmsPages_id", "cmsPageId"],
     ["/api/modules/edit.php", "modules", "modules_id", "moduleId", "Saves every submitted field, including instances_id"],
+    ["/api/instances/projectTypes/edit.php", "projectsTypes", "projectsTypes_id", "projectTypeId", "Saves every submitted field, including instances_id"],
   ] as const
 ).map(([endpoint, table, field, key, fixme]) => ({
   endpoint,
@@ -232,6 +263,13 @@ const moveCases: WriteCase[] = (
   control: false as const,
   restore: (a: Tenant) => [`UPDATE ${table} SET instances_id = ? WHERE ${field} = ?`, [a.instanceId, a[key]]],
 }));
+moveCases.push({
+  endpoint: "/api/instances/projectStatus/edit.php",
+  params: (t, self) => ({ formData: formData({ projectsStatuses_id: self.projectStatusIds.first, instances_id: t.instanceId }) }),
+  control: false,
+  restore: (a) => ["UPDATE projectsStatuses SET instances_id = ? WHERE projectsStatuses_id = ?", [a.instanceId, a.projectStatusIds.first]],
+  fixme: "Saves every submitted field, including instances_id",
+});
 
 const count = ([sql, params]: [string, unknown[]]) => Number(dbQuery<{ n: number }>(sql, params)[0].n);
 const linkCases: LinkCase[] = [
