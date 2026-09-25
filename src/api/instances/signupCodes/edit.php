@@ -8,6 +8,9 @@ foreach ($_POST['formData'] as $item) {
 if (!is_numeric($array['signupCodes_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 elseif (!$AUTH->instancePermissionCheck("BUSINESS:USER_SIGNUP_CODES:EDIT")) die("404");
 
+$array = array_intersect_key($array, array_flip(["signupCodes_id", "signupCodes_name", "signupCodes_notes", "signupCodes_role", "signupCodes_valid", "signupCodes_deleted", "instancePositions_id"]));
+if (isset($array['instancePositions_id']) and $array['instancePositions_id'] !== "" and !$bCMS->positionIsInInstance($array['instancePositions_id'], $AUTH->data['instance']['instances_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Role not found"]);
+if (isset($array['instancePositions_id']) and $array['instancePositions_id'] === "") $array['instancePositions_id'] = null;
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("signupCodes_deleted", 0);
 $DBLIB->where("signupCodes_id", $array['signupCodes_id']);
