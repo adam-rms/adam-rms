@@ -11,7 +11,7 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**138 of 270** entries have at least one test, and **3** have a known leak (68 pages, 202 API endpoints).
+**159 of 270** entries have at least one test, and **7** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
@@ -20,8 +20,8 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | Clients | 5 | 5 |
 | Locations | 6 | 6 |
 | Maintenance | 21 | 21 |
-| CMS | 13 | 1 |
-| Training | 10 | 1 |
+| CMS | 13 | 13 |
+| Training | 10 | 10 |
 | Files | 10 | 0 |
 | Instances (business settings, users, permissions) | 61 | 3 |
 | Server administration | 9 | 0 |
@@ -188,34 +188,34 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `cms/customDashboards.php` | instance: `CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS` |  | ✔ | ⬜ |
-| page | `cms/edit.php` | instance: `BUSINESS:BUSINESS_STATS:VIEW`, `CMS:CMS_PAGES:EDIT` |  | ✔ | ⬜ |
+| page | `cms/customDashboards.php` | instance: `CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `cms/edit.php` | instance: `BUSINESS:BUSINESS_STATS:VIEW`, `CMS:CMS_PAGES:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `cms/index.php` | instance: `BUSINESS:BUSINESS_STATS:VIEW`, `CMS:CMS_PAGES:EDIT` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| page | `cms/list.php` | instance: `CMS:CMS_PAGES:CREATE` |  | ✔ | ⬜ |
-| page | `cms/log.php` | instance: `CMS:CMS_PAGES:VIEW:ACCESS_LOG` |  | ✔ | ⬜ |
-| page | `cms/stats.php` | instance: `CMS:CMS_PAGES:CREATE` |  | ✔ | ⬜ |
-| API | `api/cms/editPageConfig.php` | instance: `CMS:CMS_PAGES:EDIT` | `cmsPages_id` | ✔ | ⬜ |
-| API | `api/cms/editPageContent-rollback.php` | instance: `CMS:CMS_PAGES:EDIT` | `cmsPages_id` | ✔ | ⬜ |
-| API | `api/cms/editPageContent.php` | instance: `CMS:CMS_PAGES:EDIT` | `cmsPages_id` | ✔ | ⬜ |
-| API | `api/cms/editPageRank.php` | instance: `CMS:CMS_PAGES:EDIT` |  | ✔ | ⬜ |
-| API | `api/cms/get.php` | login only |  | ✔ | ⬜ |
-| API | `api/cms/list.php` | login only |  | ✔ | ⬜ |
-| API | `api/cms/setCustomDashboard.php` | instance: `CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS` | `cmsPages_id`, `instancePositions_id` | ✔ | ⬜ |
+| page | `cms/list.php` | instance: `CMS:CMS_PAGES:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `cms/log.php` | instance: `CMS:CMS_PAGES:VIEW:ACCESS_LOG` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `cms/stats.php` | instance: `CMS:CMS_PAGES:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/cms/editPageConfig.php` | instance: `CMS:CMS_PAGES:EDIT` | `cmsPages_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/cms/editPageContent-rollback.php` | instance: `CMS:CMS_PAGES:EDIT` | `cmsPages_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/cms/editPageContent.php` | instance: `CMS:CMS_PAGES:EDIT` | `cmsPages_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/cms/editPageRank.php` | instance: `CMS:CMS_PAGES:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/cms/get.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/cms/list.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/cms/setCustomDashboard.php` | instance: `CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS` | `cmsPages_id`, `instancePositions_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 
 ## Training
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `training/index.php` | instance: `TRAINING:EDIT`, `TRAINING:VIEW`, `TRAINING:VIEW:DRAFT_MODULES`, `TRAINING:VIEW:USER_PROGRESS_IN_MODULES` |  | ✔ | ⬜ |
+| page | `training/index.php` | instance: `TRAINING:EDIT`, `TRAINING:VIEW`, `TRAINING:VIEW:DRAFT_MODULES`, `TRAINING:VIEW:USER_PROGRESS_IN_MODULES` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `training/module.php` | instance: `TRAINING:EDIT`, `TRAINING:VIEW`, `TRAINING:VIEW:DRAFT_MODULES`, `TRAINING:VIEW:USER_PROGRESS_IN_MODULES` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/modules/edit.php` | instance: `TRAINING:EDIT` | `modules_id` | ✔ | ⬜ |
-| API | `api/modules/new.php` | instance: `TRAINING:CREATE` | `modules_id`, `users_userid` | ✔ | ⬜ |
-| API | `api/modules/steps/edit.php` | instance: `TRAINING:EDIT` | `modulesSteps_id` | ✔ | ⬜ |
-| API | `api/modules/steps/new.php` | instance: `TRAINING:EDIT` | `modules_id` | ✔ | ⬜ |
-| API | `api/modules/steps/sortRank.php` | instance: `TRAINING:EDIT` |  | ✔ | ⬜ |
-| API | `api/training/certify.php` | instance: `TRAINING:EDIT:CERTIFY_USER` | `modules_id`, `userid` | ✘ | ⬜ |
-| API | `api/training/completeStep.php` | login only | `id` | ✘ | ⬜ |
-| API | `api/training/revokeAll.php` | instance: `TRAINING:EDIT:REVOKE_USER_CERTIFICATION` | `modules_id`, `userid` | ✘ | ⬜ |
+| API | `api/modules/edit.php` | instance: `TRAINING:EDIT` | `modules_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/modules/new.php` | instance: `TRAINING:CREATE` | `modules_id`, `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts` |
+| API | `api/modules/steps/edit.php` | instance: `TRAINING:EDIT` | `modulesSteps_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/modules/steps/new.php` | instance: `TRAINING:EDIT` | `modules_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/modules/steps/sortRank.php` | instance: `TRAINING:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/training/certify.php` | instance: `TRAINING:EDIT:CERTIFY_USER` | `modules_id`, `userid` | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/training/completeStep.php` | login only | `id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/training/revokeAll.php` | instance: `TRAINING:EDIT:REVOKE_USER_CERTIFICATION` | `modules_id`, `userid` | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
 
 ## Files
 

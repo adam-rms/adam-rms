@@ -69,6 +69,8 @@ const readCases: ReadCase[] = [
   { endpoint: "/api/assets/export.php", params: () => ({ csv: 1 }) },
   { endpoint: "/api/assets/getAssetTypeData.php", params: (t) => ({ term: t.assetTypeId }), shows: (t) => `"assetTypes_id":${t.assetTypeId}`, hides: (t) => `"assetTypes_id":${t.assetTypeId}` },
   { endpoint: "/api/assets/substitutions.php", params: (t) => ({ assetsAssignments_id: t.assignmentId }), shows: (t) => t.spareAssetTag, hides: (t) => t.spareAssetTag },
+  { endpoint: "/api/cms/get.php", params: (t) => ({ p: t.cmsPageId }), shows: (t) => `${t.marker} page content` },
+  { endpoint: "/api/cms/list.php", params: () => ({}), shows: (t) => `${t.marker} page` },
   { endpoint: "/api/projects/getComments.php", params: (t) => ({ projects_id: t.projectId }), shows: (t) => `${t.marker} quick comment` },
 ];
 
@@ -97,6 +99,12 @@ const pageCases: PageCase[] = [
   { file: "maintenance/barcodeGenerator.php", url: (t) => `/maintenance/barcodeGenerator.php?type=${t.assetTypeId}&category=${t.categoryId}&manufacturer=${t.manufacturerId}`, shows: (t) => t.assetTag, hides: (t) => t.assetTag },
   { file: "maintenance/barcodeGenerator.php", label: "all", url: () => `/maintenance/barcodeGenerator.php?all`, shows: (t) => t.assetTag, hides: (t) => t.assetTag },
   { file: "maintenance/barcodePrint.php", url: (t) => `/maintenance/barcodePrint.php?ids=${t.assetId}&groups=${t.assetGroupId}`, shows: (t) => t.assetTag, hides: (t) => t.assetTag },
+  { file: "cms/list.php", url: () => `/cms/list.php`, shows: (t) => `${t.marker} page` },
+  { file: "cms/customDashboards.php", url: () => `/cms/customDashboards.php`, shows: (t) => `${t.marker} page` },
+  { file: "cms/edit.php", url: (t) => `/cms/edit.php?p=${t.cmsPageId}`, shows: (t) => `${t.marker} page` },
+  { file: "cms/log.php", url: (t) => `/cms/log.php?p=${t.cmsPageId}`, shows: (t) => `${t.marker} user` },
+  { file: "cms/stats.php", url: (t) => `/cms/stats.php?p=${t.cmsPageId}`, shows: (t) => `${t.marker} user` },
+  { file: "training/index.php", url: () => `/training/`, shows: (t) => `${t.marker} training module` },
   { file: "search.php", url: () => `/search.php?term=E2E_TENANT`, shows: (t) => `${t.marker} project` },
 ];
 
@@ -160,6 +168,20 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/manufacturer/edit.php", params: (t) => ({ formData: formData({ manufacturers_id: t.manufacturerId, manufacturers_name: "Renamed by e2e" }) }) },
   // A isn't a member of B, so there's nowhere for the control to transfer A's asset to
   { endpoint: "/api/assets/transfer.php", params: (t, self) => ({ assets_id: self.assetId, new_instances_id: t.instanceId, assetTypes_id: t.assetTypeId }), control: false },
+  // CMS
+  { endpoint: "/api/cms/editPageConfig.php", params: (t) => ({ formData: formData({ cmsPages_id: t.cmsPageId, cmsPages_name: "Renamed by e2e" }) }) },
+  { endpoint: "/api/cms/editPageContent.php", params: (t) => ({ cmsPages_id: t.cmsPageId, pageData: { cards: [{ content: "<p>Changed by e2e</p>" }] }, changelog: "e2e" }) },
+  { endpoint: "/api/cms/editPageContent-rollback.php", params: (t) => ({ cmsPages_id: t.cmsPageId, change: t.cmsPageDraftId }) },
+  { endpoint: "/api/cms/editPageRank.php", params: (t) => ({ order: [t.cmsPageId] }) },
+  { endpoint: "/api/cms/setCustomDashboard.php", params: (t) => ({ instancePositions_id: t.positions.limited, cmsPages_id: t.cmsPageId }) },
+  // Training
+  { endpoint: "/api/modules/edit.php", params: (t) => ({ formData: formData({ modules_id: t.moduleId, modules_name: "Renamed by e2e" }) }) },
+  { endpoint: "/api/modules/steps/edit.php", params: (t) => ({ formData: formData({ modulesSteps_id: t.moduleStepId, modulesSteps_name: "Renamed by e2e", modulesSteps_content: "Changed by e2e" }) }) },
+  { endpoint: "/api/modules/steps/new.php", params: (t) => ({ formData: formData({ modules_id: t.moduleId, modulesSteps_name: "Step by e2e", modulesSteps_type: 1, modulesSteps_order: 50, modulesSteps_locked: 0 }) }) },
+  { endpoint: "/api/modules/steps/sortRank.php", params: (t) => ({ order: [t.moduleStepId] }) },
+  { endpoint: "/api/training/certify.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId, comment: "Certified by e2e" }), fixme: "Checks neither the module nor the user, so A can certify B's users in B's modules" },
+  { endpoint: "/api/training/revokeAll.php", params: (t) => ({ userid: t.users.limited.id, modules_id: t.moduleId }), fixme: "Checks neither the module nor the user, so A can revoke B's users' certifications" },
+  { endpoint: "/api/training/completeStep.php", params: (t) => ({ id: t.moduleStepId }), fixme: "Doesn't check the step's module is in the business, so A's user gets progress on B's module" },
   // Clients
   { endpoint: "/api/clients/edit.php", params: (t) => ({ formData: formData({ clients_id: t.clientId, clients_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/clients/archive.php", params: (t) => ({ clients_id: t.clientId }) },
@@ -193,9 +215,12 @@ const moveCases: WriteCase[] = (
     ["/api/groups/edit.php", "assetGroups", "assetGroups_id", "assetGroupId"],
     ["/api/categories/edit.php", "assetCategories", "assetCategories_id", "categoryId"],
     ["/api/categories/groups/edit.php", "assetCategoriesGroups", "assetCategoriesGroups_id", "categoryGroupId"],
+    ["/api/cms/editPageConfig.php", "cmsPages", "cmsPages_id", "cmsPageId"],
+    ["/api/modules/edit.php", "modules", "modules_id", "moduleId", "Saves every submitted field, including instances_id"],
   ] as const
-).map(([endpoint, table, field, key]) => ({
+).map(([endpoint, table, field, key, fixme]) => ({
   endpoint,
+  fixme,
   params: (t: Tenant, self: Tenant) => ({ formData: formData({ [field]: self[key], instances_id: t.instanceId }) }),
   control: false as const,
   restore: (a: Tenant) => [`UPDATE ${table} SET instances_id = ? WHERE ${field} = ?`, [a.instanceId, a[key]]],
@@ -225,6 +250,7 @@ const linkCases: LinkCase[] = [
   { endpoint: "/api/assets/newAssetType.php", label: "manufacturer", fixme: "manufacturers_id isn't checked, so the new type shows B's manufacturer name", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: t.manufacturerId, assetCategories_id: a.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND manufacturers_id = ?", [a.instanceId, b.manufacturerId]] },
   { endpoint: "/api/assets/newAssetType.php", label: "category", fixme: "assetCategories_id isn't checked, so the new type shows B's category name", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: a.manufacturerId, assetCategories_id: t.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND assetCategories_id = ?", [a.instanceId, b.categoryId]] },
   { endpoint: "/api/categories/new.php", fixme: "assetCategoriesGroups_id isn't checked, so the new category sits in B's category group", params: (t) => ({ formData: formData({ assetCategories_name: "Category by e2e", assetCategoriesGroups_id: t.categoryGroupId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetCategories WHERE instances_id = ? AND assetCategoriesGroups_id = ?", [a.instanceId, b.categoryGroupId]] },
+  { endpoint: "/api/modules/steps/edit.php", params: (t, a) => ({ formData: formData({ modulesSteps_id: a.moduleStepId, modules_id: t.moduleId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM modulesSteps WHERE modulesSteps_id = ? AND modules_id = ?", [a.moduleStepId, b.moduleId]], fixme: "Saves every submitted field, so A's step can be moved into B's module" },
   // Watchers are notified when assets are added to or removed from the group
   { endpoint: "/api/groups/watch.php", fixme: "assetGroups_id isn't checked, so A's user is notified of B's asset tags and group name when B changes the group", params: (t) => ({ assetGroups_id: t.assetGroupId }), linked: (b, a) => ["SELECT COUNT(*) n FROM users WHERE users_userid = ? AND FIND_IN_SET(?, users_assetGroupsWatching)", [a.users.full.id, b.assetGroupId]] },
 ];
@@ -304,6 +330,16 @@ test.describe("a sub-project of a project whose manager has since joined another
     expect(succeeded(response), response.body.slice(0, 500)).toBe(true);
     const [project] = dbQuery<{ projects_manager: number }>("SELECT projects_manager FROM projects WHERE projects_id = ?", [response.json.response.projects_id]);
     expect(project.projects_manager).toBe(a.users.full.id);
+    seedTenants();
+  });
+});
+
+test.describe("a custom dashboard set to another business's page", () => {
+  test("isn't shown", async ({ asA, tenants: { a, b } }) => {
+    await asA.api("/api/cms/setCustomDashboard.php", { instancePositions_id: a.positions.full, cmsPages_id: b.cmsPageId });
+    const control = await asA.api("/api/cms/setCustomDashboard.php", { instancePositions_id: a.positions.limited, cmsPages_id: a.cmsPageId });
+    expect(succeeded(control)).toBe(true);
+    expect(mentions(await asA.page("/"), b.marker)).toBe(false);
     seedTenants();
   });
 });

@@ -43,8 +43,10 @@ export type Tenant = {
   maintenanceJobId: number;
   maintenanceMessageId: number;
   cmsPageId: number;
+  cmsPageDraftId: number;
   moduleId: number;
   moduleStepId: number;
+  certificationId: number;
   signupCodeId: number;
 };
 type TenantUser = { id: number; email: string };

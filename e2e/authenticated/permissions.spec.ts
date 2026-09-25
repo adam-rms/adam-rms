@@ -46,6 +46,19 @@ const writeCases: ApiCase[] = [
   { endpoint: "/api/groups/new.php", permission: "ASSETS:ASSET_GROUPS:CREATE", params: () => ({ formData: formData({ assetGroups_name: "E2E_TENANT_A_SECRET group by e2e" }) }) },
   { endpoint: "/api/categories/new.php", permission: "ASSETS:ASSET_CATEGORIES:EDIT", params: (a) => ({ formData: formData({ assetCategories_name: "E2E_TENANT_A_SECRET category by e2e", assetCategoriesGroups_id: a.categoryGroupId, assetCategories_rank: 99 }) }) },
   { endpoint: "/api/categories/groups/new.php", permission: "ASSETS:ASSET_CATEGORIES:EDIT", params: () => ({ formData: formData({ assetCategoriesGroups_name: "E2E_TENANT_A_SECRET category group by e2e" }) }) },
+  // CMS
+  { endpoint: "/api/cms/editPageConfig.php", permission: "CMS:CMS_PAGES:EDIT", params: (a) => ({ formData: formData({ cmsPages_id: a.cmsPageId, cmsPages_name: "Renamed by e2e" }) }) },
+  { endpoint: "/api/cms/editPageContent.php", permission: "CMS:CMS_PAGES:EDIT", params: (a) => ({ cmsPages_id: a.cmsPageId, pageData: { cards: [{ content: "<p>Changed by e2e</p>" }] }, changelog: "e2e" }) },
+  { endpoint: "/api/cms/editPageRank.php", permission: "CMS:CMS_PAGES:EDIT", params: (a) => ({ order: [a.cmsPageId] }) },
+  { endpoint: "/api/cms/setCustomDashboard.php", permission: "CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS", params: (a) => ({ instancePositions_id: a.positions.limited, cmsPages_id: a.cmsPageId }) },
+  // Training
+  { endpoint: "/api/modules/new.php", permission: "TRAINING:CREATE", params: () => ({ formData: formData({ modules_name: "E2E_TENANT_A_SECRET module by e2e" }) }) },
+  { endpoint: "/api/modules/edit.php", permission: "TRAINING:EDIT", params: (a) => ({ formData: formData({ modules_id: a.moduleId, modules_name: "Renamed by e2e" }) }) },
+  { endpoint: "/api/modules/steps/new.php", permission: "TRAINING:EDIT", params: (a) => ({ formData: formData({ modules_id: a.moduleId, modulesSteps_name: "Step by e2e", modulesSteps_type: 1, modulesSteps_order: 50, modulesSteps_locked: 0 }) }) },
+  { endpoint: "/api/modules/steps/edit.php", permission: "TRAINING:EDIT", params: (a) => ({ formData: formData({ modulesSteps_id: a.moduleStepId, modulesSteps_name: "Renamed by e2e", modulesSteps_content: "Changed by e2e" }) }) },
+  { endpoint: "/api/modules/steps/sortRank.php", permission: "TRAINING:EDIT", params: (a) => ({ order: [a.moduleStepId] }) },
+  { endpoint: "/api/training/certify.php", permission: "TRAINING:EDIT:CERTIFY_USER", params: (a) => ({ userid: a.users.limited.id, modules_id: a.moduleId, comment: "Certified by e2e" }) },
+  { endpoint: "/api/training/revokeAll.php", permission: "TRAINING:EDIT:REVOKE_USER_CERTIFICATION", params: (a) => ({ userid: a.users.limited.id, modules_id: a.moduleId }) },
   // Clients
   { endpoint: "/api/clients/new.php", permission: "CLIENTS:CREATE", params: () => ({ clients_name: "New by e2e" }) },
   { endpoint: "/api/clients/edit.php", permission: "CLIENTS:EDIT", params: (a) => ({ formData: formData({ clients_id: a.clientId, clients_name: "Renamed by e2e" }) }) },
@@ -73,6 +86,12 @@ const refusedPages: { file: string; url: string | ((a: Tenant) => string); permi
   { file: "maintenance/barcodeGenerator.php", url: "/maintenance/barcodeGenerator.php", permission: "ASSETS:ASSET_BARCODES:VIEW" },
   { file: "maintenance/barcodePrint.php", url: (a) => `/maintenance/barcodePrint.php?ids=${a.assetId}`, permission: "ASSETS:ASSET_BARCODES:VIEW" },
   { file: "location/barcode.php", url: (a) => `/location/barcode.php?location=${a.locationId}`, permission: "LOCATIONS:LOCATION_BARCODES:VIEW" },
+  { file: "cms/list.php", url: "/cms/list.php", permission: "CMS:CMS_PAGES:CREATE" },
+  { file: "cms/stats.php", url: (a) => `/cms/stats.php?p=${a.cmsPageId}`, permission: "CMS:CMS_PAGES:CREATE" },
+  { file: "cms/edit.php", url: (a) => `/cms/edit.php?p=${a.cmsPageId}`, permission: "CMS:CMS_PAGES:EDIT" },
+  { file: "cms/log.php", url: (a) => `/cms/log.php?p=${a.cmsPageId}`, permission: "CMS:CMS_PAGES:VIEW:ACCESS_LOG" },
+  { file: "cms/customDashboards.php", url: "/cms/customDashboards.php", permission: "CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS" },
+  { file: "training/index.php", url: "/training/", permission: "TRAINING:VIEW" },
   { file: "project/crew/vacancies.php", url: "/project/crew/vacancies.php", permission: "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES" },
 ];
 const NOT_FOUND = "Oops! Page not found.";

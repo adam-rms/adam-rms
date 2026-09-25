@@ -104,10 +104,10 @@ function tenant(string $letter): array {
     ]);
 
     $fullPosition = upsert("instancePositions", "instancePositions_id", ["instances_id" => $instance, "instancePositions_displayName" => "$marker full access"], [
-        "instancePositions_rank" => 1, "instancePositions_deleted" => 0, "instancePositions_actions" => implode(",", array_keys($instanceActions)),
+        "instancePositions_rank" => 1, "instancePositions_deleted" => 0, "instancePositions_actions" => implode(",", array_keys($instanceActions)), "cmsPages_id" => null,
     ]);
     $limitedPosition = upsert("instancePositions", "instancePositions_id", ["instances_id" => $instance, "instancePositions_displayName" => "$marker limited"], [
-        "instancePositions_rank" => 2, "instancePositions_deleted" => 0, "instancePositions_actions" => implode(",", LIMITED_PERMISSIONS),
+        "instancePositions_rank" => 2, "instancePositions_deleted" => 0, "instancePositions_actions" => implode(",", LIMITED_PERMISSIONS), "cmsPages_id" => null,
     ]);
     $t['positions'] = ["full" => $fullPosition, "limited" => $limitedPosition];
 
@@ -260,10 +260,13 @@ function tenant(string $letter): array {
         "cmsPages_name" => "$marker page", "cmsPages_showNav" => 1, "cmsPages_visibleToGroups" => null, "cmsPages_navOrder" => 99,
         "cmsPages_archived" => 0, "cmsPages_deleted" => 0, "cmsPages_subOf" => null, "cmsPages_added" => "2024-01-01 00:00:00",
     ], $remembered['cmsPageId'] ?? null);
-    upsert("cmsPagesDrafts", "cmsPagesDrafts_id", ["cmsPages_id" => $t['cmsPageId'], "cmsPagesDrafts_revisionID" => 1], [
+    $t['cmsPageDraftId'] = upsert("cmsPagesDrafts", "cmsPagesDrafts_id", ["cmsPages_id" => $t['cmsPageId'], "cmsPagesDrafts_revisionID" => 1], [
         "users_userid" => $manager, "cmsPagesDrafts_timestamp" => "2024-01-01 00:00:00", "cmsPagesDrafts_changelog" => "$marker changelog",
         "cmsPagesDrafts_data" => json_encode([["type" => "html", "content" => "<p>$marker page content</p>"]]),
     ]);
+    // Drafts tests add would be shown instead of the seeded one
+    $db->prepare("DELETE FROM cmsPagesDrafts WHERE cmsPages_id = ? AND cmsPagesDrafts_id != ?")->execute([$t['cmsPageId'], $t['cmsPageDraftId']]);
+    upsert("cmsPagesViews", "cmsPagesViews_id", ["cmsPages_id" => $t['cmsPageId'], "users_userid" => $manager, "cmsPages_type" => 1], ["cmsPagesViews_timestamp" => "2024-01-01 00:00:00"]);
     $t['moduleId'] = upsert("modules", "modules_id", ["instances_id" => $instance, "modules_learningObjectives" => "$marker objectives"], [
         "users_userid" => $manager, "modules_name" => "$marker training module", "modules_description" => "$marker module description",
         "modules_visibleToGroups" => null, "modules_deleted" => 0, "modules_show" => 1, "modules_thumbnail" => null, "modules_type" => 1,
@@ -272,6 +275,10 @@ function tenant(string $letter): array {
         "modulesSteps_deleted" => 0, "modulesSteps_show" => 1, "modulesSteps_type" => 1, "modulesSteps_content" => "$marker step content",
         "modulesSteps_completionTime" => 0, "modulesSteps_internalNotes" => null, "modulesSteps_order" => 1, "modulesSteps_locked" => 0,
     ], $remembered['moduleStepId'] ?? null);
+    $t['certificationId'] = upsert("userModulesCertifications", "userModulesCertifications_id", ["modules_id" => $t['moduleId'], "users_userid" => $t['users']['limited']['id']], [
+        "userModulesCertifications_revoked" => 0, "userModulesCertifications_approvedBy" => $manager,
+        "userModulesCertifications_approvedComment" => "$marker certification", "userModulesCertifications_timestamp" => "2024-01-01 00:00:00",
+    ], $remembered['certificationId'] ?? null);
     $t['signupCodeId'] = upsert("signupCodes", "signupCodes_id", ["signupCodes_name" => "e2e-tenant-$lower-signup"], [
         "instances_id" => $instance, "signupCodes_deleted" => 0, "signupCodes_valid" => 1, "signupCodes_notes" => "$marker signup code",
         "signupCodes_role" => "$marker role", "instancePositions_id" => $limitedPosition,
