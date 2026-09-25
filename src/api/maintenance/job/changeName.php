@@ -3,12 +3,6 @@ require_once __DIR__ . '/../../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck("MAINTENANCE_JOBS:EDIT:NAME") or !isset($_POST['maintenanceJobs_id'])) die("404");
 
-//The update below reports success even when no job matches, so check the job is in this business first
-$DBLIB->where("maintenanceJobs.instances_id", $AUTH->data['instance']['instances_id']);
-$DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
-$DBLIB->where("maintenanceJobs_id", $_POST['maintenanceJobs_id']);
-if (!$DBLIB->getOne("maintenanceJobs", ["maintenanceJobs_id"])) die("404");
-
 $DBLIB->where("maintenanceJobs.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
 $DBLIB->where("maintenanceJobs_id", $_POST['maintenanceJobs_id']);

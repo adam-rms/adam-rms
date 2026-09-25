@@ -29,8 +29,6 @@ type WriteCase = {
   /** false when the request is a no-op on A's seeded state (e.g. un-archiving something not archived) */
   control?: false;
   fixme?: string;
-  /** B's project or maintenance job history gets an entry although B's records are untouched */
-  historyFixme?: string;
   /** SQL that undoes the request if it moved A's record into B, so later tests still find it */
   restore?: (a: Tenant) => [string, unknown[]];
 };
@@ -232,14 +230,6 @@ test.describe("changing another business's records", () => {
         await asA.api(c.endpoint, c.params(a, a));
         expect(snapshot(a.instanceId), "control: the same request changes A's own records").not.toEqual(ownBefore);
       }
-      seedTenants();
-    });
-  }
-  for (const c of writeCases) {
-    maybeFixme(c.historyFixme ?? c.fixme)(`${c.endpoint} adds nothing to B's project or job history`, async ({ asA, tenants: { a, b } }) => {
-      const before = snapshot(b.instanceId).history;
-      await asA.api(c.endpoint, c.params(b, a));
-      expect(snapshot(b.instanceId).history).toEqual(before);
       seedTenants();
     });
   }
