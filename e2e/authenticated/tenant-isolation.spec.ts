@@ -17,6 +17,8 @@ type ReadCase = {
   params: (t: Tenant) => Params;
   /** Text the control response must contain. Defaults to the business's marker. */
   shows?: (t: Tenant) => string;
+  /** Text that means the target's data leaked. Defaults to the business's marker. */
+  hides?: (t: Tenant) => string;
   /** Endpoints that read $_GET rather than $_POST */
   method?: "GET";
   fixme?: string;
@@ -35,6 +37,8 @@ type WriteCase = {
 
 type LinkCase = {
   endpoint: string;
+  /** Tells apart cases for the same endpoint */
+  label?: string;
   /** Point one of `self`'s records at `target`'s record */
   params: (target: Tenant, self: Tenant) => Params;
   /** SQL counting rows in which A's data refers to B's record */
@@ -42,7 +46,7 @@ type LinkCase = {
   fixme?: string;
 };
 
-type PageCase = { file: string; url: (t: Tenant) => string; shows: (t: Tenant) => string; fixme?: string };
+type PageCase = { file: string; label?: string; url: (t: Tenant) => string; shows: (t: Tenant) => string; hides?: (t: Tenant) => string; fixme?: string };
 
 const readCases: ReadCase[] = [
   { endpoint: "/api/projects/list.php", params: () => ({}) },
@@ -61,6 +65,11 @@ const readCases: ReadCase[] = [
   { endpoint: "/api/categories/search.php", params: () => ({ term: "E2E_TENANT" }) },
   { endpoint: "/api/manufacturer/search.php", params: () => ({ term: "E2E_TENANT" }) },
   { endpoint: "/api/search/search.php", params: () => ({ term: "E2E_TENANT" }), method: "GET" },
+  { endpoint: "/api/assets/searchAssets.php", params: () => ({ term: "E2E_TENANT" }) },
+  { endpoint: "/api/assets/export.php", params: () => ({ csv: 1 }) },
+  { endpoint: "/api/assets/getAssetTypeData.php", params: (t) => ({ term: t.assetTypeId }), shows: (t) => `"assetTypes_id":${t.assetTypeId}`, hides: (t) => `"assetTypes_id":${t.assetTypeId}` },
+  { endpoint: "/api/assets/substitutions.php", params: (t) => ({ assetsAssignments_id: t.assignmentId }), shows: (t) => t.spareAssetTag, hides: (t) => t.spareAssetTag },
+  { endpoint: "/api/projects/getComments.php", params: (t) => ({ projects_id: t.projectId }), shows: (t) => `${t.marker} quick comment` },
 ];
 
 const pageCases: PageCase[] = [
@@ -80,6 +89,15 @@ const pageCases: PageCase[] = [
   { file: "cms/index.php", url: (t) => `/cms/?p=${t.cmsPageId}`, shows: (t) => `${t.marker} page` },
   { file: "training/module.php", url: (t) => `/training/module.php?id=${t.moduleId}`, shows: (t) => `${t.marker} training module` },
   { file: "user.php", url: (t) => `/user.php?id=${t.users.limited.id}`, shows: (t) => t.users.limited.email },
+  { file: "manufacturers.php", url: () => `/manufacturers.php`, shows: (t) => `${t.marker} manufacturer` },
+  { file: "manufacturers.php", label: "search", url: () => `/manufacturers.php?q=E2E_TENANT`, shows: (t) => `${t.marker} manufacturer` },
+  { file: "instances/importAssets.php", url: () => `/instances/importAssets.php`, shows: (t) => `${t.marker} category` },
+  { file: "project/crew/vacancies.php", url: () => `/project/crew/vacancies.php`, shows: (t) => `${t.marker} vacancy` },
+  { file: "location/barcode.php", url: (t) => `/location/barcode.php?location=${t.locationId}`, shows: (t) => t.locationBarcodeValue, hides: (t) => t.locationBarcodeValue },
+  { file: "maintenance/barcodeGenerator.php", url: (t) => `/maintenance/barcodeGenerator.php?type=${t.assetTypeId}&category=${t.categoryId}&manufacturer=${t.manufacturerId}`, shows: (t) => t.assetTag, hides: (t) => t.assetTag },
+  { file: "maintenance/barcodeGenerator.php", label: "all", url: () => `/maintenance/barcodeGenerator.php?all`, shows: (t) => t.assetTag, hides: (t) => t.assetTag },
+  { file: "maintenance/barcodePrint.php", url: (t) => `/maintenance/barcodePrint.php?ids=${t.assetId}&groups=${t.assetGroupId}`, shows: (t) => t.assetTag, hides: (t) => t.assetTag },
+  { file: "search.php", url: () => `/search.php?term=E2E_TENANT`, shows: (t) => `${t.marker} project` },
 ];
 
 const writeCases: WriteCase[] = [
@@ -119,6 +137,14 @@ const writeCases: WriteCase[] = [
   },
   { endpoint: "/api/projects/crew/crewRoles/accept.php", params: (t) => ({ projectsVacantRolesApplications_id: t.vacancyApplicationId }) },
   { endpoint: "/api/projects/crew/crewRoles/reject.php", params: (t) => ({ projectsVacantRolesApplications_id: t.vacancyApplicationId }) },
+  { endpoint: "/api/projects/crew/crewRoles/apply.php", params: (t) => ({ formData: formData({ projectsVacantRoles_id: t.vacantRoleId, projectsVacantRolesApplications_applicantComment: "Applied by e2e" }) }) },
+  { endpoint: "/api/projects/crew/sortRank.php", params: (t) => ({ projects_id: t.projectId, order: [t.crewAssignmentId] }) },
+  { endpoint: "/api/projects/changeProjectDeliverDates.php", params: (t) => ({ projects_id: t.projectId, projects_dates_deliver_start: "2031-01-01 09:00", projects_dates_deliver_end: "2031-01-05 09:00" }) },
+  { endpoint: "/api/projects/changeProjectFinanceDurationMaths.php", params: (t) => ({ projects_id: t.projectId, projects_dates_finances_days: 3, projects_dates_finances_weeks: 1 }) },
+  { endpoint: "/api/projects/assets/setStatusByTag.php", params: (t) => ({ projects_id: t.projectId, text: t.assetTag, assetsAssignments_status: t.assignmentStatusId }) },
+  { endpoint: "/api/projects/assets/setStatusBarcode.php", params: (t) => ({ projects_id: t.projectId, text: t.barcodeValue, type: "CODE_128", assetsAssignments_status: t.assignmentStatusId }) },
+  { endpoint: "/api/projects/assets/assign.php", params: (t, self) => ({ projects_id: t.projectId, assets_id: self.spareAssetId }) },
+  { endpoint: "/api/projects/assets/swap.php", params: (t) => ({ assetsAssignments_id: t.assignmentId, assets_id: t.spareAssetId }) },
   // Assets
   { endpoint: "/api/assets/editAsset.php", params: (t) => ({ assets_id: t.assetId, assets_notes: "Changed by e2e", assets_value: "9999.00" }) },
   { endpoint: "/api/assets/archive.php", params: (t) => ({ assets_id: t.assetId, reason: "e2e", date: "2024-02-01" }) },
@@ -132,6 +158,8 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/categories/edit.php", params: (t) => ({ formData: formData({ assetCategories_id: t.categoryId, assetCategories_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/categories/groups/edit.php", params: (t) => ({ formData: formData({ assetCategoriesGroups_id: t.categoryGroupId, assetCategoriesGroups_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/manufacturer/edit.php", params: (t) => ({ formData: formData({ manufacturers_id: t.manufacturerId, manufacturers_name: "Renamed by e2e" }) }) },
+  // A isn't a member of B, so there's nowhere for the control to transfer A's asset to
+  { endpoint: "/api/assets/transfer.php", params: (t, self) => ({ assets_id: self.assetId, new_instances_id: t.instanceId, assetTypes_id: t.assetTypeId }), control: false },
   // Clients
   { endpoint: "/api/clients/edit.php", params: (t) => ({ formData: formData({ clients_id: t.clientId, clients_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/clients/archive.php", params: (t) => ({ clients_id: t.clientId }) },
@@ -183,6 +211,8 @@ const linkCases: LinkCase[] = [
   { endpoint: "/api/projects/changeProjectManager.php", params: (t, a) => ({ projects_id: a.projectId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE projects_id = ? AND projects_manager = ?", [a.projectId, b.users.full.id]] },
   { endpoint: "/api/projects/new.php", params: (t, a) => ({ projects_name: "New by e2e", projects_manager: a.users.full.id, projectsType_id: t.projectTypeId }), linked: (b, a) => ["SELECT COUNT(*) n FROM projects WHERE instances_id = ? AND projectsTypes_id = ?", [a.instanceId, b.projectTypeId]] },
   { endpoint: "/api/projects/crew/assign.php", params: (t, a) => ({ formData: formData({ projects_id: a.projectId, crewAssignments_role: "e2e role" }), users: [t.users.limited.id] }), linked: (b, a) => ["SELECT COUNT(*) n FROM crewAssignments WHERE projects_id = ? AND users_userid = ? AND crewAssignments_deleted = 0", [a.projectId, b.users.limited.id]] },
+  // Assets are shared only between businesses the user belongs to, and A's user isn't in B
+  { endpoint: "/api/projects/assets/assign.php", params: (t, a) => ({ projects_id: a.projectId, assets_id: t === a ? a.spareAssetId : t.assetId }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetsAssignments WHERE projects_id = ? AND assets_id = ? AND assetsAssignments_deleted = 0", [a.projectId, b.assetId]] },
   { endpoint: "/api/assets/editAsset.php", params: (t, a) => ({ assets_id: a.assetId, assetTypes_id: t.assetTypeId }), linked: (b, a) => ["SELECT COUNT(*) n FROM assets WHERE assets_id = ? AND assetTypes_id = ?", [a.assetId, b.assetTypeId]] },
   { endpoint: "/api/assets/editAssetType.php", params: (t, a) => ({ formData: formData({ assetTypes_id: a.assetTypeId, assetTypes_name: `${a.marker} asset type`, manufacturers_id: t.manufacturerId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE assetTypes_id = ? AND manufacturers_id = ?", [a.assetTypeId, b.manufacturerId]] },
   { endpoint: "/api/categories/edit.php", params: (t, a) => ({ formData: formData({ assetCategories_id: a.categoryId, assetCategoriesGroups_id: t.categoryGroupId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetCategories WHERE assetCategories_id = ? AND assetCategoriesGroups_id = ?", [a.categoryId, b.categoryGroupId]] },
@@ -192,6 +222,11 @@ const linkCases: LinkCase[] = [
   { endpoint: "/api/maintenance/job/addAsset.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, maintenanceJobs_assets: [t.assetId] }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_assets)", [a.maintenanceJobId, b.assetId]] },
   { endpoint: "/api/maintenance/job/tagUser.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND FIND_IN_SET(?, maintenanceJobs_user_tagged)", [a.maintenanceJobId, b.users.full.id]] },
   { endpoint: "/api/maintenance/job/changeJobAssigned.php", params: (t, a) => ({ maintenanceJobs_id: a.maintenanceJobId, users_userid: t.users.full.id }), linked: (b, a) => ["SELECT COUNT(*) n FROM maintenanceJobs WHERE maintenanceJobs_id = ? AND maintenanceJobs_user_assignedTo = ?", [a.maintenanceJobId, b.users.full.id]] },
+  { endpoint: "/api/assets/newAssetType.php", label: "manufacturer", fixme: "manufacturers_id isn't checked, so the new type shows B's manufacturer name", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: t.manufacturerId, assetCategories_id: a.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND manufacturers_id = ?", [a.instanceId, b.manufacturerId]] },
+  { endpoint: "/api/assets/newAssetType.php", label: "category", fixme: "assetCategories_id isn't checked, so the new type shows B's category name", params: (t, a) => ({ formData: formData({ assetTypes_name: "Type by e2e", manufacturers_id: a.manufacturerId, assetCategories_id: t.categoryId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetTypes WHERE instances_id = ? AND assetCategories_id = ?", [a.instanceId, b.categoryId]] },
+  { endpoint: "/api/categories/new.php", fixme: "assetCategoriesGroups_id isn't checked, so the new category sits in B's category group", params: (t) => ({ formData: formData({ assetCategories_name: "Category by e2e", assetCategoriesGroups_id: t.categoryGroupId }) }), linked: (b, a) => ["SELECT COUNT(*) n FROM assetCategories WHERE instances_id = ? AND assetCategoriesGroups_id = ?", [a.instanceId, b.categoryGroupId]] },
+  // Watchers are notified when assets are added to or removed from the group
+  { endpoint: "/api/groups/watch.php", fixme: "assetGroups_id isn't checked, so A's user is notified of B's asset tags and group name when B changes the group", params: (t) => ({ assetGroups_id: t.assetGroupId }), linked: (b, a) => ["SELECT COUNT(*) n FROM users WHERE users_userid = ? AND FIND_IN_SET(?, users_assetGroupsWatching)", [a.users.full.id, b.assetGroupId]] },
 ];
 
 const maybeFixme = (fixme: string | undefined) => (fixme ? test.fixme : test);
@@ -202,15 +237,15 @@ test.describe("reading another business's records", () => {
       const control = await asA.api(c.endpoint, c.params(a), c.method);
       expect(mentions(control, (c.shows ?? ((t) => t.marker))(a)), `control: A's own data\n${control.body.slice(0, 500)}`).toBe(true);
       const response = await asA.api(c.endpoint, c.params(b), c.method);
-      expect(mentions(response, b.marker), response.body.slice(0, 1000)).toBe(false);
+      expect(mentions(response, (c.hides ?? ((t) => t.marker))(b)), response.body.slice(0, 1000)).toBe(false);
     });
   }
   for (const c of pageCases) {
-    maybeFixme(c.fixme)(`page ${c.file} shows nothing of B's`, async ({ asA, tenants: { a, b } }) => {
+    maybeFixme(c.fixme)(`page ${c.file}${c.label ? ` (${c.label})` : ""} shows nothing of B's`, async ({ asA, tenants: { a, b } }) => {
       const control = await asA.page(c.url(a));
       expect(mentions(control, c.shows(a)), `control: A's own page`).toBe(true);
       const response = await asA.page(c.url(b));
-      expect(mentions(response, b.marker)).toBe(false);
+      expect(mentions(response, (c.hides ?? ((t) => t.marker))(b))).toBe(false);
     });
   }
 });
@@ -237,7 +272,7 @@ test.describe("changing another business's records", () => {
 
 test.describe("pointing A's records at B's", () => {
   for (const c of linkCases) {
-    maybeFixme(c.fixme)(`${c.endpoint} won't link A's data to B's`, async ({ asA, tenants: { a, b } }) => {
+    maybeFixme(c.fixme)(`${c.endpoint} won't link A's data to B's${c.label ? ` (${c.label})` : ""}`, async ({ asA, tenants: { a, b } }) => {
       const before = count(c.linked(b, a));
       await asA.api(c.endpoint, c.params(b, a));
       expect(count(c.linked(b, a))).toBe(before);
@@ -270,6 +305,47 @@ test.describe("a sub-project of a project whose manager has since joined another
     const [project] = dbQuery<{ projects_manager: number }>("SELECT projects_manager FROM projects WHERE projects_id = ?", [response.json.response.projects_id]);
     expect(project.projects_manager).toBe(a.users.full.id);
     seedTenants();
+  });
+});
+
+test.describe("importing assets", () => {
+  // The columns import.php expects, in order (see $CSVHEADERS there)
+  const headers = ["assetTypes_name", "assetTypes_description", "assetTypes_productLink", "assetTypes_mass", "assetTypes_dayRate", "assetTypes_weekRate", "assetTypes_value", "assetCategories_name", "manufacturers_name", "assets_tag", "assets_notes", "assets_storageLocation", "assets_dayRate", "assets_WeekRate", "assets_value", "assets_mass", ...Array.from({ length: 10 }, (_, i) => `assetType_definableFieldsName_${i + 1}`), ...Array.from({ length: 10 }, (_, i) => `asset_definableFields_${i + 1}`)];
+  const csv = (row: Record<string, string>) => Buffer.from([headers.join(","), headers.map((h) => row[h] ?? "").join(",")].join("\n") + "\n");
+  const upload = (tag: string, typeName: string, manufacturerName: string, categoryName: string) => ({
+    csvFile: { name: "assets.csv", mimeType: "text/csv", buffer: csv({ assetTypes_name: typeName, assetCategories_name: categoryName, manufacturers_name: manufacturerName, assets_tag: tag }) },
+  });
+
+  test("matches types, manufacturers and categories by name only within the business", async ({ asA, tenants: { a, b } }) => {
+    const tag = `E2E-IMPORT-${Date.now()}`;
+    // B's names, apart from the category: an unknown category fails the row, and so should B's
+    const typeName = `Imported ${Date.now()}`;
+    dbQuery("UPDATE assetTypes SET assetTypes_name = ? WHERE assetTypes_id = ?", [typeName, b.assetTypeId]);
+    const manufacturerName = `Imported manufacturer ${Date.now()}`;
+    dbQuery("UPDATE manufacturers SET manufacturers_name = ? WHERE manufacturers_id = ?", [manufacturerName, b.manufacturerId]);
+    const response = await asA.upload("/api/assets/import.php", upload(tag, typeName, manufacturerName, `${a.marker} category`));
+    const [asset] = dbQuery<{ instances_id: number; assetTypes_id: number; manufacturers_id: number }>(
+      "SELECT assets.instances_id, assets.assetTypes_id, assetTypes.manufacturers_id FROM assets JOIN assetTypes USING (assetTypes_id) WHERE assets_tag = ?", [tag]);
+    const withBCategory = await asA.upload("/api/assets/import.php", upload(`${tag}-B`, `${typeName} 2`, manufacturerName, `${b.marker} category`)); // A new type, so the category is looked up
+    const withBCategoryImported = dbQuery("SELECT assets_id FROM assets WHERE assets_tag = ?", [`${tag}-B`]).length;
+    // Tidy up before asserting: the new type and manufacturer are named like B's
+    dbQuery("DELETE FROM assets WHERE assets_tag LIKE ?", [`${tag}%`]);
+    dbQuery("DELETE FROM assetTypes WHERE assetTypes_name IN (?, ?) AND instances_id = ?", [typeName, `${typeName} 2`, a.instanceId]);
+    dbQuery("DELETE FROM manufacturers WHERE manufacturers_name = ? AND instances_id = ?", [manufacturerName, a.instanceId]);
+    seedTenants();
+
+    expect(asset, response.body.slice(0, 500)).toBeDefined();
+    expect(asset.instances_id).toBe(a.instanceId);
+    expect(asset.assetTypes_id).not.toBe(b.assetTypeId);
+    expect(asset.manufacturers_id).not.toBe(b.manufacturerId);
+    expect(withBCategoryImported, withBCategory.body.slice(0, 500)).toBe(0);
+  });
+
+  test("needs ASSETS:IMPORT", async ({ asLimitedA, tenants: { a } }) => {
+    const tag = `E2E-IMPORT-${Date.now()}`;
+    const response = await asLimitedA.upload("/api/assets/import.php", upload(tag, `${a.marker} asset type`, `${a.marker} manufacturer`, `${a.marker} category`));
+    expect(succeeded(response)).toBe(false);
+    expect(dbQuery("SELECT assets_id FROM assets WHERE assets_tag = ?", [tag])).toHaveLength(0);
   });
 });
 

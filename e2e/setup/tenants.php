@@ -72,7 +72,7 @@ function user(string $email, string $name1, string $name2): int {
     global $db, $credentials, $devPosition;
     $id = upsert("users", "users_userid", ["users_email" => $email], [
         "users_username" => strstr($email, "@", true), "users_name1" => $name1, "users_name2" => $name2,
-        "users_created" => "2024-01-01 00:00:00", "users_selectedInstanceIDLast" => null,
+        "users_created" => "2024-01-01 00:00:00", "users_selectedInstanceIDLast" => null, "users_assetGroupsWatching" => null,
     ] + $credentials);
     // Too many recent failed logins (e.g. from a manual attempt) would block the tests from logging in
     $db->prepare("DELETE FROM loginAttempts WHERE loginAttempts_textEntered = ?")->execute([$email]);
@@ -135,6 +135,11 @@ function tenant(string $letter): array {
         "locations_name" => "$marker location", "clients_id" => $t['clientId'], "locations_deleted" => 0, "locations_archived" => 0,
         "locations_subOf" => null, "locations_address" => "$marker location address",
     ], $remembered['locationId'] ?? null);
+    $t['locationBarcodeValue'] = "E2E{$letter}LOCATION0001";
+    $t['locationBarcodeId'] = upsert("locationsBarcodes", "locationsBarcodes_id", ["locationsBarcodes_value" => $t['locationBarcodeValue']], [
+        "locations_id" => $t['locationId'], "locationsBarcodes_type" => "CODE_128", "locationsBarcodes_notes" => "$marker location barcode",
+        "locationsBarcodes_added" => "2024-01-01 00:00:00", "locationsBarcodes_deleted" => 0,
+    ], $remembered['locationBarcodeId'] ?? null);
     $t['manufacturerId'] = upsert("manufacturers", "manufacturers_id", ["instances_id" => $instance, "manufacturers_notes" => "e2e-$lower"], [
         "manufacturers_name" => "$marker manufacturer", "manufacturers_website" => null,
     ], $remembered['manufacturerId'] ?? null);
@@ -159,6 +164,14 @@ function tenant(string $letter): array {
         "assets_value" => null, "assets_dayRate" => null, "assets_weekRate" => null, "assets_mass" => null, "assets_showPublic" => 0,
         "asset_definableFields_1" => null, "assets_inserted" => "2024-01-01 00:00:00",
     ], $remembered['assetId'] ?? null);
+    // Same type, not on any project: what swap.php and substitutions.php offer in place of the asset above
+    $t['spareAssetTag'] = "E2E-$letter-0002";
+    $t['spareAssetId'] = upsert("assets", "assets_id", ["instances_id" => $instance, "assets_tag" => $t['spareAssetTag']], [
+        "assetTypes_id" => $t['assetTypeId'], "assets_notes" => "$marker spare asset notes", "assets_deleted" => 0, "assets_archived" => null,
+        "assets_endDate" => null, "assets_linkedTo" => null, "assets_assetGroups" => null, "assets_storageLocation" => null,
+        "assets_value" => null, "assets_dayRate" => null, "assets_weekRate" => null, "assets_mass" => null, "assets_showPublic" => 0,
+        "asset_definableFields_1" => null, "assets_inserted" => "2024-01-01 00:00:00",
+    ], $remembered['spareAssetId'] ?? null);
     $t['barcodeValue'] = "E2E{$letter}BARCODE0001";
     $t['barcodeId'] = upsert("assetsBarcodes", "assetsBarcodes_id", ["assetsBarcodes_value" => $t['barcodeValue']], [
         "assets_id" => $t['assetId'], "assetsBarcodes_type" => "CODE_128", "assetsBarcodes_notes" => "$marker barcode",
@@ -201,6 +214,12 @@ function tenant(string $letter): array {
         "assetsAssignments_comment" => "$marker assignment comment", "assetsAssignments_customPrice" => 0, "assetsAssignments_discount" => 0,
         "assetsAssignments_deleted" => 0, "assetsAssignmentsStatus_id" => null, "assetsAssignments_linkedTo" => null,
     ], $remembered['assignmentId'] ?? null);
+    // Tests assign the spare asset (assign.php); it starts off free
+    $db->prepare("UPDATE assetsAssignments SET assetsAssignments_deleted = 1 WHERE assets_id = ? AND assetsAssignments_id != ?")->execute([$t['spareAssetId'], $t['assignmentId']]);
+    // Quick comments are stored in the audit log
+    upsert("auditLog", "auditLog_id", ["projects_id" => $t['projectId'], "auditLog_actionType" => "QUICKCOMMENT", "auditLog_actionData" => "$marker quick comment"], [
+        "auditLog_actionTable" => "projects", "users_userid" => $manager, "auditLog_deleted" => 0, "auditLog_timestamp" => "2024-01-01 00:00:00",
+    ]);
     $t['noteId'] = upsert("projectsNotes", "projectsNotes_id", ["projects_id" => $t['projectId'], "projectsNotes_title" => "$marker note"], [
         "projectsNotes_text" => "$marker note text", "projectsNotes_userid" => $manager, "projectsNotes_deleted" => 0,
     ], $remembered['noteId'] ?? null);
@@ -223,6 +242,9 @@ function tenant(string $letter): array {
         "projectsVacantRolesApplications_applicantComment" => "$marker application", "projectsVacantRolesApplications_deleted" => 0,
         "projectsVacantRolesApplications_withdrawn" => 0, "projectsVacantRolesApplications_status" => 0, "projectsVacantRolesApplications_submitted" => "2024-01-01 00:00:00",
     ], $remembered['vacancyApplicationId'] ?? null);
+    // Applications made by tests (apply.php refuses a second one from the same user)
+    $db->prepare("UPDATE projectsVacantRolesApplications SET projectsVacantRolesApplications_deleted = 1 WHERE projectsVacantRoles_id = ? AND projectsVacantRolesApplications_id != ?")
+        ->execute([$t['vacantRoleId'], $t['vacancyApplicationId']]);
 
     $t['maintenanceJobId'] = upsert("maintenanceJobs", "maintenanceJobs_id", ["instances_id" => $instance, "maintenanceJobs_faultDescription" => "$marker fault"], [
         "maintenanceJobs_title" => "$marker maintenance job", "maintenanceJobs_assets" => (string) $t['assetId'], "maintenanceJobs_user_creator" => $manager,

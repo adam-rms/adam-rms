@@ -16,6 +16,8 @@ export type Tenant = {
   users: { full: TenantUser; limited: TenantUser; deleted: TenantUser };
   clientId: number;
   locationId: number;
+  locationBarcodeValue: string;
+  locationBarcodeId: number;
   manufacturerId: number;
   categoryGroupId: number;
   categoryId: number;
@@ -23,6 +25,8 @@ export type Tenant = {
   assetGroupId: number;
   assetTag: string;
   assetId: number;
+  spareAssetTag: string;
+  spareAssetId: number;
   barcodeValue: string;
   barcodeId: number;
   projectTypeId: number;
@@ -112,6 +116,11 @@ export class Session {
   async api(endpoint: string, params: Params = {}, method: "POST" | "GET" = "POST") {
     if (method === "GET") return result(await this.request.get(endpoint, { params: toForm(params) }));
     return result(await this.request.post(endpoint, { form: toForm(params) }));
+  }
+
+  /** A multipart POST, for endpoints that take a file upload */
+  async upload(endpoint: string, files: Record<string, { name: string; mimeType: string; buffer: Buffer }>) {
+    return result(await this.request.post(endpoint, { multipart: files }));
   }
 
   async page(url: string) {

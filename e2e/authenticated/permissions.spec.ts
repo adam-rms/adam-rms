@@ -24,6 +24,14 @@ const writeCases: ApiCase[] = [
   { endpoint: "/api/projects/assets/setComment.php", permission: "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT", params: (a) => ({ assetsAssignments: [a.assignmentId], assetsAssignments_comment: "Changed by e2e" }) },
   { endpoint: "/api/projects/assets/unassign.php", permission: "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN", params: (a) => ({ assetsAssignments: [a.assignmentId] }) },
   { endpoint: "/api/projects/crew/edit.php", permission: "PROJECTS:PROJECT_CREW:EDIT", params: (a) => ({ crewAssignments_id: a.crewAssignmentId, crewAssignments_comment: "Changed by e2e" }) },
+  { endpoint: "/api/projects/crew/sortRank.php", permission: "PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS", params: (a) => ({ projects_id: a.projectId, order: [a.crewAssignmentId] }) },
+  { endpoint: "/api/projects/crew/crewRoles/apply.php", permission: "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES", params: (a) => ({ formData: formData({ projectsVacantRoles_id: a.vacantRoleId }) }) },
+  { endpoint: "/api/projects/changeProjectDeliverDates.php", permission: "PROJECTS:EDIT:DATES", params: (a) => ({ projects_id: a.projectId, projects_dates_deliver_start: "2031-01-01 09:00", projects_dates_deliver_end: "2031-01-05 09:00" }) },
+  { endpoint: "/api/projects/changeProjectFinanceDurationMaths.php", permission: "PROJECTS:EDIT:DATES", params: (a) => ({ projects_id: a.projectId, projects_dates_finances_days: 3, projects_dates_finances_weeks: 1 }) },
+  { endpoint: "/api/projects/assets/setStatusByTag.php", permission: "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS", params: (a) => ({ projects_id: a.projectId, text: a.assetTag, assetsAssignments_status: a.assignmentStatusId }) },
+  { endpoint: "/api/projects/assets/setStatusBarcode.php", permission: "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS", params: (a) => ({ projects_id: a.projectId, text: a.barcodeValue, type: "CODE_128", assetsAssignments_status: a.assignmentStatusId }) },
+  { endpoint: "/api/projects/assets/assign.php", permission: "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN", params: (a) => ({ projects_id: a.projectId, assets_id: a.spareAssetId }) },
+  { endpoint: "/api/projects/assets/swap.php", permission: "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN", params: (a) => ({ assetsAssignments_id: a.assignmentId, assets_id: a.spareAssetId }) },
   // Assets
   { endpoint: "/api/assets/newAssetFromType.php", permission: "ASSETS:CREATE", params: (a) => ({ formData: formData({ assetTypes_id: a.assetTypeId }) }) },
   { endpoint: "/api/assets/editAsset.php", permission: "ASSETS:EDIT", params: (a) => ({ assets_id: a.assetId, assets_notes: "Changed by e2e" }) },
@@ -33,6 +41,11 @@ const writeCases: ApiCase[] = [
   { endpoint: "/api/groups/edit.php", permission: "ASSETS:ASSET_GROUPS:EDIT", params: (a) => ({ formData: formData({ assetGroups_id: a.assetGroupId, assetGroups_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/categories/edit.php", permission: "ASSETS:ASSET_CATEGORIES:EDIT", params: (a) => ({ formData: formData({ assetCategories_id: a.categoryId, assetCategories_name: "Renamed by e2e" }) }) },
   { endpoint: "/api/manufacturer/edit.php", permission: "ASSETS:MANUFACTURERS:EDIT", params: (a) => ({ formData: formData({ manufacturers_id: a.manufacturerId, manufacturers_name: "Renamed by e2e" }) }) },
+  { endpoint: "/api/manufacturer/new.php", permission: "ASSETS:MANUFACTURERS:CREATE", params: () => ({ manufacturers_name: "E2E_TENANT_A_SECRET manufacturer by e2e" }) },
+  { endpoint: "/api/assets/newAssetType.php", permission: "ASSETS:ASSET_TYPES:CREATE", params: (a) => ({ formData: formData({ assetTypes_name: "E2E_TENANT_A_SECRET type by e2e", manufacturers_id: a.manufacturerId, assetCategories_id: a.categoryId }) }) },
+  { endpoint: "/api/groups/new.php", permission: "ASSETS:ASSET_GROUPS:CREATE", params: () => ({ formData: formData({ assetGroups_name: "E2E_TENANT_A_SECRET group by e2e" }) }) },
+  { endpoint: "/api/categories/new.php", permission: "ASSETS:ASSET_CATEGORIES:EDIT", params: (a) => ({ formData: formData({ assetCategories_name: "E2E_TENANT_A_SECRET category by e2e", assetCategoriesGroups_id: a.categoryGroupId, assetCategories_rank: 99 }) }) },
+  { endpoint: "/api/categories/groups/new.php", permission: "ASSETS:ASSET_CATEGORIES:EDIT", params: () => ({ formData: formData({ assetCategoriesGroups_name: "E2E_TENANT_A_SECRET category group by e2e" }) }) },
   // Clients
   { endpoint: "/api/clients/new.php", permission: "CLIENTS:CREATE", params: () => ({ clients_name: "New by e2e" }) },
   { endpoint: "/api/clients/edit.php", permission: "CLIENTS:EDIT", params: (a) => ({ formData: formData({ clients_id: a.clientId, clients_name: "Renamed by e2e" }) }) },
@@ -48,13 +61,19 @@ const writeCases: ApiCase[] = [
 ];
 
 // Pages the limited user must get the 404 page for
-const refusedPages = [
+const refusedPages: { file: string; url: string | ((a: Tenant) => string); permission: string }[] = [
   { file: "project/new.php", url: "/project/new.php", permission: "PROJECTS:CREATE" },
   { file: "newAsset.php", url: "/newAsset.php", permission: "ASSETS:CREATE" },
   { file: "ledger.php", url: "/ledger.php", permission: "FINANCE:PAYMENTS_LEDGER:VIEW" },
   { file: "instances/users.php", url: "/instances/users.php", permission: "BUSINESS:USERS:VIEW:LIST" },
   { file: "instances/settings.php", url: "/instances/settings.php", permission: "BUSINESS:BUSINESS_SETTINGS:VIEW" },
   { file: "instances/permissions.php", url: "/instances/permissions.php", permission: "BUSINESS:ROLES_AND_PERMISSIONS:VIEW" },
+  { file: "instances/importAssets.php", url: "/instances/importAssets.php", permission: "ASSETS:IMPORT" },
+  { file: "maintenance/barcode.php", url: "/maintenance/barcode.php", permission: "ASSETS:ASSET_BARCODES:VIEW" },
+  { file: "maintenance/barcodeGenerator.php", url: "/maintenance/barcodeGenerator.php", permission: "ASSETS:ASSET_BARCODES:VIEW" },
+  { file: "maintenance/barcodePrint.php", url: (a) => `/maintenance/barcodePrint.php?ids=${a.assetId}`, permission: "ASSETS:ASSET_BARCODES:VIEW" },
+  { file: "location/barcode.php", url: (a) => `/location/barcode.php?location=${a.locationId}`, permission: "LOCATIONS:LOCATION_BARCODES:VIEW" },
+  { file: "project/crew/vacancies.php", url: "/project/crew/vacancies.php", permission: "PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES" },
 ];
 const NOT_FOUND = "Oops! Page not found.";
 
@@ -75,9 +94,10 @@ test.describe("a user without the permission", () => {
   }
 
   for (const c of refusedPages) {
-    test(`gets the 404 page for ${c.file} (${c.permission})`, async ({ asA, asLimitedA }) => {
-      expect(mentions(await asLimitedA.page(c.url), NOT_FOUND)).toBe(true);
-      expect(mentions(await asA.page(c.url), NOT_FOUND), "control: the full-access user can").toBe(false);
+    test(`gets the 404 page for ${c.file} (${c.permission})`, async ({ asA, asLimitedA, tenants: { a } }) => {
+      const url = typeof c.url === "string" ? c.url : c.url(a);
+      expect(mentions(await asLimitedA.page(url), NOT_FOUND)).toBe(true);
+      expect(mentions(await asA.page(url), NOT_FOUND), "control: the full-access user can").toBe(false);
     });
   }
 });

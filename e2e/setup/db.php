@@ -27,6 +27,7 @@ $byInstance = ["instancePositions", "clients", "locations", "manufacturers", "as
     "maintenanceJobsStatuses", "cmsPages", "modules", "signupCodes", "s3files"];
 $children = [ // table => SQL picking the rows that belong to the business through a parent row
     "assetsBarcodes" => "assets_id IN (SELECT assets_id FROM assets WHERE instances_id = ?)",
+    "assetsBarcodesScans" => "assetsBarcodes_id IN (SELECT assetsBarcodes_id FROM assetsBarcodes JOIN assets USING (assets_id) WHERE instances_id = ?)",
     "assetsAssignments" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
     "projectsNotes" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",
     "payments" => "projects_id IN (SELECT projects_id FROM projects WHERE instances_id = ?)",

@@ -11,22 +11,22 @@ Every page controller (`src/**/*.php` outside `src/api/` and `src/common/` that 
 
 This is a regex scan, so it's a checklist, not an audit. Work through it one module at a time: add isolation cases to `authenticated/tenant-isolation.spec.ts` and permission cases to `authenticated/permissions.spec.ts` (or a module spec), then re-run the generator.
 
-**107 of 270** entries have at least one test, and **0** have a known leak (68 pages, 202 API endpoints).
+**138 of 270** entries have at least one test, and **3** have a known leak (68 pages, 202 API endpoints).
 
 | Module | Entries | Tested |
 | --- | ---: | ---: |
-| Assets | 40 | 24 |
-| Projects | 57 | 47 |
+| Assets | 40 | 40 |
+| Projects | 57 | 57 |
 | Clients | 5 | 5 |
-| Locations | 6 | 5 |
-| Maintenance | 21 | 18 |
+| Locations | 6 | 6 |
+| Maintenance | 21 | 21 |
 | CMS | 13 | 1 |
 | Training | 10 | 1 |
 | Files | 10 | 0 |
 | Instances (business settings, users, permissions) | 61 | 3 |
 | Server administration | 9 | 0 |
 | Account & login | 31 | 2 |
-| Search | 2 | 1 |
+| Search | 2 | 2 |
 | Public embeds | 1 | 0 |
 | Other | 4 | 0 |
 
@@ -36,43 +36,43 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | --- | --- | --- | --- | :---: | --- |
 | page | `asset.php` | login only | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `assets.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `instance_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| page | `instances/importAssets.php` | instance: `ASSETS:IMPORT` |  | ✔ | ⬜ |
-| page | `manufacturers.php` | login only |  | ✔ | ⬜ |
+| page | `instances/importAssets.php` | instance: `ASSETS:IMPORT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `manufacturers.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `newAsset.php` | instance: `ASSETS:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/assets/archive.php` | instance: `ASSETS:ARCHIVE` | `assets_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/barcodes/assign.php` | instance: `ASSETS:ASSET_BARCODES:EDIT:ASSOCIATE_UNNASOCIATED_BARCODES_WITH_ASSETS` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/barcodes/delete.php` | instance: `ASSETS:ASSET_BARCODES:DELETE` | `barcodes_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/assets/barcodes/index.php` | **none (public)** |  | ✘ | ⬜ |
+| API | `api/assets/barcodes/index.php` | **none (public)** |  | ✘ | ✅ `public/barcodes.spec.ts` |
 | API | `api/assets/barcodes/search.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/delete.php` | instance: `ASSETS:DELETE` | `assets_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/editAsset.php` | instance: `ASSETS:EDIT` | `assetTypes_id`, `assets_id`, `assets_linkedTo` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/editAssetType.php` | instance: `ASSETS:ASSET_TYPES:EDIT`<br>server: `ASSETS:EDIT:ANY_ASSET_TYPE` | `assetCategories_id`, `assetTypes_id`, `manufacturers_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/editAssetTypeDefinableFields.php` | instance: `ASSETS:ASSET_TYPES:EDIT`<br>server: `ASSETS:EDIT:ANY_ASSET_TYPE` | `assetTypes_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/assets/export.php` | login only |  | ✔ | ⬜ |
-| API | `api/assets/getAssetTypeData.php` | login only |  | ✔ | ⬜ |
-| API | `api/assets/import.php` | instance: `ASSETS:IMPORT` |  | ✔ | ⬜ |
+| API | `api/assets/export.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/assets/getAssetTypeData.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/assets/import.php` | instance: `ASSETS:IMPORT` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/list.php` | login only | `assetTypes_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/assets/newAssetFromType.php` | instance: `ASSETS:CREATE` | `assetTypes_id` | ✔ | ✅ `authenticated/permissions.spec.ts` |
-| API | `api/assets/newAssetType.php` | instance: `ASSETS:ASSET_TYPES:CREATE` | `manufacturers_id` | ✘ | ⬜ |
-| API | `api/assets/searchAssets.php` | login only |  | ✔ | ⬜ |
-| API | `api/assets/searchAssetsBarcode.php` | ? |  | ✘ | ⬜ |
+| API | `api/assets/newAssetType.php` | instance: `ASSETS:ASSET_TYPES:CREATE` | `manufacturers_id` | ✘ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
+| API | `api/assets/searchAssets.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/assets/searchAssetsBarcode.php` | ? |  | ✘ | ✅ `public/barcodes.spec.ts` |
 | API | `api/assets/searchType.php` | instance: `ASSETS:TRANSFER` | `other_instances_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/assets/substitutions.php` | login only | `assetsAssignments_id` | ✔ | ⬜ |
-| API | `api/assets/transfer.php` | instance: `ASSETS:TRANSFER` | `assetCategories_id`, `assetTypes_id`, `assets_id`, `manufacturers_id`, `new_instances_id` | ✘ | ⬜ |
+| API | `api/assets/substitutions.php` | login only | `assetsAssignments_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
+| API | `api/assets/transfer.php` | instance: `ASSETS:TRANSFER` | `assetCategories_id`, `assetTypes_id`, `assets_id`, `manufacturers_id`, `new_instances_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/barcodes/searchAsset.php` | login only |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/categories/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id`, `assetCategories_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/categories/groups/edit.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` | `assetCategoriesGroups_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/categories/groups/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ⬜ |
-| API | `api/categories/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ⬜ |
+| API | `api/categories/groups/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
+| API | `api/categories/new.php` | instance: `ASSETS:ASSET_CATEGORIES:EDIT` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
 | API | `api/categories/search.php` | instance: `ASSETS:TRANSFER` | `other_instances_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/addAsset.php` | instance: `ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP` | `assetGroups_id`, `assets_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/edit.php` | instance: `ASSETS:ASSET_GROUPS:EDIT` | `assetGroups_id`, `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/groups/new.php` | instance: `ASSETS:ASSET_GROUPS:CREATE` | `users_userid` | ✔ | ⬜ |
+| API | `api/groups/new.php` | instance: `ASSETS:ASSET_GROUPS:CREATE` | `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/groups/removeAsset.php` | instance: `ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROUP` | `assetGroups_id`, `assets_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/groups/search.php` | login only |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/groups/watch.php` | login only | `assetGroups_id` | ✘ | ⬜ |
+| API | `api/groups/watch.php` | login only | `assetGroups_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` ⚠️ **known leak** (`test.fixme`) |
 | API | `api/manufacturer/edit.php` | instance: `ASSETS:MANUFACTURERS:EDIT` | `manufacturers_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/manufacturer/new.php` | instance: `ASSETS:MANUFACTURERS:CREATE` |  | ✔ | ⬜ |
+| API | `api/manufacturer/new.php` | instance: `ASSETS:MANUFACTURERS:CREATE` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | API | `api/manufacturer/search.php` | instance: `ASSETS:TRANSFER` | `other_instances_id` | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
 ## Projects
@@ -81,7 +81,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | --- | --- | --- | --- | :---: | --- |
 | page | `ledger.php` | instance: `FINANCE:PAYMENTS_LEDGER:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts` |
 | page | `project/crew/applications.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| page | `project/crew/vacancies.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` |  | ✔ | ⬜ |
+| page | `project/crew/vacancies.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `project/crew/vacancy.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `project/crew/vacantCrew.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `project/index.php` | instance: `PROJECTS:EDIT:ADDRESS`, `PROJECTS:EDIT:CLIENT`, `PROJECTS:EDIT:STATUS`, `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES`, `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -90,15 +90,15 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | page | `project/noteExport.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `project/projectInvoice.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/archive.php` | instance: `PROJECTS:ARCHIVE` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/assets/assign.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS`, `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetGroups_id`, `assetTypes_id`, `assets_id`, `projects_id` | ✔ | ⬜ |
+| API | `api/projects/assets/assign.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_ALL_BUSINESS_ASSETS`, `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetGroups_id`, `assetTypes_id`, `assets_id`, `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/setComment.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT` | `assetsAssignments` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/setDiscount.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:DISCOUNT` | `assetsAssignments` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/setPrice.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE` | `assetsAssignments` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/setStatus.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS` | `assetsAssignments_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/assets/setStatusBarcode.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS` | `projects_id` | ✔ | ⬜ |
-| API | `api/projects/assets/setStatusByTag.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS` | `projects_id` | ✔ | ⬜ |
+| API | `api/projects/assets/setStatusBarcode.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/projects/assets/setStatusByTag.php` | instance: `PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/statusList.php` | instance: `PROJECTS:VIEW` | `id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/assets/swap.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetsAssignments_id`, `assets_id` | ✔ | ⬜ |
+| API | `api/projects/assets/swap.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetsAssignments_id`, `assets_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/assets/unassign.php` | instance: `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` | `assetTypes_id`, `assetsAssignments`, `assets_id`, `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeClient.php` | instance: `PROJECTS:EDIT:CLIENT` | `clients_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeDeliveryNotes.php` | instance: `PROJECTS:EDIT:DELIVERY_NOTES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -106,8 +106,8 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/projects/changeInvoiceNotes.php` | instance: `PROJECTS:EDIT:INVOICE_NOTES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeName.php` | instance: `PROJECTS:EDIT:NAME` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeProjectDates.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/changeProjectDeliverDates.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ⬜ |
-| API | `api/projects/changeProjectFinanceDurationMaths.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ⬜ |
+| API | `api/projects/changeProjectDeliverDates.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| API | `api/projects/changeProjectFinanceDurationMaths.php` | instance: `PROJECTS:EDIT:DATES` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeProjectManager.php` | instance: `PROJECTS:EDIT:LEAD` | `projects_id`, `users_userid` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeProjectType.php` | instance: `PROJECTS:EDIT:PROJECT_TYPE` | `projectsTypes_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/changeStatus.php` | instance: `PROJECTS:EDIT:STATUS` | `projectsStatuses_id`, `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
@@ -116,20 +116,20 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 | API | `api/projects/crew/assign.php` | instance: `PROJECTS:PROJECT_CREW:CREATE` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/accept.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projectsVacantRolesApplications_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/applicationList.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT` | `projectsVacantRoles_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/crew/crewRoles/apply.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projectsVacantRoles_id`, `users_userid` | ✔ | ⬜ |
+| API | `api/projects/crew/crewRoles/apply.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projectsVacantRoles_id`, `users_userid` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/edit.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RECRUITMENT` | `projectsVacantRoles_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/list.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/crewRoles/reject.php` | instance: `PROJECTS:PROJECT_CREW:VIEW:VIEW_AND_APPLY_FOR_CREW_ROLES` | `projectsVacantRolesApplications_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/edit.php` | instance: `PROJECTS:PROJECT_CREW:EDIT` | `crewAssignments_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/searchUser.php` | instance: `PROJECTS:PROJECT_CREW:CREATE` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/crew/sortRank.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS` | `projects_id` | ✔ | ⬜ |
+| API | `api/projects/crew/sortRank.php` | instance: `PROJECTS:PROJECT_CREW:EDIT:CREW_RANKS` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/crew/unassign.php` | instance: `PROJECTS:PROJECT_CREW:EDIT` | `crewAssignments_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/data.php` | instance: `PROJECTS:VIEW` | `id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/delete.php` | instance: `PROJECTS:DELETE` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/deletePayment.php` | instance: `PROJECTS:PROJECT_PAYMENTS:DELETE` | `payments_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/editNote.php` | instance: `PROJECTS:PROJECT_NOTES:EDIT:NOTES` | `projectsNotes_id`, `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/followParentStatus.php` | instance: `PROJECTS:CREATE` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
-| API | `api/projects/getComments.php` | instance: `PROJECTS:VIEW` | `projects_id` | ✔ | ⬜ |
+| API | `api/projects/getComments.php` | instance: `PROJECTS:VIEW` | `projects_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/list.php` | instance: `PROJECTS:VIEW` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/new.php` | instance: `PROJECTS:CREATE` | `projectsType_id`, `projects_manager`, `projects_parent_project_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/projects/newNote.php` | instance: `PROJECTS:PROJECT_NOTES:CREATE:NOTES` | `projects_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
@@ -151,7 +151,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `location/barcode.php` | instance: `LOCATIONS:LOCATION_BARCODES:VIEW` |  | ✔ | ⬜ |
+| page | `location/barcode.php` | instance: `LOCATIONS:LOCATION_BARCODES:VIEW` |  | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `location/index.php` | instance: `LOCATIONS:VIEW` | `id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/locations/archive.php` | instance: `LOCATIONS:EDIT` | `location_id`, `locations_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/locations/edit.php` | instance: `LOCATIONS:EDIT` | `clients_id`, `locations_id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
@@ -162,9 +162,9 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `maintenance/barcode.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` |  | ✘ | ⬜ |
-| page | `maintenance/barcodeGenerator.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `id` | ✔ | ⬜ |
-| page | `maintenance/barcodePrint.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `ids` | ✔ | ⬜ |
+| page | `maintenance/barcode.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` |  | ✘ | ✅ `authenticated/permissions.spec.ts` |
+| page | `maintenance/barcodeGenerator.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
+| page | `maintenance/barcodePrint.php` | instance: `ASSETS:ASSET_BARCODES:VIEW` | `ids` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | page | `maintenance/index.php` | instance: `MAINTENANCE_JOBS:VIEW` |  | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | page | `maintenance/job.php` | instance: `MAINTENANCE_JOBS:EDIT:USER_ASSIGNED_TO_JOB`, `MAINTENANCE_JOBS:VIEW` | `id` | ✔ | ✅ `authenticated/permissions.spec.ts`, `authenticated/tenant-isolation.spec.ts` |
 | API | `api/maintenance/job/addAsset.php` | instance: `MAINTENANCE_JOBS:EDIT:ADD_ASSETS` | `maintenanceJobs_assets`, `maintenanceJobs_id` | ✔ | ✅ `authenticated/tenant-isolation.spec.ts` |
@@ -352,7 +352,7 @@ This is a regex scan, so it's a checklist, not an audit. Work through it one mod
 
 | | Path | Permission checks | ID params | Instance filter | Tests |
 | --- | --- | --- | --- | :---: | --- |
-| page | `search.php` | login only |  | ✘ | ⬜ |
+| page | `search.php` | login only |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 | API | `api/search/search.php` | **none (public)** |  | ✘ | ✅ `authenticated/tenant-isolation.spec.ts` |
 
 ## Public embeds
