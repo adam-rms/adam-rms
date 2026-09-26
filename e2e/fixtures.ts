@@ -1,4 +1,5 @@
 import { test as base, expect, type Page } from "@playwright/test";
+import { cacheCdn } from "./cdn";
 import { TEST_USER } from "./env";
 
 export async function login(page: Page, email = TEST_USER.email, password = TEST_USER.password) {
@@ -14,6 +15,7 @@ export async function login(page: Page, email = TEST_USER.email, password = TEST
 /** A test whose `page` is already logged in as the seeded super admin. */
 export const test = base.extend({
   page: async ({ page }, use) => {
+    await cacheCdn(page.context());
     await login(page);
     await use(page);
   },

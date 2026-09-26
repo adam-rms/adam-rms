@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { TEST_USER } from "../env";
+import { cacheCdn } from "../cdn";
+
+test.beforeEach(async ({ page }) => {
+  await cacheCdn(page.context());
+});
 
 // The suite runs with DEV_MODE=true (as the devcontainer does), where headSecure.php
 // shows the auth failure and a login link instead of redirecting.

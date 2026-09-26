@@ -295,6 +295,10 @@
                 });
             });
         </script>
+        <script>
+            // The step previews (training/types/*.twig) call this to enable a learner's "mark as completed" button, which the editor doesn't have
+            function unlockCompleteStep(id) {}
+        </script>
         {% embed ('training/types/youtubePageFooter.twig') %}{% endembed %}
     </div>
 

@@ -52,7 +52,13 @@ export type Tenant = {
   signupCodeId: number;
 };
 type TenantUser = { id: number; email: string };
-export type Tenants = { password: string; a: Tenant; b: Tenant };
+export type Tenants = {
+  password: string;
+  a: Tenant;
+  b: Tenant;
+  /** Has full access to both A and B */
+  sharedUser: TenantUser;
+};
 
 const repoRoot = path.resolve(__dirname, "..");
 function php(script: string, args: string[] = []) {
@@ -60,6 +66,7 @@ function php(script: string, args: string[] = []) {
     cwd: repoRoot,
     env: { ...process.env, ...APP_ENV },
     encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024, // A business's snapshot grows with every record tests add to it
   });
 }
 
