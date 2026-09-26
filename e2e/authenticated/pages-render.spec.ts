@@ -79,10 +79,7 @@ const businessPages: PageCase[] = [
   { url: (t) => `/project/crew/applications.php?id=${t.vacantRoleId}` },
   { url: () => "/training/" },
   { url: (t) => `/training/module.php?id=${t.moduleId}` },
-  {
-    url: (t) => `/training/module.php?id=${t.moduleId}&steps`,
-    fixme: "The step templates (training/types/*.twig) call unlockCompleteStep(), which only the learner's view defines (adam-rms/adam-rms#1029)",
-  },
+  { url: (t) => `/training/module.php?id=${t.moduleId}&steps` },
   { url: (t) => `/training/module.php?id=${t.moduleId}&users` },
 ];
 

@@ -92,20 +92,39 @@ test.describe("swapping an asset", () => {
     expect(bookings(mine)).toEqual([project]);
   });
 
-  // swap.php changes the assignment's asset without adjusting the project's running totals, so if the new asset has its own
-  // rates (or value or mass) projectsFinanceCache no longer matches what data.php works out. adam-rms/adam-rms#1028
-  test.fixme("keeps the project's running totals right when the new asset has its own day rate", async ({ asA, tenants: { a } }) => {
+  test("keeps the project's running totals right when the new asset has its own rates, value and mass", async ({ asA, tenants: { a } }) => {
+    const booked = await newAsset(asA, a);
+    const pricier = await newAsset(asA, a);
+    await expect(asA.api("/api/assets/editAsset.php", {
+      instances_id: a.instanceId, formData: formData({ assets_id: pricier, assets_dayRate: "20.00", assets_value: "250.00", assets_mass: 3 }),
+    })).resolves.toMatchObject({ json: { result: true } });
+    const project = await newProject(asA, a, a.users.full.id, DATES);
+    await assign(asA, a, project, booked);
+    const [{ id }] = dbQuery<{ id: number }>("SELECT assetsAssignments_id id FROM assetsAssignments WHERE projects_id = ?", [project]);
+    await asA.api("/api/projects/assets/setDiscount.php", { instances_id: a.instanceId, assetsAssignments: [id], assetsAssignments_discount: 50 });
+    const none = { received: 0, sales: 0, subHire: 0, staff: 0 };
+    // 3 days at £10.00, half off
+    await expectFinances(asA, a, project, { ...none, subTotal: 3000, discounts: 1500, total: 1500, grandTotal: 1500, value: 10000, mass: 1 });
+
+    await expect(asA.api("/api/projects/assets/swap.php", { instances_id: a.instanceId, assetsAssignments_id: id, assets_id: pricier }))
+      .resolves.toMatchObject({ json: { result: true } });
+    // 3 days at £20.00, still half off
+    await expectFinances(asA, a, project, { ...none, subTotal: 6000, discounts: 3000, total: 3000, grandTotal: 3000, value: 25000, mass: 3 });
+  });
+
+  test("keeps a custom price when swapping", async ({ asA, tenants: { a } }) => {
     const booked = await newAsset(asA, a);
     const pricier = await newAsset(asA, a);
     await asA.api("/api/assets/editAsset.php", { instances_id: a.instanceId, formData: formData({ assets_id: pricier, assets_dayRate: "20.00" }) });
     const project = await newProject(asA, a, a.users.full.id, DATES);
     await assign(asA, a, project, booked);
-    const zero = { discounts: 0, received: 0, sales: 0, subHire: 0, staff: 0, value: 10000, mass: 1 };
-    await expectFinances(asA, a, project, { ...zero, subTotal: 3000, total: 3000, grandTotal: 3000 });
     const [{ id }] = dbQuery<{ id: number }>("SELECT assetsAssignments_id id FROM assetsAssignments WHERE projects_id = ?", [project]);
+    await asA.api("/api/projects/assets/setPrice.php", { instances_id: a.instanceId, assetsAssignments: [id], assetsAssignments_customPrice: "15.00" });
+    const custom = { discounts: 0, received: 0, sales: 0, subHire: 0, staff: 0, subTotal: 1500, total: 1500, grandTotal: 1500, value: 10000, mass: 1 };
+    await expectFinances(asA, a, project, custom);
 
     await asA.api("/api/projects/assets/swap.php", { instances_id: a.instanceId, assetsAssignments_id: id, assets_id: pricier });
-    await expectFinances(asA, a, project, { ...zero, subTotal: 6000, total: 6000, grandTotal: 6000 });
+    await expectFinances(asA, a, project, custom);
   });
 });
 
