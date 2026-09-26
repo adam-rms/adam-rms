@@ -76,14 +76,19 @@ function request(params: string[], injected: string, a: Tenant): Params {
 
 const all = endpoints();
 
-// instances/new.php makes a new business each time it's probed; delete them afterwards, and their memberships
-let lastBusiness = 0;
+// The probes make records (businesses, clients, modules...) that would push the seeded ones off the first page of
+// lists other specs check, so everything they add to a table with a soft-delete flag is deleted afterwards
+let tables: { t: string; id: string; deleted: string; max: number }[] = [];
 test.beforeAll(() => {
-  lastBusiness = dbQuery<{ id: number }>("SELECT COALESCE(MAX(instances_id), 0) id FROM instances")[0].id;
+  tables = dbQuery<{ t: string; id: string; deleted: string }>(
+    `SELECT c.TABLE_NAME t, k.COLUMN_NAME id, c.COLUMN_NAME deleted FROM information_schema.COLUMNS c
+     JOIN information_schema.KEY_COLUMN_USAGE k ON k.TABLE_SCHEMA = c.TABLE_SCHEMA AND k.TABLE_NAME = c.TABLE_NAME AND k.CONSTRAINT_NAME = 'PRIMARY'
+     WHERE c.TABLE_SCHEMA = DATABASE() AND c.COLUMN_NAME = CONCAT(c.TABLE_NAME, '_deleted')`,
+  ).map((table) => ({ ...table, max: dbQuery<{ max: number }>(`SELECT COALESCE(MAX(\`${table.id}\`), 0) max FROM \`${table.t}\``)[0].max }));
 });
 test.afterAll(() => {
-  dbQuery("UPDATE userInstances SET userInstances_deleted = 1 WHERE instancePositions_id IN (SELECT instancePositions_id FROM instancePositions WHERE instances_id > ?)", [lastBusiness]);
-  dbQuery("UPDATE instances SET instances_deleted = 1 WHERE instances_id > ?", [lastBusiness]);
+  for (const { t, id, deleted, max } of tables) dbQuery(`UPDATE \`${t}\` SET \`${deleted}\` = 1 WHERE \`${id}\` > ?`, [max]);
+  seedTenants(); // In case a seeded record was made during the run
 });
 
 test.describe("logged in as business A's full user", () => {
