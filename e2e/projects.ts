@@ -105,3 +105,16 @@ export async function expectFinances(session: Session, t: Tenant, projectId: num
   expect(cacheBefore, "the running totals in projectsFinanceCache").toEqual(expected);
   expect(cacheRows(projectId), "data.php found no mismatch to correct").toBe(rowsBefore);
 }
+
+/**
+ * The totals table on a project's invoice or quote (project/projectInvoice.php builds the PDF in the browser, from
+ * the same numbers as data.php), as { label: amount as printed }.
+ */
+export async function documentSummary(session: Session, projectId: number, type: "invoice" | "quote") {
+  const page = await session.page(`/project/projectInvoice.php?id=${projectId}&type=${type}&finance=1`);
+  expect(page.status, `opening the ${type}`).toBe(200);
+  const summary: Record<string, string> = {};
+  const row = /\{ text: "([^"]+)"(?:, style: \{[^}]*\})? \},\s*\{ text: "([^"]*)", style: \{ alignment: 'right' \} \}/g;
+  for (const [, label, value] of page.body.matchAll(row)) summary[label] = JSON.parse(`"${value}"`);
+  return summary;
+}

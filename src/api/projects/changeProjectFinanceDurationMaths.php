@@ -11,7 +11,8 @@ if (
 
 $DAYS = intval($_POST['projects_dates_finances_days']);
 $WEEKS = intval($_POST['projects_dates_finances_weeks']);
-$REMOVECUSTOM = $_POST['projects_dates_finances_days'] == -1 and $_POST['projects_dates_finances_weeks'] == -1;
+$REMOVECUSTOM = ($DAYS == -1 and $WEEKS == -1); //-1 for both goes back to working out the days from the project's dates
+if (!$REMOVECUSTOM and ($DAYS < 0 or $WEEKS < 0)) finish(false, ["code" => "PARAM-ERROR", "message" => "Days and weeks can't be negative"]);
 
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
