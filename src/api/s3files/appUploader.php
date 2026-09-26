@@ -4,6 +4,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if ($CONFIG['FILES_ENABLED'] !== "Enabled") {
     finish(false, ["code" => null, "message" => "File uploads are disabled"]);
 }
+if (!$bCMS->s3SubTypeIsInInstance($_POST['typeid'] ?? null, $_POST['subtype'] ?? null)) finish(false, ["code" => null, "message" => "Record not found"]);
 if(isset($_FILES['file'])) {
     $temp_file_location = $_FILES['file']['tmp_name'];
     $s3 = new Aws\S3\S3Client([

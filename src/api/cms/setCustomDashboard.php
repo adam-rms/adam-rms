@@ -5,6 +5,12 @@ if (!$AUTH->instancePermissionCheck("CMS:CMS_PAGES:EDIT:CUSTOM_DASHBOARDS")) die
 
 if (!isset($_POST['instancePositions_id']) or !is_numeric($_POST['instancePositions_id'])) finish(false);
 
+if ($_POST['cmsPages_id']) { //The page must be this business's
+    $DBLIB->where("cmsPages_id", $_POST['cmsPages_id']);
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("cmsPages_deleted", 0);
+    if (!$DBLIB->getOne("cmsPages", ["cmsPages_id"])) finish(false);
+}
 $DBLIB->where("instancePositions_deleted",0);
 $DBLIB->where("instancePositions_id",$_POST['instancePositions_id']);
 $DBLIB->where("instances_id",$AUTH->data['instance']['instances_id']);

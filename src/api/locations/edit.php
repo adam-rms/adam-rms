@@ -9,6 +9,17 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['locations_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+unset($array['instances_id']); //Records can't be moved to another business
+if (isset($array['clients_id'])) {
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("clients_id", $array['clients_id']);
+    if (!$DBLIB->getOne("clients", ["clients_id"])) finish(false, ["code" => "PARAM-ERROR", "message" => "Client not found"]);
+}
+if (isset($array['locations_subOf'])) {
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("locations_id", $array['locations_subOf']);
+    if (!$DBLIB->getOne("locations", ["locations_id"])) finish(false, ["code" => "PARAM-ERROR", "message" => "Parent location not found"]);
+}
 
 $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("locations.locations_deleted", 0);

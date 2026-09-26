@@ -11,6 +11,7 @@ foreach ($_POST['formData'] as $item) {
     if ($item['name'] == 'modules_visibleToGroups') array_push($array['modules_visibleToGroups'],$item['value']);
     else $array[$item['name']] = $item['value'];
 }
+unset($array['instances_id']); //Modules can't be moved to another business
 if (strlen($array['modules_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 if ($array['modules_show']) $array['modules_show'] = 1;
 else $array['modules_show'] = 0;

@@ -9,6 +9,7 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['assetGroups_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+unset($array['instances_id']); //Records can't be moved to another business
 if ($array['personal'] == "on") $array['users_userid'] = $AUTH->data['users_userid'];
 else $array['users_userid'] = null;
 unset($array['personal']);

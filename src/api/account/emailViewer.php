@@ -11,7 +11,9 @@ if (!$AUTH->serverPermissionCheck("USERS:VIEW:MAILINGS")) die("Sorry you don't h
 					.pagebreak { page-break-before: always; }
 				</style>';
 	if (isset($_POST['email']) and  $_POST['email'] != '') {
-		$DBLIB->where ('emailSent_id IN (' . $bCMS->sanitizeStringMYSQL($_POST['email']) . ')');
+		$ids = array_filter(array_map('intval', explode(",", $_POST['email']))); //A comma-separated list of IDs
+		if (!$ids) die('E-Mail not found');
+		$DBLIB->where ('emailSent_id', $ids, 'IN');
 		$emails = $DBLIB->get('emailSent');
 		if (!isset($emails[0])) die('E-Mail not found');
 	} else die('Nothing to see here!');

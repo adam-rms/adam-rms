@@ -3,6 +3,9 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 
 if (!$AUTH->instancePermissionCheck("TRAINING:EDIT:REVOKE_USER_CERTIFICATION") or !isset($_POST['userid']) or !isset($_POST['modules_id'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No auth for action"]);
 
+$DBLIB->where("modules_id", $_POST['modules_id']);
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']); //The module must be in this business
+if (!$DBLIB->getOne("modules", ["modules_id"])) finish(false, ["message"=> "Module not found"]);
 $DBLIB->where("users_userid",$_POST['userid']);
 $DBLIB->where("modules_id", $_POST['modules_id']);
 $update = $DBLIB->update("userModulesCertifications",["userModulesCertifications_revoked" => 1]);

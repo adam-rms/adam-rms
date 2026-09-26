@@ -8,6 +8,11 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['assetCategories_name']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+if (isset($array['assetCategoriesGroups_id'])) { //Shared category groups, or the business's own
+    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+    $DBLIB->where("assetCategoriesGroups_id", $array['assetCategoriesGroups_id']);
+    if (!$DBLIB->getOne("assetCategoriesGroups", ["assetCategoriesGroups_id"])) finish(false, ["code" => "PARAM-ERROR", "message" => "Category group not found"]);
+}
 $array['instances_id'] = $AUTH->data['instance']['instances_id'];
 $category = $DBLIB->insert("assetCategories", $array);
 if (!$category) finish(false);

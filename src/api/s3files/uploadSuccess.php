@@ -3,6 +3,7 @@ require_once __DIR__ . '/../apiHeadSecure.php';
 if ($CONFIG['FILES_ENABLED'] !== "Enabled") {
     finish(false, ["code" => null, "message" => "File uploads are disabled"]);
 }
+if (!$bCMS->s3SubTypeIsInInstance($_POST['typeid'], $_POST['subtype'] ?? null)) finish(false, ["code" => null, "message" => "Record not found"]);
 $fileData = [
     "s3files_extension" => pathinfo($bCMS->sanitizeString($_POST['name']), PATHINFO_EXTENSION),
     "s3files_path" => pathinfo($bCMS->sanitizeString($_POST['name']), PATHINFO_DIRNAME),

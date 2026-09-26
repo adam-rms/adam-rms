@@ -5,6 +5,8 @@ if (!$AUTH->instancePermissionCheck("ASSETS:ASSET_GROUPS:EDIT:ASSETS_WITHIN_GROU
 if (!isset($_POST['assetGroups_id']) or !is_numeric($_POST['assetGroups_id']) or !is_numeric($_POST['assetGroups_id'])) finish(false);
 
 $DBLIB->where("assets_id",$_POST['assets_id']);
+$DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']); //Only this business's assets
+$DBLIB->where("assets.assets_deleted", 0);
 $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
 $asset = $DBLIB->getone("assets", ["assets_assetGroups","assets_tag","assetTypes_name"]);
 if (!$asset) finish(false);

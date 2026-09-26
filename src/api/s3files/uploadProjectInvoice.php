@@ -2,6 +2,10 @@
 require_once __DIR__ . '/../apiHeadSecure.php';
 if (!$AUTH->instancePermissionCheck("PROJECTS:VIEW") or !isset($_POST['id']) or $CONFIG['FILES_ENABLED'] !== "Enabled") finish(false);
 
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']); //Only this business's projects
+$DBLIB->where("projects_deleted", 0);
+$DBLIB->where("projects_id", $_POST['id']);
+if (!$DBLIB->getOne("projects", ["projects_id"])) finish(false);
 if (isset($_FILES['file'])) {
     $temp_file_location = $_FILES['file']['tmp_name'];
     $s3 = new Aws\S3\S3Client([

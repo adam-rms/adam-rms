@@ -15,15 +15,25 @@ $array['maintenanceJobs_timestamp_added'] = date('Y-m-d H:i:s');
 if ($array['maintenanceJobs_assets'] == "") finish(false, ["code" => "NO-ASSETS", "message"=> "No assets"]);
 
 if ($array["maintenanceJobs_user_tagged"] == "" or !isset($array["maintenanceJobs_user_tagged"])) $array["maintenanceJobs_user_tagged"] = [];
+// The assets and users must all be in this business
+$assetIds = [];
+foreach (explode(",", $array['maintenanceJobs_assets']) as $assetId) {
+    $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("assets_deleted", 0);
+    $DBLIB->where("assets_id", $assetId);
+    if (!$DBLIB->getOne("assets", ["assets_id"])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Asset not found"]);
+    $assetIds[] = intval($assetId);
+}
+$array['maintenanceJobs_assets'] = implode(",", $assetIds);
 $array["maintenanceJobs_user_taggedFINAL"] = [];
 foreach ($array["maintenanceJobs_user_tagged"] as $user) {
-    array_push($array["maintenanceJobs_user_taggedFINAL"], $user);
+    if (!$bCMS->userIsInInstance($user, $AUTH->data['instance']['instances_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Tagged user not found"]);
+    array_push($array["maintenanceJobs_user_taggedFINAL"], intval($user));
 }
 $array['maintenanceJobs_user_tagged'] = implode(",", $array['maintenanceJobs_user_taggedFINAL']);
-
 if (!$array['maintenanceJobs_user_creator']) $array['maintenanceJobs_user_creator'] =  $AUTH->data['users_userid'];
-
-//TODO verify these users are in the instance
+elseif (!$bCMS->userIsInInstance($array['maintenanceJobs_user_creator'], $AUTH->data['instance']['instances_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Creator not found"]);
+if ($array['maintenanceJobs_user_assignedTo'] and !$bCMS->userIsInInstance($array['maintenanceJobs_user_assignedTo'], $AUTH->data['instance']['instances_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "Assigned user not found"]);
 $result = $DBLIB->insert("maintenanceJobs", array_intersect_key( $array, array_flip( ['maintenanceJobs_assets','maintenanceJobs_title','maintenanceJobs_timestamp_added','maintenanceJobs_user_creator','maintenanceJobs_user_assignedTo','maintenanceJobs_faultDescription','maintenanceJobs_priority',"instances_id","maintenanceJobs_user_tagged"] ) ));
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message"=> "Could not insert job" . $DBLIB->getlasterror()]);
 else {

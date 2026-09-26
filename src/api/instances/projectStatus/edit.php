@@ -11,6 +11,7 @@ foreach ($_POST['formData'] as $item) {
         $array[$item['name']] = $item['value'];
     }
 }
+unset($array['instances_id']); //Statuses can't be moved to another business
 if (strlen($array['projectsStatuses_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);

@@ -5,6 +5,7 @@ $array = [];
 foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
+unset($array['instances_id']); //Types can't be moved to another business
 if (!is_numeric($array['projectsTypes_id'])) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
 elseif (!$AUTH->instancePermissionCheck("PROJECTS:PROJECT_TYPES:EDIT")) die("404");
 

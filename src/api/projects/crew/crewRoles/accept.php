@@ -14,6 +14,7 @@ $DBLIB->where("projectsVacantRolesApplications.projectsVacantRolesApplications_d
 $DBLIB->where("projectsVacantRolesApplications_id",$_POST["projectsVacantRolesApplications_id"]);
 $application = $DBLIB->getOne("projectsVacantRolesApplications", ["projectsVacantRolesApplications_id","projects_name","projects.projects_id","projectsVacantRoles_name","users.users_userid","projectsVacantRoles_name","projectsVacantRoles_slotsFilled"]);
 if (!$application) finish(false,["message"=>"Application not found"]);
+if (!$bCMS->userIsInInstance($application['users_userid'], $AUTH->data['instance']['instances_id'])) finish(false, ["message"=>"This user is no longer in the business"]);
 
 $insert = $DBLIB->insert("crewAssignments", [
     "projects_id" => $application["projects_id"],

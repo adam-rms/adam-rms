@@ -6,7 +6,10 @@ if (!isset($_POST['id'])) finish(false, ["code" => "AUTH-ERROR", "message"=> "No
 $DBLIB->where("modulesSteps_deleted",0);
 $DBLIB->where("modulesSteps_id",$_POST['id']);
 $DBLIB->where("modulesSteps_show",1);
-$step = $DBLIB->getone("modulesSteps",["modulesSteps_id","modules_id"]);
+$DBLIB->join("modules", "modules.modules_id=modulesSteps.modules_id", "LEFT");
+$DBLIB->where("modules.instances_id", $AUTH->data['instance']['instances_id']); //Only this business's modules
+$DBLIB->where("modules.modules_deleted", 0);
+$step = $DBLIB->getone("modulesSteps",["modulesSteps.modulesSteps_id","modulesSteps.modules_id"]);
 if (!$step) finish(false, ["message"=> "Can't find step"]);
 
 $DBLIB->orderBy("userModules_updated","DESC");

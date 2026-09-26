@@ -8,6 +8,12 @@ foreach ($_POST['formData'] as $item) {
     $array[$item['name']] = $item['value'];
 }
 if (strlen($array['assetCategories_id']) <1) finish(false, ["code" => "PARAM-ERROR", "message"=> "No data for action"]);
+unset($array['instances_id']); //Records can't be moved to another business
+if (isset($array['assetCategoriesGroups_id'])) {
+    $DBLIB->where("(instances_id IS NULL OR instances_id = ?)", [$AUTH->data['instance']['instances_id']]);
+    $DBLIB->where("assetCategoriesGroups_id", $array['assetCategoriesGroups_id']);
+    if (!$DBLIB->getOne("assetCategoriesGroups", ["assetCategoriesGroups_id"])) finish(false, ["code" => "PARAM-ERROR", "message" => "Category group not found"]);
+}
 
 $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("assetCategories_deleted", 0);
