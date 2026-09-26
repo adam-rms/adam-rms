@@ -123,7 +123,7 @@ function assetFlagsAndBlocks($assetid)
     global $DBLIB;
     $DBLIB->where("maintenanceJobs.maintenanceJobs_deleted", 0);
     $DBLIB->where("(maintenanceJobs.maintenanceJobs_blockAssets = 1 OR maintenanceJobs.maintenanceJobs_flagAssets = 1)");
-    $DBLIB->where("(FIND_IN_SET(" . $assetid . ", maintenanceJobs.maintenanceJobs_assets) > 0)");
+    $DBLIB->where("(FIND_IN_SET(?, maintenanceJobs.maintenanceJobs_assets) > 0)", [$assetid]);
     $DBLIB->join("maintenanceJobsStatuses", "maintenanceJobs.maintenanceJobsStatuses_id=maintenanceJobsStatuses.maintenanceJobsStatuses_id", "LEFT");
     //$DBLIB->join("users AS userCreator", "userCreator.users_userid=maintenanceJobs.maintenanceJobs_user_creator", "LEFT");
     //$DBLIB->join("users AS userAssigned", "userAssigned.users_userid=maintenanceJobs.maintenanceJobs_user_assignedTo", "LEFT");

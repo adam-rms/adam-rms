@@ -17,12 +17,13 @@ $DBLIB->orderBy("users.users_created", "ASC");
 $DBLIB->where("users_deleted", 0);
 if (strlen($q) > 0) {
 	//Search
+	$like = "%" . $bCMS->sanitizeString($q) . "%";
 	$DBLIB->where("(
-		users_username LIKE '%" . $bCMS->sanitizeString($q) . "%'
-		OR users_name1 LIKE '%" . $bCMS->sanitizeString($q) . "%'
-		OR users_name2 LIKE '%" . $bCMS->sanitizeString($q) . "%'
-		OR users_email LIKE '%" . $bCMS->sanitizeString($q) . "%'
-		)");
+		users_username LIKE ?
+		OR users_name1 LIKE ?
+		OR users_name2 LIKE ?
+		OR users_email LIKE ?
+		)", [$like, $like, $like, $like]);
 }
 $DBLIB->join("userInstances", "users.users_userid=userInstances.users_userid","LEFT");
 $DBLIB->join("instancePositions", "userInstances.instancePositions_id=instancePositions.instancePositions_id","LEFT");

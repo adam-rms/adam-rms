@@ -20,6 +20,16 @@ foreach ($_GET as $key=>$item) {
 }
 //POST is now the authoritarian copy
 
+//Many endpoints use the names of the fields they're sent as column names, which the database class doesn't escape, so drop any name that isn't a plain identifier
+foreach (array_keys($_POST) as $key) {
+    if (!preg_match('/^\w+$/', $key)) unset($_POST[$key]);
+}
+if (isset($_POST['formData']) and is_array($_POST['formData'])) {
+    $_POST['formData'] = array_values(array_filter($_POST['formData'], function ($item) {
+        return is_array($item) and isset($item['name']) and is_string($item['name']) and preg_match('/^\w+$/', $item['name']);
+    }));
+}
+
 
 require_once __DIR__ . '/../common/head.php';
 require_once __DIR__ . '/notifications/main.php';

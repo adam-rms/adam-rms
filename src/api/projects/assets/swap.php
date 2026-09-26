@@ -48,11 +48,11 @@ $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
 $DBLIB->where("((projects_dates_deliver_start >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_start"] . "' AND projects_dates_deliver_end <= '" . $currentAsset["projects_dates_deliver_end"] . "') OR (projects_dates_deliver_end >= '" . $currentAsset["projects_dates_deliver_end"] . "' AND projects_dates_deliver_start <= '" . $currentAsset["projects_dates_deliver_start"] . "'))");
 $assignments = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.projects_id"]);
 
-$flagsBlocks = assetFlagsAndBlocks($_POST['assets_id']);
+$flagsBlocks = assetFlagsAndBlocks($assetToSwap['assets_id']);
 
 if (count($assignments) < 1 and $flagsBlocks['COUNT']['BLOCK'] < 1) {
     $DBLIB->where('assetsAssignments_id', $currentAsset['assetsAssignments_id']);
-    $assignment = $DBLIB->update("assetsAssignments", ["assets_id" => $_POST['assets_id']],1);
+    $assignment = $DBLIB->update("assetsAssignments", ["assets_id" => $assetToSwap['assets_id']],1);
     if (!$assignment) finish(false);
 
     // Both assets are the same type, but either can have its own rates, value and mass, so take the old asset's off the project's finances and add the new one's
