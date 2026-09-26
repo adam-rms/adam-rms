@@ -374,7 +374,7 @@ npm test                          # set PHP_BINARY=php8.3 if `php` on your PATH 
 - For a bug fix, add a test that reproduces the bug first, then fix it.
 - Tests share one database and run serially; create the data each test needs rather than relying on what an earlier test left behind.
 - Multi-tenancy and permissions: `e2e/tenants.ts` gives a `test` with two seeded businesses, A and B (`e2e/setup/tenants.php`), logged-in HTTP sessions for their users, and DB snapshots. Add cases to the tables in `authenticated/tenant-isolation.spec.ts` and `authenticated/permissions.spec.ts`.
-- `e2e/COVERAGE.md` lists every page and API endpoint with its permission checks and test status. Regenerate it with `npm run coverage` (in `e2e/`) after adding tests.
+- Every page and API endpoint has at least one test. When you add one, add a test for it too, including tenant-isolation and permission cases if it takes record IDs or checks a permission.
 - **OpenAPI docs**: Auto-generated from `@OA\` annotations in PHP files via `zircote/swagger-php`
 - **License**: AGPLv3 - all changes must remain open source
 
