@@ -123,6 +123,8 @@ function tenant(string $letter): array {
         $membershipId = upsert("userInstances", "userInstances_id", ["users_userid" => $userId, "instancePositions_id" => $position], [
             "userInstances_deleted" => 0, "userInstances_archived" => null, "userInstances_extraPermissions" => null, "userInstances_label" => "$marker $kind",
         ], $kind === "deleted" ? ($remembered['deletedMembershipId'] ?? null) : null);
+        // A test may have had the user leave and join again, leaving a second membership with the same role
+        $db->prepare("UPDATE userInstances SET userInstances_deleted = 1 WHERE users_userid = ? AND userInstances_id != ?")->execute([$userId, $membershipId]);
         $t['users'][$kind] = ["id" => $userId, "email" => $email];
         if ($kind === "deleted") $t['deletedMembershipId'] = $membershipId;
     }

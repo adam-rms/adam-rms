@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { BASE_URL } from "../env";
-import { expect, newSession, type Params, seedTenants, Session, test, type Tenant } from "../tenants";
+import { dbQuery, expect, newSession, type Params, seedTenants, Session, test, type Tenant } from "../tenants";
 
 /**
  * Sends every API endpoint a value that breaks out of an SQL string, in each request parameter the endpoint
@@ -75,6 +75,16 @@ function request(params: string[], injected: string, a: Tenant): Params {
 }
 
 const all = endpoints();
+
+// instances/new.php makes a new business each time it's probed; delete them afterwards, and their memberships
+let lastBusiness = 0;
+test.beforeAll(() => {
+  lastBusiness = dbQuery<{ id: number }>("SELECT COALESCE(MAX(instances_id), 0) id FROM instances")[0].id;
+});
+test.afterAll(() => {
+  dbQuery("UPDATE userInstances SET userInstances_deleted = 1 WHERE instancePositions_id IN (SELECT instancePositions_id FROM instancePositions WHERE instances_id > ?)", [lastBusiness]);
+  dbQuery("UPDATE instances SET instances_deleted = 1 WHERE instances_id > ?", [lastBusiness]);
+});
 
 test.describe("logged in as business A's full user", () => {
   test.afterEach(() => {

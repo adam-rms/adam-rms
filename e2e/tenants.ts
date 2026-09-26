@@ -66,6 +66,7 @@ function php(script: string, args: string[] = []) {
     cwd: repoRoot,
     env: { ...process.env, ...APP_ENV },
     encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024, // A business's snapshot grows with every record tests add to it
   });
 }
 
