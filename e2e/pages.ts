@@ -54,6 +54,7 @@ export const businessPages: PageCase[] = [
   { url: (t) => `/location/?id=${t.locationId}&files` },
   { url: (t) => `/location/barcode.php?location=${t.locationId}` },
   { url: () => "/maintenance/" },
+  { url: () => "/maintenance/job.php" },
   { url: (t) => `/maintenance/job.php?id=${t.maintenanceJobId}` },
   { url: () => "/maintenance/barcode.php" },
   { url: () => "/maintenance/barcodeGenerator.php?all" },
