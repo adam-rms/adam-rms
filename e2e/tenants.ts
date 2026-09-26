@@ -52,7 +52,13 @@ export type Tenant = {
   signupCodeId: number;
 };
 type TenantUser = { id: number; email: string };
-export type Tenants = { password: string; a: Tenant; b: Tenant };
+export type Tenants = {
+  password: string;
+  a: Tenant;
+  b: Tenant;
+  /** Has full access to both A and B */
+  sharedUser: TenantUser;
+};
 
 const repoRoot = path.resolve(__dirname, "..");
 function php(script: string, args: string[] = []) {

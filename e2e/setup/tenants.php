@@ -295,4 +295,18 @@ function tenant(string $letter): array {
 }
 
 $tenants = ["password" => "password!", "a" => tenant("A"), "b" => tenant("B")];
+
+// A user with full access to both businesses, for what happens between them, e.g. that an asset can't be
+// booked in A and B at once. Its name and labels have no marker, so it doesn't look like a leak when A sees it.
+$sharedEmail = "e2e_tenants_shared@example.com";
+$sharedId = user($sharedEmail, "Shared", "E2E user");
+$sharedPositions = [$tenants['a']['positions']['full'], $tenants['b']['positions']['full']];
+$db->prepare("UPDATE userInstances SET userInstances_deleted = 1 WHERE users_userid = ? AND instancePositions_id NOT IN (?, ?)")
+    ->execute([$sharedId, ...$sharedPositions]);
+foreach ($sharedPositions as $position) {
+    upsert("userInstances", "userInstances_id", ["users_userid" => $sharedId, "instancePositions_id" => $position], [
+        "userInstances_deleted" => 0, "userInstances_archived" => null, "userInstances_extraPermissions" => null, "userInstances_label" => "E2E shared user",
+    ]);
+}
+$tenants['sharedUser'] = ["id" => $sharedId, "email" => $sharedEmail];
 echo json_encode($tenants, JSON_PRETTY_PRINT) . "\n";
