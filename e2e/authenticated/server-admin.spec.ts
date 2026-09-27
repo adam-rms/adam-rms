@@ -150,3 +150,18 @@ test("businesses are edited and deleted by server admins only", async ({ asA, te
   }
   expect(mentions(await asA.api("/api/instances/list.php"), `${a.marker} Ltd`)).toBe(true);
 });
+
+test("a business can only be made with a real currency", async () => {
+  const name = `E2E currency business ${Date.now()}`;
+  const bad = await admin.api("/api/instances/new.php", { instances_name: `${name} bad`, role: "e2e", instances_config_currency: "NOTACURRENCY" });
+  expect(bad.json).toMatchObject({ result: false });
+  expect(dbQuery("SELECT instances_id FROM instances WHERE instances_name = ?", [`${name} bad`])).toHaveLength(0);
+
+  expect(succeeded(await admin.api("/api/instances/new.php", { instances_name: name, role: "e2e", instances_config_currency: "EUR" }))).toBe(true);
+  const [{ instances_id, currency }] = dbQuery<{ instances_id: number; currency: string }>(
+    "SELECT instances_id, instances_config_currency currency FROM instances WHERE instances_name = ?", [name],
+  );
+  expect(currency).toBe("EUR");
+  dbQuery("UPDATE userInstances SET userInstances_deleted = 1 WHERE instancePositions_id IN (SELECT instancePositions_id FROM instancePositions WHERE instances_id = ?)", [instances_id]);
+  dbQuery("UPDATE instances SET instances_deleted = 1 WHERE instances_id = ?", [instances_id]);
+});

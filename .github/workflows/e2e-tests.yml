@@ -17,7 +17,7 @@ jobs:
   e2e:
     name: Playwright E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     services:
       mysql:
         image: mysql:8.0
@@ -57,6 +57,13 @@ jobs:
 
       - name: Install test dependencies
         run: npm ci
+
+      # The jQuery, Bootstrap etc. pages load from CDNs, cached by e2e/cdn.ts; the templates say which versions
+      - uses: actions/cache@v4
+        with:
+          path: e2e/.cdn-cache
+          key: cdn-${{ hashFiles('src/**/*.twig') }}
+          restore-keys: cdn-
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium

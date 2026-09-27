@@ -13,11 +13,12 @@ $DBLIB->where("(userInstances.userInstances_archived IS NULL OR userInstances.us
 $DBLIB->orderBy("users.users_name1", "ASC");
 $DBLIB->orderBy("users.users_name2", "ASC");
 if (strlen($_POST['term']) > 0) {
+    $like = "%" . $bCMS->sanitizeString($_POST['term']) . "%";
     $DBLIB->where("(
-		users_name1 LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
-		OR users_name2 LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'	
-		OR CONCAT( users_name1,  ' ', users_name2 ) LIKE '%" . $bCMS->sanitizeString($_POST['term']) . "%'
-    )");
+		users_name1 LIKE ?
+		OR users_name2 LIKE ?
+		OR CONCAT( users_name1,  ' ', users_name2 ) LIKE ?
+    )", [$like, $like, $like]);
 }
 $users = $DBLIB->get("users", 15, ["users.users_userid", "users.users_name1", "users.users_name2"]);
 if (!$users) finish(false, ["code" => "LIST-USERS-FAIL", "message"=> "Could not search for Users"]);

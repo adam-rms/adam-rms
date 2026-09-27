@@ -83,6 +83,11 @@ export default defineConfig({
 
   projects: [
     {
+      // Checks on the source code; no browser or server needed
+      name: "static",
+      testMatch: /static\/.+\.spec\.ts/,
+    },
+    {
       name: "public",
       testMatch: /public\/.+\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], launchOptions },

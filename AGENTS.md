@@ -369,12 +369,17 @@ npm test                          # set PHP_BINARY=php8.3 if `php` on your PATH 
 
 ### Writing E2E tests
 
+- `e2e/static/` — checks on the source that need no server: every PHP file parses, every `require` of a `__DIR__`-relative path and every template a `render()` call or Twig tag names exists, and every Twig template compiles with only filters, functions and tags that exist (`e2e/setup/lint.php`).
 - `e2e/public/` — tests that don't need a session. `e2e/authenticated/` — import `test` from `e2e/fixtures.ts` to get a `page` already logged in as the super admin.
+- `authenticated/pages-render.spec.ts` opens every page in a browser and fails on a PHP fatal error, the 404 page or an uncaught JavaScript error. Add new pages to the lists in `e2e/pages.ts`. Browser tests get CDN files from a local cache (`e2e/cdn.ts`) and can't reach any other outside site.
+- Security sweeps run over every endpoint and page automatically: `authenticated/sql-injection.spec.ts` sends every parameter an endpoint reads (and a field whose name contains a backtick) a value that breaks out of SQL, and `authenticated/xss.spec.ts` gives business A's names and notes script payloads and opens every page. New endpoints and pages are picked up without changes; a failure there is a real injection hole.
+- `authenticated/journeys.spec.ts` drives the everyday jobs through the UI (new project, adding an asset from the assets page, recording a payment, the dispatch board, reporting a fault). If you change one of those pages' forms or scripts, run it.
+- Business rules have their own specs: `asset-availability.spec.ts` (an asset can't be double-booked, within or across businesses), `project-finance.spec.ts` (project totals, and that the `projectsFinanceCache` running totals every price/discount/date/payment endpoint adjusts stay equal to what `projects/data.php` works out) and `project-assets.spec.ts`. `e2e/projects.ts` has helpers to create projects and assets and check a project's finances; if you change an endpoint that affects a project's money, add a step to `project-finance.spec.ts`.
 - Write characterisation tests: assert what the app does today. If you find a bug while writing tests, mark the test `test.fixme` with a comment and raise an issue rather than fixing it in the same PR.
 - For a bug fix, add a test that reproduces the bug first, then fix it.
 - Tests share one database and run serially; create the data each test needs rather than relying on what an earlier test left behind.
-- Multi-tenancy and permissions: `e2e/tenants.ts` gives a `test` with two seeded businesses, A and B (`e2e/setup/tenants.php`), logged-in HTTP sessions for their users, and DB snapshots. Add cases to the tables in `authenticated/tenant-isolation.spec.ts` and `authenticated/permissions.spec.ts`.
-- `e2e/COVERAGE.md` lists every page and API endpoint with its permission checks and test status. Regenerate it with `npm run coverage` (in `e2e/`) after adding tests.
+- Multi-tenancy and permissions: `e2e/tenants.ts` gives a `test` with two seeded businesses, A and B (`e2e/setup/tenants.php`), logged-in HTTP sessions for their users, a user who belongs to both (`sharedUser`), and DB snapshots. Add cases to the tables in `authenticated/tenant-isolation.spec.ts` and `authenticated/permissions.spec.ts`.
+- Every page and API endpoint has at least one test. When you add one, add a test for it too, including tenant-isolation and permission cases if it takes record IDs or checks a permission.
 - **OpenAPI docs**: Auto-generated from `@OA\` annotations in PHP files via `zircote/swagger-php`
 - **License**: AGPLv3 - all changes must remain open source
 

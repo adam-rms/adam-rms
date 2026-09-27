@@ -9,7 +9,7 @@ import { BASE_URL, TEST_USER } from "../env";
  * Controls change A's records, so the tenants are re-seeded after each one (setup/tenants.php resets them).
  *
  * A new case that finds a leak can be marked test.fixme (set `fixme` to a note saying how it leaks)
- * until the endpoint is fixed; e2e/COVERAGE.md flags those endpoints.
+ * until the endpoint is fixed.
  */
 
 type ReadCase = {
