@@ -48,6 +48,23 @@ if ($hasType) {
     }
 }
 
+//Where the asset is being scanned: a location barcode or an asset in this business, or a place typed in by hand
+$scanLocation = ["locationsBarcodes_id" => null, "location_assets_id" => null, "assetsBarcodes_customLocation" => null];
+if (isset($_POST['locationType']) and isset($_POST['location'])) {
+    if ($_POST['locationType'] == "barcode" and is_numeric($_POST['location'])) {
+        $DBLIB->where("locationsBarcodes.locationsBarcodes_id", intval($_POST['location']));
+        $DBLIB->where("locationsBarcodes.locationsBarcodes_deleted", 0);
+        $DBLIB->where("locations.instances_id", $AUTH->data['instance']['instances_id']);
+        $DBLIB->join("locations", "locations.locations_id=locationsBarcodes.locations_id", "LEFT");
+        $scanLocation['locationsBarcodes_id'] = $DBLIB->getValue("locationsBarcodes", "locationsBarcodes.locationsBarcodes_id") ?: null;
+    } elseif ($_POST['locationType'] == "asset" and is_numeric($_POST['location'])) {
+        $DBLIB->where("assets_id", intval($_POST['location']));
+        $DBLIB->where("assets_deleted", 0);
+        $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+        $scanLocation['location_assets_id'] = $DBLIB->getValue("assets", "assets_id") ?: null;
+    } elseif ($_POST['locationType'] == "Custom") $scanLocation['assetsBarcodes_customLocation'] = $_POST['location'];
+}
+
 //See if Barcode is in database
 if ($hasType) {
     $DBLIB->where("assetsBarcodes_value", $_POST['text']);
@@ -61,9 +78,9 @@ if ($hasType) {
             "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
             "users_userid" => $AUTH->data['users_userid'],
             "assetsBarcodesScans_timestamp" => date('Y-m-d H:i:s'),
-            "locationsBarcodes_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "barcode" && isset($_POST['location']) ? $_POST['location'] : null),
-            "location_assets_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "asset" && isset($_POST['location']) ? $_POST['location'] : null),
-            "assetsBarcodes_customLocation" => (isset($_POST['locationType']) && $_POST['locationType'] == "Custom" && isset($_POST['location']) ? $_POST['location'] : null),
+            "locationsBarcodes_id" => $scanLocation['locationsBarcodes_id'],
+            "location_assets_id" => $scanLocation['location_assets_id'],
+            "assetsBarcodes_customLocation" => $scanLocation['assetsBarcodes_customLocation'],
             "assetsBarcodesScans_barcodeWasScanned" => (isset($_POST['scanned']) && $_POST['scanned'] == "true" ? 1 : 0),
             "assetsBarcodesScans_validation" => isset($_POST['validation']) ? $_POST['validation'] : null,
         ];
@@ -95,9 +112,9 @@ if ($hasType) {
             "assetsBarcodes_id" => $barcode['assetsBarcodes_id'],
             "users_userid" => $AUTH->data['users_userid'],
             "assetsBarcodesScans_timestamp" => date('Y-m-d H:i:s'),
-            "locationsBarcodes_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "barcode" && isset($_POST['location']) ? $_POST['location'] : null),
-            "location_assets_id" => (isset($_POST['locationType']) && $_POST['locationType'] == "asset" && isset($_POST['location']) ? $_POST['location'] : null),
-            "assetsBarcodes_customLocation" => (isset($_POST['locationType']) && $_POST['locationType'] == "Custom" && isset($_POST['location']) ? $_POST['location'] : null),
+            "locationsBarcodes_id" => $scanLocation['locationsBarcodes_id'],
+            "location_assets_id" => $scanLocation['location_assets_id'],
+            "assetsBarcodes_customLocation" => $scanLocation['assetsBarcodes_customLocation'],
             "assetsBarcodesScans_barcodeWasScanned" => (isset($_POST['scanned']) && $_POST['scanned'] == "true" ? 1 : 0),
             "assetsBarcodesScans_validation" => isset($_POST['validation']) ? $_POST['validation'] : null,
         ];
