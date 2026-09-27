@@ -147,7 +147,16 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.POST_CONTAINER_BUILD_WEBHOOK }}
           COOLIFY_TOKEN: ${{ secrets.POST_CONTAINER_BUILD_WEBHOOK_TOKEN }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
         run: |
           # Wait for the new image to propagate through the registry before triggering a deploy
           sleep 10
-          curl -fsS --show-error -X GET -H "Authorization: Bearer $COOLIFY_TOKEN" "$WEBHOOK_URL" || echo "Warning: Deploy webhook failed, continuing anyway"
+          # Coolify sits behind Cloudflare Access, so a Cloudflare Access service token
+          # (see the CF_ACCESS_CLIENT_ID / CF_ACCESS_CLIENT_SECRET secrets) is required
+          # to reach it in addition to the Coolify webhook's own bearer token.
+          curl -fsS --show-error -X GET \
+            -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            -H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" \
+            -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" \
+            "$WEBHOOK_URL" || echo "Warning: Deploy webhook failed, continuing anyway"
