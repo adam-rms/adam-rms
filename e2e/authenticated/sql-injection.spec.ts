@@ -97,6 +97,8 @@ test.describe("logged in as business A's full user", () => {
   });
   for (const { file, params } of all.filter((e) => !e.file.startsWith("login/"))) {
     test(`api/${file} doesn't paste its parameters into SQL`, async ({ playwright, seeded, tenants: { a } }) => {
+      // Waits 10 seconds after each code that isn't valid, which every probe of it is
+      if (file === "instances/addUserFromCode.php") test.slow();
       const context = await playwright.request.newContext({ baseURL: BASE_URL });
       const session = await newSession(context, seeded.a.users.full.email, seeded.password);
       const broken: string[] = [];
