@@ -32,7 +32,7 @@ AdamRMS supports two methods for scanning asset barcodes:
 Use a device's built-in or attached camera to scan barcodes in real-time. This is ideal for mobile devices and tablets. Click "Start Camera Scanning" to begin, and the scanner will automatically detect barcodes in the camera view. If your device has multiple cameras, you can select which one to use.
 
 :::note Important:
-AdamRMS will only detect your camera, if you have a secure connection (https://...).
+Camera scanning requires a secure browser context. Use HTTPS when accessing AdamRMS remotely; browsers generally treat `localhost` as secure for local development.
 :::
 
 ### USB/Bluetooth Scanner
