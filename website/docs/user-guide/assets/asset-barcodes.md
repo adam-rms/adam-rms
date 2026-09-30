@@ -31,6 +31,10 @@ AdamRMS supports two methods for scanning asset barcodes:
 ### Camera Scanning
 Use a device's built-in or attached camera to scan barcodes in real-time. This is ideal for mobile devices and tablets. Click "Start Camera Scanning" to begin, and the scanner will automatically detect barcodes in the camera view. If your device has multiple cameras, you can select which one to use.
 
+:::note Important:
+AdamRMS will only detect your camera, if you have a secure connection (https://...).
+:::
+
 ### USB/Bluetooth Scanner
 If you have a USB or Bluetooth barcode scanner (sometimes called a "keyboard wedge" scanner), you can use the text input field on the scanner page. Simply scan a barcode with your USB/Bluetooth scanner and it will be entered into the text field automatically. You can also type a barcode value manually and press Enter.
 
