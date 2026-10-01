@@ -1,5 +1,23 @@
-import { dbQuery, expect, formData, test } from "../tenants";
+import { dbQuery, expect, formData, newSession, test } from "../tenants";
 import { login } from "../fixtures";
+import { BASE_URL } from "../env";
+
+test("rejects asset tag patterns that could exceed the database column as the counter grows", async ({ asA, tenants: { a } }) => {
+  const tooLongAtMaximumCounter = `${"A".repeat(197)}{1}`;
+  const original = dbQuery<{ pattern: string | null }>(
+    "SELECT instances_assetTagPattern pattern FROM instances WHERE instances_id = ?", [a.instanceId],
+  )[0].pattern;
+
+  const response = await asA.api("/api/instances/editInstance.php", {
+    formData: formData({ instances_assetTagPattern: tooLongAtMaximumCounter }),
+  });
+
+  expect(response.json).toMatchObject({ result: false });
+  expect(response.json.error.message).toBe("Enter a pattern with one counter such as E-{7}");
+  expect(dbQuery<{ pattern: string | null }>(
+    "SELECT instances_assetTagPattern pattern FROM instances WHERE instances_id = ?", [a.instanceId],
+  )[0].pattern).toBe(original);
+});
 
 test("saves an asset tag pattern and uses its padded counter for new assets", async ({ asA, page, tenants: { a, password } }) => {
   const original = dbQuery<{ pattern: string | null }>(
@@ -18,24 +36,40 @@ test("saves an asset tag pattern and uses its padded counter for new assets", as
       "SELECT instances_assetTagPattern pattern FROM instances WHERE instances_id = ?", [a.instanceId],
     )[0].pattern).toBe(pattern);
 
-    const created = await asA.api("/api/assets/newAssetFromType.php", {
+    const timestamp = pattern.split("-")[1];
+
+    // Create two assets to confirm the MAX/increment counter actually starts at 1 and advances, not just that it pads to 5 digits.
+    const createdFirst = await asA.api("/api/assets/newAssetFromType.php", {
       instances_id: a.instanceId,
       formData: formData({ assetTypes_id: a.assetTypeId }),
     });
-    expect(created.json).toMatchObject({ result: true });
-    expect(created.json.response.assets_tag).toMatch(new RegExp(`^E2E-${pattern.split("-")[1]}-[0-9]{5}-AV$`));
-    const assetId = created.json.response.assets_id;
-    const barcode = dbQuery<{ value: string }>(
+    expect(createdFirst.json).toMatchObject({ result: true });
+    expect(createdFirst.json.response.assets_tag).toBe(`E2E-${timestamp}-00001-AV`);
+    const firstAssetId = createdFirst.json.response.assets_id;
+    const firstBarcode = dbQuery<{ value: string }>(
       "SELECT assetsBarcodes_value value FROM assetsBarcodes WHERE assets_id = ? AND assetsBarcodes_type = 'QR_CODE'",
-      [assetId],
+      [firstAssetId],
     )[0];
-    expect(barcode.value).toBe(created.json.response.assets_tag);
+    expect(firstBarcode.value).toBe(createdFirst.json.response.assets_tag);
+
+    const createdSecond = await asA.api("/api/assets/newAssetFromType.php", {
+      instances_id: a.instanceId,
+      formData: formData({ assetTypes_id: a.assetTypeId }),
+    });
+    expect(createdSecond.json).toMatchObject({ result: true });
+    expect(createdSecond.json.response.assets_tag).toBe(`E2E-${timestamp}-00002-AV`);
+    const secondAssetId = createdSecond.json.response.assets_id;
+    const secondBarcode = dbQuery<{ value: string }>(
+      "SELECT assetsBarcodes_value value FROM assetsBarcodes WHERE assets_id = ? AND assetsBarcodes_type = 'QR_CODE'",
+      [secondAssetId],
+    )[0];
+    expect(secondBarcode.value).toBe(createdSecond.json.response.assets_tag);
   } finally {
     dbQuery("UPDATE instances SET instances_assetTagPattern = ? WHERE instances_id = ?", [original, a.instanceId]);
   }
 });
 
-test("the same asset tag keeps matching barcodes in different instances", async ({ asA, tenants: { a, b, password } }) => {
+test("the same asset tag keeps matching barcodes in different instances", async ({ asA, playwright, tenants: { a, b, password } }) => {
   const originals = dbQuery<{ instances_id: number; pattern: string | null }>(
     "SELECT instances_id, instances_assetTagPattern pattern FROM instances WHERE instances_id IN (?, ?)", [a.instanceId, b.instanceId],
   );
@@ -57,37 +91,36 @@ test("the same asset tag keeps matching barcodes in different instances", async 
     )[0];
     expect(assetABarcode.value).toBe(assetA.assets_tag);
 
-    const loginB = await asA.request.post("/api/login/login.php", {
-      form: { formInput: b.users.full.email, password },
-    });
-    expect(await loginB.json()).toMatchObject({ result: true });
-    const createdB = await asA.api("/api/assets/newAssetFromType.php", {
-      instances_id: b.instanceId,
-      formData: formData({ assetTypes_id: b.assetTypeId }),
-    });
-    expect(createdB.json).toMatchObject({ result: true });
-    const assetB = createdB.json.response;
-    expect(assetA.assets_tag).toBe(assetB.assets_tag);
-    const assetBQr = dbQuery<{ value: string }>(
-      "SELECT assetsBarcodes_value value FROM assetsBarcodes WHERE assets_id = ? AND assetsBarcodes_type = 'QR_CODE'",
-      [assetB.assets_id],
-    )[0];
-    expect(assetBQr.value).toBe(assetB.assets_tag);
+    // A separate request context for B, so logging in doesn't touch the shared, worker-scoped `asA` session.
+    const requestB = await playwright.request.newContext({ baseURL: BASE_URL });
+    try {
+      const asB = await newSession(requestB, b.users.full.email, password);
+      const createdB = await asB.api("/api/assets/newAssetFromType.php", {
+        instances_id: b.instanceId,
+        formData: formData({ assetTypes_id: b.assetTypeId }),
+      });
+      expect(createdB.json).toMatchObject({ result: true });
+      const assetB = createdB.json.response;
+      expect(assetA.assets_tag).toBe(assetB.assets_tag);
+      const assetBQr = dbQuery<{ value: string }>(
+        "SELECT assetsBarcodes_value value FROM assetsBarcodes WHERE assets_id = ? AND assetsBarcodes_type = 'QR_CODE'",
+        [assetB.assets_id],
+      )[0];
+      expect(assetBQr.value).toBe(assetB.assets_tag);
 
-    const printedB = await asA.page(`/maintenance/barcodePrint.php?ids=${assetB.assets_id}&groups=&blanks=0&barcodeType=CODE_128`);
-    expect(printedB.status).toBe(200);
-    const assetBBarcode = dbQuery<{ value: string }>(
-      "SELECT assetsBarcodes_value value FROM assetsBarcodes WHERE assets_id = ? AND assetsBarcodes_type = 'CODE_128'",
-      [assetB.assets_id],
-    )[0];
-    expect(assetBBarcode.value).toBe(assetB.assets_tag);
+      const printedB = await asB.page(`/maintenance/barcodePrint.php?ids=${assetB.assets_id}&groups=&blanks=0&barcodeType=CODE_128`);
+      expect(printedB.status).toBe(200);
+      const assetBBarcode = dbQuery<{ value: string }>(
+        "SELECT assetsBarcodes_value value FROM assetsBarcodes WHERE assets_id = ? AND assetsBarcodes_type = 'CODE_128'",
+        [assetB.assets_id],
+      )[0];
+      expect(assetBBarcode.value).toBe(assetB.assets_tag);
+    } finally {
+      await requestB.dispose();
+    }
   } finally {
     for (const instance of originals) {
       dbQuery("UPDATE instances SET instances_assetTagPattern = ? WHERE instances_id = ?", [instance.pattern, instance.instances_id]);
     }
-    	
-    await asA.request.post("/api/login/login.php", {
-      form: { formInput: a.users.full.email, password },
-    });
   }
 });

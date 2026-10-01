@@ -35,7 +35,7 @@ Each asset can have additional information:
 - Values for the asset type definable fields
 - [Asset Groups](./asset-groups)
 - Asset Tags
-  - Asset Tags can be auto-generated (will be A-XXXX) or entered manually.
+  - Asset Tags can be auto-generated (the pattern for auto-generation can be set manually, by default it´s A-XXXX) or entered manually.
   - See [Asset Barcodes](./asset-barcodes) for more information.
 
 You can add multiple assets at once, and the tags will be added sequentially.

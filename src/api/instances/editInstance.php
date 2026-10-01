@@ -13,7 +13,7 @@ if (isset($array['instances_termsAndPayment'])) $array['instances_termsAndPaymen
 if (isset($array['instances_quoteTerms'])) $array['instances_quoteTerms'] = $bCMS->cleanString($array['instances_quoteTerms']);
 if (isset($array['instances_assetTagPattern'])) {
     if ($array['instances_assetTagPattern'] === null) $array['instances_assetTagPattern'] = "A-{4}";
-    if (!is_string($array['instances_assetTagPattern']) or mb_strlen($array['instances_assetTagPattern'], 'UTF-8') > 200 or !preg_match('/^([^{}]*)\{([1-9]|1[0-8])\}([^{}]*)$/D', $array['instances_assetTagPattern'], $matches) or mb_strlen($matches[1], 'UTF-8') + intval($matches[2]) + mb_strlen($matches[3], 'UTF-8') > 200) {
+    if (!is_string($array['instances_assetTagPattern']) or mb_strlen($array['instances_assetTagPattern'], 'UTF-8') > 200 or !preg_match('/^([^{}]*)\{([1-9]|1[0-8])\}([^{}]*)$/D', $array['instances_assetTagPattern'], $matches) or mb_strlen($matches[1], 'UTF-8') + 18 + mb_strlen($matches[3], 'UTF-8') > 200) {
         finish(false, ["code" => "PARAM-ERROR", "message" => "Enter a pattern with one counter such as E-{7}"]);
     }
 }
