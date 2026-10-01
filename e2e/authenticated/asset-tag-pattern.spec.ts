@@ -85,5 +85,9 @@ test("the same asset tag keeps matching barcodes in different instances", async 
     for (const instance of originals) {
       dbQuery("UPDATE instances SET instances_assetTagPattern = ? WHERE instances_id = ?", [instance.pattern, instance.instances_id]);
     }
+    	
+    await asA.request.post("/api/login/login.php", {
+      form: { formInput: a.users.full.email, password },
+    });
   }
 });
