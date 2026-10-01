@@ -100,23 +100,35 @@ if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strl
 }
 
 // TODO move these functions to a class
-function generateNewTag()
+function generateNewTag($instancesId)
 {
     global $DBLIB;
-    //Get highest current tag - sort numerically so A-10000 ranks above A-9999
-    $DBLIB->orderBy("CAST(SUBSTRING(assets_tag, 3) AS UNSIGNED)", "DESC");
-    $DBLIB->where("assets_tag", 'A-%', 'like');
-    $tag = $DBLIB->getone("assets", ["assets_tag"]);
-    if ($tag) {
-        if (is_numeric(str_replace("A-", "", $tag["assets_tag"]))) {
-            $value = intval(str_replace("A-", "", $tag["assets_tag"])) + 1;
-            if ($value <= 9999)
-                $value = sprintf('%04d', $value);
-            return "A-" . $value;
-        } else
-            return "A-0001";
-    } else
-        return "A-0001";
+    $DBLIB->where("instances_id", $instancesId);
+    $pattern = $DBLIB->getValue("instances", "instances_assetTagPattern");
+    if (!$pattern) $pattern = "A-{4}";
+
+    if (!preg_match('/^([^{}]*)\{([1-9]|1[0-8])\}([^{}]*)$/D', $pattern, $matches)) {
+        $pattern = "A-{4}";
+        preg_match('/^([^{}]*)\{([1-9]|1[0-8])\}([^{}]*)$/D', $pattern, $matches);
+    }
+
+    $prefix = $matches[1];
+    $digits = intval($matches[2]);
+    $suffix = $matches[3];
+    $databaseTagPattern = '^' . preg_quote($prefix) . '([0-9]+)' . preg_quote($suffix) . '$';
+    $tagPattern = '/^' . preg_quote($prefix, '/') . '([0-9]+)' . preg_quote($suffix, '/') . '$/';
+    $DBLIB->where("instances_id", $instancesId);
+    $DBLIB->where("(assets_tag REGEXP ?)", [$databaseTagPattern]);
+    $existingTags = $DBLIB->get("assets", null, ["assets_tag"]);
+
+    $highest = 0;
+    foreach ($existingTags as $existingTag) {
+        if (preg_match($tagPattern, $existingTag["assets_tag"], $counter)) {
+            $highest = max($highest, intval($counter[1]));
+        }
+    }
+
+    return $prefix . str_pad((string) ($highest + 1), $digits, '0', STR_PAD_LEFT) . $suffix;
 }
 function assetFlagsAndBlocks($assetid)
 {
