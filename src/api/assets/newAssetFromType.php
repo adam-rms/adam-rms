@@ -16,6 +16,11 @@ $DBLIB->where("assetTypes_id", $array['assetTypes_id']);
 $asset = $DBLIB->getone("assetTypes");
 if (!$asset) finish(false, ["code" => "LIST-ASSETTYPES-FAIL", "message" => "Could not find asset type"]);
 
+// Hold an instance-scoped lock from the tag duplicate-check/generation through the insert below,
+// so two concurrent requests can't pick (or generate) the same assets_tag. The lock is released
+// implicitly if finish() below exits early, since that closes this request's DB connection.
+$assetTagLock = acquireAssetTagLock($AUTH->data['instance']['instances_id']);
+
 if (isset($array['assets_tag']) and $array['assets_tag'] != null) {
     $DBLIB->where("assets.instances_id", $AUTH->data['instance']['instances_id']);
     $DBLIB->where("assets.assets_tag", $array['assets_tag']);
@@ -25,6 +30,8 @@ if (isset($array['assets_tag']) and $array['assets_tag'] != null) {
 } else $array['assets_tag'] = generateNewTag($AUTH->data['instance']['instances_id']);
 
 $result = $DBLIB->insert("assets", array_intersect_key($array, array_flip(['assets_tag', 'assetTypes_id', 'assets_notes', 'instances_id', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_assetGroups'])));
+
+releaseAssetTagLock($assetTagLock);
 
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message" => "Could not insert asset"]);
 

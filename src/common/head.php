@@ -100,6 +100,33 @@ if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strl
 }
 
 // TODO move these functions to a class
+
+/**
+ * Acquires a MySQL named lock scoped to the instance, used to serialise asset tag
+ * generation/validation with the subsequent insert so two concurrent requests can't
+ * allocate (or insert) the same tag. Must be paired with releaseAssetTagLock().
+ * Throws if the lock can't be acquired within the timeout.
+ */
+function acquireAssetTagLock($instancesId)
+{
+    global $DBLIB;
+    $lockName = "adamrms_asset_tag_instance_" . $instancesId;
+    $row = $DBLIB->rawQueryOne("SELECT GET_LOCK(?, 10) AS locked", [$lockName]);
+    if (!$row || $row["locked"] != 1) {
+        throw new Exception("Could not acquire asset tag lock for instance " . $instancesId);
+    }
+    return $lockName;
+}
+
+/**
+ * Releases a lock previously acquired with acquireAssetTagLock().
+ */
+function releaseAssetTagLock($lockName)
+{
+    global $DBLIB;
+    $DBLIB->rawQuery("SELECT RELEASE_LOCK(?)", [$lockName]);
+}
+
 function generateNewTag($instancesId)
 {
     global $DBLIB;

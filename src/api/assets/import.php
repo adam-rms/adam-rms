@@ -89,6 +89,11 @@ for ($i = 1; $i < count($csv); $i++) {
         }
     });
 
+    // Hold an instance-scoped lock from the tag duplicate-check/generation through the asset
+    // insert at the end of this iteration, so two concurrent requests (e.g. a parallel import
+    // or a manual asset creation) can't pick or generate the same assets_tag.
+    $assetTagLock = acquireAssetTagLock($instances_id);
+
     //Check if asset with given tag already exists
     if (isset($row[9]) and $row[9] != null){
         $DBLIB->where("assets_tag", $row[9]);
@@ -98,6 +103,7 @@ for ($i = 1; $i < count($csv); $i++) {
         if ($asset) {
             //Don't override existing information
             array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset with tag " . $row[9] . " already exists"]);
+            releaseAssetTagLock($assetTagLock);
             continue; 
         }
     } else $row[9] = generateNewTag($instances_id);
@@ -105,6 +111,7 @@ for ($i = 1; $i < count($csv); $i++) {
     //Asset Type
     if (!isset($row[0]) or $row[0] == null) {
         array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset Type not specified"]);
+        releaseAssetTagLock($assetTagLock);
         continue;
     }
     $DBLIB->where("assetTypes_name", $row[0]);
@@ -154,6 +161,7 @@ for ($i = 1; $i < count($csv); $i++) {
             //Asset Category not found
             //This is the one thing we can't just create with data from the CSV
             array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset Category '" . $categoryInput . "' not found. If multiple categories share this name, use 'Group - Category' format to disambiguate."]);
+            releaseAssetTagLock($assetTagLock);
             continue;
         }
 
@@ -184,11 +192,13 @@ for ($i = 1; $i < count($csv); $i++) {
             $assetType['assetTypes_id'] = $DBLIB->insert("assetTypes", $assetType);
         } catch (Exception $e) {
             array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Database error creating Asset Type: " . $e->getMessage()]);
+            releaseAssetTagLock($assetTagLock);
             continue;
         }
         if ($assetType['assetTypes_id']) array_push($createdAssetTypes, $assetType);
         else {
             array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Error creating Asset Type"]);
+            releaseAssetTagLock($assetTagLock);
             continue;
         }
 
@@ -224,6 +234,8 @@ for ($i = 1; $i < count($csv); $i++) {
     } catch (Exception $e) {
         $asset['row'] = $i; //Add Row ID to asset array for logging output
         array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Database error: " . $e->getMessage()]);
+    } finally {
+        releaseAssetTagLock($assetTagLock);
     }
 }
 
