@@ -116,17 +116,11 @@ function generateNewTag($instancesId)
     $digits = intval($matches[2]);
     $suffix = $matches[3];
     $databaseTagPattern = '^' . preg_quote($prefix) . '([0-9]+)' . preg_quote($suffix) . '$';
-    $tagPattern = '/^' . preg_quote($prefix, '/') . '([0-9]+)' . preg_quote($suffix, '/') . '$/';
-    $DBLIB->where("instances_id", $instancesId);
-    $DBLIB->where("(assets_tag REGEXP ?)", [$databaseTagPattern]);
-    $existingTags = $DBLIB->get("assets", null, ["assets_tag"]);
-
-    $highest = 0;
-    foreach ($existingTags as $existingTag) {
-        if (preg_match($tagPattern, $existingTag["assets_tag"], $counter)) {
-            $highest = max($highest, intval($counter[1]));
-        }
-    }
+    $row = $DBLIB->rawQueryOne(
+        "SELECT MAX(CAST(SUBSTRING(assets_tag, ?, CHAR_LENGTH(assets_tag) - ?) AS UNSIGNED)) AS highest FROM assets WHERE instances_id = ? AND (assets_tag REGEXP ?)",
+        [strlen($prefix) + 1, strlen($prefix) + strlen($suffix), $instancesId, $databaseTagPattern]
+    );
+    $highest = ($row && $row["highest"] !== null) ? intval($row["highest"]) : 0;
 
     return $prefix . str_pad((string) ($highest + 1), $digits, '0', STR_PAD_LEFT) . $suffix;
 }

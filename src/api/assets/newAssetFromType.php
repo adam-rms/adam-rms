@@ -28,9 +28,11 @@ $result = $DBLIB->insert("assets", array_intersect_key($array, array_flip(['asse
 
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message" => "Could not insert asset"]);
 
-function checkDuplicate($value, $type)
+function checkDuplicate($value, $type, $instancesId)
 {
     global $DBLIB;
+    $DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
+    $DBLIB->where("assets.instances_id", $instancesId);
     $DBLIB->where("assetsBarcodes_value", $value);
     $DBLIB->where("assetsBarcodes_type", $type);
     $result = $DBLIB->getone("assetsBarcodes", ["assetsBarcodes_id"]);
@@ -47,7 +49,7 @@ $assetBarcodeData = [
     "users_userid" => $AUTH->data['users_userid'],
     "assetsBarcodes_added" => date("Y-m-d H:i:s")
 ];
-while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"], $assetBarcodeData["assetsBarcodes_type"])) {
+while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"], $assetBarcodeData["assetsBarcodes_type"], $AUTH->data['instance']['instances_id'])) {
     $assetBarcodeData["assetsBarcodes_value"] = mt_rand(1000, 999999); //Duplicate, so generate a hopefully random number as a replacement
 }
 $insert = $DBLIB->insert("assetsBarcodes", $assetBarcodeData);
