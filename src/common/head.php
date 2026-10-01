@@ -118,7 +118,7 @@ function generateNewTag($instancesId)
     $databaseTagPattern = '^' . preg_quote($prefix) . '([0-9]+)' . preg_quote($suffix) . '$';
     $row = $DBLIB->rawQueryOne(
         "SELECT MAX(CAST(SUBSTRING(assets_tag, ?, CHAR_LENGTH(assets_tag) - ?) AS UNSIGNED)) AS highest FROM assets WHERE instances_id = ? AND (assets_tag REGEXP ?)",
-        [strlen($prefix) + 1, strlen($prefix) + strlen($suffix), $instancesId, $databaseTagPattern]
+        [mb_strlen($prefix, 'UTF-8') + 1, mb_strlen($prefix, 'UTF-8') + mb_strlen($suffix, 'UTF-8'), $instancesId, $databaseTagPattern]
     );
     $highest = ($row && $row["highest"] !== null) ? intval($row["highest"]) : 0;
 
