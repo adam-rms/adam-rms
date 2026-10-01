@@ -76,7 +76,7 @@ if ($_GET['blanks'] > 0) {
             "assetsBarcodes_value" => $count + $asset,
             "assetsBarcodes_type" => isset($_GET['barcodeType']) ? $_GET['barcodeType'] : "CODE_128"
         ];
-        while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"], $assetBarcodeData["assetsBarcodes_type"])) {
+        while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"], $assetBarcodeData["assetsBarcodes_type"], $AUTH->data['instance']['instances_id'])) {
             $assetBarcodeData["assetsBarcodes_value"] = mt_rand(1000, 99999);
         }
         $asset = [];

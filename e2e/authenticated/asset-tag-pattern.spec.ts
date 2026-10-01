@@ -82,8 +82,64 @@ test("the same asset tag keeps matching barcodes in different instances", async 
     )[0];
     expect(assetBBarcode.value).toBe(assetB.assets_tag);
   } finally {
-    for (const instance of originals) {
-      dbQuery("UPDATE instances SET instances_assetTagPattern = ? WHERE instances_id = ?", [instance.pattern, instance.instances_id]);
+    try {
+      const loginA = await asA.request.post("/api/login/login.php", {
+        form: { formInput: a.users.full.email, password },
+      });
+      expect(await loginA.json()).toMatchObject({ result: true });
+    } finally {
+      for (const instance of originals) {
+        dbQuery("UPDATE instances SET instances_assetTagPattern = ? WHERE instances_id = ?", [instance.pattern, instance.instances_id]);
+      }
     }
   }
+});
+
+test("blank barcode labels aren't treated as duplicates of another instance's barcodes", async ({ asA, tenants: { a, b, password } }) => {
+  const barcodeType = `E2E-BLANK-${Date.now()}`;
+  // Mirrors barcodePrint.php's own count of business B's non-deleted barcodes, to predict the deterministic value it will pick for the first blank label
+  const existing = dbQuery<{ count: number }>(
+    "SELECT COUNT(*) count FROM assetsBarcodes JOIN assets USING (assets_id) WHERE assets.instances_id = ? AND assetsBarcodes_deleted = 0",
+    [b.instanceId],
+  )[0].count;
+  const expectedValue = String(existing + 2); // +1 for the new set, +1 for the first label
+  // Business A has a barcode with that same value and type, for the blank label to collide with if the duplicate check isn't instance-scoped
+  dbQuery(
+    "INSERT INTO assetsBarcodes (assets_id, assetsBarcodes_value, assetsBarcodes_type, assetsBarcodes_added, assetsBarcodes_deleted) VALUES (?, ?, ?, NOW(), 0)",
+    [a.assetId, expectedValue, barcodeType],
+  );
+
+  try {
+    const loginB = await asA.request.post("/api/login/login.php", {
+      form: { formInput: b.users.full.email, password },
+    });
+    expect(await loginB.json()).toMatchObject({ result: true });
+
+    const printedB = await asA.page(`/maintenance/barcodePrint.php?ids=&groups=&blanks=1&barcodeType=${barcodeType}`);
+    expect(printedB.status).toBe(200);
+    // If the duplicate check isn't instance-scoped, A's barcode above looks like a collision and this gets randomised to a different number instead
+    const cells = [...printedB.body.matchAll(/<td>\s*([^<]*?)\s*<\/td>/g)].map((match) => match[1].trim());
+    expect(cells).toContain(expectedValue);
+  } finally {
+    const loginA = await asA.request.post("/api/login/login.php", {
+      form: { formInput: a.users.full.email, password },
+    });
+    expect(await loginA.json()).toMatchObject({ result: true });
+  }
+});
+
+test("asset tag patterns reserve space for the maximum counter width", async ({ asA, tenants: { a } }) => {
+  const original = dbQuery<{ pattern: string | null }>(
+    "SELECT instances_assetTagPattern pattern FROM instances WHERE instances_id = ?", [a.instanceId],
+  )[0].pattern;
+  const pattern = `${"x".repeat(197)}{1}`;
+
+  const updated = await asA.api("/api/instances/editInstance.php", {
+    formData: formData({ instances_assetTagPattern: pattern }),
+  });
+
+  expect(updated.json).toMatchObject({ result: false });
+  expect(dbQuery<{ pattern: string | null }>(
+    "SELECT instances_assetTagPattern pattern FROM instances WHERE instances_id = ?", [a.instanceId],
+  )[0].pattern).toBe(original);
 });
