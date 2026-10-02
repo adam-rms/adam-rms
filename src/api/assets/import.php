@@ -100,7 +100,7 @@ for ($i = 1; $i < count($csv); $i++) {
             array_push($failedAssets, ["row" => $i, "tag" => $row[9], "reason" => "Asset with tag " . $row[9] . " already exists"]);
             continue; 
         }
-    } else $row[9] = generateNewTag();
+    } else $row[9] = generateNewTag($instances_id);
     
     //Asset Type
     if (!isset($row[0]) or $row[0] == null) {

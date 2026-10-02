@@ -11,9 +11,15 @@ foreach ($_POST['formData'] as $item) {
 
 if (isset($array['instances_termsAndPayment'])) $array['instances_termsAndPayment'] = $bCMS->cleanString($array['instances_termsAndPayment']);
 if (isset($array['instances_quoteTerms'])) $array['instances_quoteTerms'] = $bCMS->cleanString($array['instances_quoteTerms']);
+if (isset($array['instances_assetTagPattern'])) {
+    if ($array['instances_assetTagPattern'] === null) $array['instances_assetTagPattern'] = "A-{4}";
+    if (!is_string($array['instances_assetTagPattern']) or mb_strlen($array['instances_assetTagPattern'], 'UTF-8') > 200 or !preg_match('/^([^{}]*)\{([1-9]|1[0-8])\}([^{}]*)$/D', $array['instances_assetTagPattern'], $matches) or mb_strlen($matches[1], 'UTF-8') + 18 + mb_strlen($matches[3], 'UTF-8') > 200) {
+        finish(false, ["code" => "PARAM-ERROR", "message" => "Enter a pattern with one counter such as E-{7}"]);
+    }
+}
 
 $DBLIB->where("instances_id",$AUTH->data['instance']["instances_id"]);
-$result = $DBLIB->update("instances", array_intersect_key( $array, array_flip( ["instances_name","instances_address","instances_phone","instances_email","instances_website","instances_weekStartDates","instances_logo","instances_emailHeader","instances_termsAndPayment", "instances_quoteTerms", "instances_cableColours"] ) ));
+$result = $DBLIB->update("instances", array_intersect_key($array, array_flip(["instances_name", "instances_address", "instances_phone", "instances_email", "instances_website", "instances_weekStartDates", "instances_logo", "instances_emailHeader", "instances_termsAndPayment", "instances_quoteTerms", "instances_cableColours", "instances_assetTagPattern"])));
 echo $DBLIB->getLastError();
 if (!$result) finish(false, ["code" => "UPDATE-FAIL", "message"=> "Could not update instance"]);
 else {
