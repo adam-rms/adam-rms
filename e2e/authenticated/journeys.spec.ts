@@ -120,3 +120,17 @@ test("reporting a fault on an asset from the New Maintenance Job page", async ({
   ]);
   await expect(page.locator("body")).toContainText("Journey fault");
 });
+
+test("changing the business address on Business Settings without a website", async ({ page, tenants: { a } }) => {
+  // A business doesn't need a website, so leaving it empty mustn't stop the form saving
+  const address = () => dbQuery<{ address: string; website: string | null }>("SELECT instances_address address, instances_website website FROM instances WHERE instances_id = ?", [a.instanceId])[0];
+  expect(address().website).toBeNull();
+  try {
+    await page.goto("/instances/settings.php");
+    await page.locator('#basicSettings textarea[name="instances_address"]').fill("1 New Street");
+    await page.locator("#basicSettings").getByRole("button", { name: "Save" }).click();
+    await expect.poll(address).toEqual({ address: "1 New Street", website: null });
+  } finally {
+    dbQuery("UPDATE instances SET instances_address = ? WHERE instances_id = ?", [`${a.marker} address`, a.instanceId]);
+  }
+});
