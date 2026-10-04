@@ -99,6 +99,8 @@ if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strl
     ]);
 }
 
+const ASSET_TAG_COUNTER_MAX_LENGTH = 18;
+
 // TODO move these functions to a class
 function generateNewTag($instancesId)
 {
@@ -120,9 +122,12 @@ function generateNewTag($instancesId)
         "SELECT MAX(CAST(SUBSTRING(assets_tag, ?, CHAR_LENGTH(assets_tag) - ?) AS UNSIGNED)) AS highest FROM assets WHERE instances_id = ? AND (assets_tag REGEXP ?)",
         [mb_strlen($prefix, 'UTF-8') + 1, mb_strlen($prefix, 'UTF-8') + mb_strlen($suffix, 'UTF-8'), $instancesId, $databaseTagPattern]
     );
-    $highest = ($row && $row["highest"] !== null) ? intval($row["highest"]) : 0;
+    $highest = ($row && $row["highest"] !== null) ? ltrim((string) $row["highest"], '0') : '0';
+    if ($highest === '') $highest = '0';
+    $maximumCounter = str_repeat('9', ASSET_TAG_COUNTER_MAX_LENGTH);
+    if (strlen($highest) > ASSET_TAG_COUNTER_MAX_LENGTH || (strlen($highest) === ASSET_TAG_COUNTER_MAX_LENGTH && strcmp($highest, $maximumCounter) >= 0)) return false;
 
-    return $prefix . str_pad((string) ($highest + 1), $digits, '0', STR_PAD_LEFT) . $suffix;
+    return $prefix . str_pad((string) ((int) $highest + 1), $digits, '0', STR_PAD_LEFT) . $suffix;
 }
 function assetFlagsAndBlocks($assetid)
 {

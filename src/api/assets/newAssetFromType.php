@@ -22,7 +22,10 @@ if (isset($array['assets_tag']) and $array['assets_tag'] != null) {
     $DBLIB->where("assets.assets_deleted", 0); //Deleted assets can't be restored, so can be used
     $duplicateAssetTag = $DBLIB->getValue("assets", "count(*)");
     if ($duplicateAssetTag > 0) finish(false, ["code" => "INSERT-FAIL", "message" => "Sorry that tag you chose was a duplicate - please choose another one"]);
-} else $array['assets_tag'] = generateNewTag($AUTH->data['instance']['instances_id']);
+} else {
+    $array['assets_tag'] = generateNewTag($AUTH->data['instance']['instances_id']);
+    if ($array['assets_tag'] === false) finish(false, ["code" => "TAG-COUNTER-EXHAUSTED", "message" => "Could not generate a new asset tag because the counter is exhausted"]);
+}
 
 $result = $DBLIB->insert("assets", array_intersect_key($array, array_flip(['assets_tag', 'assetTypes_id', 'assets_notes', 'instances_id', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_assetGroups'])));
 

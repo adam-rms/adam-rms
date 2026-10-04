@@ -13,10 +13,43 @@ test("rejects asset tag patterns that could exceed the database column as the co
   });
 
   expect(response.json).toMatchObject({ result: false });
-  expect(response.json.error.message).toBe("Enter a pattern with one counter such as E-{7}");
+  expect(response.json.error.message).toBe("Enter a pattern with one counter such as E-{7}. The maximum length is 200 characters in total.");
   expect(dbQuery<{ pattern: string | null }>(
     "SELECT instances_assetTagPattern pattern FROM instances WHERE instances_id = ?", [a.instanceId],
   )[0].pattern).toBe(original);
+});
+
+test("reports counter exhaustion before creating an asset", async ({ asA, tenants: { a } }) => {
+  const pattern = `E2E-OVERFLOW-${Date.now()}-{1}`;
+  const prefix = pattern.slice(0, pattern.indexOf("{"));
+  const highestTag = `${prefix}${"9".repeat(18)}`;
+  const originalPattern = dbQuery<{ pattern: string | null }>(
+    "SELECT instances_assetTagPattern pattern FROM instances WHERE instances_id = ?", [a.instanceId],
+  )[0].pattern;
+  const originalAssetTag = dbQuery<{ tag: string }>(
+    "SELECT assets_tag tag FROM assets WHERE assets_id = ?", [a.assetId],
+  )[0].tag;
+  const originalAssetCount = dbQuery<{ count: number }>(
+    "SELECT COUNT(*) count FROM assets WHERE instances_id = ?", [a.instanceId],
+  )[0].count;
+
+  try {
+    dbQuery("UPDATE instances SET instances_assetTagPattern = ? WHERE instances_id = ?", [pattern, a.instanceId]);
+    dbQuery("UPDATE assets SET assets_tag = ? WHERE assets_id = ?", [highestTag, a.assetId]);
+
+    const response = await asA.api("/api/assets/newAssetFromType.php", {
+      instances_id: a.instanceId,
+      formData: formData({ assetTypes_id: a.assetTypeId }),
+    });
+
+    expect(response.json).toMatchObject({ result: false, error: { code: "TAG-COUNTER-EXHAUSTED" } });
+    expect(dbQuery<{ count: number }>(
+      "SELECT COUNT(*) count FROM assets WHERE instances_id = ?", [a.instanceId],
+    )[0].count).toBe(originalAssetCount);
+  } finally {
+    dbQuery("UPDATE assets SET assets_tag = ? WHERE assets_id = ?", [originalAssetTag, a.assetId]);
+    dbQuery("UPDATE instances SET instances_assetTagPattern = ? WHERE instances_id = ?", [originalPattern, a.instanceId]);
+  }
 });
 
 test("saves an asset tag pattern and uses its padded counter for new assets", async ({ asA, page, tenants: { a, password } }) => {
