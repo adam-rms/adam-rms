@@ -218,7 +218,10 @@ class bCMS
     $DBLIB->where("(s3files_meta_deleteOn >= '" . date("Y-m-d H:i:s") . "' OR s3files_meta_deleteOn IS NULL)"); //If the file is to be deleted soon or has been deleted don't let them download it
     $DBLIB->where("s3files_meta_physicallyStored", 1); //If we've lost the file or deleted it we can't actually let them download it
     $DBLIB->orderBy($sort, $sortOrder);
-    return $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name", "s3files_meta_size", "s3files_meta_uploaded", "s3files_shareKey"]);
+    $files = $DBLIB->get("s3files", $limit, ["s3files_id", "s3files_extension", "s3files_name", "s3files_meta_size", "s3files_meta_uploaded", "s3files_shareKey"]);
+    //The key a share link carries is a hash of the stored one (see share.php and s3URL)
+    foreach ($files as &$file) $file['s3files_shareKeyHash'] = empty($file['s3files_shareKey']) ? null : hash('sha256', $file['s3files_shareKey'] . "|" . $file['s3files_id']);
+    return $files;
   }
   function s3DataUri($fileid)
   {
