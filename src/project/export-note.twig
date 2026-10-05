@@ -25,8 +25,8 @@ window.print();
 	</head>
 	<body>
 		<div align="center" style="width: 100%; text-align: center;">
-			{% if USERDATA.instance.instances_logo %}
-				<img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 200px; padding:20px;"/>
+			{% if LOCAL_LOGO %}
+				<img src="{{ LOCAL_LOGO.url }}" style="width: 200px; padding:20px;"/>
 			{% endif %}
 			<h1>{{USERDATA['instance']['instances_name']}}</h1>
 			<h2>{{ note['projectsNotes_title'] }}</h2>

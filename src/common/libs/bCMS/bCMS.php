@@ -120,6 +120,34 @@ class bCMS
 
     return 'data: ' . $type . ';base64,' . base64_encode($file['data']);
   }
+  function localPdfLogo()
+  {
+    global $CONFIG;
+    static $logo = null;
+    if ($logo !== null) return $logo;
+
+    $logoDirectory = dirname(__DIR__, 3) . '/static-assets/img/business-logo';
+    $supportedTypes = [
+      'png' => 'image/png',
+      'jpg' => 'image/jpeg',
+      'jpeg' => 'image/jpeg'
+    ];
+    foreach ($supportedTypes as $extension => $mimeType) {
+      $logoPath = $logoDirectory . '/logo.' . $extension;
+      if (!is_file($logoPath) or !is_readable($logoPath) or filesize($logoPath) > 10485760) continue;
+      $contents = file_get_contents($logoPath);
+      if ($contents === false) continue;
+
+      $logo = [
+        'url' => $CONFIG['ROOTURL'] . '/static-assets/img/business-logo/logo.' . $extension,
+        'dataUri' => 'data:' . $mimeType . ';base64,' . base64_encode($contents)
+      ];
+      return $logo;
+    }
+
+    $logo = false;
+    return false;
+  }
   function s3Passthrough($fileid)
   {
     global $DBLIB;

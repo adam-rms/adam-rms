@@ -13,8 +13,8 @@
     }
 </script>
 <body>
-    {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and USERDATA.instance.instances_logo %}
-    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="width: 40%;margin-bottom: 4px;">
+    {% if LOCAL_LOGO %}
+    <img src="{{ LOCAL_LOGO.url }}" style="width: 40%;margin-bottom: 4px;">
     {% endif %}
     <!--<img src="{{ CONFIG.ROOTURL}}/static-assets/img/logosmall.png" style="width: 40%;" />-->
     <h3>{{ USERDATA.instance.instances_name }}</h3>
