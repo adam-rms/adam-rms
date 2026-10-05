@@ -1,3 +1,4 @@
+import { createHmac } from "crypto";
 import { test, expect, dbQuery, mentions, seedTenants, succeeded } from "../tenants";
 
 test.afterEach(() => {
@@ -59,5 +60,27 @@ test.describe("billing", () => {
     });
     expect(await webhook.text()).not.toContain('"result":true');
     expect(dbQuery("SELECT * FROM instances WHERE instances_id = ?", [a.instanceId])).toEqual(before);
+  });
+
+  test("webhooks.php rejects an event signed with an empty key when no webhook secret is set", async ({ request, tenants: { a } }) => {
+    dbQuery("REPLACE INTO config (config_key, config_value) VALUES ('STRIPE_KEY', 'sk_test_e2e')");
+    dbQuery("DELETE FROM config WHERE config_key = 'STRIPE_WEBHOOK_SECRET'");
+    try {
+      const before = dbQuery("SELECT * FROM instances WHERE instances_id = ?", [a.instanceId]);
+      const payload = JSON.stringify({
+        id: "evt_forged", object: "event", type: "customer.subscription.updated",
+        data: { object: { id: "sub_forged", object: "subscription", status: "canceled", customer: "cus_forged", metadata: { instance_id: String(a.instanceId) }, items: { data: [] } } },
+      });
+      const timestamp = Math.floor(Date.now() / 1000);
+      const signature = createHmac("sha256", "").update(`${timestamp}.${payload}`).digest("hex");
+      const response = await request.post("/api/instances/billing/webhooks.php", {
+        headers: { "Stripe-Signature": `t=${timestamp},v1=${signature}`, "Content-Type": "application/json" },
+        data: payload,
+      });
+      expect(response.status()).toBe(400);
+      expect(dbQuery("SELECT * FROM instances WHERE instances_id = ?", [a.instanceId])).toEqual(before);
+    } finally {
+      dbQuery("DELETE FROM config WHERE config_key = 'STRIPE_KEY'");
+    }
   });
 });
