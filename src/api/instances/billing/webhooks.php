@@ -1,6 +1,13 @@
 <?php
 require_once __DIR__ . '/../../apiHead.php';
 
+// Without a signing secret an attacker can sign events with an empty key, so refuse everything.
+if (!$CONFIGCLASS->get('STRIPE_WEBHOOK_SECRET')) {
+  echo 'Webhook error: no signing secret is configured.';
+  http_response_code(400);
+  exit();
+}
+
 \Stripe\Stripe::setApiKey($CONFIGCLASS->get('STRIPE_KEY'));
 $stripe = new \Stripe\StripeClient($CONFIGCLASS->get('STRIPE_KEY'));
 
@@ -65,7 +72,7 @@ function handleWebhook($subscription)  // contains a \Stripe\Subscription
 
 try {
   $payload = @file_get_contents('php://input');
-  $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+  $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
   $event = \Stripe\Webhook::constructEvent(
     $payload,
     $sig_header,
