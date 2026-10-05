@@ -295,8 +295,8 @@ class bCMS
     $requireInstance = !in_array($file['s3files_meta_type'], [2, 5, 9, 10, 15, 16, 17]);
     $secure = !in_array($file['s3files_meta_type'], [2, 5, 10, 15, 16, 17]);
 
-    //File has been shared publicly, and the key matches?
-    if ($shareKey and ($shareKey == hash('sha256', $file['s3files_shareKey'] . "|" . $file['s3files_id']))) $secure = false; 
+    //File has been shared publicly, and the key matches? An unshared file has no share key, so never accept one for it
+    if ($shareKey and !empty($file['s3files_shareKey']) and is_string($shareKey) and hash_equals(hash('sha256', $file['s3files_shareKey'] . "|" . $file['s3files_id']), $shareKey)) $secure = false;
 
     if ($secure and !$GLOBALS['AUTH']->login) return false;
     elseif ($secure and $requireInstance and $file["instances_id"] != $AUTH->data['instance']['instances_id']) return false;

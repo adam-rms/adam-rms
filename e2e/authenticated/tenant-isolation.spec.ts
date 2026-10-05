@@ -1,4 +1,5 @@
-import { test, expect, formData, mentions, newSession, seedTenants, snapshot, dbQuery, succeeded, type Params, type Tenant } from "../tenants";
+import { test, expect, formData, mentions, newSession, seedTenants, snapshot, dbQuery, succeeded, Session, type Params, type Tenant } from "../tenants";
+import { createHash } from "crypto";
 import { BASE_URL, TEST_USER } from "../env";
 
 /**
@@ -438,6 +439,28 @@ test.describe("files", () => {
     const other = await asA.api("/api/file/index.php", { f: b.fileId });
     expect(other.json, other.body.slice(0, 500)).toMatchObject({ result: false });
     expect(own.json?.response?.url ?? own.body).not.toEqual(other.json?.response?.url);
+  });
+
+  test("api/file/index.php won't accept a share key for a file that hasn't been shared", async ({ playwright, asA, tenants: { a, b } }) => {
+    // An unshared file has a NULL s3files_shareKey, so its "key" would be sha256("|" + id), which anyone can work out
+    const request = await playwright.request.newContext({ baseURL: BASE_URL });
+    const anonymous = new Session(request);
+    try {
+      const forged = (id: number) => createHash("sha256").update(`|${id}`).digest("hex");
+      for (const t of [a, b]) {
+        const response = await anonymous.api("/api/file/index.php", { f: t.fileId, key: forged(t.fileId) });
+        expect(response.json, response.body.slice(0, 500)).toMatchObject({ result: false });
+      }
+      // Control: once shared, the key share.php hands out does work without logging in. No S3 is configured, so
+      // there's no link to check: s3URL gets past the access checks and then fails building it
+      const share = await asA.api("/api/file/share.php", { s3files_id: a.fileId });
+      expect(succeeded(share), share.body.slice(0, 500)).toBe(true);
+      const shared = await anonymous.api("/api/file/index.php", { f: a.fileId, key: share.json.response.s3files_shareKey });
+      expect(shared.body).not.toContain("File not found");
+    } finally {
+      await request.dispose();
+      seedTenants();
+    }
   });
 
   test("api/s3files/uploadSuccess.php won't attach a file to another business's record", async ({ asA, tenants: { a, b } }) => {
