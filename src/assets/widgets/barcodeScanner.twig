@@ -107,6 +107,39 @@
 <script>
     (function() {
         var suffix = {{ suffix|json_encode|raw }};
+        window.playBarcodeSuccessTone = window.playBarcodeSuccessTone || function() {
+            try {
+                var AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+
+                var context = window.__barcodeScannerAudioContext || new AudioContext();
+                window.__barcodeScannerAudioContext = context;
+                if (context.state === 'suspended') {
+                    context.resume().catch(function() {});
+                }
+
+                [
+                    { frequency: 660, startOffset: 0, duration: 0.11 },
+                    { frequency: 880, startOffset: 0.09, duration: 0.13 }
+                ].forEach(function(note) {
+                    var startAt = context.currentTime + note.startOffset;
+                    var tone = context.createOscillator();
+                    var gain = context.createGain();
+                    tone.type = 'sine';
+                    tone.frequency.setValueAtTime(note.frequency, startAt);
+                    gain.gain.setValueAtTime(0.0001, startAt);
+                    gain.gain.linearRampToValueAtTime(0.09, startAt + 0.008);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + note.duration);
+                    tone.connect(gain);
+                    gain.connect(context.destination);
+                    tone.start(startAt);
+                    tone.stop(startAt + note.duration);
+                });
+            } catch (e) {
+                console.error('Barcode success tone failed', e);
+            }
+        };
+
         var callbackFn = (function() {
             // scannerCallback is documented as a function name string.
             // Keep it as a string and resolve lazily via window[callbackName].
