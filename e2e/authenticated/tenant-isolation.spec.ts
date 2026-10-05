@@ -463,6 +463,22 @@ test.describe("files", () => {
     }
   });
 
+  test("a shared file's sharing dialog gets the key share.php hands out, not the stored one", async ({ asA, tenants: { a } }) => {
+    dbQuery("REPLACE INTO config (config_key, config_value) VALUES ('FILES_ENABLED', 'Enabled')");
+    try {
+      const share = await asA.api("/api/file/share.php", { s3files_id: a.fileId });
+      expect(succeeded(share), share.body.slice(0, 500)).toBe(true);
+      const [{ s3files_shareKey: stored }] = dbQuery<{ s3files_shareKey: string }>("SELECT s3files_shareKey FROM s3files WHERE s3files_id = ?", [a.fileId]);
+      const page = await asA.page(`/asset.php?id=${a.assetTypeId}`);
+      const key = page.body.match(new RegExp(`data-s3fileid="${a.fileId}" data-s3filesharekey="([^"]*)"`))?.[1];
+      expect(key).toBe(share.json.response.s3files_shareKey);
+      expect(page.body).not.toContain(stored);
+    } finally {
+      dbQuery("DELETE FROM config WHERE config_key = 'FILES_ENABLED'");
+      seedTenants();
+    }
+  });
+
   test("api/s3files/uploadSuccess.php won't attach a file to another business's record", async ({ asA, tenants: { a, b } }) => {
     // s3List (which asset.php uses) doesn't filter by business, so a file attached to B's asset type would be listed on B's page
     dbQuery("REPLACE INTO config (config_key, config_value) VALUES ('FILES_ENABLED', 'Enabled')");
