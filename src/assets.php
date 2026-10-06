@@ -18,7 +18,7 @@ $SEARCH = [
     "PROJECT_ID" => $_GET['project'] ?: false,
     "PROJECT_REFERER" => $_GET['project_referer'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
-    "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 20,
+    "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 100,
     "SETTINGS" => [
         "SHOWLINKED" => ($_GET['showlinked'] == 1 ? true : false),
         "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false),
@@ -31,7 +31,7 @@ $SEARCH = [
         "GROUPS" => is_array($_GET['group']) ? $_GET['group'] : [],
         "DATE-START" => $dateStart,
         "DATE-END" => $dateEnd,
-        "SORT" => $_GET['sort'] ?: "category-a",
+        "SORT" => $_GET['sort'] ?: "alphabet-a",
         "TAGS" => (is_array($_GET['tags'])) ? $_GET['tags'] : [],
     ],
     "SELECTED_TERMS" => [
@@ -101,14 +101,13 @@ if ($SEARCH['TERMS']['MANUFACTURER']) $DBLIB->where('manufacturers.manufacturers
 //Sorting
 $sortArray = explode("-",$SEARCH['TERMS']['SORT']);
 if (count($sortArray) == 2) {
-    if ($sortArray[0] == "category") $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", ($sortArray[1] == "a" ? "ASC" : "DESC"));
-    elseif ($sortArray[0] == "price") $DBLIB->orderBy("assetTypes.assetTypes_weekRate", ($sortArray[1] == "a" ? "ASC" : "DESC"));
+    if ($sortArray[0] == "price") $DBLIB->orderBy("assetTypes.assetTypes_weekRate", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "value") $DBLIB->orderBy("assetTypes.assetTypes_value", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "alphabet") $DBLIB->orderBy("assetTypes.assetTypes_name", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "mass") $DBLIB->orderBy("assetTypes.assetTypes_mass", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "date") $DBLIB->orderBy("assetTypes.assetTypes_inserted", ($sortArray[1] == "a" ? "ASC" : "DESC"));
-    else $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC"); //Default - category
-} else $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
+    else $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
+} else $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
 
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC"); // Last item in the sort each time
 

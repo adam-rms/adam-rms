@@ -18,17 +18,40 @@
             max-width: 100%;
         }
     }
-    #navItemQuickDispatch {
-        height: 100%;
-    }
-    #navItemQuickDispatch button {
-        background-color: transparent;
-    }
     #navItemBarcodeDispatch {
         height: 100%;
     }
     #navItemBarcodeDispatch button {
         background-color: transparent;
+    }
+    .barcodeDispatchInlineControls {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: .35rem;
+        padding: .25rem .5rem;
+    }
+    .barcodeDispatchInlineControls .barcodeDispatchInlineLabel {
+        margin: 0;
+        white-space: nowrap;
+        font-size: .8rem;
+    }
+    .barcodeDispatchInlineStatus {
+        width: 145px;
+    }
+    .barcodeDispatchInlineInput {
+        width: 215px;
+    }
+    .barcodeDispatchInlineLabel.autoReplaceUnpickedLabel {
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        margin: 0;
+        font-size: .75rem;
+        white-space: nowrap;
+    }
+    .barcodeDispatchInlineLabel.autoReplaceUnpickedLabel input {
+        margin-right: .25rem;
     }
 </style>
 <div class="card card-primary card-outline card-outline-tabs">
@@ -45,10 +68,34 @@
                 </li>
             {% endfor %}
             {% if (FINANCIALS.assetsAssigned|length > 0 or FINANCIALS.assetsAssignedSUB|length > 0) and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-                <li class="nav-item" id="navItemQuickDispatch">
-                    <button type="button" class="nav-link" title="Quick Dispatch" data-toggle="modal" data-target="#quickDispatchModal">
-                        <i class="fas fas fa-shipping-fast"></i>
-                    </button>
+                <li class="nav-item ml-auto barcodeDispatchInlineControls">
+                    <span class="barcodeDispatchInlineLabel">Set Asset Status to</span>
+                    <select class="form-control form-control-sm barcodeDispatchInlineStatus assetStatusSelectorBarcodeDispatchInline" id="barcodeDispatchInlineStatus" data-instanceid="{{ USERDATA.instance["instances_id"] }}" data-boardtab="asset-board-thisinstance" aria-label="Set Asset Status to">
+                        {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                        {% endfor %}
+                    </select>
+                    {% for instance in FINANCIALS.assetsAssignedSUB %}
+                    <select class="form-control form-control-sm barcodeDispatchInlineStatus assetStatusSelectorBarcodeDispatchInline d-none" data-instanceid="{{ instance['instance'].instances_id }}" data-boardtab="asset-board-instance{{ instance['instance'].instances_id }}" aria-label="Set Asset Status to">
+                        {% for status in BOARDSTATUSES[instance['instance'].instances_id] %}
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                        {% endfor %}
+                    </select>
+                    {% endfor %}
+                    <div class="input-group input-group-sm barcodeDispatchInlineInput">
+                        <input type="text" class="form-control" id="barcodeScanTextInputInline" placeholder="Scan or type barcode value" aria-label="Scan or type barcode value">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="barcodeScanTextButtonInline" aria-label="Submit barcode">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                    <label class="barcodeDispatchInlineLabel autoReplaceUnpickedLabel">
+                        <input type="checkbox" class="autoReplaceUnpickedAsset" id="barcodeAutoReplaceUnpickedInline">
+                        Auto-replace unpicked asset
+                    </label>
+                    {% endif %}
                 </li>
                 <li class="nav-item" id="navItemBarcodeDispatch">
                     <button type="button" class="nav-link" title="Barcode Dispatch" data-toggle="modal" data-target="#barcodeDispatchModal">
@@ -74,72 +121,6 @@
     </div>
 </div>
 {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
-<div class="modal fade" id="quickDispatchModal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Quick Dispatch</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body p-0">
-                <ul class="nav nav-tabs" role="tablist">
-                    {% if FINANCIALS.assetsAssigned|length > 0 %}
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="pill" href="#quick-dispatch-modal-board-thisinstance" role="tab" aria-controls="quick-dispatch-modal-board-thisinstance" aria-selected="false">{{ USERDATA.instance.instances_name }}</a>
-                        </li>
-                    {% endif %}
-                    {% for instance in FINANCIALS.assetsAssignedSUB %}
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="pill" href="#quick-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" role="tab" aria-controls="quick-dispatch-modal-board-instance{{ instance['instance'].instances_id }}" aria-selected="false">{{  instance['instance'].instances_name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <div class="p-3">
-                    <div class="tab-content">
-                        <div class="tab-pane show active p2" id="quick-dispatch-modal-board-thisinstance" role="tabpanel" aria-labelledby="asset-list-tabs-profile-tab">
-                            <p>Enter an asset's tag from {{ USERDATA.instance.instances_name }} to set its status.</p>
-                            <div class="form-group">
-                                <label>Set Asset Status to</label>
-                                <select class="form-control assetStatusSelectorQuickDispatch" data-instanceid="{{ USERDATA.instance["instances_id"] }}">
-                                    {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
-                                    <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        {% for instance in FINANCIALS.assetsAssignedSUB %}
-                        <div class="tab-pane p2" id="quick-dispatch-modal-board-instance{{ instance['instance']['instances_id'] }}">
-                            <p>Enter an asset's tag from {{  instance['instance'].instances_name }} tag to set its status.</p>
-                            <div class="form-group">
-                                <label>Set Asset Status to</label>
-                                <select class="form-control assetStatusSelectorQuickDispatch" data-instanceid="{{ instance['instance']['instances_id'] }}">
-                                    {% for status in BOARDSTATUSES[instance['instance']['instances_id']] %}
-                                    <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>                
-                    <div class="form-group">
-                        <label>Asset Tag</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="assetTagQuickDispatch" />
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="goQuickDispatch">
-                                    <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="assetTagResultQuickDispatch"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="modal fade" id="barcodeDispatchModal">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -199,7 +180,7 @@
                                     </div>
                                     {% endfor %}
                                 </div>
-                                {% embed 'assets/widgets/barcodeScanner.twig' with {"scannerCallback": "dispatchBarcodeScanned", "scannerIdSuffix": "Dispatch"} %}
+                                {% embed 'assets/widgets/barcodeScanner.twig' with {"scannerCallback": "dispatchBarcodeScanned", "scannerIdSuffix": "Dispatch", "showAutoReplace": true} %}
                                 {% endembed %}
                                 <div id="barcodeDispatchResult"></div>
                             </div>
@@ -224,25 +205,50 @@
     }
 
     {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+    function syncInlineBarcodeDispatchStatus() {
+        var activeBoardTab = $('a.assetsBoardToggle.active').attr('aria-controls') || 'asset-board-thisinstance';
+        $(".assetStatusSelectorBarcodeDispatchInline").addClass("d-none")
+            .filter('[data-boardtab="' + activeBoardTab + '"]').removeClass("d-none");
+    }
+    syncInlineBarcodeDispatchStatus();
+
+    $('a.assetsBoardToggle[data-toggle="pill"]').on('shown.bs.tab', syncInlineBarcodeDispatchStatus);
+
+    function submitInlineBarcodeDispatch() {
+        var $input = $("#barcodeScanTextInputInline");
+        var value = $input.val().trim();
+        if (value.length > 0) {
+            dispatchBarcodeScanned(value, "UNKNOWN");
+            $input.val("").focus();
+        }
+    }
+    $("#barcodeScanTextInputInline").on("keydown", function(e) {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        submitInlineBarcodeDispatch();
+    });
+    $("#barcodeScanTextButtonInline").on("click", submitInlineBarcodeDispatch);
 
     // Whether the user can assign assets to projects (for Supermarket Sweep)
     const canAssignAssets = {{ "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions ? 'true' : 'false' }};
+    $(".autoReplaceUnpickedAsset").on("change", function() {
+        $(".autoReplaceUnpickedAsset").prop("checked", this.checked);
+    });
 
     // Create an array of status ids, ordered
     const assetStatusesRaw = JSON.parse('{{ BOARDSTATUSES|json_encode|raw }}');
     var assetStatuses = {};
     for (const [instanceid, instanceStatuses] of Object.entries(assetStatusesRaw)) {
         var newDir = {"orderedStatusIds": [], "allData": instanceStatuses};
-        // In theory, if the statuses have been sorted by the user dragging them around then the orders will be in order and so JS will recognise them as an array. Otherwise they'll be an object (e.g. if someone has deleted a status but not dragged them around)
-        if (Array.isArray(instanceStatuses)) {
-            instanceStatuses.forEach((item) => {
-                newDir["orderedStatusIds"].push(item["assetsAssignmentsStatus_id"]);
-            });
-        } else if (typeof instanceStatuses === 'object') {
-            for (const [key, value] of Object.entries(instanceStatuses)) {
-                newDir["orderedStatusIds"].push(value["assetsAssignmentsStatus_id"]);
-            }
-        }
+        var configuredStatuses = Array.isArray(instanceStatuses)
+            ? instanceStatuses.slice()
+            : Object.values(instanceStatuses);
+        configuredStatuses.sort(function(a, b) {
+            return parseInt(a.assetsAssignmentsStatus_order, 10) - parseInt(b.assetsAssignmentsStatus_order, 10);
+        });
+        configuredStatuses.forEach(function(status) {
+            newDir["orderedStatusIds"].push(status.assetsAssignmentsStatus_id);
+        });
         assetStatuses[instanceid] = newDir;
     }
     // Show/Hide relevant buttons for touchscreen control
@@ -254,53 +260,59 @@
             var prev = (position == 0 ? false : assetStatuses[instance]['orderedStatusIds'][position-1]);
             var next = (position == assetStatuses[instance]['orderedStatusIds'].length - 1 ? false : assetStatuses[instance]['orderedStatusIds'][position+1]);
 
-            $(this).find(".assetDispatchAssetList-statusPrevButton").css('display', prev === false ? 'none': 'block');
+            $(this).find(".assetDispatchAssetList-statusPrevButton").css('display', prev === false ? 'none': 'inline-block');
             $(this).find(".assetDispatchAssetList-statusPrevButton").data('nextstatus', prev);
-            $(this).find(".assetDispatchAssetList-statusNextButton").css('display', next === false ? 'none': 'block');
+            $(this).find(".assetDispatchAssetList-statusNextButton").css('display', next === false ? 'none': 'inline-block');
             $(this).find(".assetDispatchAssetList-statusNextButton").data('nextstatus', next);
         });
     }
 
     function buildAssetDispatchCard(asset, assignmentId, statusId, instanceId) {
-        var card = $("<div>").addClass("row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card");
+        var card = $("<div>").addClass("p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card");
         card.attr("data-currentstatus", statusId);
         card.attr("data-assignment", assignmentId);
         card.attr("data-instance", instanceId);
         card.attr("data-asset", asset.assets_id);
 
+        var heading = $("<div>").addClass("d-flex align-items-center");
         if (canAssignAssets) {
-            card.append($("<button>")
-                .addClass("btn btn-outline-secondary assetDispatchAssetList-statusPrevButton col-1")
+            heading.append($("<a>")
+                .attr("href", "#")
+                .addClass("text-secondary small mx-1 assetDispatchAssetList-statusPrevButton")
                 .attr("data-nextstatus", "")
+                .attr("aria-label", "Previous status")
+                .attr("title", "Previous status")
                 .hide()
-                .text("«"));
+                .html("&larr;"));
         }
 
-        var title;
-        var title = $("<h6>").addClass("col my-auto");
+        var assetId = $("<span>").addClass("assetDispatchAssetList-assetId mx-2");
         if (asset.assets_id) {
-            title.append("(");
-            title.append($("<a>")
+            assetId.append("(");
+            assetId.append($("<a>")
                 .attr("target", "_blank")
                 .attr("href", "{{ CONFIG.ROOTURL }}/asset.php?id=" + asset.assetTypes_id + "&asset=" + asset.assets_id + "&instance=" + instanceId)
                 .text(asset.assets_tag)
             );
-            title.append(")");
+            assetId.append(")");
         } else {
-            title.append(document.createTextNode("(" + asset.assets_tag + ")"));
+            assetId.text("(" + asset.assets_tag + ")");
         }
-        title.append("<br>");
-        title.append(document.createTextNode(asset.assetTypes_name));
-        card.append(title);
+        heading.append(assetId);
 
         if (canAssignAssets) {
-            card.append($("<button>")
-                .addClass("btn btn-outline-secondary assetDispatchAssetList-statusNextButton col-1")
+            heading.append($("<a>")
+                .attr("href", "#")
+                .addClass("text-secondary small mx-1 assetDispatchAssetList-statusNextButton")
                 .attr("data-nextstatus", "")
+                .attr("aria-label", "Next status")
+                .attr("title", "Next status")
                 .hide()
-                .text("»"));
+                .html("&rarr;"));
         }
 
+        card.append(heading);
+        card.append($("<div>").addClass("assetDispatchAssetList-name").text(asset.assetTypes_name));
         return card;
     }
 
@@ -311,25 +323,19 @@
             assetCard.attr("data-asset", asset.assets_id);
             assetCard.data("asset", asset.assets_id);
             assetCard.data("currentstatus", assetStatus);
+            var assetId = assetCard.find(".assetDispatchAssetList-assetId").empty();
             if (asset.assets_id) {
-                assetCard.find('a').attr('href', '{{ CONFIG.ROOTURL }}/asset.php?id=' + asset.assetTypes_id + '&asset=' + asset.assets_id + '&instance=' + instanceId).text(asset.assets_tag);
-                var title = assetCard.find('h6');
-                title.empty();
-                title.append("(");
-                title.append($("<a>")
+                assetId.append("(");
+                assetId.append($("<a>")
                     .attr("target", "_blank")
                     .attr("href", "{{ CONFIG.ROOTURL }}/asset.php?id=" + asset.assetTypes_id + "&asset=" + asset.assets_id + "&instance=" + instanceId)
                     .text(asset.assets_tag)
                 );
-                title.append(")<br>");
-                title.append(document.createTextNode(asset.assetTypes_name));
+                assetId.append(")");
             } else {
-                var title = assetCard.find('h6');
-                title.empty();
-                title.append(document.createTextNode("(" + asset.assets_tag + ")"));
-                title.append("<br>");
-                title.append(document.createTextNode(asset.assetTypes_name));
+                assetId.text("(" + asset.assets_tag + ")");
             }
+            assetCard.find(".assetDispatchAssetList-name").text(asset.assetTypes_name);
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance=" + instanceId + "]");
             return assetCard;
         }
@@ -357,10 +363,12 @@
      * Function to handle a barcode scan for asset dispatch
      * Called by the shared barcode scanner widget
      * @param value The barcode value
-     * @param type The barcode format type (e.g. 'QR_CODE', 'CODE_128', or 'UNKNOWN' for USB/Bluetooth)
+     * @param type The barcode format type ('UNKNOWN' for USB/Bluetooth scanners)
      */
     function focusBarcodeDispatchInput() {
-        var $input = $("#barcodeScanTextInputDispatch");
+        var $input = $("#barcodeDispatchModal").hasClass("show")
+            ? $("#barcodeScanTextInputDispatch")
+            : $("#barcodeScanTextInputInline");
         if ($input.length) {
             $input.focus();
         }
@@ -602,8 +610,11 @@
     }
 
     function dispatchBarcodeScanned(value, type) {
-        var assetStatus = $(".assetStatusSelectorBarcodeDispatch:visible").val();
-        var instanceId = $(".assetStatusSelectorBarcodeDispatch:visible").data("instanceid");
+        var $statusSelector = $("#barcodeDispatchModal").hasClass("show")
+            ? $(".assetStatusSelectorBarcodeDispatch:visible").first()
+            : $(".assetStatusSelectorBarcodeDispatchInline:visible").first();
+        var assetStatus = $statusSelector.val();
+        var instanceId = $statusSelector.data("instanceid");
         var requestData = {
             text: value,
             assetsAssignments_status: assetStatus,
@@ -644,7 +655,6 @@
                         title: 'Asset dispatched via barcode'
                     });
                 } else if (result.error && result.error.code === "NOTASSIGNED" && ('assets_id' in result.error) && canAssignAssets) {
-                    notifyScanError();
                     // Supermarket Sweep: asset exists but is not assigned to this project
                     // Prevent multiple concurrent NOTASSIGNED flows (scanner may fire repeatedly)
                     if (window.barcodeAssignInProgress) {
@@ -653,6 +663,18 @@
                     window.barcodeAssignInProgress = true;
 
                     var swapCandidates = result.error.swapCandidates || [];
+                    var unpickedCandidates = swapCandidates.filter(function(candidate) {
+                        return candidate.assetsAssignmentsStatus_id === null
+                            || candidate.assetsAssignmentsStatus_id === ""
+                            || (result.error.unpickedStatusId !== null
+                                && String(candidate.assetsAssignmentsStatus_id) === String(result.error.unpickedStatusId));
+                    });
+                    if ($(".autoReplaceUnpickedAsset").first().prop("checked") && unpickedCandidates.length > 0) {
+                        swapScannedAsset(value, result.error.assets_id, unpickedCandidates[0].assetsAssignments_id, assetStatus);
+                        return;
+                    }
+
+                    notifyScanError();
                     var conflictText = '';
                     if (result.error && result.error.conflictingAssignment && result.error.conflictingAssignment.projects_name) {
                         conflictText = '<div class="alert alert-warning mb-3">This asset is currently assigned to <strong>' + result.error.conflictingAssignment.projects_name + '</strong> with status <strong>' + result.error.conflictingAssignment.assetsAssignmentsStatus_name + '</strong>.</div>';
@@ -763,67 +785,23 @@
             }
         });
 
-        $(".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton").click(function (){
-            const assetCard = $(this).parent();
+        $(document).on("click", ".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton", function (e) {
+            e.preventDefault();
+            const assetCard = $(this).closest(".assetDispatchAssetList-card");
             const assetAssignment = assetCard.data("assignment");
             const assetNextStatus = $(this).data("nextstatus");
-            changeStatus(parseInt(assetAssignment),parseInt(assetNextStatus));
-            //move card to new status
-            assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
-        });
-
-        function doQuickDispatch() {
-            const assetTag = $("#assetTagQuickDispatch").val();
-            const assetStatus = $(".assetStatusSelectorQuickDispatch:visible").val();
-            const instanceId = $(".assetStatusSelectorQuickDispatch:visible").data("instanceid");
-            // Not using ajaxcall so we can have our own error handling for the alert boxes
-            $.ajax({
-                url: "{{ CONFIG.ROOTURL }}/api/projects/assets/setStatusByTag.php",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    text: assetTag,
-                    assetsAssignments_status: assetStatus,
-                    projects_id: {{ project.projects_id }},
-                    instances_id: instanceId
-                },
-                cache: false,
-                success: function(result, status, data) {
-                    if (result.result === true) {
-                        window.playBarcodeSuccessTone();
-                        const assetCard = $(".assetDispatchAssetList[data-instance=" + instanceId + "] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
-                        assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance=" + instanceId + "]");
-                        drawButtons();
-                    } else {
-                        notifyScanError();
-                        Toast.fire({
-                            type: 'error',
-                            title: assetTag + ": " + result.error.message
-                        });
-                        const resultDiv = $("<div>").addClass("alert alert-danger").text(assetTag + ": " + result.error.message);
-                        $("#assetTagResultQuickDispatch").prepend(resultDiv);
-                    }
-                    $("#assetTagQuickDispatch").val("");
-                    $("#assetTagQuickDispatch").focus();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error("Quick dispatch request failed", jqXHR, textStatus, errorThrown);
-                    notifyScanError();
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Could not update asset status. Please try again.'
-                    });
-                }
-            });
-        }
-        $("#assetTagQuickDispatch").on("keydown", function(e) {
-            if (e.key !== "Enter") {
+            const instanceId = assetCard.data("instance");
+            if (!assetAssignment || assetNextStatus === undefined || assetNextStatus === null || !instanceId) {
+                console.error("Unable to change asset status: assignment, next status, or instance is missing.");
                 return;
             }
-            e.preventDefault();
-            doQuickDispatch();
+            changeStatus(parseInt(assetAssignment),parseInt(assetNextStatus));
+            //move card to new status
+            assetCard.attr("data-currentstatus", assetNextStatus).data("currentstatus", assetNextStatus);
+            assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + instanceId + "]");
+            drawButtons();
         });
-        $("#goQuickDispatch").on("click", doQuickDispatch);
+
         {% endif %}
 
 

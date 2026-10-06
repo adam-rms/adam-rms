@@ -26,15 +26,9 @@ They also have Asset stickers for larger assets. These stickers have T-XXXX tags
 ## Scanning Barcodes
 ---
 
-AdamRMS supports two methods for scanning asset barcodes:
+AdamRMS supports USB/Bluetooth barcode scanners (sometimes called "keyboard wedge" scanners). Scan a barcode with a connected scanner and it will be entered into the text field automatically. You can also type a barcode value manually and press Enter.
 
-### Camera Scanning
-Use a device's built-in or attached camera to scan barcodes in real-time. This is ideal for mobile devices and tablets. Click "Start Camera Scanning" to begin, and the scanner will automatically detect barcodes in the camera view. If your device has multiple cameras, you can select which one to use.
-
-### USB/Bluetooth Scanner
-If you have a USB or Bluetooth barcode scanner (sometimes called a "keyboard wedge" scanner), you can use the text input field on the scanner page. Simply scan a barcode with your USB/Bluetooth scanner and it will be entered into the text field automatically. You can also type a barcode value manually and press Enter.
-
-Both scanning methods are available on the Barcode Scanner page and within the [Asset Dispatch Barcode Dispatch](../projects/assets#barcode-dispatch) feature. When using Barcode Dispatch, assets that are not yet assigned to the project can be added automatically via the [Supermarket Sweep](../projects/assets#supermarket-sweep) feature.
+This method is available on the Barcode Scanner page and within the [Asset Dispatch Barcode Dispatch](../projects/assets#barcode-dispatch) feature. When using Barcode Dispatch, assets that are not yet assigned to the project can be added automatically via the [Supermarket Sweep](../projects/assets#supermarket-sweep) feature.
 
 ### Barcode Scanner Page
 

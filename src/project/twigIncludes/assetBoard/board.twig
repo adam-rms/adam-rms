@@ -8,20 +8,23 @@
                 </div>
                 <div class="card-body assetDispatchAssetList" data-statusid="{{ status['assetsAssignmentsStatus_id'] }}" data-instance="{{ instanceid }}">
                     {% for asset in status['assets'] %}
-                        <div class="row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card" data-currentstatus="{{ status['assetsAssignmentsStatus_id'] }}" data-assignment="{{ asset['assetsAssignments_id'] }}" data-instance="{{ instanceid }}" data-asset="{{ asset['assets_id'] }}">
+                        <div class="p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card" data-currentstatus="{{ status['assetsAssignmentsStatus_id'] }}" data-assignment="{{ asset['assetsAssignments_id'] }}" data-instance="{{ instanceid }}" data-asset="{{ asset['assets_id'] }}">
+                            <div class="d-flex align-items-center">
                             {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
-                                <button class="btn btn-outline-secondary assetDispatchAssetList-statusPrevButton col-1" data-nextstatus="" style="display: none;">«</button>
+                                <a href="#" class="text-secondary small mx-1 assetDispatchAssetList-statusPrevButton" data-nextstatus="" aria-label="Previous status" title="Previous status" style="display: none;">&larr;</a>
                             {% endif %}
-                            <h6 class="col my-auto "><i>(
+                            <span class="assetDispatchAssetList-assetId mx-2"><i>(
                                 {% if asset['assets_id'] %}
                                     <a target="_blank" href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset['assetTypes_id'] }}&asset={{ asset['assets_id'] }}&instance={{ instanceid }}">{{ asset['assets_tag'] }}</a>
                                 {% else %}
                                     {{ asset['assets_tag'] }}
                                 {% endif %}
-                            )</i><br>{{ asset['assetTypes_name'] }}</h6>
+                            )</i></span>
                             {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions%}
-                                <button class="btn btn-outline-secondary assetDispatchAssetList-statusNextButton col-1" data-nextstatus="" style="display: none;">»</button>
+                                <a href="#" class="text-secondary small mx-1 assetDispatchAssetList-statusNextButton" data-nextstatus="" aria-label="Next status" title="Next status" style="display: none;">&rarr;</a>
                             {% endif %}
+                            </div>
+                            <div class="assetDispatchAssetList-name">{{ asset['assetTypes_name'] }}</div>
                         </div>
                     {% endfor %}
                 </div>
