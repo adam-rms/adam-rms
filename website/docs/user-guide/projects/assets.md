@@ -97,10 +97,6 @@ _Asset Dispatch_
 
 You can update an asset's status by moving it between status columns, using the arrow buttons or by dragging and dropping the asset.
 
-### Quick Dispatch
-
-The Quick Dispatch button in the board header opens a dialog where you can enter an asset's tag to quickly set its status, without needing to find and drag the asset on the board. This is useful for quickly processing large numbers of assets.
-
 ### Barcode Dispatch
 
 The Barcode Dispatch button in the board header opens a dialog that allows you to scan asset barcodes to update their dispatch status. Use a connected USB/Bluetooth barcode scanner or type a barcode value manually.
