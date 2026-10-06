@@ -42,6 +42,10 @@
     .barcodeDispatchInlineInput {
         width: 215px;
     }
+    .barcodeDispatchInlineInput .autoReplaceUnpickedLabel {
+        font-size: .75rem;
+        white-space: nowrap;
+    }
 </style>
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0 card-tabs">
@@ -74,6 +78,12 @@
                     <div class="input-group input-group-sm barcodeDispatchInlineInput">
                         <input type="text" class="form-control" id="barcodeScanTextInputInline" placeholder="Scan or type barcode value" aria-label="Scan or type barcode value">
                         <div class="input-group-append">
+                            {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                            <label class="input-group-text mb-0 autoReplaceUnpickedLabel">
+                                <input type="checkbox" class="autoReplaceUnpickedAsset mr-1" id="barcodeAutoReplaceUnpickedInline">
+                                Auto-replace unpicked asset
+                            </label>
+                            {% endif %}
                             <button class="btn btn-primary" type="button" id="barcodeScanTextButtonInline" aria-label="Submit barcode">
                                 <i class="fas fa-arrow-right"></i>
                             </button>
@@ -163,7 +173,7 @@
                                     </div>
                                     {% endfor %}
                                 </div>
-                                {% embed 'assets/widgets/barcodeScanner.twig' with {"scannerCallback": "dispatchBarcodeScanned", "scannerIdSuffix": "Dispatch"} %}
+                                {% embed 'assets/widgets/barcodeScanner.twig' with {"scannerCallback": "dispatchBarcodeScanned", "scannerIdSuffix": "Dispatch", "showAutoReplace": true} %}
                                 {% endembed %}
                                 <div id="barcodeDispatchResult"></div>
                             </div>
@@ -214,6 +224,9 @@
 
     // Whether the user can assign assets to projects (for Supermarket Sweep)
     const canAssignAssets = {{ "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions ? 'true' : 'false' }};
+    $(".autoReplaceUnpickedAsset").on("change", function() {
+        $(".autoReplaceUnpickedAsset").prop("checked", this.checked);
+    });
 
     // Create an array of status ids, ordered
     const assetStatusesRaw = JSON.parse('{{ BOARDSTATUSES|json_encode|raw }}');
@@ -632,7 +645,6 @@
                         title: 'Asset dispatched via barcode'
                     });
                 } else if (result.error && result.error.code === "NOTASSIGNED" && ('assets_id' in result.error) && canAssignAssets) {
-                    notifyScanError();
                     // Supermarket Sweep: asset exists but is not assigned to this project
                     // Prevent multiple concurrent NOTASSIGNED flows (scanner may fire repeatedly)
                     if (window.barcodeAssignInProgress) {
@@ -641,6 +653,17 @@
                     window.barcodeAssignInProgress = true;
 
                     var swapCandidates = result.error.swapCandidates || [];
+                    var unpickedCandidates = swapCandidates.filter(function(candidate) {
+                        return candidate.assetsAssignmentsStatus_id === null
+                            || candidate.assetsAssignmentsStatus_id === ""
+                            || parseInt(candidate.assetsAssignmentsStatus_order, 10) === 0;
+                    });
+                    if ($(".autoReplaceUnpickedAsset").first().prop("checked") && unpickedCandidates.length === 1) {
+                        swapScannedAsset(value, result.error.assets_id, unpickedCandidates[0].assetsAssignments_id, assetStatus);
+                        return;
+                    }
+
+                    notifyScanError();
                     var conflictText = '';
                     if (result.error && result.error.conflictingAssignment && result.error.conflictingAssignment.projects_name) {
                         conflictText = '<div class="alert alert-warning mb-3">This asset is currently assigned to <strong>' + result.error.conflictingAssignment.projects_name + '</strong> with status <strong>' + result.error.conflictingAssignment.assetsAssignmentsStatus_name + '</strong>.</div>';

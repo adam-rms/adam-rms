@@ -18,6 +18,12 @@
                 <div class="input-group">
                     <input type="text" class="form-control" id="barcodeScanTextInput{{ suffix }}" placeholder="Scan or type barcode value">
                     <div class="input-group-append">
+                        {% if showAutoReplace|default(false) and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                        <label class="input-group-text mb-0">
+                            <input type="checkbox" class="autoReplaceUnpickedAsset mr-1" id="barcodeAutoReplaceUnpicked{{ suffix }}">
+                            Auto-replace unpicked asset
+                        </label>
+                        {% endif %}
                         <button class="btn btn-primary" type="button" id="barcodeScanTextButton{{ suffix }}">
                             <i class="fas fa-arrow-right"></i>
                         </button>
