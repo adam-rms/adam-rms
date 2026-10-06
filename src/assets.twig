@@ -17,6 +17,9 @@
     .asset-result-condensed .asset-result-expanded-details {
         display: none;
     }
+    .asset-result-item.asset-result-filter-hidden {
+        display: none !important;
+    }
     .asset-result-view {
         display: inline-flex;
         align-items: center;
@@ -681,9 +684,9 @@ $(document).ready(function () {
 
         $('.asset-result-item').each(function () {
             var matches = selectedGroup === null || String($(this).data('category-group')) === String(selectedGroup);
-            $(this).toggleClass('d-none', !matches);
+            $(this).toggleClass('asset-result-filter-hidden', !matches);
         });
-        var visibleCount = $('.asset-result-item:not(.d-none)').length;
+        var visibleCount = $('.asset-result-item:not(.asset-result-filter-hidden)').length;
         $('.asset-results-visible-count').text(
             selectedGroup === null
                 ? $('.asset-results-visible-count').data('default-count')
