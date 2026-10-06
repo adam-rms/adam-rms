@@ -153,26 +153,24 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="d-flex flex-column">
-                                <div class="mb-2">
-                                    <input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}>
-                                    <span>Show assets linked to others</span>
-                                </div>
-                                <div class="mb-2">
-                                    <input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}>
-                                    <span>Show archived assets</span>
-                                </div>
-                                <div class="mb-2">
-                                    <input type="checkbox" name="hideimages" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.HIDEIMAGES ? "checked" : "" }}>
-                                    <span>Hide asset images</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer d-flex justify-content-between align-items-center">
                     <button type="submit" class="btn btn-primary btn-lg ">Search</button>
+                    <div class="d-flex flex-wrap justify-content-end align-items-center">
+                        <div class="mb-0 ml-3">
+                            <input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}>
+                            <span>Show assets linked to others</span>
+                        </div>
+                        <div class="mb-0 ml-3">
+                            <input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}>
+                            <span>Show archived assets</span>
+                        </div>
+                        <div class="mb-0 ml-3">
+                            <input type="checkbox" name="hideimages" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.HIDEIMAGES ? "checked" : "" }}>
+                            <span>Hide asset images</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
