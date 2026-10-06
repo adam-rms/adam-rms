@@ -95,11 +95,13 @@
             }, function (data) {
                 if (data.response.location) {
                     setScanLocation(data.response.location["locationsBarcodes_id"], data.response.location['locations_name'], "barcode")
+                    window.playBarcodeSuccessTone();
                     bootbox.alert("Location set to " + data.response.location['locations_name'], function () {
                         barcodeRequestInProgress = false
                     });
                 } else if (data.response.asset) {
                     setScanLocation(data.response.asset['assets_id'], data.response.asset['assets_tag'] + " " + data.response.asset['assetTypes_name'], "asset")
+                    window.playBarcodeSuccessTone();
                     bootbox.alert("Location set to asset " + data.response.asset['assets_tag'] + " " + data.response.asset['assetTypes_name'], function () {
                         barcodeRequestInProgress = false
                     });
@@ -130,6 +132,7 @@
                     callback: function (result) {
                         if (result) {
                             setScanLocation(assetResult.response.location['barcode']["locationsBarcodes_id"], assetResult.response.location['locations_name'], "barcode")
+                            window.playBarcodeSuccessTone();
                             bootbox.alert("Location set to " + assetResult.response.location['locations_name']);
                         }
                         barcodeRequestInProgress = false
@@ -174,6 +177,7 @@
                                                     "type": barcodeType
                                                 }, function (result) {
                                                     appendAssetToList(assetResult.response.assetSuggest, result.response.barcodeId)
+                                                    window.playBarcodeSuccessTone();
                                                     barcodeRequestInProgress = false
                                                 });
                                             } else {
@@ -201,6 +205,7 @@
                     {% endif %}
                 } else if (assetResult.result && assetResult.response.asset) {
                     appendAssetToList(assetResult.response.asset, assetResult.response.barcode)
+                    window.playBarcodeSuccessTone();
                     barcodeRequestInProgress = false
                 }
             });

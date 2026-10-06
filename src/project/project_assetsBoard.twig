@@ -442,6 +442,7 @@
                                     type: 'success',
                                     title: 'Asset added to project and dispatched via barcode'
                                 });
+                                window.playBarcodeSuccessTone();
                             } else {
                                 Toast.fire({
                                     type: 'warning',
@@ -512,6 +513,7 @@
                         type: 'success',
                         title: 'Asset replaced in project'
                     });
+                    window.playBarcodeSuccessTone();
                     focusBarcodeDispatchInput();
                 } else {
                     notifyScanError();
@@ -619,6 +621,7 @@
             cache: false,
             success: function(result, status, data) {
                 if (result.result === true) {
+                    window.playBarcodeSuccessTone();
                     if (result.response && result.response.assetsAssignments_id) {
                         var assetCard = $(".assetDispatchAssetList[data-instance=" + instanceId + "] .assetDispatchAssetList-card[data-assignment=" + result.response.assetsAssignments_id + "]");
                         if (assetCard.length > 0) {
@@ -787,6 +790,7 @@
                 cache: false,
                 success: function(result, status, data) {
                     if (result.result === true) {
+                        window.playBarcodeSuccessTone();
                         const assetCard = $(".assetDispatchAssetList[data-instance=" + instanceId + "] .assetDispatchAssetList-card[data-asset=" + result.response.assets_id + "]");
                         assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance=" + instanceId + "]");
                         drawButtons();

@@ -18,9 +18,9 @@
                     {% if GET.definableField1 == 1 and asset.assetTypes_definableFields[0] != "" %}{{ asset.assetTypes_definableFields[0] }}: {{ asset['asset_definableFields_1'] }}<br/> {% endif %}
                     {% if GET.instanceName %}{{ USERDATA.instance.instances_name }}{% endif %}
                 </div>
-                {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and GET.instancelogo == 1 %}
+                {% if LOCAL_LOGO %}
                 <div class="item">
-                    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="height:70px">
+                    <img src="{{ LOCAL_LOGO.url }}" style="height:70px">
                 </div>
                 {% endif %}
             </div>
@@ -32,7 +32,7 @@
         {% if GET.adamrmslogo == 1 %}
             {% set colcount = colcount + 1 %}
         {% endif %}
-        {% if GET.instancelogo == 1 %}
+        {% if LOCAL_LOGO %}
             {% set colcount = colcount + 1 %}
         {% endif %}
 
@@ -88,9 +88,9 @@
                                 {% if GET.definableField1 == 1 and asset.assetTypes_definableFields[0] != "" %}{{ asset.assetTypes_definableFields[0] }}: {{ asset['asset_definableFields_1'] }}<br/> {% endif %}
                                 {% if GET.instanceName %}{{ GET.instanceName }}{% endif %}
                             </td>
-                            {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and GET.instancelogo == 1 %}
+                            {% if LOCAL_LOGO %}
                                 <td>
-                                    <img src="{{ USERDATA.instance.instances_logo|s3URL("medium") }}" style="height:{{ heightcount*10 }}px">
+                                    <img src="{{ LOCAL_LOGO.url }}" style="height:{{ heightcount*10 }}px">
                                 </td>
                             {% endif %}
                         </tr>

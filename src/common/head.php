@@ -90,6 +90,7 @@ date_default_timezone_set($CONFIG['TIMEZONE']);
 // Include the bCMS class, which contains useful functions 
 require_once __DIR__ . '/libs/bCMS/bCMS.php';
 $GLOBALS['bCMS'] = new bCMS;
+$TWIG->addGlobal('LOCAL_LOGO', $GLOBALS['bCMS']->localPdfLogo());
 
 if (getenv('DEV_MODE') != "true" and $CONFIG['ERRORS_PROVIDERS_SENTRY'] and strlen($CONFIG['ERRORS_PROVIDERS_SENTRY']) > 0) {
     Sentry\init([
