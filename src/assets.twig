@@ -176,7 +176,7 @@
     </div>
     <div class="col-12">
         {% if searchResults.ASSETS %}
-        <div class="card card-solid asset-results-card asset-result-condensed">
+        <div class="card card-solid asset-results-card">
             <div class="card-header">
                 <h3 class="card-title" style="margin-top: 0.4rem;">
                     Showing {{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }} of {{ searchResults.PAGINATION.COUNT }} result{{ searchResults.PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ searchResults.SPEED|round(1) }} second{{ searchResults.SPEED|round(1) != 1 ? 's':'' }}
@@ -185,8 +185,8 @@
                     <div class="asset-result-view">
                         <span class="mr-1">View:</span>
                         <div class="btn-group btn-group-sm" role="group" aria-label="Asset result display">
-                            <button type="button" class="btn btn-default asset-result-view-toggle active" data-view="condensed" aria-pressed="true">Condensed</button>
-                            <button type="button" class="btn btn-default asset-result-view-toggle" data-view="expanded" aria-pressed="false">Expanded</button>
+                            <button type="button" class="btn btn-default asset-result-view-toggle" data-view="condensed" aria-pressed="false">Condensed</button>
+                            <button type="button" class="btn btn-default asset-result-view-toggle active" data-view="expanded" aria-pressed="true">Expanded</button>
                         </div>
                     </div>
                 {% if searchResults.PAGINATION['TOTAL-PAGES'] > 1 %}
