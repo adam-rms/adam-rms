@@ -37,8 +37,6 @@
                             <i class="fas fa-copy"></i>
                         </button>
                         {% endif %}
-                        <button type="button" class="btn btn-tool" title="Add free-text project item" id="addProjectFreeText">
-                            <i class="fas fa-plus"></i></button>
                     {% endif %}
                     {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
@@ -285,32 +283,6 @@
                     }
                 });
             }
-        });
-        {% endif %}
-        {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-        $("#addProjectFreeText").click(function () {
-            bootbox.prompt({
-                title: "Add Free Text Item",
-                message: "Add a project-scoped free text item to {{ project.projects_name }}.",
-                inputType: 'textarea',
-                callback: function (result) {
-                    if (result) {
-                        ajaxcall("projects/assets/addFreetext.php", {
-                            "projects_id": {{ project.projects_id }},
-                            "freetext": result
-                        }, function (data) {
-                            if (data.result === true) {
-                                window.location.reload();
-                            } else {
-                                Toast.fire({
-                                    type: 'error',
-                                    title: data.error ? data.error.message : 'Could not create item'
-                                });
-                            }
-                        });
-                    }
-                }
-            });
         });
         {% endif %}
         {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions %}
