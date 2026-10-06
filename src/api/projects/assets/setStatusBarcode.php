@@ -56,6 +56,7 @@ if ($barcode and $barcode['assets_id'] != null) {
                 $DBLIB->where("assets.assetTypes_id", $assetDetails['assetTypes_id']);
                 $DBLIB->where("assets.instances_id", $assetInstanceId);
                 $DBLIB->where('assets.assets_deleted', 0);
+                $DBLIB->orderBy("assetsAssignments.assetsAssignments_id", "ASC");
                 $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id", "LEFT");
                 $DBLIB->join("assetsAssignmentsStatus", "assetsAssignments.assetsAssignmentsStatus_id=assetsAssignmentsStatus.assetsAssignmentsStatus_id", "LEFT");
                 $swapCandidates = $DBLIB->get("assetsAssignments", null, ["assetsAssignments_id", "assets.assets_id", "assets.assets_tag", "assets.asset_definableFields_1", "assetsAssignments.assetsAssignmentsStatus_id", "assetsAssignmentsStatus.assetsAssignmentsStatus_name"]);

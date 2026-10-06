@@ -665,7 +665,7 @@
                             || (result.error.unpickedStatusId !== null
                                 && String(candidate.assetsAssignmentsStatus_id) === String(result.error.unpickedStatusId));
                     });
-                    if ($(".autoReplaceUnpickedAsset").first().prop("checked") && unpickedCandidates.length === 1) {
+                    if ($(".autoReplaceUnpickedAsset").first().prop("checked") && unpickedCandidates.length > 0) {
                         swapScannedAsset(value, result.error.assets_id, unpickedCandidates[0].assetsAssignments_id, assetStatus);
                         return;
                     }
