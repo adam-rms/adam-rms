@@ -276,12 +276,14 @@
 
         var heading = $("<div>").addClass("d-flex align-items-center");
         if (canAssignAssets) {
-            heading.append($("<button>")
-                .addClass("btn btn-sm btn-outline-secondary px-1 py-0 assetDispatchAssetList-statusPrevButton")
+            heading.append($("<a>")
+                .attr("href", "#")
+                .addClass("text-secondary small mx-1 assetDispatchAssetList-statusPrevButton")
                 .attr("data-nextstatus", "")
+                .attr("aria-label", "Previous status")
                 .attr("title", "Previous status")
                 .hide()
-                .text("«"));
+                .html("&larr;"));
         }
 
         var assetId = $("<span>").addClass("assetDispatchAssetList-assetId mx-2");
@@ -299,12 +301,14 @@
         heading.append(assetId);
 
         if (canAssignAssets) {
-            heading.append($("<button>")
-                .addClass("btn btn-sm btn-outline-secondary px-1 py-0 assetDispatchAssetList-statusNextButton")
+            heading.append($("<a>")
+                .attr("href", "#")
+                .addClass("text-secondary small mx-1 assetDispatchAssetList-statusNextButton")
                 .attr("data-nextstatus", "")
+                .attr("aria-label", "Next status")
                 .attr("title", "Next status")
                 .hide()
-                .text("»"));
+                .html("&rarr;"));
         }
 
         card.append(heading);
@@ -781,13 +785,21 @@
             }
         });
 
-        $(".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton").click(function (){
-            const assetCard = $(this).parent();
+        $(document).on("click", ".assetDispatchAssetList-statusPrevButton,.assetDispatchAssetList-statusNextButton", function (e) {
+            e.preventDefault();
+            const assetCard = $(this).closest(".assetDispatchAssetList-card");
             const assetAssignment = assetCard.data("assignment");
             const assetNextStatus = $(this).data("nextstatus");
+            const instanceId = assetCard.data("instance");
+            if (!assetAssignment || assetNextStatus === undefined || assetNextStatus === null || !instanceId) {
+                console.error("Unable to change asset status: assignment, next status, or instance is missing.");
+                return;
+            }
             changeStatus(parseInt(assetAssignment),parseInt(assetNextStatus));
             //move card to new status
-            assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + assetCard.data("instance") + "]");
+            assetCard.attr("data-currentstatus", assetNextStatus).data("currentstatus", assetNextStatus);
+            assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetNextStatus + "][data-instance=" + instanceId + "]");
+            drawButtons();
         });
 
         {% endif %}
