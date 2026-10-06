@@ -241,6 +241,13 @@ $RETURN['SPEED'] = microtime(true) - $scriptStartTime;
 
 $PAGEDATA['searchOptions'] = [];
 
+// Category groups used by the in-page asset result filters
+$DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_deleted", 0);
+$DBLIB->where("(assetCategoriesGroups.instances_id IS NULL OR assetCategoriesGroups.instances_id = ?)", [$SEARCH['INSTANCE_ID']]);
+$DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
+$DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_name", "ASC");
+$PAGEDATA['searchOptions']['categoryGroups'] = $DBLIB->get("assetCategoriesGroups", null, ["assetCategoriesGroups_id", "assetCategoriesGroups_name"]);
+
 // Projects for search
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
