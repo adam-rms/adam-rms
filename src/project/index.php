@@ -15,6 +15,15 @@ $PAGEDATA['project']['auditLog'] = $DBLIB->get("auditLog",null, ["auditLog.*", "
 
 $PAGEDATA['pageConfig'] = ["TITLE" => $PAGEDATA["project"]['projects_name'], "BREADCRUMB" => false];
 
+if ($AUTH->instancePermissionCheck("PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN")) {
+    $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
+    $DBLIB->where("projects.projects_deleted", 0);
+    $DBLIB->where("projects.projects_id", $PAGEDATA['project']['projects_id'], "!=");
+    $DBLIB->join("clients", "projects.clients_id=clients.clients_id", "LEFT");
+    $DBLIB->orderBy("projects.projects_name", "ASC");
+    $PAGEDATA['projectAssetCloneSources'] = $DBLIB->get("projects", null, ["projects.projects_id", "projects.projects_name", "clients.clients_name"]);
+}
+
 //Edit Options - Client List
 if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:CLIENT")) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
