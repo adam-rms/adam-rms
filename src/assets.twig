@@ -62,7 +62,6 @@
                                         <option value="{{ term }}" selected>{{ term }}</option>
                                     {% endfor %}
                                 </select>
-                                <small class="form-text text-muted">Seperate multiple keywords with a comma</small>
                             </div>
                             <div class="form-group">
                                 <label>Tag</label>
@@ -144,6 +143,7 @@
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "price-d" ? 'selected' : '' }}  value="price-d">Weekly Price (high-low)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "value-a" ? 'selected' : '' }}  value="value-a">Value (low-high)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "value-d" ? 'selected' : '' }}  value="value-d">Value (high-low)</option>
+                                    <option {{ searchResults.SEARCH.TERMS.SORT == "category-a" ? 'selected' : '' }} value="category-a">Category (A-Z), then name (A-Z)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-a" ? 'selected' : '' }}  value="alphabet-a">Alphabetical (A-Z)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-d" ? 'selected' : '' }}  value="alphabet-d">Alphabetical (Z-A)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "mass-a" ? 'selected' : '' }}  value="mass-a">Mass (low-high)</option>
@@ -152,11 +152,13 @@
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "date-a" ? 'selected' : '' }}  value="date-a">Date Added (oldest first)</option>
                                 </select>
                             </div>
-                            <div class="mb-1">
+                        </div>
+                        <div class="col-12 d-flex flex-wrap align-items-center">
+                            <div class="mb-1 mr-3">
                                 <input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}>
                                 <span>Show assets linked to others</span>
                             </div>
-                            <div class="mb-1">
+                            <div class="mb-1 mr-3">
                                 <input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}>
                                 <span>Show archived assets</span>
                             </div>

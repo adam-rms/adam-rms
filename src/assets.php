@@ -32,7 +32,7 @@ $SEARCH = [
         "GROUPS" => is_array($_GET['group']) ? $_GET['group'] : [],
         "DATE-START" => $dateStart,
         "DATE-END" => $dateEnd,
-        "SORT" => $_GET['sort'] ?: "alphabet-a",
+        "SORT" => $_GET['sort'] ?: "category-a",
         "TAGS" => (is_array($_GET['tags'])) ? $_GET['tags'] : [],
     ],
     "SELECTED_TERMS" => [
@@ -106,6 +106,7 @@ if (count($sortArray) == 2) {
     if ($sortArray[0] == "price") $DBLIB->orderBy("assetTypes.assetTypes_weekRate", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "value") $DBLIB->orderBy("assetTypes.assetTypes_value", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "alphabet") $DBLIB->orderBy("assetTypes.assetTypes_name", ($sortArray[1] == "a" ? "ASC" : "DESC"));
+    elseif ($sortArray[0] == "category") $DBLIB->orderBy("assetCategories.assetCategories_name", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "mass") $DBLIB->orderBy("assetTypes.assetTypes_mass", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "date") $DBLIB->orderBy("assetTypes.assetTypes_inserted", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     else $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
