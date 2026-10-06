@@ -26,6 +26,7 @@ PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS
 Assets are assigned using the [Asset Search functionality](../assets/finding-assets).  
 To select the project you are assigning assets to, either use the `+ Add Assets` button on the project toolbar, or select a project when searching assets.
 You can also assign all assets to the project, using the add all button.
+Use **Clone assets from another project** in the Assets tab to add assets from another project in the same business. Linked assets are included automatically. Assets already assigned to the current project or unavailable for its dates are skipped. New assignments use the current project's default pricing and status.
 
 ![Select Project on the Project information page](/img/tutorial/projects/assets-shopping.png)
 _Shopping buttons are highlighted: Add All Assets to Project in blue, Add assets to this project in red_

@@ -32,8 +32,11 @@
             <li class="pt-2 px-3">
                 <div class="card-tools">
                     {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-                        <button type="button" class="btn btn-tool" title="Add free-text project item" id="addProjectFreeText">
-                            <i class="fas fa-plus"></i></button>
+                        {% if projectAssetCloneSources|length > 0 %}
+                        <button type="button" class="btn btn-tool" title="Clone assets from another project" id="cloneProjectAssets">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        {% endif %}
                     {% endif %}
                     {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
                         <button type="button" class="btn btn-tool" title="Set comment for assignment" id="setAssetAssignmentComment">
@@ -182,6 +185,84 @@
         $(".categoryFilter").hide();
         $(".typeFilter").hide();
 
+        {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+        $("#cloneProjectAssets").on("click", function() {
+            bootbox.prompt({
+                title: "Clone assets from another project",
+                message: "Select a project. Linked assets will be included; assets already assigned or unavailable for this project will be skipped.",
+                inputType: "select",
+                inputOptions: [
+                    {% for sourceProject in projectAssetCloneSources %}
+                    {
+                        text: '{{ sourceProject.projects_name|escape('js') }}{{ sourceProject.clients_name ? " | " ~ sourceProject.clients_name|escape('js') : "" }}',
+                        value: '{{ sourceProject.projects_id }}'
+                    },
+                    {% endfor %}
+                ],
+                callback: function(sourceProjectId) {
+                    if (sourceProjectId) cloneAssetsFromProject(sourceProjectId);
+                }
+            });
+        });
+
+        function cloneAssetsFromProject(sourceProjectId) {
+            $.ajax({
+                url: "{{ CONFIG.ROOTURL }}/api/projects/assets/cloneSourceAssets.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    source_projects_id: sourceProjectId,
+                    target_projects_id: {{ project.projects_id }}
+                },
+                success: function(result) {
+                    if (result.result !== true) {
+                        bootbox.alert(result.error && result.error.message ? result.error.message : "Could not load assets from that project.");
+                        return;
+                    }
+
+                    var assets = result.response.assets || [];
+                    if (assets.length === 0) {
+                        bootbox.alert("There are no assets to clone from that project.");
+                        return;
+                    }
+
+                    bootbox.confirm("Add " + assets.length + " asset" + (assets.length === 1 ? "" : "s") + " from the selected project? New assignments use this project's default pricing and status.", function(confirmed) {
+                        if (confirmed) assignClonedAssets(assets, 0, 0, 0);
+                    });
+                },
+                error: function() {
+                    bootbox.alert("Could not load assets from that project. Please try again.");
+                }
+            });
+        }
+
+        function assignClonedAssets(assets, index, added, skipped) {
+            if (index >= assets.length) {
+                bootbox.alert(added + " asset" + (added === 1 ? "" : "s") + " added. " + skipped + " could not be added because they are already assigned or unavailable.", function() {
+                    window.location.reload();
+                });
+                return;
+            }
+
+            $.ajax({
+                url: "{{ CONFIG.ROOTURL }}/api/projects/assets/assign.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    projects_id: {{ project.projects_id }},
+                    assets_id: assets[index]
+                },
+                success: function(result) {
+                    if (result.result === true) assignClonedAssets(assets, index + 1, added + 1, skipped);
+                    else assignClonedAssets(assets, index + 1, added, skipped + 1);
+                },
+                error: function() {
+                    assignClonedAssets(assets, index + 1, added, skipped + 1);
+                }
+            });
+        }
+        {% endif %}
+
         {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMNET_COMMENT"|instancePermissions %}
         $("#setAssetAssignmentComment").click(function () {
             var selected = getSelected();
@@ -202,32 +283,6 @@
                     }
                 });
             }
-        });
-        {% endif %}
-        {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-        $("#addProjectFreeText").click(function () {
-            bootbox.prompt({
-                title: "Add Free Text Item",
-                message: "Add a project-scoped free text item to {{ project.projects_name }}.",
-                inputType: 'textarea',
-                callback: function (result) {
-                    if (result) {
-                        ajaxcall("projects/assets/addFreetext.php", {
-                            "projects_id": {{ project.projects_id }},
-                            "freetext": result
-                        }, function (data) {
-                            if (data.result === true) {
-                                window.location.reload();
-                            } else {
-                                Toast.fire({
-                                    type: 'error',
-                                    title: data.error ? data.error.message : 'Could not create item'
-                                });
-                            }
-                        });
-                    }
-                }
-            });
         });
         {% endif %}
         {% if "PROJECTS:PROJECT_ASSETS:EDIT:CUSTOM_PRICE"|instancePermissions %}

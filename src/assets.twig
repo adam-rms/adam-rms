@@ -1,5 +1,30 @@
 {% extends "assets/template.twig" %}
 
+{% block htmlIncludes %}
+<style>
+    .asset-result-condensed .asset-result-item {
+        padding: 3px !important;
+    }
+    .asset-result-condensed .asset-result-card {
+        margin-bottom: 0;
+    }
+    .asset-result-quantity {
+        display: none;
+    }
+    .asset-result-condensed .asset-result-quantity {
+        display: block;
+    }
+    .asset-result-condensed .asset-result-expanded-details {
+        display: none;
+    }
+    .asset-result-view {
+        display: inline-flex;
+        align-items: center;
+        margin-right: .5rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-12">
@@ -37,7 +62,6 @@
                                         <option value="{{ term }}" selected>{{ term }}</option>
                                     {% endfor %}
                                 </select>
-                                <small class="form-text text-muted">Seperate multiple keywords with a comma</small>
                             </div>
                             <div class="form-group">
                                 <label>Tag</label>
@@ -119,6 +143,7 @@
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "price-d" ? 'selected' : '' }}  value="price-d">Weekly Price (high-low)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "value-a" ? 'selected' : '' }}  value="value-a">Value (low-high)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "value-d" ? 'selected' : '' }}  value="value-d">Value (high-low)</option>
+                                    <option {{ searchResults.SEARCH.TERMS.SORT == "category-a" ? 'selected' : '' }} value="category-a">Category (A-Z), then name (A-Z)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-a" ? 'selected' : '' }}  value="alphabet-a">Alphabetical (A-Z)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-d" ? 'selected' : '' }}  value="alphabet-d">Alphabetical (Z-A)</option>
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "mass-a" ? 'selected' : '' }}  value="mass-a">Mass (low-high)</option>
@@ -127,36 +152,47 @@
                                     <option {{ searchResults.SEARCH.TERMS.SORT == "date-a" ? 'selected' : '' }}  value="date-a">Date Added (oldest first)</option>
                                 </select>
                             </div>
-                            <div class="mb-1">
-                                <input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}>
-                                <span>Show assets linked to others</span>
-                            </div>
-                            <div class="mb-1">
-                                <input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}>
-                                <span>Show archived assets</span>
-                            </div>
-                            <div class="mb-1">
-                                <input type="checkbox" name="hideimages" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.HIDEIMAGES ? "checked" : "" }}>
-                                <span>Hide asset images</span>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer d-flex justify-content-between align-items-center">
                     <button type="submit" class="btn btn-primary btn-lg ">Search</button>
+                    <div class="d-flex flex-wrap justify-content-end align-items-center">
+                        <div class="mb-0 ml-3">
+                            <input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}>
+                            <span>Show assets linked to others</span>
+                        </div>
+                        <div class="mb-0 ml-3">
+                            <input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}>
+                            <span>Show archived assets</span>
+                        </div>
+                        <div class="mb-0 ml-3">
+                            <input type="checkbox" name="hideimages" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.HIDEIMAGES ? "checked" : "" }}>
+                            <span>Hide asset images</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
 
     </div>
-    <div class="col-12">
+    <div class="col-12" id="assetSearchResults">
         {% if searchResults.ASSETS %}
-        <div class="card card-solid">
+        <div class="card card-solid asset-results-card">
             <div class="card-header">
-                <h3 class="card-title" style="margin-top: 0.4rem;">
-                    Showing {{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }} of {{ searchResults.PAGINATION.COUNT }} result{{ searchResults.PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ searchResults.SPEED|round(1) }} second{{ searchResults.SPEED|round(1) != 1 ? 's':'' }}
-                </h3>
-                <div class="card-tools pull-right">
+                <div class="asset-category-group-filters d-inline-flex align-items-center ml-2" role="group" aria-label="Filter asset results by category group">
+                    {% for categoryGroup in searchOptions.categoryGroups %}
+                        <button type="button" class="btn btn-sm {{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'btn-primary' : 'btn-outline-primary' }} asset-category-group-filter" data-category-group="{{ categoryGroup.assetCategoriesGroups_id }}" aria-pressed="{{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'true' : 'false' }}">{{ categoryGroup.assetCategoriesGroups_name }}</button>
+                    {% endfor %}
+                </div>
+                <div class="card-tools pull-right d-flex align-items-center">
+                    <div class="asset-result-view">
+                        <span class="mr-1">View:</span>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Asset result display">
+                            <button type="button" class="btn btn-default asset-result-view-toggle" data-view="condensed" aria-pressed="false">Condensed</button>
+                            <button type="button" class="btn btn-default asset-result-view-toggle active" data-view="expanded" aria-pressed="true">Expanded</button>
+                        </div>
+                    </div>
                 {% if searchResults.PAGINATION['TOTAL-PAGES'] > 1 %}
                     <ul class="pagination pagination-sm m-0">
                         {% if searchResults.PAGINATION.PAGE > 1 %}
@@ -182,10 +218,14 @@
             <div class="card-body">
                 <div class="row d-flex align-items-stretch">
                     {% for asset in searchResults.ASSETS %}
-                        <div class="col-auto d-flex align-items-stretch" style="padding: 10px;">
-                            <div class="card">
-                                <div class="card-body" style="max-width: 250px;">
+                        <div class="col-auto d-flex align-items-stretch asset-result-item">
+                            <div class="card asset-result-card">
+                                <div class="card-body asset-result-card-body" style="max-width: 250px;">
                                     <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
+                                    <ul class="ml-4 mb-0 fa-ul text-muted asset-result-quantity">
+                                        <li class="small" title="Number owned"><span class="fa-li"><i class="fas fa-boxes"></i></span> {{ asset.count }}</li>
+                                    </ul>
+                                    <div class="asset-result-expanded-details">
                                     {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and asset.thumbnail|length > 0 and searchResults.SEARCH.SETTINGS.HIDEIMAGES != true %}
                                         <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                             {% for thumb in asset.thumbnail %}
@@ -234,6 +274,7 @@
                                         {% endif %}
 
                                     </ul>
+                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="text-right">
@@ -241,13 +282,13 @@
                                             {% if searchResults.PROJECT.ID and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                                                 {% if asset.count == 1 %}
                                                     {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < searchResults.PROJECT['DATEEND'] %}
-                                                        <button title="Asset to be archived" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                        <button title="Asset to be archived" class="btn btn-sm btn-success asset-result-compact-action" disabled><i class="fa fa-shopping-basket"></i></button>
                                                     {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
-                                                        <button title="Remove from project" {% if (not asset.tags[0].assignment) or searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                        <button title="Remove from project" {% if (not asset.tags[0].assignment) or searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton asset-result-compact-action" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                     {% if asset.tags[0].assignment and searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}
-                                                            <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                            <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success asset-result-compact-action" disabled><i class="fa fa-shopping-basket"></i></button>
                                                         {% endif %}
-                                                        <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                        <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton asset-result-compact-action" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                     {% else %}
                                                         <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                     {% endif %}
@@ -314,7 +355,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
+                                                    <button type="button" class="btn btn-sm asset-result-compact-action {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                                 {% endif %}
                                             {% elseif searchResults.PROJECT.DATESTART and searchResults.PROJECT.DATEEND %}
                                                 {% if asset.count == 1 %}
@@ -393,7 +434,7 @@
                                                     <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                             {% endif %}
                                         {% endif %}
-                                            <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default" target="_blank">
+                                            <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default asset-result-compact-action" target="_blank">
                                                 <i class="fas fa-info-circle"></i>
                                             </a>
                                         </div>
@@ -405,6 +446,9 @@
                 </div>
             </div>
             <div class="card-footer">
+                <h3 class="card-title">
+                    Showing <span class="asset-results-visible-count" data-default-count="{{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }}">{{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }}</span> of {{ searchResults.PAGINATION.COUNT }} result{{ searchResults.PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ searchResults.SPEED|round(1) }} second{{ searchResults.SPEED|round(1) != 1 ? 's':'' }}
+                </h3>
                 <div class="card-tools float-right">
                 {% if searchResults.PAGINATION['TOTAL-PAGES'] > 1 %}
                     <ul class="pagination pagination-sm m-0">
@@ -435,6 +479,11 @@
                 <h3 class="card-title" style="margin-top: 0.4rem;">
                     No results found
                 </h3>
+                <div class="asset-category-group-filters d-inline-flex align-items-center ml-2" role="group" aria-label="Filter asset results by category group">
+                    {% for categoryGroup in searchOptions.categoryGroups %}
+                        <button type="button" class="btn btn-sm {{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'btn-primary' : 'btn-outline-primary' }} asset-category-group-filter" data-category-group="{{ categoryGroup.assetCategoriesGroups_id }}" aria-pressed="{{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'true' : 'false' }}">{{ categoryGroup.assetCategoriesGroups_name }}</button>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         {% endif %}
@@ -594,7 +643,75 @@ $(document).ready(function () {
     $(document).on("click",".page-link[data-page]",function () {
         var str = window.location.search
         str = replaceQueryParam('page', $(this).data("page"), str)
+        sessionStorage.setItem('assetSearchResultView', getAssetResultView());
         window.location = window.location.pathname + str
+    });
+
+    function getAssetResultView() {
+        return $('.asset-results-card').hasClass('asset-result-condensed') ? 'condensed' : 'expanded';
+    }
+
+    function setAssetResultView(view) {
+        var condensed = view !== 'expanded';
+        $('.asset-results-card').toggleClass('asset-result-condensed', condensed);
+        $('.asset-result-view-toggle').each(function () {
+            var selected = $(this).data('view') === (condensed ? 'condensed' : 'expanded');
+            $(this).toggleClass('active', selected).attr('aria-pressed', selected ? 'true' : 'false');
+        });
+        if (!condensed) {
+            $('.slick.slick-initialized').slick('setPosition');
+        }
+    }
+
+    var savedAssetResultView = sessionStorage.getItem('assetSearchResultView');
+    if (savedAssetResultView) {
+        sessionStorage.removeItem('assetSearchResultView');
+        setAssetResultView(savedAssetResultView);
+    }
+    $(document).on('click', '.asset-result-view-toggle', function () {
+        setAssetResultView($(this).data('view'));
+    });
+    $(document).on('click', '.asset-category-group-filter', function () {
+        var selectedGroup = $(this).hasClass('btn-primary') ? null : $(this).data('category-group');
+        var view = getAssetResultView();
+        var url = new URL(window.location.href);
+        if (selectedGroup === null) {
+            url.searchParams.delete('result_category_group');
+        } else {
+            url.searchParams.set('result_category_group', selectedGroup);
+        }
+        url.searchParams.delete('page');
+
+        $.get(url.pathname + url.search)
+            .done(function (response) {
+                var parsedPage = $('<div>').append($.parseHTML(response));
+                var replacement = parsedPage.find('#assetSearchResults').first();
+                if (!replacement.length) {
+                    Toast.fire({type: 'error', title: 'Could not update asset results'});
+                    return;
+                }
+                $('#assetSearchResults').replaceWith(replacement);
+                history.replaceState({}, '', url.pathname + url.search);
+                setAssetResultView(view);
+                $('.slick').not('.slick-initialized').slick({
+                    dots: false,
+                    arrows: false,
+                    focusOnSelect: true,
+                    pauseOnHover: true,
+                    draggable: false,
+                    infinite: true,
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 2000,
+                });
+            })
+            .fail(function () {
+                Toast.fire({type: 'error', title: 'Could not update asset results'});
+            });
+    });
+    $('#assetSearchForm').on('submit', function () {
+        sessionStorage.setItem('assetSearchResultView', getAssetResultView());
     });
 
     const Toast = Swal.mixin({
@@ -616,7 +733,7 @@ $(document).ready(function () {
         autoplaySpeed: 2000,
     });
     {% if searchResults.PROJECT.ID != null and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-    $(".addToBasketAssetButton").click(function () {
+    $(document).on("click", ".addToBasketAssetButton", function () {
         var assetId=$(this).data("assetid");
         ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid"),"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
             $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
@@ -627,7 +744,7 @@ $(document).ready(function () {
             });
         });
     });
-    $(".addToBasketAssetTypeButton").click(function () {
+    $(document).on("click", ".addToBasketAssetTypeButton", function () {
         const thisButton = $(this);
         var assetTypeId = thisButton.data("assettypeid");
         ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
@@ -646,7 +763,7 @@ $(document).ready(function () {
             });
         });
     });
-    $(".removeFromBasketAssetButton").click(function () {
+    $(document).on("click", ".removeFromBasketAssetButton", function () {
         var assetId = $(this).data("assetid");
         bootbox.confirm({
             message: "Are you sure you wish to remove this asset from the project?",

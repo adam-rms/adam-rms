@@ -19,6 +19,7 @@ $SEARCH = [
     "PROJECT_REFERER" => $_GET['project_referer'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
     "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 100,
+    "RESULT_CATEGORY_GROUP" => isset($_GET['result_category_group']) && ctype_digit((string)$_GET['result_category_group']) ? intval($_GET['result_category_group']) : 0,
     "SETTINGS" => [
         "SHOWLINKED" => ($_GET['showlinked'] == 1 ? true : false),
         "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false),
@@ -31,7 +32,7 @@ $SEARCH = [
         "GROUPS" => is_array($_GET['group']) ? $_GET['group'] : [],
         "DATE-START" => $dateStart,
         "DATE-END" => $dateEnd,
-        "SORT" => $_GET['sort'] ?: "alphabet-a",
+        "SORT" => $_GET['sort'] ?: "category-a",
         "TAGS" => (is_array($_GET['tags'])) ? $_GET['tags'] : [],
     ],
     "SELECTED_TERMS" => [
@@ -93,6 +94,7 @@ $RETURN['PROJECT']['DATEEND'] = $dateEnd;
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 if ($SEARCH['TERMS']['CATEGORY']) $DBLIB->where('assetTypes.assetCategories_id', $SEARCH['TERMS']['CATEGORY'], 'IN');
+if ($SEARCH['RESULT_CATEGORY_GROUP'] > 0) $DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_id", $SEARCH['RESULT_CATEGORY_GROUP']);
 
 //Evaluate manufacturers
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");
@@ -104,6 +106,7 @@ if (count($sortArray) == 2) {
     if ($sortArray[0] == "price") $DBLIB->orderBy("assetTypes.assetTypes_weekRate", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "value") $DBLIB->orderBy("assetTypes.assetTypes_value", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "alphabet") $DBLIB->orderBy("assetTypes.assetTypes_name", ($sortArray[1] == "a" ? "ASC" : "DESC"));
+    elseif ($sortArray[0] == "category") $DBLIB->orderBy("assetCategories.assetCategories_name", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "mass") $DBLIB->orderBy("assetTypes.assetTypes_mass", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     elseif ($sortArray[0] == "date") $DBLIB->orderBy("assetTypes.assetTypes_inserted", ($sortArray[1] == "a" ? "ASC" : "DESC"));
     else $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
@@ -240,6 +243,23 @@ $RETURN['SPEED'] = microtime(true) - $scriptStartTime;
 
 
 $PAGEDATA['searchOptions'] = [];
+
+// Category groups used by the in-page asset result filters
+$DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
+$DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_deleted", 0);
+$DBLIB->where("(assetCategoriesGroups.instances_id IS NULL OR assetCategoriesGroups.instances_id = ?)", [$SEARCH['INSTANCE_ID']]);
+$DBLIB->where("assetCategories.assetCategories_deleted", 0);
+$DBLIB->where("(assetCategories.instances_id IS NULL OR assetCategories.instances_id = ?)", [$SEARCH['INSTANCE_ID']]);
+$DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
+$DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_name", "ASC");
+$categoryGroupCategories = $DBLIB->get("assetCategories", null, ["assetCategoriesGroups.assetCategoriesGroups_id", "assetCategoriesGroups.assetCategoriesGroups_name"]) ?: [];
+$PAGEDATA['searchOptions']['categoryGroups'] = [];
+foreach ($categoryGroupCategories as $categoryGroupCategory) {
+    $categoryGroupId = $categoryGroupCategory['assetCategoriesGroups_id'];
+    if (!isset($PAGEDATA['searchOptions']['categoryGroups'][$categoryGroupId])) {
+        $PAGEDATA['searchOptions']['categoryGroups'][$categoryGroupId] = $categoryGroupCategory;
+    }
+}
 
 // Projects for search
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);

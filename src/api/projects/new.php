@@ -10,6 +10,8 @@ $DBLIB->orderBy("projectsStatuses_rank", "ASC");
 $projectsStatus = $DBLIB->getValue("projectsStatuses","projectsStatuses_id",1);
 
 $hasProjectDates = isset($_POST['projects_dates_use_start']) and isset($_POST['projects_dates_use_end']);
+$projectDateStart = $hasProjectDates ? date("Y-m-d H:i:s", strtotime($_POST['projects_dates_use_start'])) : null;
+$projectDateEnd = $hasProjectDates ? date("Y-m-d H:i:s", strtotime($_POST['projects_dates_use_end'])) : null;
 
 $project = $DBLIB->insert("projects", [
     "projects_name" => $_POST['projects_name'],
@@ -20,8 +22,10 @@ $project = $DBLIB->insert("projects", [
     "projectsTypes_id" => $_POST['projectsType_id'],
     "projectsStatuses_id" => $projectsStatus,
     "projects_parent_project_id" => ($_POST['projects_parent_project_id'] ?? null),
-    "projects_dates_use_start" => $hasProjectDates ? date("Y-m-d H:i:s", strtotime($_POST['projects_dates_use_start'])) : null,
-    "projects_dates_use_end" => $hasProjectDates ? date("Y-m-d H:i:s", strtotime($_POST['projects_dates_use_end'])) : null
+    "projects_dates_use_start" => $projectDateStart,
+    "projects_dates_use_end" => $projectDateEnd,
+    "projects_dates_deliver_start" => $projectDateStart,
+    "projects_dates_deliver_end" => $projectDateEnd
 ]);
 if (!$project) finish(false, ["code" => "CREATE-PROJECT-FAIL", "message"=> "Could not create new project"]);
 
