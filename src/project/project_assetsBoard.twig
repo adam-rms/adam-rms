@@ -241,53 +241,55 @@
             var prev = (position == 0 ? false : assetStatuses[instance]['orderedStatusIds'][position-1]);
             var next = (position == assetStatuses[instance]['orderedStatusIds'].length - 1 ? false : assetStatuses[instance]['orderedStatusIds'][position+1]);
 
-            $(this).find(".assetDispatchAssetList-statusPrevButton").css('display', prev === false ? 'none': 'block');
+            $(this).find(".assetDispatchAssetList-statusPrevButton").css('display', prev === false ? 'none': 'inline-block');
             $(this).find(".assetDispatchAssetList-statusPrevButton").data('nextstatus', prev);
-            $(this).find(".assetDispatchAssetList-statusNextButton").css('display', next === false ? 'none': 'block');
+            $(this).find(".assetDispatchAssetList-statusNextButton").css('display', next === false ? 'none': 'inline-block');
             $(this).find(".assetDispatchAssetList-statusNextButton").data('nextstatus', next);
         });
     }
 
     function buildAssetDispatchCard(asset, assignmentId, statusId, instanceId) {
-        var card = $("<div>").addClass("row align-middle p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card");
+        var card = $("<div>").addClass("p-2 border border-secondary border-2 rounded mt-auto mb-2 assetDispatchAssetList-card");
         card.attr("data-currentstatus", statusId);
         card.attr("data-assignment", assignmentId);
         card.attr("data-instance", instanceId);
         card.attr("data-asset", asset.assets_id);
 
+        var heading = $("<div>").addClass("d-flex align-items-center");
         if (canAssignAssets) {
-            card.append($("<button>")
-                .addClass("btn btn-outline-secondary assetDispatchAssetList-statusPrevButton col-1")
+            heading.append($("<button>")
+                .addClass("btn btn-sm btn-outline-secondary px-1 py-0 assetDispatchAssetList-statusPrevButton")
                 .attr("data-nextstatus", "")
+                .attr("title", "Previous status")
                 .hide()
                 .text("«"));
         }
 
-        var title;
-        var title = $("<h6>").addClass("col my-auto");
+        var assetId = $("<span>").addClass("assetDispatchAssetList-assetId mx-2");
         if (asset.assets_id) {
-            title.append("(");
-            title.append($("<a>")
+            assetId.append("(");
+            assetId.append($("<a>")
                 .attr("target", "_blank")
                 .attr("href", "{{ CONFIG.ROOTURL }}/asset.php?id=" + asset.assetTypes_id + "&asset=" + asset.assets_id + "&instance=" + instanceId)
                 .text(asset.assets_tag)
             );
-            title.append(")");
+            assetId.append(")");
         } else {
-            title.append(document.createTextNode("(" + asset.assets_tag + ")"));
+            assetId.text("(" + asset.assets_tag + ")");
         }
-        title.append("<br>");
-        title.append(document.createTextNode(asset.assetTypes_name));
-        card.append(title);
+        heading.append(assetId);
 
         if (canAssignAssets) {
-            card.append($("<button>")
-                .addClass("btn btn-outline-secondary assetDispatchAssetList-statusNextButton col-1")
+            heading.append($("<button>")
+                .addClass("btn btn-sm btn-outline-secondary px-1 py-0 assetDispatchAssetList-statusNextButton")
                 .attr("data-nextstatus", "")
+                .attr("title", "Next status")
                 .hide()
                 .text("»"));
         }
 
+        card.append(heading);
+        card.append($("<div>").addClass("assetDispatchAssetList-name").text(asset.assetTypes_name));
         return card;
     }
 
@@ -298,25 +300,19 @@
             assetCard.attr("data-asset", asset.assets_id);
             assetCard.data("asset", asset.assets_id);
             assetCard.data("currentstatus", assetStatus);
+            var assetId = assetCard.find(".assetDispatchAssetList-assetId").empty();
             if (asset.assets_id) {
-                assetCard.find('a').attr('href', '{{ CONFIG.ROOTURL }}/asset.php?id=' + asset.assetTypes_id + '&asset=' + asset.assets_id + '&instance=' + instanceId).text(asset.assets_tag);
-                var title = assetCard.find('h6');
-                title.empty();
-                title.append("(");
-                title.append($("<a>")
+                assetId.append("(");
+                assetId.append($("<a>")
                     .attr("target", "_blank")
                     .attr("href", "{{ CONFIG.ROOTURL }}/asset.php?id=" + asset.assetTypes_id + "&asset=" + asset.assets_id + "&instance=" + instanceId)
                     .text(asset.assets_tag)
                 );
-                title.append(")<br>");
-                title.append(document.createTextNode(asset.assetTypes_name));
+                assetId.append(")");
             } else {
-                var title = assetCard.find('h6');
-                title.empty();
-                title.append(document.createTextNode("(" + asset.assets_tag + ")"));
-                title.append("<br>");
-                title.append(document.createTextNode(asset.assetTypes_name));
+                assetId.text("(" + asset.assets_tag + ")");
             }
+            assetCard.find(".assetDispatchAssetList-name").text(asset.assetTypes_name);
             assetCard.detach().appendTo(".assetDispatchAssetList[data-statusid=" + assetStatus + "][data-instance=" + instanceId + "]");
             return assetCard;
         }
