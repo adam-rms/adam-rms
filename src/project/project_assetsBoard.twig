@@ -24,6 +24,24 @@
     #navItemBarcodeDispatch button {
         background-color: transparent;
     }
+    .barcodeDispatchInlineControls {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: .35rem;
+        padding: .25rem .5rem;
+    }
+    .barcodeDispatchInlineControls .barcodeDispatchInlineLabel {
+        margin: 0;
+        white-space: nowrap;
+        font-size: .8rem;
+    }
+    .barcodeDispatchInlineStatus {
+        width: 145px;
+    }
+    .barcodeDispatchInlineInput {
+        width: 215px;
+    }
 </style>
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0 card-tabs">
@@ -39,6 +57,29 @@
                 </li>
             {% endfor %}
             {% if (FINANCIALS.assetsAssigned|length > 0 or FINANCIALS.assetsAssignedSUB|length > 0) and "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+                <li class="nav-item ml-auto barcodeDispatchInlineControls">
+                    <span class="barcodeDispatchInlineLabel">Set Asset Status to</span>
+                    <select class="form-control form-control-sm barcodeDispatchInlineStatus assetStatusSelectorBarcodeDispatchInline" id="barcodeDispatchInlineStatus" data-instanceid="{{ USERDATA.instance["instances_id"] }}" data-boardtab="asset-board-thisinstance" aria-label="Set Asset Status to">
+                        {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                        {% endfor %}
+                    </select>
+                    {% for instance in FINANCIALS.assetsAssignedSUB %}
+                    <select class="form-control form-control-sm barcodeDispatchInlineStatus assetStatusSelectorBarcodeDispatchInline d-none" data-instanceid="{{ instance['instance'].instances_id }}" data-boardtab="asset-board-instance{{ instance['instance'].instances_id }}" aria-label="Set Asset Status to">
+                        {% for status in BOARDSTATUSES[instance['instance'].instances_id] %}
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                        {% endfor %}
+                    </select>
+                    {% endfor %}
+                    <div class="input-group input-group-sm barcodeDispatchInlineInput">
+                        <input type="text" class="form-control" id="barcodeScanTextInputInline" placeholder="Scan or type barcode value" aria-label="Scan or type barcode value">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="barcodeScanTextButtonInline" aria-label="Submit barcode">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </li>
                 <li class="nav-item" id="navItemBarcodeDispatch">
                     <button type="button" class="nav-link" title="Barcode Dispatch" data-toggle="modal" data-target="#barcodeDispatchModal">
                         <i class="fas fa-barcode"></i>
@@ -147,6 +188,29 @@
     }
 
     {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
+    function syncInlineBarcodeDispatchStatus() {
+        var activeBoardTab = $('a.assetsBoardToggle.active').attr('aria-controls') || 'asset-board-thisinstance';
+        $(".assetStatusSelectorBarcodeDispatchInline").addClass("d-none")
+            .filter('[data-boardtab="' + activeBoardTab + '"]').removeClass("d-none");
+    }
+    syncInlineBarcodeDispatchStatus();
+
+    $('a.assetsBoardToggle[data-toggle="pill"]').on('shown.bs.tab', syncInlineBarcodeDispatchStatus);
+
+    function submitInlineBarcodeDispatch() {
+        var $input = $("#barcodeScanTextInputInline");
+        var value = $input.val().trim();
+        if (value.length > 0) {
+            dispatchBarcodeScanned(value, "UNKNOWN");
+            $input.val("").focus();
+        }
+    }
+    $("#barcodeScanTextInputInline").on("keydown", function(e) {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        submitInlineBarcodeDispatch();
+    });
+    $("#barcodeScanTextButtonInline").on("click", submitInlineBarcodeDispatch);
 
     // Whether the user can assign assets to projects (for Supermarket Sweep)
     const canAssignAssets = {{ "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions ? 'true' : 'false' }};
@@ -283,7 +347,9 @@
      * @param type The barcode format type ('UNKNOWN' for USB/Bluetooth scanners)
      */
     function focusBarcodeDispatchInput() {
-        var $input = $("#barcodeScanTextInputDispatch");
+        var $input = $("#barcodeDispatchModal").hasClass("show")
+            ? $("#barcodeScanTextInputDispatch")
+            : $("#barcodeScanTextInputInline");
         if ($input.length) {
             $input.focus();
         }
@@ -525,8 +591,11 @@
     }
 
     function dispatchBarcodeScanned(value, type) {
-        var assetStatus = $(".assetStatusSelectorBarcodeDispatch:visible").val();
-        var instanceId = $(".assetStatusSelectorBarcodeDispatch:visible").data("instanceid");
+        var $statusSelector = $("#barcodeDispatchModal").hasClass("show")
+            ? $(".assetStatusSelectorBarcodeDispatch:visible").first()
+            : $(".assetStatusSelectorBarcodeDispatchInline:visible").first();
+        var assetStatus = $statusSelector.val();
+        var instanceId = $statusSelector.data("instanceid");
         var requestData = {
             text: value,
             assetsAssignments_status: assetStatus,
