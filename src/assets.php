@@ -19,6 +19,7 @@ $SEARCH = [
     "PROJECT_REFERER" => $_GET['project_referer'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
     "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 100,
+    "RESULT_CATEGORY_GROUP" => isset($_GET['result_category_group']) && ctype_digit((string)$_GET['result_category_group']) ? intval($_GET['result_category_group']) : 0,
     "SETTINGS" => [
         "SHOWLINKED" => ($_GET['showlinked'] == 1 ? true : false),
         "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false),
@@ -93,6 +94,7 @@ $RETURN['PROJECT']['DATEEND'] = $dateEnd;
 $DBLIB->join("assetCategories", "assetCategories.assetCategories_id=assetTypes.assetCategories_id", "LEFT");
 $DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 if ($SEARCH['TERMS']['CATEGORY']) $DBLIB->where('assetTypes.assetCategories_id', $SEARCH['TERMS']['CATEGORY'], 'IN');
+if ($SEARCH['RESULT_CATEGORY_GROUP'] > 0) $DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_id", $SEARCH['RESULT_CATEGORY_GROUP']);
 
 //Evaluate manufacturers
 $DBLIB->join("manufacturers", "manufacturers.manufacturers_id=assetTypes.manufacturers_id", "LEFT");

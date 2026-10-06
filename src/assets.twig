@@ -17,9 +17,6 @@
     .asset-result-condensed .asset-result-expanded-details {
         display: none;
     }
-    .asset-result-item.asset-result-filter-hidden {
-        display: none !important;
-    }
     .asset-result-view {
         display: inline-flex;
         align-items: center;
@@ -177,16 +174,13 @@
         </form>
 
     </div>
-    <div class="col-12">
+    <div class="col-12" id="assetSearchResults">
         {% if searchResults.ASSETS %}
         <div class="card card-solid asset-results-card">
             <div class="card-header">
-                <h3 class="card-title" style="margin-top: 0.4rem;">
-                    Showing <span class="asset-results-visible-count" data-default-count="{{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }}">{{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }}</span> of {{ searchResults.PAGINATION.COUNT }} result{{ searchResults.PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ searchResults.SPEED|round(1) }} second{{ searchResults.SPEED|round(1) != 1 ? 's':'' }}
-                </h3>
                 <div class="asset-category-group-filters d-inline-flex align-items-center ml-2" role="group" aria-label="Filter asset results by category group">
                     {% for categoryGroup in searchOptions.categoryGroups %}
-                        <button type="button" class="btn btn-sm btn-outline-primary asset-category-group-filter" data-category-group="{{ categoryGroup.assetCategoriesGroups_id }}" aria-pressed="false">{{ categoryGroup.assetCategoriesGroups_name }}</button>
+                        <button type="button" class="btn btn-sm {{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'btn-primary' : 'btn-outline-primary' }} asset-category-group-filter" data-category-group="{{ categoryGroup.assetCategoriesGroups_id }}" aria-pressed="{{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'true' : 'false' }}">{{ categoryGroup.assetCategoriesGroups_name }}</button>
                     {% endfor %}
                 </div>
                 <div class="card-tools pull-right d-flex align-items-center">
@@ -222,7 +216,7 @@
             <div class="card-body">
                 <div class="row d-flex align-items-stretch">
                     {% for asset in searchResults.ASSETS %}
-                        <div class="col-auto d-flex align-items-stretch asset-result-item" data-category-group="{{ asset.assetCategoriesGroups_id }}">
+                        <div class="col-auto d-flex align-items-stretch asset-result-item">
                             <div class="card asset-result-card">
                                 <div class="card-body asset-result-card-body" style="max-width: 250px;">
                                     <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
@@ -450,6 +444,9 @@
                 </div>
             </div>
             <div class="card-footer">
+                <h3 class="card-title">
+                    Showing <span class="asset-results-visible-count" data-default-count="{{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }}">{{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }}</span> of {{ searchResults.PAGINATION.COUNT }} result{{ searchResults.PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ searchResults.SPEED|round(1) }} second{{ searchResults.SPEED|round(1) != 1 ? 's':'' }}
+                </h3>
                 <div class="card-tools float-right">
                 {% if searchResults.PAGINATION['TOTAL-PAGES'] > 1 %}
                     <ul class="pagination pagination-sm m-0">
@@ -480,6 +477,11 @@
                 <h3 class="card-title" style="margin-top: 0.4rem;">
                     No results found
                 </h3>
+                <div class="asset-category-group-filters d-inline-flex align-items-center ml-2" role="group" aria-label="Filter asset results by category group">
+                    {% for categoryGroup in searchOptions.categoryGroups %}
+                        <button type="button" class="btn btn-sm {{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'btn-primary' : 'btn-outline-primary' }} asset-category-group-filter" data-category-group="{{ categoryGroup.assetCategoriesGroups_id }}" aria-pressed="{{ searchResults.SEARCH.RESULT_CATEGORY_GROUP == categoryGroup.assetCategoriesGroups_id ? 'true' : 'false' }}">{{ categoryGroup.assetCategoriesGroups_name }}</button>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         {% endif %}
@@ -664,34 +666,47 @@ $(document).ready(function () {
         sessionStorage.removeItem('assetSearchResultView');
         setAssetResultView(savedAssetResultView);
     }
-    $('.asset-result-view-toggle').on('click', function () {
+    $(document).on('click', '.asset-result-view-toggle', function () {
         setAssetResultView($(this).data('view'));
     });
-    $('.asset-category-group-filter').on('click', function () {
+    $(document).on('click', '.asset-category-group-filter', function () {
         var selectedGroup = $(this).hasClass('btn-primary') ? null : $(this).data('category-group');
-        $('.asset-category-group-filter')
-            .removeClass('btn-primary')
-            .addClass('btn-outline-primary')
-            .attr('aria-pressed', 'false');
-
-        if (selectedGroup !== null) {
-            var selectedButton = $('.asset-category-group-filter[data-category-group="' + selectedGroup + '"]');
-            selectedButton
-                .removeClass('btn-outline-primary')
-                .addClass('btn-primary')
-                .attr('aria-pressed', 'true');
+        var view = getAssetResultView();
+        var url = new URL(window.location.href);
+        if (selectedGroup === null) {
+            url.searchParams.delete('result_category_group');
+        } else {
+            url.searchParams.set('result_category_group', selectedGroup);
         }
+        url.searchParams.delete('page');
 
-        $('.asset-result-item').each(function () {
-            var matches = selectedGroup === null || String($(this).data('category-group')) === String(selectedGroup);
-            $(this).toggleClass('asset-result-filter-hidden', !matches);
-        });
-        var visibleCount = $('.asset-result-item:not(.asset-result-filter-hidden)').length;
-        $('.asset-results-visible-count').text(
-            selectedGroup === null
-                ? $('.asset-results-visible-count').data('default-count')
-                : visibleCount + ' matching asset' + (visibleCount === 1 ? '' : 's') + ' on this page'
-        );
+        $.get(url.pathname + url.search)
+            .done(function (response) {
+                var parsedPage = $('<div>').append($.parseHTML(response));
+                var replacement = parsedPage.find('#assetSearchResults').first();
+                if (!replacement.length) {
+                    Toast.fire({type: 'error', title: 'Could not update asset results'});
+                    return;
+                }
+                $('#assetSearchResults').replaceWith(replacement);
+                history.replaceState({}, '', url.pathname + url.search);
+                setAssetResultView(view);
+                $('.slick').not('.slick-initialized').slick({
+                    dots: false,
+                    arrows: false,
+                    focusOnSelect: true,
+                    pauseOnHover: true,
+                    draggable: false,
+                    infinite: true,
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 2000,
+                });
+            })
+            .fail(function () {
+                Toast.fire({type: 'error', title: 'Could not update asset results'});
+            });
     });
     $('#assetSearchForm').on('submit', function () {
         sessionStorage.setItem('assetSearchResultView', getAssetResultView());
@@ -716,7 +731,7 @@ $(document).ready(function () {
         autoplaySpeed: 2000,
     });
     {% if searchResults.PROJECT.ID != null and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-    $(".addToBasketAssetButton").click(function () {
+    $(document).on("click", ".addToBasketAssetButton", function () {
         var assetId=$(this).data("assetid");
         ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid"),"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
             $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
@@ -727,7 +742,7 @@ $(document).ready(function () {
             });
         });
     });
-    $(".addToBasketAssetTypeButton").click(function () {
+    $(document).on("click", ".addToBasketAssetTypeButton", function () {
         const thisButton = $(this);
         var assetTypeId = thisButton.data("assettypeid");
         ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
@@ -746,7 +761,7 @@ $(document).ready(function () {
             });
         });
     });
-    $(".removeFromBasketAssetButton").click(function () {
+    $(document).on("click", ".removeFromBasketAssetButton", function () {
         var assetId = $(this).data("assetid");
         bootbox.confirm({
             message: "Are you sure you wish to remove this asset from the project?",
