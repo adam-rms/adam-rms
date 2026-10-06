@@ -659,14 +659,11 @@
                     window.barcodeAssignInProgress = true;
 
                     var swapCandidates = result.error.swapCandidates || [];
-                    var firstStatusId = $('.assetDispatchAssetList').filter(function() {
-                        return String($(this).data("instance")) === String(instanceId);
-                    }).first().attr("data-statusid");
                     var unpickedCandidates = swapCandidates.filter(function(candidate) {
                         return candidate.assetsAssignmentsStatus_id === null
                             || candidate.assetsAssignmentsStatus_id === ""
-                            || (firstStatusId !== undefined
-                                && String(candidate.assetsAssignmentsStatus_id) === String(firstStatusId));
+                            || (result.error.unpickedStatusId !== null
+                                && String(candidate.assetsAssignmentsStatus_id) === String(result.error.unpickedStatusId));
                     });
                     if ($(".autoReplaceUnpickedAsset").first().prop("checked") && unpickedCandidates.length === 1) {
                         swapScannedAsset(value, result.error.assets_id, unpickedCandidates[0].assetsAssignments_id, assetStatus);
