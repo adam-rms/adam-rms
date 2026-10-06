@@ -1,5 +1,54 @@
 {% extends "assets/template.twig" %}
 
+{% block htmlIncludes %}
+<style>
+    .asset-result-condensed .asset-result-item {
+        padding: 3px !important;
+    }
+    .asset-result-condensed .asset-result-card {
+        margin-bottom: 0;
+    }
+    .asset-result-condensed .asset-result-card-body {
+        display: flex;
+        align-items: center;
+        max-width: none !important;
+        padding: .35rem .5rem;
+    }
+    .asset-result-condensed .asset-result-card-body .lead {
+        margin: 0;
+        font-size: .95rem;
+        max-width: 250px;
+    }
+    .asset-result-quantity {
+        display: none;
+    }
+    .asset-result-condensed .asset-result-quantity {
+        display: inline-block;
+        margin-left: .4rem;
+        font-size: .8rem;
+        white-space: nowrap;
+    }
+    .asset-result-condensed .asset-result-expanded-details {
+        display: none;
+    }
+    .asset-result-condensed .asset-result-card .card-footer {
+        padding: .25rem .4rem;
+    }
+    .asset-result-condensed .asset-result-card .card-footer .btn-group > button:not(.asset-result-compact-action),
+    .asset-result-condensed .asset-result-card .card-footer .btn-group > a:not(.asset-result-compact-action) {
+        display: none;
+    }
+    .asset-result-condensed .asset-result-card .card-footer .btn {
+        padding: .15rem .35rem;
+    }
+    .asset-results-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-12">
@@ -151,7 +200,7 @@
     </div>
     <div class="col-12">
         {% if searchResults.ASSETS %}
-        <div class="card card-solid">
+        <div class="card card-solid asset-results-card asset-result-condensed">
             <div class="card-header">
                 <h3 class="card-title" style="margin-top: 0.4rem;">
                     Showing {{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }} of {{ searchResults.PAGINATION.COUNT }} result{{ searchResults.PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ searchResults.SPEED|round(1) }} second{{ searchResults.SPEED|round(1) != 1 ? 's':'' }}
@@ -182,10 +231,12 @@
             <div class="card-body">
                 <div class="row d-flex align-items-stretch">
                     {% for asset in searchResults.ASSETS %}
-                        <div class="col-auto d-flex align-items-stretch" style="padding: 10px;">
-                            <div class="card">
-                                <div class="card-body" style="max-width: 250px;">
+                        <div class="col-auto d-flex align-items-stretch asset-result-item">
+                            <div class="card asset-result-card">
+                                <div class="card-body asset-result-card-body" style="max-width: 250px;">
                                     <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
+                                    <span class="asset-result-quantity">{{ asset.count }}</span>
+                                    <div class="asset-result-expanded-details">
                                     {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and asset.thumbnail|length > 0 and searchResults.SEARCH.SETTINGS.HIDEIMAGES != true %}
                                         <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
                                             {% for thumb in asset.thumbnail %}
@@ -234,6 +285,7 @@
                                         {% endif %}
 
                                     </ul>
+                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="text-right">
@@ -241,13 +293,13 @@
                                             {% if searchResults.PROJECT.ID and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
                                                 {% if asset.count == 1 %}
                                                     {% if asset.tags[0].assets_endDate != null and asset.tags[0].assets_endDate < searchResults.PROJECT['DATEEND'] %}
-                                                        <button title="Asset to be archived" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                        <button title="Asset to be archived" class="btn btn-sm btn-success asset-result-compact-action" disabled><i class="fa fa-shopping-basket"></i></button>
                                                     {% elseif asset.tags[0].flagsblocks.COUNT.BLOCK < 1 %}
-                                                        <button title="Remove from project" {% if (not asset.tags[0].assignment) or searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                        <button title="Remove from project" {% if (not asset.tags[0].assignment) or searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}style="display:none;"{% endif %} class="btn btn-sm btn-warning removeFromBasketAssetButton asset-result-compact-action" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                     {% if asset.tags[0].assignment and searchResults.PROJECT.ID != asset.tags[0].assignment[0].projects_id %}
-                                                            <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success" disabled><i class="fa fa-shopping-basket"></i></button>
+                                                            <button title="Assigned to {{ asset.tags[0].assignment[0]['projects_name'] }}" class="btn btn-sm btn-success asset-result-compact-action" disabled><i class="fa fa-shopping-basket"></i></button>
                                                         {% endif %}
-                                                        <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
+                                                        <button title="Add to project" {% if asset.tags[0].assignment %} style="display:none;"{% endif %} class="btn btn-sm btn-success addToBasketAssetButton asset-result-compact-action" data-assetid="{{ asset.tags[0]['assets_id'] }}"><i class="fa fa-shopping-basket"></i></button>
                                                     {% else %}
                                                         <button class="btn btn-sm btn-danger" title="Asset is blocked from being assigned by a maintenance job" disabled><i class="fas fa-ban"></i></button>
                                                     {% endif %}
@@ -314,7 +366,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
+                                                    <button type="button" class="btn btn-sm asset-result-compact-action {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-shopping-basket"></i></button>
                                                 {% endif %}
                                             {% elseif searchResults.PROJECT.DATESTART and searchResults.PROJECT.DATEEND %}
                                                 {% if asset.count == 1 %}
@@ -393,7 +445,7 @@
                                                     <button type="button" class="btn btn-sm {{ asset.countAvailable > 0 ? 'btn-success' : 'btn-warning' }}" data-toggle="modal" data-target="#assetDetailsModal{{ asset.assetTypes_id }}"><i class="fa fa-calendar"></i></button>
                                             {% endif %}
                                         {% endif %}
-                                            <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default" target="_blank">
+                                            <a href="{{ CONFIG.ROOTURL }}/asset.php?id={{ asset.assetTypes_id }}{{ asset.count == 1 ? '&asset=' ~ asset.tags[0]['assets_id'] : '' }}{{ SEARCH["SETTINGS"]["SHOWARCHIVED"] ? '&showArchived' : ''}}&instance={{ searchResults.SEARCH.INSTANCE_ID }}" class="btn btn-sm btn-default asset-result-compact-action" target="_blank">
                                                 <i class="fas fa-info-circle"></i>
                                             </a>
                                         </div>
@@ -405,7 +457,12 @@
                 </div>
             </div>
             <div class="card-footer">
-                <div class="card-tools float-right">
+                <div class="asset-results-footer">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Asset result display">
+                        <button type="button" class="btn btn-default asset-result-view-toggle active" data-view="condensed" aria-pressed="true">Condensed</button>
+                        <button type="button" class="btn btn-default asset-result-view-toggle" data-view="expanded" aria-pressed="false">Expanded</button>
+                    </div>
+                    <div class="card-tools">
                 {% if searchResults.PAGINATION['TOTAL-PAGES'] > 1 %}
                     <ul class="pagination pagination-sm m-0">
                         {% if searchResults.PAGINATION.PAGE > 1 %}
@@ -426,6 +483,7 @@
                         {% endif %}
                     </ul>
                 {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -594,7 +652,36 @@ $(document).ready(function () {
     $(document).on("click",".page-link[data-page]",function () {
         var str = window.location.search
         str = replaceQueryParam('page', $(this).data("page"), str)
+        sessionStorage.setItem('assetSearchResultView', getAssetResultView());
         window.location = window.location.pathname + str
+    });
+
+    function getAssetResultView() {
+        return $('.asset-results-card').hasClass('asset-result-condensed') ? 'condensed' : 'expanded';
+    }
+
+    function setAssetResultView(view) {
+        var condensed = view !== 'expanded';
+        $('.asset-results-card').toggleClass('asset-result-condensed', condensed);
+        $('.asset-result-view-toggle').each(function () {
+            var selected = $(this).data('view') === (condensed ? 'condensed' : 'expanded');
+            $(this).toggleClass('active', selected).attr('aria-pressed', selected ? 'true' : 'false');
+        });
+        if (!condensed) {
+            $('.slick.slick-initialized').slick('setPosition');
+        }
+    }
+
+    var savedAssetResultView = sessionStorage.getItem('assetSearchResultView');
+    if (savedAssetResultView) {
+        sessionStorage.removeItem('assetSearchResultView');
+        setAssetResultView(savedAssetResultView);
+    }
+    $('.asset-result-view-toggle').on('click', function () {
+        setAssetResultView($(this).data('view'));
+    });
+    $('#assetSearchForm').on('submit', function () {
+        sessionStorage.setItem('assetSearchResultView', getAssetResultView());
     });
 
     const Toast = Swal.mixin({
