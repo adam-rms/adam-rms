@@ -53,30 +53,6 @@ if ($_POST['type'] == "QR_CODE") {
     TYPE_PHARMA_CODE
     TYPE_PHARMA_CODE_TWO_TRACKS
     */
-    /*
-    * Supported types in the zxing reader
-    UPC-A	
-    Code 39
-    QR Code
-    UPC-E
-    Code 93
-    Data Matrix
-    EAN-8
-    Code 128
-    Aztec
-    EAN-13
-    Codabar
-    */
-    /*
-    * Therefore the overlap is only:
-    TYPE_CODE_39
-    TYPE_CODE_93
-    TYPE_CODE_128
-    TYPE_EAN_8
-    TYPE_EAN_13
-    TYPE_UPC_A
-    TYPE_UPC_E
-    */
     switch ($_POST['type']) {
         case "EAN_8":
             $type = $generator::TYPE_EAN_8;

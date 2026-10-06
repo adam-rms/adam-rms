@@ -272,7 +272,6 @@
             $("#currentLocationText").html("Current Location: " + name)
             $("#assetsScannedList").parent().show()
             $("#currentLocationCard").show()
-            $("#barcodeScanStartButton").html("Start Scanning Assets")
         }
         function clearScanLocation() {
             localStorage.removeItem("adamrms-barcode-scan-location-value")
@@ -283,7 +282,6 @@
                 name: null,
                 type: false
             }
-            $("#barcodeScanStartButton").html("Start Scanning to Set Location")
             $("#assetsScannedList").parent().hide()
             $("#setLocationCard").show()
             $("#currentLocationCard").hide()
