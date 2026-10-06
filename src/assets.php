@@ -242,15 +242,21 @@ $RETURN['SPEED'] = microtime(true) - $scriptStartTime;
 $PAGEDATA['searchOptions'] = [];
 
 // Category groups used by the in-page asset result filters
-$DBLIB->join("assetCategories", "assetCategories.assetCategoriesGroups_id=assetCategoriesGroups.assetCategoriesGroups_id", "LEFT");
+$DBLIB->join("assetCategoriesGroups", "assetCategoriesGroups.assetCategoriesGroups_id=assetCategories.assetCategoriesGroups_id", "LEFT");
 $DBLIB->where("assetCategoriesGroups.assetCategoriesGroups_deleted", 0);
 $DBLIB->where("(assetCategoriesGroups.instances_id IS NULL OR assetCategoriesGroups.instances_id = ?)", [$SEARCH['INSTANCE_ID']]);
 $DBLIB->where("assetCategories.assetCategories_deleted", 0);
 $DBLIB->where("(assetCategories.instances_id IS NULL OR assetCategories.instances_id = ?)", [$SEARCH['INSTANCE_ID']]);
-$DBLIB->groupBy("assetCategoriesGroups.assetCategoriesGroups_id");
 $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_order", "ASC");
 $DBLIB->orderBy("assetCategoriesGroups.assetCategoriesGroups_name", "ASC");
-$PAGEDATA['searchOptions']['categoryGroups'] = $DBLIB->get("assetCategoriesGroups", null, ["assetCategoriesGroups_id", "assetCategoriesGroups_name"]);
+$categoryGroupCategories = $DBLIB->get("assetCategories", null, ["assetCategoriesGroups.assetCategoriesGroups_id", "assetCategoriesGroups.assetCategoriesGroups_name"]) ?: [];
+$PAGEDATA['searchOptions']['categoryGroups'] = [];
+foreach ($categoryGroupCategories as $categoryGroupCategory) {
+    $categoryGroupId = $categoryGroupCategory['assetCategoriesGroups_id'];
+    if (!isset($PAGEDATA['searchOptions']['categoryGroups'][$categoryGroupId])) {
+        $PAGEDATA['searchOptions']['categoryGroups'][$categoryGroupId] = $categoryGroupCategory;
+    }
+}
 
 // Projects for search
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
