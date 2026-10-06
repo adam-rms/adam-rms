@@ -42,9 +42,16 @@
     .barcodeDispatchInlineInput {
         width: 215px;
     }
-    .barcodeDispatchInlineInput .autoReplaceUnpickedLabel {
+    .barcodeDispatchInlineLabel.autoReplaceUnpickedLabel {
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        margin: 0;
         font-size: .75rem;
         white-space: nowrap;
+    }
+    .barcodeDispatchInlineLabel.autoReplaceUnpickedLabel input {
+        margin-right: .25rem;
     }
 </style>
 <div class="card card-primary card-outline card-outline-tabs">
@@ -78,17 +85,17 @@
                     <div class="input-group input-group-sm barcodeDispatchInlineInput">
                         <input type="text" class="form-control" id="barcodeScanTextInputInline" placeholder="Scan or type barcode value" aria-label="Scan or type barcode value">
                         <div class="input-group-append">
-                            {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-                            <label class="input-group-text mb-0 autoReplaceUnpickedLabel">
-                                <input type="checkbox" class="autoReplaceUnpickedAsset mr-1" id="barcodeAutoReplaceUnpickedInline">
-                                Auto-replace unpicked asset
-                            </label>
-                            {% endif %}
                             <button class="btn btn-primary" type="button" id="barcodeScanTextButtonInline" aria-label="Submit barcode">
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>
+                    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+                    <label class="barcodeDispatchInlineLabel autoReplaceUnpickedLabel">
+                        <input type="checkbox" class="autoReplaceUnpickedAsset" id="barcodeAutoReplaceUnpickedInline">
+                        Auto-replace unpicked asset
+                    </label>
+                    {% endif %}
                 </li>
                 <li class="nav-item" id="navItemBarcodeDispatch">
                     <button type="button" class="nav-link" title="Barcode Dispatch" data-toggle="modal" data-target="#barcodeDispatchModal">
