@@ -8,43 +8,19 @@
     .asset-result-condensed .asset-result-card {
         margin-bottom: 0;
     }
-    .asset-result-condensed .asset-result-card-body {
-        display: flex;
-        align-items: center;
-        max-width: none !important;
-        padding: .35rem .5rem;
-    }
-    .asset-result-condensed .asset-result-card-body .lead {
-        margin: 0;
-        font-size: .95rem;
-        max-width: 250px;
-    }
     .asset-result-quantity {
         display: none;
     }
     .asset-result-condensed .asset-result-quantity {
-        display: inline-block;
-        margin-left: .4rem;
-        font-size: .8rem;
-        white-space: nowrap;
+        display: block;
     }
     .asset-result-condensed .asset-result-expanded-details {
         display: none;
     }
-    .asset-result-condensed .asset-result-card .card-footer {
-        padding: .25rem .4rem;
-    }
-    .asset-result-condensed .asset-result-card .card-footer .btn-group > button:not(.asset-result-compact-action),
-    .asset-result-condensed .asset-result-card .card-footer .btn-group > a:not(.asset-result-compact-action) {
-        display: none;
-    }
-    .asset-result-condensed .asset-result-card .card-footer .btn {
-        padding: .15rem .35rem;
-    }
-    .asset-results-footer {
-        display: flex;
+    .asset-result-view {
+        display: inline-flex;
         align-items: center;
-        justify-content: space-between;
+        margin-right: .5rem;
     }
 </style>
 {% endblock %}
@@ -205,7 +181,14 @@
                 <h3 class="card-title" style="margin-top: 0.4rem;">
                     Showing {{ searchResults.PAGINATION.OFFSET>0 ? 'results ' ~ searchResults.PAGINATION.OFFSET ~ '-' ~ (searchResults.PAGINATION.OFFSET+(searchResults.ASSETS|length)) : searchResults.ASSETS|length }} of {{ searchResults.PAGINATION.COUNT }} result{{ searchResults.PAGINATION.COUNT == 1 ? '' : 's' }} found in {{ searchResults.SPEED|round(1) }} second{{ searchResults.SPEED|round(1) != 1 ? 's':'' }}
                 </h3>
-                <div class="card-tools pull-right">
+                <div class="card-tools pull-right d-flex align-items-center">
+                    <div class="asset-result-view">
+                        <span class="mr-1">View:</span>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Asset result display">
+                            <button type="button" class="btn btn-default asset-result-view-toggle active" data-view="condensed" aria-pressed="true">Condensed</button>
+                            <button type="button" class="btn btn-default asset-result-view-toggle" data-view="expanded" aria-pressed="false">Expanded</button>
+                        </div>
+                    </div>
                 {% if searchResults.PAGINATION['TOTAL-PAGES'] > 1 %}
                     <ul class="pagination pagination-sm m-0">
                         {% if searchResults.PAGINATION.PAGE > 1 %}
@@ -235,7 +218,9 @@
                             <div class="card asset-result-card">
                                 <div class="card-body asset-result-card-body" style="max-width: 250px;">
                                     <h2 class="lead"><b>{{ asset.assetTypes_name }}</b></h2>
-                                    <span class="asset-result-quantity">{{ asset.count }}</span>
+                                    <ul class="ml-4 mb-0 fa-ul text-muted asset-result-quantity">
+                                        <li class="small" title="Number owned"><span class="fa-li"><i class="fas fa-boxes"></i></span> {{ asset.count }}</li>
+                                    </ul>
                                     <div class="asset-result-expanded-details">
                                     {% if CONFIG.FILES_ENABLED == "Enabled" and USERDATA.instance.instances_storageEnabled == 1 and asset.thumbnail|length > 0 and searchResults.SEARCH.SETTINGS.HIDEIMAGES != true %}
                                         <div class="{% if asset.thumbnail|length > 1 %}slick{% endif %}" style="text-align:center;height:200px;">
@@ -457,12 +442,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <div class="asset-results-footer">
-                    <div class="btn-group btn-group-sm" role="group" aria-label="Asset result display">
-                        <button type="button" class="btn btn-default asset-result-view-toggle active" data-view="condensed" aria-pressed="true">Condensed</button>
-                        <button type="button" class="btn btn-default asset-result-view-toggle" data-view="expanded" aria-pressed="false">Expanded</button>
-                    </div>
-                    <div class="card-tools">
+                <div class="card-tools float-right">
                 {% if searchResults.PAGINATION['TOTAL-PAGES'] > 1 %}
                     <ul class="pagination pagination-sm m-0">
                         {% if searchResults.PAGINATION.PAGE > 1 %}
@@ -483,7 +463,6 @@
                         {% endif %}
                     </ul>
                 {% endif %}
-                    </div>
                 </div>
             </div>
         </div>
