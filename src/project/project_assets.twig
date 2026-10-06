@@ -70,7 +70,9 @@
         <div class="tab-content" id="asset-list-tabs-tabContent">
             <div class="tab-pane fade show active p-3" id="asset-list-tabs-home" role="tabpanel" aria-labelledby="asset-list-tabs-home-tab">
                 <p style="font-style: italic;">To view assets assigned to this project, select a business above</p>
-                <p>{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }} ({{FINANCIALS.mass|mass }})</p>
+                <p>{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) }} Asset{{ (FINANCIALS.assetsAssigned|length + FINANCIALS.assetsAssignedSUB|length) != 1 ? 's' }} assigned to {{ project.projects_name }}</p>
+                <p>Total weight: {{ FINANCIALS.mass|mass }}</p>
+                <p>Replacement value: {{ FINANCIALS.formattedValue }}</p>
                 {% if project.projectsTypes_config_finance == 1 %}
                     <p>Project duration set as {{ FINANCIALS['priceMaths']["weeks"] }} week{{ FINANCIALS['priceMaths']["weeks"] != 1 ? 's' : '' }} and {{ FINANCIALS['priceMaths']["days"] }} day{{ FINANCIALS['priceMaths']["days"] != 1 ? 's' : ''}} for asset pricing purposes.
                     {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
