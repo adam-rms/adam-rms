@@ -659,7 +659,9 @@
                     window.barcodeAssignInProgress = true;
 
                     var swapCandidates = result.error.swapCandidates || [];
-                    var firstStatusId = assetStatuses[instanceId] && assetStatuses[instanceId].orderedStatusIds[0];
+                    var firstStatusId = $('.assetDispatchAssetList').filter(function() {
+                        return String($(this).data("instance")) === String(instanceId);
+                    }).first().attr("data-statusid");
                     var unpickedCandidates = swapCandidates.filter(function(candidate) {
                         return candidate.assetsAssignmentsStatus_id === null
                             || candidate.assetsAssignmentsStatus_id === ""
