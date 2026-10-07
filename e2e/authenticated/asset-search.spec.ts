@@ -48,6 +48,58 @@ test("the keyword box searches as you type, without reloading the page", async (
   expect(await page.evaluate(() => (window as any).notReloaded)).toBe(true);
 });
 
+test("the keyword matches description, manufacturer, category, category group and asset tag", async ({ page, asA, tenants: { a } }) => {
+  // Each field gets a word found nowhere else, so each search can only match through that field
+  const { stamp, alpha } = await twoTypes(asA, a);
+  const [{ type }] = dbQuery<{ type: number }>("SELECT assetTypes_id type FROM assets WHERE assets_id = ?", [alpha.asset]);
+  const id = (sql: string, params: unknown[]) => dbQuery<{ id: number }>(sql, params)[0].id;
+  dbQuery("INSERT INTO manufacturers (manufacturers_name, instances_id) VALUES (?, ?)", [`Maker${stamp}`, a.instanceId]);
+  const manufacturer = id("SELECT manufacturers_id id FROM manufacturers WHERE manufacturers_name = ?", [`Maker${stamp}`]);
+  dbQuery("INSERT INTO assetCategoriesGroups (assetCategoriesGroups_name, assetCategoriesGroups_order, instances_id, assetCategoriesGroups_deleted) VALUES (?, 0, ?, 0)", [`Grp${stamp}`, a.instanceId]);
+  const group = id("SELECT assetCategoriesGroups_id id FROM assetCategoriesGroups WHERE assetCategoriesGroups_name = ?", [`Grp${stamp}`]);
+  dbQuery("INSERT INTO assetCategories (assetCategories_name, assetCategories_rank, assetCategoriesGroups_id, instances_id, assetCategories_deleted) VALUES (?, 0, ?, ?, 0)", [`Cat${stamp}`, group, a.instanceId]);
+  const category = id("SELECT assetCategories_id id FROM assetCategories WHERE assetCategories_name = ?", [`Cat${stamp}`]);
+  try {
+    dbQuery("UPDATE assetTypes SET assetTypes_description = ?, manufacturers_id = ?, assetCategories_id = ? WHERE assetTypes_id = ?", [`Desc${stamp}`, manufacturer, category, type]);
+    dbQuery("UPDATE assets SET assets_tag = ? WHERE assets_id = ?", [`Tag${stamp}`, alpha.asset]);
+
+    const results = page.locator("#assetSearchResults");
+    for (const keyword of [`Desc${stamp}`, `Maker${stamp}`, `Cat${stamp}`, `Grp${stamp}`, `Tag${stamp}`]) {
+      await page.goto(`/assets.php?simple=1&simple_keyword=${keyword}`);
+      await expect(results, keyword).toContainText(alpha.name);
+    }
+    await page.goto(`/assets.php?simple=1&simple_keyword=Nowhere${stamp}`);
+    await expect(results).not.toContainText(alpha.name);
+  } finally {
+    dbQuery("UPDATE assetTypes SET manufacturers_id = ?, assetCategories_id = ? WHERE assetTypes_id = ?", [a.manufacturerId, a.categoryId, type]);
+    dbQuery("DELETE FROM assetCategories WHERE assetCategories_id = ?", [category]);
+    dbQuery("DELETE FROM assetCategoriesGroups WHERE assetCategoriesGroups_id = ?", [group]);
+    dbQuery("DELETE FROM manufacturers WHERE manufacturers_id = ?", [manufacturer]);
+  }
+});
+
+test("the keyword's tag match only looks at this business's assets", async ({ page, asA, tenants: { a, b } }) => {
+  // A shared (catalogue) asset type with an asset in each business; only B's asset has the tag searched for
+  const stamp = `Shared${Date.now()}`;
+  dbQuery("INSERT INTO assetTypes (assetTypes_name, instances_id, manufacturers_id, assetCategories_id, assetTypes_inserted) VALUES (?, NULL, ?, ?, NOW())", [stamp, a.manufacturerId, a.categoryId]);
+  const [{ type }] = dbQuery<{ type: number }>("SELECT assetTypes_id type FROM assetTypes WHERE assetTypes_name = ?", [stamp]);
+  try {
+    const newAsset = async () => (await asA.api("/api/assets/newAssetFromType.php", { instances_id: a.instanceId, formData: formData({ assetTypes_id: type }) })).json.response.assets_id as number;
+    await newAsset();
+    const bAsset = await newAsset();
+    dbQuery("UPDATE assets SET instances_id = ?, assets_tag = ? WHERE assets_id = ?", [b.instanceId, `OtherTag${stamp}`, bAsset]);
+
+    const results = page.locator("#assetSearchResults");
+    await page.goto(`/assets.php?simple=1&simple_keyword=${stamp}`);
+    await expect(results).toContainText(stamp); // A has an asset of the type, so its name finds it
+    await page.goto(`/assets.php?simple=1&simple_keyword=OtherTag${stamp}`);
+    await expect(results).not.toContainText(stamp);
+  } finally {
+    dbQuery("DELETE FROM assets WHERE assetTypes_id = ?", [type]);
+    dbQuery("DELETE FROM assetTypes WHERE assetTypes_id = ?", [type]);
+  }
+});
+
 test("an old keyword[] link fills the keyword box, and later searches keep it", async ({ page, asA, tenants: { a } }) => {
   const { stamp, alpha, beta } = await twoTypes(asA, a);
   await page.goto(`/assets.php?keyword[]=${encodeURIComponent(`${stamp} Alpha`)}`);
