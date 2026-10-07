@@ -147,3 +147,25 @@ test("choosing a project after the page has loaded, then adding an asset to it",
   await expect(page.locator(`.removeFromBasketAssetButton[data-assetid="${alpha.asset}"]`)).toBeVisible();
   expect(bookings(alpha.asset)).toEqual([project]);
 });
+
+test("switching project while an add is in flight books the first project and leaves the new results alone", async ({ page, asA, tenants: { a } }) => {
+  const { alpha } = await twoTypes(asA, a);
+  const first = await newProject(asA, a, a.users.full.id, { start: "2036-09-01 09:00:00", end: "2036-09-02 18:00:00" });
+  const second = await newProject(asA, a, a.users.full.id, { start: "2036-10-01 09:00:00", end: "2036-10-02 18:00:00" });
+  await page.goto(`/assets.php?project=${first}&simple=1&simple_keyword=${encodeURIComponent(alpha.name)}`);
+
+  // Hold the add back until the results have been swapped for the second project
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("**/api/projects/assets/assign.php", async (route) => { await held; await route.continue(); });
+  await page.locator(`.addToBasketAssetButton[data-assetid="${alpha.asset}"]`).click();
+  await page.locator('#assetSearchForm select[name="project"]').selectOption(String(second), { force: true });
+  await expect(page.locator("#assetSearchResultsProject")).toHaveAttribute("data-project-id", String(second));
+  release();
+
+  await expect.poll(() => bookings(alpha.asset)).toEqual([first]);
+  await expect(page.locator(".swal2-title")).toHaveText("Added to Booking test 2036-09-01 09:00:00");
+  // The second project's results still offer to add the asset
+  await expect(page.locator(`.addToBasketAssetButton[data-assetid="${alpha.asset}"]`)).toBeVisible();
+  await expect(page.locator(`.removeFromBasketAssetButton[data-assetid="${alpha.asset}"]`)).toBeHidden();
+});

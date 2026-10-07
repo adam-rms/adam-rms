@@ -564,16 +564,21 @@ $(document).ready(function () {
         }
         var qs = buildQueryString(overridePage);
         var url = "{{ CONFIG.ROOTURL }}/assets.php?" + qs;
-        currentAbort = new AbortController();
+        // Each search checks it is still the latest before touching the page, so an
+        // older, superseded search can neither swap in its results nor hide the
+        // loading overlay while the newer one is running.
+        var controller = new AbortController();
+        currentAbort = controller;
         $loading.stop(true, true).fadeIn(80);
         fetch(url, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin',
-            signal: currentAbort.signal
+            signal: controller.signal
         }).then(function (r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.text();
         }).then(function (html) {
+            if (controller !== currentAbort) return;
             var doc = new DOMParser().parseFromString(html, 'text/html');
             var next = doc.getElementById('assetSearchResults');
             if (!next) throw new Error('No results block in response');
@@ -595,10 +600,12 @@ $(document).ready(function () {
             // Update URL (without page reload) so bookmarks / refresh work.
             history.replaceState(null, '', window.location.pathname + '?' + qs);
         }).catch(function (err) {
-            if (err.name === 'AbortError') return;
+            if (err.name === 'AbortError' || controller !== currentAbort) return;
             console.error('Asset search failed', err);
             $results.html('<div class="alert alert-warning" id="assetSearchError">The search could not be completed. Please try again, or reload the page.</div>');
         }).finally(function () {
+            if (controller !== currentAbort) return;
+            currentAbort = null;
             $loading.stop(true, true).fadeOut(120);
         });
     }
@@ -628,9 +635,17 @@ $(document).ready(function () {
         runSearch(1);
     });
 
-    // Pagination — swap results instead of full navigation.
+    // Pagination — swap results instead of full navigation. If the keyword has been
+    // edited and its search is still waiting, these page links belong to the old
+    // keyword, so run the new search (from page 1) now instead.
     $(document).on('click', '#assetSearchResults .page-link[data-page]', function (e) {
         e.preventDefault();
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = null;
+            runSearch(1);
+            return;
+        }
         runSearch($(this).data('page'));
     });
 
@@ -789,49 +804,62 @@ $(document).ready(function () {
         autoplaySpeed: 2000,
     });
     {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-    // The project the current results were rendered for. Read at click time from a
-    // marker inside the results, so after an auto-search swaps in results for another
-    // project the buttons act on the project they were drawn for.
-    function resultsProjectId() {
-        return $('#assetSearchResultsProject').attr('data-project-id') || '';
+    // The project the current results were rendered for, from a marker inside the
+    // results. Each button reads it once, when clicked, so it acts on the project it
+    // was drawn for even if an auto-search swaps in results for another project
+    // before the request returns. The name is HTML-escaped for the toast title.
+    function resultsProject() {
+        var $marker = $('#assetSearchResultsProject');
+        return {
+            id: $marker.attr('data-project-id') || '',
+            name: $('<div>').text($marker.attr('data-project-name') || '').html()
+        };
     }
-    // HTML-escaped, as the toast title is rendered as HTML.
-    function resultsProjectName() {
-        return $('<div>').text($('#assetSearchResultsProject').attr('data-project-name') || '').html();
+    // Whether the results on screen are still the ones drawn for this project, so a
+    // late response doesn't flip the buttons on results for a different project.
+    function stillShowing(project) {
+        return resultsProject().id === project.id;
     }
     // Delegated so that DOM swaps from auto-search don't detach these handlers.
     $(document).on('click', '#assetSearchResults .addToBasketAssetButton', function () {
         var assetId = $(this).data("assetid");
-        ajaxcall("projects/assets/assign.php", {"assets_id":assetId,"projects_id":resultsProjectId()}, function (data) {
-            $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
-            $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+        var project = resultsProject();
+        ajaxcall("projects/assets/assign.php", {"assets_id":assetId,"projects_id":project.id}, function (data) {
+            if (stillShowing(project)) {
+                $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+            }
             Toast.fire({
                 type: 'success',
-                title: 'Added to ' + resultsProjectName()
+                title: 'Added to ' + project.name
             });
         });
     });
     $(document).on('click', '#assetSearchResults .addToBasketAssetTypeButton', function () {
         const thisButton = $(this);
         var assetTypeId = thisButton.data("assettypeid");
-        ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":resultsProjectId()}, function (data) {
-            var failedIds = (data.response && data.response.failed ? data.response.failed : []).map(function(f) { return f.assets_id; });
-            $(".addToBasketAssetButton[data-assettypeid=" + assetTypeId + "]").each(function() {
-                var assetId = $(this).data("assetid");
-                if (failedIds.indexOf(assetId) === -1) {
-                    $(this).hide();
-                    $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
-                }
-            });
-            thisButton.prop('disabled', true);
+        var project = resultsProject();
+        ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":project.id}, function (data) {
+            if (stillShowing(project)) {
+                var failedIds = (data.response && data.response.failed ? data.response.failed : []).map(function(f) { return f.assets_id; });
+                $(".addToBasketAssetButton[data-assettypeid=" + assetTypeId + "]").each(function() {
+                    var assetId = $(this).data("assetid");
+                    if (failedIds.indexOf(assetId) === -1) {
+                        $(this).hide();
+                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+                    }
+                });
+                thisButton.prop('disabled', true);
+            }
             Toast.fire({
                 type: 'success',
-                title: 'Added to ' + resultsProjectName()
+                title: 'Added to ' + project.name
             });
         });
     });
     $(document).on('click', '#assetSearchResults .removeFromBasketAssetButton', function () {
         var assetId = $(this).data("assetid");
+        var project = resultsProject();
         bootbox.confirm({
             message: "Are you sure you wish to remove this asset from the project?",
             buttons: {
@@ -846,12 +874,14 @@ $(document).ready(function () {
             },
             callback: function (result) {
                 if (result) {
-                    ajaxcall("projects/assets/unassign.php", {"assets_id":assetId,"projects_id":resultsProjectId()}, function (data) {
-                        $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
-                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                    ajaxcall("projects/assets/unassign.php", {"assets_id":assetId,"projects_id":project.id}, function (data) {
+                        if (stillShowing(project)) {
+                            $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
+                            $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                        }
                         Toast.fire({
                             type: 'success',
-                            title: 'Removed from ' + resultsProjectName()
+                            title: 'Removed from ' + project.name
                         });
                     });
                 }
