@@ -522,7 +522,7 @@ $(document).ready(function () {
 
     // The parameters a search sends. The keyword box, scope bar and Advanced filters
     // all combine into one query. keyword[] (the old multi-keyword box) is left out:
-    // the single keyword box replaces it, though the server still honours it in links.
+    // the server moves it into the keyword box when an old link is opened.
     var QUERY_ALLOW = {
         'simple': 1, 'simple_keyword': 1, 'page': 1,
         'project': 1, 'project_referer': 1,

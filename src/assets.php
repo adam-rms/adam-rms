@@ -42,6 +42,12 @@ $SEARCH = [
       "GROUPS" => [],
     ]
 ];
+// Links from before the keyword box (keyword[]=...) are carried over into it, so the box
+// shows the keywords and every instant search after the first page keeps them.
+if (!$SEARCH['SIMPLE'] and count($SEARCH['TERMS']['KEYWORDS']) > 0) {
+    $SEARCH['SIMPLE'] = true;
+    $SEARCH['SIMPLE_KEYWORD'] = trim(implode(' ', array_filter($SEARCH['TERMS']['KEYWORDS'], 'is_string')));
+}
 $RETURN = [
     "PAGINATION" => [
         "PAGE" => $SEARCH['PAGE']
@@ -185,18 +191,6 @@ if ($SEARCH['SIMPLE']) {
             $DBLIB->where('(' . implode(' AND ', $andClauses) . ')', $allValues);
         }
     }
-} elseif (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
-    $thisWhere = false;
-    $thisValues = [];
-    foreach ($SEARCH['TERMS']['KEYWORDS'] as $word) {
-        if ($word != null) {
-            if ($thisWhere != false) $thisWhere .= ' OR ';
-            else $thisWhere = "(";
-            $thisWhere .= "manufacturers.manufacturers_name LIKE ? OR assetTypes.assetTypes_description LIKE ? OR assetTypes.assetTypes_name LIKE ?";
-            array_push($thisValues,'%' . $word . '%','%' . $word . '%','%' . $word . '%');
-        }
-    }
-    $DBLIB->where($thisWhere . ")",$thisValues);
 }
 
 

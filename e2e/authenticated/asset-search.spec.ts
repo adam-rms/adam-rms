@@ -48,6 +48,22 @@ test("the keyword box searches as you type, without reloading the page", async (
   expect(await page.evaluate(() => (window as any).notReloaded)).toBe(true);
 });
 
+test("an old keyword[] link fills the keyword box, and later searches keep it", async ({ page, asA, tenants: { a } }) => {
+  const { stamp, alpha, beta } = await twoTypes(asA, a);
+  await page.goto(`/assets.php?keyword[]=${encodeURIComponent(`${stamp} Alpha`)}`);
+  await expect(page.locator("#assetSearchSimpleKeyword")).toHaveValue(`${stamp} Alpha`);
+  const results = page.locator("#assetSearchResults");
+  await expect(results).toContainText(alpha.name);
+  await expect(results).not.toContainText(beta.name);
+
+  // Any change searches again without a page load, still with the keyword
+  await page.locator("#assetSearchSort").selectOption("alphabet-d", { force: true });
+  await expect.poll(() => new URL(page.url()).searchParams.get("sort")).toBe("alphabet-d");
+  await expect(results).toContainText(alpha.name);
+  await expect(results).not.toContainText(beta.name);
+  expect(new URL(page.url()).searchParams.get("simple_keyword")).toBe(`${stamp} Alpha`);
+});
+
 test("advanced filters in the link start open, and hiding them clears them", async ({ page, asA, tenants: { a } }) => {
   const { stamp, alpha, beta } = await twoTypes(asA, a);
   await page.goto(`/assets.php?simple=1&simple_keyword=${stamp}&tags[]=${encodeURIComponent(alpha.tag)}`);
