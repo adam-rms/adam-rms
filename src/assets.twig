@@ -585,6 +585,9 @@ $(document).ready(function () {
             // An asset details dialog lives inside the results, so a swap removes it
             // while its backdrop (on <body>) would stay behind; clear that up too.
             var dialogOpen = $results.find('.modal.show').length > 0;
+            // Tear down the old carousels first: Slick's window handlers and autoplay
+            // timers outlive their removed elements otherwise.
+            $results.find('.slick.slick-initialized').slick('unslick');
             // Preserve the overlay element by swapping only inner content.
             $results.html(next.innerHTML);
             if (dialogOpen) {
