@@ -122,12 +122,14 @@ if ($SEARCH['SIMPLE']) {
         // Keep every non-empty term (including the literal "0", which a callback-less
         // array_filter() would wrongly drop), then bound the query by capping the number
         // of terms and the length of each so a pathological input can't build a huge WHERE.
+        // Split and cut as UTF-8 so a multibyte character (e.g. "Å") is never broken in two;
+        // input that isn't valid UTF-8 makes preg_split() return false and is treated as empty.
         $terms = array_values(array_filter(
-            preg_split('/\s+/', $SEARCH['SIMPLE_KEYWORD']),
+            preg_split('/\s+/u', $SEARCH['SIMPLE_KEYWORD']) ?: [],
             function ($t) { return strlen(trim((string)$t)) > 0; }
         ));
         $terms = array_slice($terms, 0, 10);
-        $terms = array_map(function ($t) { return substr($t, 0, 100); }, $terms);
+        $terms = array_map(function ($t) { return mb_substr($t, 0, 100, 'UTF-8'); }, $terms);
         if (count($terms) > 0) {
             $instanceIdInt = intval($SEARCH['INSTANCE_ID']);
             $keywordNow = date("Y-m-d H:i:s");
@@ -135,17 +137,34 @@ if ($SEARCH['SIMPLE']) {
             $allValues = [];
             foreach ($terms as $term) {
                 $like = '%' . $term . '%';
-                // Mirror the linked/archived constraints the main results query applies so a
-                // tag match can't surface a type whose matching asset is filtered out below.
+                // Mirror the archived/group/linked/tag constraints the asset queries below
+                // apply, so a tag match can't surface a type whose matching asset is
+                // filtered out of the results.
                 $existsExtra = '';
                 $existsExtraValues = [];
                 if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) {
                     $existsExtra .= "\n                          AND (a2.assets_endDate IS NULL OR a2.assets_endDate >= ?)";
                     $existsExtraValues[] = $keywordNow;
                 }
+                $groupClauses = [];
+                foreach ($SEARCH['TERMS']['GROUPS'] as $group) {
+                    if ($group != null) {
+                        $groupClauses[] = "FIND_IN_SET(?, a2.assets_assetGroups)";
+                        $existsExtraValues[] = intval($group);
+                    }
+                }
+                if ($groupClauses) $existsExtra .= "\n                          AND (" . implode(" OR ", $groupClauses) . ")";
                 if (!$SEARCH['SETTINGS']['SHOWLINKED']) {
                     $existsExtra .= "\n                          AND a2.assets_linkedTo IS NULL";
                 }
+                $tagClauses = [];
+                foreach ($SEARCH['TERMS']['TAGS'] as $tagFilter) {
+                    if ($tagFilter != null) {
+                        $tagClauses[] = "a2.assets_tag LIKE ?";
+                        $existsExtraValues[] = '%' . $tagFilter . '%';
+                    }
+                }
+                if ($tagClauses) $existsExtra .= "\n                          AND (" . implode(" OR ", $tagClauses) . ")";
                 $andClauses[] = "(
                     assetTypes.assetTypes_name LIKE ?
                     OR assetTypes.assetTypes_description LIKE ?

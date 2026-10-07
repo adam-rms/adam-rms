@@ -7,20 +7,27 @@ title: Finding Assets
 
 AdamRMS uses a comprehensive search system to help you find assets. You can open the search engine by clicking on the warehouse button on the left menu bar.
 
-You can search by:
+Start typing in the **Keyword** box and the results update as you type. The keyword is matched against the asset name and description, its asset tag, category, category group and manufacturer. Separate words with spaces to narrow the search: every word has to match (eg. `ETC Source` finds Source Four fixtures made by ETC). The page address updates as you search, so you can bookmark or share a search.
 
-- Keyword - Name of asset (eg. Source 4 Jr)
+Next to the keyword box are options that apply to every search:
+
+- Business - you can only select one at once
+- Project to assign assets to - shows asset availability for that project's dates and lets you add assets to it (or a range of dates to check availability, if you do not have permission to assign assets to projects)
+- Sort by and the number of results per page
+- Hide asset images
+
+Click **Advanced filters** to narrow the search further. These filters combine with the keyword:
+
 - Tags - Asset ID (A-XXXX) or custom barcode value (eg T-3214)
-- Categories - eg. ‘Lighting - Conventionals’
 - Manufacturers - eg. ‘ETC’
 - Groups - Business asset groups
-- Business - you can only select one at once
+- Categories - eg. ‘Lighting - Conventionals’
+- Show assets linked to others, and show archived assets
+
+Hiding the advanced filters clears them, so a filter you can't see never narrows your search.
 
 ![The Asset Search page](/img/tutorial/assets/assets-search.png)
 
-Asset availability can be checked by selecting a project (or a range of dates if you do not have permission to assign assets to projects)
-
-Page Limit, Sorting, Linked Assets and Archived assets are additional options if you need further control over searching.  
 From the search page, you can also export a full list of assets in either .xlsx or .csv formats.
 
 ## Listing Assets
