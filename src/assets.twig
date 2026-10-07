@@ -582,8 +582,15 @@ $(document).ready(function () {
             var doc = new DOMParser().parseFromString(html, 'text/html');
             var next = doc.getElementById('assetSearchResults');
             if (!next) throw new Error('No results block in response');
+            // An asset details dialog lives inside the results, so a swap removes it
+            // while its backdrop (on <body>) would stay behind; clear that up too.
+            var dialogOpen = $results.find('.modal.show').length > 0;
             // Preserve the overlay element by swapping only inner content.
             $results.html(next.innerHTML);
+            if (dialogOpen) {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open').css('padding-right', '');
+            }
             // Rebind carousels inside the new results.
             $results.find('.slick').slick({
                 dots: false,
@@ -836,8 +843,7 @@ $(document).ready(function () {
         });
     });
     $(document).on('click', '#assetSearchResults .addToBasketAssetTypeButton', function () {
-        const thisButton = $(this);
-        var assetTypeId = thisButton.data("assettypeid");
+        var assetTypeId = $(this).data("assettypeid");
         var project = resultsProject();
         ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":project.id}, function (data) {
             if (stillShowing(project)) {
@@ -849,7 +855,8 @@ $(document).ready(function () {
                         $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
                     }
                 });
-                thisButton.prop('disabled', true);
+                // By selector, not the clicked button: a refresh may have redrawn it
+                $(".addToBasketAssetTypeButton[data-assettypeid=" + assetTypeId + "]").prop('disabled', true);
             }
             Toast.fire({
                 type: 'success',

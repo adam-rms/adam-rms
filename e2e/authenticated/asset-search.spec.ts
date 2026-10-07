@@ -169,3 +169,26 @@ test("switching project while an add is in flight books the first project and le
   await expect(page.locator(`.addToBasketAssetButton[data-assetid="${alpha.asset}"]`)).toBeVisible();
   await expect(page.locator(`.removeFromBasketAssetButton[data-assetid="${alpha.asset}"]`)).toBeHidden();
 });
+
+test("adding a whole asset type while the results refresh disables the redrawn button", async ({ page, asA, tenants: { a } }) => {
+  // A type with two assets, so its card opens a details dialog with an "add all" button
+  const { alpha } = await twoTypes(asA, a);
+  const [{ type }] = dbQuery<{ type: number }>("SELECT assetTypes_id type FROM assets WHERE assets_id = ?", [alpha.asset]);
+  const second = (await asA.api("/api/assets/newAssetFromType.php", { instances_id: a.instanceId, formData: formData({ assetTypes_id: type }) })).json.response.assets_id as number;
+  const project = await newProject(asA, a, a.users.full.id, { start: "2036-11-01 09:00:00", end: "2036-11-02 18:00:00" });
+  await page.goto(`/assets.php?project=${project}&simple=1&simple_keyword=${encodeURIComponent(alpha.name)}`);
+
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("**/api/projects/assets/assign.php", async (route) => { await held; await route.continue(); });
+  await page.locator(`[data-target="#assetDetailsModal${type}"]`).first().click();
+  await page.locator(`#assetDetailsModal${type} .addToBasketAssetTypeButton`).click();
+  // The results refresh (same project) while the add is held back, redrawing the dialog and its button
+  await page.locator("#assetSearchSort").selectOption("alphabet-d", { force: true });
+  await expect.poll(() => new URL(page.url()).searchParams.get("sort")).toBe("alphabet-d");
+  await expect(page.locator(".modal-backdrop")).toHaveCount(0);
+  release();
+
+  await expect.poll(() => [...bookings(alpha.asset), ...bookings(second)]).toEqual([project, project]);
+  await expect(page.locator(`#assetDetailsModal${type} .addToBasketAssetTypeButton`)).toBeDisabled();
+});
