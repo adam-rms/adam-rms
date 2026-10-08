@@ -99,11 +99,24 @@
             }
         }
 
-        $("#barcodeScanTextInput" + suffix).on("keydown", function(e) {
+        var $input = $("#barcodeScanTextInput" + suffix);
+        $input.on("keydown", function(e) {
             if (e.key !== "Enter") return;
             e.preventDefault();
             submitTextBarcode();
         });
         $("#barcodeScanTextButton" + suffix).on("click", submitTextBarcode);
+
+        function focusScannerInput() {
+            if ($input.is(":visible")) {
+                $input.trigger("focus");
+            }
+        }
+
+        var $modal = $input.closest(".modal");
+        if ($modal.length) {
+            $modal.on("shown.bs.modal", focusScannerInput);
+        }
+        $(focusScannerInput);
     })();
 </script>

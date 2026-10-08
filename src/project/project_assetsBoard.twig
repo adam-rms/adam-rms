@@ -765,6 +765,12 @@
     $(document).ready(function () {
         {% if "PROJECTS:PROJECT_ASSETS:EDIT:ASSIGNMENT_STATUS"|instancePermissions %}
         drawButtons();
+        if ($("#assets-board").is(":visible")) {
+            focusBarcodeDispatchInput();
+        }
+        $('a[href="#assets-board"][data-toggle="tab"]').on("shown.bs.tab", focusBarcodeDispatchInput);
+        $("#barcodeDispatchModal").on("shown.bs.modal", focusBarcodeDispatchInput);
+        $("#barcodeDispatchModal").on("hidden.bs.modal", focusBarcodeDispatchInput);
         $(".assetDispatchAssetList").sortable({
             connectWith: "div",
             update: function( event, ui ){
