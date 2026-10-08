@@ -1717,6 +1717,11 @@
             // Change hashtag on tab change for page-reload
             $('#nav-bar .nav-item a').on('shown.bs.tab', function (e) {
                 window.location.hash = e.target.hash;
+                if (e.target.hash === '#assets-board' && $('#barcodeScanTextInputInline').length) {
+                    window.setTimeout(function () {
+                        $('#barcodeScanTextInputInline').trigger('focus');
+                    }, 0);
+                }
                 document.body.scrollTop = 0; // For Safari
                 document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
             })
