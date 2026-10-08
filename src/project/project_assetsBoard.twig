@@ -72,13 +72,13 @@
                     <span class="barcodeDispatchInlineLabel">Set Asset Status to</span>
                     <select class="form-control form-control-sm barcodeDispatchInlineStatus assetStatusSelectorBarcodeDispatchInline" id="barcodeDispatchInlineStatus" data-instanceid="{{ USERDATA.instance["instances_id"] }}" data-boardtab="asset-board-thisinstance" aria-label="Set Asset Status to">
                         {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
-                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}"{% if loop.index == 2 %} selected{% endif %}>{{ status['assetsAssignmentsStatus_name'] }}</option>
                         {% endfor %}
                     </select>
                     {% for instance in FINANCIALS.assetsAssignedSUB %}
                     <select class="form-control form-control-sm barcodeDispatchInlineStatus assetStatusSelectorBarcodeDispatchInline d-none" data-instanceid="{{ instance['instance'].instances_id }}" data-boardtab="asset-board-instance{{ instance['instance'].instances_id }}" aria-label="Set Asset Status to">
                         {% for status in BOARDSTATUSES[instance['instance'].instances_id] %}
-                        <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                        <option value="{{ status['assetsAssignmentsStatus_id'] }}"{% if loop.index == 2 %} selected{% endif %}>{{ status['assetsAssignmentsStatus_name'] }}</option>
                         {% endfor %}
                     </select>
                     {% endfor %}
@@ -160,7 +160,7 @@
                                             <label>Set Asset Status to</label>
                                             <select class="form-control assetStatusSelectorBarcodeDispatch" data-instanceid="{{ USERDATA.instance["instances_id"] }}">
                                                 {% for status in BOARDSTATUSES[USERDATA.instance["instances_id"]] %}
-                                                <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                                                <option value="{{ status['assetsAssignmentsStatus_id'] }}"{% if loop.index == 2 %} selected{% endif %}>{{ status['assetsAssignmentsStatus_name'] }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -173,7 +173,7 @@
                                             <label>Set Asset Status to</label>
                                             <select class="form-control assetStatusSelectorBarcodeDispatch" data-instanceid="{{ instance['instance']['instances_id'] }}">
                                                 {% for status in BOARDSTATUSES[instance['instance']['instances_id']] %}
-                                                <option value="{{ status['assetsAssignmentsStatus_id'] }}">{{ status['assetsAssignmentsStatus_name'] }}</option>
+                                                <option value="{{ status['assetsAssignmentsStatus_id'] }}"{% if loop.index == 2 %} selected{% endif %}>{{ status['assetsAssignmentsStatus_name'] }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
