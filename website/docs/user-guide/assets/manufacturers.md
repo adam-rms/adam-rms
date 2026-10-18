@@ -62,6 +62,6 @@ Both types appear in the manufacturer list and can be assigned to asset types.
 
 ## Related Features
 
-- [Assets](./assets) -- asset types are linked to manufacturers
+- [Assets](./assets.md) -- asset types are linked to manufacturers
 - [New Assets](./new-assets) -- selecting a manufacturer when creating asset types
 - [Finding Assets](./finding-assets) -- filtering assets by manufacturer

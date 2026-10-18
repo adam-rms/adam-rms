@@ -17,7 +17,7 @@ This guide covers everything you need to know to use AdamRMS effectively, from s
 - [Your Account](./account) -- managing your profile, notifications, password, and calendar export
 
 ### Assets
-- [Assets](./assets/assets) -- understanding asset types, individual assets, and the asset lifecycle
+- [Assets](./assets/assets.md) -- understanding asset types, individual assets, and the asset lifecycle
 - [Creating New Assets](./assets/new-assets) -- adding asset types and individual assets
 - [Finding Assets](./assets/finding-assets) -- searching, filtering, and browsing your equipment
 - [Asset Groups](./assets/asset-groups) -- organising assets into named collections
@@ -26,7 +26,7 @@ This guide covers everything you need to know to use AdamRMS effectively, from s
 - [Maintenance](./assets/maintenance) -- tracking repairs, servicing, and compliance
 
 ### Projects
-- [Projects](./projects/projects) -- creating, managing, and understanding project statuses
+- [Projects](./projects/projects.md) -- creating, managing, and understanding project statuses
 - [Project Overview](./projects/overview) -- project details, comments, files, and sub-projects
 - [Project Assets](./projects/assets) -- assigning assets, dispatch, pricing, and barcode scanning
 - [Project Crew](./projects/crew) -- crew management and recruitment
@@ -39,7 +39,7 @@ This guide covers everything you need to know to use AdamRMS effectively, from s
 - [Clients](./business/clients) -- managing your client directory
 - [Locations](./business/locations) -- venues, storage areas, and hierarchical locations
 - [Ledger](./business/ledger) -- viewing payment records across your business
-- [Asset Import](./business/asset-import) -- bulk importing assets from CSV files
+- [Asset Import](./assets/asset-import.md) -- bulk importing assets from CSV files
 
 ### CMS & Customisation
 - [CMS Pages](./cms/cms-pages) -- creating and managing content pages
@@ -47,10 +47,10 @@ This guide covers everything you need to know to use AdamRMS effectively, from s
 - [Public Sites](./cms/public-sites) -- embedding crew vacancies on external websites
 
 ### Training
-- [Training](./training/training) -- creating training modules and tracking user progress
+- [Training](./training/training.md) -- creating training modules and tracking user progress
 
 ### Search
-- [Search](./search/search) -- using the global search to find projects, clients, locations, and more
+- [Search](./search/search.md) -- using the global search to find projects, clients, locations, and more
 
 ### Reference
 - [Permissions Reference](./business/permissions-reference) -- complete list of all permissions

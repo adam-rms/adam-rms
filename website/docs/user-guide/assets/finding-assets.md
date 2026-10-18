@@ -52,7 +52,7 @@ ASSETS:ASSET_TYPE_FILE_ATTACHMENTS:CREATE
 :::
 
 For asset types it is suggested the files are for user manuals, info sheets and more general documentation.  
-More information about files on AdamRMS can be found [here](./../../hosting/intro#file-storage)
+More information about files on AdamRMS can be found [here](../../hosting/s3-storage.md)
 
 ### Editing asset types
 

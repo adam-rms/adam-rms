@@ -77,8 +77,8 @@ The side menu provides access to all major sections of AdamRMS, organised under 
   - **Maintenance** -- manage [maintenance jobs](./assets/maintenance)
   - **Barcode Scanner** -- scan [asset barcodes](./assets/asset-barcodes)
 - **PROJECTS** header:
-  - All non-archived projects are listed individually, with icons and colours indicating your role and the project status (see [Projects](./projects/projects) for the colour code reference)
-  - **Training** -- [training modules](./training/training) and progress
+  - All non-archived projects are listed individually, with icons and colours indicating your role and the project status (see [Projects](./projects/projects.md) for the colour code reference)
+  - **Training** -- [training modules](./training/training.md) and progress
 
 :::caution Please note
 AdamRMS uses a granular permission management system, so the items visible in your side menu depend on the permissions assigned to your role group. You may not see all of the sections listed above.
@@ -96,5 +96,5 @@ If your account belongs to multiple businesses, you can switch between them by c
 
 - [Getting Started](./getting-started) -- setting up your account
 - [Custom Dashboards](./cms/custom-dashboards) -- replacing the default dashboard for specific role groups
-- [Search](./search/search) -- using the global search
+- [Search](./search/search.md) -- using the global search
 - [Business Settings](./business/business-settings) -- configuring your business

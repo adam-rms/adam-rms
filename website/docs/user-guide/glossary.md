@@ -10,7 +10,7 @@ A reference of key terms used throughout AdamRMS.
 ---
 
 ### Asset
-A piece of equipment managed in AdamRMS. See [Assets](./assets/assets) for more details.
+A piece of equipment managed in AdamRMS. See [Assets](./assets/assets.md) for more details.
 
 ### Asset Tag
 A unique identifier assigned to each individual asset, either auto-generated (format `A-XXXX`) or manually entered. Used to distinguish between individual items of the same asset type.
@@ -73,7 +73,7 @@ The company that produces a piece of equipment. Manufacturers are linked to asse
 A granular access control that determines what a user can do within a business. Permissions are assigned to **Role Groups**. See [User Management](./business/user-management#permissions).
 
 ### Project
-A date-based event or job that brings together assets, crew, locations, and finances. Projects are the primary organisational unit for tracking work. See [Projects](./projects/projects).
+A date-based event or job that brings together assets, crew, locations, and finances. Projects are the primary organisational unit for tracking work. See [Projects](./projects/projects.md).
 
 ### Project Manager
 The user designated as the lead for a project. Project managers are indicated with a star icon in the sidebar menu.

@@ -17,6 +17,6 @@ This section of the site contains a huge wealth of information, separated into s
 
 - [Getting Started with Contributing to the Open Source Project](./contributing)
   - [Developing Locally](./repo/intro)
-- [Using the API](../../../api)
+- [Using the API](pathname:///api/adamrms-api)
 - [Style Guide](./style-guide)
 - [Licencing Details](./licence-details)

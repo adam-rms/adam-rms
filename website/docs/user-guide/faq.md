@@ -34,7 +34,7 @@ There are three ways:
 ## Assets
 
 ### What's the difference between an asset type and an individual asset?
-An **asset type** is a template (e.g. "5m XLR Cable") that holds shared information like hire rates and manufacturer. **Individual assets** are the physical items you own -- each with a unique tag (e.g. `A-0042`). See [Assets](./assets/assets#key-concepts) for a full explanation.
+An **asset type** is a template (e.g. "5m XLR Cable") that holds shared information like hire rates and manufacturer. **Individual assets** are the physical items you own -- each with a unique tag (e.g. `A-0042`). See [Assets](./assets/assets.md#key-concepts) for a full explanation.
 
 ### Why can't I assign an asset to a project?
 Check the following:
@@ -44,7 +44,7 @@ Check the following:
 - You need the `PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN` permission.
 
 ### How do I retire/archive an asset?
-Set an **end date** on the individual asset. Assets with end dates in the past are considered archived and hidden from default searches. They can still be found using the "Show Archived" option. See [Assets](./assets/assets#asset-lifecycle).
+Set an **end date** on the individual asset. Assets with end dates in the past are considered archived and hidden from default searches. They can still be found using the "Show Archived" option. See [Assets](./assets/assets.md#asset-lifecycle).
 
 ### How do I track where an asset is?
 Use [Asset Barcodes](./assets/asset-barcodes) and [Locations](./business/locations). Scanning an asset's barcode at a location records its position. You can also manually set a storage location on each individual asset.
@@ -54,7 +54,7 @@ Use [Asset Barcodes](./assets/asset-barcodes) and [Locations](./business/locatio
 ## Projects
 
 ### How do project statuses work?
-Each project has a status that reflects its stage in your workflow (e.g. Confirmed, Dispatched, Returned). Statuses are colour-coded in the menu and calendar. Your business administrator can customise available statuses in [Business Settings](./business/business-settings#project-statuses). See [Projects](./projects/projects) for the full colour code reference.
+Each project has a status that reflects its stage in your workflow (e.g. Confirmed, Dispatched, Returned). Statuses are colour-coded in the menu and calendar. Your business administrator can customise available statuses in [Business Settings](./business/business-settings#project-statuses). See [Projects](./projects/projects.md) for the full colour code reference.
 
 ### How does asset pricing work?
 AdamRMS calculates hire costs based on:
