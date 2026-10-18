@@ -84,10 +84,9 @@ function PartsOfTheSite(): React.JSX.Element {
 }
 
 export default function Home(): React.JSX.Element {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`${siteConfig.title} | Open Source Advanced Rental Management System for Theatre, AV & Broadcast`}
+      title="Open Source Advanced Rental Management System for Theatre, AV & Broadcast"
       description="AdamRMS is an advanced Rental Management System for Theatre, AV & Broadcast. Free & Open Source"
     >
       <HomepageHeader />

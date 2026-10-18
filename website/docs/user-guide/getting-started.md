@@ -77,8 +77,8 @@ The top bar of the rms contains the following icons:
 Here are some recommended next steps:
 - **Explore your dashboard** -- see [Dashboard & Navigation](./dashboard) for a full guide
 - **Manage your account** -- update your details, notifications, and calendar export on [Your Account](./account) page
-- **Browse your assets** -- learn about [Assets](./assets/assets) and how to [find them](./assets/finding-assets)
-- **Understand projects** -- see how [Projects](./projects/projects) bring assets, crew, and finance together
+- **Browse your assets** -- learn about [Assets](./assets/assets.md) and how to [find them](./assets/finding-assets)
+- **Understand projects** -- see how [Projects](./projects/projects.md) bring assets, crew, and finance together
 - **Check the glossary** -- unfamiliar with a term? See the [Glossary](./glossary)
 
 :::caution Please note

@@ -77,7 +77,7 @@ For detailed financial information about a specific client's projects, click on 
 
 ## Related Features
 
-- [Projects](../projects/projects) -- creating and managing projects linked to clients
+- [Projects](../projects/projects.md) -- creating and managing projects linked to clients
 - [Project Finance](../projects/finance) -- managing invoices, quotes, and payments
 - [Ledger](../business/ledger) -- viewing all payments across the business
 - [Locations](../business/locations) -- managing venues (which can also be linked to clients)

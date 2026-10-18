@@ -89,4 +89,4 @@ Click on a location's file icon to view and manage its attached files.
 
 - [Asset Barcodes](../assets/asset-barcodes) -- scanning assets at locations
 - [Clients](./clients) -- locations can be linked to clients
-- [Projects](../projects/projects) -- projects reference locations for delivery and use
+- [Projects](../projects/projects.md) -- projects reference locations for delivery and use

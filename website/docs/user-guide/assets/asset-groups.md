@@ -63,7 +63,7 @@ Groups can be used as a filter in the [asset search](./finding-assets). Select o
 
 ## Related Features
 
-- [Assets](./assets) -- understanding asset types and individual assets
+- [Assets](./assets.md) -- understanding asset types and individual assets
 - [Finding Assets](./finding-assets) -- filtering assets by group in search
 - [Asset Barcodes](./asset-barcodes) -- generating barcode sheets by group
 - [Project Assets](../projects/assets) -- assigning assets to projects
