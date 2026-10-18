@@ -43,7 +43,7 @@
                         {% for length,colour in USERDATA.instance['instances_cableColours']|jsonDecode %}
                         <tr>
                             <td>
-                                <input type="number" class="form-control" data-type="length" value="{{ length }}">
+                                <input type="number" step="any" class="form-control" data-type="length" value="{{ length }}">
                             </td>
                             <td>
                                 <input type="text" class="form-control colorpicker" data-type="colour" value="{{ colour['background'] }}">
@@ -68,7 +68,7 @@
                     $("#addNewCableColourOption").on("click", function(){
                         $("#cableColours > div > table").append(`<tr>
                             <td>
-                                <input type="number" class="form-control" data-type="length">
+                                <input type="number" step="any" class="form-control" data-type="length">
                             </td>
                             <td>
                                 <input type="text" class="form-control colorpicker" data-type="colour">
