@@ -17,24 +17,71 @@ const CLARITY_PROJECT_ID = "ree0pnhyh9";
 
 const config: Config = {
   title: "AdamRMS",
-  // Inject Clarity on production builds only so that development previews do not
-  // pollute analytics data.
-  headTags: production
-    ? [
-        {
-          tagName: "script",
-          attributes: { type: "text/javascript" },
-          innerHTML: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`,
-        },
-      ]
-    : [],
+  headTags: [
+    {
+      tagName: "link",
+      attributes: {
+        rel: "icon",
+        href: "/img/logoicon.svg",
+        type: "image/svg+xml",
+      },
+    },
+    {
+      tagName: "link",
+      attributes: {
+        rel: "apple-touch-icon",
+        href: "/img/apple-touch-icon.png",
+      },
+    },
+    {
+      tagName: "link",
+      attributes: { rel: "manifest", href: "/site.webmanifest" },
+    },
+    {
+      tagName: "script",
+      attributes: { type: "application/ld+json" },
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://adam-rms.com/#organization",
+            name: "AdamRMS",
+            url: "https://adam-rms.com",
+            logo: "https://adam-rms.com/img/logosmall.png",
+            sameAs: ["https://github.com/adam-rms"],
+          },
+          {
+            "@type": "SoftwareApplication",
+            name: "AdamRMS",
+            url: "https://adam-rms.com",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web",
+            license: "https://www.gnu.org/licenses/agpl-3.0.html",
+            publisher: { "@id": "https://adam-rms.com/#organization" },
+          },
+        ],
+      }),
+    },
+    // Inject Clarity on production builds only so that development previews do not
+    // pollute analytics data.
+    ...(production
+      ? [
+          {
+            tagName: "script",
+            attributes: { type: "text/javascript" },
+            innerHTML: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`,
+          },
+        ]
+      : []),
+  ],
   tagline:
     "AdamRMS is a free, open source advanced Rental Management System for Theatre, AV & Broadcast",
   url: "https://adam-rms.com",
   baseUrl: "/",
   onBrokenLinks: "warn",
   noIndex: !production,
-  favicon: "img/favicon.ico",
+  favicon: "favicon.ico",
   markdown: {
     hooks: {
       onBrokenMarkdownLinks: "warn",
@@ -45,6 +92,24 @@ const config: Config = {
   plugins: [
     "@docusaurus/plugin-ideal-image",
     "docusaurus-plugin-sass",
+    [
+      "docusaurus-plugin-llms",
+      {
+        docsDir: [
+          { path: "docs", routeBasePath: "docs/v1", label: "Documentation" },
+        ],
+        includeOrder: [
+          "docs/user-guide/**",
+          "docs/hosting/**",
+          "docs/contributor/**",
+        ],
+        rootContent:
+          "AdamRMS is a free, open source (AGPLv3) rental management system for theatre, AV and broadcast. The hosted version is at https://dash.adam-rms.com. The REST API is described by the OpenAPI spec at https://adam-rms.com/apiDocs.yaml. Every page below is available as Markdown, and https://adam-rms.com/llms-full.txt has them all in one file.",
+        generateMarkdownFiles: true,
+        excludeImports: true,
+        removeDuplicateHeadings: true,
+      },
+    ],
     ...(apiSpecExists
       ? [
           [
@@ -131,6 +196,7 @@ const config: Config = {
       style: "dark",
       copyright: `Copyright © 2019-${new Date().getFullYear()} Bithell Studios Ltd. <a href="/legal">Terms</a>`,
     },
+    metadata: [{ name: "theme-color", content: "#f77e9d" }],
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
@@ -181,9 +247,7 @@ const config: Config = {
             },
           },
         },
-        blog: {
-          showReadingTime: true,
-        },
+        blog: false,
         theme: {
           customCss: "./src/css/custom.css",
         },
