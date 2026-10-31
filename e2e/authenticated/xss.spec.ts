@@ -110,3 +110,57 @@ test.describe("record names and notes containing script", () => {
     });
   }
 });
+
+/**
+ * The server audit log prints auditLog_actionData straight into the page. Callers store plain text
+ * (a renamed file, a note with line breaks) and JSON objects (a module edit). Both have to stay
+ * readable, and neither may run as markup in a server administrator's browser.
+ */
+test.describe("server audit log action data", () => {
+  test.beforeEach(async ({ page }) => {
+    await cacheCdn(page.context());
+    await page.addInitScript(() => {
+      const w = window as unknown as { __xssRan: number[]; __xss: (n: number) => void };
+      w.__xssRan = [];
+      w.__xss = (n) => w.__xssRan.push(n);
+    });
+  });
+
+  test("is shown as text, including JSON and line breaks", async ({ page }) => {
+    const marker = `e2eauditxss${Date.now()}`;
+    const hostile = `<img src=x onerror=__xss(1)></pre><script>__xss(1)</script>`;
+    const plain = `Set the name to file's ${hostile}\nkept on its own line ${marker}`;
+    const recorded = {
+      modules_name: hostile,
+      note: `first line\nsecond line & "quotes" ${marker}`,
+      path: "notes/file",
+    };
+    const insert = "INSERT INTO auditLog (auditLog_actionType, auditLog_actionTable, auditLog_actionData, auditLog_timestamp, auditLog_deleted) VALUES (?, ?, ?, NOW(), 0)";
+    dbQuery(insert, ["RENAME-FILE", "s3files", plain]);
+    dbQuery(insert, ["EDIT", "modules", JSON.stringify(recorded)]);
+
+    try {
+      await login(page, TEST_USER.email, TEST_USER.password);
+      await page.goto(`/server/auditLog.php?q=${marker}`, { waitUntil: "load" });
+
+      const ran: number[] = await page.evaluate(() => (window as unknown as { __xssRan: number[] }).__xssRan);
+      expect(ran).toEqual([]);
+      await expect(page.locator("img[src='x']")).toHaveCount(0);
+      await expect(page.locator("script", { hasText: "__xss" })).toHaveCount(0);
+      await expect(page.locator("td pre")).toHaveCount(2);
+
+      const html = await page.locator("table").innerHTML();
+      expect(html).toContain("&lt;img src=x onerror=__xss(1)&gt;");
+      expect(html).not.toContain("<img");
+      expect(html).not.toContain("<script>");
+
+      const blocks = (await page.locator("td pre").allTextContents()).map((text) => text.trim());
+      expect(blocks).toContain(plain);
+      const jsonBlock = blocks.find((text) => text.startsWith("{"));
+      expect(jsonBlock, "JSON action data is still readable").toBeDefined();
+      expect(JSON.parse(jsonBlock!)).toEqual(recorded);
+    } finally {
+      dbQuery("DELETE FROM auditLog WHERE auditLog_actionData LIKE ?", [`%${marker}%`]);
+    }
+  });
+});
