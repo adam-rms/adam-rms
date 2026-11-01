@@ -221,6 +221,7 @@ const writeCases: WriteCase[] = [
   { endpoint: "/api/instances/editInstance.php", params: () => ({ formData: formData({ instances_phone: "01234 567890" }) }) },
   { endpoint: "/api/instances/editCalendarSettings.php", params: () => ({ formData: formData({ defaultView: "timeGridWeek" }) }) },
   { endpoint: "/api/instances/editInstancePublicSite.php", params: () => ({ formData: formData({ enabled: "on" }) }) },
+  { endpoint: "/api/instances/editDayRateMultipliers.php", params: () => ({ multipliers: JSON.stringify([{ from: 2, to: 2, multiplier: "1.5" }]) }) },
   { endpoint: "/api/permissions/newInstancePosition.php", params: () => ({ name: "Role by e2e" }) },
   // Maintenance jobs read fields from the top level of the request too, as the app sends them
   { endpoint: "/api/maintenance/newJob.php", params: (t, self) => ({ formData: formData({ maintenanceJobs_title: "Job by e2e", maintenanceJobs_assets: String(self.assetId) }), instances_id: t.instanceId }) },

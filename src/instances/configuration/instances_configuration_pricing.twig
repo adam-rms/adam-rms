@@ -1,0 +1,98 @@
+{% extends "assets/template.twig" %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+			<div class="card-header">
+				<ul class="nav nav-pills">
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/navigation.php"><i class="fas fa-arrow-left"></i> Back to Settings</span></a></li>
+					{% if "PROJECTS:PROJECT_TYPES:VIEW"|instancePermissions %}
+                    <li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectTypes.php">Project Types</a></li>
+                    {% endif %}
+					{% if "PROJECTS:PROJECT_STATUSES:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/projectStatuses.php">Project Statuses</a></li>
+                    {% endif %}
+					{% if "BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions %}
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/asset-status.php">Asset Statuses</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{CONFIG.ROOTURL}}/instances/configuration/invoices.php">Invoices</a></li>
+					<li class="nav-item"><a class="nav-link active" href="{{CONFIG.ROOTURL}}/instances/configuration/pricing.php">Pricing</a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Day Rate Multipliers</h3>
+            </div>
+            <div class="card-body">
+                <p>By default an asset is charged its day rate for every day of a project. Here you can instead charge a number of day rates for a project lasting a number of days - for example 1.5 day rates for a 2 day hire, or 2 day rates for a hire of 3 to 4 days.</p>
+                <p>Projects lasting a number of days not covered below are charged one day rate per day. Projects with a custom duration set for asset pricing, and assets with a custom price, aren't affected.</p>
+                <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Saving changes here reprices every project that is priced by its dates, including past projects.</p>
+                <table class="table table-sm" id="dayRateMultipliersTable">
+                    <thead>
+                        <tr>
+                            <th>From (days)</th>
+                            <th>To (days)</th>
+                            <th>Day rates charged</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rule in dayRateMultipliers %}
+                        <tr class="dayRateMultiplierRow">
+                            <td><input type="number" min="1" max="9999" step="1" class="form-control dayRateMultiplierFrom" value="{{ rule.from }}"{% if not "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %} disabled{% endif %}></td>
+                            <td><input type="number" min="1" max="9999" step="1" class="form-control dayRateMultiplierTo" value="{{ rule.to }}"{% if not "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %} disabled{% endif %}></td>
+                            <td><input type="number" min="0" step="0.0001" class="form-control dayRateMultiplierValue" value="{{ rule.multiplier }}"{% if not "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %} disabled{% endif %}></td>
+                            <td>{% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}<button type="button" class="btn btn-sm btn-danger removeDayRateMultiplier" title="Remove"><i class="fas fa-trash"></i></button>{% endif %}</td>
+                        </tr>
+                        {% else %}
+                        <tr id="noDayRateMultipliers"><td colspan="4"><i>No multipliers set - every day is charged one day rate</i></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+            <div class="card-footer">
+                <button type="button" id="addDayRateMultiplier" class="btn btn-default"><i class="fas fa-plus"></i> Add</button>
+                <button type="button" id="saveDayRateMultipliers" class="btn btn-primary float-right">Save</button>
+            </div>
+            <script>
+                $(document).ready(function() {
+                    $('#addDayRateMultiplier').on('click', function() {
+                        $('#noDayRateMultipliers').remove();
+                        $('#dayRateMultipliersTable tbody').append('<tr class="dayRateMultiplierRow">' +
+                            '<td><input type="number" min="1" max="9999" step="1" class="form-control dayRateMultiplierFrom"></td>' +
+                            '<td><input type="number" min="1" max="9999" step="1" class="form-control dayRateMultiplierTo"></td>' +
+                            '<td><input type="number" min="0" step="0.0001" class="form-control dayRateMultiplierValue"></td>' +
+                            '<td><button type="button" class="btn btn-sm btn-danger removeDayRateMultiplier" title="Remove"><i class="fas fa-trash"></i></button></td>' +
+                            '</tr>');
+                    });
+                    $('#dayRateMultipliersTable').on('click', '.removeDayRateMultiplier', function() {
+                        $(this).closest('tr').remove();
+                    });
+                    $('#saveDayRateMultipliers').on('click', function() {
+                        var multipliers = [];
+                        $('.dayRateMultiplierRow').each(function() {
+                            multipliers.push({
+                                'from': $(this).find('.dayRateMultiplierFrom').val(),
+                                'to': $(this).find('.dayRateMultiplierTo').val(),
+                                'multiplier': $(this).find('.dayRateMultiplierValue').val()
+                            });
+                        });
+                        ajaxcall("instances/editDayRateMultipliers.php", {
+                            'multipliers': JSON.stringify(multipliers)
+                        }, function (data) {
+                            location.reload();
+                        }, false);
+                    });
+                });
+            </script>
+            {% endif %}
+        </div>
+   </div>
+</div>
+{% endblock %}

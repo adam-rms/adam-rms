@@ -22,7 +22,7 @@ if ($project['projects_dates_finances_days'] !== NULL and $project['projects_dat
 } else {
     // We need to calculate the price maths because custom price maths is not set
     $priceMathsOld = $projectFinanceHelper->durationMaths($project['projects_id']);
-    $priceMathsNew = $projectFinanceHelper->durationMathsByDates($newDates['projects_dates_deliver_start'],$newDates['projects_dates_deliver_end']);
+    $priceMathsNew = $projectFinanceHelper->durationMathsByDates($newDates['projects_dates_deliver_start'],$newDates['projects_dates_deliver_end'], $AUTH->data['instance']['instances_id']);
 }
 
 

@@ -200,6 +200,18 @@
                 <a href="{{ CONFIG.ROOTURL }}/instances/configuration/invoices.php" class="small-box-footer">Manage Invoices <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>Pricing</h3>
+                    <p>Configure day rate multipliers for asset hire.</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <a href="{{ CONFIG.ROOTURL }}/instances/configuration/pricing.php" class="small-box-footer">Manage Pricing <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
         {% endif %}
         {% if ("BUSINESS:BUSINESS_SETTINGS:VIEW"|instancePermissions or "ASSETS:ASSET_CATEGORIES:VIEW"|instancePermissions or "ASSETS:IMPORT"|instancePermissions) %}
         <div class="col-12">

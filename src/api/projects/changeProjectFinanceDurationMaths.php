@@ -23,7 +23,7 @@ if (!$project) finish(false);
 $projectFinanceHelper = new projectFinance();
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 $priceMathsOld = $projectFinanceHelper->durationMaths($project['projects_id']);
-if ($REMOVECUSTOM) $priceMathsNew = $projectFinanceHelper->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end']);
+if ($REMOVECUSTOM) $priceMathsNew = $projectFinanceHelper->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end'], $AUTH->data['instance']['instances_id']);
 else $priceMathsNew = ["days" => $DAYS, "weeks" => $WEEKS];
 
 //We're changing dates so we need to update pricing
