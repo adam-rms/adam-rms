@@ -18,7 +18,7 @@ foreach ($rules as $rule) {
     $to = filter_var($rule['to'], FILTER_VALIDATE_INT);
     if ($from === false or $to === false or $from < 1 or $to > 9999 or $from > $to) finish(false, ["code" => "PARAM-ERROR", "message" => "Days must be whole numbers from 1, and \"from\" can't be after \"to\""]);
     $multiplier = trim((string) $rule['multiplier']);
-    if (!preg_match('/^\d{1,5}(\.\d{1,4})?$/', $multiplier)) finish(false, ["code" => "PARAM-ERROR", "message" => "Multipliers must be a number of day rates with up to 4 decimal places"]);
+    if (!preg_match('/^\d{1,5}(\.\d{1,2})?$/', $multiplier)) finish(false, ["code" => "PARAM-ERROR", "message" => "Multipliers must be a number of day rates with up to 2 decimal places"]);
     // Tidy it up, so "01.50" is stored as "1.5"
     $parts = explode('.', $multiplier . '.');
     $whole = ltrim($parts[0], '0') ?: '0';

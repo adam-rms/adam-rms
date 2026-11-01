@@ -306,16 +306,20 @@ test.describe("day rate multipliers", () => {
       await expectFinances(asA, a, byDates, priced(2000));
     });
 
-    await test.step("a multiplier that doesn't come to a whole number of pence is rounded the same way everywhere", async () => {
-      await ok(multipliers(asA, a.instanceId, [{ from: 4, to: 4, multiplier: "1.3333" }]), "changing the multipliers");
-      // £13.333 rounds to £13.33; half price is £6.665, which rounds to £6.67, so £6.66 off
-      await expectFinances(asA, a, byDates, { ...priced(1333), discounts: 666, total: 2000, grandTotal: 2000 });
+    await test.step("a price that doesn't come to a whole number of pence is rounded the same way everywhere", async () => {
+      await ok(multipliers(asA, a.instanceId, [{ from: 4, to: 4, multiplier: "1.35" }]), "changing the multipliers");
+      await expectFinances(asA, a, byDates, priced(1350));
+      const [{ assets_id }] = dbQuery<{ assets_id: number }>("SELECT assets_id FROM assetsAssignments WHERE assetsAssignments_id = ?", [discounted]);
+      await ok(api("/api/assets/editAsset.php", { formData: formData({ assets_id, assets_dayRate: "10.01" }) }), "changing an asset's day rate");
+      // £10.01 x 1.35 = £13.5135, which rounds to £13.51; half price is £6.755, which rounds to £6.76, so £6.75 off
+      await expectFinances(asA, a, byDates, { ...priced(1350), subTotal: 2701, discounts: 675, total: 2026, grandTotal: 2026 });
+      await ok(api("/api/assets/editAsset.php", { formData: formData({ assets_id, assets_dayRate: "10.00" }) }), "changing it back");
     });
 
     await test.step("going back to charging by the dates from a custom duration uses the multiplier", async () => {
       await dates(custom, 4);
       await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: -1, projects_dates_finances_weeks: -1 }), "removing the custom duration");
-      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 1333, total: 1333, grandTotal: 1333 });
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 1350, total: 1350, grandTotal: 1350 });
     });
 
     await test.step("removing them all goes back to a day rate a day", async () => {
@@ -341,7 +345,7 @@ test.describe("day rate multipliers", () => {
     await refused(rules({ from: 0, to: 1, multiplier: "1.5" }), "zero days");
     await refused(rules({ from: 1.5, to: 2, multiplier: "1.5" }), "part of a day");
     await refused(rules({ from: 2, to: 2, multiplier: "-1" }), "a negative multiplier");
-    await refused(rules({ from: 2, to: 2, multiplier: "1.23456" }), "too many decimal places");
+    await refused(rules({ from: 2, to: 2, multiplier: "1.234" }), "more than 2 decimal places");
     await refused(rules({ from: 2, to: 2, multiplier: "1e3" }), "an exponent");
     await refused(rules({ from: 2, to: 2 }), "no multiplier");
     await refused(JSON.stringify({ from: 2, to: 2, multiplier: "1.5" }), "not a list");
