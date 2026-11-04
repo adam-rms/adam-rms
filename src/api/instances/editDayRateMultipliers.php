@@ -5,7 +5,7 @@ use Money\Currency;
 use Money\Money;
 
 if (!$AUTH->instancePermissionCheck("BUSINESS:BUSINESS_SETTINGS:EDIT")) finish(false, ["code" => "AUTH-ERROR", "message" => "No auth for action"]);
-if (!isset($_POST['multipliers'])) finish(false, ["code" => "PARAM-ERROR", "message" => "No data for action"]);
+if (!isset($_POST['multipliers']) or !is_string($_POST['multipliers'])) finish(false, ["code" => "PARAM-ERROR", "message" => "No data for action"]);
 
 // A list of {"from": days, "to": days, "multiplier": number of day rates to charge}, or an empty list to remove them all
 $rules = json_decode($_POST['multipliers'], true);
@@ -13,7 +13,7 @@ if (!is_array($rules) or !array_is_list($rules)) finish(false, ["code" => "PARAM
 if (count($rules) > 100) finish(false, ["code" => "PARAM-ERROR", "message" => "Too many multipliers"]);
 $clean = [];
 foreach ($rules as $rule) {
-    if (!is_array($rule) or !isset($rule['from'], $rule['to'], $rule['multiplier'])) finish(false, ["code" => "PARAM-ERROR", "message" => "Each multiplier needs a from, to and multiplier"]);
+    if (!is_array($rule) or !isset($rule['from'], $rule['to'], $rule['multiplier']) or !is_scalar($rule['multiplier'])) finish(false, ["code" => "PARAM-ERROR", "message" => "Each multiplier needs a from, to and multiplier"]);
     $from = filter_var($rule['from'], FILTER_VALIDATE_INT);
     $to = filter_var($rule['to'], FILTER_VALIDATE_INT);
     if ($from === false or $to === false or $from < 1 or $to > 9999 or $from > $to) finish(false, ["code" => "PARAM-ERROR", "message" => "Days must be whole numbers from 1, and \"from\" can't be after \"to\""]);
@@ -60,6 +60,7 @@ foreach ($projects as $project) {
     $DBLIB->where("assetsAssignments.projects_id", $project['projects_id']);
     $DBLIB->join("assets", "assetsAssignments.assets_id=assets.assets_id", "LEFT");
     $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+    $DBLIB->where("assets.assets_deleted", 0); //Deleting an asset takes it out of the totals but leaves it assigned, as projects/data.php expects
     $assets = $DBLIB->get("assetsAssignments", null, ["assetsAssignments_customPrice", "assetsAssignments_discount", "assetTypes_weekRate", "assetTypes_dayRate", "assets_dayRate", "assets_weekRate"]);
     foreach ($assets as $asset) {
         if ($asset['assetsAssignments_customPrice'] != null) continue; //There is a custom price set - so this asset is date agnostic anyway

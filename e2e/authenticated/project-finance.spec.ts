@@ -330,6 +330,22 @@ test.describe("day rate multipliers", () => {
     });
   });
 
+  test("a deleted asset still assigned to a project isn't repriced", async ({ asA, tenants: { a } }) => {
+    const api = (endpoint: string, params: Parameters<Session["api"]>[1]) => asA.api(endpoint, { instances_id: a.instanceId, ...params });
+    const project: number = (await api("/api/projects/new.php", { projects_name: "Multiplier deleted asset test", projects_manager: a.users.full.id, projectsType_id: a.projectTypeId })).json.response.projects_id;
+    await ok(api("/api/projects/changeProjectDeliverDates.php", {
+      projects_id: project, projects_dates_deliver_start: "2036-06-01 09:00:00", projects_dates_deliver_end: "2036-06-03 18:00:00",
+    }), "setting the dates");
+    const zero = { ...none, subTotal: 0, discounts: 0, total: 0, grandTotal: 0, value: 0, mass: 0 };
+    await expectFinances(asA, a, project, zero);
+    const asset = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+    await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: asset }), "assigning");
+    await ok(api("/api/assets/delete.php", { assets_id: asset }), "deleting the asset");
+    await expectFinances(asA, a, project, zero);
+    await ok(multipliers(asA, a.instanceId, [{ from: 3, to: 3, multiplier: "2" }]), "setting a multiplier");
+    await expectFinances(asA, a, project, zero);
+  });
+
   test("multipliers that overlap or aren't numbers are refused, and nothing changes", async ({ asA, tenants: { a, b } }) => {
     await ok(multipliers(asA, a.instanceId, [{ from: 2, to: 3, multiplier: "1.5" }]), "setting a multiplier");
     const stored = () => dbQuery<{ m: string | null }>("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m;
@@ -350,6 +366,9 @@ test.describe("day rate multipliers", () => {
     await refused(rules({ from: 2, to: 2 }), "no multiplier");
     await refused(JSON.stringify({ from: 2, to: 2, multiplier: "1.5" }), "not a list");
     await refused("not json", "not JSON");
+    const asArray = await asA.api("/api/instances/editDayRateMultipliers.php", { instances_id: a.instanceId, multipliers: ["1.5"] });
+    expect(asArray.json, "sent as an array").toMatchObject({ result: false, error: { code: "PARAM-ERROR" } });
+    await refused(rules({ from: 2, to: 2, multiplier: ["1.5"] }), "a multiplier that isn't a number");
     // Only the caller's own business is changed
     expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [b.instanceId])[0].m).toBeNull();
   });
