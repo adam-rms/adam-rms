@@ -261,15 +261,15 @@
                                                             {% endif %}
                                                         </div>
                                                         <div id="projectDurationContainer">
-                                                            <p class="text-sm">Project duration for asset pricing purposes</p>
+                                                            <p class="text-sm">Project duration for asset pricing purposes{% if USERDATA.instance.instances_dayRateMultipliers %} - the days the equipment is used for, which are charged using your <a href="{{ CONFIG.ROOTURL }}/instances/configuration/pricing.php">day rate multipliers</a>{% endif %}</p>
                                                             {% if "PROJECTS:EDIT:DATES"|instancePermissions %}
                                                                 <div class="input-group">
-                                                                    <div class="input-group-prepend">
+                                                                    <div class="input-group-prepend{{ USERDATA.instance.instances_hideWeekRates and FINANCIALS['priceMaths']["weeks"] == 0 ? ' d-none' }}">
                                                                         <span class="input-group-text">Weeks</span>
                                                                     </div>
-                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["weeks"] }}" class="form-control float-right" required id="financeDurationMathsWeeks">
+                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["weeks"] }}" class="form-control float-right{{ USERDATA.instance.instances_hideWeekRates and FINANCIALS['priceMaths']["weeks"] == 0 ? ' d-none' }}" required id="financeDurationMathsWeeks">
                                                                     <span class="input-group-text">Days</span>
-                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["days"] }}" class="form-control float-right" required id="financeDurationMathsDays">
+                                                                    <input type="number" min="0" step="1" max="256" value="{{ FINANCIALS['priceMaths']["durationDays"] ?? FINANCIALS['priceMaths']["days"] }}" class="form-control float-right" required id="financeDurationMathsDays">
                                                                     <div class="input-group-append">
                                                                         <button class="btn btn-default" type="button" id="financeDurationMathsSave">Save</button>
                                                                     </div>
@@ -277,14 +277,14 @@
                                                                 {% if project.projects_dates_use_start %}
                                                                 <div style="width: 100%;text-align: right;">
                                                                     {% if project.projects_dates_finances_days is same as(null) and project.projects_dates_finances_weeks is same as (null) %}
-                                                                        <p class="text-sm">Project duration is currently based on project dates</p>
+                                                                        <p class="text-sm">Project duration is currently based on project dates{% if FINANCIALS['priceMaths']["dayRateMultiplier"] is defined %}, charged as {{ FINANCIALS['priceMaths']["dayRateMultiplier"] }} day rate{{ FINANCIALS['priceMaths']["dayRateMultiplier"] != 1 ? 's' }}{% endif %}</p>
                                                                     {% else %}
                                                                      <button type="button" class="btn btn-link btn-sm" id="copyProjectDatesToFinanceDurationMaths">Sync to Project Dates ({{ FINANCIALS['priceMaths']["calendarDays"] }} day{{ FINANCIALS['priceMaths']["calendarDays"] == 1 ? '' : 's' }})</button>
                                                                     {% endif %}
                                                                 </div>
                                                                 {% endif %}
                                                             {% else %}
-                                                                <b class="d-block">{{ FINANCIALS['priceMaths']["weeks"] }} week{{ FINANCIALS['priceMaths']["weeks"] != 1 ? 's' : '' }} and {{ FINANCIALS['priceMaths']["days"] }} day{{ FINANCIALS['priceMaths']["days"] != 1 ? 's' : ''}}</b>
+                                                                <b class="d-block">{% if not USERDATA.instance.instances_hideWeekRates or FINANCIALS['priceMaths']["weeks"] > 0 %}{{ FINANCIALS['priceMaths']["weeks"] }} week{{ FINANCIALS['priceMaths']["weeks"] != 1 ? 's' : '' }} and {% endif %}{% if FINANCIALS['priceMaths']["dayRateMultiplier"] is defined %}{{ FINANCIALS['priceMaths']["durationDays"] }} day{{ FINANCIALS['priceMaths']["durationDays"] != 1 ? 's' }} (charged as {{ FINANCIALS['priceMaths']["dayRateMultiplier"] }} day rate{{ FINANCIALS['priceMaths']["dayRateMultiplier"] != 1 ? 's' }}){% else %}{{ FINANCIALS['priceMaths']["days"] }} day{{ FINANCIALS['priceMaths']["days"] != 1 ? 's' : ''}}{% endif %}</b>
                                                             {% endif %}
                                                         </div>
                                                         {% endif %}

@@ -1,6 +1,8 @@
-import { documentSummary, expectFinances, type Finances } from "../projects";
+import { cacheCdn } from "../cdn";
 import { BASE_URL } from "../env";
-import { dbQuery, expect, formData, newSession, type Session, test } from "../tenants";
+import { login } from "../fixtures";
+import { documentSummary, expectFinances, type Finances } from "../projects";
+import { dbQuery, expect, formData, newSession, seedTenants, type Session, test } from "../tenants";
 
 /**
  * A project's money is worked out twice: projects/data.php (behind the project page, quotes and invoices)
@@ -222,4 +224,269 @@ test("transferring an asset that's on a project to another business leaves that 
   expect(dbQuery<{ archived: string | null }>("SELECT assets_archived archived FROM assets WHERE assets_id = ?", [asset])[0].archived).not.toBeNull();
   await expectFinances(asShared, a, project, { ...none, subTotal: 3000, total: 3000, grandTotal: 3000, value: 10000, mass: 1 });
   await context.dispose();
+});
+
+test.describe("day rate multipliers", () => {
+  const none = { received: 0, sales: 0, subHire: 0, staff: 0 };
+  const multipliers = (session: Session, instanceId: number, rules: { from: number; to: number; multiplier: string }[]) =>
+    session.api("/api/instances/editDayRateMultipliers.php", { instances_id: instanceId, multipliers: JSON.stringify(rules) });
+
+  // They're a business-wide setting, so put A back how the other tests expect it: through the API first, so A's other projects are repriced back
+  test.afterEach(async ({ asA, tenants: { a } }) => {
+    await ok(multipliers(asA, a.instanceId, []), "removing the multipliers");
+    seedTenants();
+  });
+
+  test("charge a number of day rates for how many days a project lasts, and reprice projects charged by their dates", async ({ asA, tenants: { a } }) => {
+    const api = (endpoint: string, params: Parameters<Session["api"]>[1]) => asA.api(endpoint, { instances_id: a.instanceId, ...params });
+    const dates = (project: number, days: number) => ok(api("/api/projects/changeProjectDeliverDates.php", {
+      projects_id: project, projects_dates_deliver_start: "2036-05-01 09:00:00", projects_dates_deliver_end: `2036-05-${String(days).padStart(2, "0")} 18:00:00`,
+    }), `setting the dates to ${days} days`);
+    const newProject = async (name: string, days: number, assetCount: number) => {
+      const project: number = (await api("/api/projects/new.php", { projects_name: name, projects_manager: a.users.full.id, projectsType_id: a.projectTypeId })).json.response.projects_id;
+      await dates(project, days);
+      await expectFinances(asA, a, project, { ...none, subTotal: 0, discounts: 0, total: 0, grandTotal: 0, value: 0, mass: 0 });
+      for (let i = 0; i < assetCount; i++) {
+        const asset = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+        await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: asset }), "assigning");
+      }
+      return project;
+    };
+    // Two £10.00/day assets, one half off
+    const byDates = await newProject("Multiplier test", 3, 2);
+    const [discounted] = dbQuery<{ id: number }>("SELECT assetsAssignments_id id FROM assetsAssignments WHERE projects_id = ? ORDER BY assets_id", [byDates]).map((row) => row.id);
+    await ok(api("/api/projects/assets/setDiscount.php", { assetsAssignments: [discounted], assetsAssignments_discount: 50 }), "discounting");
+    /** Finances of byDates when each asset costs `each` pence */
+    const priced = (each: number, assets = 2) => ({ ...none, subTotal: each * assets, discounts: each / 2, total: each * assets - each / 2, grandTotal: each * assets - each / 2, value: 10000 * assets, mass: assets });
+    await expectFinances(asA, a, byDates, priced(3000));
+    // A custom duration of 1 week and 2 days: £30.00 + 2 x £10.00
+    const custom = await newProject("Multiplier custom duration test", 1, 1);
+    await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: 2, projects_dates_finances_weeks: 1 }), "setting a custom duration");
+    const customFinances = { ...none, subTotal: 5000, discounts: 0, total: 5000, grandTotal: 5000, value: 10000, mass: 1 };
+    await expectFinances(asA, a, custom, customFinances);
+
+    await test.step("setting multipliers reprices projects", async () => {
+      await ok(multipliers(asA, a.instanceId, [{ from: 5, to: 7, multiplier: "3" }, { from: 2, to: 2, multiplier: "1.50" }, { from: 3, to: 4, multiplier: "2" }]), "setting multipliers");
+      // Kept in order, tidied up
+      expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m)
+        .toBe('[{"from":2,"to":2,"multiplier":"1.5"},{"from":3,"to":4,"multiplier":"2"},{"from":5,"to":7,"multiplier":"3"}]');
+      // 3 days is 2 day rates
+      await expectFinances(asA, a, byDates, priced(2000));
+      // The custom duration's 2 days are 1.5 day rates; its week is still a week rate
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 4500, total: 4500, grandTotal: 4500 });
+    });
+
+    await test.step("a custom duration's days go through the multipliers too", async () => {
+      await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: 3, projects_dates_finances_weeks: 0 }), "changing the custom duration");
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 2000, total: 2000, grandTotal: 2000 });
+      const page = (await asA.page(`/project/?id=${custom}`)).body;
+      expect(page).toContain("Project duration set as 0 weeks and 3 days (charged as 2 day rates) for asset pricing purposes.");
+      expect(page).toContain("the days the equipment is used for, which are charged using your");
+      // So saving the box as it is leaves the price alone
+      expect(page).toMatch(/value="3"[^>]*id="financeDurationMathsDays"/);
+      await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: 2, projects_dates_finances_weeks: 1 }), "changing it back");
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 4500, total: 4500, grandTotal: 4500 });
+    });
+
+    await test.step("the project page says how the duration is charged", async () => {
+      const page = (await asA.page(`/project/?id=${byDates}`)).body;
+      expect(page).toContain("Project duration set as 0 weeks and 3 days (charged as 2 day rates) for asset pricing purposes.");
+      // The custom duration box starts at the real number of days, not the number of day rates
+      expect(page).toMatch(/value="3"[^>]*id="financeDurationMathsDays"/);
+      // The Finance tab, and quotes and invoices with finances on them, say how the equipment was charged
+      expect(page).toContain('<small class="text-muted">3 days, charged as 2 day rates</small>');
+      for (const type of ["quote", "invoice"]) {
+        const document = await asA.page(`/project/projectInvoice.php?id=${byDates}&type=${type}&finance=1`);
+        const [, hireLength] = document.body.match(/\['Hire Length:',"([^"]*)"\]/) ?? [];
+        expect(hireLength && JSON.parse(`"${hireLength}"`), type).toBe("3 days, charged as 2 day rates");
+        expect((await asA.page(`/project/projectInvoice.php?id=${byDates}&type=${type}`)).body, `${type} without finances`).not.toContain("Hire Length");
+      }
+    });
+
+    await test.step("moving the dates uses the multiplier for the new length", async () => {
+      await dates(byDates, 2);
+      await expectFinances(asA, a, byDates, priced(1500));
+      await dates(byDates, 7);
+      await expectFinances(asA, a, byDates, priced(3000));
+      // 8 days isn't covered, so it's a day rate a day
+      await dates(byDates, 8);
+      await expectFinances(asA, a, byDates, priced(8000));
+      await dates(byDates, 4);
+      await expectFinances(asA, a, byDates, priced(2000));
+    });
+
+    await test.step("assets added, swapped and repriced follow the multiplier", async () => {
+      const asset = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+      await ok(api("/api/projects/assets/assign.php", { projects_id: byDates, assets_id: asset }), "assigning a third asset");
+      await expectFinances(asA, a, byDates, priced(2000, 3));
+      // £12.00/day x 2 day rates for the discounted one
+      const [{ assets_id }] = dbQuery<{ assets_id: number }>("SELECT assets_id FROM assetsAssignments WHERE assetsAssignments_id = ?", [discounted]);
+      await ok(api("/api/assets/editAsset.php", { formData: formData({ assets_id, assets_dayRate: "12.00" }) }), "changing an asset's day rate");
+      await expectFinances(asA, a, byDates, { ...priced(2000, 3), subTotal: 6400, discounts: 1200, total: 5200, grandTotal: 5200 });
+      await ok(api("/api/assets/editAsset.php", { formData: formData({ assets_id, assets_dayRate: "10.00" }) }), "changing it back");
+      await ok(api("/api/projects/assets/unassign.php", { assetsAssignments: dbQuery<{ id: number }>("SELECT assetsAssignments_id id FROM assetsAssignments WHERE projects_id = ? AND assets_id = ?", [byDates, asset]).map((row) => row.id) }), "unassigning it");
+      await expectFinances(asA, a, byDates, priced(2000));
+    });
+
+    await test.step("a price that doesn't come to a whole number of pence is rounded the same way everywhere", async () => {
+      await ok(multipliers(asA, a.instanceId, [{ from: 4, to: 4, multiplier: "1.35" }]), "changing the multipliers");
+      await expectFinances(asA, a, byDates, priced(1350));
+      // 2 days isn't covered any more, so the custom duration is back to a day rate a day
+      await expectFinances(asA, a, custom, customFinances);
+      const [{ assets_id }] = dbQuery<{ assets_id: number }>("SELECT assets_id FROM assetsAssignments WHERE assetsAssignments_id = ?", [discounted]);
+      await ok(api("/api/assets/editAsset.php", { formData: formData({ assets_id, assets_dayRate: "10.01" }) }), "changing an asset's day rate");
+      // £10.01 x 1.35 = £13.5135, which rounds to £13.51; half price is £6.755, which rounds to £6.76, so £6.75 off
+      await expectFinances(asA, a, byDates, { ...priced(1350), subTotal: 2701, discounts: 675, total: 2026, grandTotal: 2026 });
+      await ok(api("/api/assets/editAsset.php", { formData: formData({ assets_id, assets_dayRate: "10.00" }) }), "changing it back");
+    });
+
+    await test.step("going back to charging by the dates from a custom duration uses the multiplier", async () => {
+      await dates(custom, 4);
+      await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: -1, projects_dates_finances_weeks: -1 }), "removing the custom duration");
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 1350, total: 1350, grandTotal: 1350 });
+    });
+
+    await test.step("removing them all goes back to a day rate a day", async () => {
+      await ok(multipliers(asA, a.instanceId, []), "removing the multipliers");
+      expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m).toBeNull();
+      await expectFinances(asA, a, byDates, priced(4000));
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 4000, total: 4000, grandTotal: 4000 });
+      expect((await asA.page(`/project/projectInvoice.php?id=${byDates}&type=invoice&finance=1`)).body).not.toContain("Hire Length");
+    });
+  });
+
+  test("a deleted asset still assigned to a project isn't repriced", async ({ asA, tenants: { a } }) => {
+    const api = (endpoint: string, params: Parameters<Session["api"]>[1]) => asA.api(endpoint, { instances_id: a.instanceId, ...params });
+    const project: number = (await api("/api/projects/new.php", { projects_name: "Multiplier deleted asset test", projects_manager: a.users.full.id, projectsType_id: a.projectTypeId })).json.response.projects_id;
+    await ok(api("/api/projects/changeProjectDeliverDates.php", {
+      projects_id: project, projects_dates_deliver_start: "2036-06-01 09:00:00", projects_dates_deliver_end: "2036-06-03 18:00:00",
+    }), "setting the dates");
+    const zero = { ...none, subTotal: 0, discounts: 0, total: 0, grandTotal: 0, value: 0, mass: 0 };
+    await expectFinances(asA, a, project, zero);
+    const asset = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+    await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: asset }), "assigning");
+    await ok(api("/api/assets/delete.php", { assets_id: asset }), "deleting the asset");
+    await expectFinances(asA, a, project, zero);
+    // One with a custom price of £20.00 isn't repriced either
+    const customPriced = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+    await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: customPriced }), "assigning another");
+    const [{ id }] = dbQuery<{ id: number }>("SELECT assetsAssignments_id id FROM assetsAssignments WHERE projects_id = ? AND assets_id = ?", [project, customPriced]);
+    await ok(api("/api/projects/assets/setPrice.php", { assetsAssignments: [id], assetsAssignments_customPrice: "20.00" }), "setting a custom price");
+    const customOnly = { ...zero, subTotal: 2000, total: 2000, grandTotal: 2000, value: 10000, mass: 1 };
+    await expectFinances(asA, a, project, customOnly);
+    await ok(multipliers(asA, a.instanceId, [{ from: 3, to: 3, multiplier: "2" }]), "setting a multiplier");
+    await expectFinances(asA, a, project, customOnly);
+  });
+
+  test("multipliers that overlap or aren't numbers are refused, and nothing changes", async ({ asA, tenants: { a, b } }) => {
+    await ok(multipliers(asA, a.instanceId, [{ from: 2, to: 3, multiplier: "1.5" }]), "setting a multiplier");
+    const stored = () => dbQuery<{ m: string | null }>("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m;
+    const before = stored();
+    const refused = async (multipliersParam: string, what: string) => {
+      const response = await asA.api("/api/instances/editDayRateMultipliers.php", { instances_id: a.instanceId, multipliers: multipliersParam });
+      expect(response.json, what).toMatchObject({ result: false, error: { code: "PARAM-ERROR" } });
+      expect(stored(), what).toBe(before);
+    };
+    const rules = (...list: object[]) => JSON.stringify(list);
+    await refused(rules({ from: 2, to: 3, multiplier: "1.5" }, { from: 3, to: 4, multiplier: "2" }), "overlapping days");
+    await refused(rules({ from: 4, to: 3, multiplier: "1.5" }), "from after to");
+    await refused(rules({ from: 0, to: 1, multiplier: "1.5" }), "zero days");
+    await refused(rules({ from: 1.5, to: 2, multiplier: "1.5" }), "part of a day");
+    await refused(rules({ from: 2, to: 2, multiplier: "-1" }), "a negative multiplier");
+    await refused(rules({ from: 2, to: 2, multiplier: "0" }), "no day rates");
+    await refused(rules({ from: 2, to: 2, multiplier: "0.99" }), "less than 1 day rate");
+    await refused(rules({ from: 2, to: 2, multiplier: "1.234" }), "more than 2 decimal places");
+    await refused(rules({ from: 2, to: 2, multiplier: "1e3" }), "an exponent");
+    await refused(rules({ from: 2, to: 2 }), "no multiplier");
+    await refused(JSON.stringify({ from: 2, to: 2, multiplier: "1.5" }), "not a list");
+    await refused("not json", "not JSON");
+    const asArray = await asA.api("/api/instances/editDayRateMultipliers.php", { instances_id: a.instanceId, multipliers: ["1.5"] });
+    expect(asArray.json, "sent as an array").toMatchObject({ result: false, error: { code: "PARAM-ERROR" } });
+    await refused(rules({ from: 2, to: 2, multiplier: ["1.5"] }), "a multiplier that isn't a number");
+    // Only the caller's own business is changed
+    expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [b.instanceId])[0].m).toBeNull();
+  });
+
+  test("weekly rates can be hidden, except on a project with a custom duration in weeks", async ({ asA, tenants: { a } }) => {
+    const api = (endpoint: string, params: Parameters<Session["api"]>[1]) => asA.api(endpoint, { instances_id: a.instanceId, ...params });
+    const hide = async (value: string) => {
+      await ok(api("/api/instances/editInstance.php", { formData: formData({ instances_hideWeekRates: value }) }), `setting hide weekly rates to ${value}`);
+      return dbQuery<{ hide: number }>("SELECT instances_hideWeekRates hide FROM instances WHERE instances_id = ?", [a.instanceId])[0].hide;
+    };
+    const project: number = (await api("/api/projects/new.php", { projects_name: "Hide weekly rates test", projects_manager: a.users.full.id, projectsType_id: a.projectTypeId })).json.response.projects_id;
+    await ok(api("/api/projects/changeProjectDeliverDates.php", {
+      projects_id: project, projects_dates_deliver_start: "2036-08-01 09:00:00", projects_dates_deliver_end: "2036-08-03 18:00:00",
+    }), "setting the dates");
+    // The project page only says how its duration is charged once something's on it
+    const onProject = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+    await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: onProject }), "assigning");
+    const pages = async () => ({
+      assetType: (await asA.page(`/asset.php?id=${a.assetTypeId}`)).body,
+      asset: (await asA.page(`/asset.php?id=${a.assetTypeId}&asset=${a.assetId}`)).body,
+      assets: (await asA.page("/assets.php")).body,
+      project: (await asA.page(`/project/?id=${project}`)).body,
+    });
+    const weeksInput = /class="form-control float-right d-none" required id="financeDurationMathsWeeks"/;
+
+    let shown = await pages();
+    expect(shown.assetType).toContain("Week Rate");
+    expect(shown.asset).toContain("Cost/week");
+    expect(shown.assets).toContain("/week");
+    expect(shown.project).toContain("Project duration set as 0 weeks and 3 days");
+    expect(shown.project).not.toMatch(weeksInput);
+
+    expect(await hide("1")).toBe(1);
+    const hidden = await pages();
+    expect(hidden.assetType).not.toContain("Week Rate");
+    expect(hidden.asset).not.toContain("Cost/week");
+    expect(hidden.assets).not.toContain("/week");
+    expect(hidden.project).toContain("Project duration set as 3 days");
+    // The weeks box is still on the page, hidden, so saving a custom duration keeps sending 0 weeks
+    expect(hidden.project).toMatch(weeksInput);
+    // Weekly rates already set are kept, ready for when they're shown again
+    expect(hidden.asset).toMatch(/d-none">\s*<div class="input-group-prepend">\s*<span class="input-group-text">\s*Weekly Rate/);
+
+    await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: project, projects_dates_finances_days: 2, projects_dates_finances_weeks: 1 }), "setting a custom duration in weeks");
+    const custom = (await asA.page(`/project/?id=${project}`)).body;
+    expect(custom).toContain("Project duration set as 1 week and 2 days");
+    expect(custom).not.toMatch(weeksInput);
+
+    expect(await hide("0")).toBe(0);
+    expect((await pages()).assets).toContain("/week");
+    // Takes the usual ways of saying yes or no
+    expect(await hide("yes")).toBe(1);
+    expect(await hide("off")).toBe(0);
+    expect(await hide("1")).toBe(1);
+    expect(await hide("")).toBe(0);
+  });
+
+  test("can be set from the business's pricing settings page", async ({ page, tenants: { a, password } }) => {
+    await cacheCdn(page.context());
+    await login(page, a.users.full.email, password);
+    await page.goto("/instances/configuration/pricing.php");
+    await expect(page.locator("#noDayRateMultipliers")).toBeVisible();
+    for (const [from, to, multiplier] of [["2", "2", "1.5"], ["3", "4", "2"]]) {
+      await page.locator("#addDayRateMultiplier").click();
+      const row = page.locator(".dayRateMultiplierRow").last();
+      await row.locator(".dayRateMultiplierFrom").fill(from);
+      await row.locator(".dayRateMultiplierTo").fill(to);
+      await row.locator(".dayRateMultiplierValue").fill(multiplier);
+    }
+    await Promise.all([page.waitForEvent("load"), page.locator("#saveDayRateMultipliers").click()]);
+    await expect(page.locator(".dayRateMultiplierRow")).toHaveCount(2);
+    await expect(page.locator(".dayRateMultiplierValue").first()).toHaveValue("1.5");
+    expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m)
+      .toBe('[{"from":2,"to":2,"multiplier":"1.5"},{"from":3,"to":4,"multiplier":"2"}]');
+
+    await page.locator(".removeDayRateMultiplier").first().click();
+    await Promise.all([page.waitForEvent("load"), page.locator("#saveDayRateMultipliers").click()]);
+    await expect(page.locator(".dayRateMultiplierRow")).toHaveCount(1);
+    expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m)
+      .toBe('[{"from":3,"to":4,"multiplier":"2"}]');
+
+    // The switch is styled over the checkbox, so click its label
+    await Promise.all([page.waitForEvent("load"), page.locator('label[for="instances_hideWeekRates"]').click()]);
+    await expect(page.locator("#instances_hideWeekRates")).toBeChecked();
+    expect(dbQuery("SELECT instances_hideWeekRates h FROM instances WHERE instances_id = ?", [a.instanceId])[0].h).toBe(1);
+  });
 });

@@ -211,7 +211,7 @@
                                                 {% endif %}
                                             <li class="small">
                                                 <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ (asset.tags[0]['assets_value'] ?: asset.assetTypes_value)|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
-                                                {{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/week
+                                                {{ (asset.tags[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/day{% if not USERDATA.instance.instances_hideWeekRates %}<br/>{{ (asset.tags[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}/week{% endif %}
                                             </li>
                                         {% else %}
                                             {% if asset.assetTypes_mass != "" and asset.assetTypes_mass != 0  %}
@@ -221,7 +221,7 @@
                                             {% endif %}
                                             <li class="small">
                                                 <span class="fa-li"><i class="fas fa-money-bill-wave"></i></span> {{ asset.assetTypes_value|money(SEARCH.INSTANCE['instances_config_currency']) }}<br/>
-                                                {{ asset.assetTypes_dayRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/day<br/>{{ asset.assetTypes_weekRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/week
+                                                {{ asset.assetTypes_dayRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/day{% if not USERDATA.instance.instances_hideWeekRates %}<br/>{{ asset.assetTypes_weekRate|money(SEARCH.INSTANCE['instances_config_currency']) }}/week{% endif %}
                                             </li>
                                             <li class="small" title="Number owned"><span class="fa-li"><i class="fas fa-boxes"></i></span> {{asset.count}}</li>
                                         {% endif %}
@@ -270,7 +270,7 @@
                                                                             {% endfor %}
                                                                             <th>Notes</th>
                                                                             <th>Cost/day</th>
-                                                                            <th>Cost/week</th>
+                                                                            {% if not USERDATA.instance.instances_hideWeekRates %}<th>Cost/week</th>{% endif %}
                                                                             <th style="width:1%"><i class="fas fa-flag"></i></th>
                                                                             <th style="width:30px;">
                                                                                 <button class="btn btn-success addToBasketAssetTypeButton" {% if asset.countAvailable < 1 %} disabled {% endif %}" title "Add all of this asset type to the project" data-assetTypeId="{{ asset.assetTypes_id }}"><i class="fas fa-dolly"></i></button>
@@ -286,9 +286,11 @@
                                                                                 <td>
                                                                                     {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
+                                                                                {% if not USERDATA.instance.instances_hideWeekRates %}
                                                                                 <td>
                                                                                     {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
+                                                                                {% endif %}
                                                                                 <td>
                                                                                     {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
                                                                                 </td>
@@ -348,7 +350,7 @@
                                                                             {% endfor %}
                                                                             <th>Notes</th>
                                                                             <th>Cost/day</th>
-                                                                            <th>Cost/week</th>
+                                                                            {% if not USERDATA.instance.instances_hideWeekRates %}<th>Cost/week</th>{% endif %}
                                                                             <th style="width:1%"><i class="fas fa-flag"></i></th>
                                                                             <th style="width:30px;"></th>
                                                                         </tr>
@@ -362,9 +364,11 @@
                                                                                 <td>
                                                                                     {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
+                                                                                {% if not USERDATA.instance.instances_hideWeekRates %}
                                                                                 <td>
                                                                                     {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(SEARCH.INSTANCE['instances_config_currency']) }}
                                                                                 </td>
+                                                                                {% endif %}
                                                                                 <td>
                                                                                     {{ thisasset.flagsblocks.COUNT.FLAG > 0 ?: '' }}
                                                                                 </td>
