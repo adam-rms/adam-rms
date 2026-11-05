@@ -122,7 +122,7 @@ const refusedPages: { file: string; url: string | ((a: Tenant) => string); permi
   ...[
     ["instances/calendarSettings.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"], ["instances/configuration/asset-status.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"],
     ["instances/configuration/barcodes.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"], ["instances/configuration/invoices.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"],
-    ["instances/configuration/logo.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"], ["instances/public.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"],
+    ["instances/configuration/logo.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"], ["instances/configuration/pricing.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"], ["instances/public.php", "BUSINESS:BUSINESS_SETTINGS:VIEW"],
     ["instances/stats.php", "BUSINESS:BUSINESS_STATS:VIEW"], ["instances/trustedDomains.php", "BUSINESS:SETTINGS:EDIT:TRUSTED_DOMAINS"],
     ["instances/customCategories.php", "ASSETS:ASSET_CATEGORIES:VIEW"], ["instances/projectStatuses.php", "PROJECTS:PROJECT_STATUSES:VIEW"],
     ["instances/projectTypes.php", "PROJECTS:PROJECT_TYPES:VIEW"], ["instances/signupCodes.php", "BUSINESS:USER_SIGNUP_CODES:VIEW"],

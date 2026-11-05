@@ -227,14 +227,15 @@ test("transferring an asset that's on a project to another business leaves that 
 });
 
 test.describe("day rate multipliers", () => {
-  // They're a business-wide setting, so put A back how the other tests expect it
-  test.afterEach(() => {
-    seedTenants();
-  });
-
   const none = { received: 0, sales: 0, subHire: 0, staff: 0 };
   const multipliers = (session: Session, instanceId: number, rules: { from: number; to: number; multiplier: string }[]) =>
     session.api("/api/instances/editDayRateMultipliers.php", { instances_id: instanceId, multipliers: JSON.stringify(rules) });
+
+  // They're a business-wide setting, so put A back how the other tests expect it: through the API first, so A's other projects are repriced back
+  test.afterEach(async ({ asA, tenants: { a } }) => {
+    await ok(multipliers(asA, a.instanceId, []), "removing the multipliers");
+    seedTenants();
+  });
 
   test("charge a number of day rates for how many days a project lasts, and reprice projects charged by their dates", async ({ asA, tenants: { a } }) => {
     const api = (endpoint: string, params: Parameters<Session["api"]>[1]) => asA.api(endpoint, { instances_id: a.instanceId, ...params });
@@ -284,7 +285,7 @@ test.describe("day rate multipliers", () => {
     await test.step("moving the dates uses the multiplier for the new length", async () => {
       await dates(byDates, 2);
       await expectFinances(asA, a, byDates, priced(1500));
-      await dates(byDates, 6);
+      await dates(byDates, 7);
       await expectFinances(asA, a, byDates, priced(3000));
       // 8 days isn't covered, so it's a day rate a day
       await dates(byDates, 8);
@@ -342,8 +343,15 @@ test.describe("day rate multipliers", () => {
     await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: asset }), "assigning");
     await ok(api("/api/assets/delete.php", { assets_id: asset }), "deleting the asset");
     await expectFinances(asA, a, project, zero);
+    // One with a custom price of £20.00 isn't repriced either
+    const customPriced = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+    await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: customPriced }), "assigning another");
+    const [{ id }] = dbQuery<{ id: number }>("SELECT assetsAssignments_id id FROM assetsAssignments WHERE projects_id = ? AND assets_id = ?", [project, customPriced]);
+    await ok(api("/api/projects/assets/setPrice.php", { assetsAssignments: [id], assetsAssignments_customPrice: "20.00" }), "setting a custom price");
+    const customOnly = { ...zero, subTotal: 2000, total: 2000, grandTotal: 2000, value: 10000, mass: 1 };
+    await expectFinances(asA, a, project, customOnly);
     await ok(multipliers(asA, a.instanceId, [{ from: 3, to: 3, multiplier: "2" }]), "setting a multiplier");
-    await expectFinances(asA, a, project, zero);
+    await expectFinances(asA, a, project, customOnly);
   });
 
   test("multipliers that overlap or aren't numbers are refused, and nothing changes", async ({ asA, tenants: { a, b } }) => {
@@ -421,8 +429,10 @@ test.describe("day rate multipliers", () => {
 
     expect(await hide("0")).toBe(0);
     expect((await pages()).assets).toContain("/week");
-    // Anything other than 0 or empty turns it on
+    // Takes the usual ways of saying yes or no
     expect(await hide("yes")).toBe(1);
+    expect(await hide("off")).toBe(0);
+    expect(await hide("1")).toBe(1);
     expect(await hide("")).toBe(0);
   });
 

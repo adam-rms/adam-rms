@@ -81,7 +81,7 @@ foreach ($projects as $project) {
     $projectFinanceCacher->save();
 }
 
-$bCMS->auditLog("EDIT-INSTANCE", "instances", "Set day rate multipliers to " . json_encode($clean), $AUTH->data['users_userid'], null, $AUTH->data['instance']["instances_id"]);
+$bCMS->auditLog("EDIT-INSTANCE", "instances", "Set day rate multipliers to " . json_encode($clean), $AUTH->data['users_userid'], null, null, $AUTH->data['instance']["instances_id"]);
 finish(true, null, ["multipliers" => $clean]);
 
 /** @OA\Post(
