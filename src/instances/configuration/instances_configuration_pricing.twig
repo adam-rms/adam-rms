@@ -93,6 +93,31 @@
             </script>
             {% endif %}
         </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Weekly Rates</h3>
+            </div>
+            <div class="card-body">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="instances_hideWeekRates"{{ USERDATA.instance.instances_hideWeekRates ? ' checked' }}{% if not "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %} disabled{% endif %}>
+                    <label class="custom-control-label" for="instances_hideWeekRates">Hide weekly rates</label>
+                </div>
+                <p class="text-muted text-sm mt-2">If you price longer hires with the multipliers above rather than with weekly rates, this hides weekly rates on assets and projects. Weekly rates already set aren't removed, and projects with a custom duration in weeks still show it.</p>
+            </div>
+            {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+            <script>
+                $(document).ready(function() {
+                    $('#instances_hideWeekRates').on('change', function() {
+                        ajaxcall("instances/editInstance.php", {
+                            'formData': [{ 'name': 'instances_hideWeekRates', 'value': $(this).is(':checked') ? 1 : 0 }]
+                        }, function (data) {
+                            location.reload();
+                        });
+                    });
+                });
+            </script>
+            {% endif %}
+        </div>
    </div>
 </div>
 {% endblock %}

@@ -375,6 +375,57 @@ test.describe("day rate multipliers", () => {
     expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [b.instanceId])[0].m).toBeNull();
   });
 
+  test("weekly rates can be hidden, except on a project with a custom duration in weeks", async ({ asA, tenants: { a } }) => {
+    const api = (endpoint: string, params: Parameters<Session["api"]>[1]) => asA.api(endpoint, { instances_id: a.instanceId, ...params });
+    const hide = async (value: string) => {
+      await ok(api("/api/instances/editInstance.php", { formData: formData({ instances_hideWeekRates: value }) }), `setting hide weekly rates to ${value}`);
+      return dbQuery<{ hide: number }>("SELECT instances_hideWeekRates hide FROM instances WHERE instances_id = ?", [a.instanceId])[0].hide;
+    };
+    const project: number = (await api("/api/projects/new.php", { projects_name: "Hide weekly rates test", projects_manager: a.users.full.id, projectsType_id: a.projectTypeId })).json.response.projects_id;
+    await ok(api("/api/projects/changeProjectDeliverDates.php", {
+      projects_id: project, projects_dates_deliver_start: "2036-08-01 09:00:00", projects_dates_deliver_end: "2036-08-03 18:00:00",
+    }), "setting the dates");
+    // The project page only says how its duration is charged once something's on it
+    const onProject = (await api("/api/assets/newAssetFromType.php", { formData: formData({ assetTypes_id: a.assetTypeId }) })).json.response.assets_id;
+    await ok(api("/api/projects/assets/assign.php", { projects_id: project, assets_id: onProject }), "assigning");
+    const pages = async () => ({
+      assetType: (await asA.page(`/asset.php?id=${a.assetTypeId}`)).body,
+      asset: (await asA.page(`/asset.php?id=${a.assetTypeId}&asset=${a.assetId}`)).body,
+      assets: (await asA.page("/assets.php")).body,
+      project: (await asA.page(`/project/?id=${project}`)).body,
+    });
+    const weeksInput = /class="form-control float-right d-none" required id="financeDurationMathsWeeks"/;
+
+    let shown = await pages();
+    expect(shown.assetType).toContain("Week Rate");
+    expect(shown.asset).toContain("Cost/week");
+    expect(shown.assets).toContain("/week");
+    expect(shown.project).toContain("Project duration set as 0 weeks and 3 days");
+    expect(shown.project).not.toMatch(weeksInput);
+
+    expect(await hide("1")).toBe(1);
+    const hidden = await pages();
+    expect(hidden.assetType).not.toContain("Week Rate");
+    expect(hidden.asset).not.toContain("Cost/week");
+    expect(hidden.assets).not.toContain("/week");
+    expect(hidden.project).toContain("Project duration set as 3 days");
+    // The weeks box is still on the page, hidden, so saving a custom duration keeps sending 0 weeks
+    expect(hidden.project).toMatch(weeksInput);
+    // Weekly rates already set are kept, ready for when they're shown again
+    expect(hidden.asset).toMatch(/d-none">\s*<div class="input-group-prepend">\s*<span class="input-group-text">\s*Weekly Rate/);
+
+    await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: project, projects_dates_finances_days: 2, projects_dates_finances_weeks: 1 }), "setting a custom duration in weeks");
+    const custom = (await asA.page(`/project/?id=${project}`)).body;
+    expect(custom).toContain("Project duration set as 1 week and 2 days");
+    expect(custom).not.toMatch(weeksInput);
+
+    expect(await hide("0")).toBe(0);
+    expect((await pages()).assets).toContain("/week");
+    // Anything other than 0 or empty turns it on
+    expect(await hide("yes")).toBe(1);
+    expect(await hide("")).toBe(0);
+  });
+
   test("can be set from the business's pricing settings page", async ({ page, tenants: { a, password } }) => {
     await cacheCdn(page.context());
     await login(page, a.users.full.email, password);
@@ -398,5 +449,10 @@ test.describe("day rate multipliers", () => {
     await expect(page.locator(".dayRateMultiplierRow")).toHaveCount(1);
     expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m)
       .toBe('[{"from":3,"to":4,"multiplier":"2"}]');
+
+    // The switch is styled over the checkbox, so click its label
+    await Promise.all([page.waitForEvent("load"), page.locator('label[for="instances_hideWeekRates"]').click()]);
+    await expect(page.locator("#instances_hideWeekRates")).toBeChecked();
+    expect(dbQuery("SELECT instances_hideWeekRates h FROM instances WHERE instances_id = ?", [a.instanceId])[0].h).toBe(1);
   });
 });

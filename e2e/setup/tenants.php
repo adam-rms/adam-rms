@@ -102,7 +102,7 @@ function tenant(string $letter): array {
         "instances_assetLimit" => 0, "instances_userLimit" => 0, "instances_projectLimit" => 0, "instances_planName" => "",
         "instances_calendarConfig" => '{"showProjectStatus":true,"showSubProjects":true,"useCustomWeekNumbers":true,"defaultView":"dayGridMonth"}',
         "instances_calendarHash" => "e2e-calendar-hash-$lower", "instances_publicConfig" => null, "instances_trustedDomains" => null,
-        "instances_dayRateMultipliers" => null,
+        "instances_dayRateMultipliers" => null, "instances_hideWeekRates" => 0,
     ]);
 
     $fullPosition = upsert("instancePositions", "instancePositions_id", ["instances_id" => $instance, "instancePositions_displayName" => "$marker full access"], [
