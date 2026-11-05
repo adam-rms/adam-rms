@@ -259,20 +259,33 @@ test.describe("day rate multipliers", () => {
     /** Finances of byDates when each asset costs `each` pence */
     const priced = (each: number, assets = 2) => ({ ...none, subTotal: each * assets, discounts: each / 2, total: each * assets - each / 2, grandTotal: each * assets - each / 2, value: 10000 * assets, mass: assets });
     await expectFinances(asA, a, byDates, priced(3000));
-    // A custom duration of 2 days isn't touched by the multipliers
+    // A custom duration of 1 week and 2 days: £30.00 + 2 x £10.00
     const custom = await newProject("Multiplier custom duration test", 1, 1);
-    await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: 2, projects_dates_finances_weeks: 0 }), "setting a custom duration");
-    const customFinances = { ...none, subTotal: 2000, discounts: 0, total: 2000, grandTotal: 2000, value: 10000, mass: 1 };
+    await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: 2, projects_dates_finances_weeks: 1 }), "setting a custom duration");
+    const customFinances = { ...none, subTotal: 5000, discounts: 0, total: 5000, grandTotal: 5000, value: 10000, mass: 1 };
     await expectFinances(asA, a, custom, customFinances);
 
-    await test.step("setting multipliers reprices the projects charged by their dates", async () => {
+    await test.step("setting multipliers reprices projects", async () => {
       await ok(multipliers(asA, a.instanceId, [{ from: 5, to: 7, multiplier: "3" }, { from: 2, to: 2, multiplier: "1.50" }, { from: 3, to: 4, multiplier: "2" }]), "setting multipliers");
       // Kept in order, tidied up
       expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m)
         .toBe('[{"from":2,"to":2,"multiplier":"1.5"},{"from":3,"to":4,"multiplier":"2"},{"from":5,"to":7,"multiplier":"3"}]');
       // 3 days is 2 day rates
       await expectFinances(asA, a, byDates, priced(2000));
-      await expectFinances(asA, a, custom, customFinances);
+      // The custom duration's 2 days are 1.5 day rates; its week is still a week rate
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 4500, total: 4500, grandTotal: 4500 });
+    });
+
+    await test.step("a custom duration's days go through the multipliers too", async () => {
+      await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: 3, projects_dates_finances_weeks: 0 }), "changing the custom duration");
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 2000, total: 2000, grandTotal: 2000 });
+      const page = (await asA.page(`/project/?id=${custom}`)).body;
+      expect(page).toContain("Project duration set as 0 weeks and 3 days (charged as 2 day rates) for asset pricing purposes.");
+      expect(page).toContain("the days the equipment is used for, which are charged using your");
+      // So saving the box as it is leaves the price alone
+      expect(page).toMatch(/value="3"[^>]*id="financeDurationMathsDays"/);
+      await ok(api("/api/projects/changeProjectFinanceDurationMaths.php", { projects_id: custom, projects_dates_finances_days: 2, projects_dates_finances_weeks: 1 }), "changing it back");
+      await expectFinances(asA, a, custom, { ...customFinances, subTotal: 4500, total: 4500, grandTotal: 4500 });
     });
 
     await test.step("the project page says how the duration is charged", async () => {
@@ -310,6 +323,8 @@ test.describe("day rate multipliers", () => {
     await test.step("a price that doesn't come to a whole number of pence is rounded the same way everywhere", async () => {
       await ok(multipliers(asA, a.instanceId, [{ from: 4, to: 4, multiplier: "1.35" }]), "changing the multipliers");
       await expectFinances(asA, a, byDates, priced(1350));
+      // 2 days isn't covered any more, so the custom duration is back to a day rate a day
+      await expectFinances(asA, a, custom, customFinances);
       const [{ assets_id }] = dbQuery<{ assets_id: number }>("SELECT assets_id FROM assetsAssignments WHERE assetsAssignments_id = ?", [discounted]);
       await ok(api("/api/assets/editAsset.php", { formData: formData({ assets_id, assets_dayRate: "10.01" }) }), "changing an asset's day rate");
       // £10.01 x 1.35 = £13.5135, which rounds to £13.51; half price is £6.755, which rounds to £6.76, so £6.75 off

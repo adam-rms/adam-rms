@@ -37,10 +37,9 @@ for ($i = 1; $i < count($clean); $i++) {
 $currency = new Currency($AUTH->data['instance']['instances_config_currency']);
 $projectFinanceHelper = new projectFinance();
 
-// Projects priced by their dates (rather than a custom number of days and weeks) are repriced by the change, so their running totals need adjusting
+// Projects are repriced by the change, whether their days come from their dates or a custom duration, so their running totals need adjusting
 $DBLIB->where("projects.instances_id", $AUTH->data['instance']['instances_id']);
 $DBLIB->where("projects.projects_deleted", 0);
-$DBLIB->where("(projects.projects_dates_finances_days IS NULL OR projects.projects_dates_finances_weeks IS NULL)");
 $projects = $DBLIB->get("projects", null, ["projects_id"]);
 $priceMathsOld = [];
 foreach ($projects as $project) {
@@ -87,7 +86,7 @@ finish(true, null, ["multipliers" => $clean]);
 /** @OA\Post(
  *     path="/instances/editDayRateMultipliers.php",
  *     summary="Edit Day Rate Multipliers",
- *     description="Set how many day rates to charge for a hire lasting a given number of days (e.g. 1.5 day rates for 2 days). Projects priced by their dates are repriced.
+ *     description="Set how many day rates to charge for a hire lasting a given number of days (e.g. 1.5 day rates for 2 days). Projects are repriced.
 Requires Instance Permission BUSINESS:BUSINESS_SETTINGS:EDIT
 ",
  *     operationId="editDayRateMultipliers",

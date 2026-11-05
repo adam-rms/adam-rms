@@ -24,7 +24,7 @@ $projectFinanceHelper = new projectFinance();
 $projectFinanceCacher = new projectFinanceCacher($project['projects_id']);
 $priceMathsOld = $projectFinanceHelper->durationMaths($project['projects_id']);
 if ($REMOVECUSTOM) $priceMathsNew = $projectFinanceHelper->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end'], $AUTH->data['instance']['instances_id']);
-else $priceMathsNew = ["days" => $DAYS, "weeks" => $WEEKS];
+else $priceMathsNew = $projectFinanceHelper->durationMathsByCustom($DAYS, $WEEKS, $priceMathsOld['calendarDays'], $AUTH->data['instance']['instances_id']);
 
 //We're changing dates so we need to update pricing
 $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);

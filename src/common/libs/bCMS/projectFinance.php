@@ -42,18 +42,29 @@ class projectFinance
     return self::parseDayRateMultipliers($instance['instances_dayRateMultipliers']);
   }
   /**
-   * $instances_id is the business the project belongs to - if it has day rate multipliers set, "days" is the number of day rates
-   * to charge (which may not be a whole number) rather than the number of calendar days
+   * If the business ($instances_id) has a day rate multiplier for the number of days being charged, "days" becomes the number of
+   * day rates to charge for them (which may not be a whole number), and "durationDays" keeps the number of days it was worked out from
    */
+  private function applyDayRateMultiplier($maths, $instances_id)
+  {
+    $multiplier = self::dayRateMultiplierFor($maths['days'], $this->instanceDayRateMultipliers($instances_id));
+    if ($multiplier === null) return $maths;
+    return array_merge($maths, ["days" => $multiplier, "durationDays" => $maths['days'], "dayRateMultiplier" => $multiplier]);
+  }
   public function durationMathsByDates($start, $end, $instances_id = null)
   {
     $start = strtotime(date("d F Y 00:00:00", strtotime($start)));
     $end = strtotime(date("d F Y 23:59:59", strtotime($end)));
     $diff = ceil(($end - $start) / 86400);
     if ($diff < 1) $diff = 1;
-    $multiplier = self::dayRateMultiplierFor($diff, $this->instanceDayRateMultipliers($instances_id));
-    if ($multiplier !== null) return ["days" => $multiplier, "weeks" => 0, "calendarDays" => $diff, "dayRateMultiplier" => $multiplier];
-    return ["days" => $diff, "weeks" => 0, "calendarDays" => $diff];
+    return $this->applyDayRateMultiplier(["days" => $diff, "weeks" => 0, "calendarDays" => $diff], $instances_id);
+  }
+  /**
+   * A custom duration: $days are the days the equipment is used for, so they go through the multipliers too, and weeks are charged a week rate each
+   */
+  public function durationMathsByCustom($days, $weeks, $calendarDays, $instances_id)
+  {
+    return $this->applyDayRateMultiplier(["days" => $days, "weeks" => $weeks, "calendarDays" => $calendarDays], $instances_id);
   }
   public function durationMaths($projects_id)
   {
@@ -64,7 +75,7 @@ class projectFinance
 
     if ($project['projects_dates_finances_days'] !== NULL and $project['projects_dates_finances_weeks'] !== NULL) {
       $rawDays = $this->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end']);
-      return ["days" => $project['projects_dates_finances_days'], "weeks" => $project['projects_dates_finances_weeks'], "calendarDays" => $rawDays['days']];
+      return $this->durationMathsByCustom($project['projects_dates_finances_days'], $project['projects_dates_finances_weeks'], $rawDays['days'], $project['instances_id']);
     } else {
       return $this->durationMathsByDates($project['projects_dates_deliver_start'], $project['projects_dates_deliver_end'], $project['instances_id']);
     }
