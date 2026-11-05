@@ -24,6 +24,7 @@ foreach ($rules as $rule) {
     $whole = ltrim($parts[0], '0') ?: '0';
     $fraction = rtrim($parts[1], '0');
     $multiplier = $fraction === '' ? $whole : $whole . '.' . $fraction;
+    if ($whole === '0') finish(false, ["code" => "PARAM-ERROR", "message" => "Multipliers can't be less than 1 day rate - use a discount instead"]);
     $clean[] = ["from" => $from, "to" => $to, "multiplier" => $multiplier];
 }
 usort($clean, function ($a, $b) {

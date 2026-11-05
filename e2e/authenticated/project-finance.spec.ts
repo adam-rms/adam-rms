@@ -361,6 +361,8 @@ test.describe("day rate multipliers", () => {
     await refused(rules({ from: 0, to: 1, multiplier: "1.5" }), "zero days");
     await refused(rules({ from: 1.5, to: 2, multiplier: "1.5" }), "part of a day");
     await refused(rules({ from: 2, to: 2, multiplier: "-1" }), "a negative multiplier");
+    await refused(rules({ from: 2, to: 2, multiplier: "0" }), "no day rates");
+    await refused(rules({ from: 2, to: 2, multiplier: "0.99" }), "less than 1 day rate");
     await refused(rules({ from: 2, to: 2, multiplier: "1.234" }), "more than 2 decimal places");
     await refused(rules({ from: 2, to: 2, multiplier: "1e3" }), "an exponent");
     await refused(rules({ from: 2, to: 2 }), "no multiplier");
