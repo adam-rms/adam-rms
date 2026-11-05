@@ -293,6 +293,14 @@ test.describe("day rate multipliers", () => {
       expect(page).toContain("Project duration set as 0 weeks and 3 days (charged as 2 day rates) for asset pricing purposes.");
       // The custom duration box starts at the real number of days, not the number of day rates
       expect(page).toMatch(/value="3"[^>]*id="financeDurationMathsDays"/);
+      // The Finance tab, and quotes and invoices with finances on them, say how the equipment was charged
+      expect(page).toContain('<small class="text-muted">3 days, charged as 2 day rates</small>');
+      for (const type of ["quote", "invoice"]) {
+        const document = await asA.page(`/project/projectInvoice.php?id=${byDates}&type=${type}&finance=1`);
+        const [, hireLength] = document.body.match(/\['Hire Length:',"([^"]*)"\]/) ?? [];
+        expect(hireLength && JSON.parse(`"${hireLength}"`), type).toBe("3 days, charged as 2 day rates");
+        expect((await asA.page(`/project/projectInvoice.php?id=${byDates}&type=${type}`)).body, `${type} without finances`).not.toContain("Hire Length");
+      }
     });
 
     await test.step("moving the dates uses the multiplier for the new length", async () => {
@@ -343,6 +351,7 @@ test.describe("day rate multipliers", () => {
       expect(dbQuery("SELECT instances_dayRateMultipliers m FROM instances WHERE instances_id = ?", [a.instanceId])[0].m).toBeNull();
       await expectFinances(asA, a, byDates, priced(4000));
       await expectFinances(asA, a, custom, { ...customFinances, subTotal: 4000, total: 4000, grandTotal: 4000 });
+      expect((await asA.page(`/project/projectInvoice.php?id=${byDates}&type=invoice&finance=1`)).body).not.toContain("Hire Length");
     });
   });
 
