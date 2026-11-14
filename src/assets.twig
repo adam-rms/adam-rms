@@ -17,6 +17,7 @@
             {% endfor %}
         {% endif %}
         <form method="get" action="{{CONFIG.ROOTURL}}/assets.php" id="assetSearchForm">
+            <input type="hidden" name="simple" value="1">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Assets</h3>
@@ -30,65 +31,26 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="form-group">
-                                <label>Keyword</label>
-                                <select class="form-control select2bs4" multiple="multiple" name="keyword[]">
-                                    {% for term in searchResults.SEARCH.TERMS.KEYWORDS %}
-                                        <option value="{{ term }}" selected>{{ term }}</option>
-                                    {% endfor %}
-                                </select>
-                                <small class="form-text text-muted">Seperate multiple keywords with a comma</small>
+                        <div class="col-12 col-lg-7">
+                            <div class="form-group mb-2">
+                                <label for="assetSearchSimpleKeyword" class="mb-1">Keyword</label>
+                                <input type="text" id="assetSearchSimpleKeyword" name="simple_keyword" class="form-control" value="{{ searchResults.SEARCH.SIMPLE_KEYWORD }}" placeholder="Search assets by name, tag, category, manufacturer, group…" autocomplete="off">
+                                <small class="form-text text-muted">Searches asset name, description, tag, category, manufacturer and group.</small>
                             </div>
-                            <div class="form-group">
-                                <label>Tag</label>
-                                <select class="form-control select2bs4" multiple="multiple" name="tags[]">
-                                    {% for tag in searchResults.SEARCH.TERMS.TAGS %}
-                                        <option value="{{ tag }}" selected>{{ tag }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Manufacturer</label>
-                                <select class="form-control select2bs4" multiple name="manufacturer[]">
-                                    {% for manufacturer in searchResults.SEARCH['SELECTED_TERMS']['MANUFACTURER'] %}
-                                        <option value="{{ manufacturer.manufacturers_id }}" selected>{{ manufacturer.manufacturers_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            
                         </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="form-group">
-                                <label>Group</label>
-                                <select class="form-control select2bs4" name="group[]" multiple>
-                                    {% for group in searchResults.SEARCH['SELECTED_TERMS']['GROUPS'] %}
-                                        <option value="{{ group.assetGroups_id }}" selected>{{ group.assetGroups_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Category</label>
-                                <select class="form-control select2bs4" multiple name="category[]">
-                                    {% for category in searchResults.SEARCH['SELECTED_TERMS']['CATEGORY'] %}
-                                        <option value="{{ category.assetCategories_id }}" selected>{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Business</label>
-                                <select class="form-control select2 select2bs4" name="instance_id">
+                        <div class="col-12 col-lg-5" id="assetSearchScopeBar">
+                            <div class="form-group mb-2">
+                                <label for="assetSearchInstance" class="mb-0"><small class="text-muted">Business</small></label>
+                                <select class="form-control select2 select2bs4" name="instance_id" id="assetSearchInstance">
                                     {% for instance in USERDATA.instances %}
                                         <option {{ searchResults.SEARCH.INSTANCE_ID == instance.instances_id ? 'selected' : '' }}  value="{{instance.instances_id}}">{{instance.instances_name}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4">
                             {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-                                <div class="form-group">
-                                    <label>Project to assign assets to</label>
-                                    <select class="form-control select2 select2bs4" name="project">
+                                <div class="form-group mb-2">
+                                    <label for="assetSearchProject" class="mb-0"><small class="text-muted">Project to assign assets to</small></label>
+                                    <select class="form-control select2 select2bs4" name="project" id="assetSearchProject">
                                         <option value="">No project selected</option>
                                         {% for project in searchOptions.projects %}
                                             <option {{ searchResults.SEARCH.PROJECT_ID == project.projects_id ? 'selected' : '' }}  value="{{ project.projects_id }}">{{ project.projects_name }}{{ project.clients_name ? " | " ~ project.clients_name : "" }}</option>
@@ -99,57 +61,115 @@
                                     <input type="hidden" name="project_referer" value="{{ searchResults.SEARCH.PROJECT_REFERER }}">
                                 {% endif %}
                             {% else %}
-                            <div class="form-group">
-                                <label>Show availability between</label>
-                                <input type="text" class="form-control" name="dates" value="{{ searchResults.SEARCH.TERMS['DATE-START'] ? searchResults.SEARCH.TERMS['DATE-START'] ~ " - " ~ searchResults.SEARCH.TERMS['DATE-END'] }}" />
-                            </div>
+                                <div class="form-group mb-2">
+                                    <label for="assetSearchDates" class="mb-0"><small class="text-muted">Show availability between</small></label>
+                                    <input type="text" class="form-control" name="dates" id="assetSearchDates" value="{{ searchResults.SEARCH.TERMS['DATE-START'] ? searchResults.SEARCH.TERMS['DATE-START'] ~ " - " ~ searchResults.SEARCH.TERMS['DATE-END'] }}" />
+                                </div>
                             {% endif %}
-                            <div class="form-group">
-                                <label>Number of results per page</label>
-                                <select class="form-control select2 select2bs4" name="resultsperpage">
-                                    <option {{ searchResults.SEARCH.PAGE_LIMIT == 10 ? 'selected' : '' }}>10</option>
-                                    <option {{ searchResults.SEARCH.PAGE_LIMIT == 20 ? 'selected' : '' }}>20</option>
-                                    <option {{ searchResults.SEARCH.PAGE_LIMIT == 50 ? 'selected' : '' }}>50</option>
-                                    <option {{ searchResults.SEARCH.PAGE_LIMIT == 100 ? 'selected' : '' }}>100</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Sort by</label>
-                                <select class="form-control select2 select2bs4" name="sort">
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "price-a" ? 'selected' : '' }}  value="price-a">Weekly Price (low-high)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "price-d" ? 'selected' : '' }}  value="price-d">Weekly Price (high-low)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "value-a" ? 'selected' : '' }}  value="value-a">Value (low-high)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "value-d" ? 'selected' : '' }}  value="value-d">Value (high-low)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-a" ? 'selected' : '' }}  value="alphabet-a">Alphabetical (A-Z)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-d" ? 'selected' : '' }}  value="alphabet-d">Alphabetical (Z-A)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "mass-a" ? 'selected' : '' }}  value="mass-a">Mass (low-high)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "mass-d" ? 'selected' : '' }}  value="mass-d">Mass (high-low)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "date-d" ? 'selected' : '' }}  value="date-d">Date Added (most recent first)</option>
-                                    <option {{ searchResults.SEARCH.TERMS.SORT == "date-a" ? 'selected' : '' }}  value="date-a">Date Added (oldest first)</option>
-                                </select>
-                            </div>
-                            <div class="mb-1">
-                                <input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}>
-                                <span>Show assets linked to others</span>
+                            <div class="form-row">
+                                <div class="form-group col-auto mb-2" style="min-width:14rem;">
+                                    <label for="assetSearchSort" class="mb-0"><small class="text-muted">Sort by</small></label>
+                                    <select class="form-control select2 select2bs4" name="sort" id="assetSearchSort">
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "price-a" ? 'selected' : '' }}  value="price-a">Weekly Price (low-high)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "price-d" ? 'selected' : '' }}  value="price-d">Weekly Price (high-low)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "value-a" ? 'selected' : '' }}  value="value-a">Value (low-high)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "value-d" ? 'selected' : '' }}  value="value-d">Value (high-low)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-a" ? 'selected' : '' }}  value="alphabet-a">Alphabetical (A-Z)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "alphabet-d" ? 'selected' : '' }}  value="alphabet-d">Alphabetical (Z-A)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "mass-a" ? 'selected' : '' }}  value="mass-a">Mass (low-high)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "mass-d" ? 'selected' : '' }}  value="mass-d">Mass (high-low)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "date-d" ? 'selected' : '' }}  value="date-d">Date Added (most recent first)</option>
+                                        <option {{ searchResults.SEARCH.TERMS.SORT == "date-a" ? 'selected' : '' }}  value="date-a">Date Added (oldest first)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-auto mb-2" style="min-width:8rem;">
+                                    <label for="assetSearchPerPage" class="mb-0"><small class="text-muted">Per page</small></label>
+                                    <select class="form-control select2 select2bs4" name="resultsperpage" id="assetSearchPerPage">
+                                        <option {{ searchResults.SEARCH.PAGE_LIMIT == 10 ? 'selected' : '' }}>10</option>
+                                        <option {{ searchResults.SEARCH.PAGE_LIMIT == 20 ? 'selected' : '' }}>20</option>
+                                        <option {{ searchResults.SEARCH.PAGE_LIMIT == 50 ? 'selected' : '' }}>50</option>
+                                        <option {{ searchResults.SEARCH.PAGE_LIMIT == 100 ? 'selected' : '' }}>100</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="mb-1">
-                                <input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}>
-                                <span>Show archived assets</span>
+                                <label class="d-block mb-1" style="font-weight:normal;"><input type="checkbox" name="hideimages" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.HIDEIMAGES ? "checked" : "" }}> Hide asset images</label>
                             </div>
-                            <div class="mb-1">
-                                <input type="checkbox" name="hideimages" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.HIDEIMAGES ? "checked" : "" }}>
-                                <span>Hide asset images</span>
+                        </div>
+                    </div>
+                    {% set advancedActive = searchResults.SEARCH.TERMS.TAGS|length > 0
+                        or searchResults.SEARCH.TERMS.MANUFACTURER|length > 0
+                        or searchResults.SEARCH.TERMS.GROUPS|length > 0
+                        or searchResults.SEARCH.TERMS.CATEGORY|length > 0
+                        or searchResults.SEARCH.SETTINGS.SHOWLINKED
+                        or searchResults.SEARCH.SETTINGS.SHOWARCHIVED %}
+                    <div class="mb-2">
+                        <a href="#" id="assetSearchAdvancedToggle" role="button" aria-expanded="false" aria-controls="assetSearchAdvanced">
+                            <i class="fas fa-caret-right" id="assetSearchAdvancedToggleIcon"></i>
+                            <span id="assetSearchAdvancedToggleLabel">Advanced filters</span>
+                        </a>
+                    </div>
+                    <div id="assetSearchAdvanced" data-open="{{ advancedActive ? '1' : '0' }}" style="display:none;">
+                        <hr>
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>Tag</label>
+                                    <select class="form-control select2bs4" multiple="multiple" name="tags[]">
+                                        {% for tag in searchResults.SEARCH.TERMS.TAGS %}
+                                            <option value="{{ tag }}" selected>{{ tag }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Manufacturer</label>
+                                    <select class="form-control select2bs4" multiple name="manufacturer[]">
+                                        {% for manufacturer in searchResults.SEARCH['SELECTED_TERMS']['MANUFACTURER'] %}
+                                            <option value="{{ manufacturer.manufacturers_id }}" selected>{{ manufacturer.manufacturers_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>Group</label>
+                                    <select class="form-control select2bs4" name="group[]" multiple>
+                                        {% for group in searchResults.SEARCH['SELECTED_TERMS']['GROUPS'] %}
+                                            <option value="{{ group.assetGroups_id }}" selected>{{ group.assetGroups_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select class="form-control select2bs4" multiple name="category[]">
+                                        {% for category in searchResults.SEARCH['SELECTED_TERMS']['CATEGORY'] %}
+                                            <option value="{{ category.assetCategories_id }}" selected>{{ category.assetCategoriesGroups_name }} - {{ category.assetCategories_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label class="d-block mb-1" style="font-weight:normal;"><input type="checkbox" name="showlinked" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWLINKED ? "checked" : "" }}> Show assets linked to others</label>
+                                    <label class="d-block mb-1" style="font-weight:normal;"><input type="checkbox" name="showarchived" value="1" class="mr-1" {{ searchResults.SEARCH.SETTINGS.SHOWARCHIVED ? "checked" : "" }}> Show archived assets</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer" id="assetSearchAdvancedFooter" style="display:none;">
                     <button type="submit" class="btn btn-primary btn-lg ">Search</button>
                 </div>
             </div>
         </form>
     </div>
-    <div class="col-12">
+    <div class="col-12" style="position:relative;">
+        <div id="assetSearchLoading" style="display:none;position:absolute;inset:0;z-index:10;background:rgba(255,255,255,0.55);text-align:center;padding-top:60px;">
+            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+        </div>
+        <div id="assetSearchResults">
+        {# The project these results were rendered for; the add/remove buttons act on it #}
+        <span id="assetSearchResultsProject" hidden data-project-id="{{ searchResults.PROJECT.ID }}" data-project-name="{{ searchResults.PROJECT.NAME }}"></span>
         {% if searchResults.ASSETS %}
         <div class="card card-solid">
             <div class="card-header">
@@ -438,17 +458,208 @@
             </div>
         </div>
         {% endif %}
+        </div>
     </div>
 </div>
 <script>
-function replaceQueryParam(param, newval, search) {
-    var regex = new RegExp("([?;&])" + param + "[^&;]*[;&]?");
-    var query = search.replace(regex, "$1").replace(/&$/, '');
-
-    return (query.length > 2 ? query + "&" : "?") + (newval ? param + "=" + newval : '');
-}
 $(document).ready(function () {
-    $('#assetSearchForm input[name ="dates"]').daterangepicker({
+    var $form = $('#assetSearchForm');
+    var $simpleKeyword = $('#assetSearchSimpleKeyword');
+    var $advancedSection = $('#assetSearchAdvanced');
+    var $advancedFooter = $('#assetSearchAdvancedFooter');
+    var $advancedToggle = $('#assetSearchAdvancedToggle');
+    var $advancedToggleIcon = $('#assetSearchAdvancedToggleIcon');
+    var $advancedToggleLabel = $('#assetSearchAdvancedToggleLabel');
+    var $results = $('#assetSearchResults');
+    var $loading = $('#assetSearchLoading');
+
+    // Clear every Advanced filter (tag, manufacturer, group, category, show linked,
+    // show archived) - including any that arrived in the URL - so a filter in a
+    // collapsed panel can never silently narrow the search. The keyword box and the
+    // scope bar (business, project or dates, sort, per page, hide images) sit outside
+    // the panel and are left alone.
+    function clearAdvancedFields() {
+        $advancedSection.find('input, select').each(function () {
+            if (this.type === 'checkbox') {
+                this.checked = false;
+            } else if (this.tagName === 'SELECT') {
+                $(this).find('option').prop('selected', false);
+                // The .select2 namespace refreshes select2's display without firing
+                // the change handler below, so clearing runs a single search.
+                $(this).trigger('change.select2');
+            } else {
+                this.value = '';
+            }
+        });
+    }
+
+    // The panel starts open when the page was loaded with any Advanced filter set
+    // (e.g. from a manufacturer's "view assets" link), so an active filter is never hidden.
+    var advancedOpen = $advancedSection.data('open') == 1;
+    function applyAdvancedVisibility() {
+        $advancedSection.toggle(advancedOpen);
+        $advancedFooter.toggle(advancedOpen);
+        $advancedToggleIcon.toggleClass('fa-caret-down', advancedOpen).toggleClass('fa-caret-right', !advancedOpen);
+        $advancedToggleLabel.text(advancedOpen ? 'Hide advanced filters' : 'Advanced filters');
+        $advancedToggle.attr('aria-expanded', advancedOpen ? 'true' : 'false');
+    }
+    applyAdvancedVisibility();
+    $advancedToggle.on('click', function (e) {
+        e.preventDefault();
+        advancedOpen = !advancedOpen;
+        applyAdvancedVisibility();
+        if (!advancedOpen) {
+            // Collapsing clears the filters, so search again to keep the results and
+            // the URL in step with what the form now shows.
+            clearAdvancedFields();
+            scheduleSearch(0);
+        }
+    });
+
+    // --- Auto-search machinery ---------------------------------------------
+    var debounceTimer = null;
+    var currentAbort = null;
+
+    // The parameters a search sends. The keyword box, scope bar and Advanced filters
+    // all combine into one query. keyword[] (the old multi-keyword box) is left out:
+    // the server moves it into the keyword box when an old link is opened.
+    var QUERY_ALLOW = {
+        'simple': 1, 'simple_keyword': 1, 'page': 1,
+        'project': 1, 'project_referer': 1,
+        'instance_id': 1, 'resultsperpage': 1, 'sort': 1,
+        'showlinked': 1, 'showarchived': 1, 'hideimages': 1,
+        'tags[]': 1, 'manufacturer[]': 1, 'group[]': 1, 'category[]': 1, 'dates': 1,
+    };
+
+    function buildQueryString(overridePage) {
+        var params = new URLSearchParams();
+        $form.find('input, select').each(function () {
+            var el = this;
+            var name = el.name;
+            if (!name || !QUERY_ALLOW[name]) return;
+            if (el.type === 'checkbox') {
+                if (el.checked) params.append(name, el.value);
+                return;
+            }
+            if (el.tagName === 'SELECT' && el.multiple) {
+                $(el).find('option:selected').each(function () {
+                    params.append(name, this.value);
+                });
+                return;
+            }
+            var val = el.value;
+            if (val === '' || val == null) return;
+            params.append(name, val);
+        });
+        if (overridePage != null) {
+            params.delete('page');
+            params.append('page', overridePage);
+        }
+        return params.toString();
+    }
+
+    function runSearch(overridePage) {
+        if (currentAbort) {
+            currentAbort.abort();
+        }
+        var qs = buildQueryString(overridePage);
+        var url = "{{ CONFIG.ROOTURL }}/assets.php?" + qs;
+        // Each search checks it is still the latest before touching the page, so an
+        // older, superseded search can neither swap in its results nor hide the
+        // loading overlay while the newer one is running.
+        var controller = new AbortController();
+        currentAbort = controller;
+        $loading.stop(true, true).fadeIn(80);
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+            signal: controller.signal
+        }).then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.text();
+        }).then(function (html) {
+            if (controller !== currentAbort) return;
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var next = doc.getElementById('assetSearchResults');
+            if (!next) throw new Error('No results block in response');
+            // An asset details dialog lives inside the results, so a swap removes it
+            // while its backdrop (on <body>) would stay behind; clear that up too.
+            var dialogOpen = $results.find('.modal.show').length > 0;
+            // Tear down the old carousels first: Slick's window handlers and autoplay
+            // timers outlive their removed elements otherwise.
+            $results.find('.slick.slick-initialized').slick('unslick');
+            // Preserve the overlay element by swapping only inner content.
+            $results.html(next.innerHTML);
+            if (dialogOpen) {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open').css('padding-right', '');
+            }
+            // Rebind carousels inside the new results.
+            $results.find('.slick').slick({
+                dots: false,
+                arrows: false,
+                focusOnSelect: true,
+                pauseOnHover: true,
+                draggable: false,
+                infinite: true,
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 2000,
+            });
+            // Update URL (without page reload) so bookmarks / refresh work.
+            history.replaceState(null, '', window.location.pathname + '?' + qs);
+        }).catch(function (err) {
+            if (err.name === 'AbortError' || controller !== currentAbort) return;
+            console.error('Asset search failed', err);
+            $results.html('<div class="alert alert-warning" id="assetSearchError">The search could not be completed. Please try again, or reload the page.</div>');
+        }).finally(function () {
+            if (controller !== currentAbort) return;
+            currentAbort = null;
+            $loading.stop(true, true).fadeOut(120);
+        });
+    }
+
+    function scheduleSearch(delayMs) {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+            debounceTimer = null;
+            runSearch(1); // any filter change resets to page 1
+        }, delayMs);
+    }
+
+    // Debounced input on the keyword box.
+    $simpleKeyword.on('input', function () { scheduleSearch(500); });
+
+    // Immediate search when a scope bar control (business, project, sort, per page,
+    // hide images) or an Advanced filter changes. The dates box searches from its
+    // picker's apply/cancel events below.
+    $('#assetSearchScopeBar, #assetSearchAdvanced').on('change', 'input:not([name="dates"]), select', function () {
+        scheduleSearch(0);
+    });
+
+    // Manual search button — submit fires immediately, cancelling any pending.
+    $form.on('submit', function (e) {
+        e.preventDefault();
+        if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; }
+        runSearch(1);
+    });
+
+    // Pagination — swap results instead of full navigation. If the keyword has been
+    // edited and its search is still waiting, these page links belong to the old
+    // keyword, so run the new search (from page 1) now instead.
+    $(document).on('click', '#assetSearchResults .page-link[data-page]', function (e) {
+        e.preventDefault();
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = null;
+            runSearch(1);
+            return;
+        }
+        runSearch($(this).data('page'));
+    });
+
+    $form.find('input[name ="dates"]').daterangepicker({
         timePicker: true,
         timePickerIncrement: 15,
         locale: {
@@ -458,22 +669,15 @@ $(document).ready(function () {
     });
     $('#assetSearchForm input[name ="dates"]').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD MMM YYYY hh:mm A') + ' - ' + picker.endDate.format('DD MMM YYYY hh:mm A'));
+        scheduleSearch(0);
     });
     $('#assetSearchForm input[name ="dates"]').on('cancel.daterangepicker', function(ev, picker) {
         $(this).val('');
+        scheduleSearch(0);
     });
     $('#assetSearchForm .select2').select2({
         theme: "bootstrap4",
         width: '100%'
-    });
-    $('#assetSearchForm select[name ="keyword[]"]').select2({
-        tags: true,
-        tokenSeparators: [',', ';'],
-        multiple: true,
-        theme: "bootstrap4",
-        minimumInputLength: 1,
-        width: '100%',
-        placeholder: "SD7T, Viper, Wash, Condenser, CYC, Dynamic, Clamp",
     });
     $('#assetSearchForm select[name ="tags[]"]').select2({
         tags: true,
@@ -591,11 +795,6 @@ $(document).ready(function () {
             }
         }
     });
-    $(document).on("click",".page-link[data-page]",function () {
-        var str = window.location.search
-        str = replaceQueryParam('page', $(this).data("page"), str)
-        window.location = window.location.pathname + str
-    });
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -614,39 +813,63 @@ $(document).ready(function () {
         autoplay: true,
         autoplaySpeed: 2000,
     });
-    {% if searchResults.PROJECT.ID != null and "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
-    $(".addToBasketAssetButton").click(function () {
-        var assetId=$(this).data("assetid");
-        ajaxcall("projects/assets/assign.php", {"assets_id":$(this).data("assetid"),"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
-            $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
-            $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
-            Toast.fire({
-                type: 'success',
-                title: 'Added to {{ searchResults.PROJECT.NAME }}'
-            });
-        });
-    });
-    $(".addToBasketAssetTypeButton").click(function () {
-        const thisButton = $(this);
-        var assetTypeId = thisButton.data("assettypeid");
-        ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
-            var failedIds = (data.response && data.response.failed ? data.response.failed : []).map(function(f) { return f.assets_id; });
-            $(".addToBasketAssetButton[data-assettypeid=" + assetTypeId + "]").each(function() {
-                var assetId = $(this).data("assetid");
-                if (failedIds.indexOf(assetId) === -1) {
-                    $(this).hide();
-                    $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
-                }
-            });
-            thisButton.prop('disabled', true);
-            Toast.fire({
-                type: 'success',
-                title: 'Added to {{ searchResults.PROJECT.NAME }}'
-            });
-        });
-    });
-    $(".removeFromBasketAssetButton").click(function () {
+    {% if "PROJECTS:PROJECT_ASSETS:CREATE:ASSIGN_AND_UNASSIGN"|instancePermissions %}
+    // The project the current results were rendered for, from a marker inside the
+    // results. Each button reads it once, when clicked, so it acts on the project it
+    // was drawn for even if an auto-search swaps in results for another project
+    // before the request returns. The name is HTML-escaped for the toast title.
+    function resultsProject() {
+        var $marker = $('#assetSearchResultsProject');
+        return {
+            id: $marker.attr('data-project-id') || '',
+            name: $('<div>').text($marker.attr('data-project-name') || '').html()
+        };
+    }
+    // Whether the results on screen are still the ones drawn for this project, so a
+    // late response doesn't flip the buttons on results for a different project.
+    function stillShowing(project) {
+        return resultsProject().id === project.id;
+    }
+    // Delegated so that DOM swaps from auto-search don't detach these handlers.
+    $(document).on('click', '#assetSearchResults .addToBasketAssetButton', function () {
         var assetId = $(this).data("assetid");
+        var project = resultsProject();
+        ajaxcall("projects/assets/assign.php", {"assets_id":assetId,"projects_id":project.id}, function (data) {
+            if (stillShowing(project)) {
+                $(".addToBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+            }
+            Toast.fire({
+                type: 'success',
+                title: 'Added to ' + project.name
+            });
+        });
+    });
+    $(document).on('click', '#assetSearchResults .addToBasketAssetTypeButton', function () {
+        var assetTypeId = $(this).data("assettypeid");
+        var project = resultsProject();
+        ajaxcall("projects/assets/assign.php", {"assetTypes_id":assetTypeId,"projects_id":project.id}, function (data) {
+            if (stillShowing(project)) {
+                var failedIds = (data.response && data.response.failed ? data.response.failed : []).map(function(f) { return f.assets_id; });
+                $(".addToBasketAssetButton[data-assettypeid=" + assetTypeId + "]").each(function() {
+                    var assetId = $(this).data("assetid");
+                    if (failedIds.indexOf(assetId) === -1) {
+                        $(this).hide();
+                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").show();
+                    }
+                });
+                // By selector, not the clicked button: a refresh may have redrawn it
+                $(".addToBasketAssetTypeButton[data-assettypeid=" + assetTypeId + "]").prop('disabled', true);
+            }
+            Toast.fire({
+                type: 'success',
+                title: 'Added to ' + project.name
+            });
+        });
+    });
+    $(document).on('click', '#assetSearchResults .removeFromBasketAssetButton', function () {
+        var assetId = $(this).data("assetid");
+        var project = resultsProject();
         bootbox.confirm({
             message: "Are you sure you wish to remove this asset from the project?",
             buttons: {
@@ -661,12 +884,14 @@ $(document).ready(function () {
             },
             callback: function (result) {
                 if (result) {
-                    ajaxcall("projects/assets/unassign.php", {"assets_id":assetId,"projects_id":"{{ searchResults.SEARCH.PROJECT_ID }}"}, function (data) {
-                        $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
-                        $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                    ajaxcall("projects/assets/unassign.php", {"assets_id":assetId,"projects_id":project.id}, function (data) {
+                        if (stillShowing(project)) {
+                            $(".addToBasketAssetButton[data-assetid=" + assetId + "]").show();
+                            $(".removeFromBasketAssetButton[data-assetid=" + assetId + "]").hide();
+                        }
                         Toast.fire({
                             type: 'success',
-                            title: 'Removed from {{ searchResults.PROJECT.NAME }}'
+                            title: 'Removed from ' + project.name
                         });
                     });
                 }
