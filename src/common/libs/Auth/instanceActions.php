@@ -433,6 +433,17 @@ $instanceActions = [
     'LEGACY-ID' => 81,
     'LEGACY-Sort Rank' => 77,
   ],
+  'BUSINESS:MIGRATE' => [
+    'Category' => 'Business',
+    'Table' => 'Business',
+    'Type' => 'Migrate',
+    'Detail' => null,
+    'Combined Text Description' => 'Business: Migrate',
+    'Dependencies' => null,
+    'Comment' => null,
+    'Supported Token Types' => ["web-session"],
+    'Caution' => 'Allows user to copy all of the business\'s data to the new version of AdamRMS'
+  ],
   'BUSINESS:BUSINESS_STATS:VIEW' => [
     'Category' => 'Business',
     'Table' => 'Business Stats',

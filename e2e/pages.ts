@@ -38,6 +38,7 @@ export const businessPages: PageCase[] = [
   { url: () => "/instances/customCategories.php" },
   { url: () => "/instances/groups.php" },
   { url: () => "/instances/importAssets.php" },
+  { url: () => "/instances/migrate.php?state=e2e-pages-render-state" },
   { url: () => "/instances/join.php" },
   { url: () => "/instances/navigation.php" },
   { url: () => "/instances/new.php" },
