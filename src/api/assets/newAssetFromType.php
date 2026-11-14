@@ -22,15 +22,20 @@ if (isset($array['assets_tag']) and $array['assets_tag'] != null) {
     $DBLIB->where("assets.assets_deleted", 0); //Deleted assets can't be restored, so can be used
     $duplicateAssetTag = $DBLIB->getValue("assets", "count(*)");
     if ($duplicateAssetTag > 0) finish(false, ["code" => "INSERT-FAIL", "message" => "Sorry that tag you chose was a duplicate - please choose another one"]);
-} else $array['assets_tag'] = generateNewTag();
+} else {
+    $array['assets_tag'] = generateNewTag($AUTH->data['instance']['instances_id']);
+    if ($array['assets_tag'] === false) finish(false, ["code" => "TAG-COUNTER-EXHAUSTED", "message" => "Could not generate a new asset tag because the counter is exhausted"]);
+}
 
 $result = $DBLIB->insert("assets", array_intersect_key($array, array_flip(['assets_tag', 'assetTypes_id', 'assets_notes', 'instances_id', 'asset_definableFields_1', 'asset_definableFields_2', 'asset_definableFields_3', 'asset_definableFields_4', 'asset_definableFields_5', 'asset_definableFields_6', 'asset_definableFields_7', 'asset_definableFields_8', 'asset_definableFields_9', 'asset_definableFields_10', 'assets_assetGroups'])));
 
 if (!$result) finish(false, ["code" => "INSERT-FAIL", "message" => "Could not insert asset"]);
 
-function checkDuplicate($value, $type)
+function checkDuplicate($value, $type, $instancesId)
 {
     global $DBLIB;
+    $DBLIB->join("assets", "assets.assets_id=assetsBarcodes.assets_id", "LEFT");
+    $DBLIB->where("assets.instances_id", $instancesId);
     $DBLIB->where("assetsBarcodes_value", $value);
     $DBLIB->where("assetsBarcodes_type", $type);
     $result = $DBLIB->getone("assetsBarcodes", ["assetsBarcodes_id"]);
@@ -47,7 +52,7 @@ $assetBarcodeData = [
     "users_userid" => $AUTH->data['users_userid'],
     "assetsBarcodes_added" => date("Y-m-d H:i:s")
 ];
-while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"], $assetBarcodeData["assetsBarcodes_type"])) {
+while (checkDuplicate($assetBarcodeData["assetsBarcodes_value"], $assetBarcodeData["assetsBarcodes_type"], $AUTH->data['instance']['instances_id'])) {
     $assetBarcodeData["assetsBarcodes_value"] = mt_rand(1000, 999999); //Duplicate, so generate a hopefully random number as a replacement
 }
 $insert = $DBLIB->insert("assetsBarcodes", $assetBarcodeData);
