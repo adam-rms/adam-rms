@@ -17,10 +17,18 @@
             {% endfor %}
         {% endif %}
         <form method="get" action="{{CONFIG.ROOTURL}}/assets.php" id="assetSearchForm">
+            {% if searchResults.SEARCH.LOCATION_ID %}
+                <input type="hidden" name="location" value="{{ searchResults.SEARCH.LOCATION_ID }}">
+            {% endif %}
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Assets</h3>
+                    <h3 class="card-title">
+                        Assets{% if searchResults.SEARCH.LOCATION_ID %} stored at {{ searchResults.SEARCH.LOCATION_NAME }}{% endif %}
+                    </h3>
                     <div class="card-tools">
+                        {% if searchResults.SEARCH.LOCATION_ID %}
+                            <a href="{{ CONFIG.ROOTURL }}/assets.php" class="btn btn-tool" title="Clear location filter"><i class="fas fa-times"></i> Clear location</a>
+                        {% endif %}
 <a href="{{ CONFIG.LINKS_USERGUIDEURL }}assets/finding-assets/" target="_blank" class="btn btn-tool">Help</a>
 
                         <a href="{{ CONFIG.ROOTURL }}/api/assets/export.php?xlsx" class="btn btn-tool" title="Excel Export"><i class="fas fa-file-excel"></i></a>
