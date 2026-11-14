@@ -17,9 +17,8 @@ export const APP_ENV: Record<string, string> = {
   DB_PORT: process.env.DB_PORT ?? "3306",
   DEV_MODE: "true",
   CONFIG_ROOTURL: BASE_URL,
-  MIGRATE_CALLBACK_URL: "http://127.0.0.1:9/migrate-callback",
   // A throwaway Ed25519 key, used nowhere else. MIGRATE_PUBLIC_KEY below is its public half.
-  MIGRATE_SIGNING_KEY: "l+4zyGH/3tyLwAKysLsz2ZUxnA+XH4fT96ZK/jovBse7MBQ/GD0WkC/WDQ2DsdRVGQ/iunZ3pdIJcGOiujjm6g==",
+  CONFIG_MIGRATE_SIGNING_KEY: "l+4zyGH/3tyLwAKysLsz2ZUxnA+XH4fT96ZK/jovBse7MBQ/GD0WkC/WDQ2DsdRVGQ/iunZ3pdIJcGOiujjm6g==",
 };
 export const MIGRATE_PUBLIC_KEY = "uzAUPxg9FpAv1g0Ng7HUVRkP4rp2d6XSCXBjoro45uo=";
 

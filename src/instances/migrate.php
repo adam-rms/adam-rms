@@ -5,17 +5,18 @@ use \Firebase\JWT\JWT;
 
 /**
  * Lets a user prove to the new version of AdamRMS that they may migrate one of their businesses to it.
- * The new version sends them here with a `state`; they pick a business, and go back with a short-lived
- * signed statement of its ID. That statement is not a login, and can't be used for anything on this site.
+ * The new version sends them here with a `state` and the `redirect_uri` to come back to; they pick a business,
+ * and go back with a short-lived signed statement of its ID. That statement is not a login, and can't be used
+ * for anything on this site. It names the redirect_uri it was sent to (`aud`), which the receiver must check
+ * is its own, so one sent anywhere else is worthless.
  *
- * Off unless both environment variables are set:
- *  MIGRATE_CALLBACK_URL - where to send the user back to
- *  MIGRATE_SIGNING_KEY  - base64 Ed25519 secret key (sodium_crypto_sign_secretkey)
+ * Off unless the MIGRATE_SIGNING_KEY config value is set.
  */
-$callbackUrl = getenv('MIGRATE_CALLBACK_URL');
-$signingKey = getenv('MIGRATE_SIGNING_KEY');
+$signingKey = $CONFIGCLASS->get('MIGRATE_SIGNING_KEY');
 $state = isset($_GET['state']) ? $_GET['state'] : '';
-if (!$callbackUrl or !$signingKey or !preg_match('/^[A-Za-z0-9_-]{16,128}$/', $state)) die($TWIG->render('404.twig', $PAGEDATA));
+$callbackUrl = isset($_GET['redirect_uri']) ? filter_var($_GET['redirect_uri'], FILTER_VALIDATE_URL) : false;
+if ($callbackUrl and parse_url($callbackUrl, PHP_URL_SCHEME) !== "https" and !$CONFIG['DEV']) $callbackUrl = false;
+if (!$signingKey or !$callbackUrl or !preg_match('/^[A-Za-z0-9_-]{16,128}$/', $state)) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['instances'] = [];
 foreach ($AUTH->data['instances'] as $instance) {
@@ -40,5 +41,6 @@ if (isset($_POST['migrate_instances_id']) and isset($PAGEDATA['instances'][$_POS
     exit;
 }
 
+$PAGEDATA['callbackHost'] = parse_url($callbackUrl, PHP_URL_HOST);
 $PAGEDATA['pageConfig'] = ["TITLE" => "Migrate Business", "BREADCRUMB" => false];
 echo $TWIG->render('instances/instances_migrate.twig', $PAGEDATA);

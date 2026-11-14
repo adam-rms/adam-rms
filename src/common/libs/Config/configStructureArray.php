@@ -369,6 +369,30 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "CONFIG_AUTH_JWTKey",
   ],
+  "MIGRATE_SIGNING_KEY" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Migration signing key",
+      "group" => "Security & Login",
+      "description" => "Lets users authorise migrating a business to the new version of AdamRMS, which checks the result against the public half of this key. A base64 encoded Ed25519 secret key. Leave blank to turn this off.",
+      "required" => false,
+      "maxlength" => 88,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        if ($value === null or $value === "") return ["valid" => true, "value" => $value, "error" => ''];
+        $decoded = base64_decode($value, true);
+        if ($decoded !== false and strlen($decoded) === SODIUM_CRYPTO_SIGN_SECRETKEYBYTES) return ["valid" => true, "value" => $value, "error" => ''];
+        else return ["valid" => false, "value" => null, "error" => "Invalid Ed25519 secret key"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_MIGRATE_SIGNING_KEY",
+  ],
   "AUTH_NEXTHASH" => [
     "form" => [
       "type" => "select",

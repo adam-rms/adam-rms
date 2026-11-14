@@ -9,7 +9,7 @@
             </div>
             <div class="card-body">
                 {% if instances|length > 0 %}
-                <p>Choose the business to copy to the new version of AdamRMS. Nothing in this business is changed or deleted.</p>
+                <p>Choose the business to copy to the new version of AdamRMS at <strong>{{ callbackHost }}</strong>. Nothing in this business is changed or deleted.</p>
                 <form method="post">
                     {% for instance in instances %}
                     <button type="submit" name="migrate_instances_id" value="{{ instance.instances_id }}" class="btn btn-primary btn-block">{{ instance.instances_name }}</button>

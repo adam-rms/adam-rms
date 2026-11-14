@@ -1,9 +1,10 @@
 import { createPublicKey, verify } from "crypto";
-import { APP_ENV, BASE_URL, MIGRATE_PUBLIC_KEY } from "../env";
+import { BASE_URL, MIGRATE_PUBLIC_KEY } from "../env";
 import { test, expect, type Session } from "../tenants";
 
 const STATE = "e2e-migrate-state-0123456789";
-const URL = `/instances/migrate.php?state=${STATE}`;
+const CALLBACK = "http://127.0.0.1:9/migrate-callback";
+const URL = `/instances/migrate.php?state=${STATE}&redirect_uri=${encodeURIComponent(CALLBACK)}`;
 
 /** Chooses a business on the migrate page, without following the redirect back to the new version */
 const choose = (session: Session, instanceId: number) =>
@@ -17,7 +18,7 @@ test("instances/migrate.php sends the user back with a signed statement of the b
   const response = await choose(asA, a.instanceId);
   expect(response.status()).toBe(302);
   const location = new globalThis.URL(response.headers()["location"]);
-  expect(location.origin + location.pathname).toBe(APP_ENV.MIGRATE_CALLBACK_URL);
+  expect(location.origin + location.pathname).toBe(CALLBACK);
   expect(location.searchParams.get("state")).toBe(STATE);
 
   const [header, payload, signature] = location.searchParams.get("assertion")!.split(".");
@@ -31,7 +32,7 @@ test("instances/migrate.php sends the user back with a signed statement of the b
   const claims = JSON.parse(Buffer.from(payload, "base64url").toString());
   expect(claims).toMatchObject({
     iss: BASE_URL,
-    aud: APP_ENV.MIGRATE_CALLBACK_URL,
+    aud: CALLBACK,
     sub: String(a.users.full.id),
     instances_id: a.instanceId,
     state: STATE,
@@ -47,9 +48,14 @@ test("instances/migrate.php refuses a business the user can't migrate", async ({
   expect((await choose(asLimitedA, a.instanceId)).status()).toBe(200);
 });
 
-test("instances/migrate.php needs a state to send back", async ({ asA }) => {
-  const page = await asA.page("/instances/migrate.php");
-  expect(page.body).not.toContain("migrate_instances_id");
+test("instances/migrate.php needs a state and somewhere to send it back to", async ({ asA }) => {
+  for (const url of [
+    `/instances/migrate.php?redirect_uri=${encodeURIComponent(CALLBACK)}`,
+    `/instances/migrate.php?state=${STATE}`,
+    `/instances/migrate.php?state=${STATE}&redirect_uri=${encodeURIComponent("javascript:alert(1)")}`,
+  ]) {
+    expect((await asA.page(url)).body, url).not.toContain("migrate_instances_id");
+  }
 });
 
 test("instances/migrate.php comes back after signing in", async ({ browser, tenants }) => {
