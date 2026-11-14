@@ -19,10 +19,13 @@ $SEARCH = [
     "PROJECT_REFERER" => $_GET['project_referer'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
     "PAGE_LIMIT" => $_GET['resultsperpage'] ? intval($_GET['resultsperpage']) : 20,
+    "SIMPLE" => (isset($_GET['simple']) and $_GET['simple'] == '1'),
+    "SIMPLE_KEYWORD" => isset($_GET['simple_keyword']) ? trim((string)$_GET['simple_keyword']) : '',
     "SETTINGS" => [
         "SHOWLINKED" => ($_GET['showlinked'] == 1 ? true : false),
         "SHOWARCHIVED" => ($_GET['showarchived'] == 1 ? true : false),
         "HIDEIMAGES" => ($_GET['hideimages'] == 1 ? true : false),
+        "SHOWGROUPS" => (!isset($_GET['showgroups']) || $_GET['showgroups'] == '1'),
     ],
     "TERMS" => [
         "CATEGORY" => is_array($_GET['category']) ? $_GET['category'] : [],
@@ -50,6 +53,37 @@ $RETURN = [
         "NAME" => false
     ]
 ];
+
+/**
+ * Enrich one physical asset row with everything an asset list needs to render it: whether it
+ * clashes with another project over the search date range, and any maintenance flags/blocks.
+ * Shared by the assetTypes results loop and the asset group loop so the two stay in step.
+ */
+function hydrateAssetRow($tag, $dateStart, $dateEnd, $projectId) {
+    global $DBLIB;
+    $tag['assignment'] = false;
+    if ($dateStart and $dateEnd) {
+        //Check availability
+        $DBLIB->where("assets_id", $tag['assets_id']);
+        $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
+        $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
+        $DBLIB->where("projects.projects_deleted", 0);
+        // Standard date-range overlap: the assignment's project overlaps the search window
+        // when it starts on/before the window ends and ends on/after the window starts.
+        // Bound parameters only - never interpolate values into the SQL string.
+        $rangeStart = date("Y-m-d H:i:s", $dateStart);
+        $rangeEnd = date("Y-m-d H:i:s", $dateEnd);
+        $DBLIB->where("(projects_dates_deliver_start <= ? AND projects_dates_deliver_end >= ?)", [$rangeEnd, $rangeStart]);
+        $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
+        if ($projectId) {
+            // If a project is being searched for specifically then we need to check if the asset is assigned to that project or if it is assigned to another project
+            $DBLIB->where("(projectsStatuses.projectsStatuses_assetsReleased = 0 OR projects.projects_id = ?)", [$projectId]);
+        } else $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
+        $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assetsAssignments.projects_id", "projects.projects_name"]);
+    }
+    $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
+    return $tag;
+}
 
 $DBLIB->where("instances_id",$SEARCH['INSTANCE_ID']);
 $DBLIB->where("instances_deleted",0);
@@ -112,7 +146,59 @@ if (count($sortArray) == 2) {
 $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC"); // Last item in the sort each time
 
 //Keywords
-if (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
+if ($SEARCH['SIMPLE']) {
+    // Broad AssetType keyword match: name, description, manufacturer, category name,
+    // category-group name, and physical-asset tag. Each whitespace-separated term must
+    // match somewhere.
+    if ($SEARCH['SIMPLE_KEYWORD'] !== '') {
+        // Keep every non-empty term (including the literal "0", which a callback-less
+        // array_filter() would wrongly drop), then bound the query by capping the number
+        // of terms and the length of each so a pathological input can't build a huge WHERE.
+        $terms = array_values(array_filter(
+            preg_split('/\s+/', $SEARCH['SIMPLE_KEYWORD']),
+            function ($t) { return strlen(trim((string)$t)) > 0; }
+        ));
+        $terms = array_slice($terms, 0, 10);
+        $terms = array_map(function ($t) { return substr($t, 0, 100); }, $terms);
+        if (count($terms) > 0) {
+            $instanceIdInt = intval($SEARCH['INSTANCE_ID']);
+            $keywordNow = date("Y-m-d H:i:s");
+            $andClauses = [];
+            $allValues = [];
+            foreach ($terms as $term) {
+                $like = '%' . $term . '%';
+                // Mirror the linked/archived constraints the main results query applies so a
+                // tag match can't surface a type whose matching asset is filtered out below.
+                $existsExtra = '';
+                $existsExtraValues = [];
+                if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) {
+                    $existsExtra .= "\n                          AND (a2.assets_endDate IS NULL OR a2.assets_endDate >= ?)";
+                    $existsExtraValues[] = $keywordNow;
+                }
+                if (!$SEARCH['SETTINGS']['SHOWLINKED']) {
+                    $existsExtra .= "\n                          AND a2.assets_linkedTo IS NULL";
+                }
+                $andClauses[] = "(
+                    assetTypes.assetTypes_name LIKE ?
+                    OR assetTypes.assetTypes_description LIKE ?
+                    OR manufacturers.manufacturers_name LIKE ?
+                    OR assetCategories.assetCategories_name LIKE ?
+                    OR assetCategoriesGroups.assetCategoriesGroups_name LIKE ?
+                    OR EXISTS (
+                        SELECT 1 FROM assets a2
+                        WHERE a2.assetTypes_id = assetTypes.assetTypes_id
+                          AND a2.instances_id = ?
+                          AND a2.assets_deleted = 0
+                          AND a2.assets_tag LIKE ?" . $existsExtra . "
+                    )
+                )";
+                array_push($allValues, $like, $like, $like, $like, $like, $instanceIdInt, $like);
+                foreach ($existsExtraValues as $ev) $allValues[] = $ev;
+            }
+            $DBLIB->where('(' . implode(' AND ', $andClauses) . ')', $allValues);
+        }
+    }
+} elseif (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
     $thisWhere = false;
     $thisValues = [];
     foreach ($SEARCH['TERMS']['KEYWORDS'] as $word) {
@@ -215,27 +301,117 @@ foreach ($assets as $asset) {
     $asset['thumbnail'] = $bCMS->s3List(2, $asset['assetTypes_id'],'s3files_meta_uploaded','ASC',1);
     $asset['tags'] = [];
     foreach ($assetTags as $tag) {
-        if ($dateStart and $dateEnd) {
-            //Check availability
-            $DBLIB->where("assets_id", $tag['assets_id']);
-            $DBLIB->where("assetsAssignments.assetsAssignments_deleted", 0);
-            $DBLIB->join("projects", "assetsAssignments.projects_id=projects.projects_id", "LEFT");
-            $DBLIB->where("projects.projects_deleted", 0);
-            $DBLIB->where("((projects_dates_deliver_start >= '" . date ("Y-m-d H:i:s",$dateStart)  . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateStart) . "' AND projects_dates_deliver_end <= '" . date ("Y-m-d H:i:s",$dateEnd) . "') OR (projects_dates_deliver_end >= '" . date ("Y-m-d H:i:s",$dateEnd) . "' AND projects_dates_deliver_start <= '" . date ("Y-m-d H:i:s",$dateStart) . "'))");
-            $DBLIB->join("projectsStatuses", "projects.projectsStatuses_id=projectsStatuses.projectsStatuses_id", "LEFT");
-            if ($RETURN['PROJECT']['ID']) {
-                // If a project is being searched for specifically then we need to check if the asset is assigned to that project or if it is assigned to another project
-                $DBLIB->where("(projectsStatuses.projectsStatuses_assetsReleased = 0 OR projects.projects_id = '" . $RETURN['PROJECT']['ID'] . "')");
-            } else $DBLIB->where("projectsStatuses.projectsStatuses_assetsReleased", 0);
-            $tag['assignment'] = $DBLIB->get("assetsAssignments", null, ["assetsAssignments.assetsAssignments_id", "assetsAssignments.projects_id", "projects.projects_name"]);
-        }
-        $tag['flagsblocks'] = assetFlagsAndBlocks($tag['assets_id']);
+        $tag = hydrateAssetRow($tag, $dateStart, $dateEnd, $RETURN['PROJECT']['ID']);
         if ($tag['assignment'] or $tag['flagsblocks']['COUNT']['BLOCK'] > 0) $asset['countBlocked']++;
         $asset['tags'][] = $tag;
     }
     $asset['countAvailable'] = $asset['count'] - $asset['countBlocked'];
     $RETURN['ASSETS'][] = $asset;
 }
+//**ASSET GROUPS**
+// Asset Groups are shown as extra result cards mixed in with the asset types (gated by the
+// "Show asset groups" scope toggle). With a project selected they can be booked - a whole group
+// or picked apart - without leaving the search; with no project the cards are informational.
+// When the advanced Group filter names specific groups, exactly those are shown (the keyword is
+// ignored for cards); otherwise groups match on the search text. Page 1 only, because the
+// pagination above counts assetTypes rows and there is no page for a second stream to spill onto.
+$RETURN['GROUP_COUNT'] = 0;
+if ($SEARCH['SETTINGS']['SHOWGROUPS']
+    and $SEARCH['INSTANCE_ID'] == $AUTH->data['instance']['instances_id'] // api/projects/assets/assign.php only resolves groups in the current instance
+    and $SEARCH['PAGE'] == 1) {
+
+    $selectedGroupIds = array_values(array_filter(array_map('intval', $SEARCH['TERMS']['GROUPS'])));
+    $groupTerms = $SEARCH['SIMPLE'] ?
+        ($SEARCH['SIMPLE_KEYWORD'] === '' ? [] : array_values(array_filter(preg_split('/\s+/', $SEARCH['SIMPLE_KEYWORD'])))) :
+        array_values(array_filter($SEARCH['TERMS']['KEYWORDS']));
+
+    $DBLIB->where("(assetGroups.users_userid IS NULL OR assetGroups.users_userid = ?)", [$AUTH->data['users_userid']]);
+    $DBLIB->where("assetGroups.instances_id", $SEARCH['INSTANCE_ID']);
+    $DBLIB->where("assetGroups.assetGroups_deleted", 0);
+    if (count($selectedGroupIds) > 0) {
+        // Advanced Group filter names specific groups - show exactly those, ignore the keyword.
+        $DBLIB->where("assetGroups.assetGroups_id", $selectedGroupIds, "IN");
+    } elseif (count($groupTerms) > 0) {
+        // Every term must match either the group itself or one of the assets inside it
+        $andClauses = [];
+        $allValues = [];
+        foreach ($groupTerms as $term) {
+            $like = '%' . $term . '%';
+            $andClauses[] = "(
+                assetGroups.assetGroups_name LIKE ?
+                OR assetGroups.assetGroups_description LIKE ?
+                OR EXISTS (
+                    SELECT 1 FROM assets a3
+                    LEFT JOIN assetTypes at3 ON a3.assetTypes_id = at3.assetTypes_id
+                    LEFT JOIN manufacturers m3 ON at3.manufacturers_id = m3.manufacturers_id
+                    LEFT JOIN assetCategories ac3 ON at3.assetCategories_id = ac3.assetCategories_id
+                    WHERE FIND_IN_SET(assetGroups.assetGroups_id, a3.assets_assetGroups)
+                      AND a3.instances_id = ?
+                      AND a3.assets_deleted = 0
+                      AND (
+                        at3.assetTypes_name LIKE ?
+                        OR at3.assetTypes_description LIKE ?
+                        OR m3.manufacturers_name LIKE ?
+                        OR ac3.assetCategories_name LIKE ?
+                        OR a3.assets_tag LIKE ?
+                      )
+                )
+            )";
+            array_push($allValues, $like, $like, intval($SEARCH['INSTANCE_ID']), $like, $like, $like, $like, $like);
+        }
+        $DBLIB->where('(' . implode(' AND ', $andClauses) . ')', $allValues);
+    }
+    $DBLIB->orderBy("assetGroups.assetGroups_name", "ASC");
+    $matchedGroups = $DBLIB->get("assetGroups", 25, ["assetGroups_id", "assetGroups_name", "assetGroups_description", "users_userid"]);
+
+    $groupAssetBudget = 300; // Hydrating a member costs ~4 queries, so cap how many we render per page
+    $groupCards = [];
+    foreach ($matchedGroups as $group) {
+        $DBLIB->where("FIND_IN_SET(?, assets.assets_assetGroups)", [intval($group['assetGroups_id'])]);
+        $DBLIB->where("assets.instances_id", $SEARCH['INSTANCE_ID']);
+        $DBLIB->where("assets.assets_deleted", 0);
+        $DBLIB->join("assetTypes", "assets.assetTypes_id=assetTypes.assetTypes_id", "LEFT");
+        $DBLIB->orderBy("assetTypes.assetTypes_name", "ASC");
+        $DBLIB->orderBy("assets.assets_tag", "ASC");
+        $members = $DBLIB->get("assets", null, ["assets.assets_id", "assets.assets_tag", "assets.assetTypes_id", "assetTypes.assetTypes_name", "assets.assets_dayRate", "assets.assets_weekRate", "assetTypes.assetTypes_dayRate", "assetTypes.assetTypes_weekRate", "assets.assets_endDate", "assets.assets_notes"]);
+        if (!$members) continue; // An empty group is not worth a card
+
+        $card = [
+            "isGroup" => true,
+            "assetGroups_id" => $group['assetGroups_id'],
+            "assetGroups_name" => $group['assetGroups_name'],
+            "assetGroups_description" => $group['assetGroups_description'],
+            "personal" => $group['users_userid'] != null,
+            "count" => count($members),
+            "countBlocked" => 0,
+            "countAvailable" => 0,
+            "truncated" => false,
+            "tags" => [],
+        ];
+        if (count($members) > $groupAssetBudget) {
+            // Too big to list on this page - the card still offers "add the whole group",
+            // which is resolved entirely server side by the assign endpoint.
+            $card['truncated'] = true;
+        } else {
+            $groupAssetBudget -= count($members);
+            foreach ($members as $member) {
+                $member = hydrateAssetRow($member, $dateStart, $dateEnd, $RETURN['PROJECT']['ID']);
+                if ($member['assignment'] or $member['flagsblocks']['COUNT']['BLOCK'] > 0) $card['countBlocked']++;
+                $card['tags'][] = $member;
+            }
+        }
+        $card['countAvailable'] = $card['count'] - $card['countBlocked'];
+        $groupCards[] = $card;
+    }
+
+    if (count($groupCards) > 0) {
+        $RETURN['GROUP_COUNT'] = count($groupCards);
+        // Groups always lead the page, whatever the sort - they have no price/mass/value/date to
+        // sort against the asset types, and leading keeps them easy to find.
+        $RETURN['ASSETS'] = array_merge($groupCards, $RETURN['ASSETS']);
+    }
+}
+
 $RETURN['SPEED'] = microtime(true) - $scriptStartTime;
 
 
@@ -280,4 +456,5 @@ if (count($SEARCH['TERMS']['CATEGORY']) > 0) {
 
 $RETURN['SEARCH'] = $SEARCH;
 $PAGEDATA['searchResults'] = $RETURN;
+
 echo $TWIG->render('assets.twig', $PAGEDATA);
