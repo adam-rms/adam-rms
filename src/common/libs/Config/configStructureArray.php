@@ -377,7 +377,7 @@ $configStructureArray = [
       },
       "name" => "Migration signing key",
       "group" => "Security & Login",
-      "description" => "Lets users authorise migrating a business to the new version of AdamRMS, which checks the result against the public half of this key. A base64 encoded Ed25519 secret key. Leave blank to turn this off.",
+      "description" => "Only needed if businesses on this installation are moving to the new version of AdamRMS. It lets a user confirm to the new version that they are allowed to migrate a business. Leave blank to keep this turned off. To create a key, run this on any machine with PHP: php -r '\$k = sodium_crypto_sign_keypair(); echo base64_encode(sodium_crypto_sign_secretkey(\$k)), PHP_EOL, base64_encode(sodium_crypto_sign_publickey(\$k)), PHP_EOL;' It prints two lines. Paste the first line here and keep it secret. Give the second line to the new version of AdamRMS as its public key.",
       "required" => false,
       "maxlength" => 88,
       "minlength" => 0,
