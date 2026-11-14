@@ -1,5 +1,5 @@
-import { createPublicKey, verify } from "crypto";
-import { BASE_URL, MIGRATE_PUBLIC_KEY } from "../env";
+import { createHmac } from "crypto";
+import { APP_ENV, BASE_URL } from "../env";
 import { test, expect, type Session } from "../tenants";
 
 const STATE = "e2e-migrate-state-0123456789";
@@ -22,13 +22,8 @@ test("instances/migrate.php sends the user back with a signed statement of the b
   expect(location.searchParams.get("state")).toBe(STATE);
 
   const [header, payload, signature] = location.searchParams.get("assertion")!.split(".");
-  // The raw 32-byte key, wrapped in the fixed DER prefix for an Ed25519 public key
-  const publicKey = createPublicKey({
-    key: Buffer.concat([Buffer.from("302a300506032b6570032100", "hex"), Buffer.from(MIGRATE_PUBLIC_KEY, "base64")]),
-    format: "der",
-    type: "spki",
-  });
-  expect(verify(null, Buffer.from(`${header}.${payload}`), publicKey, Buffer.from(signature, "base64url"))).toBe(true);
+  expect(JSON.parse(Buffer.from(header, "base64url").toString()).alg).toBe("HS256");
+  expect(signature).toBe(createHmac("sha256", APP_ENV.CONFIG_MIGRATE_SIGNING_KEY).update(`${header}.${payload}`).digest("base64url"));
   const claims = JSON.parse(Buffer.from(payload, "base64url").toString());
   expect(claims).toMatchObject({
     iss: BASE_URL,

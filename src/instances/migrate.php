@@ -10,13 +10,13 @@ use \Firebase\JWT\JWT;
  * for anything on this site. It names the redirect_uri it was sent to (`aud`), which the receiver must check
  * is its own, so one sent anywhere else is worthless.
  *
- * Off unless the MIGRATE_SIGNING_KEY config value is set.
+ * Off unless the MIGRATE_SIGNING_KEY config value is set. The new version holds the same key, to check the statement.
  */
 $signingKey = $CONFIGCLASS->get('MIGRATE_SIGNING_KEY');
 $state = isset($_GET['state']) ? $_GET['state'] : '';
 $callbackUrl = isset($_GET['redirect_uri']) ? filter_var($_GET['redirect_uri'], FILTER_VALIDATE_URL) : false;
 if ($callbackUrl and parse_url($callbackUrl, PHP_URL_SCHEME) !== "https" and !$CONFIG['DEV']) $callbackUrl = false;
-if (!$signingKey or !$callbackUrl or !preg_match('/^[A-Za-z0-9_-]{16,128}$/', $state)) die($TWIG->render('404.twig', $PAGEDATA));
+if (!$signingKey or strlen($signingKey) < 32 or !$callbackUrl or !preg_match('/^[A-Za-z0-9_-]{16,128}$/', $state)) die($TWIG->render('404.twig', $PAGEDATA));
 
 $PAGEDATA['instances'] = [];
 foreach ($AUTH->data['instances'] as $instance) {
@@ -35,7 +35,7 @@ if (isset($_POST['migrate_instances_id']) and isset($PAGEDATA['instances'][$_POS
         "iat" => time(),
         "exp" => time() + 60,
         "jti" => bin2hex(random_bytes(16)),
-    ], $signingKey, 'EdDSA');
+    ], $signingKey, 'HS256');
     $bCMS->auditLog("MIGRATE", "instances", "Authorised migration to the new version of AdamRMS", $AUTH->data['users_userid'], null, null, $instanceId);
     header("Location: " . $callbackUrl . (str_contains($callbackUrl, "?") ? "&" : "?") . http_build_query(["assertion" => $assertion, "state" => $state]));
     exit;

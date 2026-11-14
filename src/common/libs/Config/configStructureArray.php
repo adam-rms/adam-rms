@@ -375,18 +375,16 @@ $configStructureArray = [
       "default" => function () {
         return null;
       },
-      "name" => "Migration signing key",
+      "name" => "Migration key",
       "group" => "Security & Login",
-      "description" => "Only needed if businesses on this installation are moving to the new version of AdamRMS. It lets a user confirm to the new version that they are allowed to migrate a business. Leave blank to keep this turned off. To create a key, run this on any machine with PHP: php -r '\$k = sodium_crypto_sign_keypair(); echo base64_encode(sodium_crypto_sign_secretkey(\$k)), PHP_EOL, base64_encode(sodium_crypto_sign_publickey(\$k)), PHP_EOL;' It prints two lines. Paste the first line here and keep it secret. Give the second line to the new version of AdamRMS as its public key.",
+      "description" => "Only needed if businesses on this installation are moving to the new version of AdamRMS. A long random password, at least 32 characters, which must also be given to the new version. It lets a user confirm to the new version that they are allowed to migrate a business. Leave blank to keep this turned off.",
       "required" => false,
-      "maxlength" => 88,
+      "maxlength" => 128,
       "minlength" => 0,
       "options" => [],
       "verifyMatch" => function ($value, $options) {
-        if ($value === null or $value === "") return ["valid" => true, "value" => $value, "error" => ''];
-        $decoded = base64_decode($value, true);
-        if ($decoded !== false and strlen($decoded) === SODIUM_CRYPTO_SIGN_SECRETKEYBYTES) return ["valid" => true, "value" => $value, "error" => ''];
-        else return ["valid" => false, "value" => null, "error" => "Invalid Ed25519 secret key"];
+        if ($value === null or $value === "" or strlen($value) >= 32) return ["valid" => true, "value" => $value, "error" => ''];
+        else return ["valid" => false, "value" => null, "error" => "The migration key must be at least 32 characters"];
       }
     ],
     "specialRequest" => true,
