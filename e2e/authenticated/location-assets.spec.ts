@@ -10,6 +10,8 @@ test("the location list links to assets stored at that location", async ({ asA, 
     expect(assets.status).toBe(200);
     expect(assets.body).toContain(`Assets stored at ${a.marker} location`);
     expect(assets.body).toContain(`/asset.php?id=${a.assetTypeId}&amp;asset=${a.assetId}`);
+    // The spare asset is the same type but not stored there, so the filter must leave it out
+    expect(assets.body).not.toContain(`/asset.php?id=${a.assetTypeId}&amp;asset=${a.spareAssetId}`);
   } finally {
     dbQuery("UPDATE assets SET assets_storageLocation = NULL WHERE assets_id = ?", [a.assetId]);
   }
