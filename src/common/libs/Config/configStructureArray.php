@@ -369,6 +369,28 @@ $configStructureArray = [
     "default" => false,
     "envFallback" => "CONFIG_AUTH_JWTKey",
   ],
+  "MIGRATE_SIGNING_KEY" => [
+    "form" => [
+      "type" => "secret",
+      "default" => function () {
+        return null;
+      },
+      "name" => "Migration key",
+      "group" => "Security & Login",
+      "description" => "Only needed if businesses on this installation are moving to the new version of AdamRMS. A long random password, at least 32 characters, which must also be given to the new version. It lets a user confirm to the new version that they are allowed to migrate a business. Leave blank to keep this turned off.",
+      "required" => false,
+      "maxlength" => 128,
+      "minlength" => 0,
+      "options" => [],
+      "verifyMatch" => function ($value, $options) {
+        if ($value === null or $value === "" or strlen($value) >= 32) return ["valid" => true, "value" => $value, "error" => ''];
+        else return ["valid" => false, "value" => null, "error" => "The migration key must be at least 32 characters"];
+      }
+    ],
+    "specialRequest" => true,
+    "default" => false,
+    "envFallback" => "CONFIG_MIGRATE_SIGNING_KEY",
+  ],
   "AUTH_NEXTHASH" => [
     "form" => [
       "type" => "select",

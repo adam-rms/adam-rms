@@ -17,6 +17,7 @@ export const APP_ENV: Record<string, string> = {
   DB_PORT: process.env.DB_PORT ?? "3306",
   DEV_MODE: "true",
   CONFIG_ROOTURL: BASE_URL,
+  CONFIG_MIGRATE_SIGNING_KEY: "e2e-migration-key-used-nowhere-else-0123456789",
 };
 
 /** Seeded by db/seeds/DefaultUserSeeder.php */
