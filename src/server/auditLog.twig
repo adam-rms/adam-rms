@@ -65,7 +65,7 @@
                                             <a href="?userto={{ item.userAction_userid }}">{{ item.userAction_name1 ~ ' ' ~ item.userAction_name2 }}</a>
                                         {% endif %}
                                     </td>
-                                    <td><pre>{% if item.auditLog_actionData is iterable %}{{ item.auditLog_actionData|json_encode()|raw }}{% else %}{{ item.auditLog_actionData|raw }}{% endif %}</pre></td>
+                                    <td><pre>{% if item.auditLog_actionData is iterable %}{{ item.auditLog_actionData|json_encode() }}{% else %}{{ item.auditLog_actionData }}{% endif %}</pre></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
