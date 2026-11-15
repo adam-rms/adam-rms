@@ -150,4 +150,4 @@ jobs:
         run: |
           # Wait for the new image to propagate through the registry before triggering a deploy
           sleep 10
-          curl -fsS --show-error -X GET -H "Authorization: Bearer $COOLIFY_TOKEN" "$WEBHOOK_URL" || echo "Warning: Deploy webhook failed, continuing anyway"
+          curl -fsS --show-error -X POST -H "Authorization: Bearer $COOLIFY_TOKEN" "$WEBHOOK_URL" || echo "Warning: Deploy webhook failed, continuing anyway"
