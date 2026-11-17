@@ -15,6 +15,7 @@ if (count($dates) == 2) {
 $DBLIB->setTrace(true, $_SERVER['SERVER_ROOT']);
 $SEARCH = [
     "INSTANCE_ID" => in_array($_GET['instance_id'],$AUTH->data['instance_ids']) ? $_GET['instance_id'] : $AUTH->data['instance']['instances_id'],
+    "LOCATION_ID" => false,
     "PROJECT_ID" => $_GET['project'] ?: false,
     "PROJECT_REFERER" => $_GET['project_referer'] ?: false,
     "PAGE" =>  $_GET['page'] ? intval($_GET['page']) : 1,
@@ -40,6 +41,17 @@ $SEARCH = [
       "GROUPS" => [],
     ]
 ];
+if (isset($_GET['location'])) {
+    if (!is_string($_GET['location']) || !ctype_digit($_GET['location'])) die($TWIG->render('404.twig', $PAGEDATA));
+    $DBLIB->where("locations_id", (int) $_GET['location']);
+    $DBLIB->where("instances_id", $SEARCH['INSTANCE_ID']);
+    $DBLIB->where("locations_deleted", 0);
+    $DBLIB->where("locations_archived", 0);
+    $location = $DBLIB->getOne("locations", ["locations_id", "locations_name"]);
+    if (!$location) die($TWIG->render('404.twig', $PAGEDATA));
+    $SEARCH['LOCATION_ID'] = (int) $location['locations_id'];
+    $SEARCH['LOCATION_NAME'] = $location['locations_name'];
+}
 $RETURN = [
     "PAGINATION" => [
         "PAGE" => $SEARCH['PAGE']
@@ -131,6 +143,7 @@ if (count($SEARCH['TERMS']['KEYWORDS']) > 0) {
 $subQuery = $DBLIB->subQuery();
 $subQuery->where("assets.instances_id",$SEARCH['INSTANCE_ID']);
 $subQuery->where("assets_deleted",0);
+if ($SEARCH['LOCATION_ID']) $subQuery->where("assets.assets_storageLocation", $SEARCH['LOCATION_ID']);
 if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $subQuery->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
 
 if ($SEARCH['TERMS']['GROUPS']) {
@@ -176,6 +189,7 @@ foreach ($assets as $asset) {
     $DBLIB->where("assets.assetTypes_id", $asset['assetTypes_id']);
     $DBLIB->where("assets.instances_id",$SEARCH['INSTANCE_ID']);
     $DBLIB->where("assets_deleted",0);
+    if ($SEARCH['LOCATION_ID']) $DBLIB->where("assets.assets_storageLocation", $SEARCH['LOCATION_ID']);
     if (!$SEARCH['SETTINGS']['SHOWARCHIVED']) $DBLIB->where ("(assets.assets_endDate IS NULL OR assets.assets_endDate >= '" . date ("Y-m-d H:i:s") . "')");
     if ($SEARCH['TERMS']['GROUPS']) {
         $thisWhere = false;

@@ -87,6 +87,7 @@ const pageCases: PageCase[] = [
   { file: "project/list.php", url: () => `/project/list.php`, shows: (t) => `${t.marker} project` },
   { file: "asset.php", url: (t) => `/asset.php?id=${t.assetTypeId}`, shows: (t) => `${t.marker} asset type` },
   { file: "assets.php", url: () => `/assets.php`, shows: (t) => `${t.marker} asset type` },
+  { file: "assets.php", label: "location", url: (t) => `/assets.php?location=${t.locationId}`, shows: (t) => `${t.marker} location` },
   { file: "clients.php", url: () => `/clients.php`, shows: (t) => `${t.marker} client` },
   { file: "location/index.php", url: () => `/location/`, shows: (t) => `${t.marker} location` },
   { file: "maintenance/index.php", url: () => `/maintenance/`, shows: (t) => `${t.marker} maintenance job` },
