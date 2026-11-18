@@ -52,9 +52,11 @@
                             <li class="list-group-item">
                                 <b>Day Rate</b> <span class="float-right text-primary">{{ (assets[0]['assets_dayRate'] ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                             </li>
+                            {% if not USERDATA.instance.instances_hideWeekRates %}
                             <li class="list-group-item">
                                 <b>Week Rate</b> <span class="float-right text-primary">{{ (assets[0]['assets_weekRate'] ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                             </li>
+                            {% endif %}
                             {% if assets[0]['storage_location'] %}
                             <li class="list-group-item">
                                 <b>Storage Location</b>
@@ -112,9 +114,11 @@
                         <li class="list-group-item">
                             <b>Day Rate</b> <span class="float-right text-primary">{{ asset.assetTypes_dayRate|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                         </li>
+                        {% if not USERDATA.instance.instances_hideWeekRates %}
                         <li class="list-group-item">
                             <b>Week Rate</b> <span class="float-right text-primary">{{ asset.assetTypes_weekRate|money(ASSET_INSTANCE['instances_config_currency']) }}</span>
                         </li>
+                        {% endif %}
                     </ul>
                     {% if asset.oneasset %}
                         <a href="?id={{asset.assetTypes_id}}" class="btn btn-info btn-block"><b>View All</b></a>
@@ -381,7 +385,7 @@
                                                             </div>
                                                             <input type="number" step="0.001" min="0" name="assets_dayRate" value="{{ assets[0].assets_dayRate|moneyDecimal }}" class="form-control"  />
                                                         </div>
-                                                        <div class="input-group">
+                                                        <div class="input-group{{ USERDATA.instance.instances_hideWeekRates ? ' d-none' }}">
                                                             <div class="input-group-prepend">
                                                             <span class="input-group-text">
                                                               Weekly Rate - {{ moneySymbol() }}
@@ -906,7 +910,7 @@
                                     <th>Notes</th>
                                     <th>Value</th>
                                     <th>Cost/day</th>
-                                    <th>Cost/week</th>
+                                    {% if not USERDATA.instance.instances_hideWeekRates %}<th>Cost/week</th>{% endif %}
                                     <th title="File attachments"><i class="fas fa-paperclip"></i></th>
                                     <th style="width:1%"><i class="fas fa-flag"></i></th>
                                     <th style="width:1%"><i class="fas fa-ban"></i></th>
@@ -925,9 +929,11 @@
                                         <td>
                                             {{ (thisasset.assets_dayRate ?: asset.assetTypes_dayRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
+                                        {% if not USERDATA.instance.instances_hideWeekRates %}
                                         <td>
                                             {{ (thisasset.assets_weekRate ?: asset.assetTypes_weekRate)|money(ASSET_INSTANCE['instances_config_currency']) }}
                                         </td>
+                                        {% endif %}
                                         <td>{{ thisasset.files|length > 0 ?: "" }}</td>
 
                                         <td>
@@ -1082,7 +1088,7 @@
                                                     <div class="input-group-text" id="addNewType-dayRate-guide">Guide 2% of value</div>
                                                 </div>
                                             </div>
-                                            <div class="input-group">
+                                            <div class="input-group{{ USERDATA.instance.instances_hideWeekRates ? ' d-none' }}">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">
                                                       Weekly Rate - {{ moneySymbol() }}

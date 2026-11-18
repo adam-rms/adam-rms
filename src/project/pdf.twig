@@ -84,6 +84,10 @@
                                         {% if project.projects_dates_deliver_end %}
                                             ['Collect:',"{{ project.projects_dates_deliver_end|date("j M Y h:ia")|escape("js") }}"],
                                         {% endif %}
+                                        {% if GET['finance'] and "PROJECTS:PROJECT_PAYMENTS:VIEW"|instancePermissions and project.projectsTypes_config_finance == 1 and FINANCIALS.priceMaths.dayRateMultiplier is defined %}
+                                            {% set hireLength %}{{ FINANCIALS.priceMaths.durationDays }} day{{ FINANCIALS.priceMaths.durationDays != 1 ? 's' }}, charged as {{ FINANCIALS.priceMaths.dayRateMultiplier }} day rate{{ FINANCIALS.priceMaths.dayRateMultiplier != 1 ? 's' }}{% endset %}
+                                            ['Hire Length:',"{{ hireLength|escape("js") }}"],
+                                        {% endif %}
                                         {% if GET['totalmass'] and project.projectsTypes_config_assets == 1 %}
                                             ['Mass Estimate:',"{{FINANCIALS.mass|mass|escape("js") }}"],
                                         {% endif %}

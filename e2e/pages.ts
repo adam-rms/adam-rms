@@ -35,6 +35,7 @@ export const businessPages: PageCase[] = [
   { url: () => "/instances/configuration/barcodes.php" },
   { url: () => "/instances/configuration/invoices.php" },
   { url: () => "/instances/configuration/logo.php" },
+  { url: () => "/instances/configuration/pricing.php" },
   { url: () => "/instances/customCategories.php" },
   { url: () => "/instances/groups.php" },
   { url: () => "/instances/importAssets.php" },

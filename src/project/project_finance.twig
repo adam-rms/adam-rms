@@ -9,6 +9,7 @@
 					<tr>
 						<td style="width: 35%;">
 							Equipment SubTotal
+							{% if FINANCIALS.priceMaths.dayRateMultiplier is defined %}<br/><small class="text-muted">{{ FINANCIALS.priceMaths.durationDays }} day{{ FINANCIALS.priceMaths.durationDays != 1 ? 's' }}, charged as {{ FINANCIALS.priceMaths.dayRateMultiplier }} day rate{{ FINANCIALS.priceMaths.dayRateMultiplier != 1 ? 's' }}</small>{% endif %}
 						</td>
 						<td style="width: 15%;text-align: right;">
 							{{ FINANCIALS.prices.subTotal|money }}
