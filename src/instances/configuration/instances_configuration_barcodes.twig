@@ -26,6 +26,27 @@
 <div class="row">
     <div class="col-12 col-md-8 offset-md-2">
         <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Asset Tag Pattern</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="instances_assetTagPattern">Pattern</label>
+                    <input type="text" class="form-control" id="instances_assetTagPattern" maxlength="200" value="{{ USERDATA.instance.instances_assetTagPattern|default('A-{4}') }}" placeholder="E-{7}">
+                    <small class="form-text text-muted">Use one counter such as {7}; the number sets its minimum digit count.</small>
+                </div>
+            </div>
+            <div class="card-footer">
+                {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                <button type="button" class="btn btn-default" id="saveAssetTagPattern">Save</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <div class="card">
             <form id="cableColours">
                 <div class="card-header">
                     <h3 class="card-title">Cable Colours</h3>
@@ -61,6 +82,17 @@
             </form>
             <script>
                 $(document).ready(function() {
+                    {% if "BUSINESS:BUSINESS_SETTINGS:EDIT"|instancePermissions %}
+                    $('#saveAssetTagPattern').on('click', function() {
+                        ajaxcall("instances/editInstance.php", {
+                            'formData': [
+                                { 'name': 'instances_assetTagPattern', 'value': $('#instances_assetTagPattern').val() }
+                            ]
+                        }, function (data) {
+                            location.reload();
+                        }, false);
+                    });
+                    {% endif %}
                     $(".colorpicker").spectrum({
                         showInput: true,
                         preferredFormat: "hex",
