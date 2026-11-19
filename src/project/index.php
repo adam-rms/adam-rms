@@ -88,6 +88,24 @@ foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $instance) { //Go throu
     $PAGEDATA['BOARDSTATUSES'][$instance['instance']['instances_id']] = stripBoardAssets($PAGEDATA['BOARDASSETS'][$instance['instance']['instances_id']]); //for the JS Array
 }
 
+// Locations for Location Dispatch modal "Other Location" dropdown (current instance)
+$DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
+$DBLIB->where("locations_deleted", 0);
+$DBLIB->where("locations_archived", 0);
+$DBLIB->orderBy("locations_name", "ASC");
+$PAGEDATA['locationDispatchLocations'] = $DBLIB->get("locations", null, ["locations_id", "locations_name"]);
+
+// Locations for each sub-instance present in this project
+$PAGEDATA['locationDispatchSubLocations'] = [];
+foreach ($PAGEDATA['FINANCIALS']['assetsAssignedSUB'] as $subInstance) {
+    $subInstanceId = $subInstance['instance']['instances_id'];
+    $DBLIB->where("instances_id", $subInstanceId);
+    $DBLIB->where("locations_deleted", 0);
+    $DBLIB->where("locations_archived", 0);
+    $DBLIB->orderBy("locations_name", "ASC");
+    $PAGEDATA['locationDispatchSubLocations'][$subInstanceId] = $DBLIB->get("locations", null, ["locations_id", "locations_name"]);
+}
+
 //Edit Options - Project Statuses list
 if ($AUTH->instancePermissionCheck("PROJECTS:EDIT:STATUS")) {
     $DBLIB->where("instances_id", $AUTH->data['instance']['instances_id']);
